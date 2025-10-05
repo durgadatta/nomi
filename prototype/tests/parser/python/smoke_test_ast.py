@@ -13,13 +13,14 @@ from lark.indenter import PythonIndenter
 
 from prototype.parser.python import (
     ensure_expr, 
-    ExpressionMixin, StatementMixin, CallMixin, 
+    ExpressionMixin, StatementMixin, CallMixin, ControlMixin
 )
 
 
 class ModuleMixin(
     ExpressionMixin, 
     StatementMixin,
+    ControlMixin,
     CallMixin,   
 ):
     def file_input(self, items):
