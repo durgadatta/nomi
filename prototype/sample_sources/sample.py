@@ -1,8 +1,12 @@
 def add(a, b):
     return a + b 
 
-v = add(1,2)
-print(v)
+x = 1
+v = add(x,2)
+
+a, b = 1, 2
+
+
 print('successfully executed')
 
 

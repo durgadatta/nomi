@@ -48,13 +48,12 @@ class PythonASTTransformer(
         return children
 
 
-
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
     sample_file = script_path.parents[3].joinpath('sample_sources', 'dummy').with_name("sample.py")
-
     source_code = sample_file.read_text(encoding="utf-8")
 
+    # Load Lark parser
     parser = Lark.open_from_package(
         'lark',
         'python.lark',
@@ -64,22 +63,35 @@ if __name__ == "__main__":
         start='file_input'
     )
 
-    # parse Lark tree
+    # Parse Lark tree
     tree = parser.parse(source_code)
 
-    # transform to Python AST
+    # Transform to Python AST using your transformer
     tr = PythonASTTransformer()
-    module = tr.transform(tree)
-    module = ast.fix_missing_locations(module)
+    lark_module = tr.transform(tree)
 
-    # print ASTs for comparison
+    # Fix line numbers globally
+    lark_module = ast.fix_missing_locations(lark_module)
+
+    # Also parse Python's built-in AST
+    python_module = ast.parse(source_code)
+
+    # Convert ASTs to strings (pretty-print)
+    lark_ast_str = ast.dump(lark_module, indent=4)
+    python_ast_str = ast.dump(python_module, indent=4)
+
+
+    local_folder = script_path.parents[4].joinpath('local')
+    (local_folder / "lark.ast").write_text(lark_ast_str, encoding="utf-8")
+    (local_folder / "python.ast").write_text(python_ast_str, encoding="utf-8")
+
     print("Lark -> AST:")
-    print(ast.dump(module, indent=4))
+    print(lark_ast_str)
     print("\nPython ast.parse -> AST:")
-    print(ast.dump(ast.parse(source_code), indent=4))
+    print(python_ast_str)
 
-    # execute the compiled AST
-    globals_for_exec = {'xyx': int}  # optional: supply any annotations needed
-    codeobj = compile(module, "<string>", "exec")
+    # --- Execute compiled AST ---
+    globals_for_exec = {}  # supply any annotations if needed
+    codeobj = compile(lark_module, "<string>", "exec")
     print("\n====== EXEC OUTPUT ======")
     exec(codeobj, globals_for_exec)
