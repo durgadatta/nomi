@@ -1,21 +1,10 @@
-# lark_to_python_ast.py
-# Mixin-style Lark -> Python ast Transformer for the official python.lark grammar.
-# Designed as a pragmatic, extensible converter covering major language constructs.
-#
-# Usage:
-#   from lark import Lark
-#   from lark.indenter import PythonIndenter
-#   from lark_to_python_ast import PythonASTTransformer
-#
-#   parser = Lark.open_from_package('lark', 'python.lark', ['grammars'],
-#                                  parser='lalr', postlex=PythonIndenter(), start='file_input')
-#   tree = parser.parse(source_code)
-#   module_node = PythonASTTransformer().transform(tree)
-#   module_node = ast.fix_missing_locations(module_node)
-#   exec(compile(module_node, '<string>', 'exec'), globals_dict)
-#
-# Note: This is a pragmatic implementation — many complex corners are handled
-# defensively (using ast.parse fallback) and mixins are separated for clarity.
+'''
+This is a basic smoke-testing; 
+later systematic regression test (that compare ast from Python's ast and implementation here will be compared)
+and unit test (similar comparison on small chunks) will be added
+
+also all will be hooked-up via pytest
+'''
 
 from pathlib import Path
 import ast
@@ -60,19 +49,10 @@ class PythonASTTransformer(
 
 
 
-
-
-# fucntional test
 if __name__ == "__main__":
-    # path relative to this script
     script_path = Path(__file__).resolve()
-    script_dir = script_path.parent
-    sample_file = script_dir.parent.parent.joinpath('sample_sources', 'dummy').with_name("sample.py")
+    sample_file = script_path.parents[3].joinpath('sample_sources', 'dummy').with_name("sample.py")
 
-    if not sample_file.exists():
-        raise FileNotFoundError(f"Sample file not found: {sample_file}")
-
-    # read source from file
     source_code = sample_file.read_text(encoding="utf-8")
 
     parser = Lark.open_from_package(
