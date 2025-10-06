@@ -3,7 +3,7 @@ from lark import Transformer
 
 from prototype.parser.python import (
     ensure_expr, 
-    BindingMixin, ExpressionMixin, StatementMixin, CallMixin, ControlMixin,
+    BindingMixin, ExpressionMixin, StatementMixin, FunctionMixin, ControlMixin,
     ClassMixin, ExceptionMixin, ModuleMixin
 )
 
@@ -12,7 +12,7 @@ class ModuleMixin(
     ExpressionMixin, 
     StatementMixin,
     ControlMixin,
-    CallMixin,
+    FunctionMixin,
     ExceptionMixin, 
     ClassMixin,
     ModuleMixin  
