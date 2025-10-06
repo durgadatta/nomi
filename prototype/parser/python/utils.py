@@ -12,7 +12,13 @@ def ensure_name(x):
     return str(x)
 
 def ensure_expr(x):
-    """Coerce many shapes into ast.expr; fallback to ast.parse for tokens/strings."""
+    """
+        Coerce many shapes into ast.expr; fallback to ast.parse for tokens/strings.
+        
+    This likely means some identifier (name/var/NAME) etc. is not handled well somewhere
+
+    #THIS should be removed later
+    """
     if x is None:
         return ast.Constant(value=None)
     if isinstance(x, ast.expr):
@@ -54,17 +60,31 @@ def ensure_stmt_list(stmts):
             raise TypeError(f"Unknown node in statement list: {type(n)}")
     return out
 
-def storeify(node):
-    if isinstance(node, ast.Name):
-        return ast.copy_location(ast.Name(id=node.id, ctx=ast.Store()), node)
-    if isinstance(node, ast.Tuple):
-        elts = [storeify(e) for e in node.elts]
-        return ast.copy_location(ast.Tuple(elts=elts, ctx=ast.Store()), node)
-    if isinstance(node, ast.List):
-        elts = [storeify(e) for e in node.elts]
-        return ast.copy_location(ast.List(elts=elts, ctx=ast.Store()), node)
-    return node
 
 def tokval(t):
     return t.value if isinstance(t, Token) else str(t)
+
+
+# --- Helper: recursively set Store() context for LHS ---
+def ensure_store(node):
+    '''
+    Mainly used in assignment; but there are also other implicit assignment
+        - with .. as var
+    '''
+    if isinstance(node, ast.Name):
+        return ast.Name(id=node.id, ctx=ast.Store())
+    elif isinstance(node, ast.Attribute):
+        return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store())
+    elif isinstance(node, ast.Subscript):
+        return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store())
+    elif isinstance(node, ast.Starred):
+        # Python allows starred expressions in assignment: *a, b = ...
+        return ast.Starred(value=ensure_store(node.value), ctx=ast.Store())
+    elif isinstance(node, ast.Tuple):
+        return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store())
+    elif isinstance(node, list):
+        # Lark transformer may return a list for comma-separated targets
+        return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store())
+    else:
+        return node  # unknown node types, leave as-is
 

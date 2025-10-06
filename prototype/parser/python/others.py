@@ -1,6 +1,6 @@
 import ast
 
-from prototype.parser.python import ensure_stmt_list, ensure_expr, tokval
+from prototype.parser.python import ensure_stmt_list, ensure_expr, tokval, ensure_store
 
 class ImportMixin:
     def import_stmt(self, items):
@@ -102,7 +102,7 @@ class ContextManagerMixin:
             ast_with_items.append(
                 ast.withitem(
                     context_expr=ensure_expr(context_expr),
-                    optional_vars=ensure_expr(optional_vars) if optional_vars is not None else None
+                    optional_vars=ensure_store(ensure_expr(optional_vars)) if optional_vars is not None else None
                 )
             )
 
