@@ -1,8 +1,7 @@
 
 import ast
+from lark import Tree, Token
 from prototype.parser.python import ensure_expr, storeify
-
-import ast
 
 def ensure_stmt_list(stmts):
     out = []
@@ -18,7 +17,147 @@ def ensure_stmt_list(stmts):
             raise TypeError(f"Unknown node in statement list: {type(n)}")
     return out
 
-class ControlMixin:
+class CompMixin:
+    """Mixin for handling Python comprehensions in Lark AST transformer."""
+
+    # --- Entry points for comprehension nodes ---
+    def comprehension(self, items):
+        """
+        Handle comprehension{comp_result}: comp_result comp_fors [comp_if].
+        Returns a tuple: (comp_result, list of ast.comprehension)
+        """
+        if not items or len(items) < 2:
+            raise ValueError(f"Expected at least 2 items in comprehension, got {items}")
+        comp_result = items[0]
+        comp_fors = items[1]
+        comp_if = items[2] if len(items) > 2 else None
+
+        if not isinstance(comp_fors, list):
+            comp_fors = [comp_fors]
+
+        # Attach comp_if to the last generator
+        if comp_if:
+            if not comp_fors:
+                raise ValueError("comp_if provided but no comp_for available")
+            comp_fors[-1].ifs.append(self._to_expr(comp_if))
+
+        return comp_result, comp_fors
+
+    def comp_fors(self, items):
+        """Handle comp_fors: comp_for+"""
+        # items: list of ast.comprehension
+        return items
+
+    def comp_for(self, items):
+        """
+        Handle comp_for: [ASYNC] 'for' exprlist 'in' or_test
+        Robustly ignores literal tokens ('for', 'in') and None placeholders.
+        """
+        # Filter out literal tokens and None
+        nodes = [x for x in items if isinstance(x, (ast.AST, list))]
+
+        if len(nodes) == 2:
+            # Normal: exprlist, iterable
+            exprlist, iter_ = nodes
+            is_async = False
+        elif len(nodes) == 3:
+            # Async: async token, exprlist, iterable
+            exprlist, iter_ = nodes[1:]
+            is_async = True
+        else:
+            raise ValueError(f"Cannot parse comp_for items: {items}")
+
+        if exprlist is None:
+            raise ValueError(f"Comprehension loop target cannot be None: items={items}")
+
+        exprlist = self._ensure_store(exprlist)
+
+        return ast.comprehension(
+            target=exprlist,
+            iter=self._to_expr(iter_),
+            ifs=[],
+            is_async=1 if is_async else 0
+        )
+
+
+    def comp_if(self, items):
+        """Handle comp_if: 'if' test_nocond"""
+        return self._to_expr(items[1])  # skip 'if' token
+
+    # --- Comprehension AST constructors ---
+    def list_comprehension(self, items):
+        comp_result, comp_fors = items[0]
+        return ast.ListComp(
+            elt=self._to_expr(comp_result),
+            generators=comp_fors,
+            lineno=1,
+            col_offset=0
+        )
+
+    def set_comprehension(self, items):
+        comp_result, comp_fors = items[0]
+        return ast.SetComp(
+            elt=self._to_expr(comp_result),
+            generators=comp_fors,
+            lineno=1,
+            col_offset=0
+        )
+
+    def tuple_comprehension(self, items):
+        comp_result, comp_fors = items[0]
+        return ast.GeneratorExp(
+            elt=self._to_expr(comp_result),
+            generators=comp_fors,
+            lineno=1,
+            col_offset=0
+        )
+
+    def dict_comprehension(self, items):
+        comp_result, comp_fors = items[0]
+        if not (isinstance(comp_result, (list, tuple)) and len(comp_result) == 2):
+            raise ValueError(f"Invalid dict comprehension element: {comp_result}")
+        key_expr, value_expr = comp_result
+        return ast.DictComp(
+            key=self._to_expr(key_expr),
+            value=self._to_expr(value_expr),
+            generators=comp_fors,
+            lineno=1,
+            col_offset=0
+        )
+
+    # --- Utilities ---
+    def _to_expr(self, node):
+        """Ensure a proper AST expression node."""
+        if isinstance(node, ast.AST):
+            return node
+        elif isinstance(node, (list, tuple)):
+            return ast.Tuple(elts=[self._to_expr(n) for n in node], ctx=ast.Load())
+        else:
+            return ast.Constant(value=node)
+
+    def _ensure_store(self, node):
+        if node is None:
+            raise ValueError("Target for comprehension cannot be None")
+        elif isinstance(node, ast.Name):
+            return ast.Name(id=node.id, ctx=ast.Store(),
+                            lineno=getattr(node, 'lineno', 0),
+                            col_offset=getattr(node, 'col_offset', 0))
+        elif isinstance(node, ast.Tuple):
+            return ast.Tuple(
+                elts=[self._ensure_store(n) for n in node.elts],
+                ctx=ast.Store(),
+                lineno=getattr(node, 'lineno', 0),
+                col_offset=getattr(node, 'col_offset', 0)
+            )
+        elif isinstance(node, list) and all(n is not None for n in node):
+            return ast.Tuple(
+                elts=[self._ensure_store(n) for n in node],
+                ctx=ast.Store()
+            )
+        else:
+            raise ValueError(f"Invalid target for comprehension: {node}")
+
+class ControlMixin(CompMixin):
     def elif_(self, items):
         # items[0] = test (ast.expr), items[1] = suite (list or nodes)
         test_node = items[0]
@@ -83,68 +222,3 @@ class ControlMixin:
 
         targ = storeify(target) if isinstance(target, (ast.Name, ast.Tuple, ast.List)) else target
         return ast.For(target=targ, iter=ensure_expr(iter_expr), body=body, orelse=orelse, type_comment=None)
-    
-    def _to_expr(self, node):
-        if isinstance(node, tuple) or isinstance(node, list):
-            if len(node) == 1:
-                return node[0]
-            else:
-                return ast.Tuple(elts=[self._to_expr(n) for n in node], ctx=ast.Load())
-        return node
-
-    # --- comp_for / comp_if ---
-    def comp_for(self, items):
-        target, iter_, *rest = items
-        target = self._to_expr(target)
-
-        # nested comp_iter
-        generators = []
-        if rest:
-            nested = rest[0]
-            if isinstance(nested, (tuple, list)):
-                generators.extend(nested)
-            else:
-                generators.append(nested)
-
-        return [ast.comprehension(target=target, iter=iter_, ifs=[], is_async=0)] + generators
-
-    def comp_if(self, items):
-        test, *rest = items
-        if rest:
-            sub_iter = rest[0]
-            if isinstance(sub_iter, (tuple, list)):
-                sub_iter[0].ifs.append(test)
-                return sub_iter
-            else:
-                sub_iter.ifs.append(test)
-                return [sub_iter]
-        else:
-            # fallback dummy comprehension to avoid None target
-            dummy = ast.comprehension(
-                target=ast.Name(id='_dummy', ctx=ast.Load()),
-                iter=ast.List(elts=[], ctx=ast.Load()),
-                ifs=[test],
-                is_async=0
-            )
-            return [dummy]
-
-    # --- all comprehension types ---
-    def list_comp(self, items):
-        elt, *comp_iter = items
-        generators = comp_iter[0] if comp_iter else []
-        return ast.ListComp(elt=self._to_expr(elt), generators=generators)
-
-    def set_comp(self, items):
-        elt, *comp_iter = items
-        generators = comp_iter[0] if comp_iter else []
-        return ast.SetComp(elt=self._to_expr(elt), generators=generators)
-
-    def dict_comp(self, items):
-        key, value, *comp_iter = items
-        generators = comp_iter[0] if comp_iter else []
-        return ast.DictComp(key=self._to_expr(key), value=self._to_expr(value), generators=generators)
-
-    def gen_exp(self, items):
-        elt, *comp_iter = items
-        generators = comp_iter[0] if comp_iter else []
-        return ast.GeneratorExp(elt=self._to_expr(elt), generators=generators)
