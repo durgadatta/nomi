@@ -4,7 +4,7 @@ from lark import Transformer
 from prototype.parser.python import (
     ensure_expr, 
     BindingMixin, ExpressionMixin, StatementMixin, FunctionMixin, ControlMixin,
-    ClassMixin, ExceptionMixin, ModuleMixin
+    ClassMixin, ExceptionMixin, ModuleMixin, PatternMixin, OthersMixin
 )
 
 class ModuleMixin(
@@ -14,8 +14,10 @@ class ModuleMixin(
     ControlMixin,
     FunctionMixin,
     ExceptionMixin, 
+    PatternMixin,
     ClassMixin,
-    ModuleMixin  
+    ModuleMixin,
+    OthersMixin  
 ):
     def file_input(self, items):
         body = []

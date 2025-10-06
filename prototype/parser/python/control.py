@@ -1,21 +1,7 @@
 
 import ast
 from lark import Tree, Token
-from prototype.parser.python import ensure_expr, storeify
-
-def ensure_stmt_list(stmts):
-    out = []
-    for n in stmts:
-        if isinstance(n, ast.stmt):
-            out.append(n)
-        elif isinstance(n, list):
-            out.extend(ensure_stmt_list(n))
-        elif isinstance(n, ast.expr):
-            # Only wrap true expression statements
-            out.append(ast.Expr(value=n))
-        else:
-            raise TypeError(f"Unknown node in statement list: {type(n)}")
-    return out
+from prototype.parser.python import ensure_expr, storeify, ensure_stmt_list
 
 class CompMixin:
     """Mixin for handling Python comprehensions in Lark AST transformer."""
@@ -168,14 +154,21 @@ class ControlMixin(CompMixin):
 
     def elifs(self, items):
         # items is a list of elif_ results (each a (test, body) tuple)
-        return items  # Return the list of (test, body) tuples as-is
+        # Lark may pass [] or [None] or None if absent
+        if not items:
+            return []
+        # filter out accidental None entries
+        return [it for it in items if it is not None]
 
     def if_stmt(self, items):
         """
-        items[0] = test
-        items[1] = suite (body)
-        items[2] = elifs (list of (test, body) tuples)
-        items[3] = else_suite (optional)
+        Grammar:
+            if_stmt: "if" test ":" suite ("elif" test ":" suite)* ["else" ":" suite]
+        Transformer:
+            items[0] = test
+            items[1] = suite (body)
+            items[2] = elifs (optional)
+            items[3] = else_suite (optional)
         """
         test = items[0]
         if not isinstance(test, ast.expr):
@@ -183,30 +176,37 @@ class ControlMixin(CompMixin):
 
         body = ensure_stmt_list(items[1])
 
-        # Ensure elifs is a list of tuples
-        elifs = items[2] if len(items) > 2 else []
+        # normalize elifs safely
+        elifs = None
+        if len(items) > 2:
+            elifs = items[2]
+        if not elifs:
+            elifs = []
 
-        # Ensure else_suite is always a list
-        else_suite = ensure_stmt_list(items[3]) if len(items) > 3 else []
+        # normalize else_suite safely
+        else_suite = None
+        if len(items) > 3:
+            raw_else = items[3]
+            # protect against None or []
+            else_suite = ensure_stmt_list(raw_else) if raw_else else []
+        else:
+            else_suite = []
 
-        # Start with orelse being the else suite (always a list)
+        # construct nested Ifs
         orelse_node = else_suite
-
-        # Process elifs in reverse to nest If nodes
         for elif_item in reversed(elifs):
             if not (isinstance(elif_item, tuple) and len(elif_item) == 2):
-                raise TypeError(f"Elif item must be a (test, body) tuple, got {type(elif_item)}")
+                raise TypeError(f"Elif item must be (test, body), got {elif_item!r}")
             elif_test, elif_body = elif_item
-            elif_body_list = ensure_stmt_list(elif_body)
             nested_if = ast.If(
                 test=elif_test,
-                body=elif_body_list,
-                orelse=orelse_node   # Always a list
+                body=ensure_stmt_list(elif_body),
+                orelse=orelse_node,
             )
             orelse_node = [nested_if]
 
-        # orelse_node is now guaranteed to be a list
         return ast.If(test=test, body=body, orelse=orelse_node)
+
 
     def while_stmt(self, items):
         test = items[0]; body = items[1] if len(items) > 1 else []; orelse = items[2] if len(items) > 2 else []

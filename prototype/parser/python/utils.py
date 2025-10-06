@@ -39,6 +39,21 @@ def ensure_arg(x):
         return ast.arg(arg=x, annotation=None)
     raise TypeError("Cannot coerce to ast.arg: %r" % (x,))
 
+def ensure_stmt_list(stmts):
+    out = []
+    stmts = stmts or []
+    for n in stmts:
+        if isinstance(n, ast.stmt):
+            out.append(n)
+        elif isinstance(n, list):
+            out.extend(ensure_stmt_list(n))
+        elif isinstance(n, ast.expr):
+            # Only wrap true expression statements
+            out.append(ast.Expr(value=n))
+        else:
+            raise TypeError(f"Unknown node in statement list: {type(n)}")
+    return out
+
 def storeify(node):
     if isinstance(node, ast.Name):
         return ast.copy_location(ast.Name(id=node.id, ctx=ast.Store()), node)
@@ -50,4 +65,6 @@ def storeify(node):
         return ast.copy_location(ast.List(elts=elts, ctx=ast.Store()), node)
     return node
 
+def tokval(t):
+    return t.value if isinstance(t, Token) else str(t)
 
