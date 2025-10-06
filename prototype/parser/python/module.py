@@ -24,25 +24,29 @@ class ModuleMixin:
     # -----------------------------
     def import_from(self, items):
         """
-        items: [dots? + dotted_name?, imported_names]
-        imported_names: "*" or list of (name, alias)
+        items: [module_path, imported]
+        module_path: list of names and optional leading dots
+        imported: "*" or list of (name, alias)
         """
-        # first item: module path
-        mod_item = items[0]
-        # module name string
-        if isinstance(mod_item, tuple) or isinstance(mod_item, list):
-            # may include leading dots for relative import
-            dots = mod_item[0] if isinstance(mod_item[0], str) and mod_item[0] in (".", "...") else ""
-            name_list = mod_item[1] if len(mod_item) > 1 else []
-            module_name = ".".join(name_list) if name_list else None
-            # compute level: count dots
-            level = len([c for c in mod_item if c in (".", "...")])
-        else:
-            module_name = mod_item
-            level = 0
-
+        module_item = items[0]  # could be ['collections'] or ['.', 'collections']
         imported = items[1]
-        # "*" import
+
+        # Determine level (count leading dots)
+        level = 0
+        name_parts = []
+        if isinstance(module_item, list):
+            for p in module_item:
+                if p == '.':
+                    level += 1
+                elif p == '...':  # in case of multiple dots
+                    level += 3
+                else:
+                    name_parts.append(p)
+            module_name = ".".join(name_parts) if name_parts else None
+        else:
+            module_name = str(module_item)
+
+        # Build list of aliases
         if imported == "*":
             names = [ast.alias(name="*", asname=None)]
         else:
