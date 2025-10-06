@@ -1,69 +1,75 @@
 import ast
-from lark.lexer import Token
-from lark import Tree
-from prototype.parser.python import ensure_expr, ensure_arg, ensure_name
-
-# functions.py
-# Grammar-faithful implementation of function-related constructs
-# for the official Python grammar in Lark.
-# Converts Lark Trees -> Python ast nodes.
-
-import ast
-from prototype.parser.python.utils import ensure_expr
+from typing import List, Optional, Tuple
+from lark import Tree, Token
+from prototype.parser.python.utils import ensure_expr, ensure_arg, ensure_name
 
 
-class FunctionMixin():
-    def typedparam(self, items):
-        name = items[0]
-        annotation = items[1] if len(items) > 1 else None
-        return ast.arg(arg=ensure_name(name), annotation=annotation)
+class FunctionDefMixin:
+    """
+    Unified mixin for both function definitions and lambdas.
+    Converts Lark Trees into Python ast.FunctionDef or ast.Lambda.
 
-    def paramvalue(self, items):
-        if len(items) == 2:
-            return (items[0], ensure_expr(items[1]))
-        return items[0]
+    Reuses the same _build_arguments() logic for both.
+    """
 
-    def starparam(self, items):
-        return ('vararg', ensure_arg(items[0]))
+    # ---------- shared helpers ----------
+    def _name_to_arg(self, name: str) -> ast.arg:
+        return ast.arg(arg=str(name), annotation=None)
 
-    def starguard(self, items):
-        return ('star', None)
+    def _paramvalue_to_pair(self, item):
+        """Convert a paramvalue/lambda_paramvalue-like node to (ast.arg, default_expr_or_None)."""
+        if item is None:
+            return None, None
 
-    def poststarparams(self, items):
-        out = []
-        for it in items:
-            if isinstance(it, list):
-                out.extend(it)
-            else:
-                out.append(it)
-        return out
+        if isinstance(item, tuple) and len(item) == 2:
+            name, default_tree = item
+            if name is None:
+                return None, None
+            arg = ensure_arg(name)
+            default_expr = ensure_expr(default_tree) if default_tree is not None else None
+            return arg, default_expr
 
-    def kwparams(self, items):
-        return ('kwarg', ensure_arg(items[0]))
-    
-    def parameters(self, items):
+        if isinstance(item, ast.arg):
+            return item, None
+
+        if isinstance(item, str):
+            return self._name_to_arg(item), None
+
+        if isinstance(item, Token):
+            return self._name_to_arg(item.value), None
+
+        if isinstance(item, list) and item:
+            name = item[0]
+            default_tree = item[1] if len(item) > 1 else None
+            arg = ensure_arg(name)
+            default_expr = ensure_expr(default_tree) if default_tree is not None else None
+            return arg, default_expr
+
+        raise ValueError(f"Unsupported parameter value shape: {item!r}")
+
+    # ---------- argument normalization ----------
+    def _build_arguments(self, items):
         """
-        Convert Lark parameter items into ast.arguments.
-        Correctly match Python AST:
-        - posonlyargs: before '/'
-        - args: positional-or-keyword after '/'
-        - vararg: *args
-        - kwonlyargs: keyword-only args after '*' or *args
-        - kwarg: **kwargs
-        - defaults: only last N positional args that have defaults
-        - kw_defaults: one per kwonlyarg
+        Convert flattened parameter-like items into ast.arguments.
+        Works for both normal functions and lambdas.
         """
+        if not items:
+            return ast.arguments(
+                posonlyargs=[], args=[], vararg=None,
+                kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]
+            )
+
         posonlyargs = []
         args = []
-        kwonlyargs = []
-        defaults_for_args = []
-        kw_defaults = []
         vararg = None
+        kwonlyargs = []
+        kw_defaults = []
         kwarg = None
+        defaults = []
+        defaults_for_args = []
+        mode = "pos_or_kw"
+        seen_star = False
 
-        mode = "pos_or_kw"  # default mode
-
-        # Flatten nested lists
         def _flatten(xs):
             out = []
             for x in xs:
@@ -77,82 +83,63 @@ class FunctionMixin():
 
         flat = _flatten(items)
 
-        # Normalize: pair name + default when separate
-        normalized = []
-        i = 0
-        while i < len(flat):
-            it = flat[i]
-            if isinstance(it, (ast.arg, Token, str)):
-                if (i + 1 < len(flat)) and isinstance(flat[i + 1], ast.expr):
-                    normalized.append((it, flat[i + 1]))
-                    i += 2
+        for it in flat:
+            # Handle bare tokens
+            if isinstance(it, Token):
+                if it.type == "SLASH":
+                    mode = "posonly"
                     continue
-                normalized.append(it)
-                i += 1
-                continue
-            normalized.append(it)
-            i += 1
-
-        for it in normalized:
-            # Slash → switch to posonlyargs
-            if (isinstance(it, Token) and it.type == "SLASH") or (it == '/'):
-                mode = "posonly"
-                continue
-
-            # Bare '*' → switch to keyword-only mode
-            if (isinstance(it, Token) and it.type == "STAR") or (isinstance(it, tuple) and it[0] == "star"):
-                mode = "kwonly"
-                continue
+                if it.type == "STAR":
+                    seen_star = True
+                    mode = "kwonly"
+                    continue
 
             # *args
-            if isinstance(it, tuple) and it[0] == "vararg":
-                vararg = it[1] if isinstance(it[1], ast.arg) else ensure_arg(it[1])
+            if isinstance(it, tuple) and it and it[0] == "vararg":
+                vararg = ensure_arg(it[1])
+                seen_star = True
                 mode = "kwonly"
                 continue
 
             # **kwargs
-            if isinstance(it, tuple) and it[0] == "kwarg":
-                kwarg = it[1] if isinstance(it[1], ast.arg) else ensure_arg(it[1])
+            if isinstance(it, tuple) and it and it[0] == "kwarg":
+                kwarg = ensure_arg(it[1])
                 continue
 
-            # argument with default
-            if isinstance(it, tuple) and len(it) == 2 and isinstance(it[0], (ast.arg, Token, str)):
-                a = it[0] if isinstance(it[0], ast.arg) else ensure_arg(it[0])
-                d = ensure_expr(it[1])
-                if mode in ("pos_or_kw", "posonly"):
-                    if mode == "pos_or_kw":
-                        args.append(a)
-                    else:
-                        posonlyargs.append(a)
-                    defaults_for_args.append(d)
-                else:  # kwonly
-                    kwonlyargs.append(a)
-                    kw_defaults.append(d)
+            # lambda_starparams dict form
+            if isinstance(it, dict) and "star_name" in it:
+                seen_star = True
+                if it["star_name"]:
+                    vararg = self._name_to_arg(it["star_name"])
+                for pv in it.get("after_params", []):
+                    arg_obj, default_expr = self._paramvalue_to_pair(pv)
+                    if arg_obj:
+                        kwonlyargs.append(arg_obj)
+                        kw_defaults.append(default_expr)
+                if it.get("kwparams"):
+                    kwarg = self._name_to_arg(it["kwparams"])
                 continue
 
-            # argument without default
-            if isinstance(it, (ast.arg, Token, str)):
-                a = it if isinstance(it, ast.arg) else ensure_arg(it)
-                if mode == "pos_or_kw":
-                    args.append(a)
-                elif mode == "posonly":
-                    posonlyargs.append(a)
-                else:
-                    kwonlyargs.append(a)
-                    kw_defaults.append(None)
+            # normal parameter
+            pair = self._paramvalue_to_pair(it)
+            if not pair or pair[0] is None:
                 continue
 
-            raise ValueError(f"Unexpected parameter item: {it!r}")
+            arg_obj, default_expr = pair
+            if seen_star or mode == "kwonly":
+                kwonlyargs.append(arg_obj)
+                kw_defaults.append(default_expr)
+            elif mode == "posonly":
+                posonlyargs.append(arg_obj)
+                if default_expr is not None:
+                    defaults_for_args.append(default_expr)
+            else:
+                args.append(arg_obj)
+                if default_expr is not None:
+                    defaults_for_args.append(default_expr)
 
-        # --- Align defaults correctly: only last N positional args have defaults ---
-        n_defaults = len(defaults_for_args)
-        if n_defaults > 0:
-            defaults = defaults_for_args[-n_defaults:]
-            # pad with None for args without defaults not needed!
-        else:
-            defaults = []
-
-        # keyword-only defaults: one per kwonlyarg
+        # defaults and kw_defaults alignment
+        defaults = defaults_for_args[-len(defaults_for_args):]
         while len(kw_defaults) < len(kwonlyargs):
             kw_defaults.append(None)
 
@@ -166,11 +153,36 @@ class FunctionMixin():
             defaults=defaults
         )
 
+    # ---------- normal function rules ----------
+    def typedparam(self, items):
+        name = items[0]
+        annotation = items[1] if len(items) > 1 else None
+        return ast.arg(arg=ensure_name(name), annotation=annotation)
+
+    def paramvalue(self, items):
+        if len(items) == 2:
+            return (items[0], ensure_expr(items[1]))
+        return items[0]
+
+    def starparam(self, items):
+        return ("vararg", ensure_arg(items[0]))
+
+    def starguard(self, _):
+        return ("star", None)
+
+    def kwparams(self, items):
+        return ("kwarg", ensure_arg(items[0]))
+
+    def parameters(self, items):
+        return self._build_arguments(items)
 
     def funcdef(self, items):
-        name = None; args_node = None; returns = None; body = None
+        name = None
+        args_node = None
+        returns = None
+        body = None
         for it in items:
-            if isinstance(it, Token) and it.type == 'NAME':
+            if isinstance(it, Token) and it.type == "NAME":
                 name = it.value
             elif isinstance(it, ast.arguments):
                 args_node = it
@@ -180,258 +192,71 @@ class FunctionMixin():
                 returns = it
             elif isinstance(it, str) and name is None:
                 name = it
-        if args_node is None:
-            args_node = ast.arguments(posonlyargs=[], args=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[])
-        if body is None:
-            body = []
-        return ast.FunctionDef(name=name, args=args_node, body=body, decorator_list=[], returns=returns, type_comment=None)
 
-import ast
-from lark import Tree, Token
+        args_node = args_node or self._build_arguments([])
+        body = body or []
 
-# lambda_mixin.py
-import ast
-from typing import List, Tuple, Optional
+        return ast.FunctionDef(
+            name=name,
+            args=args_node,
+            body=body,
+            decorator_list=[],
+            returns=returns,
+            type_comment=None
+        )
 
-class LambdaMixin:
-    """
-    Mix into your Lark Transformer. Requires:
-      - a method self._to_expr(node) -> ast.expr that converts a 'test' or 'test_nocond'
-        subtree into an ast expression node.
-      - optionally self._name(token_or_str) -> str (but here we accept plain str).
-    """
-
-    # ---------- helpers ----------
-    def _name_to_arg(self, name: str) -> ast.arg:
-        """Create ast.arg for a name (no annotation for lambda params)."""
-        return ast.arg(arg=name, annotation=None)
-
-    def _paramvalue_to_pair(self, item):
-        """
-        Convert a lambda_paramvalue-like node to (ast.arg, default_expr_or_None).
-        Handles cases where item is None (e.g., stray commas or optional params).
-        """
-        if item is None:
-            # Empty slot (e.g. "lambda *: 1" or trailing comma) — skip gracefully.
-            return None, None
-
-        # Simple case: already tuple (name, default_tree)
-        if isinstance(item, tuple) and len(item) == 2:
-            name, default_tree = item
-            if name is None:
-                return None, None
-            arg = self._name_to_arg(str(name))
-            default_expr = self._to_expr(default_tree) if default_tree is not None else None
-            return arg, default_expr
-
-        # Simple bare name
-        if isinstance(item, str):
-            return self._name_to_arg(item), None
-
-        # Token (Lark token)
-        from lark import Token
-        if isinstance(item, Token):
-            return self._name_to_arg(item.value), None
-
-        # Sometimes Lark gives a list like ['x'] or ['x', test]
-        if isinstance(item, list) and item:
-            name = item[0]
-            default_tree = item[1] if len(item) > 1 else None
-            arg = self._name_to_arg(str(name))
-            default_expr = self._to_expr(default_tree) if default_tree is not None else None
-            return arg, default_expr
-
-        raise ValueError(f"Unsupported lambda_paramvalue shape: {item!r}")
-
-
-    # ---------- grammar rule handlers ----------
-    def lambdef(self, items):
-        """
-        lambdef: "lambda" [lambda_params] ":" test
-        items: either [params_node, test_node] or [test_node] depending on presence of params.
-        Return an ast.Lambda
-        """
-        if len(items) == 1:
-            params_node = None
-            test_node = items[0]
-        else:
-            params_node = items[0]
-            test_node = items[1]
-
-        body = self._to_expr(test_node)
-        args = self._lambda_params_to_arguments(params_node)
-        node = ast.Lambda(args=args, body=body)
-        return ast.fix_missing_locations(node)
-
-    def lambdef_nocond(self, items):
-        """
-        lambdef_nocond: "lambda" [lambda_params] ":" test_nocond
-        Same as lambdef but forwards to expression conversion for no-cond test.
-        """
-        if len(items) == 1:
-            params_node = None
-            test_node = items[0]
-        else:
-            params_node = items[0]
-            test_node = items[1]
-
-        body = self._to_expr(test_node)  # assume _to_expr handles nocond variant
-        args = self._lambda_params_to_arguments(params_node)
-        node = ast.Lambda(args=args, body=body)
-        return ast.fix_missing_locations(node)
-
-    def lambda_params(self, items):
-        """
-        lambda_params: lambda_paramvalue ("," lambda_paramvalue)* ["," [lambda_starparams | lambda_kwparams]]
-                       | lambda_starparams
-                       | lambda_kwparams
-        Here we pass through items as-is and handle them inside _lambda_params_to_arguments.
-        """
-        # return items as a convenience container for _lambda_params_to_arguments
-        return items
-
+class LambdaMixin(FunctionDefMixin):
     def lambda_paramvalue(self, items):
-        """
-        ?lambda_paramvalue: name ("=" test)?
-        We'll return a tuple (name_str, default_tree_or_None) so helper can handle uniformly.
-        items: [name] or [name, test_node]
-        """
         if len(items) == 1:
-            name = items[0]
-            return (name, None)
-        else:
-            name = items[0]
-            default_tree = items[1]
-            return (name, default_tree)
+            return (items[0], None)
+        name, default_tree = items
+        return (name, default_tree)
 
     def lambda_starparams(self, items):
-        """
-        lambda_starparams: "*" [name]  ("," lambda_paramvalue)* ["," [lambda_kwparams]]
-        We want to represent this structure in a canonical tuple:
-           ("star", star_name_or_None, pre_post_list, maybe_lambda_kwparams)
-        But simpler: return items as-is: items[0] may be star name or '*' depending on how parser returns it.
-        For robustness, we'll return a dict with clear fields.
-        items layout (as produced by Lark) may vary; produce a normalized dict here.
-        """
-        # Items can be like: [maybe_name_or_token, paramvalue1, paramvalue2, lambda_kwparams?]
-        # Normalize:
         star_name = None
         rest = []
         kwparams = None
         for it in items:
-            # if a plain name string and star_name not set: it's the star's name
             if isinstance(it, str) and star_name is None:
-                # `*` token itself generally not included; grammar allows "*" [name]
-                # If parser yields literal "*", skip it; expect a name token if provided
-                if it == "*":
-                    continue
-                star_name = it
-            # lambda_kwparams may be a dict/tree; detect by shape: grammar lambda_kwparams begins with "**"
-            elif hasattr(it, 'data') and getattr(it, 'data', None) == 'lambda_kwparams':
+                if it != "*":
+                    star_name = it
+            elif hasattr(it, "data") and getattr(it, "data", None) == "lambda_kwparams":
                 kwparams = it
             else:
-                # probably a lambda_paramvalue tuple
                 rest.append(it)
         return {"star_name": star_name, "after_params": rest, "kwparams": kwparams}
 
     def lambda_kwparams(self, items):
-        """
-        lambda_kwparams: "**" name ","?
-        items likely: [name]
-        Return the name string for kwarg.
-        """
-        if len(items) == 0:
-            raise ValueError("lambda_kwparams: expected a name after **")
-        name = items[0]
-        return name
+        if not items:
+            raise ValueError("lambda_kwparams: expected name after **")
+        return items[0]
 
-    def _lambda_params_to_arguments(self, params_node):
-        """
-        Build ast.arguments for a lambda definition.
-        Skips spurious None nodes that may appear from optional commas or empty parameter lists.
-        """
-        posonlyargs = []
-        args = []
-        defaults = []
-        vararg = None
-        kwonlyargs = []
-        kw_defaults = []
-        kwarg = None
+    def lambda_params(self, items):
+        return items
 
-        if not params_node:
-            return ast.arguments(
-                posonlyargs=[], args=[], vararg=None,
-                kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]
-            )
+    def lambdef(self, items):
+        if len(items) == 1:
+            params_node = None
+            test_node = items[0]
+        else:
+            params_node, test_node = items
+        body = ensure_expr(test_node)
+        args = self._build_arguments(params_node)
+        return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
 
-        # Normalize items: always a list
-        items = params_node if isinstance(params_node, list) else [params_node]
-        items = [it for it in items if it not in (None, [], '')]  # 🚫 drop empties
-
-        seen_star = False
-
-        for it in items:
-            # starparams dict form
-            if isinstance(it, dict) and 'star_name' in it:
-                seen_star = True
-                starinfo = it
-
-                # *name or bare *
-                star_name = starinfo.get('star_name')
-                if star_name:
-                    vararg = self._name_to_arg(star_name)
-
-                # Params after *
-                for pv in starinfo.get('after_params', []) or []:
-                    pair = self._paramvalue_to_pair(pv)
-                    if not pair or pair[0] is None:
-                        continue
-                    arg_obj, default_expr = pair
-                    kwonlyargs.append(arg_obj)
-                    kw_defaults.append(default_expr)
-
-                # **kwargs if present
-                kwname = starinfo.get('kwparams')
-                if kwname:
-                    kwarg = self._name_to_arg(kwname)
-                continue
-
-            # handle pure **kwparams (no star)
-            if isinstance(it, str) and it.startswith("**"):
-                kwarg = self._name_to_arg(it.lstrip('*'))
-                continue
-
-            # regular or kw-only paramvalue
-            pair = self._paramvalue_to_pair(it)
-            if not pair or pair[0] is None:
-                continue
-
-            arg_obj, default_expr = pair
-            if not seen_star:
-                args.append(arg_obj)
-                if default_expr is not None:
-                    defaults.append(default_expr)
-            else:
-                kwonlyargs.append(arg_obj)
-                kw_defaults.append(default_expr)
-
-        # Align kw_defaults length
-        if len(kw_defaults) < len(kwonlyargs):
-            kw_defaults.extend([None] * (len(kwonlyargs) - len(kw_defaults)))
-
-        return ast.arguments(
-            posonlyargs=[],
-            args=args,
-            vararg=vararg,
-            kwonlyargs=kwonlyargs,
-            kw_defaults=kw_defaults,
-            kwarg=kwarg,
-            defaults=defaults,
-        )
+    def lambdef_nocond(self, items):
+        if len(items) == 1:
+            params_node = None
+            test_node = items[0]
+        else:
+            params_node, test_node = items
+        body = ensure_expr(test_node)
+        args = self._build_arguments(params_node)
+        return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
 
 
 # ---------- Calls ----------
-class CallMixin(LambdaMixin, FunctionMixin):
+class CallMixin():
     def argvalue(self, items):
         """
         Transform an argvalue node:
@@ -532,3 +357,6 @@ class CallMixin(LambdaMixin, FunctionMixin):
             # multiple expressions -> tuple
             return ast.Return(value=ast.Tuple(elts=items, ctx=ast.Load()))
         
+
+class FunctionMixin(CallMixin, LambdaMixin):
+    pass
