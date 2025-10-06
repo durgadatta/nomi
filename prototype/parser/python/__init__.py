@@ -1,4 +1,7 @@
-from prototype.parser.python.utils import ensure_arg, ensure_expr, ensure_name, storeify
+from prototype.parser.python.utils import (
+    ensure_arg, ensure_expr, ensure_name, ensure_stmt_list, tokval,
+    storeify
+)
 
 from prototype.parser.python.expressions import ExpressionMixin
 from prototype.parser.python.statements import StatementMixin
@@ -8,4 +11,6 @@ from prototype.parser.python.klass import ClassMixin
 from prototype.parser.python.binding import BindingMixin
 from prototype.parser.python.exception import ExceptionMixin
 from prototype.parser.python.module import ModuleMixin
+from prototype.parser.python.patterns import PatternMixin
+from prototype.parser.python.others import OthersMixin
 

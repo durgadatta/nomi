@@ -7,10 +7,9 @@ but both are conceptually same
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr
+from prototype.parser.python import ensure_expr, tokval
 
-def tokval(t):
-    return t.value if isinstance(t, Token) else str(t)
+
 
 class IdentifierMixin:
     # def NAME(self, token):
@@ -124,9 +123,46 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         return self._left_fold_binop(items)
 
     def power(self, items):
+        """
+        Handle Python '**' operator, robust to different Lark parse shapes.
+        items can be:
+        - [base]
+        - [base, exponent]
+        - [base, '**', exponent]
+        """
+        if not items:
+            return ast.Constant(value=None)
+
+        base = ensure_expr(items[0])
+
         if len(items) == 1:
-            return ensure_expr(items[0])
-        return ast.BinOp(left=ensure_expr(items[0]), op=ast.Pow(), right=ensure_expr(items[2]))
+            return base
+
+        # Two-item form: [base, exponent]
+        if len(items) == 2:
+            exponent = ensure_expr(items[1])
+            return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
+
+        # Three-item form: [base, '**', exponent]
+        if len(items) == 3:
+            exponent = ensure_expr(items[2])
+            return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
+
+        # Left-fold multiple '**': [a, '**', b, '**', c] → ((a**b)**c)
+        left = base
+        i = 1
+        while i < len(items):
+            # Skip token if present
+            if isinstance(items[i], Token) and items[i].type == '**':
+                i += 1
+                if i >= len(items):
+                    raise ValueError(f"Power '**' missing right operand in {items!r}")
+            right = ensure_expr(items[i])
+            left = ast.BinOp(left=left, op=ast.Pow(), right=right)
+            i += 1
+
+        return left
+
 
     def factor(self, items):
         if len(items) == 1:
@@ -191,3 +227,130 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             )
         else:
             raise ValueError(f"Unexpected number of items in test: {items!r}")
+        
+    def getitem(self, items):
+        """
+        Handle atom_expr "[" subscriptlist "]" -> getitem.
+        items: [value_expr, subscriptlist_expr]
+        """
+        value = ensure_expr(items[0])
+        subscr = items[1]
+        # Check if subscr is a direct subscript (not a list) or a single-element list
+        if not isinstance(subscr, list):
+            # Single subscript: could be test or slice
+            slice_node = ensure_expr(subscr)
+        elif len(subscr) == 1:
+            # Single subscript in a list (from subscript rule)
+            slice_node = ensure_expr(subscr[0])
+        else:
+            # Multiple subscripts (from subscript_tuple): produce ast.Tuple
+            slice_node = ast.Tuple(elts=[ensure_expr(s) for s in subscr], ctx=ast.Load())
+        return ast.Subscript(value=value, slice=slice_node, ctx=ast.Load())
+
+    def subscript(self, items):
+        """
+        Handle subscript: test | ([test] ":" [test] [sliceop]) -> slice.
+        items: either [test] or [start, ":", stop, sliceop?] for slices
+        """
+        if len(items) == 1 and not isinstance(items[0], Token):
+            # Single test, e.g., a[1]
+            return ensure_expr(items[0])
+        # Slice form: [start, ":", stop, sliceop?]
+        start = ensure_expr(items[0]) if items and items[0] is not None else None
+        stop = None
+        step = None
+        if len(items) > 2:
+            # items[2] is stop if present
+            stop = ensure_expr(items[2]) if items[2] is not None else None
+            # items[3] is sliceop if present
+            step = ensure_expr(items[3]) if len(items) > 3 and items[3] is not None else None
+        elif len(items) > 1:
+            # items[1] is ":"; items[2] is stop if present
+            stop = ensure_expr(items[2]) if len(items) > 2 and items[2] is not None else None
+        return ast.Slice(lower=start, upper=stop, step=step)
+
+    def subscript_tuple(self, items):
+        """
+        Handle subscript_tuple: subscript ("," subscript)+ [","].
+        Returns list of subscript elements.
+        """
+        return [ensure_expr(it) for it in items]
+    
+    def slice(self, items):
+        """
+        Handle slice: ([test] ":" [test] [sliceop]).
+        Expects items as [lower, upper, step] (already transformed ast.expr nodes).
+        """
+        print(f"slice: items={items}, len={len(items)}")  # Debug
+        lower = items[0] if items and items[0] is not None else None
+        upper = None
+        step = None
+        if len(items) >= 2:
+            upper = items[1] if items[1] is not None else None
+        if len(items) >= 3:
+            step = items[2] if items[2] is not None else None
+        print(f"slice: lower={lower}, upper={upper}, step={step}")  # Debug
+        return ast.Slice(lower=lower, upper=upper, step=step)
+
+    def sliceop(self, items):
+        """
+        Handle sliceop: ":" [test].
+        """
+        if items and items[0] is not None:
+            return ensure_expr(items[0])
+        return None
+    
+    def list(self, items):
+            """
+            Handle list literals: "[" _exprlist? "]" -> list.
+            items: list of test_or_star_expr from _exprlist, or empty
+            """
+            elts = [ensure_expr(it) for it in items if it is not None]
+            return ast.List(elts=elts, ctx=ast.Load())
+    
+    def tuple(self, items):
+            """
+            Handle tuple expressions: "(" _tuple_inner? ")".
+            """
+            elts = [ensure_expr(it) for it in items if it is not None]
+            return ast.Tuple(elts=elts, ctx=ast.Load())
+ 
+    def dict(self, items):
+        """
+        Handle dict literals: {key: value, **expr, ...}
+        items: list of key_value tuples, '**' unpack tuples, or possibly lone ast.expr
+        """
+        keys = []
+        values = []
+
+        for it in items:
+            # Unpacking: '**expr' tuple
+            if isinstance(it, tuple) and len(it) == 2 and it[0] == "**":
+                keys.append(None)  # ast.Dict uses None for unpacked dicts
+                values.append(ensure_expr(it[1]))
+
+            # Normal key:value pair
+            elif isinstance(it, tuple) and len(it) == 2:
+                key_node = ensure_expr(it[0])
+                value_node = ensure_expr(it[1])
+                keys.append(key_node)
+                values.append(value_node)
+
+            # Bare expression (single expression not in key:value form)
+            elif isinstance(it, (ast.expr, Token)):
+                # Treat as **expr unpack automatically
+                keys.append(None)
+                values.append(ensure_expr(it))
+
+            else:
+                raise TypeError(f"Unexpected dict item: {it!r}")
+
+        return ast.Dict(keys=keys, values=values)
+
+    def _dict_exprlist(self, items):
+        """Pass through the list of items to dict()"""
+        return items
+
+    def key_value(self, items):
+        """Return a tuple (key, value) for dict items"""
+        return (items[0], items[1])

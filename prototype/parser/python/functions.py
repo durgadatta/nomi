@@ -17,10 +17,21 @@ class FunctionDefMixin:
         return ast.arg(arg=str(name), annotation=None)
 
     def _paramvalue_to_pair(self, item):
-        """Convert a paramvalue/lambda_paramvalue-like node to (ast.arg, default_expr_or_None)."""
+        """
+        Normalize a parameter value node to (ast.arg, default_expr_or_None).
+        Supports:
+        - (name, default)
+        - name
+        - Token('NAME', ...)
+        - ast.arg
+        - Skip constants or unexpected expressions (e.g., stray default)
+        """
+        from lark import Token
+
         if item is None:
             return None, None
 
+        # Already a (name, default_expr)
         if isinstance(item, tuple) and len(item) == 2:
             name, default_tree = item
             if name is None:
@@ -29,21 +40,18 @@ class FunctionDefMixin:
             default_expr = ensure_expr(default_tree) if default_tree is not None else None
             return arg, default_expr
 
+        # Just a name or Token
+        if isinstance(item, (str, Token)):
+            return ensure_arg(item), None
+
+        # Already an ast.arg
         if isinstance(item, ast.arg):
             return item, None
 
-        if isinstance(item, str):
-            return self._name_to_arg(item), None
-
-        if isinstance(item, Token):
-            return self._name_to_arg(item.value), None
-
-        if isinstance(item, list) and item:
-            name = item[0]
-            default_tree = item[1] if len(item) > 1 else None
-            arg = ensure_arg(name)
-            default_expr = ensure_expr(default_tree) if default_tree is not None else None
-            return arg, default_expr
+        # Literal constant or expression — skip, likely stray default
+        if isinstance(item, ast.expr):
+            # Log or safely ignore
+            return None, None
 
         raise ValueError(f"Unsupported parameter value shape: {item!r}")
 
@@ -65,10 +73,10 @@ class FunctionDefMixin:
         kwonlyargs = []
         kw_defaults = []
         kwarg = None
-        defaults = []
         defaults_for_args = []
-        mode = "pos_or_kw"
+        seen_slash = False
         seen_star = False
+        current_list = posonlyargs
 
         def _flatten(xs):
             out = []
@@ -87,18 +95,19 @@ class FunctionDefMixin:
             # Handle bare tokens
             if isinstance(it, Token):
                 if it.type == "SLASH":
-                    mode = "posonly"
+                    seen_slash = True
+                    current_list = args
                     continue
                 if it.type == "STAR":
                     seen_star = True
-                    mode = "kwonly"
+                    current_list = kwonlyargs
                     continue
 
             # *args
             if isinstance(it, tuple) and it and it[0] == "vararg":
                 vararg = ensure_arg(it[1])
                 seen_star = True
-                mode = "kwonly"
+                current_list = kwonlyargs
                 continue
 
             # **kwargs
@@ -126,22 +135,15 @@ class FunctionDefMixin:
                 continue
 
             arg_obj, default_expr = pair
-            if seen_star or mode == "kwonly":
-                kwonlyargs.append(arg_obj)
+            current_list.append(arg_obj)
+            if seen_star:
                 kw_defaults.append(default_expr)
-            elif mode == "posonly":
-                posonlyargs.append(arg_obj)
-                if default_expr is not None:
-                    defaults_for_args.append(default_expr)
-            else:
-                args.append(arg_obj)
-                if default_expr is not None:
-                    defaults_for_args.append(default_expr)
+            elif default_expr is not None:
+                defaults_for_args.append(default_expr)
 
-        # defaults and kw_defaults alignment
-        defaults = defaults_for_args[-len(defaults_for_args):]
-        while len(kw_defaults) < len(kwonlyargs):
-            kw_defaults.append(None)
+        if not seen_slash:
+            args = posonlyargs + args
+            posonlyargs = []
 
         return ast.arguments(
             posonlyargs=posonlyargs,
@@ -150,7 +152,7 @@ class FunctionDefMixin:
             kwonlyargs=kwonlyargs,
             kw_defaults=kw_defaults,
             kwarg=kwarg,
-            defaults=defaults
+            defaults=defaults_for_args
         )
 
     # ---------- normal function rules ----------
@@ -175,19 +177,69 @@ class FunctionDefMixin:
 
     def parameters(self, items):
         return self._build_arguments(items)
+    
+    def decorator(self, items):
+        """
+        items[0] = dotted_name (str)
+        items[1] = optional arguments (tuple of (args, keywords)) or None
+        """
+        name_expr = ensure_expr(items[0])
+
+        if len(items) > 1 and items[1]:
+            # decorator with arguments
+            args, keywords = items[1]
+            return ast.Call(func=name_expr, args=args, keywords=keywords)
+
+        # decorator without arguments → just a Name
+        return name_expr
+
+    def decorators(self, items):
+        # Flatten if nested
+        out = []
+        for it in items:
+            if isinstance(it, list):
+                out.extend(it)
+            else:
+                out.append(it)
+        return out
+
+    def decorated(self, items):
+        # items[0] = decorators, items[1] = funcdef/classdef/async_funcdef
+        decorator_nodes = items[0]
+        target_node = items[1]
+
+        if not hasattr(target_node, 'decorator_list'):
+            raise TypeError(f"Target does not accept decorators: {type(target_node)}")
+
+        target_node.decorator_list = decorator_nodes
+        return target_node
 
     def funcdef(self, items):
+        """
+        items may include:
+            - decorators (optional)
+            - function name (Token or str)
+            - arguments (ast.arguments)
+            - return annotation (ast.expr, optional)
+            - body (list of ast.stmt)
+        """
         name = None
         args_node = None
         returns = None
         body = None
+        decorator_list = []
+
         for it in items:
             if isinstance(it, Token) and it.type == "NAME":
                 name = it.value
             elif isinstance(it, ast.arguments):
                 args_node = it
             elif isinstance(it, list):
-                body = it
+                # Might be body or decorators — detect via contents
+                if it and all(isinstance(d, ast.expr) for d in it):
+                    decorator_list = it
+                else:
+                    body = it
             elif isinstance(it, ast.expr):
                 returns = it
             elif isinstance(it, str) and name is None:
@@ -200,19 +252,29 @@ class FunctionDefMixin:
             name=name,
             args=args_node,
             body=body,
-            decorator_list=[],
+            decorator_list=decorator_list,
             returns=returns,
             type_comment=None
         )
 
+
+
 class LambdaMixin(FunctionDefMixin):
     def lambda_paramvalue(self, items):
+        """
+        Handle lambda parameters with optional defaults.
+        E.g., 'b=1' → (name, default_expr)
+        """
         if len(items) == 1:
             return (items[0], None)
         name, default_tree = items
         return (name, default_tree)
 
     def lambda_starparams(self, items):
+        """
+        Handle *args and **kwargs in lambda.
+        Returns a dict for _build_arguments to process.
+        """
         star_name = None
         rest = []
         kwparams = None
@@ -220,21 +282,30 @@ class LambdaMixin(FunctionDefMixin):
             if isinstance(it, str) and star_name is None:
                 if it != "*":
                     star_name = it
-            elif hasattr(it, "data") and getattr(it, "data", None) == "lambda_kwparams":
-                kwparams = it
+            elif isinstance(it, Tree) and it.data == "lambda_kwparams":
+                kwparams = it.children[0] if it.children else None
             else:
                 rest.append(it)
         return {"star_name": star_name, "after_params": rest, "kwparams": kwparams}
 
     def lambda_kwparams(self, items):
+        """
+        Handle **kwargs in lambda.
+        """
         if not items:
             raise ValueError("lambda_kwparams: expected name after **")
         return items[0]
 
     def lambda_params(self, items):
+        """
+        Pass parameters to _build_arguments.
+        """
         return items
 
     def lambdef(self, items):
+        """
+        Handle lambda definition: lambda params: expr
+        """
         if len(items) == 1:
             params_node = None
             test_node = items[0]
@@ -245,6 +316,9 @@ class LambdaMixin(FunctionDefMixin):
         return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
 
     def lambdef_nocond(self, items):
+        """
+        Handle lambda definition without condition (same as lambdef for now).
+        """
         if len(items) == 1:
             params_node = None
             test_node = items[0]
@@ -253,8 +327,6 @@ class LambdaMixin(FunctionDefMixin):
         body = ensure_expr(test_node)
         args = self._build_arguments(params_node)
         return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
-
-
 # ---------- Calls ----------
 class CallMixin():
     def argvalue(self, items):
