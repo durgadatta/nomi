@@ -40,11 +40,10 @@ class FunctionMixin():
     def kwparams(self, items):
         return ('kwarg', ensure_arg(items[0]))
     
-
     def parameters(self, items):
         """
         Convert Lark parameter items into ast.arguments.
-        Correctly match Python ast.parse:
+        Correctly match Python AST:
         - posonlyargs: before '/'
         - args: positional-or-keyword after '/'
         - vararg: *args
@@ -61,8 +60,7 @@ class FunctionMixin():
         vararg = None
         kwarg = None
 
-        #pos_or_kw, / pos_only, *|*args, kw_only
-        mode = "pos_or_kw"
+        mode = "pos_or_kw"  # default mode
 
         # Flatten nested lists
         def _flatten(xs):
@@ -98,7 +96,6 @@ class FunctionMixin():
             # Slash → switch to posonlyargs
             if (isinstance(it, Token) and it.type == "SLASH") or (it == '/'):
                 mode = "posonly"
-                posonly_cut = len(posonlyargs) + len(args)
                 continue
 
             # Bare '*' → switch to keyword-only mode
@@ -122,7 +119,10 @@ class FunctionMixin():
                 a = it[0] if isinstance(it[0], ast.arg) else ensure_arg(it[0])
                 d = ensure_expr(it[1])
                 if mode in ("pos_or_kw", "posonly"):
-                    args.append(a) if mode == "pos_or_kw" else posonlyargs.append(a)
+                    if mode == "pos_or_kw":
+                        args.append(a)
+                    else:
+                        posonlyargs.append(a)
                     defaults_for_args.append(d)
                 else:  # kwonly
                     kwonlyargs.append(a)
@@ -143,10 +143,11 @@ class FunctionMixin():
 
             raise ValueError(f"Unexpected parameter item: {it!r}")
 
-        # Align defaults: only last N positional args get defaults
+        # --- Align defaults correctly: only last N positional args have defaults ---
         n_defaults = len(defaults_for_args)
         if n_defaults > 0:
-            defaults = [None] * (len(args) - n_defaults) + defaults_for_args
+            defaults = defaults_for_args[-n_defaults:]
+            # pad with None for args without defaults not needed!
         else:
             defaults = []
 
@@ -163,6 +164,7 @@ class FunctionMixin():
             kwarg=kwarg,
             defaults=defaults
         )
+
 
     def funcdef(self, items):
         name = None; args_node = None; returns = None; body = None
