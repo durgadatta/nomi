@@ -1,7 +1,7 @@
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr, ensure_name, storeify
+from prototype.parser.python import ensure_expr, ensure_name, ensure_store
 
 class StatementMixin():
     def suite(self, items):
@@ -23,7 +23,7 @@ class StatementMixin():
         for i, it in enumerate(items):
             if isinstance(it, Token) and it.value == '=':
                 left = items[0]; right = items[i+1] if i+1 < len(items) else None
-                target = storeify(left) if isinstance(left, (ast.Name, ast.Tuple, ast.List)) else left
+                target = ensure_store(left) if isinstance(left, (ast.Name, ast.Tuple, ast.List)) else left
                 return ast.Assign(targets=[target], value=ensure_expr(right))
         return ast.Expr(value=ensure_expr(items[0]))
 
