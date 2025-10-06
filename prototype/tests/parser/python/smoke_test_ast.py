@@ -8,46 +8,10 @@ also all will be hooked-up via pytest
 
 from pathlib import Path
 import ast
-from lark import Transformer, Lark
+from lark import Lark
 from lark.indenter import PythonIndenter
 
-from prototype.parser.python import (
-    ensure_expr, 
-    ExpressionMixin, StatementMixin, CallMixin, ControlMixin
-)
-
-
-class ModuleMixin(
-    ExpressionMixin, 
-    StatementMixin,
-    ControlMixin,
-    CallMixin,   
-):
-    def file_input(self, items):
-        body = []
-        for it in items:
-            if isinstance(it, list):
-                for s in it:
-                    if isinstance(s, ast.stmt): body.append(s)
-            elif isinstance(it, ast.stmt): body.append(it)
-        return ast.Module(body=body, type_ignores=[])
-
-    def single_input(self, items): return self.file_input(items)
-    def eval_input(self, items):
-        if items: return ensure_expr(items[0])
-        return ast.Expression(body=ast.Constant(None))
-
-
-class PythonASTTransformer(
-    ModuleMixin,
-    Transformer):
-    pass
-    def __default__(self, data, children, meta):
-        # collapse single-child wrappers
-        if len(children) == 1:
-            return children[0]
-        return children
-
+from prototype.parser.python.ast_ import PythonASTTransformer
 
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()

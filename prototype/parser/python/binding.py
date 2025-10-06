@@ -1,0 +1,139 @@
+'''
+Binding constructs; this will be one of the most complex aspect to play with
+'''
+import ast 
+
+class BindingMixin:
+    def assign(self, items):
+        """
+        Build a full Python AST Assign node with correct semantics.
+
+        Parameters:
+        - items: [lhs_nodes..., rhs_node]
+            lhs_nodes: single AST node or list/nested lists of AST nodes (targets)
+            rhs_node: AST expression node (already fully built by transformer)
+        """
+
+        lhs_nodes = items[:-1]
+        rhs_node = items[-1]
+
+        # --- Helper: recursively set Store() context for LHS ---
+        def ensure_store(node):
+            if isinstance(node, ast.Name):
+                return ast.Name(id=node.id, ctx=ast.Store())
+            elif isinstance(node, ast.Attribute):
+                return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store())
+            elif isinstance(node, ast.Subscript):
+                return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store())
+            elif isinstance(node, ast.Starred):
+                # Python allows starred expressions in assignment: *a, b = ...
+                return ast.Starred(value=node.value, ctx=ast.Store())
+            elif isinstance(node, ast.Tuple):
+                return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store())
+            elif isinstance(node, list):
+                # Lark transformer may return a list for comma-separated targets
+                return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store())
+            else:
+                return node  # unknown node types, leave as-is
+
+        lhs_nodes = [ensure_store(n) for n in lhs_nodes]
+
+        # --- Wrap multiple top-level targets in a Tuple if needed ---
+        if len(lhs_nodes) == 1:
+            target_node = lhs_nodes[0]
+        else:
+            target_node = ast.Tuple(elts=lhs_nodes, ctx=ast.Store())
+
+        # --- RHS: convert Python list to AST Tuple if needed ---
+        def ensure_rhs(node):
+            if isinstance(node, list):
+                # recursively convert lists to AST Tuple nodes
+                return ast.Tuple(elts=[ensure_rhs(e) for e in node], ctx=ast.Load())
+            elif isinstance(node, ast.AST):
+                return node  # already an AST node
+            else:
+                # raw constant
+                return ast.Constant(value=node)
+
+        rhs_node = ensure_rhs(rhs_node)
+
+        # --- Build final Assign node ---
+        return ast.Assign(targets=[target_node], value=rhs_node)
+
+    def _normalize_value_for_expr(self, value):
+        """Convert a list of expressions from testlist to proper AST expression or tuple."""
+        if isinstance(value, list):
+            if len(value) == 0:
+                return ast.Tuple(elts=[], ctx=ast.Load())
+            if len(value) == 1:
+                return value[0]
+            return ast.Tuple(elts=value, ctx=ast.Load())
+        return value
+
+    def _to_store_target(self, node):
+        """
+        Convert node to a valid AugAssign target.
+        Acceptable types: ast.Name, ast.Attribute, ast.Subscript.
+        """
+        if isinstance(node, ast.Name):
+            return ast.Name(id=node.id, ctx=ast.Store())
+        if isinstance(node, ast.Attribute):
+            return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store())
+        if isinstance(node, ast.Subscript):
+            return node
+        raise TypeError(f"Invalid target for augmented assignment: {type(node)}")
+
+    def augassign(self, items):
+        """
+        Lark signature for augmented assignment:
+            items[0] = testlist_star_expr  (target)
+            items[1] = augassign_op token   (e.g. '+=')
+            items[2] = yield_expr | testlist  (value)
+        Returns: ast.AugAssign
+        """
+        AUGASSIGN_OPERATORS = {
+            '+=': ast.Add,
+            '-=': ast.Sub,
+            '*=': ast.Mult,
+            '@=': ast.MatMult,
+            '/=': ast.Div,
+            '%=': ast.Mod,
+            '&=': ast.BitAnd,
+            '|=': ast.BitOr,
+            '^=': ast.BitXor,
+            '<<=': ast.LShift,
+            '>>=': ast.RShift,
+            '**=': ast.Pow,
+            '//=': ast.FloorDiv,
+        }
+
+        if len(items) < 3:
+            raise TypeError(f"augassign: expected 3 children, got {len(items)}")
+
+        raw_target, raw_op, raw_value = items[0], items[1], items[2]
+
+        # Normalize target: testlist_star_expr can yield a single-element list
+        if isinstance(raw_target, list):
+            if len(raw_target) == 0:
+                raise TypeError("AugAssign: empty target list")
+            if len(raw_target) > 1:
+                raise TypeError("AugAssign target must be a single assignable (not a tuple/list)")
+            target_node = raw_target[0]
+        else:
+            target_node = raw_target
+
+        target_node = self._to_store_target(target_node)
+
+        # Normalize value
+        value_node = self._normalize_value_for_expr(raw_value)
+        if not isinstance(value_node, ast.expr):
+            raise TypeError(f"AugAssign value must be an expression, got {type(value_node)}")
+
+        # Operator
+        op_sym = getattr(raw_op, "value", None) or str(raw_op)
+        if op_sym not in AUGASSIGN_OPERATORS:
+            raise ValueError(f"Unknown augassign operator: {op_sym!r}")
+        op_node = AUGASSIGN_OPERATORS[op_sym]()
+
+        # Build AST node
+        return ast.AugAssign(target=target_node, op=op_node, value=value_node)

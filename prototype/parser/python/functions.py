@@ -1,6 +1,6 @@
 import ast
 from lark.lexer import Token
-from prototype.parser.python import ensure_expr, ensure_arg, ensure_name, tokval
+from prototype.parser.python import ensure_expr, ensure_arg, ensure_name
 
 # functions.py
 # Grammar-faithful implementation of function-related constructs
@@ -270,3 +270,38 @@ class CallMixin(FunctionMixin):
         if len(items) > 1 and isinstance(items[1], tuple):
             args, keywords = items[1]
         return ast.Call(func=func, args=args, keywords=keywords)
+    
+    def return_stmt(self, items):
+        """
+        items: list of expressions after 'return', or empty if just 'return'
+        returns: ast.Return node
+        """
+        if not items:
+            # plain 'return' with no value
+            return ast.Return(value=None)
+        elif len(items) == 1:
+            # single expression
+            return ast.Return(value=items[0])
+        else:
+            # multiple expressions -> tuple
+            return ast.Return(value=ast.Tuple(elts=items, ctx=ast.Load()))
+        
+    def lambda_expr(self, items):
+        """
+        items: either [body_expr] or [parameters, body_expr]
+        returns: ast.Lambda
+        """
+        if len(items) == 1:
+            # lambda with no explicit parameters: lambda: <body>
+            args_node = ast.arguments(
+                posonlyargs=[], args=[], vararg=None,
+                kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]
+            )
+            body = items[0]
+        else:
+            # lambda with parameters
+            params, body = items
+            # reuse your existing parameters() method which returns ast.arguments
+            args_node = params
+
+        return ast.Lambda(args=args_node, body=body)
