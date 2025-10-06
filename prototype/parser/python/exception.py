@@ -67,7 +67,10 @@ class ExceptionMixin:
         )
 
     def ensure_stmt_list(self, node):
+        #TODO: this is a general thing; consolidate this clean-up 
         """Normalize suite to a list of statements."""
+        if node is None:
+            return []
         if isinstance(node, list):
             return node
         return [node]
