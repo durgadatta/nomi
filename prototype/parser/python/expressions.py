@@ -1,9 +1,26 @@
+'''
+Synthesize expression and function call; 
+expression usually deal with special notation like infix, postfix etc. 
+but both are conceptually same
+
+'''
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr, tokval
+from prototype.parser.python import ensure_expr
+
+def tokval(t):
+    return t.value if isinstance(t, Token) else str(t)
 
 class IdentifierMixin:
+    # def NAME(self, token):
+    #         # Convert NAME token to ast.Name with context based on usage
+    #         if not isinstance(token, Token) or token.type != 'NAME':
+    #             raise ValueError(f"Expected NAME token, got {type(token)}: {token}")
+    #         # Default to Store for comprehension targets; override in expr contexts if needed
+    #         name_node = ast.Name(id=token.value, ctx=ast.Store())
+    #         return name_node
+
     def name(self, items):
         return tokval(items[0])
 
@@ -11,13 +28,8 @@ class IdentifierMixin:
         # items[0] might be Token or str
         child = items[0]
         name_node = ast.Name(id=tokval(child), ctx=ast.Load())
-        # don't require copy_location if not available
-        try:
-            if hasattr(child, 'line'):
-                return ast.copy_location(name_node, child)
-        except Exception:
-            pass
         return name_node
+        
 
 class LiteralMixin:
     def number(self, items):
@@ -129,6 +141,25 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         if op_s == '~':
             return ast.UnaryOp(op=ast.Invert(), operand=operand)
         return operand
+    
+    UNARY_OPERATORS = {
+        '+': ast.UAdd,
+        '-': ast.USub,
+        '~': ast.Invert,
+        'not': ast.Not,
+    }
+
+    def _unary_op(self, items):
+        """Return the operator instance."""
+        op_token = str(items[0])
+        if op_token not in self.UNARY_OPERATORS:
+            raise ValueError(f"Unknown unary operator: {op_token}")
+        return self.UNARY_OPERATORS[op_token]()
+
+    def not_test(self, items):
+        """Handle 'not' unary operator."""
+        operand = items[0]
+        return ast.UnaryOp(op=ast.Not(), operand=operand)
 
     def or_test(self, items):
         if not items:

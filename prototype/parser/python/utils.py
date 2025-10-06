@@ -2,9 +2,6 @@ import ast
 from lark import Token
 
 
-def tokval(t):
-    return t.value if isinstance(t, Token) else str(t)
-
 def ensure_name(x):
     if isinstance(x, Token):
         return x.value
