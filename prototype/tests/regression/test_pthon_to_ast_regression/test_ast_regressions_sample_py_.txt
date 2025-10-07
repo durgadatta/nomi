@@ -1,0 +1,785 @@
+Module(
+  body=[
+    Expr(
+      value=Constant(value='\nComprehensive Python parsing test — exercises most AST constructs.\n')),
+    Import(
+      names=[
+        alias(name='math')]),
+    ImportFrom(
+      module='functools',
+      names=[
+        alias(name='lru_cache', asname='cache')],
+      level=0),
+    ImportFrom(
+      module='typing',
+      names=[
+        alias(name='Callable')],
+      level=0),
+    Import(
+      names=[
+        alias(name='tempfile')]),
+    Assign(
+      targets=[
+        Name(id='CONST', ctx=Store())],
+      value=Constant(value=42)),
+    Assign(
+      targets=[
+        Name(id='PI', ctx=Store())],
+      value=Attribute(
+        value=Name(id='math', ctx=Load()),
+        attr='pi',
+        ctx=Load())),
+    FunctionDef(
+      name='add',
+      args=arguments(
+        args=[
+          arg(arg='a'),
+          arg(arg='b')],
+        defaults=[
+          Constant(value=10)]),
+      body=[
+        Expr(
+          value=Constant(value='Simple add function')),
+        Assign(
+          targets=[
+            Name(id='result', ctx=Store())],
+          value=BinOp(
+            left=Name(id='a', ctx=Load()),
+            op=Add(),
+            right=Name(id='b', ctx=Load()))),
+        If(
+          test=Compare(
+            left=Name(id='result', ctx=Load()),
+            ops=[
+              Gt()],
+            comparators=[
+              Constant(value=50)]),
+          body=[
+            Return(
+              value=Name(id='result', ctx=Load()))],
+          orelse=[
+            If(
+              test=Compare(
+                left=Name(id='result', ctx=Load()),
+                ops=[
+                  Eq()],
+                comparators=[
+                  Constant(value=50)]),
+              body=[
+                Return(
+                  value=Constant(value=0))],
+              orelse=[
+                Return(
+                  value=UnaryOp(
+                    op=USub(),
+                    operand=Name(id='result', ctx=Load())))])])]),
+    FunctionDef(
+      name='factorial',
+      args=arguments(
+        args=[
+          arg(arg='n')]),
+      body=[
+        Assign(
+          targets=[
+            Name(id='f', ctx=Store())],
+          value=Constant(value=1)),
+        For(
+          target=Name(id='i', ctx=Store()),
+          iter=Call(
+            func=Name(id='range', ctx=Load()),
+            args=[
+              Constant(value=1),
+              BinOp(
+                left=Name(id='n', ctx=Load()),
+                op=Add(),
+                right=Constant(value=1))]),
+          body=[
+            AugAssign(
+              target=Name(id='f', ctx=Store()),
+              op=Mult(),
+              value=Name(id='i', ctx=Load()))]),
+        Return(
+          value=Name(id='f', ctx=Load()))]),
+    FunctionDef(
+      name='find_first_even',
+      args=arguments(
+        args=[
+          arg(arg='nums')]),
+      body=[
+        Assign(
+          targets=[
+            Name(id='i', ctx=Store())],
+          value=Constant(value=0)),
+        While(
+          test=Compare(
+            left=Name(id='i', ctx=Load()),
+            ops=[
+              Lt()],
+            comparators=[
+              Call(
+                func=Name(id='len', ctx=Load()),
+                args=[
+                  Name(id='nums', ctx=Load())])]),
+          body=[
+            If(
+              test=Compare(
+                left=BinOp(
+                  left=Subscript(
+                    value=Name(id='nums', ctx=Load()),
+                    slice=Name(id='i', ctx=Load()),
+                    ctx=Load()),
+                  op=Mod(),
+                  right=Constant(value=2)),
+                ops=[
+                  Eq()],
+                comparators=[
+                  Constant(value=0)]),
+              body=[
+                Break()]),
+            AugAssign(
+              target=Name(id='i', ctx=Store()),
+              op=Add(),
+              value=Constant(value=1))],
+          orelse=[
+            Return(
+              value=Constant(value=None))]),
+        Return(
+          value=Subscript(
+            value=Name(id='nums', ctx=Load()),
+            slice=Name(id='i', ctx=Load()),
+            ctx=Load()))]),
+    FunctionDef(
+      name='outer',
+      args=arguments(
+        args=[
+          arg(
+            arg='x',
+            annotation=Name(id='int', ctx=Load()))]),
+      body=[
+        FunctionDef(
+          name='inner',
+          args=arguments(
+            args=[
+              arg(
+                arg='y',
+                annotation=Name(id='int', ctx=Load()))],
+            defaults=[
+              Constant(value=5)]),
+          body=[
+            Return(
+              value=BinOp(
+                left=Name(id='x', ctx=Load()),
+                op=Add(),
+                right=Name(id='y', ctx=Load())))],
+          returns=Name(id='int', ctx=Load())),
+        Return(
+          value=Name(id='inner', ctx=Load()))],
+      returns=Subscript(
+        value=Name(id='Callable', ctx=Load()),
+        slice=Tuple(
+          elts=[
+            List(
+              elts=[
+                Name(id='int', ctx=Load())],
+              ctx=Load()),
+            Name(id='int', ctx=Load())],
+          ctx=Load()),
+        ctx=Load())),
+    FunctionDef(
+      name='demo',
+      args=arguments(
+        vararg=arg(arg='args'),
+        kwonlyargs=[
+          arg(arg='scale')],
+        kw_defaults=[
+          Constant(value=1)],
+        kwarg=arg(arg='kwargs')),
+      body=[
+        Assign(
+          targets=[
+            Name(id='total', ctx=Store())],
+          value=BinOp(
+            left=Call(
+              func=Name(id='sum', ctx=Load()),
+              args=[
+                Name(id='args', ctx=Load())]),
+            op=Add(),
+            right=Call(
+              func=Name(id='sum', ctx=Load()),
+              args=[
+                Call(
+                  func=Attribute(
+                    value=Name(id='kwargs', ctx=Load()),
+                    attr='values',
+                    ctx=Load()))]))),
+        Return(
+          value=BinOp(
+            left=Name(id='total', ctx=Load()),
+            op=Mult(),
+            right=Name(id='scale', ctx=Load())))],
+      decorator_list=[
+        Name(id='cache', ctx=Load())]),
+    ClassDef(
+      name='Point',
+      body=[
+        Assign(
+          targets=[
+            Name(id='kind', ctx=Store())],
+          value=Constant(value='2D')),
+        Assign(
+          targets=[
+            Name(id='all_points', ctx=Store())],
+          value=List(ctx=Load())),
+        FunctionDef(
+          name='__init__',
+          args=arguments(
+            args=[
+              arg(arg='self'),
+              arg(arg='x'),
+              arg(arg='y')]),
+          body=[
+            Assign(
+              targets=[
+                Attribute(
+                  value=Name(id='self', ctx=Load()),
+                  attr='x',
+                  ctx=Store())],
+              value=Name(id='x', ctx=Load())),
+            Assign(
+              targets=[
+                Attribute(
+                  value=Name(id='self', ctx=Load()),
+                  attr='y',
+                  ctx=Store())],
+              value=Name(id='y', ctx=Load())),
+            Expr(
+              value=Call(
+                func=Attribute(
+                  value=Attribute(
+                    value=Name(id='Point', ctx=Load()),
+                    attr='all_points',
+                    ctx=Load()),
+                  attr='append',
+                  ctx=Load()),
+                args=[
+                  Name(id='self', ctx=Load())]))]),
+        FunctionDef(
+          name='move',
+          args=arguments(
+            args=[
+              arg(arg='self'),
+              arg(arg='dx'),
+              arg(arg='dy')]),
+          body=[
+            AugAssign(
+              target=Attribute(
+                value=Name(id='self', ctx=Load()),
+                attr='x',
+                ctx=Store()),
+              op=Add(),
+              value=Name(id='dx', ctx=Load())),
+            AugAssign(
+              target=Attribute(
+                value=Name(id='self', ctx=Load()),
+                attr='y',
+                ctx=Store()),
+              op=Add(),
+              value=Name(id='dy', ctx=Load())),
+            Return(
+              value=Name(id='self', ctx=Load()))]),
+        FunctionDef(
+          name='magnitude',
+          args=arguments(
+            args=[
+              arg(arg='self')]),
+          body=[
+            Return(
+              value=BinOp(
+                left=BinOp(
+                  left=BinOp(
+                    left=Attribute(
+                      value=Name(id='self', ctx=Load()),
+                      attr='x',
+                      ctx=Load()),
+                    op=Pow(),
+                    right=Constant(value=2)),
+                  op=Add(),
+                  right=BinOp(
+                    left=Attribute(
+                      value=Name(id='self', ctx=Load()),
+                      attr='y',
+                      ctx=Load()),
+                    op=Pow(),
+                    right=Constant(value=2))),
+                op=Pow(),
+                right=Constant(value=0.5)))],
+          decorator_list=[
+            Name(id='property', ctx=Load())])]),
+    Assign(
+      targets=[
+        Name(id='p', ctx=Store())],
+      value=Call(
+        func=Name(id='Point', ctx=Load()),
+        args=[
+          Constant(value=1),
+          Constant(value=2)])),
+    Expr(
+      value=Call(
+        func=Attribute(
+          value=Name(id='p', ctx=Load()),
+          attr='move',
+          ctx=Load()),
+        args=[
+          Constant(value=3),
+          Constant(value=4)])),
+    Assign(
+      targets=[
+        Name(id='squares', ctx=Store())],
+      value=ListComp(
+        elt=BinOp(
+          left=Name(id='i', ctx=Load()),
+          op=Mult(),
+          right=Name(id='i', ctx=Load())),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=5)]),
+            is_async=0)])),
+    Assign(
+      targets=[
+        Name(id='evens', ctx=Store())],
+      value=SetComp(
+        elt=Name(id='i', ctx=Load()),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=10)]),
+            ifs=[
+              Compare(
+                left=BinOp(
+                  left=Name(id='i', ctx=Load()),
+                  op=Mod(),
+                  right=Constant(value=2)),
+                ops=[
+                  Eq()],
+                comparators=[
+                  Constant(value=0)])],
+            is_async=0)])),
+    Assign(
+      targets=[
+        Name(id='mapping', ctx=Store())],
+      value=DictComp(
+        key=Name(id='i', ctx=Load()),
+        value=BinOp(
+          left=Name(id='i', ctx=Load()),
+          op=Mult(),
+          right=Name(id='i', ctx=Load())),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=5)]),
+            is_async=0)])),
+    Assign(
+      targets=[
+        Name(id='gen', ctx=Store())],
+      value=GeneratorExp(
+        elt=BinOp(
+          left=Name(id='i', ctx=Load()),
+          op=Pow(),
+          right=Constant(value=2)),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=3)]),
+            is_async=0)])),
+    Assign(
+      targets=[
+        Tuple(
+          elts=[
+            Name(id='a', ctx=Store()),
+            Name(id='b', ctx=Store()),
+            Starred(
+              value=Name(id='rest', ctx=Store()),
+              ctx=Store())],
+          ctx=Store())],
+      value=List(
+        elts=[
+          Constant(value=1),
+          Constant(value=2),
+          Constant(value=3),
+          Constant(value=4)],
+        ctx=Load())),
+    Assign(
+      targets=[
+        Tuple(
+          elts=[
+            Name(id='x', ctx=Store()),
+            Name(id='y', ctx=Store())],
+          ctx=Store())],
+      value=Tuple(
+        elts=[
+          Constant(value=10),
+          Constant(value=20)],
+        ctx=Load())),
+    Assign(
+      targets=[
+        Name(id='merged', ctx=Store())],
+      value=Dict(
+        keys=[
+          None,
+          Constant(value='extra')],
+        values=[
+          Name(id='mapping', ctx=Load()),
+          Constant(value=99)])),
+    Try(
+      body=[
+        Assign(
+          targets=[
+            Name(id='value', ctx=Store())],
+          value=BinOp(
+            left=Constant(value=10),
+            op=Div(),
+            right=Constant(value=0)))],
+      handlers=[
+        ExceptHandler(
+          type=Name(id='ZeroDivisionError', ctx=Load()),
+          name='e',
+          body=[
+            Expr(
+              value=Call(
+                func=Name(id='print', ctx=Load()),
+                args=[
+                  Constant(value='Error:'),
+                  Name(id='e', ctx=Load())])),
+            Assign(
+              targets=[
+                Name(id='value', ctx=Store())],
+              value=Constant(value=None))])],
+      finalbody=[
+        Expr(
+          value=Call(
+            func=Name(id='print', ctx=Load()),
+            args=[
+              Constant(value='Done (finally block executed)')]))]),
+    Assign(
+      targets=[
+        Name(id='double', ctx=Store())],
+      value=Lambda(
+        args=arguments(
+          args=[
+            arg(arg='x')]),
+        body=BinOp(
+          left=Name(id='x', ctx=Load()),
+          op=Mult(),
+          right=Constant(value=2)))),
+    Assign(
+      targets=[
+        Name(id='check', ctx=Store())],
+      value=BoolOp(
+        op=Or(),
+        values=[
+          BoolOp(
+            op=And(),
+            values=[
+              Compare(
+                left=Name(id='CONST', ctx=Load()),
+                ops=[
+                  Gt()],
+                comparators=[
+                  Constant(value=10)]),
+              Compare(
+                left=Call(
+                  func=Name(id='double', ctx=Load()),
+                  args=[
+                    Constant(value=5)]),
+                ops=[
+                  Eq()],
+                comparators=[
+                  Constant(value=10)])]),
+          UnaryOp(
+            op=Not(),
+            operand=Constant(value=False))])),
+    Assign(
+      targets=[
+        Name(id='result', ctx=Store())],
+      value=IfExp(
+        test=Name(id='check', ctx=Load()),
+        body=Constant(value='ok'),
+        orelse=Constant(value='fail'))),
+    Assign(
+      targets=[
+        Name(id='nums', ctx=Store())],
+      value=List(
+        elts=[
+          Constant(value=1),
+          Constant(value=2),
+          Constant(value=3)],
+        ctx=Load())),
+    Assign(
+      targets=[
+        Name(id='opts', ctx=Store())],
+      value=Dict(
+        keys=[
+          Constant(value='x'),
+          Constant(value='y')],
+        values=[
+          Constant(value=10),
+          Constant(value=5)])),
+    Assign(
+      targets=[
+        Name(id='v', ctx=Store())],
+      value=Call(
+        func=Name(id='demo', ctx=Load()),
+        args=[
+          Starred(
+            value=Name(id='nums', ctx=Load()),
+            ctx=Load())],
+        keywords=[
+          keyword(
+            value=Name(id='opts', ctx=Load())),
+          keyword(
+            arg='scale',
+            value=Constant(value=2))])),
+    With(
+      items=[
+        withitem(
+          context_expr=Call(
+            func=Attribute(
+              value=Name(id='tempfile', ctx=Load()),
+              attr='TemporaryFile',
+              ctx=Load())),
+          optional_vars=Name(id='fp', ctx=Store()))],
+      body=[
+        Expr(
+          value=Call(
+            func=Attribute(
+              value=Name(id='fp', ctx=Load()),
+              attr='write',
+              ctx=Load()),
+            args=[
+              Constant(value=b'Hello world!')])),
+        Expr(
+          value=Call(
+            func=Attribute(
+              value=Name(id='fp', ctx=Load()),
+              attr='seek',
+              ctx=Load()),
+            args=[
+              Constant(value=0)])),
+        Expr(
+          value=Call(
+            func=Attribute(
+              value=Name(id='fp', ctx=Load()),
+              attr='read',
+              ctx=Load())))]),
+    Assign(
+      targets=[
+        Name(id='data', ctx=Store())],
+      value=ListComp(
+        elt=Name(id='i', ctx=Load()),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=10)]),
+            is_async=0)])),
+    Assign(
+      targets=[
+        Name(id='subset', ctx=Store())],
+      value=Subscript(
+        value=Name(id='data', ctx=Load()),
+        slice=Slice(
+          lower=Constant(value=2),
+          upper=Constant(value=8),
+          step=Constant(value=2)),
+        ctx=Load())),
+    Assign(
+      targets=[
+        Name(id='matrix', ctx=Store())],
+      value=ListComp(
+        elt=ListComp(
+          elt=BinOp(
+            left=Name(id='i', ctx=Load()),
+            op=Add(),
+            right=Name(id='j', ctx=Load())),
+          generators=[
+            comprehension(
+              target=Name(id='j', ctx=Store()),
+              iter=Call(
+                func=Name(id='range', ctx=Load()),
+                args=[
+                  Constant(value=3)]),
+              is_async=0)]),
+        generators=[
+          comprehension(
+            target=Name(id='i', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=3)]),
+            is_async=0)])),
+    Assert(
+      test=Compare(
+        left=Call(
+          func=Name(id='len', ctx=Load()),
+          args=[
+            Name(id='matrix', ctx=Load())]),
+        ops=[
+          Eq()],
+        comparators=[
+          Constant(value=3)])),
+    Pass(),
+    Delete(
+      targets=[
+        Name(id='subset', ctx=Del())]),
+    Assign(
+      targets=[
+        Name(id='name', ctx=Store())],
+      value=Constant(value='World')),
+    Assign(
+      targets=[
+        Name(id='greeting', ctx=Store())],
+      value=JoinedStr(
+        values=[
+          Constant(value='Hello, '),
+          FormattedValue(
+            value=Name(id='name', ctx=Load()),
+            conversion=-1),
+          Constant(value='! The value is '),
+          FormattedValue(
+            value=BinOp(
+              left=Name(id='CONST', ctx=Load()),
+              op=Mult(),
+              right=Constant(value=2)),
+            conversion=-1)])),
+    FunctionDef(
+      name='classify',
+      args=arguments(
+        args=[
+          arg(arg='value')]),
+      body=[
+        Match(
+          subject=Name(id='value', ctx=Load()),
+          cases=[
+            match_case(
+              pattern=MatchValue(
+                value=Constant(value=0)),
+              body=[
+                Return(
+                  value=Constant(value='zero'))]),
+            match_case(
+              pattern=MatchOr(
+                patterns=[
+                  MatchValue(
+                    value=Constant(value=1)),
+                  MatchValue(
+                    value=Constant(value=2))]),
+              body=[
+                Return(
+                  value=Constant(value='small'))]),
+            match_case(
+              pattern=MatchAs(),
+              body=[
+                Return(
+                  value=Constant(value='other'))])])]),
+    Assign(
+      targets=[
+        Name(id='combine', ctx=Store())],
+      value=Lambda(
+        args=arguments(
+          args=[
+            arg(arg='a'),
+            arg(arg='b')],
+          vararg=arg(arg='args'),
+          kwarg=arg(arg='kw'),
+          defaults=[
+            Constant(value=1)]),
+        body=Tuple(
+          elts=[
+            BinOp(
+              left=Name(id='a', ctx=Load()),
+              op=Add(),
+              right=Name(id='b', ctx=Load())),
+            Name(id='args', ctx=Load()),
+            Name(id='kw', ctx=Load())],
+          ctx=Load()))),
+    Assign(
+      targets=[
+        Name(id='nested', ctx=Store())],
+      value=ListComp(
+        elt=Tuple(
+          elts=[
+            Name(id='x', ctx=Load()),
+            Name(id='y', ctx=Load())],
+          ctx=Load()),
+        generators=[
+          comprehension(
+            target=Name(id='x', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=3)]),
+            is_async=0),
+          comprehension(
+            target=Name(id='y', ctx=Store()),
+            iter=Call(
+              func=Name(id='range', ctx=Load()),
+              args=[
+                Constant(value=3)]),
+            ifs=[
+              Compare(
+                left=Name(id='x', ctx=Load()),
+                ops=[
+                  NotEq()],
+                comparators=[
+                  Name(id='y', ctx=Load())])],
+            is_async=0)])),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='All tests passed.')])),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='factorial(5):'),
+          Call(
+            func=Name(id='factorial', ctx=Load()),
+            args=[
+              Constant(value=5)])])),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='Point magnitude:'),
+          Attribute(
+            value=Name(id='p', ctx=Load()),
+            attr='magnitude',
+            ctx=Load())])),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='Check result:'),
+          Name(id='check', ctx=Load())])),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='Greeting:'),
+          Name(id='greeting', ctx=Load())]))])
