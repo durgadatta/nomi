@@ -336,30 +336,9 @@ class LambdaMixin(FunctionDefMixin):
         star_name = None
         after_params = []
         kwparams = None
-        for it in items:
-            if isinstance(it, str) and it == "*":
-                continue
-            if isinstance(it, str) and star_name is None:
-                star_name = it  # e.g., *args
-            elif isinstance(it, Tree) and it.data == "lambda_kwparams":
-                kwparams = it.children[0] if it.children else None  # e.g., **kw
-            else:
-                after_params.append(it)  # Parameters after *args, excluding **kwargs
+        star_name, *after_params, kwparams = items
         return {"star_name": star_name, "after_params": after_params, "kwparams": kwparams}
 
-    def lambda_kwparams(self, items):
-        """
-        Handle **kwargs in lambda.
-        """
-        if not items:
-            raise ValueError("lambda_kwparams: expected name after **")
-        return items[0]
-
-    def lambda_params(self, items):
-        """
-        Pass parameters to _build_arguments.
-        """
-        return items
 
     def lambdef(self, items):
         """
@@ -372,20 +351,8 @@ class LambdaMixin(FunctionDefMixin):
             params_node, test_node = items
         body = ensure_expr(test_node)
         args = self._build_arguments(params_node)
-        return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
+        return ast.Lambda(args=args, body=body)
 
-    def lambdef_nocond(self, items):
-        """
-        Handle lambda definition without condition (same as lambdef for now).
-        """
-        if len(items) == 1:
-            params_node = None
-            test_node = items[0]
-        else:
-            params_node, test_node = items
-        body = ensure_expr(test_node)
-        args = self._build_arguments(params_node)
-        return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
 
 class CallMixin:
     def argvalue(self, items):
