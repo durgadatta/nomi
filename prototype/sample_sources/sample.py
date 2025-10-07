@@ -6,6 +6,7 @@ Comprehensive Python parsing test — exercises most AST constructs.
 import math
 from functools import lru_cache as cache
 from typing import Callable
+import tempfile
 
 CONST = 42
 PI = math.pi
@@ -111,8 +112,10 @@ opts = {"x": 10, "y": 5}
 v = demo(*nums, **opts, scale=2)
 
 # --- With statement, aliasing ---
-with open(__file__) as f:
-    first_line = f.readline().strip()
+with tempfile.TemporaryFile() as fp:
+    fp.write(b'Hello world!')
+    fp.seek(0)
+    fp.read()
 
 
 # --- Slices, subscripts, and complex literals ---
