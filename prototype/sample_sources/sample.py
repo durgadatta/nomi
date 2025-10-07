@@ -148,10 +148,9 @@ combine = lambda a, b=1, *args, **kw: (a + b, args, kw)
 # --- Complex comprehension nesting ---
 nested = [(x, y) for x in range(3) for y in range(3) if x != y]
 
-# --- End marker ---
-if __name__ == "__main__":
-    print("All tests passed.")
-    print("factorial(5):", factorial(5))
-    print("Point magnitude:", p.magnitude)
-    print("Check result:", check)
-    print("Greeting:", greeting)
+
+print("All tests passed.")
+print("factorial(5):", factorial(5))
+print("Point magnitude:", p.magnitude)
+print("Check result:", check)
+print("Greeting:", greeting)
