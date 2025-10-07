@@ -298,8 +298,10 @@ class OthersMixin(ImportMixin, ContextManagerMixin, AsyncMixin, MatchMixin):
         """
         test_node = ensure_expr(items[0])
         msg_node = ensure_expr(items[1]) if len(items) > 1 else None
+        if msg_node.value is None:
+            msg_node = None
         return ast.Assert(test=test_node, msg=msg_node)
-
+    
     def del_stmt(self, items):
         """
         items: list of expressions / targets to delete
