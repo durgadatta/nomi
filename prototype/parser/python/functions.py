@@ -31,7 +31,7 @@ class FunctionDefMixin:
         if item is None:
             return None, None
 
-        # Already a (name, default_expr)
+        # Handle (name, default) tuple from paramvalue
         if isinstance(item, tuple) and len(item) == 2:
             name, default_tree = item
             if name is None:
@@ -48,14 +48,12 @@ class FunctionDefMixin:
         if isinstance(item, ast.arg):
             return item, None
 
-        # Literal constant or expression — skip, likely stray default
+        # Skip unexpected expressions
         if isinstance(item, ast.expr):
-            # Log or safely ignore
             return None, None
 
         raise ValueError(f"Unsupported parameter value shape: {item!r}")
 
-    # ---------- argument normalization ----------
     def _build_arguments(self, items):
         """
         Convert flattened parameter-like items into ast.arguments.
@@ -83,7 +81,7 @@ class FunctionDefMixin:
             for x in xs:
                 if x is None:
                     continue
-                if isinstance(x, (list, tuple)) and not (len(x) == 2 and isinstance(x[0], str)):
+                if isinstance(x, (list, tuple)) and not (len(x) == 2 and isinstance(x[0], (str, ast.arg))):
                     out.extend(_flatten(x))
                 else:
                     out.append(x)
@@ -124,23 +122,26 @@ class FunctionDefMixin:
                     arg_obj, default_expr = self._paramvalue_to_pair(pv)
                     if arg_obj:
                         kwonlyargs.append(arg_obj)
-                        kw_defaults.append(default_expr)
+                        if default_expr is not None:
+                            kw_defaults.append(default_expr)
                 if it.get("kwparams"):
                     kwarg = self._name_to_arg(it["kwparams"])
                 continue
 
-            # normal parameter
-            pair = self._paramvalue_to_pair(it)
-            if not pair or pair[0] is None:
+            # Normal parameter
+            arg_obj, default_expr = self._paramvalue_to_pair(it)
+            if not arg_obj:
                 continue
 
-            arg_obj, default_expr = pair
             current_list.append(arg_obj)
             if seen_star:
-                kw_defaults.append(default_expr)
-            elif default_expr is not None:
-                defaults_for_args.append(default_expr)
+                if default_expr is not None:
+                    kw_defaults.append(default_expr)
+            else:
+                if default_expr is not None:
+                    defaults_for_args.append(default_expr)
 
+        # Combine posonlyargs and args if no slash
         if not seen_slash:
             args = posonlyargs + args
             posonlyargs = []
@@ -154,17 +155,29 @@ class FunctionDefMixin:
             kwarg=kwarg,
             defaults=defaults_for_args
         )
-
-    # ---------- normal function rules ----------
+   
     def typedparam(self, items):
+        """
+        Process a typed parameter, e.g., 'y: int' or 'y: int = 5'.
+        Returns: ast.arg with optional annotation and default passed to _build_arguments.
+        """
         name = items[0]
         annotation = items[1] if len(items) > 1 else None
-        return ast.arg(arg=ensure_name(name), annotation=annotation)
+        default = items[2] if len(items) > 2 else None
+        arg = ast.arg(arg=ensure_name(name), annotation=ensure_expr(annotation) if annotation else None)
+        if default is not None:
+            return (arg, default)
+        return arg
 
     def paramvalue(self, items):
+        """
+        Process a parameter, e.g., 'x' or 'y=5'.
+        Returns: name (for no default) or (name, default) tuple.
+        """
         if len(items) == 2:
-            return (items[0], ensure_expr(items[1]))
-        return items[0]
+            return (items[0], items[1])  # e.g., (y, 5)
+        return items[0]  # e.g., x
+
 
     def starparam(self, items):
         return ("vararg", ensure_arg(items[0]))
@@ -180,27 +193,49 @@ class FunctionDefMixin:
     
     def decorator(self, items):
         """
-        items[0] = dotted_name (str)
+        items[0] = decorator name (str, Token, or Tree)
         items[1] = optional arguments (tuple of (args, keywords)) or None
         """
-        name_expr = ensure_expr(items[0])
+        # Handle decorator name, which could be a string, Token, or Tree
+        decorator_name = items[0]
+        if isinstance(decorator_name, str):
+            # Clean malformed strings like "['cache']", "['property']", or "'cache'"
+            cleaned_name = decorator_name
+            # Remove list-like syntax, e.g., "['cache']" -> "cache"
+            if cleaned_name.startswith("[") and cleaned_name.endswith("]"):
+                cleaned_name = cleaned_name[1:-1]
+            # Strip quotes and whitespace, e.g., "'cache'" -> "cache"
+            cleaned_name = cleaned_name.strip("'\" ").strip()
+            name_expr = ensure_name(cleaned_name)
+        elif isinstance(decorator_name, Tree) and decorator_name.data in ("decorator", "dotted_name"):
+            # Handle Tree, e.g., Tree(decorator, [Token(NAME, 'cache')])
+            name = decorator_name.children[0].value if decorator_name.children else ""
+            name_expr = ensure_name(name)
+        elif isinstance(decorator_name, Token):
+            name_expr = ensure_name(decorator_name.value)
+        else:
+            raise ValueError(f"Unsupported decorator name type: {type(decorator_name)}")
 
         if len(items) > 1 and items[1]:
             # decorator with arguments
             args, keywords = items[1]
-            return ast.Call(func=name_expr, args=args, keywords=keywords)
+            return ast.Call(func=ast.Name(id=name_expr, ctx=ast.Load()), args=args, keywords=keywords)
 
         # decorator without arguments → just a Name
-        return name_expr
+        return ast.Name(id=name_expr, ctx=ast.Load())
 
     def decorators(self, items):
-        # Flatten if nested
+        """
+        Flatten and validate decorator items.
+        """
         out = []
         for it in items:
             if isinstance(it, list):
-                out.extend(it)
-            else:
+                out.extend(self.decorators(it))  # Recursively flatten nested lists
+            elif isinstance(it, (ast.expr, ast.Name, ast.Call)):
                 out.append(it)
+            else:
+                raise ValueError(f"Invalid decorator type: {type(it)}")
         return out
 
     def decorated(self, items):
@@ -257,9 +292,32 @@ class FunctionDefMixin:
             type_comment=None
         )
 
+    def return_stmt(self, items):
+        """
+        items: list of expressions after 'return', or empty if just 'return'
+        returns: ast.Return node
+        """
+        if not isinstance(items, list):
+            raise TypeError(f"Expected list of expressions, got {type(items)}")
+        
+        if not items:
+            # plain 'return' with no value
+            return ast.Return(value=None)
+        elif len(items) == 1:
+            # single expression
+            return ast.Return(value=ensure_expr(items[0]))
+        else:
+            # multiple expressions -> tuple
+            exprs = [ensure_expr(item) for item in items]
+            return ast.Return(value=ast.Tuple(elts=exprs, ctx=ast.Load()))
 
 
 class LambdaMixin(FunctionDefMixin):
+    '''
+    NOTE: TODO:
+    Why do lambdas and regular function parameter have different processing?
+        - why is there difference in grammar ? (only the parameter part)
+    '''
     def lambda_paramvalue(self, items):
         """
         Handle lambda parameters with optional defaults.
@@ -269,24 +327,25 @@ class LambdaMixin(FunctionDefMixin):
             return (items[0], None)
         name, default_tree = items
         return (name, default_tree)
-
+    
     def lambda_starparams(self, items):
         """
         Handle *args and **kwargs in lambda.
-        Returns a dict for _build_arguments to process.
+        Returns a dict for _build_arguments to process, ensuring **kwargs is only in kwparams.
         """
         star_name = None
-        rest = []
+        after_params = []
         kwparams = None
         for it in items:
+            if isinstance(it, str) and it == "*":
+                continue
             if isinstance(it, str) and star_name is None:
-                if it != "*":
-                    star_name = it
+                star_name = it  # e.g., *args
             elif isinstance(it, Tree) and it.data == "lambda_kwparams":
-                kwparams = it.children[0] if it.children else None
+                kwparams = it.children[0] if it.children else None  # e.g., **kw
             else:
-                rest.append(it)
-        return {"star_name": star_name, "after_params": rest, "kwparams": kwparams}
+                after_params.append(it)  # Parameters after *args, excluding **kwargs
+        return {"star_name": star_name, "after_params": after_params, "kwparams": kwparams}
 
     def lambda_kwparams(self, items):
         """
@@ -327,8 +386,8 @@ class LambdaMixin(FunctionDefMixin):
         body = ensure_expr(test_node)
         args = self._build_arguments(params_node)
         return ast.fix_missing_locations(ast.Lambda(args=args, body=body))
-# ---------- Calls ----------
-class CallMixin():
+
+class CallMixin:
     def argvalue(self, items):
         """
         Transform an argvalue node:
@@ -336,99 +395,94 @@ class CallMixin():
         - two items → keyword argument (return (name, value))
         """
         if len(items) == 2:
-            # items[0] is the name, items[1] is the value
-            key = ensure_name(items[0])   # 'a'
-            value = ensure_expr(items[1]) # 2
+            key = ensure_name(items[0])
+            value = ensure_expr(items[1])
             return (key, value)
-        # otherwise positional
         return ensure_expr(items[0])
 
     def stararg(self, items):
-        return ('star_arg', ensure_expr(items[0]))
-
+        return ast.Starred(value=ensure_expr(items[0]), ctx=ast.Load())
+    
     def starargs(self, items):
         out = []
         for it in items:
-            if isinstance(it, list): out.extend(it)
-            else: out.append(it)
+            if isinstance(it, list):
+                out.extend(it)
+            else:
+                out.append(it)
         return out
 
     def kwargs(self, items):
-        return ('kwstar', ensure_expr(items[0]))
-    
+        # **kwargs → represented as a keyword with arg=None
+        return ast.keyword(arg=None, value=ensure_expr(items[0]))
+
+    def _flatten_arguments(self, items):
+        """
+        Recursively flatten nested lists from Lark parse tree.
+        """
+        out = []
+        for x in items:
+            if x is None:
+                continue
+            if isinstance(x, list):
+                out.extend(self._flatten_arguments(x))
+            else:
+                out.append(x)
+        return out
+
     def arguments(self, items):
         """
-        Normalize Lark argument items into (args, keywords) for ast.Call
-        Supports:
-            f(1, 2, a=3, *lst, **d)
+        Convert Lark argument items into (args, keywords) for ast.Call.
+        Handles:
+            - positional arguments
+            - keyword arguments
+            - *args
+            - **kwargs
         """
-        # flatten nested lists
-        flat = []
-        for it in items:
-            if isinstance(it, list):
-                flat.extend(it)
-            else:
-                flat.append(it)
+        # Flatten nested lists from Lark
+        def _flatten(xs):
+            out = []
+            for x in xs:
+                if x is None:
+                    continue
+                if isinstance(x, list):
+                    out.extend(_flatten(x))
+                else:
+                    out.append(x)
+            return out
+
+        flat = _flatten(items)
 
         args = []
         keywords = []
 
         for el in flat:
-            if el is None:
-                continue
-
-            # keyword argument: tuple (key, value)
             if isinstance(el, tuple) and len(el) == 2:
+                # This is a keyword argument from argvalue (like scale=2)
                 key, val = el
-                # convert key to str
-                if isinstance(key, ast.Name):
-                    key_str = key.id
-                elif isinstance(key, Token):
-                    key_str = key.value
-                elif isinstance(key, str):
-                    key_str = key
-                else:
-                    raise TypeError(f"Unexpected keyword key: {key!r}")
-                keywords.append(ast.keyword(arg=key_str, value=ensure_expr(val)))
-                continue
+                # Make an ast.keyword
+                keywords.append(ast.keyword(arg=str(key), value=ensure_expr(val)))
+            elif isinstance(el, ast.Starred):
+                # *args
+                args.append(el)
+            elif isinstance(el, ast.keyword):
+                # **kwargs
+                keywords.append(el)
+            else:
+                # positional argument
+                args.append(ensure_expr(el))
 
-            # *args
-            if isinstance(el, tuple) and el and el[0] == 'star_arg':
-                args.append(ast.Starred(value=ensure_expr(el[1]), ctx=ast.Load()))
-                continue
-
-            # **kwargs
-            if isinstance(el, tuple) and el and el[0] == 'kwstar':
-                keywords.append(ast.keyword(arg=None, value=ensure_expr(el[1])))
-                continue
-
-            # regular positional argument
-            args.append(ensure_expr(el))
-
-        return (args, keywords)
+        return args, keywords
 
     def funccall(self, items):
+        """
+        Build ast.Call from func and optional arguments.
+        """
         func = items[0]
-        args = []; keywords = []
-        if len(items) > 1 and isinstance(items[1], tuple):
+        args, keywords = ([], [])
+        if len(items) > 1 and items[1]:
             args, keywords = items[1]
         return ast.Call(func=func, args=args, keywords=keywords)
-    
-    def return_stmt(self, items):
-        """
-        items: list of expressions after 'return', or empty if just 'return'
-        returns: ast.Return node
-        """
-        if not items:
-            # plain 'return' with no value
-            return ast.Return(value=None)
-        elif len(items) == 1:
-            # single expression
-            return ast.Return(value=items[0])
-        else:
-            # multiple expressions -> tuple
-            return ast.Return(value=ast.Tuple(elts=items, ctx=ast.Load()))
-        
 
 class FunctionMixin(CallMixin, LambdaMixin):
     pass

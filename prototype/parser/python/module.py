@@ -78,8 +78,8 @@ class ModuleMixin:
     # dotted_name: name ("." name)*
     # returns list of strings
     # -----------------------------
-    def dotted_name(self, items):
-        return [str(i) for i in items]
+    # def dotted_name(self, items):
+    #     return [str(i) for i in items]
 
     # -----------------------------
     # import_as_names / dotted_as_names
