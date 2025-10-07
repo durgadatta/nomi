@@ -1,5 +1,6 @@
 import ast
 from lark import Token
+from pathlib import Path
 
 
 def ensure_name(x):
@@ -87,4 +88,37 @@ def ensure_store(node):
         return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store())
     else:
         return node  # unknown node types, leave as-is
+    
+
+# parser usage utilities
+def get_parser():
+    from lark import Lark
+    from lark.indenter import PythonIndenter
+    python_parser = Lark.open_from_package(
+            "lark",
+            "python.lark",
+            ["grammars"],
+            parser="lalr",
+            postlex=PythonIndenter(),
+            start="file_input",
+    )
+    return python_parser
+
+
+def generate_ast(filename=None, code=None, dump=True):
+    from prototype.parser.python.ast_ import PythonASTTransformer
+    assert filename or code
+
+    if code is None:
+        code = Path(filename).read_text()
+    tree = get_parser().parse(code)
+    node = PythonASTTransformer().transform(tree)
+    if dump:
+        return ast.dump(node, include_attributes=False, indent=2)
+    return node
+
+
+
+    
+
 
