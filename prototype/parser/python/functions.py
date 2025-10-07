@@ -380,33 +380,27 @@ class CallMixin:
         return out
 
     def kwargs(self, items):
-        # **kwargs → represented as a keyword with arg=None
-        return ast.keyword(arg=None, value=ensure_expr(items[0]))
+        """
+        Handle **kwargs possibly followed by key=value pairs (PEP 448)
+        Example: **opts, scale=2
+        """
+        # first item is **expr
+        base = ensure_expr(items[0])
+        kw_nodes = [ast.keyword(arg=None, value=base)]
 
-    def _flatten_arguments(self, items):
-        """
-        Recursively flatten nested lists from Lark parse tree.
-        """
-        out = []
-        for x in items:
-            if x is None:
-                continue
-            if isinstance(x, list):
-                out.extend(self._flatten_arguments(x))
+        # remaining items, if any, are argvalue nodes (key=value)
+        for el in items[1:]:
+            if isinstance(el, tuple) and len(el) == 2:
+                key, val = el
+                kw_nodes.append(ast.keyword(arg=str(key), value=ensure_expr(val)))
             else:
-                out.append(x)
-        return out
+                raise SyntaxError(f"Unexpected item in kwargs: {el!r}")
+
+        return kw_nodes
 
     def arguments(self, items):
-        """
-        Convert Lark argument items into (args, keywords) for ast.Call.
-        Handles:
-            - positional arguments
-            - keyword arguments
-            - *args
-            - **kwargs
-        """
-        # Flatten nested lists from Lark
+        args, keywords = [], []
+
         def _flatten(xs):
             out = []
             for x in xs:
@@ -420,23 +414,17 @@ class CallMixin:
 
         flat = _flatten(items)
 
-        args = []
-        keywords = []
-
         for el in flat:
             if isinstance(el, tuple) and len(el) == 2:
-                # This is a keyword argument from argvalue (like scale=2)
                 key, val = el
-                # Make an ast.keyword
                 keywords.append(ast.keyword(arg=str(key), value=ensure_expr(val)))
             elif isinstance(el, ast.Starred):
-                # *args
                 args.append(el)
+            elif isinstance(el, ast.keyword) and el.arg is None:
+                keywords.append(el)
             elif isinstance(el, ast.keyword):
-                # **kwargs
                 keywords.append(el)
             else:
-                # positional argument
                 args.append(ensure_expr(el))
 
         return args, keywords
