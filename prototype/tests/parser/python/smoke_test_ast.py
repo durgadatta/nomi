@@ -15,7 +15,7 @@ from prototype.parser.python.ast_ import PythonASTTransformer
 
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
-    sample_file = script_path.parents[3].joinpath('sample_sources', 'dummy').with_name("sample.py")
+    sample_file = script_path.parents[2].joinpath('regression', 'sample_sources', 'sample.py')
     source_code = sample_file.read_text(encoding="utf-8")
 
     # Load Lark parser
