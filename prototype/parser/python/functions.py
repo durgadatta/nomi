@@ -294,22 +294,21 @@ class FunctionDefMixin:
 
     def return_stmt(self, items):
         """
-        items: list of expressions after 'return', or empty if just 'return'
-        returns: ast.Return node
+        Handles 'return' statements, including multiple return values.
         """
-        if not isinstance(items, list):
-            raise TypeError(f"Expected list of expressions, got {type(items)}")
-        
+        # No return value
         if not items:
-            # plain 'return' with no value
             return ast.Return(value=None)
-        elif len(items) == 1:
-            # single expression
-            return ast.Return(value=ensure_expr(items[0]))
-        else:
-            # multiple expressions -> tuple
-            exprs = [ensure_expr(item) for item in items]
+
+        value = items[0]
+
+        # Handle 'return x, y' where testlist was collapsed into a list
+        if isinstance(value, list):
+            exprs = [ensure_expr(v) for v in value]
             return ast.Return(value=ast.Tuple(elts=exprs, ctx=ast.Load()))
+
+        # Single expression
+        return ast.Return(value=ensure_expr(value))
 
 
 class LambdaMixin(FunctionDefMixin):

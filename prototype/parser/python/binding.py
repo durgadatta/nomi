@@ -120,3 +120,11 @@ class BindingMixin:
 
         # Build AST node
         return ast.AugAssign(target=target_node, op=op_node, value=value_node)
+    
+    def assign_expr(self, items):
+        ''' a := 2'''
+        name, value = items
+        return ast.NamedExpr(
+            target=ast.Name(id=name, ctx=ast.Store()),
+            value=value
+        )
