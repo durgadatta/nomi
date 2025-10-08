@@ -304,19 +304,20 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         return None
     
     def list(self, items):
-            """
-            Handle list literals: "[" _exprlist? "]" -> list.
-            items: list of test_or_star_expr from _exprlist, or empty
-            """
-            elts = [ensure_expr(it) for it in items if it is not None]
-            return ast.List(elts=elts, ctx=ast.Load())
+        """
+        Handle list literals: "[" _exprlist? "]" -> list.
+        items: list of test_or_star_expr from _exprlist, or empty
+        """
+        return ast.List(elts=items)
     
     def tuple(self, items):
-            """
-            Handle tuple expressions: "(" _tuple_inner? ")".
-            """
-            elts = [ensure_expr(it) for it in items if it is not None]
-            return ast.Tuple(elts=elts, ctx=ast.Load())
+        """
+        Handle tuple expressions: "(" _tuple_inner? ")".
+        """
+        return ast.Tuple(elts=items)
+    
+    def set(self, items):
+        return ast.Set(elts=items)
  
     def dict(self, items):
         """

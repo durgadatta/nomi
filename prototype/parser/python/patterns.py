@@ -1,5 +1,6 @@
 import ast 
-from prototype.parser.python import ensure_expr, ensure_stmt_list
+from prototype.parser.python import ensure_expr, ensure_stmt_list, tokval
+from lark import Token, Tree
 
 
 class PatternMixin:
@@ -22,6 +23,30 @@ class PatternMixin:
         if not items or len(items) != 1:
             raise ValueError(f"Expected exactly one item for string pattern, got {len(items)}")
         return ast.MatchValue(value=ensure_expr(items[0]))
+
+    def literal_pattern(self, items):
+        """
+        Handle literal pattern, e.g., '0', '"hello"', 'None', 'True', 'False'.
+        Grammar: literal_pattern (assumed as NUMBER | STRING | "None" | "True" | "False")
+        Returns: ast.MatchValue or ast.MatchSingleton.
+        """
+        if not items or len(items) != 1:
+            raise ValueError(f"Expected exactly one item for literal_pattern, got {len(items)}")
+        item = items[0]
+        if isinstance(item, ast.Constant):
+            return ast.MatchValue(value=item)
+        if isinstance(item, Token):
+            if item.type == "NUMBER":
+                return ast.MatchValue(value=ensure_expr(item))
+            if item.type == "STRING":
+                return ast.MatchValue(value=ensure_expr(item))
+            if item.type == "NONE":
+                return ast.MatchSingleton(value=None)
+            if item.type == "TRUE":
+                return ast.MatchSingleton(value=True)
+            if item.type == "FALSE":
+                return ast.MatchSingleton(value=False)
+        raise ValueError(f"Invalid literal pattern: {item}")
 
     def capture_pattern(self, items):
         if not items or len(items) != 1:
@@ -136,29 +161,62 @@ class PatternMixin:
                       for case in items[1:]]
         return ast.Match(subject=subject_node, cases=case_nodes)
 
-    def class_pattern(self, items):
-        """
-        items[0] = class name or attr pattern
-        items[1] = arguments pattern (positional + keywords)
-        """
-        if not items:
-            raise ValueError("Expected at least class name for class_pattern")
-        class_name_node = ensure_expr(items[0])
-        pos_args, kw_args = [], []
-        if len(items) > 1:
-            args_node = items[1]
-            if not isinstance(args_node, (tuple, list)) or len(args_node) != 2:
-                raise ValueError(f"Expected (pos_args, kw_args) tuple for class_pattern, got {args_node}")
-            pos_args, kw_args = args_node
-            pos_args = pos_args if isinstance(pos_args, list) else []
-            kw_args = kw_args if isinstance(kw_args, list) else []
-            for kw in kw_args:
-                if not isinstance(kw, (tuple, list)) or len(kw) != 2:
-                    raise ValueError(f"Expected (key, pattern) pair in kw_args, got {kw}")
+    def star_pattern(self, items):
+            """
+            Handle star pattern, e.g., '*rest'.
+            Grammar: "*" NAME -> star_pattern
+            Returns: ast.MatchStar node.
+            """
+            if not items or len(items) != 1:
+                raise ValueError(f"Expected exactly one item for star_pattern, got {len(items)}")
+            name = tokval(items[0])
+            if not isinstance(name, str):
+                raise ValueError(f"Expected a string name for star_pattern, got {type(name)}")
+            return ast.MatchStar(name=name)
 
-        return ast.MatchClass(
-            cls=class_name_node,
-            patterns=pos_args,
-            kwd_attrs=[tokval(kw[0]) for kw in kw_args],
-            kwd_patterns=[kw[1] for kw in kw_args]
-        )
+    def class_pattern(self, items):
+            """
+            Handle class pattern, e.g., 'int(n)', 'Point(x=n)'.
+            Grammar: name_or_attr_pattern "(" [arguments_pattern ","?] ")"
+            Returns: ast.MatchClass node.
+            """
+            if not items:
+                raise ValueError("Expected at least class name for class_pattern")
+            if not (isinstance(items[0], (Tree, Token)) and (isinstance(items[0], Tree) and items[0].data == "value" or isinstance(items[0], Token) and items[0].type == "NAME")):
+                raise ValueError(f"Invalid class identifier in class_pattern: {items[0]}")
+            cls = ensure_expr(items[0])  # e.g., Name(id='int', ctx=Load())
+            patterns = []
+            kwd_attrs = []
+            kwd_patterns = []
+            if len(items) > 1 and items[1] is not None:  # Check for non-empty arguments
+                arg_items = items[1]
+                if isinstance(arg_items, list):
+                    # Filter out None or empty items (e.g., from trailing comma)
+                    arg_items = [item for item in arg_items if item is not None]
+                    for item in arg_items:
+                        if isinstance(item, Tree) and item.data == "mapping_item_pattern":
+                            # Keyword pattern, e.g., x=n
+                            key, pattern = item.children
+                            kwd_attrs.append(tokval(key))
+                            kwd_patterns.append(self.as_pattern([pattern]) if isinstance(pattern, Tree) and pattern.data == "as_pattern" else self.capture_pattern([pattern]))
+                        elif isinstance(item, Tree) and item.data in ("capture_pattern", "as_pattern"):
+                            # Positional pattern, e.g., n
+                            patterns.append(self.as_pattern(item.children) if item.data == "as_pattern" else self.capture_pattern(item.children))
+                        elif isinstance(item, ast.AST):
+                            patterns.append(item)
+                        else:
+                            raise ValueError(f"Invalid pattern in arguments_pattern: {item}")
+                else:
+                    # Single positional pattern
+                    if isinstance(arg_items, Tree) and arg_items.data in ("capture_pattern", "as_pattern"):
+                        patterns.append(self.as_pattern([arg_items]) if arg_items.data == "as_pattern" else self.capture_pattern(arg_items.children))
+                    elif isinstance(arg_items, ast.AST):
+                        patterns.append(arg_items)
+                    else:
+                        raise ValueError(f"Invalid single pattern in arguments_pattern: {arg_items}")
+            return ast.MatchClass(
+                cls=cls,
+                patterns=patterns,
+                kwd_attrs=kwd_attrs,
+                kwd_patterns=kwd_patterns
+            )

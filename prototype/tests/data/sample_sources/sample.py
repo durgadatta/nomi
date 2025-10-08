@@ -1,19 +1,23 @@
-# sample_test.py
 """
-Comprehensive Python parsing test — exercises most AST constructs.
+Comprehensive Python parsing test — exercises a wide range of AST constructs.
 """
 
 import math
-from functools import lru_cache as cache
-from typing import Callable
+import operator
+from functools import lru_cache as cache, reduce
+from typing import Callable, List, Dict, Optional, Union, Tuple
+from collections import namedtuple
 import tempfile
+import re
 
+# --- Constants and Global Variables ---
 CONST = 42
 PI = math.pi
+GLOBAL_COUNTER = 0
 
 # --- Simple function with defaults, returns, and control flow ---
-def add(a, b=10):
-    """Simple add function"""
+def add(a: float, b: float = 10.0) -> float:
+    """Add two numbers with conditional logic."""
     result = a + b
     if result > 50:
         return result
@@ -22,135 +26,198 @@ def add(a, b=10):
     else:
         return -result
 
+# --- Function with nested loops, continue, and break ---
+def matrix_sum(matrix: List[List[int]]) -> int:
+    total = 0
+    for row in matrix:
+        for elem in row:
+            if elem < 0:
+                continue
+            if elem > 100:
+                break
+            total += elem
+        else:
+            continue
+        break
+    return total
 
-# --- Function with loops and conditionals ---
-def factorial(n):
-    f = 1
-    for i in range(1, n + 1):
-        f *= i
-    return f
-
-
-# --- Function with while and break/continue ---
-def find_first_even(nums):
+# --- Function with while, break, and else ---
+def find_first_divisible(numbers: List[int], divisor: int) -> Optional[int]:
     i = 0
-    while i < len(nums):
-        if nums[i] % 2 == 0:
-            break
+    while i < len(numbers):
+        if numbers[i] % divisor == 0:
+            return numbers[i]
         i += 1
     else:
         return None
-    return nums[i]
 
-
-# --- Nested function + closure + annotations ---
+# --- Nested functions, closures, and type annotations ---
 def outer(x: int) -> Callable[[int], int]:
     def inner(y: int = 5) -> int:
+        nonlocal x
+        x += 1
         return x + y
     return inner
 
-
-# --- Decorators, *args, **kwargs, kwonly ---
+# --- Decorators, *args, **kwargs, keyword-only arguments ---
 @cache
-def demo(*args, scale=1, **kwargs):
+def compute_sum(*args, scale: float = 1.0, **kwargs) -> float:
+    """Compute sum of args and kwargs values, scaled."""
     total = sum(args) + sum(kwargs.values())
     return total * scale
 
+# --- Class with inheritance, classmethod, staticmethod, and properties ---
+class Vector:
+    kind = "vector"
+    _registry = []
 
-# --- Class definition with methods and comprehension attributes ---
-class Point:
-    kind = "2D"
-    all_points = []
-
-    def __init__(self, x, y):
+    def __init__(self, x: float, y: float):
         self.x = x
         self.y = y
-        Point.all_points.append(self)
+        Vector._registry.append(self)
 
-    def move(self, dx, dy):
+    @classmethod
+    def count_vectors(cls) -> int:
+        return len(cls._registry)
+
+    @staticmethod
+    def distance(p1, p2) -> float:
+        return ((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2) ** 0.5
+
+    @property
+    def magnitude(self) -> float:
+        return (self.x ** 2 + self.y ** 2) ** 0.5
+
+    def __str__(self) -> str:
+        return f"Vector({self.x}, {self.y})"
+
+class Point(Vector):
+    kind = "2D_point"
+
+    def move(self, dx: float, dy: float) -> "Point":
         self.x += dx
         self.y += dy
         return self
 
-    @property
-    def magnitude(self):
-        return (self.x ** 2 + self.y ** 2) ** 0.5
+# --- Named tuple ---
+Coordinate = namedtuple("Coordinate", ["x", "y"])
 
+# --- Comprehensions (list, set, dict, nested) ---
+squares = [i * i for i in range(10)]
+evens = {i for i in range(20) if i % 2 == 0}
+mapping = {f"key{i}": i * i for i in range(5)}
+nested = [(x, y) for x in range(3) for y in range(3) if x + y < 4]
+gen_exp = (i ** 3 for i in range(4))
 
-# --- Instance creation and method chaining ---
-p = Point(1, 2)
-p.move(3, 4)
+# --- Unpacking (tuple, list, dict) ---
+a, b, *rest, last = [1, 2, 3, 4, 5]
+x, y = Coordinate(10, 20)
+merged = {**mapping, "extra": 100}
 
-# --- Comprehensions ---
-squares = [i * i for i in range(5)]
-evens = {i for i in range(10) if i % 2 == 0}
-mapping = {i: i * i for i in range(5)}
-gen = (i ** 2 for i in range(3))
+# --- Exception handling with multiple except clauses ---
+def safe_divide(a: float, b: float) -> Optional[float]:
+    try:
+        result = a / b
+    except ZeroDivisionError as e:
+        print(f"Error: {e}")
+        return None
+    except TypeError as e:
+        print(f"Type Error: {e}")
+        return None
+    else:
+        return result
+    finally:
+        print("Division attempt completed")
 
-# --- Tuple/list/dict unpacking ---
-a, b, *rest = [1, 2, 3, 4]
-x, y = (10, 20)
-merged = {**mapping, "extra": 99}
+# --- Boolean operations, comparisons, and ternary operator ---
+is_valid = (CONST > 20) and (len(squares) == 10) or not False
+status = "success" if is_valid else "failure"
 
-# --- Try/Except/Finally + raise ---
-try:
-    value = 10 / 0
-except ZeroDivisionError as e:
-    print("Error:", e)
-    value = None
-finally:
-    print("Done (finally block executed)")
+# --- Lambda with defaults, *args, **kwargs ---
+complex_op = lambda x, y=1, *args, **kwargs: (x + y, sum(args), sum(kwargs.values()))
 
-# --- Boolean ops, comparisons, ternary ---
-double = lambda x: x * 2
-check = (CONST > 10) and (double(5) == 10) or not False
-result = "ok" if check else "fail"
+# --- Function calls with unpacking ---
+nums = [1, 2, 3, 4]
+kwargs = {"a": 5, "b": 10}
+result = compute_sum(*nums, **kwargs, scale=2)
 
-# --- Function call with *args, **kwargs ---
-nums = [1, 2, 3]
-opts = {"x": 10, "y": 5}
-v = demo(*nums, **opts, scale=2)
-
-# --- With statement, aliasing ---
-with tempfile.TemporaryFile() as fp:
-    fp.write(b'Hello world!')
-    fp.seek(0)
-    fp.read()
-
+# --- With statement with multiple context managers ---
+def process_files():
+    with tempfile.TemporaryFile() as f1, tempfile.TemporaryFile() as f2:
+        f1.write(b"Test1")
+        f2.write(b"Test2")
+        f1.seek(0)
+        f2.seek(0)
+        return f1.read(), f2.read()
 
 # --- Slices, subscripts, and complex literals ---
-data = [i for i in range(10)]
-subset = data[2:8:2]
-matrix = [[i + j for j in range(3)] for i in range(3)]
+data = list(range(15))
+sliced = data[1:10:2]
+matrix = [[i * j for j in range(4)] for i in range(4)]
+complex_num = 3 + 4j
 
-# --- Assertions, pass, del ---
-assert len(matrix) == 3
-pass
-del subset
+# --- Assertions, pass, del, and global/nonlocal ---
+def update_global():
+    global GLOBAL_COUNTER
+    GLOBAL_COUNTER += 1
+    assert GLOBAL_COUNTER > 0
+    pass
 
-# --- F-string and formatted output ---
-name = "World"
-greeting = f"Hello, {name}! The value is {CONST * 2}"
+# --- F-strings with expressions ---
+name = "Python"
+version_info = f"Running {name} version {CONST / 2:.2f}"
 
-# --- Match statement (Python 3.10+) ---
-def classify(value):
+# --- Match statement with complex patterns (Python 3.10+) ---
+def parse_input(value: Union[int, str, list]) -> str:
     match value:
         case 0:
             return "zero"
-        case 1 | 2:
-            return "small"
+        case int(n) if n > 0:
+            return "positive"
+        case str(s) if re.match(r"\d+", s):
+            return "numeric string"
+        case ["error", *rest]:
+            return f"error with {rest}"
         case _:
-            return "other"
+            return "unknown"
 
-# --- Lambda with defaults, *args, **kwargs ---
-combine = lambda a, b=1, *args, **kw: (a + b, args, kw)
+# --- Generator function ---
+def fibonacci(n: int) -> int:
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
 
-# --- Complex comprehension nesting ---
-nested = [(x, y) for x in range(3) for y in range(3) if x != y]
+# --- Walrus operator (Python 3.8+) ---
+def process_data(data: List[int]) -> List[int]:
+    return [y for x in data if (y := x * 2) > 10]
+
+# --- Set operations and built-in functions ---
+unique_nums = {1, 2, 2, 3}
+sorted_squares = sorted(squares, reverse=True)
+reduced = reduce(operator.add, squares, 0)
+
+# --- Type hints with Union, Optional, and complex types ---
+def process_value(value: Union[int, str], default: Optional[int] = None) -> Tuple[bool, str]:
+    return (isinstance(value, int), str(value))
 
 
-print("All tests passed.")
-print("factorial(5):", factorial(5))
-print("Point magnitude:", p.magnitude)
-print("Check result:", check)
-print("Greeting:", greeting)
+if __name__ == "__main__":
+    # Create instances and test methods
+    p1 = Point(3, 4)
+    p2 = Point(0, 0)
+    p1.move(1, 1)
+    
+    # Test various constructs
+    #print(f"Factorial(5): {factorial(5)}")
+    print(f"Point magnitude: {p1.magnitude}")
+    print(f"Vector count: {Vector.count_vectors()}")
+    print(f"Distance between points: {Vector.distance(p1, p2)}")
+    print(f"Safe divide: {safe_divide(10, 2)}")
+    print(f"Status: {status}")
+    print(f"Version info: {version_info}")
+    print(f"Fibonacci: {list(fibonacci(6))}")
+    print(f"Processed data: {process_data([1, 2, 3, 4, 5])}")
+    print(f"Parsed input: {parse_input(['error', 1, 2])}")
+    print("All tests completed successfully.")
+    
