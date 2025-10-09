@@ -128,3 +128,43 @@ class BindingMixin:
             target=ast.Name(id=name, ctx=ast.Store()),
             value=value
         )
+    
+
+    def annassign(self, items):
+        """
+        NOTE: Why is the grammar for annassign nd assign not same
+        on the rhs part?
+
+        Handle annotated assignment:
+            testlist_star_expr ":" test ["=" test]
+        
+        Examples:
+            x: int
+            x: int = 42
+            self.x: List[int] = []
+        """
+        if len(items) not in (2, 3):
+            raise TypeError(f"annassign: expected 2 or 3 items, got {len(items)}")
+
+        target_node = items[0]
+        annotation_node = items[1]
+        value_node = items[2] if len(items) == 3 else None
+
+        # --- Normalize target ---
+        if isinstance(target_node, list):
+            if len(target_node) != 1:
+                raise SyntaxError("Annotated assignment target must be a single name/attribute/subscript")
+            target_node = target_node[0]
+
+        target_node = self._to_store_target(target_node)
+        if value_node is not None:
+            value_node = self._normalize_value_for_expr(value_node)
+
+        simple_flag = isinstance(target_node, ast.Name)
+
+        return ast.AnnAssign(
+            target=target_node,
+            annotation=annotation_node,
+            value=value_node,
+            simple=int(simple_flag)
+        )
