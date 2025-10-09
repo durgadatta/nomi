@@ -61,11 +61,6 @@ def ensure_stmt_list(stmts):
             raise TypeError(f"Unknown node in statement list: {type(n)}")
     return out
 
-
-def tokval(t):
-    return t.value if isinstance(t, Token) else str(t)
-
-
 # --- Helper: recursively set Store() context for LHS ---
 def ensure_store(node):
     '''

@@ -7,26 +7,24 @@ but both are conceptually same
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr, tokval
+from prototype.parser.python import ensure_expr
 
 
 
 class IdentifierMixin:
-    # def NAME(self, token):
-    #         # Convert NAME token to ast.Name with context based on usage
-    #         if not isinstance(token, Token) or token.type != 'NAME':
-    #             raise ValueError(f"Expected NAME token, got {type(token)}: {token}")
-    #         # Default to Store for comprehension targets; override in expr contexts if needed
-    #         name_node = ast.Name(id=token.value, ctx=ast.Store())
-    #         return name_node
-
+    def NAME(self, token):
+        return token.value 
+    
     def name(self, items):
-        return tokval(items[0])
-
+        ''' almost always str form is used; in certain context ast.Name is required
+        such as class_pattern
+        '''
+        return items[0]
+    
     def var(self, items):
-        # items[0] might be Token or str
-        child = items[0]
-        name_node = ast.Name(id=tokval(child), ctx=ast.Load())
+        # name (as atom ) -> var
+        # name is routed to var; so it will always be string 
+        name_node = ast.Name(id=items[0], ctx=ast.Load())
         return name_node
         
 
