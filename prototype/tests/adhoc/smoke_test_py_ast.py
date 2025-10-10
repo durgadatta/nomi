@@ -12,9 +12,11 @@ from lark import Lark
 from prototype.parser.python.utils import generate_ast
 
 
+
+
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
-    sample_file = script_path.parents[3].joinpath('data', 'sample_sources', 'sample.py')
+    sample_file = script_path.parents[1].joinpath('data', 'sample_sources', 'sample.py')
     source_code = sample_file.read_text(encoding="utf-8")
 
     # Also parse Python's built-in AST
@@ -28,7 +30,7 @@ if __name__ == "__main__":
     python_ast_str = ast.dump(python_module, indent=2)
 
 
-    local_folder = script_path.parents[5].joinpath('local')
+    local_folder = script_path.parents[3].joinpath('local')
     (local_folder / "lark.ast").write_text(lark_ast_str, encoding="utf-8")
     (local_folder / "python.ast").write_text(python_ast_str, encoding="utf-8")
 
