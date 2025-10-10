@@ -16,7 +16,7 @@ from prototype.parser.python.utils import generate_ast
 
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
-    sample_file = script_path.parents[1].joinpath('data', 'sample_sources', 'sample.py')
+    sample_file = script_path.parents[1].joinpath('data', 'sample_sources', 'parser', 'sample.py')
     source_code = sample_file.read_text(encoding="utf-8")
 
     # Also parse Python's built-in AST

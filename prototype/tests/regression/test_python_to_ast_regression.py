@@ -7,7 +7,7 @@ from prototype.parser.python.ast_ import PythonASTTransformer
 from prototype.parser.python.utils import generate_ast
 
 # Directory containing test source files
-SAMPLE_DIR = Path(__file__).resolve().parents[1].joinpath('data', "sample_sources")
+SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/parser'
 ALL_SOURCES = SAMPLE_DIR.glob('*.py')
 
 
