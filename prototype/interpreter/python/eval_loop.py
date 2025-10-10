@@ -9,7 +9,7 @@ from prototype.interpreter.python.expressions import ExpresssionMixin
 from prototype.interpreter.python.ds import DataStructMixin
 from prototype.interpreter.python.control import ControlMixin
 from prototype.interpreter.python.patterns import PatternMixin
-from prototype.interpreter.python.klass import ClassMixin
+from prototype.interpreter.python.class_ import ClassMixin
 from prototype.interpreter.python.binding import BindingMixin
 from prototype.interpreter.python.others import OthersMixin
 
