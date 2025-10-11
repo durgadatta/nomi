@@ -166,6 +166,11 @@ class FunctionMixin:
         if callable(func) and not hasattr(func, "ast_node"):
             try:
                 return func(*posargs, **kwargs)
+            except StopIteration:
+                # ths is a control-signal from GeneratorState; don't wrap it
+                #TODO: are there any other control signal we need to intercept?
+                # what about Yield/FromException, ReturnException etc.
+                raise 
             except Exception as e:
                 raise RuntimeError(
                     f"Error calling built-in {getattr(func, '__name__', repr(func))} "

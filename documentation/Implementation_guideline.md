@@ -27,4 +27,4 @@
 
 
 # AI Tools Usage
-I have made fair use of ChatGPT, Grok, DeepSeek and Claude. Occasionally, it takes more time using them rather than not, but in general, it's helpful in setting up the infrastructure around parsing and evaluation, so that I can progress faster to the actual syntax layer.
+I have made fair use of ChatGPT, Grok, DeepSeek, Gemini, and Claude. Occasionally, it takes more time using them rather than not, but in general, it's helpful in setting up the infrastructure around parsing and evaluation, so that I can progress faster to the actual syntax layer.

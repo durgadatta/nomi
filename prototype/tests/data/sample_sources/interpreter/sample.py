@@ -96,6 +96,32 @@ import math
 angle = math.pi / 4
 trig_result = math.sin(angle) + math.cos(angle)
 
+
+#simple generator
+print('\n***testing simple generator****\n')
+def gen():
+    yield 1
+    yield 2
+    yield 3
+    yield 4
+
+g = gen()
+first_g = next(g)
+print(f'{first_g=}')
+second_g = next(g)
+print(f'{second_g=}')
+next(g)
+next(g)
+
+non_g = None
+try:
+    non_g = next(g)
+except StopIteration:
+    non_g = 'intercepted'
+    print('successfully intercepted StopIteration')
+print(f'{non_g=}')
+
+
 # Print results
 print(f"Nested list: {nested_list}")
 print(f"Nested dict: {nested_dict}")
