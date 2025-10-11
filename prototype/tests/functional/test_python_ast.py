@@ -8,7 +8,7 @@ from prototype.parser.python.utils import generate_ast
 
 PYTHON_SOURCES = (
     Path(__file__).resolve().parents[1]
-    .joinpath("data", "sample_sources")
+    .joinpath("data/sample_sources/parser")
     .glob('*.py')
 )
 
