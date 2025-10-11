@@ -3,7 +3,9 @@ from typing import Any, Dict, List, Optional, Tuple, Callable, Iterator, Set
 import builtins
 
 
-from prototype.interpreter.python.base import Environment, ControlException
+from prototype.interpreter.python.base import (
+    Environment, ControlException, ReturnException, BreakException, ContinueException, YieldException
+)
 from prototype.interpreter.python.function import FunctionMixin
 from prototype.interpreter.python.expressions import ExpresssionMixin
 from prototype.interpreter.python.ds import DataStructMixin
@@ -30,14 +32,23 @@ class Interpreter(
         method = getattr(self, f'eval_{node.__class__.__name__}', None)
         if method is None:
             raise NotImplementedError(f"Node type {node.__class__.__name__} not supported at line {self.get_lineno(node)}")
+
         try:
+            method = getattr(self, f"eval_{node.__class__.__name__}", None)
             return method(node)
-        except ControlException as ce:
+        except (ReturnException, BreakException, ContinueException, YieldException, StopIteration):
+            # Re-raise control flow exceptions unchanged
             raise
         except Exception as e:
-            raise RuntimeError(f"Error evaluating {node.__class__.__name__} at line {self.get_lineno(node)}: {str(e)}") from e
-
-
+            # Only wrap "unexpected" exceptions, not user-raised ones
+            if isinstance(e, (RuntimeError, TypeError, ValueError, NameError, AttributeError, SyntaxError)):
+                # These are likely user-raised or Python built-in exceptions
+                # Let them propagate for try-except blocks to catch
+                raise
+            else:
+                # Wrap other exceptions as interpreter errors
+                raise RuntimeError(f"Error evaluating {node.__class__.__name__} at line {self.get_lineno(node)}: {str(e)}") from e
+        
     def eval_Module(self, node: ast.Module) -> Any:
         for stmt in node.body:
             self.eval(stmt)

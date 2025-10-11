@@ -114,26 +114,37 @@ class ControlMixin:
 
     def eval_Try(self, node: ast.Try) -> None:
         exc = None
+        handler_executed = False
+        
         try:
             for stmt in node.body:
                 self.eval(stmt)
         except Exception as e:
             exc = e
-            handled = False
             for handler in node.handlers:
                 handler_type = self.eval(handler.type) if handler.type else None
                 if handler_type is None or isinstance(e, handler_type):
                     if handler.name:
                         self.current_env.set(handler.name, e)
+                    # Set flag and break out of try-except
+                    handler_executed = True
+                    break
+            if not handler_executed:
+                raise
+        
+        # Now execute handler body outside the try block
+        if handler_executed:
+            for handler in node.handlers:
+                handler_type = self.eval(handler.type) if handler.type else None
+                if handler_type is None or isinstance(exc, handler_type):
                     for stmt in handler.body:
                         self.eval(stmt)
-                    handled = True
                     break
-            if not handled:
-                raise
-        if not exc:
+        
+        if not exc:  # No exception occurred
             for stmt in node.orelse:
                 self.eval(stmt)
+        
         for stmt in node.finalbody:
             self.eval(stmt)
 

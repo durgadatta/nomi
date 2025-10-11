@@ -1,7 +1,7 @@
 import ast
 import pytest
 from pathlib import Path
-from typing import Mapping, Sequence, Set, Generator
+from typing import Mapping, Sequence, Set, Generator, Dict, Any
 import types
 import json
 
@@ -11,6 +11,8 @@ ALL_SOURCES = SAMPLE_DIR.glob('*.py')
 
 #TODO: put to utils; 
 from prototype.interpreter.python.eval_loop import Interpreter
+from prototype.interpreter.python.usage import run_eval_loop
+
 
 def run_ast(module: ast.Module) -> Dict[str, Any]:
     module = ast.fix_missing_locations(module)
@@ -32,15 +34,6 @@ def stabilize_value(value):
         return type(value)({stabilize_value(v) for v in value})
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
         return type(value)(stabilize_value(v) for v in value)
-    
-    # Special cases
-    # if isinstance(value, types.LambdaType):
-    #     return "lambda"
-    # if isinstance(value, Generator):
-    #     return "generator"
-    # if isinstance(value, types.ModuleType):
-    #     return value.__name__
-
     if (
             callable(value)
             or isinstance(value, (Generator, types.ModuleType))
@@ -68,8 +61,6 @@ def stabilize_locals(local_vars, exclude_private=True):
 @pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
 def test_python_eval_loop(source_file, file_regression):
     code = source_file.read_text()
-
-    tree = ast.parse(code)
-    bindings = run_ast(tree)
+    bindings = run_eval_loop(code=code)
     stable_bindings = json.dumps(stabilize_locals(bindings), indent=2)
     file_regression.check(stable_bindings)
