@@ -45,12 +45,20 @@
   "y": 20,
   "point_result": 30,
   "result": [
-    0
+    0,
+    1,
+    1,
+    2,
+    3
   ],
-  "total": 0,
-  "i": 0,
+  "total": -1,
+  "i": 3,
+  "e": "instance of:ValueError:class=<class 'type'>",
   "gen_sum": 0,
-  "slice_result": [],
+  "slice_result": [
+    1,
+    2
+  ],
   "math": "math:class=<class 'module'>",
   "angle": 0.7853981633974483,
   "trig_result": 1.414213562373095

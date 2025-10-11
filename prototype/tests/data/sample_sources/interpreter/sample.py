@@ -25,9 +25,12 @@ class MyContext:
 # Generator function
 def fibonacci(n):
     a, b = 0, 1
+    results = []
     for _ in range(n):
-        yield a
+        #yield a
+        results.append(a)
         a, b = b, a + b
+    return results
 
 # Decorated function with complex logic
 @retry(3)

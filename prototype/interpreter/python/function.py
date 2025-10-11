@@ -1,6 +1,6 @@
 from prototype.interpreter.python.base import Environment, GeneratorState
 import ast
-from typing import List, Any
+from typing import List, Any, Callable
 
 from prototype.interpreter.python.base import ReturnException
 
@@ -66,25 +66,20 @@ class FunctionMixin:
     def eval_Lambda(self, node: ast.Lambda) -> Callable:
         def lambda_func(*args, **kwargs):
             local_env = Environment(self, parent=self.current_env)
+            
+            # ⭐ FIXED: Use the same _bind_function_args logic as regular functions
+            self._bind_function_args(node, local_env, args, kwargs)
+            
             old_env = self.current_env
             self.current_env = local_env
-            arg_idx = 0
-            for param in node.args.args:
-                if arg_idx < len(args):
-                    local_env.set(param.arg, args[arg_idx])
-                elif param.arg in kwargs:
-                    local_env.set(param.arg, kwargs[param.arg])
-                else:
-                    raise TypeError(f"Missing required argument '{param.arg}' at line {self.get_lineno(node)}")
-                arg_idx += 1
-            for param, default in zip(node.args.args[-len(node.args.defaults):], node.args.defaults):
-                if param.arg not in local_env.bindings:
-                    local_env.set(param.arg, self.eval(default))
             try:
                 result = self.eval(node.body)
             finally:
                 self.current_env = old_env
             return result
+        
+        # ⭐ NEW: Attach AST node so _bind_function_args can access parameter info
+        lambda_func.ast_node = node
         return lambda_func
     
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
