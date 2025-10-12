@@ -132,6 +132,7 @@
     "5. GENERATOR FUNCTIONS",
     "Simple generator: [1, 2, 3]",
     "Fibonacci generator: [0, 1, 1, 2, 3, 5]",
+    "Fibonacci generator(while): [0, 1, 1, 2, 3, 5]",
     "Generator with loop: [0, 2, 4, 6, 8]",
     "next(gen): 1",
     "next(gen): 2",
