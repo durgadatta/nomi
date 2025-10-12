@@ -225,7 +225,6 @@ class FunctionMixin:
 
         # --- User-defined function or generator ---
         func_node = getattr(func, "ast_node", None)
-        closure_env = getattr(func, "closure_env", None)
         
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Just call the function - it will handle generator detection internally

@@ -1,5 +1,5 @@
 import ast
-from typing import Dict, Any, Iterator
+from typing import Dict, Any, Iterator, List
 
 class ControlException(Exception):
     pass
@@ -82,15 +82,11 @@ class GeneratorState:
         old_env = self.interpreter.current_env
         self.interpreter.current_env = self.env
         try:
-            # Check for compound state to resume
-            if self.compound_state:
-                return self._resume_compound_statement()
-
             # Execute statements sequentially
             while self.index < len(self.body):
                 stmt = self.body[self.index]
-                
                 try:
+                    # pass the state (self) so for/while can resume midway
                     if isinstance(stmt, ast.For):
                         self.interpreter.eval_For(stmt, self)
                     elif isinstance(stmt, ast.While): 
@@ -113,33 +109,6 @@ class GeneratorState:
             raise StopIteration(self.return_value)
         finally:
             self.interpreter.current_env = old_env
-
-    def _resume_compound_statement(self):
-        """Resumes a paused compound statement."""
-        state = self.compound_state
-        if not state:
-            return self.__next__()
-            
-        node = state['node']
-        
-        try:
-            if isinstance(node, ast.For):
-                self.interpreter.resume_For(node, self)
-            elif isinstance(node, ast.While):  # ADD THIS
-                self.interpreter.resume_While(node, self)  # ADD THIS
-            # Add other compound statement types here
-            
-        except YieldException as ye:
-            return ye.value
-            
-        except Exception:
-            self.compound_state = None
-            raise
-
-        # Compound statement finished
-        self.compound_state = None
-        self.index += 1
-        return self.__next__()
 
     def get_lineno(self) -> int:
         if self.compound_state:
