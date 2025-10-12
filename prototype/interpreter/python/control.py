@@ -191,7 +191,7 @@ class ControlMixin:
                 lineno = getattr(node, 'lineno', 1) 
                 raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
                 
-            assign_fn = getattr(self, "assign_target", None) or getattr(self, "_assign_target", None)
+            assign_fn = getattr(self, "assign_target", None)
             if assign_fn is None:
                 raise RuntimeError("No assignment helper found for blocking For loop.")
             
@@ -230,7 +230,7 @@ class ControlMixin:
         state = generator_state.compound_state
         iterator = state['iterator']
         
-        assign_fn = getattr(self, "assign_target", None) or getattr(self, "_assign_target", None)
+        assign_fn = getattr(self, "assign_target", None)
         if assign_fn is None:
             raise RuntimeError("No assignment helper found")
 
