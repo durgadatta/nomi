@@ -6,19 +6,6 @@ from prototype.interpreter.python.base import (
 )
 
 class ControlMixin:
-    def eval_While(self, node: ast.While) -> None:
-        while self.eval(node.test):
-            try:
-                for stmt in node.body:
-                    self.eval(stmt)
-            except BreakException:
-                break
-            except ContinueException:
-                continue
-        else:
-            for stmt in node.orelse:
-                self.eval(stmt)
-
     def eval_If(self, node: ast. ast.If) -> None:
         if self.eval(node.test):
             for stmt in node.body:
@@ -302,3 +289,88 @@ class ControlMixin:
             
         start_index = state['body_index']
         self._execute_for_loop(node, generator_state, start_index)
+
+    def eval_While(self, node: ast.While, generator_state: 'GeneratorState'=None) -> None:
+        """Evaluate a While loop node."""
+        
+        # Non-generator case (blocking execution)
+        if generator_state is None:
+            while self.eval(node.test):
+                try:
+                    for stmt in node.body:
+                        self.eval(stmt)
+                except BreakException:
+                    break
+                except ContinueException:
+                    continue
+            else:
+                for stmt in node.orelse:
+                    self.eval(stmt)
+            return
+
+        # Generator case
+        if generator_state.compound_state and generator_state.compound_state.get('type') == 'While':
+            # Resuming existing while loop
+            self._execute_while_loop(node, generator_state, generator_state.compound_state['body_index'])
+        else:
+            # Starting new while loop
+            generator_state.compound_state = {
+                'type': 'While', 
+                'node': node,
+                'body_index': 0, 
+                'broke': False,
+                'iteration': 0
+            }
+            
+            self._execute_while_loop(node, generator_state, 0)
+    def _execute_while_loop(self, node: ast.While, generator_state: 'GeneratorState', start_index: int):
+        """Execute a while loop, handling yields and resumption."""
+        state = generator_state.compound_state
+        
+        # Check condition first (only at start of loop iteration)
+        if start_index == 0:
+            condition = self.eval(node.test)
+            if not condition:
+                state['broke'] = False
+                for stmt in node.orelse:
+                    self.eval(stmt)
+                generator_state.compound_state = None
+                return
+            state['iteration'] += 1
+        
+        # Execute loop body
+        for i in range(start_index, len(node.body)):
+            stmt = node.body[i]            
+            try:
+                self.eval(stmt)
+            except YieldException as ye:
+                # Yield encountered - pause execution
+                state['body_index'] = i
+                # Re-raise the YieldException to be caught by the main generator loop
+                raise
+            except BreakException:
+                state['broke'] = True
+                generator_state.compound_state = None
+                return
+            except ContinueException:
+                state['body_index'] = 0
+                self._execute_while_loop(node, generator_state, 0)
+                return
+        
+        # If we completed the body without break/continue/yield, start next iteration
+        if not state.get('broke', False):
+            state['body_index'] = 0
+            self._execute_while_loop(node, generator_state, 0)
+        else:
+            generator_state.compound_state = None
+
+    def resume_While(self, node: ast.While, generator_state: 'GeneratorState'):
+        """Resume execution of a paused While loop."""
+        state = generator_state.compound_state
+        if not state:
+            return
+            
+        start_index = state['body_index']
+        
+        # Resume from the NEXT statement after the yield
+        self._execute_while_loop(node, generator_state, start_index + 1)

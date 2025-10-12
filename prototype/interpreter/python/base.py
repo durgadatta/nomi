@@ -93,9 +93,10 @@ class GeneratorState:
                 try:
                     if isinstance(stmt, ast.For):
                         self.interpreter.eval_For(stmt, self)
+                    elif isinstance(stmt, ast.While): 
+                        self.interpreter.eval_While(stmt, self)
                     else:
                         self.interpreter.eval(stmt)
-                    
                     self.index += 1
                 
                 except YieldException as ye:
@@ -124,6 +125,8 @@ class GeneratorState:
         try:
             if isinstance(node, ast.For):
                 self.interpreter.resume_For(node, self)
+            elif isinstance(node, ast.While):  # ADD THIS
+                self.interpreter.resume_While(node, self)  # ADD THIS
             # Add other compound statement types here
             
         except YieldException as ye:
@@ -145,6 +148,10 @@ class GeneratorState:
                 idx = self.compound_state['body_index']
                 if idx < len(node.body):
                     return getattr(node.body[idx], 'lineno', 1)
+            elif self.compound_state['type'] == 'While':  # ADD THIS
+                idx = self.compound_state['body_index']  # ADD THIS
+                if idx < len(node.body):  # ADD THIS
+                    return getattr(node.body[idx], 'lineno', 1)  # ADD THIS
             return getattr(node, 'lineno', 1)
 
         if self.index < len(self.body):

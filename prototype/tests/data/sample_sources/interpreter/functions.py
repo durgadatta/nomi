@@ -115,6 +115,7 @@ def generator_with_loop(n):
 # Test generators
 print("Simple generator:", list(simple_generator()))
 print("Fibonacci generator:", list(fibonacci_generator(6)))
+print("Fibonacci generator(while):", list(fibonacci_generator_while(6)))
 print("Generator with loop:", list(generator_with_loop(5)))
 
 # Test generator iteration
@@ -317,7 +318,8 @@ test_results = {
     "closures": outer_function(10)(5) == 15,
     "generators": all([
         list(simple_generator()) == [1, 2, 3],
-        list(fibonacci_generator(5)) == [0, 1, 1, 2, 3]
+        list(fibonacci_generator(5)) == [0, 1, 1, 2, 3],
+        list(fibonacci_generator_while(5)) == [0, 1, 1, 2, 3]
     ]),
     "recursion": factorial(5) == 120,
     "decorators": decorated_add(3, 4) == 7,
