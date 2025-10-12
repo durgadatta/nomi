@@ -1,8 +1,8 @@
 {
-  "retry": "func:class=<class 'function'>",
+  "retry": "retry:class=<class 'function'>",
   "MyContext": "MyContext:class=<class 'type'>",
-  "fibonacci": "func:class=<class 'function'>",
-  "risky_operation": "func:class=<class 'function'>",
+  "fibonacci": "fibonacci:class=<class 'function'>",
+  "risky_operation": "risky_operation:class=<class 'function'>",
   "Point": "Point:class=<class 'type'>",
   "p": "instance of:Point:class=<class 'type'>",
   "nested_list": [
@@ -35,7 +35,7 @@
     }
   },
   "complex_lambda": "lambda_func:class=<class 'function'>",
-  "gen_exp": "gen:class=<class 'generator'>",
+  "gen_exp": "gen_func:class=<class 'generator'>",
   "data": {
     "type": "point",
     "x": 10,
@@ -62,7 +62,7 @@
   "math": "math:class=<class 'module'>",
   "angle": 0.7853981633974483,
   "trig_result": 1.414213562373095,
-  "gen": "func:class=<class 'function'>",
+  "gen": "gen:class=<class 'function'>",
   "g": "instance of:GeneratorState:class=<class 'type'>",
   "first_g": 1,
   "second_g": 2,

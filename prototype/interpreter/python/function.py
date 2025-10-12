@@ -13,7 +13,22 @@ class FunctionMixin:
                 old_env = self.current_env
                 self.current_env = Environment(self, parent=old_env)
                 dec_func = self.eval(dec)
+                
+                # Store all original attributes
+                original_attrs = {}
+                for attr_name in ['__name__', 'ast_node', 'closure_env']:
+                    if hasattr(obj, attr_name):
+                        original_attrs[attr_name] = getattr(obj, attr_name)
+                
+                # Apply the decorator
                 obj = dec_func(obj)
+                
+                # If the decorator returned a function without these attributes, restore them
+                if callable(obj):
+                    for attr_name, attr_value in original_attrs.items():
+                        if not hasattr(obj, attr_name):
+                            setattr(obj, attr_name, attr_value)
+                            
                 self.current_env = old_env
             except Exception as e:
                 self.current_env = old_env
@@ -44,46 +59,59 @@ class FunctionMixin:
         return is_generator
 
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
+        #print(f"🚀 DEBUG: Defining function {node.name}")
         closure_env = self.current_env
         
-        def func(*args, **kwargs):            
+        def func(*args, **kwargs):
+            # Use the actual function name in debug output, not the local variable name
+            actual_name = getattr(func, '__name__', node.name)
+            #print(f"📞 DEBUG: Calling function {actual_name} with args={args}, kwargs={kwargs}")
+            
             is_generator = self._is_generator_function(node)
             
             if is_generator:
                 local_env = Environment(self, parent=closure_env)
                 self._bind_function_args(node, local_env, args, kwargs)
                 gen = GeneratorState(self, node.body, local_env)
+                #print(f"🎯 DEBUG: Returning GeneratorState for {actual_name}: {gen}")
                 return gen
             else:
-                # Regular function: execute the body normally
                 local_env = Environment(self, parent=closure_env)
                 self._bind_function_args(node, local_env, args, kwargs)
                 
                 old_env = self.current_env
                 self.current_env = local_env
                 try:
+                    #print(f"▶️  DEBUG: Executing function {actual_name} body")
                     for stmt in node.body:
                         self.eval(stmt)
+                    #print(f"✅ DEBUG: Function {actual_name} completed normally")
                     return None
                 except ReturnException as re:
+                    #print(f"↩️  DEBUG: Function {actual_name} returning: {re.value}")
                     return re.value
-                except BreakException:
-                    raise SyntaxError(f"'break' outside loop at line {self.get_lineno(node)}")
-                except ContinueException:
-                    raise SyntaxError(f"'continue' outside loop at line {self.get_lineno(node)}")
+                except (BreakException, ContinueException) as e:
+                    raise SyntaxError(f"'{type(e).__name__}' outside loop at line {self.get_lineno(node)}")
                 finally:
                     self.current_env = old_env
 
+        # ⭐ CRITICAL: Always set the function name
+        func.__name__ = node.name
         func.closure_env = closure_env
         func.ast_node = node
         
-        # Apply decorators and store the function
+        # Apply decorators
         old_env = self.current_env
         self.current_env = closure_env
-        func = self.apply_decorators(func, node.decorator_list)
+        decorated_func = self.apply_decorators(func, node.decorator_list)
         self.current_env = old_env
         
-        self.current_env.set(node.name, func)
+        # ⭐ Ensure the decorated function has the right name
+        if not hasattr(decorated_func, '__name__') or decorated_func.__name__ == 'wrapper':
+            decorated_func.__name__ = node.name
+        
+        self.current_env.set(node.name, decorated_func)
+        #print(f"✅ DEBUG: Stored function {node.name} in environment")
 
     def eval_Lambda(self, node: ast.Lambda) -> Any:
         closure_env = self.current_env  # ⭐ Capture the current environment
