@@ -282,7 +282,6 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         Handle slice: ([test] ":" [test] [sliceop]).
         Expects items as [lower, upper, step] (already transformed ast.expr nodes).
         """
-        print(f"slice: items={items}, len={len(items)}")  # Debug
         lower = items[0] if items and items[0] is not None else None
         upper = None
         step = None
@@ -290,7 +289,6 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             upper = items[1] if items[1] is not None else None
         if len(items) >= 3:
             step = items[2] if items[2] is not None else None
-        print(f"slice: lower={lower}, upper={upper}, step={step}")  # Debug
         return ast.Slice(lower=lower, upper=upper, step=step)
 
     def sliceop(self, items):

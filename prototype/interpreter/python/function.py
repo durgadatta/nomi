@@ -2,7 +2,9 @@ from prototype.interpreter.python.base import Environment, GeneratorState
 import ast
 from typing import List, Any, Callable
 
-from prototype.interpreter.python.base import ReturnException, BreakException, ContinueException
+from prototype.interpreter.python.base import (
+    ReturnException, BreakException, ContinueException, YieldException
+)
 
 class FunctionMixin:
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
@@ -17,43 +19,63 @@ class FunctionMixin:
                 self.current_env = old_env
                 raise RuntimeError(f"Error applying decorator at line {self.get_lineno(dec)}: {str(e)}") from e
         return obj
+    
+    def _is_generator_function(self, node: ast.FunctionDef) -> bool:
+        """Determine if a function is a generator by checking for yield statements, skipping nested functions."""
+        
+        def _check_for_yield(node: ast.AST) -> bool:
+            """Recursively check for yield in this node and its children, skipping nested functions."""
+            # Check current node
+            if isinstance(node, (ast.Yield, ast.YieldFrom)):
+                return True
+            
+            # Check children, but skip nested function/class definitions
+            for child in ast.iter_child_nodes(node):
+                # Skip function and class definitions - don't descend into them
+                if isinstance(child, (ast.FunctionDef, ast.ClassDef)):
+                    continue
+                if _check_for_yield(child):
+                    return True
+            return False
+
+        # Just use the recursive function on the entire function body
+        # It will automatically skip nested functions due to the check in _check_for_yield
+        is_generator = _check_for_yield(node)
+        return is_generator
 
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
-        # Check if it's a generator function
-        is_generator = any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in ast.walk(node))
+        closure_env = self.current_env
         
-        def func(*args, **kwargs):
-            # Create local environment for function execution
-            local_env = Environment(self, parent=closure_env)
+        def func(*args, **kwargs):            
+            is_generator = self._is_generator_function(node)
             
-            # Bind function arguments using the same logic as in eval_Call
-            self._bind_function_args(node, local_env, args, kwargs)
-            
-            # For generator functions, return GeneratorState
             if is_generator:
-                return GeneratorState(self, node.body, local_env)
-            
-            # For normal functions, execute immediately
-            old_env = self.current_env
-            self.current_env = local_env
-            try:
-                for stmt in node.body:
-                    self.eval(stmt)
-                return None
-            except ReturnException as re:
-                return re.value
-            except BreakException:
-                raise SyntaxError(f"'break' outside loop at line {self.get_lineno(node)}")
-            except ContinueException:
-                raise SyntaxError(f"'continue' outside loop at line {self.get_lineno(node)}")
-            finally:
-                self.current_env = old_env
+                local_env = Environment(self, parent=closure_env)
+                self._bind_function_args(node, local_env, args, kwargs)
+                gen = GeneratorState(self, node.body, local_env)
+                return gen
+            else:
+                # Regular function: execute the body normally
+                local_env = Environment(self, parent=closure_env)
+                self._bind_function_args(node, local_env, args, kwargs)
+                
+                old_env = self.current_env
+                self.current_env = local_env
+                try:
+                    for stmt in node.body:
+                        self.eval(stmt)
+                    return None
+                except ReturnException as re:
+                    return re.value
+                except BreakException:
+                    raise SyntaxError(f"'break' outside loop at line {self.get_lineno(node)}")
+                except ContinueException:
+                    raise SyntaxError(f"'continue' outside loop at line {self.get_lineno(node)}")
+                finally:
+                    self.current_env = old_env
 
-        # Create closure environment capturing the current environment
-        closure_env = Environment(self, parent=self.current_env)
-        func.closure_env = closure_env  # Attach closure environment
-        func.ast_node = node  # Attach AST node for parameter names
-        func.is_generator = is_generator  # Mark if it's a generator
+        func.closure_env = closure_env
+        func.ast_node = node
         
         # Apply decorators and store the function
         old_env = self.current_env
@@ -63,25 +85,24 @@ class FunctionMixin:
         
         self.current_env.set(node.name, func)
 
-    def eval_Lambda(self, node: ast.Lambda) -> Callable:
+    def eval_Lambda(self, node: ast.Lambda) -> Any:
+        closure_env = self.current_env  # ⭐ Capture the current environment
+        
         def lambda_func(*args, **kwargs):
-            local_env = Environment(self, parent=self.current_env)
-            
-            # ⭐ FIXED: Use the same _bind_function_args logic as regular functions
+            local_env = Environment(self, parent=closure_env)  # ⭐ Use the captured closure
             self._bind_function_args(node, local_env, args, kwargs)
             
             old_env = self.current_env
             self.current_env = local_env
             try:
-                result = self.eval(node.body)
+                return self.eval(node.body)
             finally:
                 self.current_env = old_env
-            return result
         
-        # ⭐ NEW: Attach AST node so _bind_function_args can access parameter info
+        lambda_func.closure_env = closure_env
         lambda_func.ast_node = node
         return lambda_func
-    
+
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []
@@ -143,8 +164,7 @@ class FunctionMixin:
         - decorators (native or interpreted)
         """
         func = self.eval(node.func)
-
-        # Evaluate arguments (your existing code is fine)
+        # Evaluate arguments
         posargs = []
         for arg in node.args:
             if isinstance(arg, ast.Starred):
@@ -167,9 +187,7 @@ class FunctionMixin:
             try:
                 return func(*posargs, **kwargs)
             except StopIteration:
-                # ths is a control-signal from GeneratorState; don't wrap it
-                #TODO: are there any other control signal we need to intercept?
-                # what about Yield/FromException, ReturnException etc.
+                # This is a control-signal from GeneratorState; don't wrap it
                 raise 
             except Exception as e:
                 raise RuntimeError(
@@ -179,29 +197,11 @@ class FunctionMixin:
 
         # --- User-defined function or generator ---
         func_node = getattr(func, "ast_node", None)
-        closure_env = getattr(func, "closure_env", self.current_env)
-
+        closure_env = getattr(func, "closure_env", None)
+        
         if func_node and isinstance(func_node, ast.FunctionDef):
-            # Create call environment
-            call_env = Environment(self, parent=closure_env)
-            self._bind_function_args(func_node, call_env, posargs, kwargs)
-
-            # Generator function - return the generator state object
-            if getattr(func, "is_generator", False):
-                return GeneratorState(self, func_node.body, call_env)
-
-            # Normal function
-            old_env = self.current_env
-            self.current_env = call_env
-            try:
-                for stmt in func_node.body:
-                    self.eval(stmt)
-            except ReturnException as re:
-                return re.value
-            finally:
-                self.current_env = old_env
-
-            return None
+            # Just call the function - it will handle generator detection internally
+            return func(*posargs, **kwargs)
 
         # --- Class instantiation ---
         if isinstance(func, type):
@@ -234,7 +234,11 @@ class FunctionMixin:
 
         # Check if it's an interpreted method
         func_node = getattr(init_method, "ast_node", None)
-        closure_env = getattr(init_method, "closure_env", self.current_env)
+        closure_env = getattr(init_method, "closure_env", None)
+        
+        # If no explicit closure_env, use current environment
+        if closure_env is None:
+            closure_env = self.current_env
 
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Interpreted __init__
@@ -268,4 +272,5 @@ class FunctionMixin:
         return instance
 
     def eval_Return(self, node: ast.Return) -> None:
-        raise ReturnException(self.eval(node.value))
+        value = self.eval(node.value) if node.value else None
+        raise ReturnException(value)

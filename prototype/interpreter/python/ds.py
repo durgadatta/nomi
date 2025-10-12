@@ -140,9 +140,6 @@ class DataStructMixin:
         except ValueError as e:
             raise ValueError(f"Invalid format specification at line {self.get_lineno(node)}: {str(e)}") from e
 
-    def eval_JoinedStr(self, node: ast.JoinedStr) -> str:
-        return ''.join(self.eval(v) for v in node.values)
-
     def eval_Constant(self, node: ast.Constant) -> Any:
         return node.value
     
@@ -157,3 +154,25 @@ class DataStructMixin:
         upper = self.eval(node.upper) if node.upper else None
         step = self.eval(node.step) if node.step else None
         return slice(lower, upper, step)
+    
+    def eval_JoinedStr(self, node: ast.JoinedStr):
+        """Evaluate f-strings and joined strings."""
+        parts = []
+        for value_node in node.values:
+            if isinstance(value_node, ast.Constant):
+                parts.append(str(value_node.value))
+            elif isinstance(value_node, ast.FormattedValue):
+                # Evaluate the expression inside {}
+                value = self.eval(value_node.value)
+                # Apply formatting if specified
+                if value_node.format_spec:
+                    format_spec = self._eval_format_spec(value_node.format_spec)
+                    parts.append(format(value, format_spec))
+                else:
+                    parts.append(str(value))
+            else:
+                # Handle other node types if needed
+                value = self.eval(value_node)
+                parts.append(str(value))
+        
+        return ''.join(parts)
