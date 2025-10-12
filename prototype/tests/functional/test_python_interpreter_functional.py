@@ -32,3 +32,5 @@ def test_eval_loop(source_file, capsys):
         python_stdout = io.StringIO()
         with contextlib.redirect_stdout(python_stdout):
             exec(compile(code, 'test', 'exec'))
+
+    assert eval_loop_stdout.getvalue() == python_stdout.getvalue()

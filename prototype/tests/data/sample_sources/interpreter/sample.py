@@ -116,8 +116,13 @@ try:
 except StopIteration:
     non_g = 'intercepted'
     print('successfully intercepted StopIteration')
-print(f'{non_g=}')
 
+#f'{a=}' is not yet supported; 
+# comprehensive f-string support is tedious
+print(f'non_g={non_g}')
+
+
+fstring_test = f'first_g={first_g}'
 
 # Print results
 print(f"Nested list: {nested_list}")
