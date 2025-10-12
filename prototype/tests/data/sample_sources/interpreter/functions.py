@@ -95,6 +95,13 @@ def simple_generator():
 
 def fibonacci_generator(limit):
     a, b = 0, 1
+    for _ in range(limit):
+        yield a
+        a, b = b, a + b
+
+#this still does not work, to be fixed
+def fibonacci_generator_while(limit):
+    a, b = 0, 1
     count = 0
     while count < limit:
         yield a
