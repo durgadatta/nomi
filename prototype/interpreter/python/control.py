@@ -153,11 +153,79 @@ class ControlMixin:
         if not self.eval(node.test):
             msg = self.eval(node.msg) if node.msg else None
             raise AssertionError(msg)
+
+    def _setup_loop_state(self, generator_state, node_type, node, **extra_state):
+        """Common setup for loop compound state."""
+        base_state = {
+            'type': node_type,
+            'node': node, 
+            'body_index': 0,
+            'broke': False
+        }
+        base_state.update(extra_state)
+        generator_state.compound_state = base_state
+
+    def _should_resume_loop(self, generator_state, expected_type):
+        """Check if we should resume a loop."""
+        return (generator_state.compound_state and 
+                generator_state.compound_state.get('type') == expected_type)
+
+    def _handle_loop_completion(self, node, generator_state):
+        """Handle loop completion (else clause and state cleanup)."""
+        state = generator_state.compound_state
+        if not state.get('broke', False) and hasattr(node, 'orelse') and node.orelse:
+            for stmt in node.orelse:
+                self.eval(stmt)
+        generator_state.compound_state = None
+
+    # For Loop Implementation (minimal changes)
+    def eval_For(self, node: ast.For, generator_state: 'GeneratorState'=None) -> None:
+        """Evaluate a For loop node."""
         
+        # Non-generator case (blocking execution)
+        if generator_state is None:
+            iter_obj = self.eval(node.iter)
+            try:
+                iterator = iter(iter_obj)
+            except TypeError as e:
+                lineno = getattr(node, 'lineno', 1) 
+                raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
+                
+            assign_fn = getattr(self, "assign_target", None) or getattr(self, "_assign_target", None)
+            if assign_fn is None:
+                raise RuntimeError("No assignment helper found for blocking For loop.")
+            
+            broke = False
+            for item in iterator:
+                assign_fn(node.target, item)
+                try:
+                    for stmt in node.body:
+                        self.eval(stmt)
+                except BreakException:
+                    broke = True
+                    break
+                except ContinueException:
+                    continue
+            
+            if not broke:
+                for stmt in node.orelse:
+                    self.eval(stmt)
+            return
+
+        # Generator case
+        if self._should_resume_loop(generator_state, 'For'):
+            # Resuming existing for loop
+            self._execute_for_loop(node, generator_state, generator_state.compound_state['body_index'])
+        else:
+            # Starting new for loop
+            iter_obj = self.eval(node.iter)
+            iterator = iter(iter_obj)
+            self._setup_loop_state(generator_state, 'For', node, iterator=iterator)
+            self._execute_for_loop(node, generator_state, 0)
 
     def _execute_for_loop(self, node: ast.For, generator_state: 'GeneratorState', start_index: int):
         """
-        Internal, resume-aware loop executor.
+        Internal, resume-aware for loop executor.
         """
         state = generator_state.compound_state
         iterator = state['iterator']
@@ -189,13 +257,10 @@ class ControlMixin:
                     except YieldException as ye:
                         # Save the NEXT index to execute
                         i += 1 # yield statement is now processed
-                        generator_state.compound_state = {
-                            'type': 'For', 
-                            'node': node, 
-                            'iterator': iterator,
+                        state.update({
                             'body_index': i, 
                             'broke': broke
-                        }
+                        })
                         raise ye
                     except BreakException:
                         broke = True
@@ -220,66 +285,7 @@ class ControlMixin:
             raise
         
         # Loop completed
-        generator_state.compound_state = None
-        if not broke and hasattr(node, 'orelse'):
-            for stmt in node.orelse:
-                self.eval(stmt)
-
-    def eval_For(self, node: ast.For, generator_state: 'GeneratorState'=None) -> None:
-        """Evaluate a For loop node."""
-        
-        # Non-generator case (blocking execution)
-        if generator_state is None:
-            iter_obj = self.eval(node.iter)
-            try:
-                iterator = iter(iter_obj)
-            except TypeError as e:
-                lineno = getattr(node, 'lineno', 1) 
-                raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
-                
-            assign_fn = getattr(self, "assign_target", None) or getattr(self, "_assign_target", None)
-            if assign_fn is None:
-                raise RuntimeError("No assignment helper found for blocking For loop.")
-            
-            broke = False
-            
-            try:
-                for item in iterator:
-                    assign_fn(node.target, item)
-                    try:
-                        for stmt in node.body:
-                            self.eval(stmt)
-                    except BreakException:
-                        broke = True
-                        break
-                    except ContinueException:
-                        continue
-            except Exception:
-                raise
-            
-            if not broke:
-                for stmt in node.orelse:
-                    self.eval(stmt)
-            return
-
-        # Generator case
-        if generator_state.compound_state and generator_state.compound_state.get('type') == 'For':
-            # Resuming existing for loop
-            self._execute_for_loop(node, generator_state, generator_state.compound_state['body_index'])
-        else:
-            # Starting new for loop
-            iter_obj = self.eval(node.iter)
-            iterator = iter(iter_obj)
-
-            generator_state.compound_state = {
-                'type': 'For', 
-                'node': node, 
-                'iterator': iterator,
-                'body_index': 0, 
-                'broke': False
-            }
-            
-            self._execute_for_loop(node, generator_state, 0)
+        self._handle_loop_completion(node, generator_state)
 
     def resume_For(self, node: ast.For, generator_state: 'GeneratorState'):
         """Resume execution of a paused For loop."""
@@ -290,6 +296,7 @@ class ControlMixin:
         start_index = state['body_index']
         self._execute_for_loop(node, generator_state, start_index)
 
+    # While Loop Implementation (minimal changes)  
     def eval_While(self, node: ast.While, generator_state: 'GeneratorState'=None) -> None:
         """Evaluate a While loop node."""
         
@@ -309,20 +316,14 @@ class ControlMixin:
             return
 
         # Generator case
-        if generator_state.compound_state and generator_state.compound_state.get('type') == 'While':
+        if self._should_resume_loop(generator_state, 'While'):
             # Resuming existing while loop
             self._execute_while_loop(node, generator_state, generator_state.compound_state['body_index'])
         else:
             # Starting new while loop
-            generator_state.compound_state = {
-                'type': 'While', 
-                'node': node,
-                'body_index': 0, 
-                'broke': False,
-                'iteration': 0
-            }
-            
+            self._setup_loop_state(generator_state, 'While', node, iteration=0)
             self._execute_while_loop(node, generator_state, 0)
+
     def _execute_while_loop(self, node: ast.While, generator_state: 'GeneratorState', start_index: int):
         """Execute a while loop, handling yields and resumption."""
         state = generator_state.compound_state
@@ -331,16 +332,16 @@ class ControlMixin:
         if start_index == 0:
             condition = self.eval(node.test)
             if not condition:
+                # Loop finished, execute else clause
                 state['broke'] = False
-                for stmt in node.orelse:
-                    self.eval(stmt)
-                generator_state.compound_state = None
+                self._handle_loop_completion(node, generator_state)
                 return
-            state['iteration'] += 1
+            state['iteration'] = state.get('iteration', 0) + 1
         
         # Execute loop body
         for i in range(start_index, len(node.body)):
-            stmt = node.body[i]            
+            stmt = node.body[i]
+            
             try:
                 self.eval(stmt)
             except YieldException as ye:
@@ -371,6 +372,5 @@ class ControlMixin:
             return
             
         start_index = state['body_index']
-        
         # Resume from the NEXT statement after the yield
         self._execute_while_loop(node, generator_state, start_index + 1)
