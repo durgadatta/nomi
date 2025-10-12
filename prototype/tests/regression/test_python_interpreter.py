@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Mapping, Sequence, Set, Generator, Dict, Any
 import types
 import json
+import io
+import contextlib
 
 # Directory containing test source files
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
@@ -59,8 +61,17 @@ def stabilize_locals(local_vars, exclude_private=True):
 
 
 @pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
-def test_python_eval_loop(source_file, file_regression):
+def test_python_eval_loop(source_file, file_regression, capsys):
     code = source_file.read_text()
-    bindings = run_eval_loop(code=code)
-    stable_bindings = json.dumps(stabilize_locals(bindings), indent=2)
+
+    eval_loop_stdout = io.StringIO()
+    with capsys.disabled():
+        with contextlib.redirect_stdout(eval_loop_stdout):
+            bindings = run_eval_loop(code=code)
+        stdout_value = eval_loop_stdout.getvalue().split('\n')
+    
+    stable_bindings = stabilize_locals(bindings)
+    stable_bindings['stdout'] = stdout_value
+    stable_bindings = json.dumps(stable_bindings, indent=2)
+    
     file_regression.check(stable_bindings)

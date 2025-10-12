@@ -2,7 +2,7 @@ from prototype.interpreter.python.base import Environment, GeneratorState
 import ast
 from typing import List, Any, Callable
 
-from prototype.interpreter.python.base import ReturnException
+from prototype.interpreter.python.base import ReturnException, BreakException, ContinueException
 
 class FunctionMixin:
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
