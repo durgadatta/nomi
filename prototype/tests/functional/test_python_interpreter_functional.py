@@ -29,8 +29,15 @@ def test_eval_loop(source_file, capsys):
             run_eval_loop(code=code)
         
         #baseline
+        # Capture Python exec output - Better approach
         python_stdout = io.StringIO()
         with contextlib.redirect_stdout(python_stdout):
-            exec(compile(code, 'test', 'exec'))
+            # Create a proper module-like namespace
+            namespace = {'__name__': '__main__'}
+            exec(compile(code, 'test', 'exec'), namespace)
+            # For recursive functions to work, we need to handle the case where
+            # functions reference themselves. This approach usually works better.
+    
+    assert eval_loop_stdout.getvalue() == python_stdout.getvalue()
 
     assert eval_loop_stdout.getvalue() == python_stdout.getvalue()

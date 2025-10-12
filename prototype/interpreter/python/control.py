@@ -135,9 +135,6 @@ class ControlMixin:
                 # Execute the body from current start_index
                 i = start_index
                 
-                # Reset start_index for next iteration (if we complete the body)
-                start_index = 0
-                
                 while i < len(node.body):
                     stmt = node.body[i]
                     try:
@@ -145,11 +142,12 @@ class ControlMixin:
                         i += 1
                     except YieldException as ye:
                         # Save the NEXT index to execute
+                        i += 1 # yield statement is now processed
                         generator_state.compound_state = {
                             'type': 'For', 
                             'node': node, 
                             'iterator': iterator,
-                            'body_index': i + 1,  # Save NEXT index (we've completed this statement)
+                            'body_index': i, 
                             'broke': broke
                         }
                         raise ye
@@ -158,6 +156,12 @@ class ControlMixin:
                         break
                     except ContinueException:
                         break  # Break out of inner while, continue to next iteration
+                
+                if i >= len(node.body):
+                    start_index = 0  # Move to next iteration
+                else:
+                    # We broke out mid-body (due to break/continue), preserve the break
+                    break
                 
                 # Check if we broke out due to break
                 if broke:

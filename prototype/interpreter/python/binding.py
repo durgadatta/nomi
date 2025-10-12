@@ -100,7 +100,7 @@ class BindingMixin:
     def eval_AugAssign(self, node: ast.AugAssign) -> None:
         old_value = self.eval_target(node.target)
         op_value = self.eval(node.value)
-        new_value = self.apply_operator(old_value, node.op, op_value)
+        new_value = self.apply_operator(old_value, node.op, op_value, node)
         self.assign_target(node.target, new_value)
 
     def eval_AnnAssign(self, node: ast.AnnAssign) -> None:

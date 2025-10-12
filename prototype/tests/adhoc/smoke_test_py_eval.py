@@ -7,7 +7,7 @@ from pathlib import Path
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
 
 if __name__ == "__main__":
-    file_path = SAMPLE_DIR.joinpath('sample.py')
+    file_path = SAMPLE_DIR.joinpath('functions.py')
     bindings = run_eval_loop(file_name=file_path)
     print("\nGlobal Environment:")
     for key, value in bindings.items():

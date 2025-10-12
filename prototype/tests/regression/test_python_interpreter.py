@@ -33,7 +33,8 @@ def stabilize_value(value):
     if isinstance(value, Mapping):
         return type(value)({k: stabilize_value(v) for k, v in value.items()})
     if isinstance(value, Set):
-        return type(value)({stabilize_value(v) for v in value})
+        # set are not json-serializable
+        return str(type(value)({stabilize_value(v) for v in value}))
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
         return type(value)(stabilize_value(v) for v in value)
     if (

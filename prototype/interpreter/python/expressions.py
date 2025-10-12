@@ -1,4 +1,5 @@
 import ast
+from typing import Any
 
 class ExpresssionMixin:
     def eval_Global(self, node: ast.Global) -> None:
@@ -32,14 +33,16 @@ class ExpresssionMixin:
     def eval_BinOp(self, node: ast.BinOp) -> Any:
         left = self.eval(node.left)
         right = self.eval(node.right)
-        return self.apply_operator(left, node.op, right)
+        return self.apply_operator(left, node.op, right, node)
 
-    def apply_operator(self, left: Any, op: ast.operator, right: Any) -> Any:
-        op_map = {
+    def apply_operator(self, left, op, right, node=None):
+        """Apply binary operator with proper error handling."""
+        operator_map = {
             ast.Add: lambda l, r: l + r,
             ast.Sub: lambda l, r: l - r,
             ast.Mult: lambda l, r: l * r,
             ast.Div: lambda l, r: l / r,
+            ast.FloorDiv: lambda l, r: l // r,
             ast.Mod: lambda l, r: l % r,
             ast.Pow: lambda l, r: l ** r,
             ast.LShift: lambda l, r: l << r,
@@ -47,16 +50,24 @@ class ExpresssionMixin:
             ast.BitOr: lambda l, r: l | r,
             ast.BitXor: lambda l, r: l ^ r,
             ast.BitAnd: lambda l, r: l & r,
-            ast.FloorDiv: lambda l, r: l // r,
+            ast.MatMult: lambda l, r: l @ r,
         }
-        func = op_map.get(type(op))
-        if func is None:
-            raise NotImplementedError(f"Operator {type(op).__name__} not supported at line {self.get_lineno(node)}")
+        
         try:
-            return func(left, right)
+            if type(op) in operator_map:
+                return operator_map[type(op)](left, right)
+            else:
+                raise TypeError(f"Unsupported operator {type(op).__name__}")
         except Exception as e:
-            raise TypeError(f"Unsupported operand types for {type(op).__name__}: '{type(left).__name__}' and '{type(right).__name__}' at line {self.get_lineno(node)}") from e
-
+            # Don't wrap common Python exceptions
+            if isinstance(e, (ZeroDivisionError, TypeError, ValueError, AttributeError)):
+                # Re-raise built-in exceptions as-is so they can be caught by try/except
+                raise
+            else:
+                # Only wrap truly unexpected exceptions
+                lineno = self.get_lineno(node) if node else "unknown"
+                raise TypeError(f"Unsupported operand types for {type(op).__name__}: '{type(left).__name__}' and '{type(right).__name__}' at line {lineno}") from e
+        
     def eval_UnaryOp(self, node: ast.UnaryOp) -> Any:
         operand = self.eval(node.operand)
         op_map = {
