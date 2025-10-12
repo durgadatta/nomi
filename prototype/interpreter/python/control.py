@@ -178,199 +178,147 @@ class ControlMixin:
                 self.eval(stmt)
         generator_state.compound_state = None
 
-    # For Loop Implementation (minimal changes)
-    def eval_For(self, node: ast.For, generator_state: 'GeneratorState'=None) -> None:
-        """Evaluate a For loop node."""
+    def eval_For(self, node: ast.For, generator_state: 'GeneratorState' = None) -> None:
+        """Evaluate a For loop node - unified approach."""
         
-        # Non-generator case (blocking execution)
-        if generator_state is None:
+        # Check if we're resuming first
+        if generator_state is not None and generator_state.compound_state is not None:
+            # Resuming - use existing state
+            state = generator_state.compound_state
+            # Iterator is already in state, no need to create
+        else:
+            # New execution - create iterator
             iter_obj = self.eval(node.iter)
             try:
                 iterator = iter(iter_obj)
             except TypeError as e:
                 lineno = getattr(node, 'lineno', 1) 
                 raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
-                
-            assign_fn = getattr(self, "assign_target", None)
-            if assign_fn is None:
-                raise RuntimeError("No assignment helper found for blocking For loop.")
-            
-            broke = False
-            for item in iterator:
-                assign_fn(node.target, item)
-                try:
-                    for stmt in node.body:
-                        self.eval(stmt)
-                except BreakException:
-                    broke = True
-                    break
-                except ContinueException:
-                    continue
-            
-            if not broke:
-                for stmt in node.orelse:
-                    self.eval(stmt)
-            return
 
-        # Generator case
-        if self._should_resume_loop(generator_state, 'For'):
-            # Resuming existing for loop
-            self._execute_for_loop(node, generator_state, generator_state.compound_state['body_index'])
-        else:
-            # Starting new for loop
-            iter_obj = self.eval(node.iter)
-            iterator = iter(iter_obj)
-            self._setup_loop_state(generator_state, 'For', node, iterator=iterator)
-            self._execute_for_loop(node, generator_state, 0)
-
-    def _execute_for_loop(self, node: ast.For, generator_state: 'GeneratorState', start_index: int):
-        """
-        Internal, resume-aware for loop executor.
-        """
-        state = generator_state.compound_state
-        iterator = state['iterator']
-        
-        assign_fn = getattr(self, "assign_target", None)
-        if assign_fn is None:
-            raise RuntimeError("No assignment helper found")
-
-        broke = state.get('broke', False)
-
+            # Initialize state
+            state = {
+                'node': node, # generator needs to know this to resume 
+                'iterator': iterator,
+                'broke': False,
+                'body_index': 0
+            }
         try:
-            while True:
-                # Only get next item if we're starting a completely new iteration
-                if start_index == 0:
-                    try:
-                        item = next(iterator)
-                        assign_fn(node.target, item)
-                    except StopIteration:
-                        break
-
-                # Execute the body from current start_index
-                i = start_index
-                
-                while i < len(node.body):
-                    stmt = node.body[i]
-                    try:
-                        self.eval(stmt)
-                        i += 1
-                    except YieldException as ye:
-                        # Save the NEXT index to execute
-                        i += 1 # yield statement is now processed
-                        state.update({
-                            'body_index': i, 
-                            'broke': broke
-                        })
-                        raise ye
-                    except BreakException:
-                        broke = True
-                        break
-                    except ContinueException:
-                        break  # Break out of inner while, continue to next iteration
-                
-                if i >= len(node.body):
-                    start_index = 0  # Move to next iteration
-                else:
-                    # We broke out mid-body (due to break/continue), preserve the break
-                    break
-                
-                # Check if we broke out due to break
-                if broke:
-                    break
-
+            self._execute_for_loop(node, state)      
         except YieldException:
+            # Save state and re-raise for generator handling
+            if generator_state:
+                generator_state.compound_state = state
             raise
-        except Exception:
-            generator_state.compound_state = None
-            raise
-        
-        # Loop completed
-        self._handle_loop_completion(node, generator_state)
 
-    def resume_For(self, node: ast.For, generator_state: 'GeneratorState'):
-        """Resume execution of a paused For loop."""
-        state = generator_state.compound_state
-        if not state:
-            return
-            
-        start_index = state['body_index']
-        self._execute_for_loop(node, generator_state, start_index)
+    def _execute_for_loop(self, node: ast.For, state: dict):
+        """
+        Unified for loop executor that handles both yielding and non-yielding cases.
+        """
 
-    # While Loop Implementation (minimal changes)  
-    def eval_While(self, node: ast.While, generator_state: 'GeneratorState'=None) -> None:
-        """Evaluate a While loop node."""
+        iterator = state['iterator']
+        start_index = state.get('body_index', 0)
         
-        # Non-generator case (blocking execution)
-        if generator_state is None:
-            while self.eval(node.test):
+        while True:
+            # Get next item if starting new iteration
+            if start_index == 0:
                 try:
-                    for stmt in node.body:
-                        self.eval(stmt)
-                except BreakException:
+                    item = next(iterator)
+                    self.assign_target(node.target, item)
+                except StopIteration:
+                    state['broke'] = False
                     break
-                except ContinueException:
-                    continue
-            else:
-                for stmt in node.orelse:
+
+            # Execute body statements
+            i = start_index
+            while i < len(node.body):
+                stmt = node.body[i]
+                try:
                     self.eval(stmt)
-            return
-
-        # Generator case
-        if self._should_resume_loop(generator_state, 'While'):
-            # Resuming existing while loop
-            self._execute_while_loop(node, generator_state, generator_state.compound_state['body_index'])
-        else:
-            # Starting new while loop
-            self._setup_loop_state(generator_state, 'While', node, iteration=0)
-            self._execute_while_loop(node, generator_state, 0)
-
-    def _execute_while_loop(self, node: ast.While, generator_state: 'GeneratorState', start_index: int):
-        """Execute a while loop, handling yields and resumption."""
-        state = generator_state.compound_state
-        
-        # Check condition first (only at start of loop iteration)
-        if start_index == 0:
-            condition = self.eval(node.test)
-            if not condition:
-                # Loop finished, execute else clause
-                state['broke'] = False
-                self._handle_loop_completion(node, generator_state)
-                return
-            state['iteration'] = state.get('iteration', 0) + 1
-        
-        # Execute loop body
-        for i in range(start_index, len(node.body)):
-            stmt = node.body[i]
+                    i += 1
+                except YieldException:
+                    # Save where to resume and re-raise
+                    state['body_index'] = i + 1
+                    raise
+                except BreakException:
+                    state['broke'] = True
+                    return
+                except ContinueException:
+                    break  # Break to next iteration
             
-            try:
-                self.eval(stmt)
-            except YieldException as ye:
-                # Yield encountered - pause execution
-                state['body_index'] = i
-                # Re-raise the YieldException to be caught by the main generator loop
-                raise
-            except BreakException:
-                state['broke'] = True
-                generator_state.compound_state = None
-                return
-            except ContinueException:
+            # Check if we completed the body or broke mid-way
+            if i >= len(node.body):
+                start_index = 0  # Ready for next iteration
                 state['body_index'] = 0
-                self._execute_while_loop(node, generator_state, 0)
-                return
-        
-        # If we completed the body without break/continue/yield, start next iteration
-        if not state.get('broke', False):
-            state['body_index'] = 0
-            self._execute_while_loop(node, generator_state, 0)
-        else:
-            generator_state.compound_state = None
+            else:
+                # ContinueException broke us out mid-body
+                start_index = 0
+                state['body_index'] = 0
+                continue
 
-    def resume_While(self, node: ast.While, generator_state: 'GeneratorState'):
-        """Resume execution of a paused While loop."""
-        state = generator_state.compound_state
-        if not state:
-            return
+        # Loop completed normally - handle orelse if not broken
+        if not state['broke']:
+            for stmt in node.orelse:
+                self.eval(stmt)
+
+    def eval_While(self, node: ast.While, generator_state: 'GeneratorState' = None) -> None:
+        """Evaluate a While loop node - unified approach."""
+        
+        # Initialize state
+        if generator_state is not None and generator_state.compound_state is not None:
+            # Resuming - use existing state
+            state = generator_state.compound_state
+        else:
+            # New execution
+            if generator_state:
+                state = {
+                    'node' : node,
+                    'broke': False,
+                    'body_index': 0
+                }
+        try:
+            self._execute_while_loop(node, state)      
+        except YieldException:
+            # Save state and re-raise for generator handling
+            if generator_state:
+                generator_state.compound_state = state
+            raise
+
+
+    def _execute_while_loop(self, node: ast.While, state:dict):
+        """Unified while loop executor."""
+        start_index = state.get('body_index', 0)
+        while True:
+            # Check condition at start of each iteration
+            if start_index == 0:
+                if not self.eval(node.test):
+                    state['broke'] = False
+                    break
+
+            # Execute body statements
+            i = start_index
+            while i < len(node.body):
+                stmt = node.body[i]
+                try:
+                    self.eval(stmt)
+                    i += 1
+                except YieldException:
+                    # Save where to resume
+                    state['body_index'] = i + 1
+                    raise
+                except BreakException:
+                    state['broke'] = True
+                    return
+                except ContinueException:
+                    break  # Continue to next iteration
             
-        start_index = state['body_index']
-        # Resume from the NEXT statement after the yield
-        self._execute_while_loop(node, generator_state, start_index + 1)
+            # Reset for next iteration unless we broke out
+            if not state['broke']:
+                start_index = 0
+                state['body_index'] = 0
+            else:
+                break
+
+        # Handle orelse if loop completed normally
+        if not state['broke']:
+            for stmt in node.orelse:
+                self.eval(stmt)
