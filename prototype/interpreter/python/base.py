@@ -1,52 +1,27 @@
+import ast
 from typing import Dict, Any, Iterator
-class GeneratorState:
-    """Manages state for generator functions."""
-    def __init__(self, interpreter: 'Interpreter', body: List[ast.stmt], env: 'Environment'):
-        self.interpreter = interpreter
-        self.body = body
-        self.env = env
-        self.index = 0
-        self.active = True
-        self.return_value = None
 
-    def __iter__(self):
-        return self
+class ControlException(Exception):
+    pass
 
-    def __next__(self):
-        if not self.active:
-            raise StopIteration(self.return_value)
-        
-        old_env = self.interpreter.current_env
-        self.interpreter.current_env = self.env
-        try:
-            while self.index < len(self.body):
-                try:
-                    self.interpreter.eval(self.body[self.index])
-                    self.index += 1
-                except YieldException as ye:
-                    self.index += 1  # Move to next statement after yield
-                    return ye.value
-                except YieldFromException as yfe:
-                    try:
-                        return next(yfe.iterator)
-                    except StopIteration as si:
-                        if si.value is not None:
-                            self.return_value = si.value
-                        continue
-                except ReturnException as re:
-                    self.active = False
-                    self.return_value = re.value
-                    raise StopIteration(self.return_value)
-            self.active = False
-            raise StopIteration(self.return_value)
-        finally:
-            self.interpreter.current_env = old_env
+class ReturnException(ControlException):
+    def __init__(self, value: Any):
+        self.value = value
 
-    def get_lineno(self) -> int:
-        if self.index < len(self.body):
-            return getattr(self.body[self.index], 'lineno', 1)
-        return 1
-    
+class BreakException(ControlException):
+    pass
+
+class ContinueException(ControlException):
+    pass
+
+class YieldException(ControlException):
+    def __init__(self, value: Any):
+        self.value = value
+
+class YieldFromException(ControlException):
+    def __init__(self, iterator: Iterator):
+        self.iterator = iterator
+
 class Environment:
     """Manages variable scopes and bindings."""
     def __init__(self, interpreter: 'Interpreter', parent: Optional['Environment'] = None):
@@ -85,23 +60,93 @@ class Environment:
         else:
             raise NameError(f"name '{name}' is not defined")
         
-class ControlException(Exception):
-    pass
+class GeneratorState:
+    """Manages state for generator functions."""
+    
+    def __init__(self, interpreter: 'Interpreter', body: List[ast.stmt], env: 'Environment'):
+        self.interpreter = interpreter
+        self.body = body
+        self.env = env
+        self.index = 0
+        self.active = True
+        self.return_value = None
+        self.compound_state = None
 
-class ReturnException(ControlException):
-    def __init__(self, value: Any):
-        self.value = value
+    def __iter__(self):
+        return self
 
-class BreakException(ControlException):
-    pass
+    def __next__(self):
+        if not self.active:
+            raise StopIteration(self.return_value)
+        
+        old_env = self.interpreter.current_env
+        self.interpreter.current_env = self.env
+        try:
+            # Check for compound state to resume
+            if self.compound_state:
+                return self._resume_compound_statement()
 
-class ContinueException(ControlException):
-    pass
+            # Execute statements sequentially
+            while self.index < len(self.body):
+                stmt = self.body[self.index]
+                
+                try:
+                    if isinstance(stmt, ast.For):
+                        self.interpreter.eval_For(stmt, self)
+                    else:
+                        self.interpreter.eval(stmt)
+                    
+                    self.index += 1
+                
+                except YieldException as ye:
+                    if not self.compound_state:
+                        self.index += 1
+                    return ye.value
 
-class YieldException(ControlException):
-    def __init__(self, value: Any):
-        self.value = value
+                except ReturnException as re:
+                    self.active = False
+                    self.return_value = re.value
+                    raise StopIteration(self.return_value)
+                    
+            self.active = False
+            raise StopIteration(self.return_value)
+        finally:
+            self.interpreter.current_env = old_env
 
-class YieldFromException(ControlException):
-    def __init__(self, iterator: Iterator):
-        self.iterator = iterator
+    def _resume_compound_statement(self):
+        """Resumes a paused compound statement."""
+        state = self.compound_state
+        if not state:
+            return self.__next__()
+            
+        node = state['node']
+        
+        try:
+            if isinstance(node, ast.For):
+                self.interpreter.resume_For(node, self)
+            # Add other compound statement types here
+            
+        except YieldException as ye:
+            return ye.value
+            
+        except Exception:
+            self.compound_state = None
+            raise
+
+        # Compound statement finished
+        self.compound_state = None
+        self.index += 1
+        return self.__next__()
+
+    def get_lineno(self) -> int:
+        if self.compound_state:
+            node = self.compound_state['node']
+            if self.compound_state['type'] == 'For':
+                idx = self.compound_state['body_index']
+                if idx < len(node.body):
+                    return getattr(node.body[idx], 'lineno', 1)
+            return getattr(node, 'lineno', 1)
+
+        if self.index < len(self.body):
+            return getattr(self.body[self.index], 'lineno', 1)
+        return 1
