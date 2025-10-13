@@ -1,0 +1,9 @@
+fun is_positive(x):
+    return 0 < x
+
+fun add(a,b):
+    return a + b
+
+v:int = add(1, 2)
+print(v)
+
