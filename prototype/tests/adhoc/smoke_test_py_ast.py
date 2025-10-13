@@ -23,7 +23,7 @@ if __name__ == "__main__":
     python_module = ast.parse(source_code)
 
     # Convert ASTs to strings (pretty-print)
-    lark_module = generate_ast(code=source_code, dump=False)
+    lark_module = generate_ast(code=source_code)
     lark_module = ast.fix_missing_locations(lark_module)
 
     lark_ast_str = ast.dump(lark_module,indent=2)

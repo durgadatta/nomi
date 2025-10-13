@@ -1,7 +1,8 @@
 import ast 
-from prototype.interpreter.python.eval_loop import Interpreter
 from typing import Dict, Any
 from pathlib import Path
+
+from ..python import Interpreter
 
 
 def run_eval_loop(code = None, file_name=None, tree=None) -> Dict[str, Any]:

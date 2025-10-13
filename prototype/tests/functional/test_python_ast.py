@@ -18,7 +18,7 @@ def test_python_ast_regression(source_file):
     code = source_file.read_text()
 
     # AST from custom parser
-    custom_ast = generate_ast(code=code)
+    custom_ast = generate_ast(code=code, dump=True)
 
     # AST from Python's ast module → this is the baseline
     python_ast = ast.dump(ast.parse(code), include_attributes=False, indent=2)
