@@ -11,19 +11,9 @@ import contextlib
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
 ALL_SOURCES = SAMPLE_DIR.glob('*.py')
 
-#TODO: put to utils; 
-from prototype.interpreter.python.eval_loop import Interpreter
+
 from prototype.interpreter.python.usage import run_eval_loop
 
-
-def run_ast(module: ast.Module) -> Dict[str, Any]:
-    module = ast.fix_missing_locations(module)
-    interpreter = Interpreter()
-    try:
-        interpreter.eval(module)
-        return interpreter.global_env.bindings
-    except Exception as e:
-        raise RuntimeError(f"Execution failed: {str(e)}") from e
     
 
 def stabilize_value(value):
