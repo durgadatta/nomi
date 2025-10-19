@@ -65,7 +65,8 @@ lambda_kwparams: "**" name ","?
 expr_stmt: testlist_star_expr
 assign_stmt: annassign | augassign | assign
 
-annassign: testlist_star_expr ":" test ["=" test]
+//annassign: testlist_star_expr ":" test ["=" test]
+annassign: testlist_star_expr ":" testlist_star_expr  ["=" test]
 assign: testlist_star_expr ("=" (yield_expr|testlist_star_expr))+
 augassign: testlist_star_expr augassign_op (yield_expr|testlist)
 

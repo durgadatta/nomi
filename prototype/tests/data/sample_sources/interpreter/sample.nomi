@@ -4,6 +4,10 @@ fun is_positive(x):
 fun add(a,b):
     return a + b
 
-v:int = add(1, 2)
+v:int, is_positive, v>10 = add(1, 2)
+a:a>10 = 22
+
+
+print(a)
 print(v)
 
