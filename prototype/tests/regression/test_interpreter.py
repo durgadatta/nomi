@@ -9,10 +9,13 @@ import contextlib
 
 # Directory containing test source files
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
-ALL_SOURCES = SAMPLE_DIR.glob('*.py')
+ALL_SOURCES = SAMPLE_DIR.glob('*.{py,nomi}')
 
 
-from prototype.interpreter.python.usage import run_eval_loop
+ALL_SOURCES = list(SAMPLE_DIR.glob('*.py')) + list(SAMPLE_DIR.glob('*.nomi'))
+
+from prototype.interpreter.python.usage import run_eval_loop as run_eval_loop_py
+from prototype.interpreter.nomi.usage import run_eval_loop as run_eval_loop_nomi
 
     
 
@@ -52,8 +55,14 @@ def stabilize_locals(local_vars, exclude_private=True):
 
 
 @pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
-def test_python_eval_loop(source_file, file_regression, capsys):
+def test_eval_loop(source_file, file_regression, capsys):
     code = source_file.read_text()
+
+    ext = source_file.suffix
+    if ext == '.py':
+        run_eval_loop = run_eval_loop_py
+    elif ext == '.nomi':
+        run_eval_loop = run_eval_loop_nomi
 
     eval_loop_stdout = io.StringIO()
     with capsys.disabled():
