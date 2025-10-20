@@ -4,10 +4,13 @@ fun is_positive(x):
 fun add(a,b):
     return a + b
 
-v:int, is_positive, v>10 = add(1, 2)
-a:a>10 = 22
+v:int, is_positive, v>1 = add(1, 2)
+
+try:
+    a:is_positive, 20<a<30 = -20
+except Exception as x:
+    print(str(x))
 
 
-print(a)
 print(v)
 
