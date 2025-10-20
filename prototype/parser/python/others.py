@@ -93,7 +93,7 @@ class ContextManagerMixin:
 
         # Convert each with_item to ast.withitem
         ast_with_items = []
-        for wi in with_items:
+        for wi in with_items.children:
             # wi: tuple (context_expr, optional_vars)
             context_expr, optional_vars = wi
             ast_with_items.append(
@@ -105,13 +105,6 @@ class ContextManagerMixin:
 
         return ast.With(body=body, items=ast_with_items, type_comment=None)
     
-    def with_items(self, items):
-        '''
-        TODO: NOTE:
-        this is to workaround the __default__ implementation which collapses [a] to a
-        later remove that and have local adaptation
-        '''
-        return items
 
     def with_item(self, items):
         """

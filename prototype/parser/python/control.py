@@ -144,69 +144,42 @@ class CompMixin:
             raise ValueError(f"Invalid target for comprehension: {node}")
 
 class ControlMixin(CompMixin):
-    def elif_(self, items):
-        # items[0] = test (ast.expr), items[1] = suite (list or nodes)
-        test_node = items[0]
-        if not isinstance(test_node, ast.expr):
-            raise TypeError(f"Elif test must be an expression, got {type(test_node)}")
-        body_list = items[1]
-        return (test_node, body_list)
-
-    def elifs(self, items):
-        # items is a list of elif_ results (each a (test, body) tuple)
-        # Lark may pass [] or [None] or None if absent
-        if not items:
-            return []
-        # filter out accidental None entries
-        return [it for it in items if it is not None]
-
     def if_stmt(self, items):
         """
-        Grammar:
-            if_stmt: "if" test ":" suite ("elif" test ":" suite)* ["else" ":" suite]
-        Transformer:
-            items[0] = test
-            items[1] = suite (body)
-            items[2] = elifs (optional)
-            items[3] = else_suite (optional)
+        if_stmt: "if" test ":" suite elifs ["else" ":" suite]
         """
+        # items: [test, suite, elifs, else_suite]
         test = items[0]
-        if not isinstance(test, ast.expr):
-            raise TypeError(f"If test must be an expression, got {type(test)}")
-
         body = items[1]
+        elifs = items[2] if len(items) > 2 else []
+        else_suite = items[3] if len(items) > 3 else []
+        
+        # Build the if-elif-else chain from the bottom up
+        # Start with the innermost (last elif or else)
+        current_orelse = else_suite if else_suite is not None else []
+        
+        # Process elifs in reverse order to build the nested structure correctly
+        for elif_test, elif_body in reversed(elifs):
+            current_orelse = [ast.If(test=elif_test, body=elif_body, orelse=current_orelse)]
+        
+        # Create the main if statement
+        return ast.If(test=test, body=body, orelse=current_orelse)
 
-        # normalize elifs safely
-        elifs = None
-        if len(items) > 2:
-            elifs = items[2]
-        if not elifs:
-            elifs = []
+    def elifs(self, items):
+        """
+        elifs: elif_*
+        Returns: list of (test, body) tuples for each elif
+        """
+        # items is a list of elif AST nodes, each is (test, body)
+        return items
 
-        # normalize else_suite safely
-        else_suite = None
-        if len(items) > 3:
-            raw_else = items[3]
-            # protect against None or []
-            else_suite = raw_else if raw_else else []
-        else:
-            else_suite = []
-
-        # construct nested Ifs
-        orelse_node = else_suite
-        for elif_item in reversed(elifs):
-            if not (isinstance(elif_item, tuple) and len(elif_item) == 2):
-                raise TypeError(f"Elif item must be (test, body), got {elif_item!r}")
-            elif_test, elif_body = elif_item
-            nested_if = ast.If(
-                test=elif_test,
-                body=elif_body,
-                orelse=orelse_node,
-            )
-            orelse_node = [nested_if]
-
-        return ast.If(test=test, body=body, orelse=orelse_node)
-
+    def elif_(self, items):
+        """
+        elif_: "elif" test ":" suite
+        Returns: (test, body) tuple
+        """
+        # items: [test, suite]
+        return (items[0], items[1])
 
     def while_stmt(self, items):
         test = items[0]; body = items[1] if len(items) > 1 else []; orelse = items[2] if len(items) > 2 else []

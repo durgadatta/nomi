@@ -1,66 +1,82 @@
 import ast
+from lark import Tree
+
+from prototype.parser.python import ensure_expr
 
 class ExceptionMixin:
     """Handles try/except/else/finally statements."""
 
-    def except_clause(self, items):
-        """
-        items: [type?, name?, suite]
-        returns ast.ExceptHandler
-        """
-        exc_type = exc_name = None
-        body = []
-
-        # Determine positions
-        if len(items) == 1:
-            # Only suite
-            body = items[0]
-        elif len(items) == 2:
-            # type or suite + name?
-            if isinstance(items[0], ast.expr):
-                exc_type = items[0]
-            elif isinstance(items[0], str):
-                exc_name = items[0]
-            body = items[1]
-        elif len(items) == 3:
-            exc_type = items[0]
-            exc_name = items[1]
-            body = items[2]
-
-        return ast.ExceptHandler(type=exc_type, name=exc_name, body=body)
-
     def try_stmt(self, items):
         """
-        items: [try_suite, except_handlers, else_suite?, finally_suite?]
-        returns ast.Try
+        try_stmt: "try" ":" suite except_clauses ["else" ":" suite] [finally]
+                | "try" ":" suite finally   -> try_finally
         """
-        try_suite = items[0]
+        def extract_suite(suite_item):
+            """Extract suite from Tree wrapper if needed"""
+            if isinstance(suite_item, Tree):
+                return suite_item.children[0] if suite_item.children else []
+            return suite_item
 
-        # Ensure handlers is always a list
-        handlers = items[1]
-        if isinstance(handlers, ast.ExceptHandler):
-            handlers = [handlers]  # wrap single handler into list
+        # try_finally case (grammar transformation)
+        if len(items) == 2:
+            return ast.Try(
+                body=items[0],
+                handlers=[],
+                orelse=[],
+                finalbody=extract_suite(items[1])
+            )
+        else:
+            # Full try/except/else/finally case
+            suite = items[0]
+            except_clauses = items[1] if len(items) > 1 else []
+            else_suite = items[2] if len(items) > 2 else []
+            finally_suite = items[3] if len(items) > 3 else []
 
-        # Optional else and finally
-        else_suite = items[2] if len(items) > 2 else []
-        finally_suite = items[3] if len(items) > 3 else []
+            return ast.Try(
+                body=suite,
+                handlers=except_clauses,
+                orelse=else_suite,
+                finalbody=extract_suite(finally_suite)
+            )
 
-        return ast.Try(
-            body=try_suite,
-            handlers=handlers,
-            orelse=else_suite,
-            finalbody=finally_suite,
+    def except_clauses(self, items):
+        """except_clauses: except_clause+"""
+        return items
+
+    def except_clause(self, items):
+        """except_clause: "except" [test ["as" name]] ":" suite"""
+        if len(items) == 1:
+            # Bare except: "except:"
+            type_node, name_node, body = None, None, items[0]
+        elif len(items) == 2:
+            if isinstance(items[1], str):
+                # "except TypeError as e:"
+                type_node, name_node, body = items[0], items[1], []
+            else:
+                # "except TypeError:"
+                type_node, name_node, body = items[0], None, items[1]
+        elif len(items) == 3:
+            # "except TypeError as e: suite"
+            type_node, name_node, body = items[0], items[1], items[2]
+        else:
+            raise ValueError(f"Unexpected except_clause structure: {items}")
+
+        return ast.ExceptHandler(
+            type=ensure_expr(type_node) if type_node else None,
+            name=name_node,
+            body=body if isinstance(body, list) else [body]
         )
 
     def try_finally(self, items):
-        """
-        try ... finally
-        items: [try_suite, finally_suite]
-        """
-        try_suite, finally_suite = items
+        """try ... finally (grammar transformation)"""
+        def extract_suite(suite_item):
+            if isinstance(suite_item, Tree):
+                return suite_item.children[0] if suite_item.children else []
+            return suite_item
+
         return ast.Try(
-            body=try_suite,
-            handlers=[],       # no except
-            orelse=[],         # no else
-            finalbody=finally_suite
+            body=items[0],
+            handlers=[],
+            orelse=[],
+            finalbody=extract_suite(items[1])
         )

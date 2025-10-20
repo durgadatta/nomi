@@ -88,138 +88,176 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
     def star_expr(self, items):
         return ast.Starred(value=items[0])
 
+    def comp_op(self, items):
+        def map_cmp_op(s):
+            return {
+                '==': ast.Eq(),
+                '!=': ast.NotEq(),
+                '<>': ast.NotEq(),
+                '<': ast.Lt(),
+                '<=': ast.LtE(),
+                '>': ast.Gt(),
+                '>=': ast.GtE(),
+                'in': ast.In(),
+                'not in': ast.NotIn(),
+                'is': ast.Is(),
+                'is not': ast.IsNot(),
+            }.get(s, ast.Eq())
+
+        if len(items) == 1:
+            op_token = items[0]
+            op_str = op_token.value if isinstance(op_token, Token) else str(op_token)
+            return map_cmp_op(op_str)
+        elif len(items) == 2:
+            first, second = items[0], items[1]
+            first_str = first.value if isinstance(first, Token) else str(first)
+            second_str = second.value if isinstance(second, Token) else str(second)
+            if first_str == "not" and second_str == "in":
+                return ast.NotIn()
+            elif first_str == "is" and second_str == "not":
+                return ast.IsNot()
+        
+        return ast.Eq()
+
     def comparison(self, items):
         if not items:
             return ast.Constant(value=False)
         if len(items) == 1:
             return ensure_expr(items[0])
+        
         left = ensure_expr(items[0])
         ops = []
         comparators = []
+        
         i = 1
         while i < len(items):
-            op = items[i]
-            right = items[i+1] if i+1 < len(items) else None
-            op_s = op.value if isinstance(op, Token) else str(op)
-            ops.append(self._map_cmp_op(op_s))
-            comparators.append(ensure_expr(right))
+            op_node = items[i]
+            # For tokens, use comp_op to convert them to AST operators
+            if isinstance(op_node, Token):
+                op_node = self.comp_op([op_node])
+            elif not isinstance(op_node, ast.AST):
+                # Fallback for strings or other types
+                op_node = self.comp_op([str(op_node)])
+            
+            ops.append(op_node)
+            
+            if i + 1 < len(items):
+                comparators.append(ensure_expr(items[i + 1]))
             i += 2
+            
         return ast.Compare(left=left, ops=ops, comparators=comparators)
-
-    def _map_cmp_op(self, s):
-        return {
-            '==': ast.Eq(),
-            '!=': ast.NotEq(),
-            '<>': ast.NotEq(),
-            '<': ast.Lt(),
-            '<=': ast.LtE(),
-            '>': ast.Gt(),
-            '>=': ast.GtE(),
-            'in': ast.In(),
-            'not in': ast.NotIn(),
-            'is': ast.Is(),
-            'is not': ast.IsNot(),
-        }.get(s, ast.Eq())
-
-    def _left_fold_binop(self, items):
-        # items: operand (op operand)*
-        if not items:
-            return ast.Constant(value=0)
+    
+    def term(self, items):
+        """
+        term: factor (_mul_op factor)*
+        Let Lark handle the low-level token processing
+        """
+        if len(items) == 1:
+            return ensure_expr(items[0])
+        
         left = ensure_expr(items[0])
-        i = 1
-        while i < len(items):
-            op = items[i]
-            right = ensure_expr(items[i+1]) if i+1 < len(items) else ast.Constant(value=None)
-            op_s = op.value if isinstance(op, Token) else str(op)
-            operator = {
-                '+': ast.Add(),
-                '-': ast.Sub(),
+        
+        for i in range(1, len(items), 2):
+            # Lark will automatically convert tokens to their string values
+            op_str = items[i]  
+            right = ensure_expr(items[i + 1])
+            
+            op_map = {
                 '*': ast.Mult(),
-                '/': ast.Div(),
-                '//': ast.FloorDiv(),
-                '%': ast.Mod(),
                 '@': ast.MatMult(),
-                '**': ast.Pow(),
-            }.get(op_s, ast.Add())
-            left = ast.BinOp(left=left, op=operator, right=right)
-            i += 2
+                '/': ast.Div(),
+                '%': ast.Mod(),
+                '//': ast.FloorDiv()
+            }
+            
+            if op_str not in op_map:
+                raise ValueError(f"Unknown multiplication operator: '{op_str}'")
+            
+            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
+        
         return left
 
     def arith_expr(self, items):
-        return self._left_fold_binop(items)
+        """
+        arith_expr: term (_add_op term)*
+        """
+        if len(items) == 1:
+            return items[0]
+            
+        left = items[0]
+        for i in range(1, len(items), 2):
+            op_str = items[i]  # Lark handles token conversion
+            right = items[i + 1]
+            
+            op_map = {
+                '+': ast.Add(),
+                '-': ast.Sub()
+            }
+            
+            if op_str not in op_map:
+                raise ValueError(f"Unknown addition operator: '{op_str}'")
+            
+            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
+        
+        return left
 
-    def term(self, items):
-        return self._left_fold_binop(items)
+    def shift_expr(self, items):
+        """
+        shift_expr: arith_expr (_shift_op arith_expr)*
+        """
+        if len(items) == 1:
+            return items[0]
+            
+        left = items[0]
+        for i in range(1, len(items), 2):
+            op_str = items[i]  # Lark handles token conversion
+            right = items[i + 1]
+            
+            op_map = {
+                '<<': ast.LShift(),
+                '>>': ast.RShift()
+            }
+            
+            if op_str not in op_map:
+                raise ValueError(f"Unknown shift operator: '{op_str}'")
+            
+            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
+        
+        return left
+
+    def factor(self, items):
+        """
+        factor: _unary_op factor | power
+        """
+        if len(items) == 1:
+            return ensure_expr(items[0])
+        
+        op_str = items[0]  # Lark handles token conversion
+        operand = ensure_expr(items[1])
+        
+        op_map = {
+            '+': ast.UAdd(),
+            '-': ast.USub(),
+            '~': ast.Invert()
+        }
+        
+        if op_str not in op_map:
+            raise ValueError(f"Unknown unary operator: '{op_str}'")
+        
+        return ast.UnaryOp(op=op_map[op_str], operand=operand)
 
     def power(self, items):
         """
-        Handle Python '**' operator, robust to different Lark parse shapes.
-        items can be:
-        - [base]
-        - [base, exponent]
-        - [base, '**', exponent]
+        power: await_expr ("**" factor)?
         """
-        if not items:
-            return ast.Constant(value=None)
-
-        base = ensure_expr(items[0])
-
         if len(items) == 1:
-            return base
+            return items[0]
+        
+        base = items[0]
+        exponent = items[1] if len(items) > 1 else None
+        
+        return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
 
-        # Two-item form: [base, exponent]
-        if len(items) == 2:
-            exponent = ensure_expr(items[1])
-            return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
-
-        # Three-item form: [base, '**', exponent]
-        if len(items) == 3:
-            exponent = ensure_expr(items[2])
-            return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
-
-        # Left-fold multiple '**': [a, '**', b, '**', c] → ((a**b)**c)
-        left = base
-        i = 1
-        while i < len(items):
-            # Skip token if present
-            if isinstance(items[i], Token) and items[i].type == '**':
-                i += 1
-                if i >= len(items):
-                    raise ValueError(f"Power '**' missing right operand in {items!r}")
-            right = ensure_expr(items[i])
-            left = ast.BinOp(left=left, op=ast.Pow(), right=right)
-            i += 1
-
-        return left
-
-
-    def factor(self, items):
-        if len(items) == 1:
-            return ensure_expr(items[0])
-        op = items[0]
-        operand = ensure_expr(items[1])
-        op_s = op.value if isinstance(op, Token) else str(op)
-        if op_s == '+':
-            return operand
-        if op_s == '-':
-            return ast.UnaryOp(op=ast.USub(), operand=operand)
-        if op_s == '~':
-            return ast.UnaryOp(op=ast.Invert(), operand=operand)
-        return operand
-    
-    UNARY_OPERATORS = {
-        '+': ast.UAdd,
-        '-': ast.USub,
-        '~': ast.Invert,
-        'not': ast.Not,
-    }
-
-    def _unary_op(self, items):
-        """Return the operator instance."""
-        op_token = str(items[0])
-        if op_token not in self.UNARY_OPERATORS:
-            raise ValueError(f"Unknown unary operator: {op_token}")
-        return self.UNARY_OPERATORS[op_token]()
 
     def not_test(self, items):
         """Handle 'not' unary operator."""
@@ -382,3 +420,16 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
     def key_value(self, items):
         """Return a tuple (key, value) for dict items"""
         return (items[0], items[1])
+    
+    def testlist_tuple(self, items):
+        """
+        testlist_tuple: test ("," test)+ [","] | test ","
+        Returns: ast.Tuple for multiple items, single expression for one item
+        """
+        # FIX: Return actual AST nodes, not constructor calls
+        if len(items) == 1:
+            return ensure_expr(items[0])
+        else:
+            # Filter out any comma tokens and ensure all are expressions
+            exprs = [ensure_expr(item) for item in items if not isinstance(item, Token)]
+            return ast.Tuple(elts=exprs, ctx=ast.Load())
