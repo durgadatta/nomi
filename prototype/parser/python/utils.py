@@ -3,15 +3,6 @@ from lark import Token
 from pathlib import Path
 
 
-def ensure_name(x):
-    if isinstance(x, Token):
-        return x.value
-    if isinstance(x, str):
-        return x
-    if isinstance(x, ast.Name):
-        return x.id
-    return str(x)
-
 def ensure_expr(x):
     """
         Coerce many shapes into ast.expr; fallback to ast.parse for tokens/strings.
@@ -30,10 +21,6 @@ def ensure_expr(x):
 def ensure_arg(x):
     if isinstance(x, ast.arg):
         return x
-    if isinstance(x, Token):
-        return ast.arg(arg=x.value, annotation=None)
-    if isinstance(x, ast.Name):
-        return ast.arg(arg=x.id, annotation=None)
     if isinstance(x, str):
         return ast.arg(arg=x, annotation=None)
     raise TypeError("Cannot coerce to ast.arg: %r" % (x,))
