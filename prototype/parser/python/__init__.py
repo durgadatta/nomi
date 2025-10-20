@@ -1,5 +1,5 @@
 from prototype.parser.python.utils import (
-    ensure_arg, ensure_expr, ensure_name, ensure_stmt_list,
+    ensure_arg, ensure_expr, ensure_name,
     ensure_store
 )
 

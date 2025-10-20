@@ -1,7 +1,7 @@
 
 import ast
 from lark import Tree, Token
-from prototype.parser.python import ensure_expr, ensure_store, ensure_stmt_list
+from prototype.parser.python import ensure_expr, ensure_store
 
 class CompMixin:
     """Mixin for handling Python comprehensions in Lark AST transformer."""
@@ -149,7 +149,7 @@ class ControlMixin(CompMixin):
         test_node = items[0]
         if not isinstance(test_node, ast.expr):
             raise TypeError(f"Elif test must be an expression, got {type(test_node)}")
-        body_list = ensure_stmt_list(items[1])
+        body_list = items[1]
         return (test_node, body_list)
 
     def elifs(self, items):
@@ -174,7 +174,7 @@ class ControlMixin(CompMixin):
         if not isinstance(test, ast.expr):
             raise TypeError(f"If test must be an expression, got {type(test)}")
 
-        body = ensure_stmt_list(items[1])
+        body = items[1]
 
         # normalize elifs safely
         elifs = None
@@ -188,7 +188,7 @@ class ControlMixin(CompMixin):
         if len(items) > 3:
             raw_else = items[3]
             # protect against None or []
-            else_suite = ensure_stmt_list(raw_else) if raw_else else []
+            else_suite = raw_else if raw_else else []
         else:
             else_suite = []
 
@@ -200,7 +200,7 @@ class ControlMixin(CompMixin):
             elif_test, elif_body = elif_item
             nested_if = ast.If(
                 test=elif_test,
-                body=ensure_stmt_list(elif_body),
+                body=elif_body,
                 orelse=orelse_node,
             )
             orelse_node = [nested_if]
