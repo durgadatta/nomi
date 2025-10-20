@@ -38,8 +38,3 @@ class PythonASTTransformer(
     ModuleMixin,
     Transformer):
     pass
-    def __default__(self, data, children, meta):
-        # collapse single-child wrappers
-        if len(children) == 1:
-            return children[0]
-        return children
