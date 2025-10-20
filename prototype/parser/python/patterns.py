@@ -1,5 +1,5 @@
 import ast 
-from prototype.parser.python import ensure_expr, ensure_stmt_list
+from prototype.parser.python import ensure_expr
 from lark import Token, Tree
 
 
@@ -148,7 +148,7 @@ class PatternMixin:
             guard_node = ensure_expr(items[1])
 
         # 3. Body
-        body_node = ensure_stmt_list(items[-1])
+        body_node = items[-1]
 
         return ast.match_case(pattern=pattern_node, guard=guard_node, body=body_node)
 

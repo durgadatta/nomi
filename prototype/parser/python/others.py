@@ -1,6 +1,6 @@
 import ast
 
-from prototype.parser.python import ensure_stmt_list, ensure_expr, ensure_store
+from prototype.parser.python import ensure_expr, ensure_store
 
 class ImportMixin:
     def import_stmt(self, items):
@@ -80,7 +80,7 @@ class AsyncMixin:
         await_expr: "await" test
         items: [expression]
         """
-        expr_node = ensure_expr(items[0])
+        expr_node = items[0]
         return ast.Await(value=expr_node)
 
 class ContextManagerMixin:
