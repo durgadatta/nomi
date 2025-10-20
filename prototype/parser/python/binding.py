@@ -6,6 +6,13 @@ import ast
 from prototype.parser.python import ensure_store
 
 class BindingMixin:
+    def assign_stmt(self, items):
+        """
+        assign_stmt: annassign | augassign | assign
+        """
+        # Just return the processed assignment node
+        return items[0]
+
     def assign(self, items):
         """
         Build a full Python AST Assign node with correct semantics.
@@ -15,11 +22,23 @@ class BindingMixin:
             lhs_nodes: single AST node or list/nested lists of AST nodes (targets)
             rhs_node: AST expression node (already fully built by transformer)
         """
+        # FIX: Handle case where we get [target, value] directly
+        if len(items) == 2:
+            lhs_nodes = [items[0]]
+            rhs_node = items[1]
+        else:
+            lhs_nodes = items[:-1]
+            rhs_node = items[-1]
 
-        lhs_nodes = items[:-1]
-        rhs_node = items[-1]
-
-        lhs_nodes = [ensure_store(n) for n in lhs_nodes]
+        # Flatten any nested lists in lhs_nodes
+        flattened_lhs = []
+        for node in lhs_nodes:
+            if isinstance(node, list):
+                flattened_lhs.extend(node)
+            else:
+                flattened_lhs.append(node)
+        
+        lhs_nodes = [ensure_store(n) for n in flattened_lhs]
 
         # --- Wrap multiple top-level targets in a Tuple if needed ---
         if len(lhs_nodes) == 1:

@@ -104,11 +104,14 @@ class PatternMixin:
             raise ValueError(f"Expected a string name for as_pattern, got {type(name)}")
         return ast.MatchAs(pattern=pattern, name=name)
 
-    # --- Match case ---
     def match_case(self, items):
         """
         items = [pattern_node(s), optional guard, suite]
         """
+        # FIX: Handle case where items is a Tree instead of list
+        if isinstance(items, Tree):
+            items = items.children
+            
         if not items or len(items) < 2:
             raise ValueError(f"Expected at least pattern and body for match_case, got {len(items)}")
 
@@ -181,42 +184,94 @@ class PatternMixin:
     def class_pattern(self, items):
         """
         Handle class pattern, e.g., 'int(n)', 'Point(x=n)'.
-        Grammar: name_or_attr_pattern "(" [arguments_pattern ","?] ")"
-        Returns: ast.MatchClass node.
         """
-        cls = ast.Name(id=items[0], ctx=ast.Load())
+        # FIX: Handle Tree('value', ['int']) by extracting the actual name
+        cls_name = items[0]
+        if isinstance(cls_name, Tree) and cls_name.data == 'value':
+            cls_name = cls_name.children[0] if cls_name.children else 'unknown'
+        cls = ast.Name(id=cls_name, ctx=ast.Load())
+        
         patterns = []
         kwd_attrs = []
         kwd_patterns = []
-        if len(items) > 1 and items[1] is not None:  # Check for non-empty arguments
+        
+        if len(items) > 1 and items[1] is not None:
             arg_items = items[1]
+            
+            # FIX: Handle the structure from arguments_pattern which can be [pos_arg_pattern, None]
             if isinstance(arg_items, list):
-                # Filter out None or empty items (e.g., from trailing comma)
-                arg_items = [item for item in arg_items if item is not None]
+                # Filter out None values and flatten the structure
+                processed_items = []
                 for item in arg_items:
-                    if isinstance(item, Tree) and item.data == "mapping_item_pattern":
-                        # Keyword pattern, e.g., x=n
-                        key, pattern = item.children
-                        kwd_attrs.append(key)
-                        kwd_patterns.append(self.as_pattern([pattern]) if isinstance(pattern, Tree) and pattern.data == "as_pattern" else self.capture_pattern([pattern]))
-                    elif isinstance(item, Tree) and item.data in ("capture_pattern", "as_pattern"):
-                        # Positional pattern, e.g., n
-                        patterns.append(self.as_pattern(item.children) if item.data == "as_pattern" else self.capture_pattern(item.children))
-                    elif isinstance(item, ast.AST):
-                        patterns.append(item)
+                    if item is None:
+                        continue
+                    if isinstance(item, list):
+                        processed_items.extend(item)
                     else:
-                        raise ValueError(f"Invalid pattern in arguments_pattern: {item}")
-            else:
-                # Single positional pattern
-                if isinstance(arg_items, Tree) and arg_items.data in ("capture_pattern", "as_pattern"):
-                    patterns.append(self.as_pattern([arg_items]) if arg_items.data == "as_pattern" else self.capture_pattern(arg_items.children))
-                elif isinstance(arg_items, ast.AST):
-                    patterns.append(arg_items)
+                        processed_items.append(item)
+                arg_items = processed_items
+                
+            # FIX: Ensure we always work with a list
+            if not isinstance(arg_items, list):
+                arg_items = [arg_items]
+                
+            for item in arg_items:
+                if item is None:
+                    continue
+                if isinstance(item, Tree) and item.data == "mapping_item_pattern":
+                    # Keyword pattern, e.g., x=n
+                    key, pattern = item.children
+                    kwd_attrs.append(key)
+                    kwd_patterns.append(self.as_pattern([pattern]) if isinstance(pattern, Tree) and pattern.data == "as_pattern" else self.capture_pattern([pattern]))
+                elif isinstance(item, Tree) and item.data in ("capture_pattern", "as_pattern"):
+                    # Positional pattern, e.g., n
+                    patterns.append(self.as_pattern(item.children) if item.data == "as_pattern" else self.capture_pattern(item.children))
+                elif isinstance(item, ast.AST):
+                    patterns.append(item)
                 else:
-                    raise ValueError(f"Invalid single pattern in arguments_pattern: {arg_items}")
+                    raise ValueError(f"Invalid pattern in arguments_pattern: {item}")
+                    
         return ast.MatchClass(
             cls=cls,
             patterns=patterns,
             kwd_attrs=kwd_attrs,
             kwd_patterns=kwd_patterns
         )
+    
+    def arguments_pattern(self, items):
+        """
+        arguments_pattern: pos_arg_pattern ["," keyws_arg_pattern]
+                         | keyws_arg_pattern -> no_pos_arguments
+        """
+        # FIX: Handle the structure and filter out None values
+        result = []
+        for item in items:
+            if item is None:
+                continue
+            if isinstance(item, list):
+                result.extend(item)
+            else:
+                result.append(item)
+        return result
+
+    def pos_arg_pattern(self, items):
+        """
+        pos_arg_pattern: as_pattern ("," as_pattern)*
+        """
+        # FIX: Return list of positional patterns
+        return items
+
+    def keyws_arg_pattern(self, items):
+        """
+        keyws_arg_pattern: keyw_arg_pattern ("," keyw_arg_pattern)*
+        """
+        # FIX: Return list of keyword patterns  
+        return items
+
+    def keyw_arg_pattern(self, items):
+        """
+        keyw_arg_pattern: NAME "=" as_pattern
+        """
+        # FIX: Return mapping_item_pattern structure
+        key, pattern = items[0], items[1]
+        return Tree("mapping_item_pattern", [key, pattern])
