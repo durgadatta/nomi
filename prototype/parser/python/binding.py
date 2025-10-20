@@ -113,7 +113,7 @@ class BindingMixin:
             raise TypeError(f"AugAssign value must be an expression, got {type(value_node)}")
 
         # Operator
-        op_sym = getattr(raw_op, "value", None) or str(raw_op)
+        op_sym = raw_op.children[0].value
         if op_sym not in AUGASSIGN_OPERATORS:
             raise ValueError(f"Unknown augassign operator: {op_sym!r}")
         op_node = AUGASSIGN_OPERATORS[op_sym]()
