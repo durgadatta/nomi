@@ -1,7 +1,7 @@
 
 import ast
 from lark import Tree, Token
-from prototype.parser.python import ensure_expr, ensure_store
+from prototype.parser.python import ensure_store
 
 class CompMixin:
     """Mixin for handling Python comprehensions in Lark AST transformer."""
@@ -183,7 +183,7 @@ class ControlMixin(CompMixin):
 
     def while_stmt(self, items):
         test = items[0]; body = items[1] if len(items) > 1 else []; orelse = items[2] if len(items) > 2 else []
-        return ast.While(test=ensure_expr(test), body=body, orelse=orelse)
+        return ast.While(test=test, body=body, orelse=orelse)
 
     def for_stmt(self, items):
         target = items[0]; iter_expr = items[1]; body = items[2] if len(items) > 2 else []; 
@@ -194,4 +194,4 @@ class ControlMixin(CompMixin):
             orelse = []
 
         targ = ensure_store(target) if isinstance(target, (ast.Name, ast.Tuple, ast.List)) else target
-        return ast.For(target=targ, iter=ensure_expr(iter_expr), body=body, orelse=orelse, type_comment=None)
+        return ast.For(target=targ, iter=iter_expr, body=body, orelse=orelse, type_comment=None)

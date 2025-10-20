@@ -1,5 +1,4 @@
 import ast 
-from prototype.parser.python import ensure_expr
 from lark import Token, Tree
 
 
@@ -19,16 +18,6 @@ class PatternMixin:
     def const_false(self, items):
         return ast.MatchSingleton(value=False)
 
-    def number(self, items):
-        if not items or len(items) != 1:
-            raise ValueError(f"Expected exactly one item for number pattern, got {len(items)}")
-        return ast.MatchValue(value=ensure_expr(items[0]))
-
-    def string(self, items):
-        if not items or len(items) != 1:
-            raise ValueError(f"Expected exactly one item for string pattern, got {len(items)}")
-        return ast.MatchValue(value=ensure_expr(items[0]))
-
     def literal_pattern(self, items):
         """
         Handle literal pattern, e.g., '0', '"hello"', 'None', 'True', 'False'.
@@ -42,9 +31,9 @@ class PatternMixin:
             return ast.MatchValue(value=item)
         if isinstance(item, Token):
             if item.type == "NUMBER":
-                return ast.MatchValue(value=ensure_expr(item))
+                return ast.MatchValue(value=item)
             if item.type == "STRING":
-                return ast.MatchValue(value=ensure_expr(item))
+                return ast.MatchValue(value=item)
             if item.type == "NONE":
                 return ast.MatchSingleton(value=None)
             if item.type == "TRUE":
@@ -70,7 +59,7 @@ class PatternMixin:
         patterns = []
         for item in items:
             if isinstance(item, ast.Constant):
-                patterns.append(ast.MatchValue(value=ensure_expr(item)))
+                patterns.append(ast.MatchValue(value=item))
             elif isinstance(item, ast.AST):
                 patterns.append(item)
             else:
@@ -88,7 +77,7 @@ class PatternMixin:
                 if not isinstance(item, (tuple, list)) or len(item) != 2:
                     raise ValueError(f"Expected (key, pattern) pair, got {item}")
                 key, pattern = item
-                keys.append(ensure_expr(key))
+                keys.append(key)
                 patterns.append(pattern)
         return ast.MatchMapping(keys=keys, patterns=patterns, rest=None)
 
@@ -124,13 +113,13 @@ class PatternMixin:
                 pattern_node = pattern_node[0]
                 # Wrap Constant in MatchValue if needed
                 if isinstance(pattern_node, ast.Constant):
-                    pattern_node = ast.MatchValue(value=ensure_expr(pattern_node))
+                    pattern_node = ast.MatchValue(value=pattern_node)
             else:
                 # Convert list of patterns to MatchOr, wrapping Constants in MatchValue
                 patterns = []
                 for p in pattern_node:
                     if isinstance(p, ast.Constant):
-                        patterns.append(ast.MatchValue(value=ensure_expr(p)))
+                        patterns.append(ast.MatchValue(value=p))
                     elif isinstance(p, ast.AST):
                         patterns.append(p)
                     else:
@@ -139,7 +128,7 @@ class PatternMixin:
         else:
             # Single pattern: Wrap Constant in MatchValue if needed
             if isinstance(pattern_node, ast.Constant):
-                pattern_node = ast.MatchValue(value=ensure_expr(pattern_node))
+                pattern_node = ast.MatchValue(value=pattern_node)
             elif not isinstance(pattern_node, (ast.MatchValue, ast.MatchAs, ast.MatchOr,
                                             ast.MatchSequence, ast.MatchMapping,
                                             ast.MatchSingleton, ast.MatchClass)):
@@ -148,7 +137,7 @@ class PatternMixin:
         # 2. Optional guard
         guard_node = None
         if len(items) > 2 and items[1] is not None:
-            guard_node = ensure_expr(items[1])
+            guard_node = items[1]
 
         # 3. Body
         body_node = items[-1]
@@ -163,7 +152,7 @@ class PatternMixin:
         """
         if not items or len(items) < 2:
             raise ValueError(f"Expected subject and at least one case for match_stmt, got {len(items)}")
-        subject_node = ensure_expr(items[0])
+        subject_node = items[0]
         case_nodes = [self.match_case(case) if not isinstance(case, ast.match_case) else case
                       for case in items[1:]]
         return ast.Match(subject=subject_node, cases=case_nodes)
