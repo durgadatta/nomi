@@ -1,7 +1,7 @@
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr, ensure_name, ensure_store
+from prototype.parser.python import ensure_store
 
 class StatementMixin():
     def nonlocal_stmt(self, items):
@@ -30,8 +30,8 @@ class StatementMixin():
             if isinstance(it, Token) and it.value == '=':
                 left = items[0]; right = items[i+1] if i+1 < len(items) else None
                 target = ensure_store(left) if isinstance(left, (ast.Name, ast.Tuple, ast.List)) else left
-                return ast.Assign(targets=[target], value=ensure_expr(right))
-        return ast.Expr(value=ensure_expr(items[0]))
+                return ast.Assign(targets=[target], value=right)
+        return ast.Expr(value=items[0])
 
     def pass_stmt(self, items): return ast.Pass()
     def break_stmt(self, items): return ast.Break()

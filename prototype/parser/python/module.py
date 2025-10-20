@@ -1,5 +1,4 @@
 import ast
-from prototype.parser.python import ensure_arg, ensure_expr, ensure_name
 
 class ModuleMixin:
     def import_name(self, items):

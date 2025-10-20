@@ -1,7 +1,6 @@
 import ast
 from lark import Tree
 
-from prototype.parser.python import ensure_expr
 
 class ExceptionMixin:
     """Handles try/except/else/finally statements."""
@@ -62,7 +61,7 @@ class ExceptionMixin:
             raise ValueError(f"Unexpected except_clause structure: {items}")
 
         return ast.ExceptHandler(
-            type=ensure_expr(type_node) if type_node else None,
+            type=type_node if type_node else None,
             name=name_node,
             body=body if isinstance(body, list) else [body]
         )

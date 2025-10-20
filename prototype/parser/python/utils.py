@@ -20,20 +20,12 @@ def ensure_expr(x):
 
     #THIS should be removed later
     """
-    if x is None:
-        return ast.Constant(value=None)
     if isinstance(x, ast.expr):
         return x
-    if isinstance(x, Token):
-        s = x.value
     else:
         s = str(x)
-    try:
-        return ast.parse(s, mode='eval').body
-    except Exception:
-        if s.isidentifier():
-            return ast.Name(id=s, ctx=ast.Load())
-        return ast.Constant(value=s)
+    return ast.parse(s, mode='eval').body
+
 
 def ensure_arg(x):
     if isinstance(x, ast.arg):

@@ -2,7 +2,6 @@ import ast
 from lark import Transformer
 
 from prototype.parser.python import (
-    ensure_expr, 
     BindingMixin, ExpressionMixin, StatementMixin, FunctionMixin, ControlMixin,
     ClassMixin, ExceptionMixin, ModuleMixin, PatternMixin, OthersMixin
 )
@@ -30,7 +29,7 @@ class ModuleMixin(
 
     def single_input(self, items): return self.file_input(items)
     def eval_input(self, items):
-        if items: return ensure_expr(items[0])
+        if items: return items[0]
         return ast.Expression(body=ast.Constant(None))
 
 

@@ -98,7 +98,7 @@ class ContextManagerMixin:
             context_expr, optional_vars = wi
             ast_with_items.append(
                 ast.withitem(
-                    context_expr=ensure_expr(context_expr),
+                    context_expr=context_expr,
                     optional_vars=ensure_store(ensure_expr(optional_vars)) if optional_vars is not None else None
                 )
             )
@@ -124,7 +124,7 @@ class OthersMixin(ImportMixin, ContextManagerMixin, AsyncMixin):
         - items[0] = test expression
         - items[1] = optional message expression
         """
-        test_node = ensure_expr(items[0])
+        test_node = items[0]
         msg_node = ensure_expr(items[1]) if len(items) > 1 else None
         if msg_node.value is None:
             msg_node = None
