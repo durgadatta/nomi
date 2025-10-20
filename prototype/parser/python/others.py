@@ -91,9 +91,6 @@ class ContextManagerMixin:
         """
         with_items, body = items
 
-        # Convert suite to statements
-        body_stmts = ensure_stmt_list(body)
-
         # Convert each with_item to ast.withitem
         ast_with_items = []
         for wi in with_items:
@@ -106,7 +103,15 @@ class ContextManagerMixin:
                 )
             )
 
-        return ast.With(body=body_stmts, items=ast_with_items, type_comment=None)
+        return ast.With(body=body, items=ast_with_items, type_comment=None)
+    
+    def with_items(self, items):
+        '''
+        TODO: NOTE:
+        this is to workaround the __default__ implementation which collapses [a] to a
+        later remove that and have local adaptation
+        '''
+        return items
 
     def with_item(self, items):
         """

@@ -1,0 +1,29 @@
+Module(
+  body=[
+    Import(
+      names=[
+        alias(name='contextlib')]),
+    With(
+      items=[
+        withitem(
+          context_expr=Call(
+            func=Attribute(
+              value=Name(id='contextlib', ctx=Load()),
+              attr='suppress',
+              ctx=Load()),
+            args=[
+              Name(id='Exception', ctx=Load())]),
+          optional_vars=Name(id='dummy', ctx=Store()))],
+      body=[
+        Assign(
+          targets=[
+            Name(id='a', ctx=Store())],
+          value=BinOp(
+            left=Constant(value=1),
+            op=Div(),
+            right=Constant(value=0)))]),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Constant(value='with-stmt parsing works')]))])

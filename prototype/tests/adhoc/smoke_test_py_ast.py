@@ -16,7 +16,7 @@ from prototype.parser.python.utils import generate_ast
 
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
-    sample_file = script_path.parents[1].joinpath('data', 'sample_sources', 'parser', 'sample.py')
+    sample_file = script_path.parents[1].joinpath('data', 'sample_sources', 'parser', 'context_managers.py')
     source_code = sample_file.read_text(encoding="utf-8")
 
     # Also parse Python's built-in AST
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     lark_module = generate_ast(code=source_code)
     lark_module = ast.fix_missing_locations(lark_module)
 
-    lark_ast_str = ast.dump(lark_module,indent=2)
+    lark_ast_str = ast.dump(lark_module, indent=2)
     python_ast_str = ast.dump(python_module, indent=2)
 
 
@@ -39,8 +39,3 @@ if __name__ == "__main__":
     print("\nPython ast.parse -> AST:")
     print(python_ast_str)
 
-    # --- Execute compiled AST ---
-    globals_for_exec = {}  # supply any annotations if needed
-    codeobj = compile(lark_module, "<string>", "exec")
-    print("\n====== EXEC OUTPUT ======")
-    exec(codeobj, globals_for_exec)
