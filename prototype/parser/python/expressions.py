@@ -26,6 +26,34 @@ class IdentifierMixin:
         # name is routed to var; so it will always be string 
         name_node = ast.Name(id=items[0], ctx=ast.Load())
         return name_node
+    
+    def dotted_name(self, items):
+        """
+        dotted_name: name ("." name)*
+        Build an attribute access chain: a.b.c becomes ast.Attribute(ast.Attribute(ast.Name(a), b), c)
+
+        TODO: name is now collapsed to string, so .value is not needed
+        later, we may retain name as ast
+        """
+        if len(items) == 1:
+            # Single name: just return a Name node
+            return ast.Name(id=items[0], ctx=ast.Load())
+        
+        # Build attribute chain from left to right
+        # items[0] is the first name, then alternating ['.', name, '.', name, ...]
+        expr = ast.Name(id=items[0], ctx=ast.Load())
+        
+        # Skip the first item, then process pairs: we have [name, '.', name, '.', name, ...]
+        # But actually items will be: [name, Token('.', '.'), name, Token('.', '.'), name, ...]
+        for i in range(2, len(items), 2):
+            attr_name = items[i]
+            expr = ast.Attribute(
+                value=expr,
+                attr=attr_name,
+                ctx=ast.Load(),
+            )
+        
+        return expr
         
 
 class LiteralMixin:

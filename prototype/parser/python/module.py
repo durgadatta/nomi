@@ -13,7 +13,7 @@ class ModuleMixin:
         # items[0] is the list of dotted_as_name
         dotted_list = items[0]
         names = []
-        for dotted, alias in dotted_list:
+        for dotted, alias in dotted_list.children:
             # dotted can be list of names -> join with '.'
             name_str = ".".join(dotted) if isinstance(dotted, list) else dotted
             names.append(ast.alias(name=name_str, asname=alias))
@@ -51,7 +51,7 @@ class ModuleMixin:
             names = [ast.alias(name="*", asname=None)]
         else:
             names = []
-            for name, alias in imported:
+            for name, alias in imported.children:
                 names.append(ast.alias(name=name, asname=alias))
 
         return ast.ImportFrom(module=module_name, names=names, level=level)
@@ -74,21 +74,5 @@ class ModuleMixin:
             return (items[0], None)
         return (items[0], items[1])
 
-    # -----------------------------
-    # dotted_name: name ("." name)*
-    # returns list of strings
-    # -----------------------------
-    # def dotted_name(self, items):
-    #     return [str(i) for i in items]
-
-    # -----------------------------
-    # import_as_names / dotted_as_names
-    # returns list of tuples (name_or_dotted, alias)
-    # -----------------------------
-    def import_as_names(self, items):
-        return items
-
-    def dotted_as_names(self, items):
-        return items
 
 
