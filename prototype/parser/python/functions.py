@@ -1,7 +1,7 @@
 import ast
 from typing import List, Optional, Tuple
 from lark import Tree, Token
-from prototype.parser.python.utils import ensure_arg, ensure_name
+from prototype.parser.python.utils import ensure_arg
 
 class FunctionDefMixin:
     """
@@ -185,7 +185,7 @@ class FunctionDefMixin:
         name = items[0]
         annotation = items[1] if len(items) > 1 else None
         default = items[2] if len(items) > 2 else None
-        arg = ast.arg(arg=ensure_name(name), annotation=annotation if annotation else None)
+        arg = ast.arg(arg=name, annotation=annotation if annotation else None)
         
         # FIX: Return both the arg AND the default so _build_arguments can see it
         if default is not None:
