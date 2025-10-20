@@ -100,7 +100,7 @@ def get_parser():
     return python_parser
 
 
-def generate_ast(filename=None, code=None, dump=True):
+def generate_ast(filename=None, code=None, dump=False):
     from prototype.parser.python.ast_ import PythonASTTransformer
     assert filename or code
 
