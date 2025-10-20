@@ -20,10 +20,11 @@ class Interpreter(
     PatternMixin, ControlMixin, ClassMixin, OthersMixin
 ):
     """Evaluates AST nodes."""
+    env_class = Environment
     def __init__(self):
-        self.builtin_env = Environment(self)
+        self.builtin_env = self.env_class(self)
         self.builtin_env.bindings = builtins.__dict__.copy()
-        self.global_env = Environment(self, parent=self.builtin_env)
+        self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
 
     def eval(self, node: Optional[ast.AST]) -> Any:
