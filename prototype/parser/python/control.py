@@ -185,13 +185,35 @@ class ControlMixin(CompMixin):
         test = items[0]; body = items[1] if len(items) > 1 else []; orelse = items[2] if len(items) > 2 else []
         return ast.While(test=test, body=body, orelse=orelse)
 
+    def exprlist(self, items):
+        """
+        exprlist: (expr|star_expr) ("," (expr|star_expr))* [","]
+        Handle assignment targets - ensure Store context
+        """       
+        # If we get a single AST node (not a list), wrap it
+        if not isinstance(items, list):
+            items = [items]
+        
+        # Apply Store context to all items
+        processed_items = [ensure_store(item) for item in items]
+        
+        # Return single item or Tuple
+        if len(processed_items) == 1:
+            return processed_items[0]
+        return ast.Tuple(elts=processed_items, ctx=ast.Store())
+    
     def for_stmt(self, items):
-        target = items[0]; iter_expr = items[1]; body = items[2] if len(items) > 2 else []; 
-        orelse = items[3] if len(items) > 3 else []
-        if orelse is None:
-            # ast complains othewise; thse might be handled at single place
-            # where statemetns are normalized
-            orelse = []
-
-        targ = ensure_store(target) if isinstance(target, (ast.Name, ast.Tuple, ast.List)) else target
-        return ast.For(target=targ, iter=iter_expr, body=body, orelse=orelse, type_comment=None)
+        """
+        for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
+        """
+        target = items[0]  # Already processed by exprlist with Store context
+        iterable = items[1]
+        body = items[2]
+        else_body = items[3] if len(items) > 3 else []
+        
+        return ast.For(
+            target=ensure_store(target),
+            iter=iterable,
+            body=body,
+            orelse=else_body
+        )
