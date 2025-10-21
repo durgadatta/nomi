@@ -104,50 +104,50 @@ class FunctionDefMixin:
             defaults=defaults_for_args
         )
     
+    def typedparam(self, items):
+        """
+        ?typedparam: name (":" test)?
+        This method is called → typedparam was proper rule → has BOTH children: [name, annotation]
+
+        NOTE: ?x means x is conditionally inline (when >1 children)
+        """
+        name, annotation = items
+        return ast.arg(arg=name, annotation=annotation)
+    
     def paramvalue(self, items):
         """
         paramvalue: typedparam ("=" test)?
-        Now typedparam returns ast.arg, so we need to handle that
+
+        We can't return the parsed node from here because
+        arg() does not handle default values, it is handled
+        at one level up - parameters
         """
-        # items[0] is now ast.arg from typedparam (not inline content)
-        arg_node = items[0]  # Already ast.arg
-        default = items[1] if len(items) > 1 else None
+        typedparam, default_expr = items
         
-        return (arg_node, default)  # (ast.arg, default_expr)
+        # Process typedparam result -may/not be parsed already
+        if not isinstance(typedparam, ast.arg):
+            typedparam = self.typedparam([typedparam, None])
+        return (typedparam, default_expr)
         
     def starparam(self, items):
         """
-        starparam: "*" typedparam  # typedparam is inlined, so we get its content directly
-        items: [name] or [name, annotation] from inline typedparam
+        starparam: "*" typedparam
         """
-        # Handle inline typedparam content
-        name = items[0]
-        annotation = items[1] if len(items) > 1 else None
+        typedparam = items[0]
+        if not isinstance(typedparam, ast.arg):
+            typedparam = self.typedparam([typedparam, None])
         
-        # Always return proper ast.arg
-        arg_obj = ast.arg(arg=name, annotation=annotation)
-        return ("vararg", arg_obj)
+        return ("vararg", typedparam)
 
     def kwparams(self, items):
         """
-        kwparams: "**" typedparam ","?  # typedparam is inlined
-        items: [name] or [name, annotation] from inline typedparam
+        kwparams: "**" typedparam ","?
         """
-        name = items[0]
-        annotation = items[1] if len(items) > 1 else None
-        
-        arg_obj = ast.arg(arg=name, annotation=annotation)
-        return ("kwarg", arg_obj)
-
-    def typedparam(self, items):
-        """
-        typedparam: name (":" test)?
-        This is only called when used as a proper rule (not inlined)
-        """
-        name = items[0]
-        annotation = items[1] if len(items) > 1 else None
-        
-        return ast.arg(arg=name, annotation=annotation)
+        typedparam = items[0]
+        if not isinstance(typedparam, ast.arg):
+            typedparam = self.typedparam([typedparam, None])
+    
+        return ("kwarg", typedparam)
     
     def starparams(self, items):
         """
@@ -288,10 +288,7 @@ class FunctionDefMixin:
         funcdef: "def" name "(" [parameters] ")" ["->" test] ":" suite
         items: [name, parameters, return_annotation, suite] (all 4 items always present, None if optional)
         """
-        name = items[0]
-        parameters = items[1]
-        returns = items[2]  # None if no return annotation
-        suite = items[3]
+        name, parameters, returns, suite = items
 
         return ast.FunctionDef(
             name=name,
