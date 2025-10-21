@@ -182,7 +182,8 @@ class ControlMixin(CompMixin):
         return (items[0], items[1])
 
     def while_stmt(self, items):
-        test = items[0]; body = items[1] if len(items) > 1 else []; orelse = items[2] if len(items) > 2 else []
+        test, body, orelse = items 
+        orelse = orelse or []
         return ast.While(test=test, body=body, orelse=orelse)
 
     def exprlist(self, items):
