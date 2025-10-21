@@ -206,10 +206,8 @@ class ControlMixin(CompMixin):
         """
         for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
         """
-        target = items[0]  # Already processed by exprlist with Store context
-        iterable = items[1]
-        body = items[2]
-        else_body = items[3] if len(items) > 3 else []
+        target, iterable, body, else_body = items 
+        else_body = else_body or []
         
         return ast.For(
             target=ensure_store(target),
