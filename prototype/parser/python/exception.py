@@ -26,10 +26,10 @@ class ExceptionMixin:
             )
         else:
             # Full try/except/else/finally case
-            suite = items[0]
-            except_clauses = items[1] if len(items) > 1 else []
-            else_suite = items[2] if len(items) > 2 else []
-            finally_suite = items[3] if len(items) > 3 else []
+
+            suite, except_clauses, else_suite, finally_suite = items
+            else_suite = else_suite or []
+            finally_suite = finally_suite or [] 
 
             return ast.Try(
                 body=suite,
