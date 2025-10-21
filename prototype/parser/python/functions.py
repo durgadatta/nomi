@@ -1,7 +1,6 @@
 import ast
 from typing import List, Optional, Tuple
 from lark import Tree, Token
-from prototype.parser.python.utils import ensure_arg
 
 class FunctionDefMixin:
     """
@@ -10,40 +9,6 @@ class FunctionDefMixin:
 
     Reuses the same _build_arguments() logic for both.
     """
-
-    # ---------- shared helpers ----------
-    def _name_to_arg(self, name: str) -> ast.arg:
-        return ast.arg(arg=str(name), annotation=None)
-
-    def starparams(self, items):
-        """
-        starparams: (starparam | starguard) poststarparams
-        """
-        star_part = items[0]
-        poststar_part = items[1] if len(items) > 1 else []
-        
-        # FIX: Return a flat list that _build_arguments can process
-        result = [star_part]
-        
-        if poststar_part:
-            # If poststar_part is a Tree, extract its children
-            if isinstance(poststar_part, Tree):
-                poststar_part = poststar_part.children
-            
-            # If it's a list, extend the result with its items
-            if isinstance(poststar_part, list):
-                # Flatten any nested structures in poststar_part
-                for item in poststar_part:
-                    if item is None:
-                        continue
-                    if isinstance(item, list):
-                        result.extend(item)
-                    else:
-                        result.append(item)
-            else:
-                result.append(poststar_part)
-                
-        return result
 
     def _build_arguments(self, items):
         """
@@ -67,7 +32,6 @@ class FunctionDefMixin:
         seen_star = False
         current_list = posonlyargs
 
-        # FIX: First, flatten the entire items list to handle nested structures
         def flatten_items(items_list):
             flattened = []
             for item in items_list:
@@ -85,7 +49,7 @@ class FunctionDefMixin:
             if it is None:
                 continue
 
-            # Handle section markers
+            # Handle section markers (now processed by parameters method)
             if it == "SLASH":
                 seen_slash = True
                 current_list = args
@@ -95,60 +59,32 @@ class FunctionDefMixin:
                 current_list = kwonlyargs
                 continue
 
-            # *args
+            # *args - from starparam: ("vararg", ast.arg)
             if isinstance(it, tuple) and it[0] == "vararg":
-                vararg = ensure_arg(it[1])
-                seen_star = True
-                current_list = kwonlyargs
+                vararg = it[1]  # ast.arg or None for bare *
+                if vararg is not None:  # Only set seen_star if we actually have *args
+                    seen_star = True
+                    current_list = kwonlyargs
                 continue
 
-            # **kwargs
+            # **kwargs - from kwparams: ("kwarg", ast.arg)  
             if isinstance(it, tuple) and it[0] == "kwarg":
-                kwarg = ensure_arg(it[1])
+                kwarg = it[1]  # Always ast.arg
                 continue
 
-            # lambda_starparams dict form
-            if isinstance(it, dict) and "star_name" in it:
-                seen_star = True
-                if it["star_name"]:
-                    vararg = self._name_to_arg(it["star_name"])
-                for pv in it.get("after_params", []):
-                    if isinstance(pv, tuple) and len(pv) == 2:
-                        arg_obj, default_expr = pv
-                    else:
-                        arg_obj, default_expr = pv, None
-                        
-                    if arg_obj:
-                        kwonlyargs.append(arg_obj)
-                        if default_expr is not None:
-                            kw_defaults.append(default_expr)
-                if it.get("kwparams"):
-                    kwarg = self._name_to_arg(it["kwparams"])
-                continue
-
-            # Convert string parameters to ast.arg
-            if isinstance(it, str):
-                it = ast.arg(arg=it, annotation=None)
-
-            # Normal parameter
+            # Normal parameter - guaranteed (ast.arg, default_expr)
             if isinstance(it, tuple) and len(it) == 2:
                 arg_obj, default_expr = it
             else:
-                arg_obj, default_expr = it, None
-
-            # Ensure arg_obj is ast.arg, not string
-            if isinstance(arg_obj, str):
-                arg_obj = ast.arg(arg=arg_obj, annotation=None)
+                # Should not happen with consistent types
+                continue
 
             if not arg_obj:
                 continue
 
             current_list.append(arg_obj)
             if seen_star:
-                if default_expr is not None:
-                    kw_defaults.append(default_expr)
-                else:
-                    kw_defaults.append(None)
+                kw_defaults.append(default_expr)  # Can be None
             else:
                 if default_expr is not None:
                     defaults_for_args.append(default_expr)
@@ -167,38 +103,85 @@ class FunctionDefMixin:
             kwarg=kwarg,
             defaults=defaults_for_args
         )
-   
+    
     def paramvalue(self, items):
         """
-        Process a parameter, e.g., 'x' or 'y=5'.
-        Returns: name (for no default) or (name, default) tuple.
+        paramvalue: typedparam ("=" test)?
+        Now typedparam returns ast.arg, so we need to handle that
         """
-        if len(items) == 2:
-            return (items[0], items[1])  # e.g., (y, 5)
-        return items[0]  # e.g., x
+        # items[0] is now ast.arg from typedparam (not inline content)
+        arg_node = items[0]  # Already ast.arg
+        default = items[1] if len(items) > 1 else None
+        
+        return (arg_node, default)  # (ast.arg, default_expr)
+        
+    def starparam(self, items):
+        """
+        starparam: "*" typedparam  # typedparam is inlined, so we get its content directly
+        items: [name] or [name, annotation] from inline typedparam
+        """
+        # Handle inline typedparam content
+        name = items[0]
+        annotation = items[1] if len(items) > 1 else None
+        
+        # Always return proper ast.arg
+        arg_obj = ast.arg(arg=name, annotation=annotation)
+        return ("vararg", arg_obj)
 
-    def typedparam(self, items):
+    def kwparams(self, items):
         """
-        Process a typed parameter, e.g., 'y: int' or 'y: int = 5'.
-        Returns: ast.arg with optional annotation and default passed to _build_arguments.
+        kwparams: "**" typedparam ","?  # typedparam is inlined
+        items: [name] or [name, annotation] from inline typedparam
         """
         name = items[0]
         annotation = items[1] if len(items) > 1 else None
-        default = items[2] if len(items) > 2 else None
-        arg = ast.arg(arg=name, annotation=annotation if annotation else None)
         
-        # FIX: Return both the arg AND the default so _build_arguments can see it
-        if default is not None:
-            return (arg, default)
-        return arg
+        arg_obj = ast.arg(arg=name, annotation=annotation)
+        return ("kwarg", arg_obj)
 
-    def starparam(self, items):
+    def typedparam(self, items):
         """
-        starparam: "*" typedparam
-        Returns: ("vararg", ast.arg)
+        typedparam: name (":" test)?
+        This is only called when used as a proper rule (not inlined)
         """
-        # items[0] is already an ast.arg from typedparam
-        return ("vararg", items[0])
+        name = items[0]
+        annotation = items[1] if len(items) > 1 else None
+        
+        return ast.arg(arg=name, annotation=annotation)
+    
+    def starparams(self, items):
+        """
+        starparams: (starparam | starguard) poststarparams
+        """
+        star_part = items[0]
+        poststar_part = items[1] if len(items) > 1 else []
+        
+        # star_part is either ("vararg", ast.arg) from starparam 
+        # or ("vararg", None) from starguard
+        # or potentially a raw "*" token that we need to handle
+        
+        result = []
+        
+        # If we got a raw "*" token (because no STAR method processed it)
+        if isinstance(star_part, Token) and star_part.value == '*':
+            result.append(("vararg", None))  # Bare star
+        else:
+            result.append(star_part)  # Already processed starparam/starguard
+        
+        if poststar_part:
+            if isinstance(poststar_part, list):
+                result.extend(poststar_part)
+            else:
+                result.append(poststar_part)
+                
+        return result
+
+    def starguard(self, items):
+        """
+        starguard: "*"
+        Returns: ("vararg", None) for bare star
+        """
+        return ("vararg", None)
 
     def poststarparams(self, items):
         """
@@ -207,7 +190,6 @@ class FunctionDefMixin:
         paramvalues = items[0] if items and items[0] is not None else []
         kwparams = items[1] if len(items) > 1 else None
         
-        # FIX: Ensure we return a flat list, not nested structures
         result = []
         if paramvalues:
             if isinstance(paramvalues, list):
@@ -218,21 +200,61 @@ class FunctionDefMixin:
             result.append(kwparams)
         return result
 
-    def starguard(self, _):
-        """Bare star marker"""
-        return "STAR"
-
-    def kwparams(self, items):
-        """
-        kwparams: "**" typedparam ","?
-        Returns: ("kwarg", ast.arg)
-        """
-        # items[0] is already an ast.arg from typedparam
-        return ("kwarg", items[0])
-
     def parameters(self, items):
-        """Build arguments from parameters"""
-        return self._build_arguments(items)
+        """
+        Handle all three forms of parameters:
+        1. paramvalue ("," paramvalue)* ["," SLASH ("," paramvalue)*] ["," [starparams | kwparams]]
+        2. starparams
+        3. kwparams
+        """
+        processed_items = []
+        
+        # If we only have one item, it might be Form 2 or 3
+        if len(items) == 1:
+            # Forms 2 & 3: starparams or kwparams as single item
+            return self._build_arguments(items)
+        
+        # Form 1: Mixed parameters with potential SLASH
+        i = 0
+        while i < len(items):
+            item = items[i]
+            
+            if item is None:
+                i += 1
+                continue
+                
+            # Handle SLASH marker
+            if item == "SLASH":
+                processed_items.append("SLASH")
+                i += 1
+                continue
+                
+            # Handle ast.arg (from typedparam)
+            if isinstance(item, ast.arg):
+                # Check if next item is a default expression
+                if i + 1 < len(items) and isinstance(items[i + 1], ast.expr):
+                    processed_items.append((item, items[i + 1]))
+                    i += 2
+                else:
+                    processed_items.append((item, None))
+                    i += 1
+            
+            # Handle raw string parameter names
+            elif isinstance(item, str):
+                arg_obj = ast.arg(arg=item, annotation=None)
+                processed_items.append((arg_obj, None))
+                i += 1
+                
+            # Handle starparams/kwparams in the middle of Form 1
+            elif isinstance(item, (tuple, list, dict)):
+                processed_items.append(item)
+                i += 1
+                
+            else:
+                # Unknown item type, skip it
+                i += 1
+        
+        return self._build_arguments(processed_items)
     
     def decorator(self, items):
         """
@@ -310,6 +332,11 @@ class FunctionDefMixin:
 
 
 class LambdaMixin(FunctionDefMixin):
+    '''
+    Try to re-sue FuncDef parts here
+    NOTE: why are the grammar different for arguments for FuncDef and Lambda?
+    related to precedence?
+    '''
    
     def lambda_params(self, items):
         """
@@ -317,25 +344,48 @@ class LambdaMixin(FunctionDefMixin):
                     | lambda_starparams
                     | lambda_kwparams
         """
-        # Use _build_arguments directly with flattened structure
-        flat_items = []
+        processed_items = []
         
-        for item in items:
-            if isinstance(item, ast.arguments):
-                # Unpack arguments structure into flat markers
-                if item.vararg:
-                    flat_items.append(("vararg", item.vararg))
-                for kwarg, kw_default in zip(item.kwonlyargs, item.kw_defaults):
-                    if kw_default is not None:
-                        flat_items.append((kwarg, kw_default))
-                    else:
-                        flat_items.append(kwarg)
-                if item.kwarg:
-                    flat_items.append(("kwarg", item.kwarg))
+        # Single item cases
+        if len(items) == 1:
+            item = items[0]
+            if isinstance(item, dict) and "star_name" in item:
+                return self._process_lambda_starparams(item)
+            elif isinstance(item, list) and item and item[0] == "kwarg":
+                return self._build_arguments([("kwarg", item[1])])
             else:
-                flat_items.append(item)
+                return self._build_arguments([item])
         
-        return self._build_arguments(flat_items)
+        # Mixed parameters
+        for item in items:
+            if item is None:
+                continue
+            if isinstance(item, dict) and "star_name" in item:
+                starargs_result = self._process_lambda_starparams(item)
+                processed_items.extend(starargs_result)
+            elif isinstance(item, list) and item and item[0] == "kwarg":
+                processed_items.append(("kwarg", item[1]))
+            elif isinstance(item, tuple):
+                name, default = item
+                arg_obj = ast.arg(arg=name, annotation=None) if isinstance(name, str) else name
+                processed_items.append((arg_obj, default))
+            elif isinstance(item, str):
+                arg_obj = ast.arg(arg=item, annotation=None)
+                processed_items.append((arg_obj, None))
+        
+        return self._build_arguments(processed_items)
+    
+    def _process_lambda_starparams(self, starparams_dict):
+        """Convert lambda_starparams dict to _build_arguments format"""
+        result = []
+        if starparams_dict["star_name"]:
+            result.append(("vararg", ast.arg(arg=starparams_dict["star_name"], annotation=None)))
+        for name, default in starparams_dict["after_params"]:
+            arg_obj = ast.arg(arg=name, annotation=None) if isinstance(name, str) else name
+            result.append((arg_obj, default))
+        if starparams_dict["kwparams"]:
+            result.append(("kwarg", ast.arg(arg=starparams_dict["kwparams"], annotation=None)))
+        return result
     
     def lambda_paramvalue(self, items):
         """
@@ -349,36 +399,25 @@ class LambdaMixin(FunctionDefMixin):
         """
         lambda_starparams: "*" [name] ("," lambda_paramvalue)* ["," [lambda_kwparams]]
         """
-        # Convert to format that _build_arguments understands
-        flat_items = []
-        
-        # Add *args marker
-        if items and items[0] is not None:
-            flat_items.append(("vararg", ast.arg(arg=items[0])))
-        else:
-            flat_items.append("STAR")  # Bare star marker
-        
-        # Add keyword-only parameters
+        result = {
+            "star_name": items[0] if items and items[0] is not None else None,
+            "after_params": [],
+            "kwparams": None
+        }
         for i in range(1, len(items)):
             item = items[i]
-            if isinstance(item, ast.arguments):
-                # **kwargs
-                flat_items.append(("kwarg", item.kwarg))
+            if isinstance(item, list) and item and item[0] == "kwarg":
+                result["kwparams"] = item[1].arg if hasattr(item[1], 'arg') else item[1]
             elif isinstance(item, tuple):
-                # (name, default)
-                name, default = item
-                flat_items.append((ast.arg(arg=name), default))
-            elif item is not None:
-                # name only
-                flat_items.append(ast.arg(arg=item))
-        
-        return self._build_arguments(flat_items)
+                result["after_params"].append(item)
+        return result
     
     def lambda_kwparams(self, items):
         """
         lambda_kwparams: "**" name ","?
         """
-        return self._build_arguments([("kwarg", ast.arg(arg=items[0]))])
+        name = items[0]
+        return ["kwarg", ast.arg(arg=name, annotation=None) if isinstance(name, str) else name]
     
     def lambdef(self, items):
         """
@@ -397,6 +436,8 @@ class LambdaMixin(FunctionDefMixin):
             return ast.Lambda(args=items[0], body=items[1])
         else:
             return ast.Lambda(args=self._build_arguments([]), body=items[0])
+
+
 class CallMixin:
     def argvalue(self, items):
         """

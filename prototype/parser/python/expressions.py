@@ -426,7 +426,6 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         testlist_tuple: test ("," test)+ [","] | test ","
         Returns: ast.Tuple for multiple items, single expression for one item
         """
-        # FIX: Return actual AST nodes, not constructor calls
         if len(items) == 1:
             return ensure_expr(items[0])
         else:
