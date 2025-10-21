@@ -12,7 +12,6 @@ class ModuleMixin:
         for dotted_item in dotted_tree.children:
             if isinstance(dotted_item, tuple) and len(dotted_item) == 2:
                 dotted, alias = dotted_item
-                # FIX: Convert dotted_name AST to string
                 name_str = self._dotted_name_to_string(dotted)
                 names.append(ast.alias(name=name_str, asname=alias))
         return ast.Import(names=names)
@@ -36,11 +35,9 @@ class ModuleMixin:
                 elif p == '...':  # in case of multiple dots
                     level += 3
                 else:
-                    # FIX: Convert module name AST to string
                     name_parts.append(self._dotted_name_to_string(p))
             module_name = ".".join(name_parts) if name_parts else None
         else:
-            # FIX: Convert single module name AST to string
             module_name = self._dotted_name_to_string(module_item)
 
         # Build list of aliases
@@ -51,7 +48,6 @@ class ModuleMixin:
             for import_item in imported.children:
                 if isinstance(import_item, tuple) and len(import_item) == 2:
                     name, alias = import_item
-                    # FIX: Convert imported name to string
                     name_str = name if isinstance(name, str) else self._dotted_name_to_string(name)
                     names.append(ast.alias(name=name_str, asname=alias))
         return ast.ImportFrom(module=module_name, names=names, level=level)

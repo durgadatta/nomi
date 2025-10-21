@@ -59,13 +59,11 @@ class FunctionMixin:
         return is_generator
 
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
-        #print(f"🚀 DEBUG: Defining function {node.name}")
         closure_env = self.current_env
         
         def func(*args, **kwargs):
             # Use the actual function name in debug output, not the local variable name
             actual_name = getattr(func, '__name__', node.name)
-            #print(f"📞 DEBUG: Calling function {actual_name} with args={args}, kwargs={kwargs}")
             
             is_generator = self._is_generator_function(node)
             
@@ -73,7 +71,6 @@ class FunctionMixin:
                 local_env = Environment(self, parent=closure_env)
                 self._bind_function_args(node, local_env, args, kwargs)
                 gen = GeneratorState(self, node.body, local_env)
-                #print(f"🎯 DEBUG: Returning GeneratorState for {actual_name}: {gen}")
                 return gen
             else:
                 local_env = Environment(self, parent=closure_env)
@@ -82,20 +79,16 @@ class FunctionMixin:
                 old_env = self.current_env
                 self.current_env = local_env
                 try:
-                    #print(f"▶️  DEBUG: Executing function {actual_name} body")
                     for stmt in node.body:
                         self.eval(stmt)
-                    #print(f"✅ DEBUG: Function {actual_name} completed normally")
                     return None
                 except ReturnException as re:
-                    #print(f"↩️  DEBUG: Function {actual_name} returning: {re.value}")
                     return re.value
                 except (BreakException, ContinueException) as e:
                     raise SyntaxError(f"'{type(e).__name__}' outside loop at line {self.get_lineno(node)}")
                 finally:
                     self.current_env = old_env
 
-        # ⭐ CRITICAL: Always set the function name
         func.__name__ = node.name
         func.closure_env = closure_env
         func.ast_node = node
@@ -111,7 +104,6 @@ class FunctionMixin:
             decorated_func.__name__ = node.name
         
         self.current_env.set(node.name, decorated_func)
-        #print(f"✅ DEBUG: Stored function {node.name} in environment")
 
     def eval_Lambda(self, node: ast.Lambda) -> Any:
         closure_env = self.current_env  # ⭐ Capture the current environment

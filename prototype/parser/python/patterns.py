@@ -97,7 +97,6 @@ class PatternMixin:
         """
         items = [pattern_node(s), optional guard, suite]
         """
-        # FIX: Handle case where items is a Tree instead of list
         if isinstance(items, Tree):
             items = items.children
             
@@ -174,7 +173,6 @@ class PatternMixin:
         """
         Handle class pattern, e.g., 'int(n)', 'Point(x=n)'.
         """
-        # FIX: Handle Tree('value', ['int']) by extracting the actual name
         cls_name = items[0]
         if isinstance(cls_name, Tree) and cls_name.data == 'value':
             cls_name = cls_name.children[0] if cls_name.children else 'unknown'
@@ -187,7 +185,6 @@ class PatternMixin:
         if len(items) > 1 and items[1] is not None:
             arg_items = items[1]
             
-            # FIX: Handle the structure from arguments_pattern which can be [pos_arg_pattern, None]
             if isinstance(arg_items, list):
                 # Filter out None values and flatten the structure
                 processed_items = []
@@ -200,7 +197,6 @@ class PatternMixin:
                         processed_items.append(item)
                 arg_items = processed_items
                 
-            # FIX: Ensure we always work with a list
             if not isinstance(arg_items, list):
                 arg_items = [arg_items]
                 
@@ -232,7 +228,6 @@ class PatternMixin:
         arguments_pattern: pos_arg_pattern ["," keyws_arg_pattern]
                          | keyws_arg_pattern -> no_pos_arguments
         """
-        # FIX: Handle the structure and filter out None values
         result = []
         for item in items:
             if item is None:
@@ -247,20 +242,17 @@ class PatternMixin:
         """
         pos_arg_pattern: as_pattern ("," as_pattern)*
         """
-        # FIX: Return list of positional patterns
         return items
 
     def keyws_arg_pattern(self, items):
         """
         keyws_arg_pattern: keyw_arg_pattern ("," keyw_arg_pattern)*
         """
-        # FIX: Return list of keyword patterns  
         return items
 
     def keyw_arg_pattern(self, items):
         """
         keyw_arg_pattern: NAME "=" as_pattern
         """
-        # FIX: Return mapping_item_pattern structure
         key, pattern = items[0], items[1]
         return Tree("mapping_item_pattern", [key, pattern])

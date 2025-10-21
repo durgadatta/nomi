@@ -1,6 +1,5 @@
 from prototype.parser.python.utils import (
-    ensure_arg, ensure_expr,
-    ensure_store
+    ensure_expr, ensure_store
 )
 
 from prototype.parser.python.expressions import ExpressionMixin

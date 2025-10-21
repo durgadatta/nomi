@@ -18,14 +18,6 @@ def ensure_expr(x):
     return ast.parse(s, mode='eval').body
 
 
-def ensure_arg(x):
-    if isinstance(x, ast.arg):
-        return x
-    if isinstance(x, str):
-        return ast.arg(arg=x, annotation=None)
-    raise TypeError("Cannot coerce to ast.arg: %r" % (x,))
-
-
 # --- Helper: recursively set Store() context for LHS ---
 def ensure_store(node):
     '''

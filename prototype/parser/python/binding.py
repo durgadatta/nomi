@@ -22,7 +22,6 @@ class BindingMixin:
             lhs_nodes: single AST node or list/nested lists of AST nodes (targets)
             rhs_node: AST expression node (already fully built by transformer)
         """
-        # FIX: Handle case where we get [target, value] directly
         if len(items) == 2:
             lhs_nodes = [items[0]]
             rhs_node = items[1]
