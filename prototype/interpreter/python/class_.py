@@ -1,5 +1,5 @@
 import ast
-from prototype.interpreter.python.base import Environment
+from .base import Environment
 
 class ClassMixin:
     def eval_ClassDef(self, node: ast.ClassDef) -> None:

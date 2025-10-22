@@ -1,7 +1,7 @@
 
 import ast
 from lark import Tree, Token
-from prototype.parser.python import ensure_store
+from . import ensure_store
 
 class CompMixin:
     """Mixin for handling Python comprehensions in Lark AST transformer."""

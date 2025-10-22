@@ -1,9 +1,9 @@
-from prototype.interpreter.python.base import Environment, GeneratorState
 import ast
-from typing import List, Any, Callable
+from typing import List, Any
 
-from prototype.interpreter.python.base import (
-    ReturnException, BreakException, ContinueException, YieldException
+from .base import (
+    Environment, GeneratorState,
+    ReturnException, BreakException, ContinueException
 )
 
 class FunctionMixin:

@@ -1,7 +1,7 @@
 import ast 
 from lark import Transformer
 
-from prototype.parser.python import (
+from . import (
     BindingMixin, ExpressionMixin, StatementMixin, FunctionMixin, ControlMixin,
     ClassMixin, ExceptionMixin, ModuleMixin, PatternMixin, OthersMixin
 )

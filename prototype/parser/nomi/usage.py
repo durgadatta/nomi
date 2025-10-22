@@ -4,7 +4,7 @@ from lark.indenter import PythonIndenter
 
 from pathlib import Path
 
-from prototype.parser.nomi.ast_ import NomiToPythonAST
+from .ast_ import NomiToPythonAST
 
 
 def get_parser():

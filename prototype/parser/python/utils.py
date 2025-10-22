@@ -58,7 +58,7 @@ def get_parser():
 
 
 def generate_ast(filename=None, code=None, dump=False):
-    from prototype.parser.python.ast_ import PythonASTTransformer
+    from .ast_ import PythonASTTransformer
     assert filename or code
 
     if code is None:

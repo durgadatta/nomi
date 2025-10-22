@@ -1,6 +1,6 @@
 import ast
 
-from prototype.parser.python import ensure_expr, ensure_store
+from . import ensure_expr, ensure_store
 
 class ImportMixin:
     def import_stmt(self, items):

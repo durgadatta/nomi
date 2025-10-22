@@ -1,5 +1,5 @@
 import ast
-from prototype.interpreter.python.base import  YieldException, YieldFromException
+from .base import  YieldException, YieldFromException
 class AsyncMixin:
     def eval_AsyncWith(self, node: ast.AsyncWith) -> None:
         exits = []

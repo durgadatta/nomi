@@ -3,7 +3,7 @@ from typing import Dict, Any
 from pathlib import Path
 
 from ..python import Interpreter
-from prototype.parser.python.utils import generate_ast
+from ...parser.python.utils import generate_ast
 
 
 def run_eval_loop(code = None, file_name=None, tree=None) -> Dict[str, Any]:

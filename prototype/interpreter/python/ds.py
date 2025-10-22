@@ -1,7 +1,7 @@
 import ast
 from typing import Dict, Any, List, Iterator
 
-from prototype.interpreter.python.base import Environment
+from .base import Environment
 
 class DataStructMixin:
     def eval_Dict(self, node: ast.Dict) -> Dict[Any, Any]:

@@ -3,7 +3,7 @@ Binding constructs; this will be one of the most complex aspect to play with
 '''
 import ast 
 
-from prototype.parser.python import ensure_store
+from . import ensure_store
 
 class BindingMixin:
     def assign_stmt(self, items):
