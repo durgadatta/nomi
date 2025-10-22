@@ -3,6 +3,7 @@ from typing import Dict, Any
 from pathlib import Path
 
 from ..python import Interpreter
+from prototype.parser.python.utils import generate_ast
 
 
 def run_eval_loop(code = None, file_name=None, tree=None) -> Dict[str, Any]:
@@ -10,7 +11,7 @@ def run_eval_loop(code = None, file_name=None, tree=None) -> Dict[str, Any]:
     if tree is None:
         if code is None:
             code = Path(file_name).read_text(encoding='utf-8')
-        tree = ast.parse(code)
+        tree = generate_ast(code=code)
         
 
     tree = ast.fix_missing_locations(tree)
