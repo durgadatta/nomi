@@ -79,3 +79,10 @@ class ExceptionMixin:
             orelse=[],
             finalbody=extract_suite(items[1])
         )
+    
+    def raise_stmt(self, items):
+        """
+        raise_stmt: "raise" [test ["from" test]]
+        """
+        exc, cause = items
+        return ast.Raise(exc=exc, cause=cause)
