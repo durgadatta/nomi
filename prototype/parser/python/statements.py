@@ -1,7 +1,7 @@
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_store
+from . import ensure_store
 
 class StatementMixin():
     def nonlocal_stmt(self, items):

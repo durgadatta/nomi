@@ -1,15 +1,15 @@
-from prototype.parser.python.utils import (
+from .utils import (
     ensure_expr, ensure_store
 )
 
-from prototype.parser.python.expressions import ExpressionMixin
-from prototype.parser.python.statements import StatementMixin
-from prototype.parser.python.functions import FunctionMixin
-from prototype.parser.python.control import ControlMixin
-from prototype.parser.python.class_ import ClassMixin
-from prototype.parser.python.binding import BindingMixin
-from prototype.parser.python.exception import ExceptionMixin
-from prototype.parser.python.module import ModuleMixin
-from prototype.parser.python.patterns import PatternMixin
-from prototype.parser.python.others import OthersMixin
+from .expressions import ExpressionMixin
+from .statements import StatementMixin
+from .functions import FunctionMixin
+from .control import ControlMixin
+from .class_ import ClassMixin
+from .binding import BindingMixin
+from .exception import ExceptionMixin
+from .module import ModuleMixin
+from .patterns import PatternMixin
+from .others import OthersMixin
 

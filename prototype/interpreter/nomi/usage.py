@@ -3,8 +3,8 @@ from typing import Dict, Any
 from pathlib import Path
 
 
-from prototype.interpreter.nomi.interpreter import Interpreter
-from prototype.parser.nomi.usage import generate_ast
+from ..nomi.interpreter import Interpreter
+from ...parser.nomi.usage import generate_ast
 
 
 def run_eval_loop(code = None, file_name=None, tree=None) -> Dict[str, Any]:

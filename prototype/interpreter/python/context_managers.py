@@ -1,5 +1,5 @@
 import ast
-from prototype.interpreter.python.base import Environment, ReturnException, BreakException, ContinueException
+from .base import Environment, ReturnException, BreakException, ContinueException
 
 
 class ContextMangerMixin:

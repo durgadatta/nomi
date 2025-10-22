@@ -1,6 +1,6 @@
 import ast
 
-from prototype.interpreter.python.base import (
+from .base import (
     Environment, ReturnException, GeneratorState, 
     BreakException, ContinueException, YieldException
 )

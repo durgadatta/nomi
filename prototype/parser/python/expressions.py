@@ -7,7 +7,7 @@ but both are conceptually same
 import ast
 from lark import Token
 
-from prototype.parser.python import ensure_expr
+from . import ensure_expr
 
 
 
