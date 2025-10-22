@@ -3,21 +3,23 @@ from typing import Any, Dict, List, Optional, Tuple, Callable, Iterator, Set
 import builtins
 
 
-from prototype.interpreter.python.base import (
-    Environment, ControlException, ReturnException, BreakException, ContinueException, YieldException
+from .base import (
+    Environment, ReturnException, BreakException, ContinueException, YieldException
 )
-from prototype.interpreter.python.function import FunctionMixin
-from prototype.interpreter.python.expressions import ExpresssionMixin
-from prototype.interpreter.python.ds import DataStructMixin
-from prototype.interpreter.python.control import ControlMixin
-from prototype.interpreter.python.patterns import PatternMixin
-from prototype.interpreter.python.class_ import ClassMixin
-from prototype.interpreter.python.binding import BindingMixin
-from prototype.interpreter.python.others import OthersMixin
+from .function import FunctionMixin
+from .expressions import ExpresssionMixin
+from .ds import DataStructMixin
+from .control import ControlMixin
+from .patterns import PatternMixin
+from .class_ import ClassMixin
+from .binding import BindingMixin
+from .others import OthersMixin
+
+from .context_managers import ContextMangerMixin
 
 class Interpreter(
     BindingMixin, FunctionMixin, ExpresssionMixin, DataStructMixin,
-    PatternMixin, ControlMixin, ClassMixin, OthersMixin
+    PatternMixin, ControlMixin, ClassMixin, ContextMangerMixin, OthersMixin
 ):
     """Evaluates AST nodes."""
     env_class = Environment
