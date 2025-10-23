@@ -1,8 +1,10 @@
 {
+  "contextmanager": "contextmanager:class=<class 'function'>",
   "error_printer_context": "error_printer_context:class=<class 'function'>",
   "a": [
     1
   ],
+  "test_value": 1,
   "stdout": [
     "[1]",
     ""

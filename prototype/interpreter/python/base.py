@@ -63,7 +63,18 @@ class Environment:
             raise NameError(f"name '{name}' is not defined")
         
 class GeneratorState:
-    """Manages state for generator functions."""
+    """
+    Manages state for generator functions.
+    
+    This is the most fragile piece
+
+    Tricky part in handling exception withing with-blocks.
+    Also check the python's implementation of contextmanager.contextlib -
+    there are several subtle comments and potential issues.
+    specially review the "throw" method.
+    https://stackoverflow.com/questions/11485591/what-is-generator-throw-good-for
+
+    """
     
     def __init__(self, interpreter: 'Interpreter', body: List[ast.stmt], env: 'Environment'):
         self.interpreter = interpreter
@@ -106,11 +117,27 @@ class GeneratorState:
                     self.active = False
                     self.return_value = re.value
                     raise StopIteration(self.return_value)
-                    
+                except Exception as e:
+                    # This is where we handle context manager exceptions
+                    # Insert a raise statement at the current position
+                    raise_node = ast.Raise(exc=e, cause=None)
+                    self.body.insert(self.index, raise_node)
+                    # Don't increment index - we want to execute the raise next
+                    return  # Or continue execution?
+                        
             self.active = False
             raise StopIteration(self.return_value)
         finally:
             self.interpreter.current_env = old_env
+
+    def throw(self, exc_instance):
+        """For context managers - the exception handling is done in __next__"""
+        # Maybe just call __next__ to trigger the exception handling?
+        return self.__next__()
+
+    def close(self):
+        """Implement generator.close() to allow proper cleanup."""
+        pass
 
     def get_lineno(self) -> int:
         if self.compound_state:
