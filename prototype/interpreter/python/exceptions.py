@@ -7,6 +7,7 @@ from .base import (
 
 class ExceptionMixin:
     def eval_Raise(self, node: ast.Raise) -> None:
+        """Evaluate a raise statement."""
         if node.exc:
             exc = self.eval(node.exc)
             if isinstance(exc, type) and issubclass(exc, Exception):
@@ -28,6 +29,12 @@ class ExceptionMixin:
             raise
 
     def eval_Try(self, node: ast.Try) -> Any:
+        """
+        Evaluate a try statement.
+        
+        Handles try-except-else-finally blocks with proper exception handling
+        and scope management for exception handlers.
+        """
         result = None
         exception_occurred = False
         return_exception = None
@@ -43,47 +50,13 @@ class ExceptionMixin:
         except Exception as e:
             exception_occurred = True
             caught_exception = e
-            handler_found = False
             
-            # Try each exception handler
+            # Find and execute matching exception handler
+            handler_found = False
             for handler in node.handlers:
-                if handler.type is None:
-                    # Bare except: always matches
+                if self._handler_matches_exception(handler, e):
                     handler_found = True
-                else:
-                    # Check if this handler matches the exception type
-                    handler_type = self.eval(handler.type)
-                    # Handle both class and instance comparisons
-                    if (isinstance(handler_type, type) and isinstance(e, handler_type)) or handler_type == type(e):
-                        handler_found = True
-                
-                if handler_found:
-                    # Create environment for the handler with the SAME parent as current
-                    # This ensures assignments in the handler are visible in the outer scope
-                    handler_env = Environment(self, parent=self.current_env.parent)
-                    
-                    # Copy current bindings to maintain scope
-                    for key, value in self.current_env.bindings.items():
-                        handler_env.set(key, value)
-                    
-                    # Bind the exception if there's a name
-                    if handler.name:
-                        handler_env.set(handler.name, e)
-                    
-                    # Execute handler body in the new environment
-                    old_env = self.current_env
-                    self.current_env = handler_env
-                    try:
-                        for stmt in handler.body:
-                            result = self.eval(stmt)
-                        # Copy back any assignments made in the handler
-                        for key, value in handler_env.bindings.items():
-                            if key not in ['__exception__']:  # Skip internal vars
-                                old_env.set(key, value)
-                    except ReturnException as re:
-                        return_exception = re
-                    finally:
-                        self.current_env = old_env
+                    return_exception = self._execute_exception_handler(handler, e, return_exception)
                     break
             
             # If no handler caught the exception, re-raise it
@@ -109,3 +82,52 @@ class ExceptionMixin:
             raise return_exception
         
         return result
+
+    def _handler_matches_exception(self, handler: ast.ExceptHandler, 
+                                 exception: Exception) -> bool:
+        """Check if a handler matches the given exception."""
+        if handler.type is None:
+            # Bare except: always matches
+            return True
+        
+        # Check if this handler matches the exception type
+        handler_type = self.eval(handler.type)
+        # Handle both class and instance comparisons
+        return ((isinstance(handler_type, type) and isinstance(exception, handler_type)) 
+                or handler_type == type(exception))
+
+    def _execute_exception_handler(self, handler: ast.ExceptHandler, exception: Exception,
+                                 return_exception: ReturnException) -> ReturnException:
+        """
+        Execute an exception handler with proper scope management.
+        
+        Creates a new environment that shares the same parent as the current environment,
+        ensuring assignments in the handler are visible in the outer scope.
+        """
+        # Create environment for the handler with the SAME parent as current
+        handler_env = Environment(self, parent=self.current_env.parent)
+        
+        # Copy current bindings to maintain scope continuity
+        for key, value in self.current_env.bindings.items():
+            handler_env.set(key, value)
+        
+        # Bind the exception if there's a name
+        if handler.name:
+            handler_env.set(handler.name, exception)
+        
+        # Execute handler body in the new environment
+        old_env = self.current_env
+        self.current_env = handler_env
+        try:
+            for stmt in handler.body:
+                self.eval(stmt)
+            # Copy back any assignments made in the handler
+            for key, value in handler_env.bindings.items():
+                if key not in ['__exception__']:  # Skip internal vars
+                    old_env.set(key, value)
+        except ReturnException as re:
+            return_exception = re
+        finally:
+            self.current_env = old_env
+        
+        return return_exception
