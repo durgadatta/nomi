@@ -39,11 +39,8 @@ class Interpreter(
         try:
             method = getattr(self, f"eval_{node.__class__.__name__}", None)
             return method(node)
-        except (
-            ReturnException, BreakException, ContinueException, YieldException, StopIteration,
-            ZeroDivisionError
-            ):
-            # Re-raise control flow exceptions unchanged
+        except (StopIteration, ZeroDivisionError):
+            # Re-raise semantic exceptions unchanged
             raise
         except Exception as e:
             # Only wrap "unexpected" exceptions, not user-raised ones

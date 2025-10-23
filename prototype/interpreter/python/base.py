@@ -1,7 +1,9 @@
 import ast
 from typing import Dict, Any, Iterator, List
 
-class ControlException(Exception):
+# control flow exception should not be caught
+# by broad "Exception", so use one level up!
+class ControlException(BaseException):
     pass
 
 class ReturnException(ControlException):

@@ -1,3 +1,8 @@
+
+'''
+ensure that YieldException is not generically handled in
+eval loop, and also specifically in eval_Try
+'''
 def error_printer_context():
     try:
        yield 1
