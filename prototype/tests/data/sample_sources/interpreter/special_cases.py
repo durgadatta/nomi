@@ -21,7 +21,6 @@ while block is passed to the context manger
 
 see more comments on GeneratorState class
 '''
-
 @contextmanager
 def error_printer_context():
     try:

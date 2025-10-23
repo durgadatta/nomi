@@ -20,7 +20,9 @@ from prototype.interpreter.nomi.usage import run_eval_loop as run_eval_loop_nomi
     
 
 def stabilize_value(value):
-    """Convert unstable objects to shortest stable string form"""
+    """Convert unstable objects to short stable string form
+        stable across runs / platforms
+    """
     
     # Handle collections recursively (preserve original type)
     if isinstance(value, Mapping):
@@ -34,7 +36,8 @@ def stabilize_value(value):
             callable(value)
             or isinstance(value, (Generator, types.ModuleType))
     ):
-        return f'{value.__name__}:class={type(value)}'
+        name = getattr(value, '__name__', 'un-named')
+        return f'{name}:class={type(value)}'
     
     # object instances
     if hasattr(value, '__dict__'):
