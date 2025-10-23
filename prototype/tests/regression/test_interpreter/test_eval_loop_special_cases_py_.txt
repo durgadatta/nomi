@@ -1,0 +1,9 @@
+{
+  "error_printer_context": "error_printer_context:class=<class 'function'>",
+  "a": [],
+  "stdout": [
+    "An error occurred: 1",
+    "[]",
+    ""
+  ]
+}
