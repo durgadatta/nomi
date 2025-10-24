@@ -39,5 +39,3 @@ def test_eval_loop(source_file, capsys):
             # functions reference themselves. This approach usually works better.
     
     assert eval_loop_stdout.getvalue() == python_stdout.getvalue()
-
-    assert eval_loop_stdout.getvalue() == python_stdout.getvalue()

@@ -1,12 +1,12 @@
 {
+  "contextmanager": "contextmanager:class=<class 'function'>",
   "is_positive": "is_positive:class=<class 'function'>",
   "add": "add:class=<class 'function'>",
   "v": 3,
-  "x": "instance of:TypeError:class=<class 'type'>",
+  "error_printer": "un-named:class=<class 'contextlib._GeneratorContextManager'>",
   "stdout": [
-    "Constraint violations:",
-    "  Callable constraint is_positive failed for value -20",
-    "  Constraint '20 < a < 30' failed for value -20",
+    "An error occurred: Constraint violations:",
+    "  Constraint '20 < a < 30' failed for value 10",
     "3",
     ""
   ]
