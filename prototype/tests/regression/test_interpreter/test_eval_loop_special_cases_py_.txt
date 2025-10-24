@@ -4,6 +4,7 @@
   "a": [
     1
   ],
+  "ErorrPrinter": "ErorrPrinter:class=<class 'type'>",
   "test_value": 1,
   "stdout": [
     "[1]",

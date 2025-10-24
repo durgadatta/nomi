@@ -4,6 +4,7 @@
   "add": "add:class=<class 'function'>",
   "v": 3,
   "error_printer": "un-named:class=<class 'contextlib._GeneratorContextManager'>",
+  "ErrorPrinter": "ErrorPrinter:class=<class 'type'>",
   "stdout": [
     "An error occurred: Constraint violations:",
     "  Constraint '20 < a < 30' failed for value 10",

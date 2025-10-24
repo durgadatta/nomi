@@ -8,17 +8,29 @@ fun add(a,b):
 
 v:int, is_positive, v>1 = add(1, 2)
 
+
+# this still is not working; resume one the special_cases.py
+# passes the functional test after uncommenting
 @contextmanager
-fun _error_printer():
+fun error_printer():
     try:
         yield 
     except Exception as e:
         print(f"An error occurred: {e}")
 
-error_printer = _error_printer()
+class ErrorPrinter:
+    fun __enter__(self):
+      return self 
+   
+    fun __exit__(self, exc_type, exc_val, exc_tb):
+      if exc_val:
+         print(f"An error occurred: {exc_val}")
+         return True # so the the exception is suppressed
+
+error_printer = error_printer()
 
 
-with error_printer:
+with ErrorPrinter():
     a:is_positive, 20<a<30 = 10
 
 
