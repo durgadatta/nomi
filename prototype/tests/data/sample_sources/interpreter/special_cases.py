@@ -28,6 +28,18 @@ def error_printer_context():
     except Exception as e:
        print(f"An error occurred: {e}")
 
+
+class ErorrPrinter:
+   def __enter__(self):
+      return self 
+   
+   def __exit__(self, exc_type, exc_val, exc_tb):
+      if exc_val:
+         print(f"An error occurred: {exc_val}")
+         return True # so the the exception is suppressed
+   
+
+
 test_value = 1
-with error_printer_context():
+with ErorrPrinter():
    test_value = 1/0
