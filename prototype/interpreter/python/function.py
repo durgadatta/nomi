@@ -2,9 +2,9 @@ import ast
 from typing import List, Any
 
 from .base import (
-    Environment, GeneratorState,
-    ReturnException, BreakException, ContinueException
+    Environment, ReturnException, BreakException, ContinueException
 )
+from .generator_state import GeneratorState
 
 class FunctionMixin:
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:

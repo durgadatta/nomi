@@ -1,7 +1,6 @@
 import ast
 
 from .base import (
-    GeneratorState, 
     BreakException, ContinueException, YieldException
 )
 

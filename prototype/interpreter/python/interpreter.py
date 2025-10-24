@@ -15,11 +15,11 @@ from .class_ import ClassMixin
 from .binding import BindingMixin
 from .others import OthersMixin
 
-from .context_managers import ContextMangerMixin
+from .context_managers import ContextManagerMixin
 
 class Interpreter(
     BindingMixin, FunctionMixin, ExpresssionMixin, DataStructMixin,
-    PatternMixin, ControlMixin, ClassMixin, ContextMangerMixin, OthersMixin
+    PatternMixin, ControlMixin, ClassMixin, ContextManagerMixin, OthersMixin
 ):
     """Evaluates AST nodes."""
     env_class = Environment

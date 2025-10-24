@@ -1,3 +1,5 @@
+from contextlib import contextmanager 
+
 fun is_positive(x):
     return 0 < x
 
@@ -6,10 +8,18 @@ fun add(a,b):
 
 v:int, is_positive, v>1 = add(1, 2)
 
-try:
-    a:is_positive, 20<a<30 = -20
-except Exception as x:
-    print(str(x))
+@contextmanager
+fun _error_printer():
+    try:
+        yield 
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+error_printer = _error_printer()
+
+
+with error_printer:
+    a:is_positive, 20<a<30 = 10
 
 
 print(v)
