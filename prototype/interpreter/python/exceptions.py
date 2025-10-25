@@ -67,7 +67,7 @@ class ExceptionMixin:
                 if handler_found:
                     # Create environment for the handler with the SAME parent as current
                     # This ensures assignments in the handler are visible in the outer scope
-                    handler_env = Environment(self, parent=self.current_env.parent)
+                    handler_env = self.env_class(self, parent=self.current_env.parent)
                     
                     # Copy current bindings to maintain scope
                     for key, value in self.current_env.bindings.items():

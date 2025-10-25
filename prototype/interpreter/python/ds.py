@@ -49,7 +49,7 @@ class DataStructMixin:
                 def gen_func():
                     for item in self.eval(gen.iter):
                         old_env = self.current_env
-                        self.current_env = Environment(self, old_env)
+                        self.current_env = self.env_class(self, old_env)
                         try:
                             self.assign_target(gen.target, item)
                             if all(self.eval(test) for test in gen.ifs):
@@ -62,7 +62,7 @@ class DataStructMixin:
             # Handle set and list comprehensions (non-generator cases)
             for item in self.eval(gen.iter):
                 old_env = self.current_env
-                self.current_env = Environment(self, old_env)
+                self.current_env = self.env_class(self, old_env)
                 try:
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
@@ -115,7 +115,7 @@ class DataStructMixin:
                 def gen_func():
                     for item in self.eval(gen.iter):
                         old_env = self.current_env
-                        self.current_env = Environment(self, old_env)
+                        self.current_env = self.env_class(self, old_env)
                         try:
                             self.assign_target(gen.target, item)
                             if all(self.eval(test) for test in gen.ifs):
@@ -128,7 +128,7 @@ class DataStructMixin:
             # Handle set and list comprehensions (non-generator cases)
             for item in self.eval(gen.iter):
                 old_env = self.current_env
-                self.current_env = Environment(self, old_env)
+                self.current_env = self.env_class(self, old_env)
                 try:
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
@@ -160,7 +160,7 @@ class DataStructMixin:
             try:
                 for item in self.eval(gen.iter):
                     old_env = self.current_env
-                    self.current_env = Environment(self, old_env)
+                    self.current_env = self.env_class(self, old_env)
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
                         recurse(gens, index + 1)

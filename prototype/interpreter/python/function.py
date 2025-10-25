@@ -11,12 +11,12 @@ class FunctionMixin:
         for dec in reversed(decorators):
             try:
                 old_env = self.current_env
-                self.current_env = Environment(self, parent=old_env)
+                self.current_env = self.env_class(self, parent=old_env)
                 dec_func = self.eval(dec)
                 
                 # Store all original attributes
                 original_attrs = {}
-                for attr_name in ['__name__', 'ast_node', 'closure_env']:
+                for attr_name in ['__name__', 'ast_node', 'func_env']:  # ⭐ changed closure_env to func_env
                     if hasattr(obj, attr_name):
                         original_attrs[attr_name] = getattr(obj, attr_name)
                 
@@ -59,21 +59,22 @@ class FunctionMixin:
         return is_generator
 
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
-        closure_env = self.current_env
+        # Create function environment with closure as parent
+        func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
+        
+        # Set up parameter constraints in function environment
+        self._setup_function_parameters(node, func_env)  # ⭐ setup constraints at definition time
         
         def func(*args, **kwargs):
-            # Use the actual function name in debug output, not the local variable name
-            actual_name = getattr(func, '__name__', node.name)
-            
             is_generator = self._is_generator_function(node)
             
             if is_generator:
-                local_env = Environment(self, parent=closure_env)
+                local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
                 self._bind_function_args(node, local_env, args, kwargs)
                 gen = GeneratorState(self, node.body, local_env)
                 return gen
             else:
-                local_env = Environment(self, parent=closure_env)
+                local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
                 self._bind_function_args(node, local_env, args, kwargs)
                 
                 old_env = self.current_env
@@ -90,12 +91,12 @@ class FunctionMixin:
                     self.current_env = old_env
 
         func.__name__ = node.name
-        func.closure_env = closure_env
+        func.func_env = func_env  # ⭐ store func_env instead of closure_env
         func.ast_node = node
         
         # Apply decorators
         old_env = self.current_env
-        self.current_env = closure_env
+        self.current_env = self.current_env  # use current closure scope
         decorated_func = self.apply_decorators(func, node.decorator_list)
         self.current_env = old_env
         
@@ -106,10 +107,14 @@ class FunctionMixin:
         self.current_env.set(node.name, decorated_func)
 
     def eval_Lambda(self, node: ast.Lambda) -> Any:
-        closure_env = self.current_env  # ⭐ Capture the current environment
+        # Create function environment with closure as parent  
+        func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
+        
+        # Set up parameter constraints for lambda
+        self._setup_function_parameters(node, func_env)  # ⭐ setup constraints at definition time
         
         def lambda_func(*args, **kwargs):
-            local_env = Environment(self, parent=closure_env)  # ⭐ Use the captured closure
+            local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
             self._bind_function_args(node, local_env, args, kwargs)
             
             old_env = self.current_env
@@ -119,11 +124,30 @@ class FunctionMixin:
             finally:
                 self.current_env = old_env
         
-        lambda_func.closure_env = closure_env
+        lambda_func.func_env = func_env  # ⭐ store func_env instead of closure_env
         lambda_func.ast_node = node
         return lambda_func
+    
+    def _setup_function_parameters(self, func_node, env):
+        """Set up parameter constraints in the given environment."""
+        for param in func_node.args.args:
+            if param.annotation:
+                ann_assign = ast.AnnAssign(
+                    target=ast.Name(id=param.arg, ctx=ast.Store()),
+                    annotation=param.annotation,
+                    value=None,
+                    simple=1
+                )
+                old_env = self.current_env
+                self.current_env = env
+                try:
+                    self.eval_AnnAssign(ann_assign)
+                finally:
+                    self.current_env = old_env
 
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
+        # ⭐ Note: constraints are already set up in parent env, so env.set() will check them automatically
+        
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []
         
@@ -137,7 +161,7 @@ class FunctionMixin:
                 # Still set 'self' in environment for __init__
                 env.set('self', self_obj)
 
-        # Bind positional arguments
+        # Bind positional arguments (constraints checked by env.set())
         for i, param in enumerate(params):
             if i < len(posargs):
                 env.set(param.arg, posargs[i])
@@ -173,7 +197,6 @@ class FunctionMixin:
             consumed_kw = {p.arg for p in params if p.arg in env.bindings}
             extra_kwargs = {k: v for k, v in kwargs.items() if k not in consumed_kw}
             env.set(kwarg_name, extra_kwargs)
-
 
     def eval_Call(self, node: ast.Call) -> Any:
         """
@@ -253,15 +276,15 @@ class FunctionMixin:
 
         # Check if it's an interpreted method
         func_node = getattr(init_method, "ast_node", None)
-        closure_env = getattr(init_method, "closure_env", None)
+        func_env = getattr(init_method, "func_env", None)  # ⭐ changed from closure_env to func_env
         
-        # If no explicit closure_env, use current environment
-        if closure_env is None:
-            closure_env = self.current_env
+        # If no explicit func_env, use current environment
+        if func_env is None:
+            func_env = self.current_env
 
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Interpreted __init__
-            call_env = Environment(self, parent=closure_env)
+            call_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
             
             # Bind self first
             call_env.set('self', instance)
