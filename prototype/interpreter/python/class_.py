@@ -1,10 +1,11 @@
 import ast
 from .base import Environment
+from typing import Any
 
 class ClassMixin:
     def eval_ClassDef(self, node: ast.ClassDef) -> None:
         bases = [self.eval(b) for b in node.bases]
-        class_env = Environment(self, parent=self.current_env)
+        class_env = self.env_class(self, parent=self.current_env)
         old_env = self.current_env
         self.current_env = class_env
         for stmt in node.body:

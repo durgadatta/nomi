@@ -35,7 +35,7 @@ class ContextManagerMixin:
         
         # For interpreted functions
         if method_node and isinstance(method_node, ast.FunctionDef):
-            call_env = Environment(self, parent=closure_env)
+            call_env = self.env_class(self, parent=closure_env)
             call_env.set(method_node.args.args[0].arg, context_obj)  # Set 'self'
             
             old_env = self.current_env
@@ -60,7 +60,7 @@ class ContextManagerMixin:
         
         # For interpreted functions
         if method_node and isinstance(method_node, ast.FunctionDef):
-            call_env = Environment(self, parent=closure_env)
+            call_env = self.env_class(self, parent=closure_env)
             call_env.set(method_node.args.args[0].arg, context_obj)  # Set 'self'
             
             # Set exception parameters based on actual parameter names
