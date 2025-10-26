@@ -1,6 +1,13 @@
+'''
+NOTE:Creating a function from an expression from different context 
+might be a generic feature later. Here the context is just the variable
+that is annotated; we might have more elaborate context involving
+multiple parameters - abstract and move the generic functionality into
+interpreter itself.
+'''
+
 import ast
 from typing import Any, List, Callable
-
 
 class Annotation:
     '''
@@ -10,6 +17,7 @@ class Annotation:
     def __init__(self, var_name, ann, interpreter):
         self.var_name = var_name
         self.ann = ann
+
         self.interpreter = interpreter
 
     @property
@@ -19,45 +27,56 @@ class Annotation:
 
         # Case 1: Simple name (could be class or function)
         if isinstance(annotation, ast.Name):
-            return self._create_name_predicate(annotation, var_name)
+            name_value = self.interpreter.eval(annotation)
+            name = annotation.id
+            return self._predicate_from_name(name_value, name)
         
         # Case 2: Any other expression
         else:
-            return self._create_expression_predicate(annotation, var_name)
+            return self._predicate_from_expression(annotation, var_name)
 
-    def _create_name_predicate(self, name_node: ast.Name, var_name: str) -> Callable[[Any], bool]:
+    def _predicate_from_name(self, name_value, name) -> Callable[[Any], bool]:
         """Create predicate from a name (class or function)."""
-        try:
-            name_value = self.interpreter.eval(name_node)
+        if isinstance(name_value, type):
+            # Class -> isinstance check
+            def type_predicate(value):
+                if not isinstance(value, name_value):
+                    raise TypeError(f"Expected {name}, got {type(value).__name__}")
+                return True
+            return type_predicate
             
-            if isinstance(name_value, type):
-                # Class -> isinstance check
-                def type_predicate(value):
-                    if not isinstance(value, name_value):
-                        raise TypeError(f"Expected {name_value.__name__}, got {type(value).__name__}")
-                    return True
-                return type_predicate
-                
-            elif callable(name_value):
-                # Function -> call with value
-                def callable_predicate(value):
-                    result = name_value(value)
-                    if not result:
-                        raise TypeError(f"Callable constraint {name_node.id} failed for value {value!r}")
-                    return True
-                return callable_predicate
-                
-        except NameError:
-            pass
-        
-        # Fallback: treat as expression with the variable
-        return self._create_expression_predicate(name_node, var_name)
+        elif callable(name_value):
+            # Function -> call with value
+            def callable_predicate(value):
+                result = name_value(value)
+                if not result:
+                    raise TypeError(f"Callable constraint {name} failed for value {value!r}")
+                return True
+            return callable_predicate
 
-    def _create_expression_predicate(self, expr_node: ast.expr, var_name: str) -> Callable[[Any], bool]:
-        """Create predicate from any expression."""
-        # Convert expression to function
-        constraint_func = self._expr_to_function(expr_node, var_name)
+    def _predicate_from_expression(self, expr_node: ast.expr, var_name: str) -> Callable[[Any], bool]:
+        """Create predicate from any expression by converting to function definition."""
+        # Create a function definition node with the expression as body
+        return_node = ast.Return(value=expr_node)
+        func_body = [return_node]
         
+        # Create function definition
+        func_def = ast.FunctionDef(
+            name='_constraint_predicate',
+            args=ast.arguments(
+                args=[ast.arg(arg=var_name)],
+            ),
+            body=func_body,
+        )
+        
+        # Evaluate the function definition in current environment
+        self.interpreter.eval(func_def)
+        constraint_func = self.interpreter.current_env.bindings['_constraint_predicate']
+        
+        # Clean up
+        del self.interpreter.current_env.bindings['_constraint_predicate']
+        
+        # Wrap with error handling
         def expr_predicate(value):
             result = constraint_func(value)
             if not result:
@@ -67,58 +86,26 @@ class Annotation:
         
         return expr_predicate
 
-    def _expr_to_function(self, expr: ast.expr, param_name: str) -> Callable[[Any], bool]:
-        """Convert any expression to a function."""
-        # Create function dynamically
-        if hasattr(ast, 'unparse'):
-            expr_str = ast.unparse(expr)
-        else:
-            expr_str = str(expr)
-        
-        import uuid
-        func_name = f"_constraint_{uuid.uuid4().hex[:8]}"
-        func_def = f"def {func_name}({param_name}):\n    return {expr_str}\n"
-        
-        exec_globals = self.interpreter.current_env.bindings.copy()
-        try:
-            exec(func_def, exec_globals)
-            return exec_globals[func_name]
-        except Exception:
-            # Fallback: evaluate in context
-            def fallback_func(value):
-                original_value = self.current_env.bindings.get(param_name)
-                self.current_env.bindings[param_name] = value
-                try:
-                    return bool(self.eval(expr))
-                finally:
-                    if original_value is not None:
-                        self.current_env.bindings[param_name] = original_value
-                    elif param_name in self.current_env.bindings:
-                        del self.current_env.bindings[param_name]
-            return fallback_func
-
-
 
 class Annotations:
-    def __init__(self, items:List[Annotation]):
+    def __init__(self, items: List[Annotation]):
         self.items = items 
 
     @classmethod
-    def from_node(cls, node:ast.AnnAssign, interpreter):
+    def from_node(cls, node: ast.AnnAssign, interpreter):
         '''
         directly from the parser
         '''
         annotations = node.annotation
         name = node.target.id 
 
-        #normalize to collection
+        # normalize to collection
         if isinstance(annotations, ast.Tuple):
             annotations = annotations.elts
         else:
             annotations = (annotations,)
         annotations = [Annotation(name, ann, interpreter) for ann in annotations]
         return cls(annotations)
-
 
     @property
     def predicate(self) -> Callable[[Any], bool]:
@@ -150,9 +137,8 @@ class Annotations:
 
 
 class BindingMixin:
-
     def eval_AnnAssign(self, node: ast.AnnAssign) -> None:
-        """ add the constraints and delegate to Python's handler"""
+        """Add the constraints and delegate to Python's handler"""
         # Always set constraints from the annotation
         if isinstance(node.target, ast.Name):
             predicate = Annotations.from_node(node, self).predicate
