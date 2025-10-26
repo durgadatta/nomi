@@ -29,14 +29,14 @@ class Environment(PyEnvironment):
 
     def copy(self) -> 'Environment':
         """Create a shallow copy of this environment."""
-        new_env = Environment(self.interpreter, self.parent)
-        new_env.bindings = self.bindings.copy()
+        new_env = super().copy()
         new_env.constraints = self.constraints.copy()
-        new_env.declared_globals = self.declared_globals.copy()
-        new_env.declared_nonlocals = self.declared_nonlocals.copy()
         return new_env
     
     def set(self, name: str, value: Any):
+        #TODO: for global/non-local we should get constraints the same way 
+        # we get the binding; get/set should be in sync with regards 
+        # to scope
         # Check constraints before setting the value
         if name in self.constraints:
             predicate = self.constraints[name]
