@@ -61,3 +61,11 @@ class Environment:
         else:
             raise NameError(f"name '{name}' is not defined")
         
+    def copy(self) -> 'Environment':
+        """Create a shallow copy of this environment."""
+        new_env = type(self)(self.interpreter, self.parent)
+        new_env.bindings = self.bindings.copy()
+        new_env.declared_globals = self.declared_globals.copy()
+        new_env.declared_nonlocals = self.declared_nonlocals.copy()
+        return new_env
+        

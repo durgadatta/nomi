@@ -62,19 +62,18 @@ class FunctionMixin:
         # Create function environment with closure as parent
         func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
         
-        # Set up parameter constraints in function environment
-        self._setup_function_parameters(node, func_env)  # ⭐ setup constraints at definition time
-        
         def func(*args, **kwargs):
             is_generator = self._is_generator_function(node)
             
+            #env is copied so that constraints work properly
+            # Constraints from parent are relevant only on global/non-local scope (to-implement)
+            local_env = func_env.copy()
             if is_generator:
-                local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
+                  # ⭐ use func_env as parent
                 self._bind_function_args(node, local_env, args, kwargs)
                 gen = GeneratorState(self, node.body, local_env)
                 return gen
             else:
-                local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
                 self._bind_function_args(node, local_env, args, kwargs)
                 
                 old_env = self.current_env
@@ -110,11 +109,8 @@ class FunctionMixin:
         # Create function environment with closure as parent  
         func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
         
-        # Set up parameter constraints for lambda
-        self._setup_function_parameters(node, func_env)  # ⭐ setup constraints at definition time
-        
         def lambda_func(*args, **kwargs):
-            local_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
+            local_env = func_env.copy()
             self._bind_function_args(node, local_env, args, kwargs)
             
             old_env = self.current_env
@@ -127,23 +123,6 @@ class FunctionMixin:
         lambda_func.func_env = func_env  # ⭐ store func_env instead of closure_env
         lambda_func.ast_node = node
         return lambda_func
-    
-    def _setup_function_parameters(self, func_node, env):
-        """Set up parameter constraints in the given environment."""
-        for param in func_node.args.args:
-            if param.annotation:
-                ann_assign = ast.AnnAssign(
-                    target=ast.Name(id=param.arg, ctx=ast.Store()),
-                    annotation=param.annotation,
-                    value=None,
-                    simple=1
-                )
-                old_env = self.current_env
-                self.current_env = env
-                try:
-                    self.eval_AnnAssign(ann_assign)
-                finally:
-                    self.current_env = old_env
 
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
         # ⭐ Note: constraints are already set up in parent env, so env.set() will check them automatically
