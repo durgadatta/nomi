@@ -1,9 +1,22 @@
 import ast
 from typing import Any, List, Callable
 
-class ConstraintsHandling:
-    def _normalize_single_constraint(self, annotation: ast.expr, var_name: str) -> Callable[[Any], bool]:
+
+class Annotation:
+    '''
+    x: (name of function or class) or expression
+    expression: any expr involving "x"
+    '''
+    def __init__(self, var_name, ann, interpreter):
+        self.var_name = var_name
+        self.ann = ann
+        self.interpreter = interpreter
+
+    @property
+    def predicate(self) -> Callable[[Any], bool]:
         """Normalize a single constraint to a predicate function."""
+        annotation, var_name = self.ann, self.var_name
+
         # Case 1: Simple name (could be class or function)
         if isinstance(annotation, ast.Name):
             return self._create_name_predicate(annotation, var_name)
@@ -15,7 +28,7 @@ class ConstraintsHandling:
     def _create_name_predicate(self, name_node: ast.Name, var_name: str) -> Callable[[Any], bool]:
         """Create predicate from a name (class or function)."""
         try:
-            name_value = self.eval(name_node)
+            name_value = self.interpreter.eval(name_node)
             
             if isinstance(name_value, type):
                 # Class -> isinstance check
@@ -66,7 +79,7 @@ class ConstraintsHandling:
         func_name = f"_constraint_{uuid.uuid4().hex[:8]}"
         func_def = f"def {func_name}({param_name}):\n    return {expr_str}\n"
         
-        exec_globals = self.current_env.bindings.copy()
+        exec_globals = self.interpreter.current_env.bindings.copy()
         try:
             exec(func_def, exec_globals)
             return exec_globals[func_name]
@@ -84,13 +97,39 @@ class ConstraintsHandling:
                         del self.current_env.bindings[param_name]
             return fallback_func
 
-    def _combine_predicates(self, predicates: List[Callable], annotations: List[ast.expr]) -> Callable[[Any], bool]:
+
+
+class Annotations:
+    def __init__(self, items:List[Annotation]):
+        self.items = items 
+
+    @classmethod
+    def from_node(cls, node:ast.AnnAssign, interpreter):
+        '''
+        directly from the parser
+        '''
+        annotations = node.annotation
+        name = node.target.id 
+
+        #normalize to collection
+        if isinstance(annotations, ast.Tuple):
+            annotations = annotations.elts
+        else:
+            annotations = (annotations,)
+        annotations = [Annotation(name, ann, interpreter) for ann in annotations]
+        return cls(annotations)
+
+
+    @property
+    def predicate(self) -> Callable[[Any], bool]:
         """Combine multiple predicates into one that accumulates errors."""
         # Get string representations
         annotation_strs = [
-            ast.unparse(ann) if hasattr(ast, 'unparse') else str(ann)
-            for ann in annotations
+            ast.unparse(ann.ann) if hasattr(ast, 'unparse') else str(ann.ann)
+            for ann in self.items
         ]
+
+        predicates = [ann.predicate for ann in self.items]
         
         def combined_predicate(value):
             errors = []
@@ -109,38 +148,15 @@ class ConstraintsHandling:
         
         return combined_predicate
 
-    def _normalize_to_predicate(self, annotation: ast.expr, var_name: str) -> Callable[[Any], bool]:
-        """Normalize annotation(s) to a single predicate function."""
-        # Always work with a list of annotations
-        if isinstance(annotation, ast.Tuple):
-            annotations = annotation.elts
-        else:
-            annotations = [annotation]
-        
-        # Normalize each constraint to a predicate
-        predicates = []
-        for ann in annotations:
-            predicate = self._normalize_single_constraint(ann, var_name)
-            predicates.append(predicate)
-        
-        # If single constraint, return it directly
-        if len(predicates) == 1:
-            return predicates[0]
-        
-        # Multiple constraints: combine them
-        return self._combine_predicates(predicates, annotations)
-        
+
+class BindingMixin:
 
     def eval_AnnAssign(self, node: ast.AnnAssign) -> None:
         """ add the constraints and delegate to Python's handler"""
         # Always set constraints from the annotation
         if isinstance(node.target, ast.Name):
-            predicate = self._normalize_to_predicate(node.annotation, node.target.id)
+            predicate = Annotations.from_node(node, self).predicate
             self.current_env.set_constraint(node.target.id, predicate)
         
         # If there's a value, assign it (constraints will be checked in Environment.set)
         super().eval_AnnAssign(node)
-
-
-class BindingMixin(ConstraintsHandling):
-    pass
