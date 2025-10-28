@@ -1,9 +1,9 @@
 from contextlib import contextmanager 
 
-fun is_positive(x):
+func is_positive(x):
     return 0 < x
 
-fun add(a,b):
+func add(a,b):
     return a + b
 
 v:int, is_positive, v>1 = add(1, 2)
@@ -12,22 +12,22 @@ v:int, is_positive, v>1 = add(1, 2)
 # this still is not working; resume one the special_cases.py
 # passes the functional test after uncommenting
 @contextmanager
-fun error_printer():
+func error_printer():
     try:
         yield 
     except Exception as e:
         print(f"An error occurred: {e}")
 
 class ErrorPrinter:
-    fun __enter__(self):
+    func __enter__(self):
       return self 
    
-    fun __exit__(self, exc_type, exc_val, exc_tb):
+    func __exit__(self, exc_type, exc_val, exc_tb):
       if exc_val:
          print(f"An error occurred: {exc_val}")
          return True # so the the exception is suppressed
     
-fun double_limited_pos(a:(is_positive, 1<a<100)):
+func double_limited_pos(a:(is_positive, 1<a<100)):
     return a*2
 
 error_printer = ErrorPrinter()
