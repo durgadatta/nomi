@@ -29,7 +29,7 @@ decorated: decorators (classdef | funcdef | async_funcdef)
 
 async_funcdef: "async" funcdef
 //Nomi funcdef: "def" name "(" [parameters] ")" ["->" test] ":" suite
-funcdef: "fun" name "(" [parameters] ")" ["->" test] ":" suite
+funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
 
 parameters: paramvalue ("," paramvalue)* ["," SLASH ("," paramvalue)*] ["," [starparams | kwparams]]
           | starparams
