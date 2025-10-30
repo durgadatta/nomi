@@ -51,7 +51,7 @@ That said, there are concrete syntactic and semantic differences between Python�
   * **Tuples** must be explicitly wrapped due to the “single expression” restriction.
     * For example, `return x, y` must be written as `=> (x, y)`, not `=> x, y` (the latter would evaluate `x` and then `y` separately).
 
-Many of these restrictions stem from Python’s early **LR(1)** grammar (Left-to-right parsing with one-token lookahead).  
+Many of these restrictions stem from Python’s early **L1(1)** grammar (Left-to-right, leftmost derivation parsing with one-token lookahead).  
 Python has since moved to **PEG parsing** (Parsing Expression Grammar), which removes many of those historical constraints.  
 Guido van Rossum has written about this evolution [on Medium](https://medium.com/@gvanrossum_83706/peg-parsers-7ed72462f97c).
 
@@ -70,3 +70,76 @@ Nomi introduces a concise **arrow syntax** for function literals:
 ```
 
 
+# Binding
+
+Binding is a fundamental concept as well. This is deeply connected to functions - function call is literally the evaluation of the function body with the arguments bound to the parameter on top of existing binding at the time of function definition (lexical closure -only this supported here for now) or the execution time (dynamic closure). It occurs in many contexts, most visibly in **assignment**, but also in:
+
+* Function call arguments-to-parameter mapping  
+* Iteration variables in `for` loops  
+* `as` constructs in context managers (`with cm as var`)  
+* Exception handling (`except Exception as e`)  
+* Pattern matching  
+* Packing/unpacking  
+* Imports
+
+Python currently supports **type annotations (hints)**, but they are **not enforced** by the interpreter. Some libraries, such as `dataclass` or `pydantic`, rely on them for runtime validation. *(Note: `pydantic` behavior may break under the changes proposed here.)*
+
+---
+
+## Binding Validation in Nomi
+
+Nomi supports **enforced binding validation**. Each variable can optionally be annotated with:
+
+* **Type/Class** (e.g., `int`)  
+* **Predicate function** (e.g., `is_positive`)  
+* **Expression** that can be interpreted as a predicate in the context of the variable (e.g., `a: a > 20 = 22`)
+
+If any annotation fails its check, a **`TypeError`** is raised.
+
+```python
+is_pos = (a) => a > 0
+a = 1
+a:int = 1
+a:int, is_positive, a > 20 = 19  # raises TypeError
+
+b: b>20
+b = 19 # fails
+
+b:int = 10 # any new constraints the entire constraints
+```
+
+Note: When a variable is rebound with new annotations, **all previous annotations are reset**.
+
+---
+
+## Argument-to-Parameter Mapping
+
+The same binding validation extends to **function calls**.  
+
+To distinguish between multiple parameters and multiple constraints on a single parameter, **constraints must be wrapped in parentheses**:
+
+```python
+func f(a:int, b:(int, b > 20)):
+    pass
+
+f(x, y)  # Enforces corresponding constraints on each parameter
+```
+
+**Important notes:**
+
+* Argument-to-parameter mapping is similar to multiple assignment (`a, b = x, y`) but not identical.  
+  * Example: `x = 1, 2` is valid assignment, but for `func f(x)`, `f(1, 2)` is invalid.  
+* Python’s rules for argument mapping (positional/keyword, defaults, varargs) carry over.  
+* **Constraints are enforced after arguments are mapped to parameters**.
+
+## TODO
+* support other constraints such as `const`
+  * `a:int, const = 4 `
+* add the ability to make the function parameter bind dynamically when selectively request
+  * something like -  `f(a:int,b:(int, dynamic), c, ...)`
+
+
+There are other semantic aspect relevant to parameters but not in bare assignment such as pos-only, keyword-only, mandatory or optional etc; currently Python support them with special marker such as "/" or "*". Additional we may also have lexical(default) or dynamic etc. 
+
+
+> Note: The harmonization between `def`/`lambda` discussed earlier could also apply here in between assignment and arg-param mapping, but this is more subtle and requires further exploration.
