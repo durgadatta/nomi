@@ -14,20 +14,18 @@ class FunctionMixin:
                 self.current_env = self.env_class(self, parent=old_env)
                 dec_func = self.eval(dec)
                 
-                # Store all original attributes
-                original_attrs = {}
-                for attr_name in ['__name__', 'ast_node', 'func_env']:  # ⭐ changed closure_env to func_env
+                # Store important attributes that should NEVER be changed by decorators
+                preserved_attrs = {}
+                for attr_name in ['__name__', 'ast_node', 'func_env']:
                     if hasattr(obj, attr_name):
-                        original_attrs[attr_name] = getattr(obj, attr_name)
+                        preserved_attrs[attr_name] = getattr(obj, attr_name)
                 
                 # Apply the decorator
                 obj = dec_func(obj)
                 
-                # If the decorator returned a function without these attributes, restore them
-                if callable(obj):
-                    for attr_name, attr_value in original_attrs.items():
-                        if not hasattr(obj, attr_name):
-                            setattr(obj, attr_name, attr_value)
+                # ALWAYS restore these attributes, regardless of what the decorator did
+                for attr_name, attr_value in preserved_attrs.items():
+                    setattr(obj, attr_name, attr_value)
                             
                 self.current_env = old_env
             except Exception as e:
@@ -109,8 +107,6 @@ class FunctionMixin:
             # TODO: rethink this hook-up
             return func 
         
-        #TODO: double name setting should be un-necessary
-        # later rivew this and decorated_func.__name__
         func.__name__ = name
         
         # Apply decorators
@@ -120,7 +116,6 @@ class FunctionMixin:
         self.current_env = old_env
         
 
-        decorated_func.__name__ = name
         self.current_env.set(node.name, decorated_func)
         return decorated_func
 
