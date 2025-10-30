@@ -1,0 +1,21 @@
+{
+  "temp": "temp:class=<class 'function'>",
+  "add": "temp:class=<class 'function'>",
+  "result": [
+    2,
+    4,
+    6
+  ],
+  "sorted_data": [
+    2,
+    4,
+    6
+  ],
+  "stdout": [
+    "6",
+    "8",
+    "True",
+    "[2, 4, 6]",
+    ""
+  ]
+}

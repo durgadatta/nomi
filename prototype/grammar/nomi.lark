@@ -34,6 +34,7 @@ funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
 parameters: paramvalue ("," paramvalue)* ["," SLASH ("," paramvalue)*] ["," [starparams | kwparams]]
           | starparams
           | kwparams
+func_expr: "(" [parameters] ")" "=>" test
 
 SLASH: "/" // Otherwise the it will completely disappear and it will be undisguisable in the result
 starparams: (starparam | starguard) poststarparams
@@ -44,19 +45,6 @@ kwparams: "**" typedparam ","?
 
 ?paramvalue: typedparam ("=" test)?
 ?typedparam: name (":" test)?
-
-//Nomi 
-// lambda will not be used; they are same as function
-// there will be other ways to delineate function
-lambdef: "lambda" [lambda_params] ":" test
-lambdef_nocond: "lambda" [lambda_params] ":" test_nocond
-lambda_params: lambda_paramvalue ("," lambda_paramvalue)* ["," [lambda_starparams | lambda_kwparams]]
-          | lambda_starparams
-          | lambda_kwparams
-?lambda_paramvalue: name ("=" test)?
-lambda_starparams: "*" [name]  ("," lambda_paramvalue)* ["," [lambda_kwparams]]
-lambda_kwparams: "**" name ","?
-//
 
 
 ?stmt: simple_stmt | compound_stmt
@@ -168,13 +156,13 @@ keyw_arg_pattern: NAME "=" as_pattern
 
 suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 
-?test: or_test ("if" or_test "else" test)?
-     | lambdef
+?test: func_expr 
+     |or_test ("if" or_test "else" test)?
      | assign_expr
 
 assign_expr: name ":=" test
 
-?test_nocond: or_test | lambdef_nocond
+?test_nocond: or_test
 
 ?or_test: and_test ("or" and_test)*
 ?and_test: not_test_ ("and" not_test_)*
@@ -205,11 +193,12 @@ star_expr: "*" expr
 AWAIT: "await"
 
 ?atom_expr: atom_expr "(" [arguments] ")"      -> funccall
+          //| "func" [name] "(" [parameters] ")" ["->" test] ":" test -> funcexpr
           | atom_expr "[" subscriptlist "]"  -> getitem
           | atom_expr "." name               -> getattr
           | atom
 
-?atom: "(" yield_expr ")"
+?atom: "(" yield_expr ")"  
      | "(" _tuple_inner? ")" -> tuple
      | "(" comprehension{test_or_star_expr} ")" -> tuple_comprehension
      | "[" _exprlist? "]"  -> list
