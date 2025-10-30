@@ -37,8 +37,7 @@ class FunctionMixin:
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
         # Create function environment with closure as parent
 
-        super().eval_FunctionDef(node)
-        func = self.current_env.get(node.name)
+        func = super().eval_FunctionDef(node)
         self._setup_function_parameters(node, func.func_env)
 
         return func

@@ -1,6 +1,5 @@
 {
-  "temp": "temp:class=<class 'function'>",
-  "add": "temp:class=<class 'function'>",
+  "add": "func:class=<class 'function'>",
   "result": [
     2,
     4,

@@ -3,7 +3,7 @@ print(((x,y)=>x+y)(2,4))
 add = (a, b) => a + b
 print(add(4,4))
 
-print(((x,y)=> x>0)(20))
+print(((x,y) => x>0)(20))
 
 # # Direct usage in expressions
 result = list(map((x)=>x*2, [1, 2, 3]))
