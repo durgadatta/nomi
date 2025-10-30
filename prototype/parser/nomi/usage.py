@@ -16,7 +16,7 @@ def get_parser():
     grammar = grammar_path.read_text()
     parser = Lark(
             grammar,
-            parser="lalr",
+            parser="earley",
             postlex=PythonIndenter(),
             start="file_input",
     )

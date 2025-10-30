@@ -1,4 +1,8 @@
 from ...parser.python.ast_ import PythonASTTransformer
+from .functions import FunctionsMixin
 
-class NomiToPythonAST(PythonASTTransformer):
+class NomiToPythonAST(
+    FunctionsMixin,
+    PythonASTTransformer
+):
     pass 

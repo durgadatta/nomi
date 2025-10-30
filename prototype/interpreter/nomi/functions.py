@@ -40,3 +40,5 @@ class FunctionMixin:
         super().eval_FunctionDef(node)
         func = self.current_env.get(node.name)
         self._setup_function_parameters(node, func.func_env)
+
+        return func
