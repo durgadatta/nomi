@@ -1,6 +1,7 @@
 import ast
 from typing import Any, Dict, List, Optional, Tuple, Callable, Iterator, Set
 import builtins
+from contextlib import contextmanager
 
 
 from .base import (
@@ -51,6 +52,18 @@ class Interpreter(
             else:
                 # Wrap other exceptions as interpreter errors
                 raise RuntimeError(f"Error evaluating {node.__class__.__name__} at line {self.get_lineno(node)}: {str(e)}") from e
+            
+    @contextmanager
+    def this_env(self, env):
+        """
+        Context manager for temporarily switching environments.
+        """
+        old_env = self.current_env
+        self.current_env = env
+        try:
+            yield
+        finally:
+            self.current_env = old_env
         
     def eval_Module(self, node: ast.Module) -> Any:
         for stmt in node.body:

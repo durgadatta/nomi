@@ -6,16 +6,14 @@ class ClassMixin:
     def eval_ClassDef(self, node: ast.ClassDef) -> None:
         bases = [self.eval(b) for b in node.bases]
         class_env = self.env_class(self, parent=self.current_env)
-        old_env = self.current_env
-        self.current_env = class_env
-        for stmt in node.body:
-            self.eval(stmt)
-            if isinstance(stmt, ast.FunctionDef):
-                func = class_env.bindings.get(stmt.name)
-                if func:
-                    func.closure_env = class_env
-                    func.ast_node = stmt
-        self.current_env = old_env
+        with self.this_env(class_env):
+            for stmt in node.body:
+                self.eval(stmt)
+                if isinstance(stmt, ast.FunctionDef):
+                    func = class_env.bindings.get(stmt.name)
+                    if func:
+                        func.closure_env = class_env
+                        func.ast_node = stmt
         class_dict = class_env.bindings
         try:
             cls = type(node.name, tuple(bases), class_dict)

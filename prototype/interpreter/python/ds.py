@@ -1,5 +1,5 @@
 import ast
-from typing import Dict, Any, List, Iterator
+from typing import Dict, Any, List, Iterator, Callable
 
 from .base import Environment
 
@@ -48,22 +48,16 @@ class DataStructMixin:
                 # For generator expressions, we need to yield values
                 def gen_func():
                     for item in self.eval(gen.iter):
-                        old_env = self.current_env
-                        self.current_env = self.env_class(self, old_env)
-                        try:
+                        with self.this_env(self.env_class(self, self.current_env)):
                             self.assign_target(gen.target, item)
                             if all(self.eval(test) for test in gen.ifs):
                                 inner = recurse(gens, index + 1)
                                 yield from inner
-                        finally:
-                            self.current_env = old_env
                 return gen_func()
             
             # Handle set and list comprehensions (non-generator cases)
             for item in self.eval(gen.iter):
-                old_env = self.current_env
-                self.current_env = self.env_class(self, old_env)
-                try:
+                with self.this_env(self.env_class(self, self.curren_env)):
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
                         inner = recurse(gens, index + 1)
@@ -78,8 +72,6 @@ class DataStructMixin:
                                 result.extend(inner)
                             else:
                                 result.append(inner)
-                finally:
-                    self.current_env = old_env
             
             return result
         
@@ -114,22 +106,16 @@ class DataStructMixin:
                 # For generator expressions, we need to yield values
                 def gen_func():
                     for item in self.eval(gen.iter):
-                        old_env = self.current_env
-                        self.current_env = self.env_class(self, old_env)
-                        try:
+                        with self.this_env(self.env_class(self, self.current_env)):
                             self.assign_target(gen.target, item)
                             if all(self.eval(test) for test in gen.ifs):
                                 inner = recurse(gens, index + 1)
                                 yield from inner
-                        finally:
-                            self.current_env = old_env
                 return gen_func()
             
             # Handle set and list comprehensions (non-generator cases)
             for item in self.eval(gen.iter):
-                old_env = self.current_env
-                self.current_env = self.env_class(self, old_env)
-                try:
+                with self.this_env(self.env_class(self, self.current_env)):
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
                         inner = recurse(gens, index + 1)
@@ -144,9 +130,6 @@ class DataStructMixin:
                                 result.extend(inner)
                             else:
                                 result.append(inner)
-                finally:
-                    self.current_env = old_env
-            
             return result
         
         return recurse(generators)
@@ -159,12 +142,10 @@ class DataStructMixin:
             gen = gens[index]
             try:
                 for item in self.eval(gen.iter):
-                    old_env = self.current_env
-                    self.current_env = self.env_class(self, old_env)
-                    self.assign_target(gen.target, item)
-                    if all(self.eval(test) for test in gen.ifs):
-                        recurse(gens, index + 1)
-                    self.current_env = old_env
+                    with self.this_env(self.env_class(self,  self.current_env)):
+                        self.assign_target(gen.target, item)
+                        if all(self.eval(test) for test in gen.ifs):
+                            recurse(gens, index + 1)
             except TypeError as e:
                 raise TypeError(f"'{type(self.eval(gen.iter)).__name__}' object is not iterable at line {self.get_lineno(gen.iter)}") from e
         recurse(gens=generators)

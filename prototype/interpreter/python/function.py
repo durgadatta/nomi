@@ -9,28 +9,24 @@ from .generator_state import GeneratorState
 class FunctionMixin:
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
         for dec in reversed(decorators):
-            try:
-                old_env = self.current_env
-                self.current_env = self.env_class(self, parent=old_env)
+            # Create new environment for decorator evaluation
+            dec_env = self.env_class(self, parent=self.current_env)
+            
+            with self.this_env(dec_env):
                 dec_func = self.eval(dec)
                 
-                # Store important attributes that should NEVER be changed by decorators
-                preserved_attrs = {}
+                # Store all original attributes
+                original_attrs = {}
                 for attr_name in ['__name__', 'ast_node', 'func_env']:
                     if hasattr(obj, attr_name):
-                        preserved_attrs[attr_name] = getattr(obj, attr_name)
+                        original_attrs[attr_name] = getattr(obj, attr_name)
                 
                 # Apply the decorator
                 obj = dec_func(obj)
                 
-                # ALWAYS restore these attributes, regardless of what the decorator did
-                for attr_name, attr_value in preserved_attrs.items():
+                # Always restore critical attributes
+                for attr_name, attr_value in original_attrs.items():
                     setattr(obj, attr_name, attr_value)
-                            
-                self.current_env = old_env
-            except Exception as e:
-                self.current_env = old_env
-                raise RuntimeError(f"Error applying decorator at line {self.get_lineno(dec)}: {str(e)}") from e
         return obj
     
     def _is_generator_function(self, node: ast.FunctionDef) -> bool:
@@ -80,17 +76,14 @@ class FunctionMixin:
             else:
                 self._bind_function_args(node, local_env, args, kwargs)
                 
-                old_env = self.current_env
-                self.current_env = local_env
-                try:
-                    for stmt in node.body:
-                        self.eval(stmt)
-                    return None
-                except ReturnException as re:
-                    return re.value
-                finally:
-                    self.current_env = old_env
-
+                with self.this_env(local_env):
+                    try:
+                        for stmt in node.body:
+                            self.eval(stmt)
+                        return None
+                    except ReturnException as re:
+                        return re.value
+   
         func.func_env = func_env 
         # this is used in eval_Call to determine user-defined function
         #TODO: there maybe a better way to handle this
@@ -109,12 +102,8 @@ class FunctionMixin:
         
         func.__name__ = name
         
-        # Apply decorators
-        old_env = self.current_env
-        self.current_env = self.current_env  # use current closure scope
-        decorated_func = self.apply_decorators(func, node.decorator_list)
-        self.current_env = old_env
-        
+
+        decorated_func = self.apply_decorators(func, node.decorator_list)        
 
         self.current_env.set(node.name, decorated_func)
         return decorated_func
@@ -126,13 +115,8 @@ class FunctionMixin:
         def lambda_func(*args, **kwargs):
             local_env = func_env.copy()
             self._bind_function_args(node, local_env, args, kwargs)
-            
-            old_env = self.current_env
-            self.current_env = local_env
-            try:
+            with self.this_env(local_env):
                 return self.eval(node.body)
-            finally:
-                self.current_env = old_env
         
         lambda_func.func_env = func_env  # ⭐ store func_env instead of closure_env
         lambda_func.ast_node = node
@@ -286,16 +270,14 @@ class FunctionMixin:
             self._bind_function_args(func_node, call_env, posargs, kwargs, self_obj=instance)
 
             # Execute __init__ body
-            old_env = self.current_env
-            self.current_env = call_env
-            try:
-                for stmt in func_node.body:
-                    self.eval(stmt)
-            except ReturnException as re:
-                if re.value is not None:
-                    raise TypeError(f"__init__ should return None, got {re.value}")
-            finally:
-                self.current_env = old_env
+            with self.this_env(call_env):
+                try:
+                    for stmt in func_node.body:
+                        self.eval(stmt)
+                except ReturnException as re:
+                    if re.value is not None:
+                        raise TypeError(f"__init__ should return None, got {re.value}")
+
         else:
             # Native __init__
             try:
