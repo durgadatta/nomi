@@ -58,7 +58,13 @@ class FunctionMixin:
         is_generator = _check_for_yield(node)
         return is_generator
 
-    def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
+    def eval_Function(self, node: ast.FunctionDef) -> callable:
+        '''
+        isolate evaluating function from the binding
+        note that, at the moment, there is no "Function" node
+        there maybe one later; this allows function to be
+        created without bindings
+        '''
         # Create function environment with closure as parent
         func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
         
@@ -84,14 +90,28 @@ class FunctionMixin:
                     return None
                 except ReturnException as re:
                     return re.value
-                except (BreakException, ContinueException) as e:
-                    raise SyntaxError(f"'{type(e).__name__}' outside loop at line {self.get_lineno(node)}")
                 finally:
                     self.current_env = old_env
 
-        func.__name__ = node.name
-        func.func_env = func_env  # ⭐ store func_env instead of closure_env
+        func.func_env = func_env 
+        # this is used in eval_Call to determine user-defined function
+        #TODO: there maybe a better way to handle this
         func.ast_node = node
+
+        return func
+
+    def eval_FunctionDef(self, node:ast.FunctionDef):
+
+        func = self.eval_Function(node)
+        name = node.name 
+        if not name:
+            # function expr; also no decorator processing
+            # TODO: rethink this hook-up
+            return func 
+        
+        #TODO: double name setting should be un-necessary
+        # later rivew this and decorated_func.__name__
+        func.__name__ = name
         
         # Apply decorators
         old_env = self.current_env
@@ -99,15 +119,14 @@ class FunctionMixin:
         decorated_func = self.apply_decorators(func, node.decorator_list)
         self.current_env = old_env
         
-        # ⭐ Ensure the decorated function has the right name
-        if not hasattr(decorated_func, '__name__') or decorated_func.__name__ == 'wrapper':
-            decorated_func.__name__ = node.name
-        
+
+        decorated_func.__name__ = name
         self.current_env.set(node.name, decorated_func)
+        return decorated_func
 
     def eval_Lambda(self, node: ast.Lambda) -> Any:
         # Create function environment with closure as parent  
-        func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
+        func_env = self.env_class(self, parent=self.current_env) 
         
         def lambda_func(*args, **kwargs):
             local_env = func_env.copy()

@@ -15,7 +15,8 @@ class FunctionsMixin:
         # this is an anonymous function 
         # TODO: later handle FunctionDef to handle function without name
         # or just abstract the function without name
-        name = "temp"# ast.Name(id='temp', ctx=ast.Store())
+        # when None is passed eval_FunctionDef is expected not to bind name
+        name = None
         items.insert(0, name)
 
         expr = items[-1]
