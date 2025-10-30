@@ -38,12 +38,9 @@ class GeneratorState:
         if not self.active:
             raise StopIteration(self.return_value)
         
-        old_env = self.interpreter.current_env
-        self.interpreter.current_env = self.env
-        try:
+        with self.interpreter.this_env(self.env):
             return self._execute_statements()
-        finally:
-            self.interpreter.current_env = old_env
+
 
     def _execute_statements(self):
         """Execute generator statements until yield, return, or completion."""

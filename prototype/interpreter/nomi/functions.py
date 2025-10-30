@@ -27,12 +27,9 @@ class FunctionMixin:
                     value=None,
                     simple=1
                 )
-                old_env = self.current_env
-                self.current_env = env
-                try:
+                with self.this_env(env):
                     self.eval_AnnAssign(ann_assign)
-                finally:
-                    self.current_env = old_env
+
 
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
         # Create function environment with closure as parent

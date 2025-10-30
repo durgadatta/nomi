@@ -38,16 +38,14 @@ class ContextManagerMixin:
             call_env = self.env_class(self, parent=closure_env)
             call_env.set(method_node.args.args[0].arg, context_obj)  # Set 'self'
             
-            old_env = self.current_env
-            self.current_env = call_env
-            try:
-                for stmt in method_node.body:
-                    self.eval(stmt)
-                return None  # No explicit return in __enter__
-            except ReturnException as re:
-                return re.value  # Return value if explicitly returned
-            finally:
-                self.current_env = old_env
+            with self.this_env(call_env):
+                try:
+                    for stmt in method_node.body:
+                        self.eval(stmt)
+                    return None  # No explicit return in __enter__
+                except ReturnException as re:
+                    return re.value  # Return value if explicitly returned
+
         else:
             # For Python/native functions
             return method()
@@ -72,16 +70,13 @@ class ContextManagerMixin:
             if len(param_names) >= 3:
                 call_env.set(param_names[2], exc_tb)
             
-            old_env = self.current_env
-            self.current_env = call_env
-            try:
-                for stmt in method_node.body:
-                    self.eval(stmt)
-                return False  # Default: don't suppress exception
-            except ReturnException as re:
-                return re.value  # Return suppression flag
-            finally:
-                self.current_env = old_env
+            with self.this_env(call_env):
+                try:
+                    for stmt in method_node.body:
+                        self.eval(stmt)
+                    return False  # Default: don't suppress exception
+                except ReturnException as re:
+                    return re.value  # Return suppression flag
         else:
             # For Python/native functions
             return method(exc_type, exc_val, exc_tb)
