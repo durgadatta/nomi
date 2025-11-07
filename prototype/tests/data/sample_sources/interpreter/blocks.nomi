@@ -1,0 +1,12 @@
+'''
+Detailed notes at documentations/yield_to_block.md
+'''
+
+
+func times(n):
+    for i in range(n):
+        yield 
+a = 1
+times(2): 
+    a = a + 1
+    print('hello')

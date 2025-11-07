@@ -60,7 +60,7 @@ class FunctionMixin:
         created without bindings
         '''
         # Create function environment with closure as parent
-        func_env = self.env_class(self, parent=self.current_env)  # ⭐ changed from closure_env to func_env
+        func_env = self.env_class(self, parent=self.current_env)
         
         def func(*args, **kwargs):
             is_generator = self._is_generator_function(node)
@@ -68,14 +68,17 @@ class FunctionMixin:
             #env is copied so that constraints work properly
             # Constraints from parent are relevant only on global/non-local scope (to-implement)
             local_env = func_env.copy()
+            self._bind_function_args(node, local_env, args, kwargs)
             if is_generator:
-                  # ⭐ use func_env as parent
-                self._bind_function_args(node, local_env, args, kwargs)
-                gen = GeneratorState(self, node.body, local_env)
+                gen = self.gen_state(self, node.body, local_env)
+                # NOTE: TODO: this needs to be abstracted out to nomi layer
+                # if needed handle gen separetley at call layer
+                # but local_env needs to be correctly handled as well
+                block = getattr(func, '_nomi_block', None)
+                if block is not None:
+                    gen._nomi_block = block
                 return gen
-            else:
-                self._bind_function_args(node, local_env, args, kwargs)
-                
+            else:                
                 with self.this_env(local_env):
                     try:
                         for stmt in node.body:
@@ -118,12 +121,12 @@ class FunctionMixin:
             with self.this_env(local_env):
                 return self.eval(node.body)
         
-        lambda_func.func_env = func_env  # ⭐ store func_env instead of closure_env
+        lambda_func.func_env = func_env  
         lambda_func.ast_node = node
         return lambda_func
 
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
-        # ⭐ Note: constraints are already set up in parent env, so env.set() will check them automatically
+        # Note: constraints are already set up in parent env, so env.set() will check them automatically
         
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []
@@ -220,7 +223,26 @@ class FunctionMixin:
         
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Just call the function - it will handle generator detection internally
-            return func(*posargs, **kwargs)
+            # pass the 
+
+            #TODO: later move to nomi layer - create one helper to eval user-def function
+            # Check if this call has a block
+
+            block = getattr(node, '_nomi_block', None)
+            # pass the block to be yield to actual function
+            # so that it be relayed to generator state
+            #TODO: organize this hooking 
+            func._nomi_block = (block, self.current_env)
+            result = func(*posargs, **kwargs)
+            
+            #TODO: FIX: this seems to have been removed during decorator application?
+            # or other func_expr processing, revieww it later; we should not have to
+            # check it here
+            if getattr(node, '_nomi_block', None):
+                del func._nomi_block
+            return result
+
+            
 
         # --- Class instantiation ---
         if isinstance(func, type):
@@ -253,7 +275,7 @@ class FunctionMixin:
 
         # Check if it's an interpreted method
         func_node = getattr(init_method, "ast_node", None)
-        func_env = getattr(init_method, "func_env", None)  # ⭐ changed from closure_env to func_env
+        func_env = getattr(init_method, "func_env", None)
         
         # If no explicit func_env, use current environment
         if func_env is None:
@@ -261,8 +283,7 @@ class FunctionMixin:
 
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Interpreted __init__
-            call_env = self.env_class(self, parent=func_env)  # ⭐ use func_env as parent
-            
+            call_env = self.env_class(self, parent=func_env)            
             # Bind self first
             call_env.set('self', instance)
             

@@ -47,7 +47,7 @@ kwparams: "**" typedparam ","?
 ?typedparam: name (":" test)?
 
 
-?stmt: simple_stmt | compound_stmt
+?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
 ?small_stmt: (expr_stmt | assign_stmt | del_stmt | pass_stmt | flow_stmt | import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
 expr_stmt: testlist_star_expr
@@ -197,6 +197,9 @@ AWAIT: "await"
           | atom_expr "[" subscriptlist "]"  -> getitem
           | atom_expr "." name               -> getattr
           | atom
+
+// Add block call as a statement type
+block_call_stmt: atom_expr ":" suite
 
 ?atom: "(" yield_expr ")"  
      | "(" _tuple_inner? ")" -> tuple

@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from .base import (
     Environment, ReturnException, BreakException, ContinueException, YieldException
 )
+from .generator_state import GeneratorState
 from .function import FunctionMixin
 from .expressions import ExpresssionMixin
 from .ds import DataStructMixin
@@ -24,6 +25,7 @@ class Interpreter(
 ):
     """Evaluates AST nodes."""
     env_class = Environment
+    gen_state = GeneratorState
     def __init__(self):
         self.builtin_env = self.env_class(self)
         self.builtin_env.bindings = builtins.__dict__.copy()

@@ -28,3 +28,38 @@ class FunctionsMixin:
             
         fn = self.funcdef(items)
         return fn
+    
+    def block_call_stmt(self, items):
+        '''
+            NOTE:
+            adhoc/temp implemenation of function call
+            that accepts block, later to be fully harmonized with 
+            regular call
+        '''
+        caller, block = items 
+
+        #TODO: the first exp may not be a call
+        # it may be a function that can only take block 
+        # so just f or expr without f()
+        # now it will be a generator state
+        # also it will not handle sending parameter to block fow now
+            # immediate next task
+        # in this case, we may need to wrap it into a call explicitly
+        ## later think of more systematic way to handle internal
+        #metadata
+        # can also create a separate node for this
+        # though this is part of regular call
+
+        #NOTE: __block will interfere with ast slots and private names
+        caller._nomi_block = block
+
+        # force it to run until it is exhausted
+        call_expr = ast.Call(
+            func=ast.Name('list'), 
+            args=[caller]
+        )
+
+         # This makes it a statement
+         # else it would get filtered out in file_input parsing
+         # note that ast.Expr is subclass of ast.stmt
+        return ast.Expr(value=call_expr) 
