@@ -30,7 +30,6 @@ class FunctionMixin:
                 with self.this_env(env):
                     self.eval_AnnAssign(ann_assign)
 
-
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
         # Create function environment with closure as parent
 

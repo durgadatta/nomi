@@ -54,7 +54,7 @@ class GeneratorState:
                 self.index += 1
                 
             except YieldException as ye:
-                self._handle_yield(ye, old_compound_state)
+                self._handle_yield()
                 return ye.value
 
             except ReturnException as re:
@@ -80,10 +80,8 @@ class GeneratorState:
         else:
             self.interpreter.eval(stmt)
 
-    def _handle_yield(self, ye: YieldException, old_compound_state: Optional[dict]):
+    def _handle_yield(self):
         """Handle a yield exception and update state accordingly."""
-        is_new_compound = (self.compound_state is not None and 
-                          self.compound_state != old_compound_state)
         
         # Only increment index for simple yields (non-compound statements)
         if not self.compound_state:
