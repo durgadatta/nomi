@@ -48,7 +48,6 @@ class GeneratorState:
             stmt = self.body[self.index]
             
             try:
-                old_compound_state = self.compound_state
                 self._execute_statement(stmt)
                 # Statement completed without yielding - move to next
                 self.index += 1
