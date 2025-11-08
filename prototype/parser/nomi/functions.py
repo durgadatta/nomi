@@ -28,3 +28,21 @@ class FunctionsMixin:
             
         fn = self.funcdef(items)
         return fn
+    
+    def block_call_stmt(self, items):
+        '''
+            NOTE:
+            adhoc/temp implementation of function call
+            that accepts block, later to be fully harmonized with 
+            regular call
+        '''
+        call, block = items 
+        #TODO: collect __block__ into a central labels/enums
+
+        # insert the block to be extracted by gen-state
+        block_arg = ast.keyword(arg='__block__', value=block)
+        call.keywords.append(block_arg)
+
+         # Make it a statement, note that ast.Expr < ast.stmt
+         # else it will be ignored by file_start parsing
+        return ast.Expr(value=call) 

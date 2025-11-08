@@ -36,8 +36,8 @@ Performance is not the immediate goal. **Readability, composability, and human-c
 
 My journey began with **C**, which revealed the power of low-level control but also its cognitive burden. **Python** opened my eyes to readability and expressiveness. **Tcl** shifted my perspective to **language as a craft**, not just a tool.  
 
-Over the years, I explored **Java, JavaScript, Scala, Julia, Lisp/Scheme, Haskell, PowerShell, Bash, Mathematica, and APL**—each contributing insights into abstraction, notation, and usability.  
+Over the years, I have explored **Java, JavaScript, Scala, Julia, Lisp/Scheme, Haskell, PowerShell, Bash, Mathematica (Wolfram Language), R,  and APL**—each contributing insights into abstraction, notation, and usability.  
 
-In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) (now dormant), capturing fragments of this vision. Since then, these fragments have matured into a systematic design.  
+In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) (now dormant), capturing fragments of this vision. Since then, these fragments have matured into a more systematic thought process.  
 
 **Nomi is the culmination of a decade of exploration—minimal at its base, expansive in its reach.**  
