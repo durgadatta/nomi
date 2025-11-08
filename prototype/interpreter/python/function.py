@@ -100,8 +100,6 @@ class FunctionMixin:
             return func 
         
         func.__name__ = name
-        
-
         decorated_func = self.apply_decorators(func, node.decorator_list)        
 
         self.current_env.set(node.name, decorated_func)
@@ -122,20 +120,29 @@ class FunctionMixin:
         return lambda_func
 
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
+        '''
+        NOTE: this is called by both definition and call
+        for call, arguments are already evaluated
+        for definition, we need to evaluate the defaults
+
+        We may actually eval all of them here 
+        '''
+
+
         # Note: constraints are already set up in parent env, so env.set() will check them automatically
         
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []
         
-        # Handle self binding
         if self_obj is not None:
-            if params and params[0].arg == 'self':
-                env.set('self', self_obj)
-                params = params[1:]
-            # If it's __init__, we should have self_obj but might not have 'self' param
-            elif self_obj is not None and (not params or params[0].arg != 'self'):
-                # Still set 'self' in environment for __init__
-                env.set('self', self_obj)
+            # Bind to first parameter, regardless of its name
+            if params:
+                env.set(params[0].arg, self_obj)
+                params = params[1:]  # Remove the bound parameter
+            else:
+                # No parameters but self_obj provided - might be an error case
+                # Or handle __init__ without parameters
+                pass
 
         # Bind positional arguments (constraints checked by env.set())
         for i, param in enumerate(params):
@@ -200,7 +207,7 @@ class FunctionMixin:
                 kwargs.update(kw_val)
             else:
                 value = kw.value
-                # if it is a block arg; don't eval it it
+                # if it is a block arg; don't eval it
                 # generator state will eval it in the caller's env
                 if kw.arg == '__block__':
                     value = (value, self.current_env)
