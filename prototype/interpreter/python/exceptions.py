@@ -38,6 +38,12 @@ class ExceptionMixin:
         try:
             # Execute try block
             try:
+                #TODO: this should be made available in any resumable nodes like For, While as well
+                if generator_state and generator_state.injected_exception is not None:
+                    exc = generator_state.injected_exception
+                    generator_state.injected_exception = None
+                    raise exc  # This will be caught by the except handlers below
+
                 for stmt in node.body:
                     result = self.eval(stmt)
             except Exception as e:
