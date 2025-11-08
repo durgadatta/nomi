@@ -32,34 +32,17 @@ class FunctionsMixin:
     def block_call_stmt(self, items):
         '''
             NOTE:
-            adhoc/temp implemenation of function call
+            adhoc/temp implementation of function call
             that accepts block, later to be fully harmonized with 
             regular call
         '''
-        caller, block = items 
+        call, block = items 
+        #TODO: collect __block__ into a central labels/enums
 
-        #TODO: the first exp may not be a call
-        # it may be a function that can only take block 
-        # so just f or expr without f()
-        # now it will be a generator state
-        # also it will not handle sending parameter to block fow now
-            # immediate next task
-        # in this case, we may need to wrap it into a call explicitly
-        ## later think of more systematic way to handle internal
-        #metadata
-        # can also create a separate node for this
-        # though this is part of regular call
+        # insert the block to be extracted by gen-state
+        block_arg = ast.keyword(arg='__block__', value=block)
+        call.keywords.append(block_arg)
 
-        #NOTE: __block will interfere with ast slots and private names
-        caller._nomi_block = block
-
-        # force it to run until it is exhausted
-        call_expr = ast.Call(
-            func=ast.Name('list'), 
-            args=[caller]
-        )
-
-         # This makes it a statement
-         # else it would get filtered out in file_input parsing
-         # note that ast.Expr is subclass of ast.stmt
-        return ast.Expr(value=call_expr) 
+         # Make it a statement, note that ast.Expr < ast.stmt
+         # else it will be ignored by file_start parsing
+        return ast.Expr(value=call) 

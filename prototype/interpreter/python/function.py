@@ -1,10 +1,7 @@
 import ast
 from typing import List, Any
 
-from .base import (
-    Environment, ReturnException, BreakException, ContinueException
-)
-from .generator_state import GeneratorState
+from .base import ReturnException
 
 class FunctionMixin:
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
@@ -51,6 +48,11 @@ class FunctionMixin:
         # It will automatically skip nested functions due to the check in _check_for_yield
         is_generator = _check_for_yield(node)
         return is_generator
+    
+
+    def eval_generator_obj(self, body, local_env, block=None):
+        ''' so that it can be overridden'''
+        return self.gen_state(self, body, local_env)
 
     def eval_Function(self, node: ast.FunctionDef) -> callable:
         '''
@@ -68,16 +70,10 @@ class FunctionMixin:
             #env is copied so that constraints work properly
             # Constraints from parent are relevant only on global/non-local scope (to-implement)
             local_env = func_env.copy()
+            block = kwargs.pop('__block__', None)
             self._bind_function_args(node, local_env, args, kwargs)
             if is_generator:
-                gen = self.gen_state(self, node.body, local_env)
-                # NOTE: TODO: this needs to be abstracted out to nomi layer
-                # if needed handle gen separetley at call layer
-                # but local_env needs to be correctly handled as well
-                block = getattr(func, '_nomi_block', None)
-                if block is not None:
-                    gen._nomi_block = block
-                return gen
+                return self.eval_generator_obj(node.body, local_env, block=block)
             else:                
                 with self.this_env(local_env):
                     try:
@@ -203,7 +199,14 @@ class FunctionMixin:
                     raise TypeError(f"argument after ** must be a mapping at line {self.get_lineno(node)}")
                 kwargs.update(kw_val)
             else:
-                kwargs[kw.arg] = self.eval(kw.value)
+                value = kw.value
+                # if it is a block arg; don't eval it it
+                # generator state will eval it in the caller's env
+                if kw.arg == '__block__':
+                    value = (value, self.current_env)
+                else:
+                    value = self.eval(kw.value)
+                kwargs[kw.arg] = value
 
         # --- Built-in / native callable ---
         if callable(func) and not hasattr(func, "ast_node"):
@@ -223,27 +226,8 @@ class FunctionMixin:
         
         if func_node and isinstance(func_node, ast.FunctionDef):
             # Just call the function - it will handle generator detection internally
-            # pass the 
-
-            #TODO: later move to nomi layer - create one helper to eval user-def function
-            # Check if this call has a block
-
-            block = getattr(node, '_nomi_block', None)
-            # pass the block to be yield to actual function
-            # so that it be relayed to generator state
-            #TODO: organize this hooking 
-            func._nomi_block = (block, self.current_env)
-            result = func(*posargs, **kwargs)
-            
-            #TODO: FIX: this seems to have been removed during decorator application?
-            # or other func_expr processing, revieww it later; we should not have to
-            # check it here
-            if getattr(node, '_nomi_block', None):
-                del func._nomi_block
-            return result
-
-            
-
+            return func(*posargs, **kwargs)
+ 
         # --- Class instantiation ---
         if isinstance(func, type):
             return self._instantiate_class(func, posargs, kwargs, node)
