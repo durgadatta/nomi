@@ -1,0 +1,37 @@
+'''
+Detailed notes at documentations/yield_to_block.md
+'''
+
+
+func times(n):
+    for i in range(n):
+        yield 
+a = 1
+
+times(2): 
+    a = a + 1
+    print('hello')
+
+# This still does not work
+# this can be attempted after a simpler one
+# error_printer() at sample.nomi
+# func retry(max_times, exc=None):
+#     if exc is None:
+#         exc = Exception 
+
+#     for i in range(max_times):
+#         try:
+#             yield  # Execute the block here
+#             # If we reach here, block succeeded
+#             print(f'successful after {i+1} attempts')
+#             return  # Exit on success
+#         except exc as e:
+#             print(f'failed: attempt={i+1}, error: {e}')
+#             # Continue to next attempt
+    
+#     print(f'All {max_times} attempts failed!')
+    
+
+# retry(3):
+#     1/0
+    

@@ -1,0 +1,9 @@
+{
+  "times": "times:class=<class 'function'>",
+  "a": 3,
+  "stdout": [
+    "hello",
+    "hello",
+    ""
+  ]
+}

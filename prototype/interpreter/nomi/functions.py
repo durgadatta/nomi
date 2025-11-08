@@ -30,7 +30,6 @@ class FunctionMixin:
                 with self.this_env(env):
                     self.eval_AnnAssign(ann_assign)
 
-
     def eval_FunctionDef(self, node: ast.FunctionDef) -> None:
         # Create function environment with closure as parent
 
@@ -38,3 +37,12 @@ class FunctionMixin:
         self._setup_function_parameters(node, func.func_env)
 
         return func
+    
+
+    def eval_generator_obj(self, body, local_env, block=None):
+        #TODO: better organize the passing of block from call to here
+        gen = self.gen_state(self, body, local_env, block=block)
+        if block is not None:
+            if block[0] is not None:
+                list(gen) # for the generator to exhaust (complete the call)
+        return gen
