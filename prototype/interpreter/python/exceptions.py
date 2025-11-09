@@ -44,8 +44,7 @@ class ExceptionMixin:
                     generator_state.injected_exception = None
                     raise exc  # This will be caught by the except handlers below
 
-                for stmt in node.body:
-                    result = self.eval(stmt)
+                self.eval(node.body)
             except Exception as e:
                 exception_occurred = True
                 caught_exception = e
@@ -65,8 +64,7 @@ class ExceptionMixin:
                         if handler.name:
                             self.current_env.set(handler.name, e)
                         
-                        for stmt in handler.body:
-                            result = self.eval(stmt)
+                        self.eval(handler.body)
                         break
                 
                 if not handler_found:
@@ -74,13 +72,9 @@ class ExceptionMixin:
             
             # Execute else block if no exception occurred
             if not exception_occurred and node.orelse:
-                for stmt in node.orelse:
-                    result = self.eval(stmt)
+                self.eval(node.orelse)
         
         finally:
             # Execute finally block (always runs, can override returns/exceptions)
             if node.finalbody:
-                for stmt in node.finalbody:
-                    result = self.eval(stmt)
-        
-        return result
+                self.eval(node.finalbody)

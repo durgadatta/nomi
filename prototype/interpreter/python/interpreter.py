@@ -32,7 +32,7 @@ class Interpreter(
         self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
 
-    def eval(self, node: Optional[ast.AST]) -> Any:
+    def eval(self, node: Optional[ast.AST|List]) -> Any:
         if node is None:
             return None
         method = getattr(self, f'eval_{node.__class__.__name__}', None)
@@ -66,11 +66,18 @@ class Interpreter(
             yield
         finally:
             self.current_env = old_env
+
+    def eval_list(self, stmts):
+        '''
+            Note: this is not actually an ast.node
+            but a Python list; convenience for most block
+            structure
+        '''
+        for stmt in stmts:
+            self.eval(stmt)
         
     def eval_Module(self, node: ast.Module) -> Any:
         for stmt in node.body:
             self.eval(stmt)
         return None
         
-
-
