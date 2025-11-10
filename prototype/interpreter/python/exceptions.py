@@ -50,12 +50,6 @@ class ExceptionMixin:
         try:
             try:
                 if state['phase'] == 'try_body':
-                    # Check for injected exception
-                    if generator_state and generator_state.injected_exception is not None:
-                        exc = generator_state.injected_exception
-                        generator_state.injected_exception = None
-                        raise exc
-
                     # Execute try body statements using helper
                     completed = self._execute_statement_list(
                         node.body, state, 'index', generator_state,
@@ -144,6 +138,10 @@ class ExceptionMixin:
                 raise state['pending_return']
 
         return result
+    
+
+
+
 
     def _execute_statement_list(self, statements, state: dict, index_key: str, generator_state: Any, on_exception=None):
         """
@@ -152,8 +150,11 @@ class ExceptionMixin:
         """
         i = state[index_key]
         while i < len(statements):
+            # Check for injected exception
             stmt = statements[i]
             try:
+                if generator_state is not None:
+                    generator_state.raise_injected_exception()
                 self.eval(stmt, generator_state=generator_state)
                 i += 1
                 state[index_key] = i

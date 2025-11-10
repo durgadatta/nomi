@@ -19,9 +19,10 @@ class GeneratorState(PythonGeneratorState):
                 self.interpreter.eval(block)
 
     def _handle_yield(self):
+        super()._handle_yield()
         try:
             self._handle_yield_to_block()
         except Exception as e:
             # transfer the exception from block to the generator state
             self.throw(e)
-        super()._handle_yield()
+        

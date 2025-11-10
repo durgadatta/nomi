@@ -69,14 +69,14 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
-            self._execute_for_loop(node, state)      
+            self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
             # Save state and re-raise for generator handling
             if generator_state:
                 generator_state.push_frame(node, state)
             raise
 
-    def _execute_for_loop(self, node: ast.For, state: dict):
+    def _execute_for_loop(self, node: ast.For, state: dict, generator_state):
         """
         Unified for loop executor that handles both yielding and non-yielding cases.
         """
@@ -99,7 +99,7 @@ class ControlMixin(ExceptionMixin):
             while i < len(node.body):
                 stmt = node.body[i]
                 try:
-                    self.eval(stmt)
+                    self.eval(stmt, generator_state=generator_state)
                     i += 1
                 except YieldException:
                     # Save where to resume and re-raise
