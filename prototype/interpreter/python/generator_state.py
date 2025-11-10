@@ -28,8 +28,35 @@ class GeneratorState:
         self.index = 0
         self.active = True
         self.return_value: Optional[Any] = None
-        self.compound_state: Optional[dict] = None
+   
+        # this will received by throw() and executed at the resumable
+        # node at the beginning, if present; maybe this needs to be
+        # node specific (stack) - review later
         self.injected_exception: Optional[Exception] = None
+
+        #TODO: move this to a separate class later
+        # List(Dict(node, state)
+        # This is only for compound statements (For/While/Try)
+        self.execution_stack = [] 
+
+    def push_frame(self, node, state):
+        self.execution_stack.append({
+            'node': node,
+            'state': state,
+        })
+        
+    def pop_frame(self):
+        if self.execution_stack:
+            return self.execution_stack.pop()
+        return None
+        
+    def current_frame(self):
+        if self.execution_stack:
+            return self.execution_stack[-1]
+        return None
+        
+    def is_stack_empty(self):
+        return len(self.execution_stack) == 0
 
     def __iter__(self):
         return self
@@ -38,54 +65,91 @@ class GeneratorState:
         if not self.active:
             raise StopIteration(self.return_value)
         
+        # ALWAYS process compound statement stack first
+        while not self.is_stack_empty():
+            #TODO: do we need result?
+            # move the YieldException handling here from _execute_compound_frame
+            result = self._execute_compound_frame()
+            if result is not None:  # Yield occurred
+                return result
+        
+        # No compound statements pending - execute sequential statements
+        return self._execute_sequential()
+    
+    def eval(self, node, state):
         with self.interpreter.this_env(self.env):
-            return self._execute_statements()
+            self.interpreter.eval(node, state=state, generator_state=self)
+        
+    def _execute_compound_frame(self):
+        """
+        Execute a single compound statement frame from the stack.
+        Returns yield value if execution yielded, None otherwise.
+        """
+        node, state = self.current_frame()
+        
+        # Check for injected exception
+        if self.injected_exception:
+            exc = self.injected_exception
+            self.injected_exception = None
+            raise exc
+        
+        try:
+            # Execute the compound statement with its state
+            # The compound statement manages its own yielding
 
+            frame = self.pop_frame()
+            #TODO: handle this in pop
+            node, state = frame['node'], frame['state']
+            self.eval(node, state)
+            #TODO: think about what happens if exception is raised here
+            # the common exception handle as in execute_sequential should be followed
+            
+        except YieldException as ye:
+            # Compound statement yielded - return the value
+            return ye.value
+        
+        #TODO: avoid duplication with _execute_sequential
+        except ReturnException as re:
+            self.active = False
+            self.return_value = re.value
+            raise StopIteration(self.return_value)
 
-    def _execute_statements(self):
-        """Execute generator statements until yield, return, or completion."""
+    def _execute_sequential(self):
+        """
+        Execute sequential statements until we hit a compound statement or yield.
+        Returns yield value if execution yielded.
+        """
         while self.index < len(self.body):
             stmt = self.body[self.index]
             
             try:
-                self._execute_statement(stmt)
-                # Statement completed without yielding - move to next
+                # Execute statement - may push compound frames to stack
+                self.eval(stmt, state=None)
+                # If we get here, statement completed without yielding
                 self.index += 1
-                
             except YieldException as ye:
-                self._handle_yield()
+                # Simple statement yielded
+                self.index += 1
                 return ye.value
-
+                
             except ReturnException as re:
-                self._handle_return(re)
+                self.active = False
+                self.return_value = re.value
                 raise StopIteration(self.return_value)
                 
             except Exception as e:
+                # Other exceptions
                 self._handle_other_exception(e)
-                return  # Return to allow exception propagation
+                return e
         
         # All statements completed
         self.active = False
         raise StopIteration(self.return_value)
 
-    def _execute_statement(self, stmt: ast.stmt):
-        """Execute a single statement with compound statement support."""
-        if isinstance(stmt, ast.For):
-            self.interpreter.eval_For(stmt, self)
-        elif isinstance(stmt, ast.While): 
-            self.interpreter.eval_While(stmt, self)
-        elif isinstance(stmt, ast.Try): 
-            self.interpreter.eval_Try(stmt, self)
-        else:
-            self.interpreter.eval(stmt)
-
     def _handle_yield(self):
         """Handle a yield exception and update state accordingly."""
-        
-        # Only increment index for simple yields (non-compound statements)
-        if not self.compound_state:
-            self.index += 1
-        # For compound statements, index is managed by the compound statement itself
+        #TODO: this is a hook to be overridden
+        pass
 
     def _handle_return(self, re: ReturnException):
         """Handle a return exception by marking generator as complete."""
@@ -122,29 +186,9 @@ class GeneratorState:
 
     def get_lineno(self) -> int:
         """Get current line number for error reporting."""
-        # Try compound state first
-        if self.compound_state:
-            return self._get_compound_state_lineno()
-        
-        # Fall back to current statement
+        #TODO: handle lines from compound state stack 
         if self.index < len(self.body):
             return getattr(self.body[self.index], 'lineno', 1)
         
-        return 1
+        return 
 
-    def _get_compound_state_lineno(self) -> int:
-        """Get line number from compound state."""
-        node = self.compound_state['node']
-        state_type = self.compound_state['type']
-        
-        if state_type in ['For', 'While']:
-            idx = self.compound_state['body_index']
-            if idx < len(node.body):
-                return getattr(node.body[idx], 'lineno', 1)
-                
-        elif state_type == 'Try' and self.compound_state['phase'] == 'body':
-            idx = self.compound_state['index']
-            if idx < len(node.body):
-                return getattr(node.body[idx], 'lineno', 1)
-        
-        return getattr(node, 'lineno', 1)
