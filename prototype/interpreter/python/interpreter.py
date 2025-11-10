@@ -35,9 +35,12 @@ class Interpreter(
 
     @staticmethod
     def is_resumable(node):
+        #TODO add ast.If
+        #TODO: make a general base class for all resumable nodes
         can_resume = (
             ast.For,
-            ast.While
+            ast.While,
+            ast.Try
         )
         return isinstance(node, can_resume)
 
@@ -95,6 +98,9 @@ class Interpreter(
 
             This maybe only one non-ast node.
             Think if adding other structure might help
+
+            TODO: for resumable eval, we need to know at what point we resumed
+                maybe return, the number of statements evaluated
         '''
         for stmt in stmts:
             self.eval(stmt)
