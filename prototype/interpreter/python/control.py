@@ -9,11 +9,9 @@ from .exceptions import ExceptionMixin
 class ControlMixin(ExceptionMixin):
     def eval_If(self, node: ast. ast.If) -> None:
         if self.eval(node.test):
-            for stmt in node.body:
-                self.eval(stmt)
+            self.eval(node.body)
         else:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
 
     def eval_AsyncFor(self, node: ast.AsyncFor) -> None:
         iterable = self.eval(node.iter)
@@ -24,8 +22,7 @@ class ControlMixin(ExceptionMixin):
                     item = iterable().__next__()
                     self.assign_target(node.target, item)
                     try:
-                        for stmt in node.body:
-                            self.eval(stmt)
+                        self.eval(node.body )
                     except BreakException:
                         break
                     except ContinueException:
@@ -34,8 +31,7 @@ class ControlMixin(ExceptionMixin):
                     break
         else:
             self.eval_For(node)
-        for stmt in node.orelse:
-            self.eval(stmt)
+        self.eval(node.orelse)
 
     def eval_Pass(self, node: ast.Pass) -> None:
         pass
@@ -71,8 +67,7 @@ class ControlMixin(ExceptionMixin):
         """Handle loop completion (else clause and state cleanup)."""
         state = generator_state.compound_state
         if not state.get('broke', False) and hasattr(node, 'orelse') and node.orelse:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
         generator_state.compound_state = None
 
     def eval_For(self, node: ast.For, generator_state: 'GeneratorState' = None) -> None:
@@ -154,8 +149,7 @@ class ControlMixin(ExceptionMixin):
 
         # Loop completed normally - handle orelse if not broken
         if not state['broke']:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
 
     def eval_While(self, node: ast.While, generator_state: 'GeneratorState' = None) -> None:
         """Evaluate a While loop node - unified approach."""
@@ -217,5 +211,4 @@ class ControlMixin(ExceptionMixin):
 
         # Handle orelse if loop completed normally
         if not state['broke']:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)

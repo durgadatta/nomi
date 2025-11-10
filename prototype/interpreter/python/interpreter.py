@@ -71,13 +71,15 @@ class Interpreter(
         '''
             Note: this is not actually an ast.node
             but a Python list; convenience for most block
-            structure
+            structure. This is not evaluating list in target language
+            but is used as a helper in host language, elements of
+            list are ASTs for target language.
+
+            This maybe only one non-ast node.
+            Think if adding other structure might help
         '''
         for stmt in stmts:
             self.eval(stmt)
         
     def eval_Module(self, node: ast.Module) -> Any:
-        for stmt in node.body:
-            self.eval(stmt)
-        return None
-        
+        self.eval(node.body)
