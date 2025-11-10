@@ -73,7 +73,7 @@ class ControlMixin(ExceptionMixin):
         except YieldException:
             # Save state and re-raise for generator handling
             if generator_state:
-                generator_state.push_frame(node, state)
+                generator_state.pause(node, state)
             raise
 
     def _execute_for_loop(self, node: ast.For, state: dict, generator_state):
@@ -141,7 +141,7 @@ class ControlMixin(ExceptionMixin):
         except YieldException:
             # Save state and re-raise for generator handling
             if generator_state:
-                generator_state.push_frame(node, state)
+                generator_state.pause(node, state)
             raise
 
 

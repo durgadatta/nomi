@@ -37,28 +37,28 @@ class GeneratorState:
         #TODO: move this to a separate class later
         # List(Dict(node, state)
         # This is only for compound statements (For/While/Try)
-        self.execution_stack = [] 
+        self.paused_frames = [] 
 
-    def push_frame(self, node, state):
-        self.execution_stack.append({
+    def pause(self, node, state):
+        self.paused_frames.append({
             'node': node,
             'state': state,
         })
         
-    def pop_frame(self):
+    def frame_to_resume(self):
         #TODO: this essentially make this queue, not a stack, change this later
 
-        if self.execution_stack:
-            return self.execution_stack.pop(0)
+        if self.paused_frames:
+            return self.paused_frames.pop(0)
         return None
         
     def current_frame(self):
-        if self.execution_stack:
-            return self.execution_stack[0]
+        if self.paused_frames:
+            return self.paused_frames[0]
         return None
         
     def is_stack_empty(self):
-        return len(self.execution_stack) == 0
+        return len(self.paused_frames) == 0
 
     def __iter__(self):
         return self
@@ -93,7 +93,7 @@ class GeneratorState:
             # Execute the compound statement with its state
             # The compound statement manages its own yielding
 
-            frame = self.pop_frame()
+            frame = self.frame_to_resume()
             #TODO: handle this in pop
             node, state = frame['node'], frame['state']
             self.eval(node, state)
