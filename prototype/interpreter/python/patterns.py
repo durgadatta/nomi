@@ -59,6 +59,5 @@ class PatternMixin:
         subject = self.eval(node.subject)
         for case in node.cases:
             if self.match_case(case, subject):
-                for stmt in case.body:
-                    self.eval(stmt)
+                self.eval(case.body)
                 break

@@ -10,12 +10,13 @@ class GeneratorState(PythonGeneratorState):
 
     def _handle_yield_to_block(self):
         if self.block:
-            block, env = self.block 
+            block, env = self.block
+            if block is None:
+                return 
             with self.interpreter.this_env(env):
                 #TODO: is block not wrapped in .body like other ones?
                 # also abstract other "for stmt in" block execution with env as optional param
-                for stmt in block or []:
-                    self.interpreter.eval(stmt)
+                self.interpreter.eval(block)
 
     def _handle_yield(self):
         try:
