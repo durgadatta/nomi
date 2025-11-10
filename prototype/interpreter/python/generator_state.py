@@ -46,13 +46,15 @@ class GeneratorState:
         })
         
     def pop_frame(self):
+        #TODO: this essentially make this queue, not a stack, change this later
+
         if self.execution_stack:
-            return self.execution_stack.pop()
+            return self.execution_stack.pop(0)
         return None
         
     def current_frame(self):
         if self.execution_stack:
-            return self.execution_stack[-1]
+            return self.execution_stack[0]
         return None
         
     def is_stack_empty(self):
@@ -87,12 +89,6 @@ class GeneratorState:
         """
         node, state = self.current_frame()
         
-        # Check for injected exception
-        if self.injected_exception:
-            exc = self.injected_exception
-            self.injected_exception = None
-            raise exc
-        
         try:
             # Execute the compound statement with its state
             # The compound statement manages its own yielding
@@ -106,6 +102,7 @@ class GeneratorState:
             
         except YieldException as ye:
             # Compound statement yielded - return the value
+            self._handle_yield()
             return ye.value
         
         #TODO: avoid duplication with _execute_sequential
@@ -129,7 +126,7 @@ class GeneratorState:
                 self.index += 1
             except YieldException as ye:
                 # Simple statement yielded
-                self.index += 1
+                self._handle_yield()
                 return ye.value
                 
             except ReturnException as re:
@@ -147,9 +144,17 @@ class GeneratorState:
         raise StopIteration(self.return_value)
 
     def _handle_yield(self):
-        """Handle a yield exception and update state accordingly."""
-        #TODO: this is a hook to be overridden
-        pass
+        """Handle a yield exception and update state accordingly.
+        
+        This is a hook; nomi overrides this method to handle ruby-like
+        yielding to block
+        """
+
+        # compound statement are handled in stack
+        # only advance to next for simple ones (non-resumable)
+        if self.is_stack_empty:
+            self.index += 1
+
 
     def _handle_return(self, re: ReturnException):
         """Handle a return exception by marking generator as complete."""
@@ -160,6 +165,16 @@ class GeneratorState:
         """Handle other exceptions by inserting a raise statement."""
         raise_node = ast.Raise(exc=e, cause=None)
         self.body.insert(self.index, raise_node)
+
+    def raise_injected_exception(self):
+        '''
+        exception raised within the passed block or with-block
+        should be at the resumption point
+        '''
+        if self.injected_exception is not None:
+            exc = self.injected_exception
+            self.injected_exception = None
+            raise exc
 
     def throw(self, exc_value: Exception):
         """Inject exception into generator for context manager exception handling."""
