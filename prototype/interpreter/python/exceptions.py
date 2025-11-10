@@ -121,7 +121,7 @@ class ExceptionMixin:
                 
             except YieldException as ye:
                 if generator_state:
-                    generator_state.push_frame(node, state)
+                    generator_state.pause(node, state)
                 raise ye
 
             # Propagate pending return to trigger finally
