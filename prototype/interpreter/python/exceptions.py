@@ -149,6 +149,9 @@ class ExceptionMixin:
         Returns True if all statements completed, False if interrupted by return/exception
         """
         i = state[index_key]
+        ## HACK TODO:
+        if generator_state and generator_state.injected_exception is not None:
+            i = 0 # just a hack to get inside the loop; later refactor
         while i < len(statements):
             # Check for injected exception
             stmt = statements[i]
