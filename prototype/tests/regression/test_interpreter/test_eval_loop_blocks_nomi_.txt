@@ -1,9 +1,14 @@
 {
   "times": "times:class=<class 'function'>",
   "a": 3,
+  "retry": "retry:class=<class 'function'>",
   "stdout": [
     "hello",
     "hello",
+    "failed: attempt=1, error: division by zero",
+    "failed: attempt=2, error: division by zero",
+    "failed: attempt=3, error: division by zero",
+    "All 3 attempts failed!",
     ""
   ]
 }
