@@ -26,7 +26,6 @@ class GeneratorState:
         self.body = body
         self.env = env
         self.index = 0
-        self.active = True
         self.return_value: Optional[Any] = None
    
         # this will received by throw() and executed at the resumable
@@ -47,9 +46,9 @@ class GeneratorState:
         
     def frame_to_resume(self):
         #TODO: this essentially make this queue, not a stack, change this later
-
         if self.paused_frames:
-            return self.paused_frames.pop(0)
+            frame = self.paused_frames.pop(0)
+            return (frame['node'], frame['state'])
         return None
         
     def current_frame(self):
@@ -64,89 +63,36 @@ class GeneratorState:
     def __iter__(self):
         return self
 
-    def __next__(self):
-        if not self.active:
-            raise StopIteration(self.return_value)
-        
-        # ALWAYS process compound statement stack first
-        if self.pending_compound_state:
-            while self.pending_compound_state:
-                #TODO: do we need result?
-                # move the YieldException handling here from _execute_compound_frame
-                result = self._execute_compound_frame()
-                if result is not None:  # Yield occurred
-                    return result
-            # only advance if there was a pending state and is completed
-            self.index += 1 
-            
-        
-        # No compound statements pending - execute sequential statements
-        return self._execute_sequential()
-    
-    def eval(self, node, state):
-        with self.interpreter.this_env(self.env):
-            self.interpreter.eval(node, state=state, generator_state=self)
-        
-    def _execute_compound_frame(self):
-        """
-        Execute a single compound statement frame from the stack.
-        Returns yield value if execution yielded, None otherwise.
-        """
-        node, state = self.current_frame()
-        
+    def __next__(self):        
         try:
-            # Execute the compound statement with its state
-            # The compound statement manages its own yielding
+            # ALWAYS process compound statement stack first
+            if self.pending_compound_state:
+                while self.pending_compound_state:
+                    node, state = self.frame_to_resume()
+                    self.eval(node, state)
+                # only advance if there was a pending state and is completed
+                self.index += 1 
 
-            frame = self.frame_to_resume()
-            #TODO: handle this in pop
-            node, state = frame['node'], frame['state']
-            self.eval(node, state)
-            #TODO: think about what happens if exception is raised here
-            # the common exception handle as in execute_sequential should be followed
-            
+            self._execute_sequential()
         except YieldException as ye:
             # Compound statement yielded - return the value
             self._handle_yield()
             return ye.value
-        
-        #TODO: avoid duplication with _execute_sequential
         except ReturnException as re:
-            self.active = False
             self.return_value = re.value
             raise StopIteration(self.return_value)
+        
+        raise StopIteration(self.return_value)
+    
+    def eval(self, node, state):
+        with self.interpreter.this_env(self.env):
+            self.interpreter.eval(node, state=state, generator_state=self)
 
     def _execute_sequential(self):
-        """
-        Execute sequential statements until we hit a compound statement or yield.
-        Returns yield value if execution yielded.
-        """
         while self.index < len(self.body):
             stmt = self.body[self.index]
-            
-            try:
-                # Execute statement - may push compound frames to stack
-                self.eval(stmt, state=None)
-                # If we get here, statement completed without yielding
-                self.index += 1
-            except YieldException as ye:
-                # Simple statement yielded
-                self._handle_yield()
-                return ye.value
-                
-            except ReturnException as re:
-                self.active = False
-                self.return_value = re.value
-                raise StopIteration(self.return_value)
-                
-            except Exception as e:
-                # Other exceptions
-                self._handle_other_exception(e)
-                return e
-        
-        # All statements completed
-        self.active = False
-        raise StopIteration(self.return_value)
+            self.eval(stmt, state=None)
+            self.index += 1
 
     def _handle_yield(self):
         """Handle a yield exception and update state accordingly.
@@ -160,14 +106,12 @@ class GeneratorState:
         if not self.pending_compound_state:
             self.index += 1
 
-
-    def _handle_return(self, re: ReturnException):
-        """Handle a return exception by marking generator as complete."""
-        self.active = False
-        self.return_value = re.value
-
     def _handle_other_exception(self, e: Exception):
         """Handle other exceptions by inserting a raise statement."""
+        #TODO: this is not currently in effect; 
+        # see the interaction between this and throw()
+        # contextlib relies on throw() to pass exception generated inside
+        # context block; it's also used by yield-to-block
         raise_node = ast.Raise(exc=e, cause=None)
         self.body.insert(self.index, raise_node)
 
@@ -182,10 +126,7 @@ class GeneratorState:
             raise exc
 
     def throw(self, exc_value: Exception):
-        """Inject exception into generator for context manager exception handling."""
-        if not self.active:
-            raise exc_value
-        
+        """Inject exception into generator for context manager exception handling."""        
         self.injected_exception = exc_value
         
         try:
