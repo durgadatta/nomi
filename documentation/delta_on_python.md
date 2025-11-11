@@ -143,3 +143,40 @@ There are other semantic aspect relevant to parameters but not in bare assignmen
 
 
 > Note: The harmonization between `def`/`lambda` discussed earlier could also apply here in between assignment and arg-param mapping, but this is more subtle and requires further exploration.
+
+
+# Coroutine Blocks and Unified Control
+
+Coroutines represent a powerful and deeply studied generalization of control flow — the ability to **pause and resume execution** at arbitrary points, rather than always running a function from start to finish.  
+Python’s **generators** (`yield`) are one practical specialization of this idea, trading full generality for usability and clarity.
+
+The exploration of **yield-to-block** structures aims to extend this idea beyond iteration — toward a unified, composable foundation for **control constructs**, including retries, context management, and structured concurrency.  
+This bridges the gap between **statements and expressions**, **functions and blocks**, and even between **decorators and context managers**.
+
+A concise illustration of how such a construct might work:
+
+```python
+func retry(max_times, exc=None):
+    if exc is None:
+        exc = Exception
+
+    for i in range(max_times):
+        try:
+            yield  # Execute the block here
+            print(f'successful after {i+1} attempts')
+            return
+        except exc as e:
+            print(f'failed: attempt={i+1}, error: {e}')
+
+    print(f'All {max_times} attempts failed!')
+
+
+retry(3):
+    1 / 0
+```
+
+Here, the block following retry(3): is implicitly passed to the function and executed at the yield point — allowing the retry logic to surround it seamlessly.
+Such a mechanism generalizes Python’s existing context manager model while remaining minimal and explicit.
+> *This concept builds on coroutine fundamentals and extends them toward systematic language design.*  
+> *See the section on [Ruby-like Blocks](yield_to_block.md) for the historical background and rationale.*  
+> *As discussed there, the above construct cannot be implemented naturally in current Python — as noted in this [Stack Overflow question](https://stackoverflow.com/questions/16919570/encapsulating-retries-into-with-block) — a limitation that appears to be intentional by design.*
