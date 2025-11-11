@@ -57,8 +57,9 @@ class GeneratorState:
             return self.paused_frames[0]
         return None
         
-    def is_stack_empty(self):
-        return len(self.paused_frames) == 0
+    @property
+    def pending_compound_state(self):
+        return len(self.paused_frames) > 0
 
     def __iter__(self):
         return self
@@ -68,12 +69,16 @@ class GeneratorState:
             raise StopIteration(self.return_value)
         
         # ALWAYS process compound statement stack first
-        while not self.is_stack_empty():
-            #TODO: do we need result?
-            # move the YieldException handling here from _execute_compound_frame
-            result = self._execute_compound_frame()
-            if result is not None:  # Yield occurred
-                return result
+        if self.pending_compound_state:
+            while self.pending_compound_state:
+                #TODO: do we need result?
+                # move the YieldException handling here from _execute_compound_frame
+                result = self._execute_compound_frame()
+                if result is not None:  # Yield occurred
+                    return result
+            # only advance if there was a pending state and is completed
+            self.index += 1 
+            
         
         # No compound statements pending - execute sequential statements
         return self._execute_sequential()
@@ -152,7 +157,7 @@ class GeneratorState:
 
         # compound statement are handled in stack
         # only advance to next for simple ones (non-resumable)
-        if self.is_stack_empty:
+        if not self.pending_compound_state:
             self.index += 1
 
 
