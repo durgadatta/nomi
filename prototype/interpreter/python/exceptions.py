@@ -50,14 +50,36 @@ class ExceptionMixin:
         try:
             try:
                 if state['phase'] == 'try_body':
-                    # Execute try body statements using helper
-                    completed = self._execute_statement_list(
-                        node.body, state, 'index', generator_state,
-                        on_exception=lambda e: self._handle_body_exception(e, state)
-                    )
+                    # Execute try body statements directly
+                    i = state['index']
+                    # HACK TODO: Keep the hack for now
+                    if generator_state and generator_state.injected_exception is not None:
+                        i = 0
+                    while i < len(node.body):
+                        stmt = node.body[i]
+                        try:
+                            if generator_state is not None:
+                                generator_state.raise_injected_exception()
+                            self.eval(stmt, generator_state=generator_state)
+                            i += 1
+                            state['index'] = i
+                        except YieldException:
+                            i += 1
+                            state['index'] = i
+                            raise  # Re-raise to pause execution
+                        except ReturnException as re:
+                            state['pending_return'] = re
+                            break  # Interrupted by return
+                        except Exception as e:
+                            # Handle exception in try body
+                            state['exception_occurred'] = True
+                            state['caught_exception'] = e
+                            state['phase'] = 'handlers'
+                            state['index'] = 0
+                            break
                     
                     # Move to next phase if try body completed
-                    if completed and state['pending_return'] is None and not state['exception_occurred']:
+                    if state['pending_return'] is None and not state['exception_occurred'] and i >= len(node.body):
                         state['phase'] = 'else_body' if node.orelse else 'completed'
                         state['index'] = 0
 
@@ -94,24 +116,62 @@ class ExceptionMixin:
                     if handler.name:
                         self.current_env.set(handler.name, state['caught_exception'])
                     
-                    # Execute handler body using helper
-                    completed = self._execute_statement_list(
-                        handler.body, state, 'handler_body_index', generator_state
-                    )
+                    # Execute handler body directly
+                    i = state['handler_body_index']
+                    # HACK TODO: Keep the hack for now
+                    if generator_state and generator_state.injected_exception is not None:
+                        i = 0
+                    while i < len(handler.body):
+                        stmt = handler.body[i]
+                        try:
+                            if generator_state is not None:
+                                generator_state.raise_injected_exception()
+                            self.eval(stmt, generator_state=generator_state)
+                            i += 1
+                            state['handler_body_index'] = i
+                        except YieldException:
+                            i += 1
+                            state['handler_body_index'] = i
+                            raise  # Re-raise to pause execution
+                        except ReturnException as re:
+                            state['pending_return'] = re
+                            break  # Interrupted by return
+                        except Exception as e:
+                            # Exception in handler body - let it propagate to outer try
+                            raise e
                     
                     # Handler completed
-                    if completed and state['pending_return'] is None:
+                    if state['pending_return'] is None and i >= len(handler.body):
                         state['phase'] = 'completed'
                         state['current_handler'] = None
                         state['handler_body_index'] = 0
 
                 if state['phase'] == 'else_body' and node.orelse and not state['exception_occurred']:
-                    # Execute else block using helper
-                    completed = self._execute_statement_list(
-                        node.orelse, state, 'index', generator_state
-                    )
+                    # Execute else block directly
+                    i = state['index']
+                    # HACK TODO: Keep the hack for now
+                    if generator_state and generator_state.injected_exception is not None:
+                        i = 0
+                    while i < len(node.orelse):
+                        stmt = node.orelse[i]
+                        try:
+                            if generator_state is not None:
+                                generator_state.raise_injected_exception()
+                            self.eval(stmt, generator_state=generator_state)
+                            i += 1
+                            state['index'] = i
+                        except YieldException:
+                            i += 1
+                            state['index'] = i
+                            raise  # Re-raise to pause execution
+                        except ReturnException as re:
+                            state['pending_return'] = re
+                            break  # Interrupted by return
+                        except Exception as e:
+                            # Exception in else body - let it propagate to outer try
+                            raise e
                     
-                    if completed and state['pending_return'] is None:
+                    if state['pending_return'] is None and i >= len(node.orelse):
                         state['phase'] = 'completed'
 
                 # Final phase completion check
@@ -138,46 +198,3 @@ class ExceptionMixin:
                 raise state['pending_return']
 
         return result
-    
-
-
-
-
-    def _execute_statement_list(self, statements, state: dict, index_key: str, generator_state: Any, on_exception=None):
-        """
-        Execute a list of statements with the exact same flow as the original loops
-        Returns True if all statements completed, False if interrupted by return/exception
-        """
-        i = state[index_key]
-        ## HACK TODO:
-        if generator_state and generator_state.injected_exception is not None:
-            i = 0 # just a hack to get inside the loop; later refactor
-        while i < len(statements):
-            # Check for injected exception
-            stmt = statements[i]
-            try:
-                if generator_state is not None:
-                    generator_state.raise_injected_exception()
-                self.eval(stmt, generator_state=generator_state)
-                i += 1
-                state[index_key] = i
-            except YieldException:
-                i += 1
-                state[index_key] = i
-                raise  # Re-raise to pause execution
-            except ReturnException as re:
-                state['pending_return'] = re
-                return False  # Interrupted by return
-            except Exception as e:
-                if on_exception:
-                    on_exception(e)
-                return False  # Interrupted by exception
-        
-        return True  # All statements completed
-
-    def _handle_body_exception(self, exception, state: dict):
-        """Handle exception in try body """
-        state['exception_occurred'] = True
-        state['caught_exception'] = exception
-        state['phase'] = 'handlers'
-        state['index'] = 0
