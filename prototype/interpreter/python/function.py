@@ -209,7 +209,7 @@ class FunctionMixin:
                 # if it is a block arg; don't eval it
                 # generator state will eval it in the caller's env
                 if kw.arg == '__block__':
-                    value = (value, self.current_env)
+                    value = (*value, self.current_env)
                 else:
                     value = self.eval(kw.value)
                 kwargs[kw.arg] = value

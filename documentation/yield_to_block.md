@@ -2,6 +2,7 @@
 
 The idea of generalizing Python’s context managers to support **Ruby-style implicit block yielding** has appeared repeatedly throughout Python’s design history. These constructs offer elegant generalization and can subsume many specialized control-flow patterns. However, the Python community has traditionally been cautious: such features risk obscuring intent when used in place of explicit **control-flow constructs like loops or exception handlers**.
 
+ > block will be almost like an anonymous function that is passed to generator (to be executed at the yield point) with a notable difference: this block is executed within's the caller environment, not a new function environment.
 ## Limitations of Current Context Managers
 
 As noted in this [Stack Overflow discussion](https://stackoverflow.com/questions/16919570/encapsulating-retries-into-with-block), patterns such as a `retry` context manager are difficult to express naturally in Python. This difficulty is not accidental—it reflects a deliberate design philosophy that prioritizes **explicit control flow** over implicit abstractions.
@@ -71,11 +72,8 @@ The goal is to test whether the **expressiveness–explicitness balance** can be
 
 * only statement-level pause/resume is supported now. For instance, `v=(yield 2) + (yield 3)` will not currently work - this will not generate [1,2]. This is due to the usage of ast-walking with adhoc pause-resume interpreter. This technical limitation well be eventually be overcome so that yield can occur anywhere in the expression; review the [python doc](https://docs.python.org/3/reference/expressions.html#yieldexpr) carefully. This may require significant re-write of interpreter to by either fully continuation-pasing-style or a fully linearized interpreter, i.e. a bytecode interpreter like the CPython's VM.
 
-* Block to yield does not support parameter yet, this is a relatively much minor change, will be added. After this addition, the behavior will match that of Ruby:
-    *  block will by almost like an anonymous function that is passed to generator (to be executed at the yield point) with a notable difference: this block is executed within's the caller environment, not a new function environment. 
-    * TODO: think about how to receive the arguments: 
-        * Ruby uses `|x|` or `|x,y|`
-        * can use `receive x,y`; or infer from other var around the call, akin to a more general version of `as` in Python. Study the pattern of most typical cases.
+* General parameter/arguments mapping as in function is not how block receive the yielded values (now 1:1 mapping is done without support for default values, var args, constraints etc.). While we may still keep some restriction like in Python's def vs lambda (can't take type annotation), the gap will be minimized.
+
 
 * In Python, `finally` in `try` is triggered when the generator is garbage-collected as well. Nomi's evolution has not yet reached that fine level of scrutiny; this will be addressed when low-level meta-implementation details are considered.
     * As reference on this [SO question](https://stackoverflow.com/questions/56062909/try-finally-in-python-3-generator), due to the above, we get different behavior on using `next(gen())` vs `x=gen(); next(x)` in this block.
