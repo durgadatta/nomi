@@ -26,7 +26,7 @@ def error_printer_context():
     try:
        yield 1
     except Exception as e:
-       print(f"An error occurred: {e}")
+       print(f"An error occurred(contextlib): {e}")
 
 
 class ErorrPrinter:
@@ -43,3 +43,6 @@ class ErorrPrinter:
 test_value = 1
 with ErorrPrinter():
    test_value = 1/0
+
+with error_printer_context():
+   1/0

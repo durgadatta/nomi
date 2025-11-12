@@ -32,15 +32,36 @@ class Interpreter(
         self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
 
-    def eval(self, node: Optional[ast.AST]) -> Any:
+
+    @staticmethod
+    def is_resumable(node):
+        #TODO add ast.If
+        #TODO: make a general base class for all resumable nodes
+        can_resume = (
+            ast.For,
+            ast.While,
+            ast.Try
+        )
+        return isinstance(node, can_resume)
+
+    def eval(self, node: Optional[ast.AST|List], *, state=None, generator_state=None) -> Any:
+        '''
+        :param state: State to resume from 
+        :param generator_state: one per generator, 
+            uses stack to keep track of yields withing nested resume-ables
+        '''
+
+        #TODO: why do we get this?
         if node is None:
             return None
-        method = getattr(self, f'eval_{node.__class__.__name__}', None)
+        
+        node_name = node.__class__.__name__
+        method = getattr(self, f'eval_{node_name}', None)
         if method is None:
-            raise NotImplementedError(f"Node type {node.__class__.__name__} not supported at line {self.get_lineno(node)}")
-
+            raise NotImplementedError(f"Node type {node_name} not supported at line {self.get_lineno(node)}")
         try:
-            method = getattr(self, f"eval_{node.__class__.__name__}", None)
+            if self.is_resumable(node):
+                return method(node, state=state, generator_state=generator_state)
             return method(node)
         except (StopIteration, ZeroDivisionError):
             # Re-raise semantic exceptions unchanged
@@ -54,7 +75,7 @@ class Interpreter(
             else:
                 # Wrap other exceptions as interpreter errors
                 raise RuntimeError(f"Error evaluating {node.__class__.__name__} at line {self.get_lineno(node)}: {str(e)}") from e
-            
+
     @contextmanager
     def this_env(self, env):
         """
@@ -66,11 +87,23 @@ class Interpreter(
             yield
         finally:
             self.current_env = old_env
+
+    def eval_list(self, stmts):
+        '''
+            Note: this is not actually an ast.node
+            but a Python list; convenience for most block
+            structure. This is not evaluating list in target language
+            but is used as a helper in host language, elements of
+            list are ASTs for target language.
+
+            This maybe only one non-ast node.
+            Think if adding other structure might help
+
+            TODO: for resumable eval, we need to know at what point we resumed
+                maybe return, the number of statements evaluated
+        '''
+        for stmt in stmts:
+            self.eval(stmt)
         
     def eval_Module(self, node: ast.Module) -> Any:
-        for stmt in node.body:
-            self.eval(stmt)
-        return None
-        
-
-
+        self.eval(node.body)

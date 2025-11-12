@@ -40,8 +40,7 @@ class ContextManagerMixin:
             
             with self.this_env(call_env):
                 try:
-                    for stmt in method_node.body:
-                        self.eval(stmt)
+                    self.eval(method_node.body)
                     return None  # No explicit return in __enter__
                 except ReturnException as re:
                     return re.value  # Return value if explicitly returned
@@ -72,8 +71,7 @@ class ContextManagerMixin:
             
             with self.this_env(call_env):
                 try:
-                    for stmt in method_node.body:
-                        self.eval(stmt)
+                    self.eval(method_node.body)
                     return False  # Default: don't suppress exception
                 except ReturnException as re:
                     return re.value  # Return suppression flag
@@ -84,8 +82,7 @@ class ContextManagerMixin:
     def _execute_with_body(self, body, managers_with_vars):
         """Execute the with statement body with proper exception handling."""
         try:
-            for stmt in body:
-                self.eval(stmt)
+            self.eval(body)
             # Normal exit - no exception occurred
             self._exit_contexts_normal(managers_with_vars)
         except Exception as e:

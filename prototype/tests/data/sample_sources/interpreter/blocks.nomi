@@ -12,26 +12,48 @@ times(2):
     a = a + 1
     print('hello')
 
-# This still does not work
-# this can be attempted after a simpler one
-# error_printer() at sample.nomi
-# func retry(max_times, exc=None):
-#     if exc is None:
-#         exc = Exception 
 
-#     for i in range(max_times):
-#         try:
-#             yield  # Execute the block here
-#             # If we reach here, block succeeded
-#             print(f'successful after {i+1} attempts')
-#             return  # Exit on success
-#         except exc as e:
-#             print(f'failed: attempt={i+1}, error: {e}')
-#             # Continue to next attempt
+func retry(max_times, exc=None):
+    if exc is None:
+        exc = Exception 
+
+    for i in range(max_times):
+        try:
+            yield  # Execute the block here
+            # If we reach here, block succeeded
+            print(f'successful after {i+1} attempts')
+            return  # Exit on success
+        except exc as e:
+            print(f'failed: attempt={i+1}, error: {e}')
+            # Continue to next attempt
     
-#     print(f'All {max_times} attempts failed!')
+    print(f'All {max_times} attempts failed!')
     
 
-# retry(3):
-#     1/0
+retry(3):
+    1/0
     
+
+# block that receive parameter
+func each(items):
+    for item in items:
+        yield item
+
+
+func each_key_val(data_dict):
+    for key,val in data_dict.items():
+        yield key, val
+
+
+    
+#TODO: maximally align the parameter handling
+# here and functions; some restriction might
+# apply like in def vs lambda
+# now only exact mapping of params mapping to yield values
+# is done
+each([1,2,3]) -> item:
+    print(f'each {item}')
+
+each_key_val({"one":1, "two":2}) -> key, val:
+    print(f"each {key=}, {val=}")
+

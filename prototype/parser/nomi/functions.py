@@ -36,12 +36,12 @@ class FunctionsMixin:
             that accepts block, later to be fully harmonized with 
             regular call
         '''
-        call, block = items 
+        call, params, block = items 
         #TODO: collect __block__ into a central labels/enums
 
         # insert the block to be extracted by gen-state
-        block_arg = ast.keyword(arg='__block__', value=block)
-        call.keywords.append(block_arg)
+        block = ast.keyword(arg='__block__', value=(block, params))
+        call.keywords.append(block)
 
          # Make it a statement, note that ast.Expr < ast.stmt
          # else it will be ignored by file_start parsing

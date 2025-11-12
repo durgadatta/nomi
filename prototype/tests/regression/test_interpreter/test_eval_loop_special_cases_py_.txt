@@ -9,6 +9,7 @@
   "stdout": [
     "[1]",
     "An error occurred: division by zero",
+    "An error occurred(contextlib): division by zero",
     ""
   ]
 }

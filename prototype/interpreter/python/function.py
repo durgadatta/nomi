@@ -77,8 +77,7 @@ class FunctionMixin:
             else:                
                 with self.this_env(local_env):
                     try:
-                        for stmt in node.body:
-                            self.eval(stmt)
+                        self.eval(node.body)
                         return None
                     except ReturnException as re:
                         return re.value
@@ -210,7 +209,7 @@ class FunctionMixin:
                 # if it is a block arg; don't eval it
                 # generator state will eval it in the caller's env
                 if kw.arg == '__block__':
-                    value = (value, self.current_env)
+                    value = (*value, self.current_env)
                 else:
                     value = self.eval(kw.value)
                 kwargs[kw.arg] = value
@@ -284,8 +283,7 @@ class FunctionMixin:
             # Execute __init__ body
             with self.this_env(call_env):
                 try:
-                    for stmt in func_node.body:
-                        self.eval(stmt)
+                    self.eval(func_node.body)
                 except ReturnException as re:
                     if re.value is not None:
                         raise TypeError(f"__init__ should return None, got {re.value}")

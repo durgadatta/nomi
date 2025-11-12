@@ -9,11 +9,9 @@ from .exceptions import ExceptionMixin
 class ControlMixin(ExceptionMixin):
     def eval_If(self, node: ast. ast.If) -> None:
         if self.eval(node.test):
-            for stmt in node.body:
-                self.eval(stmt)
+            self.eval(node.body)
         else:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
 
     def eval_AsyncFor(self, node: ast.AsyncFor) -> None:
         iterable = self.eval(node.iter)
@@ -24,8 +22,7 @@ class ControlMixin(ExceptionMixin):
                     item = iterable().__next__()
                     self.assign_target(node.target, item)
                     try:
-                        for stmt in node.body:
-                            self.eval(stmt)
+                        self.eval(node.body )
                     except BreakException:
                         break
                     except ContinueException:
@@ -34,8 +31,7 @@ class ControlMixin(ExceptionMixin):
                     break
         else:
             self.eval_For(node)
-        for stmt in node.orelse:
-            self.eval(stmt)
+        self.eval(node.orelse)
 
     def eval_Pass(self, node: ast.Pass) -> None:
         pass
@@ -51,39 +47,12 @@ class ControlMixin(ExceptionMixin):
             msg = self.eval(node.msg) if node.msg else None
             raise AssertionError(msg)
 
-    def _setup_loop_state(self, generator_state, node_type, node, **extra_state):
-        """Common setup for loop compound state."""
-        base_state = {
-            'type': node_type,
-            'node': node, 
-            'body_index': 0,
-            'broke': False
-        }
-        base_state.update(extra_state)
-        generator_state.compound_state = base_state
-
-    def _should_resume_loop(self, generator_state, expected_type):
-        """Check if we should resume a loop."""
-        return (generator_state.compound_state and 
-                generator_state.compound_state.get('type') == expected_type)
-
-    def _handle_loop_completion(self, node, generator_state):
-        """Handle loop completion (else clause and state cleanup)."""
-        state = generator_state.compound_state
-        if not state.get('broke', False) and hasattr(node, 'orelse') and node.orelse:
-            for stmt in node.orelse:
-                self.eval(stmt)
-        generator_state.compound_state = None
-
-    def eval_For(self, node: ast.For, generator_state: 'GeneratorState' = None) -> None:
+    def eval_For(self, node: ast.For, *, state=None, generator_state: 'GeneratorState' = None) -> None:
         """Evaluate a For loop node - unified approach."""
         
-        # Check if we're resuming first
-        if generator_state is not None and generator_state.compound_state is not None:
-            # Resuming - use existing state
-            state = generator_state.compound_state
-            # Iterator is already in state, no need to create
-        else:
+        #TODO: when gen-state is None, fallback to regular without out even creating
+        # a state; now a state is created regardless
+        if state is None:
             # New execution - create iterator
             iter_obj = self.eval(node.iter)
             try:
@@ -100,14 +69,14 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
-            self._execute_for_loop(node, state)      
+            self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
             # Save state and re-raise for generator handling
             if generator_state:
-                generator_state.compound_state = state
+                generator_state.pause(node, state)
             raise
 
-    def _execute_for_loop(self, node: ast.For, state: dict):
+    def _execute_for_loop(self, node: ast.For, state: dict, generator_state):
         """
         Unified for loop executor that handles both yielding and non-yielding cases.
         """
@@ -130,7 +99,7 @@ class ControlMixin(ExceptionMixin):
             while i < len(node.body):
                 stmt = node.body[i]
                 try:
-                    self.eval(stmt)
+                    self.eval(stmt, generator_state=generator_state)
                     i += 1
                 except YieldException:
                     # Save where to resume and re-raise
@@ -154,30 +123,25 @@ class ControlMixin(ExceptionMixin):
 
         # Loop completed normally - handle orelse if not broken
         if not state['broke']:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
 
-    def eval_While(self, node: ast.While, generator_state: 'GeneratorState' = None) -> None:
+    def eval_While(self, node: ast.While, *, state=None, generator_state: 'GeneratorState' = None) -> None:
         """Evaluate a While loop node - unified approach."""
         
         # Initialize state
-        if generator_state is not None and generator_state.compound_state is not None:
-            # Resuming - use existing state
-            state = generator_state.compound_state
-        else:
+        if state is None:
             # New execution
-            if generator_state:
-                state = {
-                    'node' : node,
-                    'broke': False,
-                    'body_index': 0
-                }
+            state = {
+                'node' : node,
+                'broke': False,
+                'body_index': 0
+            }
         try:
             self._execute_while_loop(node, state)      
         except YieldException:
             # Save state and re-raise for generator handling
             if generator_state:
-                generator_state.compound_state = state
+                generator_state.pause(node, state)
             raise
 
 
@@ -217,5 +181,4 @@ class ControlMixin(ExceptionMixin):
 
         # Handle orelse if loop completed normally
         if not state['broke']:
-            for stmt in node.orelse:
-                self.eval(stmt)
+            self.eval(node.orelse)
