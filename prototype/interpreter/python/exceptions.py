@@ -136,6 +136,8 @@ class ExceptionMixin:
             if state['exception_occurred'] and not state['handler_found']:
                 raise state['caught_exception']
         
+        # outer try is necessary because we don't want to run "finally" block
+        # on all yield (YieldException)
         try:
             try:
                 if state['phase'] == 'try_body':
