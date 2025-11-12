@@ -15,8 +15,7 @@ class AsyncMixin:
                 exits.append(exit_)
                 if item.optional_vars:
                     self.assign_target(item.optional_vars, value)
-            for stmt in node.body:
-                self.eval(stmt)
+            self.eval(node.body)
         except Exception as e:
             exc_info = (type(e), e, e.__traceback__)
             for exit_ in reversed(exits):

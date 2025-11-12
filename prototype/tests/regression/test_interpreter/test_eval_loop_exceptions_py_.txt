@@ -1,0 +1,12 @@
+{
+  "gen": "gen:class=<class 'function'>",
+  "g": "instance of:GeneratorState:class=<class 'type'>",
+  "stdout": [
+    "first yield: 1",
+    "in between",
+    "second yield: 2",
+    "finally",
+    "to check if finally is executed",
+    ""
+  ]
+}
