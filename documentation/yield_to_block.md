@@ -65,3 +65,30 @@ Rather than introducing bespoke syntax for every control-flow need, they provide
 
 This implementation is exploratory.  
 The goal is to test whether the **expressiveness–explicitness balance** can be improved without compromising clarity—acknowledging that future refinement may still be required.
+
+
+## Current Limitations
+
+* only statement-level pause/resume is supported now. For instance, `v=(yield 2) + (yield 3)` will not currently work - this will not generate [1,2]. This is due to the usage of ast-walking with adhoc pause-resume interpreter. This technical limitation well be eventually be overcome so that yield can occur anywhere in the expression; review the [python doc](https://docs.python.org/3/reference/expressions.html#yieldexpr) carefully. This may require significant re-write of interpreter to by either fully continuation-pasing-style or a fully linearized interpreter, i.e. a bytecode interpreter like the CPython's VM.
+
+* Block to yield does not support parameter yet, this is a relatively much minor change, will be added. After this addition, the behavior will match that of Ruby:
+    *  block will by almost like an anonymous function that is passed to generator (to be executed at the yield point) with a notable difference: this block is executed within's the caller environment, not a new function environment. 
+    * TODO: think about how to receive the arguments: 
+        * Ruby uses `|x|` or `|x,y|`
+        * can use `receive x,y`; or infer from other var around the call, akin to a more general version of `as` in Python. Study the pattern of most typical cases.
+
+* In Python, `finally` in `try` is triggered when the generator is garbage-collected as well. Nomi's evolution has not yet reached that fine level of scrutiny; this will be addressed when low-level meta-implementation details are considered.
+    * As reference on this [SO question](https://stackoverflow.com/questions/56062909/try-finally-in-python-3-generator), due to the above, we get different behavior on using `next(gen())` vs `x=gen(); next(x)` in this block.
+
+        ```python
+        def gen():
+            try:
+                while True:
+                    yield 1
+            finally:
+                print("stop")
+
+        next(gen()) # prints stop; GC happens immediately after the call
+        # vs x = gen(); next(g) # prints stop after the last stmt (after GC)
+        print("after generator") # to easily see the GC point
+        ```
