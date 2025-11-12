@@ -140,6 +140,7 @@ class ExceptionMixin:
         # on all yield (YieldException)
         try:
             try:
+                eval_finally = True
                 if state['phase'] == 'try_body':
                     handle_try_body()
 
@@ -156,6 +157,8 @@ class ExceptionMixin:
                     handle_completed()
                 
             except YieldException as ye:
+                #NOTE: this is a signal for generator-state to process yield; it should not trigger "finally"
+                eval_finally = False
                 if generator_state:
                     generator_state.pause(node, state)
                 raise ye
@@ -165,12 +168,13 @@ class ExceptionMixin:
                 raise state['pending_return']
 
         finally:
+            if eval_finally:
             # Finally block (always executes, even on return)
-            if node.finalbody:
-                self.eval(node.finalbody, generator_state=generator_state)
-            
-            # Re-raise pending return after finally completes
-            if state.get('pending_return') is not None:
-                raise state['pending_return']
+                if node.finalbody:
+                    self.eval(node.finalbody, generator_state=generator_state)
+                
+                # Re-raise pending return after finally completes
+                if state.get('pending_return') is not None:
+                    raise state['pending_return']
 
         return result
