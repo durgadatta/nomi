@@ -180,3 +180,14 @@ Such a mechanism generalizes Python’s existing context manager model while rem
 > *This concept builds on coroutine fundamentals and extends them toward systematic language design.*  
 > *See the section on [Ruby-like Blocks](yield_to_block.md) for the historical background and rationale.*  
 > *As discussed there, the above construct cannot be implemented naturally in current Python — as noted in this [Stack Overflow question](https://stackoverflow.com/questions/16919570/encapsulating-retries-into-with-block) — a limitation that appears to be intentional by design.*
+
+Blocks can take parameters as well:
+```python
+func each(items):
+    for item in items:
+        yield item
+
+# blocks that receives parameters
+each([1,2,3]) -> item: # later with class handling, this would typically be [1,2,4].each() -> item: ...
+    print(f'each {item}')
+```

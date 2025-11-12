@@ -76,7 +76,7 @@ class GeneratorState:
             self._execute_sequential()
         except YieldException as ye:
             # Compound statement yielded - return the value
-            self._handle_yield()
+            self._handle_yield(ye.value)
             return ye.value
         except ReturnException as re:
             self.return_value = re.value
@@ -94,7 +94,7 @@ class GeneratorState:
             self.eval(stmt, state=None)
             self.index += 1
 
-    def _handle_yield(self):
+    def _handle_yield(self, yield_value=None):
         """Handle a yield exception and update state accordingly.
         
         This is a hook; nomi overrides this method to handle ruby-like

@@ -2,6 +2,11 @@
   "times": "times:class=<class 'function'>",
   "a": 3,
   "retry": "retry:class=<class 'function'>",
+  "each": "each:class=<class 'function'>",
+  "each_key_val": "each_key_val:class=<class 'function'>",
+  "item": 3,
+  "key": "two",
+  "val": 2,
   "stdout": [
     "hello",
     "hello",
@@ -9,6 +14,11 @@
     "failed: attempt=2, error: division by zero",
     "failed: attempt=3, error: division by zero",
     "All 3 attempts failed!",
+    "each 1",
+    "each 2",
+    "each 3",
+    "each key=one, val=1",
+    "each key=two, val=2",
     ""
   ]
 }
