@@ -72,7 +72,7 @@ The goal is to test whether the **expressiveness–explicitness balance** can be
 
 * only statement-level pause/resume is supported now. For instance, `v=(yield 2) + (yield 3)` will not currently work - this will not generate [1,2]. This is due to the usage of ast-walking with adhoc pause-resume interpreter. This technical limitation well be eventually be overcome so that yield can occur anywhere in the expression; review the [python doc](https://docs.python.org/3/reference/expressions.html#yieldexpr) carefully. This may require significant re-write of interpreter to by either fully continuation-pasing-style or a fully linearized interpreter, i.e. a bytecode interpreter like the CPython's VM.
 
-* General parameter/arguments mapping as in function is not how block receive the yielded values (now 1:1 mapping is done without support for default values, var args, constraints etc.). While we may still keep some restriction like in Python's def vs lambda (can't take type annotation), the gap will be minimized.
+* General parameter/arguments mapping as in function is not how block receive the yielded values (now 1:1 mapping is done with almost like parallel assignment,  without support for default values, constraints etc.). While we may still keep some restriction like in Python's def vs lambda (can't take type annotation), the gap will be minimized.
 
 
 * In Python, `finally` in `try` is triggered when the generator is garbage-collected as well. Nomi's evolution has not yet reached that fine level of scrutiny; this will be addressed when low-level meta-implementation details are considered.

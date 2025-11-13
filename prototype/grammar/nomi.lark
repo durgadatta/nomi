@@ -199,7 +199,7 @@ AWAIT: "await"
           | atom
 
 // Add block call as a statement type
-block_call_stmt: atom_expr [ "->" parameters ] ":" suite
+block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
 
 ?atom: "(" yield_expr ")"  
      | "(" _tuple_inner? ")" -> tuple
