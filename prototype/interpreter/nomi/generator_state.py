@@ -1,4 +1,5 @@
 from ..python.generator_state import GeneratorState as PythonGeneratorState
+import ast
 
 
 class GeneratorState(PythonGeneratorState):
@@ -15,14 +16,10 @@ class GeneratorState(PythonGeneratorState):
                 return 
             
             #TODO: use the same mechanism as function params binding here
-            # abstract that part in function call/def handling
-            if params:
-                if not isinstance(yield_values, tuple):
-                    yield_values = (yield_values,)
-                for arg, param_value in zip(params.args, yield_values):
-                    param_name = arg.arg
-                    env.set(param_name, param_value)
             with self.interpreter.this_env(env): 
+                if params:
+                    self.interpreter.assign_target(params, yield_values)
+
                 self.interpreter.eval(block)
 
     def _handle_yield(self, yield_values):

@@ -40,6 +40,8 @@ func each(items):
         yield item
 
 
+# just for demo, unpacking of yield values avoids
+# the need for this
 func each_key_val(data_dict):
     for key,val in data_dict.items():
         yield key, val
@@ -55,5 +57,11 @@ each([1,2,3]) -> item:
     print(f'each {item}')
 
 each_key_val({"one":1, "two":2}) -> key, val:
+    print(f"each_key_val {key=}, {val=}")
+
+
+#parameter behave like assignment (unlike args-> param in func)
+# this avoids the need to have each_key_val as a separate func
+each({"one":1, "two":2}.items()) -> key, val:
     print(f"each {key=}, {val=}")
 
