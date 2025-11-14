@@ -1,26 +1,21 @@
 import ast
-from .base import Environment, ReturnException
+from .base import ReturnException, YieldException
 
 
 class ContextManagerMixin:
-    def eval_With(self, node: ast.With) -> None:
-        """Evaluate a 'with' statement with multiple context managers."""
-        managers_with_vars = []
-        
-        # Setup all context managers
-        for item in node.items:
-            context_obj = self.eval(item.context_expr)
-            self._validate_context_manager(context_obj, item)
-            
-            # Call __enter__ and store the result
-            enter_result = self._call_context_enter(context_obj)
-            if item.optional_vars:
-                self.current_env.set(item.optional_vars.id, enter_result)
-            
-            managers_with_vars.append((context_obj, enter_result))
-        
-        # Execute the body with proper exception handling
-        self._execute_with_body(node.body, managers_with_vars)
+    def eval_With(self, node: ast.With, *, state=None, generator_state=None) -> None:
+        if state is None:
+            managers_with_vars = []
+            for item in node.items:
+                context_obj = self.eval(item.context_expr)
+                self._validate_context_manager(context_obj, item)
+                enter_result = self._call_context_enter(context_obj)
+                if item.optional_vars:
+                    self.current_env.set(item.optional_vars.id, enter_result)
+                managers_with_vars.append((context_obj, enter_result))
+            state = {'managers': managers_with_vars, 'body_index': 0, 'node': node}
+
+        self._execute_with_body(node.body, state['managers'], state=state, generator_state=generator_state)
 
     def _validate_context_manager(self, context_obj, item):
         """Validate that an object is a proper context manager."""
@@ -79,14 +74,23 @@ class ContextManagerMixin:
             # For Python/native functions
             return method(exc_type, exc_val, exc_tb)
 
-    def _execute_with_body(self, body, managers_with_vars):
-        """Execute the with statement body with proper exception handling."""
+    def _execute_with_body(self, body, managers_with_vars, *, state, generator_state=None):
+        if generator_state and generator_state.injected_exception is not None:
+            generator_state.raise_injected_exception()
+
         try:
-            self.eval(body)
-            # Normal exit - no exception occurred
+            i = state.get('body_index', 0)
+            while i < len(body):
+                try:
+                    self.eval(body[i], generator_state=generator_state)
+                    i += 1
+                except YieldException:
+                    state['body_index'] = i + 1
+                    if generator_state:
+                        generator_state.pause(state['node'], state)
+                    raise
             self._exit_contexts_normal(managers_with_vars)
         except Exception as e:
-            # Exception occurred - handle it through context managers
             suppressed = self._exit_contexts_with_exception(managers_with_vars, e)
             if not suppressed:
                 raise

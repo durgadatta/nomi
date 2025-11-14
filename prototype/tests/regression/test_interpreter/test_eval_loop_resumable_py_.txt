@@ -1,10 +1,17 @@
 {
+  "contextmanager": "contextmanager:class=<class 'function'>",
   "gen": "gen:class=<class 'function'>",
   "g": "instance of:GeneratorState:class=<class 'type'>",
+  "cm": "cm:class=<class 'function'>",
   "stdout": [
     "should print: before after done",
     "before",
     "after",
+    "done",
+    "enter",
+    "before yield",
+    "after yield",
+    "exit",
     "done",
     ""
   ]
