@@ -131,14 +131,8 @@ class GeneratorState:
         
         try:
             self.__next__()
-            # If we reach here, generator didn't handle the exception properly
-            raise RuntimeError("generator didn't stop after throw()")
-        except StopIteration:
-            # Re-raise so contextlib can catch it
-            raise
-        except Exception as e:
-            # Return False if generator re-raised the same exception
-            return e is not exc_value
+        finally:
+            self.injected_exception = None
 
     def close(self):
         """Implement generator.close() to allow proper cleanup."""
