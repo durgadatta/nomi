@@ -214,31 +214,8 @@ class FunctionMixin:
                     value = self.eval(kw.value)
                 kwargs[kw.arg] = value
 
-        # --- Built-in / native callable ---
-        if callable(func) and not hasattr(func, "ast_node"):
-            return func(*posargs, **kwargs)
-
-        # --- User-defined function or generator ---
-        func_node = getattr(func, "ast_node", None)
-        
-        if func_node and isinstance(func_node, ast.FunctionDef):
-            # Just call the function - it will handle generator detection internally
-            return func(*posargs, **kwargs)
- 
-        # --- Class instantiation ---
-        if isinstance(func, type):
-            return self._instantiate_class(func, posargs, kwargs, node)
-
-        # --- Fallback for callable objects (decorators, etc.) ---
-        if callable(func):
-            try:
-                return func(*posargs, **kwargs)
-            except Exception as e:
-                raise RuntimeError(
-                    f"Error calling callable {repr(func)} at line {self.get_lineno(node)}: {str(e)}"
-                ) from e
-
-        raise TypeError(f"Object {func} is not callable at line {self.get_lineno(node)}")
+        return func(*posargs, **kwargs)
+    
     
     def _instantiate_class(self, cls, posargs, kwargs, call_node=None):
         """Enhanced class instantiation"""
