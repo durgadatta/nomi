@@ -27,7 +27,7 @@ class GeneratorState:
         self.env = env
         self.index = 0
         self.return_value: Optional[Any] = None
-   
+
         # this will received by throw() and executed at the resumable
         # node at the beginning, if present; maybe this needs to be
         # node specific (stack) - review later
@@ -43,6 +43,20 @@ class GeneratorState:
             'node': node,
             'state': state,
         })
+
+    def resume(self):
+        # ALWAYS process compound statement stack first
+        if self.pending_compound_state:
+            while self.pending_compound_state:
+                node, state = self.frame_to_resume()
+                self.eval(node, state)
+            # only advance if there was a pending state and is completed
+            self.index += 1 
+
+        while self.index < len(self.body):
+            stmt = self.body[self.index]
+            self.eval(stmt, state=None)
+            self.index += 1
         
     def frame_to_resume(self):
         #TODO: this essentially make this queue, not a stack, change this later
@@ -62,37 +76,26 @@ class GeneratorState:
 
     def __iter__(self):
         return self
-
+    
     def __next__(self):        
         try:
-            # ALWAYS process compound statement stack first
-            if self.pending_compound_state:
-                while self.pending_compound_state:
-                    node, state = self.frame_to_resume()
-                    self.eval(node, state)
-                # only advance if there was a pending state and is completed
-                self.index += 1 
-
-            self._execute_sequential()
+            self.resume()
         except YieldException as ye:
-            # Compound statement yielded - return the value
-            self._handle_yield(ye.value)
             return ye.value
-        except ReturnException as re:
-            self.return_value = re.value
-            raise StopIteration(self.return_value)
         
         raise StopIteration(self.return_value)
     
     def eval(self, node, state):
         with self.interpreter.this_env(self.env):
-            self.interpreter.eval(node, state=state, generator_state=self)
-
-    def _execute_sequential(self):
-        while self.index < len(self.body):
-            stmt = self.body[self.index]
-            self.eval(stmt, state=None)
-            self.index += 1
+            try:
+                self.interpreter.eval(node, state=state, generator_state=self)
+            except ReturnException as re:
+                self.return_value = re.value
+                raise StopIteration(self.return_value)
+            except YieldException as ye:
+                # Compound statement yielded - return the value
+                self._handle_yield(ye.value)
+                raise ye # so that next() can return
 
     def _handle_yield(self, yield_value=None):
         """Handle a yield exception and update state accordingly.
