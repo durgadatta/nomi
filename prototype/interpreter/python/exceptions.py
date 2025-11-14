@@ -92,14 +92,14 @@ class ExceptionMixin:
                     state['current_handler'] = handler
                     break
 
-
         def handle_handler_body():
             handler = state['current_handler']
             
             if handler.name:
                 self.current_env.set(handler.name, state['caught_exception'])
 
-            execute_block(handler.body)            
+            execute_block(handler.body)
+            state['caught_exception'] = None            
 
         def handle_completed():
             if state['caught_exception'] and not state['current_handler']:
@@ -139,6 +139,10 @@ class ExceptionMixin:
                 if node.finalbody:
                     self.eval(node.finalbody, generator_state=generator_state)
                 
+                e = state.get('caught_exception')
+                if e is not None:
+                    raise e
                 # Re-raise pending return after finally completes
                 if state.get('pending_return') is not None:
                     raise state['pending_return']
+                
