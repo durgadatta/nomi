@@ -86,8 +86,7 @@ class ContextManagerMixin:
                     i += 1
                 except YieldException:
                     state['body_index'] = i + 1
-                    if generator_state:
-                        generator_state.pause(state['node'], state)
+                    generator_state.pause(state['node'], state)
                     raise
             self._exit_contexts_normal(managers_with_vars)
         except Exception as e:

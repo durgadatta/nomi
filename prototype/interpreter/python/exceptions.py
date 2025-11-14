@@ -129,8 +129,7 @@ class ExceptionMixin:
         except YieldException as ye:
             #NOTE: this is a signal for generator-state to process yield; it should not trigger "finally"
             eval_finally = False
-            if generator_state:
-                generator_state.pause(node, state)
+            generator_state.pause(node, state)
             raise ye
 
         finally:
