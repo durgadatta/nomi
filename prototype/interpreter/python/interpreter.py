@@ -36,11 +36,13 @@ class Interpreter(
     @staticmethod
     def is_resumable(node):
         #TODO: make a general base class for all resumable nodes
+        #TODO: we could tag on the method itself. @resumable 
         can_resume = (
             ast.If,
             ast.For,
             ast.While,
-            ast.Try
+            ast.Try,
+            ast.With
         )
         return isinstance(node, can_resume)
 
