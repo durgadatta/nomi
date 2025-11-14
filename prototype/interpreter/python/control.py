@@ -38,10 +38,8 @@ class ControlMixin(ExceptionMixin):
                 self.eval(stmt, generator_state=generator_state)
                 i += 1
             except YieldException:
-                # Pause inside this If
                 state['body_index'] = i + 1
-                if generator_state:
-                    generator_state.pause(node, state)
+                generator_state.pause(node, state)
                 raise
 
     def eval_AsyncFor(self, node: ast.AsyncFor) -> None:
@@ -105,8 +103,7 @@ class ControlMixin(ExceptionMixin):
             self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
             # Save state and re-raise for generator handling
-            if generator_state:
-                generator_state.pause(node, state)
+            generator_state.pause(node, state)
             raise
 
     def _execute_for_loop(self, node: ast.For, state: dict, generator_state):
@@ -175,8 +172,7 @@ class ControlMixin(ExceptionMixin):
             self._execute_while_loop(node, state)      
         except YieldException:
             # Save state and re-raise for generator handling
-            if generator_state:
-                generator_state.pause(node, state)
+            generator_state.pause(node, state)
             raise
 
 
