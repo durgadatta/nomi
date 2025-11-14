@@ -216,16 +216,7 @@ class FunctionMixin:
 
         # --- Built-in / native callable ---
         if callable(func) and not hasattr(func, "ast_node"):
-            try:
-                return func(*posargs, **kwargs)
-            except StopIteration:
-                # This is a control-signal from GeneratorState; don't wrap it
-                raise 
-            except Exception as e:
-                raise RuntimeError(
-                    f"Error calling built-in {getattr(func, '__name__', repr(func))} "
-                    f"at line {self.get_lineno(node)}: {str(e)}"
-                ) from e
+            return func(*posargs, **kwargs)
 
         # --- User-defined function or generator ---
         func_node = getattr(func, "ast_node", None)

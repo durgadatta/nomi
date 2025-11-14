@@ -7,6 +7,8 @@
     "second yield: 2",
     "finally",
     "to check if finally is executed",
+    "1",
+    "Error thrown inside for",
     ""
   ]
 }

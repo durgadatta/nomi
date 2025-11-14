@@ -69,6 +69,8 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
+            if generator_state is not None:
+                generator_state.raise_injected_exception()
             self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
             # Save state and re-raise for generator handling
@@ -137,6 +139,8 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
+            if generator_state is not None:
+                generator_state.raise_injected_exception()
             self._execute_while_loop(node, state)      
         except YieldException:
             # Save state and re-raise for generator handling
