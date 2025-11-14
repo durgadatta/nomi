@@ -35,9 +35,9 @@ class Interpreter(
 
     @staticmethod
     def is_resumable(node):
-        #TODO add ast.If
         #TODO: make a general base class for all resumable nodes
         can_resume = (
+            ast.If,
             ast.For,
             ast.While,
             ast.Try

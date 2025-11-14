@@ -7,11 +7,42 @@ from .base import (
 from .exceptions import ExceptionMixin
 
 class ControlMixin(ExceptionMixin):
-    def eval_If(self, node: ast. ast.If) -> None:
-        if self.eval(node.test):
-            self.eval(node.body)
-        else:
-            self.eval(node.orelse)
+
+    def eval_If(self, node: ast.If, *, state=None, generator_state: 'GeneratorState' = None) -> None:
+        '''
+        Note that elif's are already parses as nested if/orelse
+        '''
+        if state is None:
+            # First time: evaluate condition, choose branch, save it
+            test_val = self.eval(node.test)
+            if test_val:
+                chosen_body = node.body
+            else:
+                chosen_body = node.orelse
+
+            state = {
+                'chosen_body': chosen_body,
+                'body_index': 0,
+            }
+
+        if generator_state:
+            generator_state.raise_injected_exception()
+
+        # Execute the chosen body, resumably
+        body = state['chosen_body']
+        i = state['body_index']
+
+        while i < len(body):
+            stmt = body[i]
+            try:
+                self.eval(stmt, generator_state=generator_state)
+                i += 1
+            except YieldException:
+                # Pause inside this If
+                state['body_index'] = i + 1
+                if generator_state:
+                    generator_state.pause(node, state)
+                raise
 
     def eval_AsyncFor(self, node: ast.AsyncFor) -> None:
         iterable = self.eval(node.iter)
@@ -69,7 +100,7 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
-            if generator_state is not None:
+            if generator_state:
                 generator_state.raise_injected_exception()
             self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
@@ -139,7 +170,7 @@ class ControlMixin(ExceptionMixin):
                 'body_index': 0
             }
         try:
-            if generator_state is not None:
+            if generator_state:
                 generator_state.raise_injected_exception()
             self._execute_while_loop(node, state)      
         except YieldException:

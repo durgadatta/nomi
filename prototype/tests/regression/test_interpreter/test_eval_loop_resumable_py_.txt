@@ -1,0 +1,11 @@
+{
+  "gen": "gen:class=<class 'function'>",
+  "g": "instance of:GeneratorState:class=<class 'type'>",
+  "stdout": [
+    "should print: before after done",
+    "before",
+    "after",
+    "done",
+    ""
+  ]
+}
