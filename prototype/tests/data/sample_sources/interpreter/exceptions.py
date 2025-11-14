@@ -16,4 +16,16 @@ try:
 except StopIteration:
     print('to check if finally is executed')
 
+def gen():
+    for x in [1, 2]:
+        yield x                # throw() resumes here
+        print("after yield")
+
+g = gen()
+print(next(g))
+try:
+    g.throw(ValueError("boom"))
+except ValueError:
+    print('Error thrown inside for')
+
     
