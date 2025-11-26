@@ -63,7 +63,7 @@
   "angle": 0.7853981633974483,
   "trig_result": 1.414213562373095,
   "gen": "gen:class=<class 'function'>",
-  "g": "instance of:GeneratorState:class=<class 'type'>",
+  "g": "un-named:class=<class 'prototype.interpreter.python.generator_state.GeneratorState'>",
   "first_g": 1,
   "second_g": 2,
   "non_g": "intercepted",

@@ -117,6 +117,14 @@ class GeneratorState:
         
         raise StopIteration(self.return_value)
     
+    def send(self, value):
+        if self.is_first_iteration and value is not None:
+            raise TypeError("can't send non-None value to a just-started generator")
+        
+        self.sent_value = value
+        self.is_first_iteration = False
+        self.__next__()
+    
     def eval(self, node, state):
         with self.interpreter.this_env(self.env):
             try:

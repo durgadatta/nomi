@@ -1,6 +1,6 @@
 {
   "gen": "gen:class=<class 'function'>",
-  "g": "instance of:GeneratorState:class=<class 'type'>",
+  "g": "un-named:class=<class 'prototype.interpreter.python.generator_state.GeneratorState'>",
   "stdout": [
     "first yield: 1",
     "in between",
