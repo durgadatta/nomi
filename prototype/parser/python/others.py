@@ -120,13 +120,7 @@ class OthersMixin(ImportMixin, ContextManagerMixin, AsyncMixin):
     def assert_stmt(self, items):
         """
         assert_stmt: "assert" test ["," test]
-        items:
-        - items[0] = test expression
-        - items[1] = optional message expression
         """
-        test_node = items[0]
-        msg_node = ensure_expr(items[1]) if len(items) > 1 else None
-        if msg_node.value is None:
-            msg_node = None
+        test_node, msg_node = items
         return ast.Assert(test=test_node, msg=msg_node)
     
