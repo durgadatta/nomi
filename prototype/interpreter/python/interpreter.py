@@ -42,7 +42,8 @@ class Interpreter(
             ast.For,
             ast.While,
             ast.Try,
-            ast.With
+            ast.With, 
+            ast.Assign
         )
         return isinstance(node, can_resume)
 
