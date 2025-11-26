@@ -70,7 +70,10 @@ The goal is to test whether the **expressiveness–explicitness balance** can be
 
 ## Current Limitations
 
-* only statement-level pause/resume is supported now. For instance, `v=(yield 2) + (yield 3)` will not currently work - this will not generate [1,2]. This is due to the usage of ast-walking with adhoc pause-resume interpreter. This technical limitation well be eventually be overcome so that yield can occur anywhere in the expression; review the [python doc](https://docs.python.org/3/reference/expressions.html#yieldexpr) carefully. This may require significant re-write of interpreter to by either fully continuation-pasing-style or a fully linearized interpreter, i.e. a bytecode interpreter like the CPython's VM.
+* Full expression level yield is not currently supported. For instance, `v=(yield 2) + (yield 3)` does not work - this will not generate [1,2]. This is due to the usage of ast-walking with adhoc pause-resume interpreter. This technical limitation well be eventually be overcome so that yield can occur anywhere in the expression; review the [python doc](https://docs.python.org/3/reference/expressions.html#yieldexpr) carefully. This may require significant re-write of interpreter to by either fully continuation-passing-style or a fully linearized interpreter, i.e. a bytecode interpreter like the CPython's VM.
+    * Towards supporting expression-level yield at any place, specific form of `lhs = yield x` is now supported. This enables most of the general functionalities of bi-directional co-routine communication (though the complex expression has to be manually reduced into this form)
+    * similar approach will be taken to make function-call resumable
+    * later, all expressions will be reduced to call
 
 * General parameter/arguments mapping as in function is not how block receive the yielded values (now 1:1 mapping is done with almost like parallel assignment,  without support for default values, constraints etc.). While we may still keep some restriction like in Python's def vs lambda (can't take type annotation), the gap will be minimized.
 

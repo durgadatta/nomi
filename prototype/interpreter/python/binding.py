@@ -1,4 +1,5 @@
 import ast
+from .base import YieldException
 
 class BindingMixin:
     def del_target(self, node: ast.expr) -> None:
@@ -17,11 +18,24 @@ class BindingMixin:
         else:
             raise NotImplementedError(f"Delete target {node.__class__.__name__} not supported at line {self.get_lineno(node)}")
 
-    def eval_Assign(self, node: ast.Assign) -> None:
+    def eval_Assign(self, node: ast.Assign, *, state=None, generator_state=None) -> None:
         """
         Evaluate assignment statements, supporting tuple/list unpacking and starred targets.
         """
-        value = self.eval(node.value)
+
+        # capture_yield during first yield encounter
+        if isinstance(node.value, ast.Yield) and state is None:
+            state = 'awaiting_sent_value'
+            value = self.eval(node.value.value)
+            generator_state.pause(node, state)
+            raise YieldException(value)
+        
+        if state == "awaiting_sent_value":
+            sent_value = generator_state.sent_value
+            generator_state.sent_value = None
+            value = sent_value
+        else:
+            value = self.eval(node.value)
 
         for target in node.targets:
             self.assign_target(target, value)

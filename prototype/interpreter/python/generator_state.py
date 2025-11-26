@@ -38,6 +38,11 @@ class GeneratorState:
         # This is only for compound statements (For/While/Try)
         self.paused_frames = [] 
 
+        # for implementing send()
+        self.sent_value = None
+        self.is_first_iteration = True
+
+
     def pause(self, node, state):
         self.paused_frames.append({
             'node': node,
@@ -111,6 +116,7 @@ class GeneratorState:
     
     def __next__(self):        
         try:
+            self.is_first_iteration = False
             self.resume()
         except YieldException as ye:
             return ye.value
@@ -123,7 +129,7 @@ class GeneratorState:
         
         self.sent_value = value
         self.is_first_iteration = False
-        self.__next__()
+        return self.__next__()
     
     def eval(self, node, state):
         with self.interpreter.this_env(self.env):
