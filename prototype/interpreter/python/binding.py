@@ -22,18 +22,15 @@ class BindingMixin:
         """
         Evaluate assignment statements, supporting tuple/list unpacking and starred targets.
         """
-
-        # capture_yield during first yield encounter
-        if isinstance(node.value, ast.Yield) and state is None:
-            state = 'awaiting_sent_value'
-            value = self.eval(node.value.value)
-            generator_state.pause(node, state)
-            raise YieldException(value)
-        
-        if state == "awaiting_sent_value":
-            sent_value = generator_state.sent_value
-            generator_state.sent_value = None
-            value = sent_value
+        if state is None:
+            # First time - try to evaluate the value
+            try:
+                value = self.eval(node.value, generator_state=generator_state)
+            except YieldException as ye:
+                generator_state.pause(node, 'awaiting_value')
+                raise ye       
+        elif state == "awaiting_value":
+            value = generator_state.get_sent_value()
         else:
             value = self.eval(node.value)
 

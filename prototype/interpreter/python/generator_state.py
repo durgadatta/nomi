@@ -141,7 +141,14 @@ class GeneratorState:
         
         self.sent_value = value
         self.is_first_iteration = False
-        return self.__next__()
+        result =  self.__next__()
+        return result
+    
+    def get_sent_value(self):
+        ''' get sent value alongside critical reset'''
+        value = self.sent_value
+        self.sent_value = None 
+        return value 
     
     def eval(self, node, state):
         with self.interpreter.this_env(self.env):
