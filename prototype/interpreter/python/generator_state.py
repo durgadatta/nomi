@@ -36,7 +36,8 @@ class GeneratorState:
         #TODO: move this to a separate class later
         # List(Dict(node, state)
         # This is only for compound statements (For/While/Try)
-        self.paused_frames = [] 
+        self.paused_frames = []
+        self._processing_frame = None  # Frame currently being evaluated 
 
         # for implementing send()
         self.sent_value = None
@@ -44,10 +45,20 @@ class GeneratorState:
 
 
     def pause(self, node, state):
-        self.paused_frames.append({
-            'node': node,
-            'state': state,
-        })
+        # Check if this yield comes from the frame we're currently processing
+        if self._processing_frame and self._processing_frame['node'] == node:
+            # Current frame yielded again - put at front for immediate continuation
+            self.paused_frames.insert(0, {
+                'node': node,
+                'state': state,
+            })
+        else:
+            # New frame yielding - add to end (normal nesting)
+            self.paused_frames.append({
+                'node': node,
+                'state': state,
+            })
+        self._processing_frame = None  # Reset processing state
 
     def resume(self):
         # ALWAYS process compound statement stack first
@@ -99,6 +110,7 @@ class GeneratorState:
         #TODO: this essentially make this queue, not a stack, change this later
         if self.paused_frames:
             frame = self.paused_frames.pop(0)
+            self._processing_frame = frame  # Track what we're processing
             return (frame['node'], frame['state'])
         return None
         

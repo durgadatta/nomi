@@ -4,17 +4,17 @@
   "results": [
     "outer=0, inner=0, first",
     "outer=0, inner=0, second",
+    "outer=0, inner=1, first",
+    "outer=0, inner=1, second",
     "outer=1, inner=0, first",
-    "outer=1, inner=1, first",
-    "outer=1, inner=1, second",
-    "outer=1, inner=1, second",
+    "outer=1, inner=0, second",
     "outer=1, inner=1, first",
     "outer=1, inner=1, second",
     "done"
   ],
   "e": "instance of:StopIteration:class=<class 'type'>",
   "stdout": [
-    "Results: ['outer=0, inner=0, first', 'outer=0, inner=0, second', 'outer=1, inner=0, first', 'outer=1, inner=1, first', 'outer=1, inner=1, second', 'outer=1, inner=1, second', 'outer=1, inner=1, first', 'outer=1, inner=1, second', 'done']",
+    "Results: ['outer=0, inner=0, first', 'outer=0, inner=0, second', 'outer=0, inner=1, first', 'outer=0, inner=1, second', 'outer=1, inner=0, first', 'outer=1, inner=0, second', 'outer=1, inner=1, first', 'outer=1, inner=1, second', 'done']",
     ""
   ]
 }
