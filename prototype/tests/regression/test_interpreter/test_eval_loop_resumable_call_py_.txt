@@ -1,0 +1,18 @@
+{
+  "receiver": "receiver:class=<class 'function'>",
+  "gen": "gen:class=<class 'function'>",
+  "g": "un-named:class=<class 'prototype.interpreter.python.generator_state.GeneratorState'>",
+  "val1": 1,
+  "val2": 2,
+  "val3": 3,
+  "e": "instance of:StopIteration:class=<class 'type'>",
+  "result": "a=10, b=20, c=30",
+  "stdout": [
+    "val1 = 1",
+    "val2 = 2",
+    "val3 = 3",
+    "Final result = a=10, b=20, c=30",
+    "Call with yields test passed",
+    ""
+  ]
+}
