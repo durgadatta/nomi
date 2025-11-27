@@ -1,11 +1,11 @@
 import ast
-from typing import Any, Dict, List, Optional, Tuple, Callable, Iterator, Set
+from typing import Any, List, Optional
 import builtins
 from contextlib import contextmanager
 
 
 from .base import (
-    Environment, ReturnException, BreakException, ContinueException, YieldException
+    Environment
 )
 from .generator_state import GeneratorState
 from .function import FunctionMixin

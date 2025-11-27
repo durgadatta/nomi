@@ -2,8 +2,9 @@ import ast
 from typing import List, Any
 
 from .base import ReturnException
+from .function_call import FunctionCallMixin
 
-class FunctionMixin:
+class FunctionMixin(FunctionCallMixin):
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
         for dec in reversed(decorators):
             # Create new environment for decorator evaluation
@@ -179,93 +180,7 @@ class FunctionMixin:
             consumed_kw = {p.arg for p in params if p.arg in env.bindings}
             extra_kwargs = {k: v for k, v in kwargs.items() if k not in consumed_kw}
             env.set(kwarg_name, extra_kwargs)
-
-    def eval_Call(self, node: ast.Call) -> Any:
-        """
-        Evaluate a function or class call:
-        - built-in / native Python function
-        - user-defined function (normal or generator)
-        - class instantiation
-        - decorators (native or interpreted)
-        """
-        func = self.eval(node.func)
-        # Evaluate arguments
-        posargs = []
-        for arg in node.args:
-            if isinstance(arg, ast.Starred):
-                posargs.extend(self.eval(arg.value))
-            else:
-                posargs.append(self.eval(arg))
-
-        kwargs = {}
-        for kw in node.keywords:
-            if kw.arg is None:
-                kw_val = self.eval(kw.value)
-                if not isinstance(kw_val, dict):
-                    raise TypeError(f"argument after ** must be a mapping at line {self.get_lineno(node)}")
-                kwargs.update(kw_val)
-            else:
-                value = kw.value
-                # if it is a block arg; don't eval it
-                # generator state will eval it in the caller's env
-                if kw.arg == '__block__':
-                    value = (*value, self.current_env)
-                else:
-                    value = self.eval(kw.value)
-                kwargs[kw.arg] = value
-
-        return func(*posargs, **kwargs)
     
-    
-    def _instantiate_class(self, cls, posargs, kwargs, call_node=None):
-        """Enhanced class instantiation"""
-        # Create instance
-        instance = cls.__new__(cls)
-        if not isinstance(instance, cls):
-            raise TypeError(f"__new__ returned non-instance of {cls.__name__}")
-
-        # Get __init__ method
-        init_method = getattr(instance, "__init__", None)
-        
-        if init_method is None:
-            # No __init__, just return instance
-            return instance
-
-        # Check if it's an interpreted method
-        func_node = getattr(init_method, "ast_node", None)
-        func_env = getattr(init_method, "func_env", None)
-        
-        # If no explicit func_env, use current environment
-        if func_env is None:
-            func_env = self.current_env
-
-        if func_node and isinstance(func_node, ast.FunctionDef):
-            # Interpreted __init__
-            call_env = self.env_class(self, parent=func_env)            
-            # Bind self first
-            call_env.set('self', instance)
-            
-            # Then bind other arguments
-            self._bind_function_args(func_node, call_env, posargs, kwargs, self_obj=instance)
-
-            # Execute __init__ body
-            with self.this_env(call_env):
-                try:
-                    self.eval(func_node.body)
-                except ReturnException as re:
-                    if re.value is not None:
-                        raise TypeError(f"__init__ should return None, got {re.value}")
-
-        else:
-            # Native __init__
-            try:
-                init_method(*posargs, **kwargs)
-            except Exception as e:
-                lineno = self.get_lineno(call_node) if call_node else "unknown"
-                raise RuntimeError(f"Error in __init__ at line {lineno}: {str(e)}") from e
-
-        return instance
-
     def eval_Return(self, node: ast.Return) -> None:
         value = self.eval(node.value) if node.value else None
         raise ReturnException(value)
