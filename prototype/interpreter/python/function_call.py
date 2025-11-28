@@ -32,42 +32,44 @@ class FunctionCallMixin:
         """
         kwargs = {}
         
-        # Process positional arguments
-        for i in range(start_index, len(node.args)):
-            arg = node.args[i]
-            
-            # If we have a sent_value for this position (resuming from yield)
-            if i == start_index and sent_value is not None:
-                evaluated_args.append(sent_value)
-                continue
-                    
-            try:
+        # Track current evaluation index across both loops
+        current_index = start_index
+        
+        try:
+            # Process positional arguments
+            for i in range(start_index, len(node.args)):
+                arg = node.args[i]
+                current_index = i
+                
+                # If we have a sent_value for this position (resuming from yield)
+                if i == start_index and sent_value is not None:
+                    evaluated_args.append(sent_value)
+                    continue
+                        
                 if isinstance(arg, ast.Starred):
                     starred_val = self.eval(arg.value, generator_state=generator_state)
                     evaluated_args.extend(starred_val)
                 else:
                     evaluated_args.append(self.eval(arg, generator_state=generator_state))
-            except YieldException as ye:
-                # Pause at this argument index
-                state = (func, evaluated_args, i)
-                if generator_state:
-                    generator_state.pause(node, state)
-                raise YieldException(ye.value)
-        
-        # Process keyword arguments
-        kw_start_index = max(0, start_index - len(node.args))
-        for kw_index, kw in enumerate(node.keywords[kw_start_index:], kw_start_index):
-            # If we have a sent_value for this keyword (resuming from yield)
-            if len(node.args) + kw_index == start_index and sent_value is not None:
-                if kw.arg == '__block__':
-                    # Handle __block__ specially
-                    value = (*sent_value, self.current_env)
-                else:
-                    value = sent_value
-                kwargs[kw.arg] = value
-                continue
+            
+            # Process keyword arguments
+            kw_start = 0
+            if start_index > len(node.args):
+                kw_start = start_index - len(node.args)
                 
-            try:
+            for kw_index, kw in enumerate(node.keywords[kw_start:], kw_start):
+                current_index = len(node.args) + kw_index
+                
+                # If we have a sent_value for this keyword (resuming from yield)
+                if len(node.args) + kw_index == start_index and sent_value is not None:
+                    if kw.arg == '__block__':
+                        # Handle __block__ specially
+                        value = (*sent_value, self.current_env)
+                    else:
+                        value = sent_value
+                    kwargs[kw.arg] = value
+                    continue
+                    
                 if kw.arg is None:
                     # **kwargs
                     kw_val = self.eval(kw.value, generator_state=generator_state)
@@ -77,24 +79,24 @@ class FunctionCallMixin:
                 else:
                     # __block__ special handling - DON'T evaluate the value
                     if kw.arg == '__block__':
-                        value = kw.value  # Keep the raw AST node
-                        value = (*value, self.current_env)  # Create tuple with raw node + env
+                        value = kw.value  
+                        value = (*value, self.current_env)  
                     else:
                         value = self.eval(kw.value, generator_state=generator_state)
                     kwargs[kw.arg] = value
-            except YieldException as ye:
-                # Pause at keyword argument
-                state = (func, evaluated_args, len(node.args) + kw_index)
-                if generator_state:
-                    generator_state.pause(node, state)
-                raise YieldException(ye.value)
+                    
+        except YieldException as ye:
+            # Pause at current index (works for both positional and keyword args)
+            state = (func, evaluated_args, current_index)
+            if generator_state:
+                generator_state.pause(node, state)
+            raise YieldException(ye.value)
         
         result = func(*evaluated_args, **kwargs)
-
+        
         #NOTE this is an abuse of mechanism used in for send() to 
         # communicate with assignment
         # review better way to deal with this
         if generator_state:
             generator_state.sent_value = result 
-        # All arguments evaluated - call the function
         return result
