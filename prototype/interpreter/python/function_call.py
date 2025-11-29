@@ -7,7 +7,8 @@ from typing import Any
 
 from .base import YieldException
 
-class FunctionCallMixin:
+
+class FunctionCallResumable:
     def eval_Call(self, node: ast.Call, *, state=None, generator_state=None) -> Any:
         """
         Evaluate a function call, supporting yields in arguments.
@@ -100,3 +101,42 @@ class FunctionCallMixin:
         if generator_state:
             generator_state.sent_value = result 
         return result
+    
+
+class FunctionCall:
+    '''
+    Keep this as well, as the resumable implementation significantly distorts the 
+    readability/simplicity
+    '''
+    def eval_Call(self, node: ast.Call) -> Any:
+        func = self.eval(node.func)
+        # Evaluate arguments
+        posargs = []
+        for arg in node.args:
+            if isinstance(arg, ast.Starred):
+                posargs.extend(self.eval(arg.value))
+            else:
+                posargs.append(self.eval(arg))
+
+        kwargs = {}
+        for kw in node.keywords:
+            if kw.arg is None:
+                kw_val = self.eval(kw.value)
+                if not isinstance(kw_val, dict):
+                    raise TypeError(f"argument after ** must be a mapping at line {self.get_lineno(node)}")
+                kwargs.update(kw_val)
+            else:
+                value = kw.value
+                # if it is a block arg; don't eval it
+                # generator state will eval it in the caller's env
+                if kw.arg == '__block__':
+                    value = (*value, self.current_env)
+                else:
+                    value = self.eval(kw.value)
+                kwargs[kw.arg] = value
+
+        return func(*posargs, **kwargs)
+    
+
+class FunctionCallMixin(FunctionCallResumable, FunctionCall):
+    pass
