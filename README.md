@@ -107,3 +107,24 @@ This bridges **statements and expressions**, **functions and blocks**, and even 
 
 > See more details on [Delta on Python](documentation/delta_on_python.md) for detailed rationale and examples.
 
+# Future Direction: Bridging Foundational Design with Cognitive Pragmatism
+
+The project has reached an important inflection point. We now possess a functional, self-hosted Python interpreter—an extensible experimental substrate that already incorporates the emerging syntax and semantics of Nomi. While incremental improvements will continue, the primary work ahead is more foundational: constructing a principled, coherent design for the language itself.
+
+This effort continues a long-standing intellectual pursuit: the search for a formal language of thought and computation. Its lineage runs from Leibniz’s *characteristica universalis*, through Boole’s algebra of logic, to Church’s Lambda Calculus. Yet the goal is not to produce a purely theoretical artifact. Instead, the ambition is synthetic: to unite the compositional clarity of foundational models (as seen in Lisp and the ALGOL family) with the cognitive usability and ergonomic simplicity that give Python its unique approachability.
+
+The vision is a language that is both **industrial in capability** and **natural in expression**—one that prioritizes clear mental models and human comprehension over accidental complexity or sheer ecosystem mass. Realizing such a system demands a careful navigation of tradeoffs:
+
+- avoiding over-mathematization that yields elegance without usability,
+- avoiding abstraction that obscures rather than clarifies,
+- avoiding ad-hoc growth that erodes conceptual unity.
+
+The target is a system in which every construct composes cleanly, enabling a virtuous progression as espoused in famed SICP but with a cognitive touch:
+
+**primitive → combination → abstraction → new primitive**
+
+This cycle should scale to unbounded complexity without sacrificing conceptual transparency.
+
+To reach this goal, I will engage deeply with the foundational literature of programming languages—drawing on the systematic rigor of the ALGOL tradition and the semantic frameworks pioneered by Landin, Strachey, Scott, and Hoare. In parallel, I will analyze the convergent lessons of modern language design: Scala’s multiparadigm synthesis, Rust’s ownership discipline, Julia’s performance-oriented multiple dispatch.
+
+The challenge—and the opportunity—is to distill decades of theoretical insight and practical engineering into a single architecture: a language that is formally sound, semantically compositional, and a joy to think in.
