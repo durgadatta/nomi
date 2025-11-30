@@ -109,6 +109,8 @@ This bridges **statements and expressions**, **functions and blocks**, and even 
 
 # Future Direction: Bridging Foundational Design with Cognitive Pragmatism
 
+> *Dedicated to **Peter Landin**, a fiercely independent mind who revealed the prose within computation, and championed abstraction not as a barrier of symbols but as a bridge for human thought*
+
 The project has reached an important inflection point. We now possess a functional, self-hosted Python interpreter—an extensible experimental substrate that already incorporates the emerging syntax and semantics of Nomi. While incremental improvements will continue, the primary work ahead is more foundational: constructing a principled, coherent design for the language itself.
 
 This effort continues a long-standing intellectual pursuit: the search for a formal language of thought and computation. Its lineage runs from Leibniz’s *characteristica universalis*, through Boole’s algebra of logic, to Church’s Lambda Calculus. Yet the goal is not to produce a purely theoretical artifact. Instead, the ambition is synthetic: to unite the compositional clarity of foundational models (as seen in Lisp and the ALGOL family) with the cognitive usability and ergonomic simplicity that give Python its unique approachability.
