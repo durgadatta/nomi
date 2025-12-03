@@ -1,0 +1,11 @@
+{
+  "make_func": "make_func:class=<class 'function'>",
+  "f": "func:class=<class 'function'>",
+  "g": "func:class=<class 'function'>",
+  "stdout": [
+    "f(1): [1]",
+    "f(2): [1, 2]",
+    "g(3): [3]",
+    ""
+  ]
+}
