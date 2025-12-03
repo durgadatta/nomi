@@ -72,7 +72,8 @@ class FunctionMixin(FunctionCallMixin):
             # Constraints from parent are relevant only on global/non-local scope (to-implement)
             local_env = func_env.copy()
             block = kwargs.pop('__block__', None)
-            self._bind_function_args(node, local_env, args, kwargs)
+            with self.this_env(local_env):
+                self._bind_function_args(node, local_env, args, kwargs)
             if is_generator:
                 return self.eval_generator_obj(node.body, local_env, block=block)
             else:                
