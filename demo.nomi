@@ -1,0 +1,84 @@
+#!/usr/bin/env nomi
+"""Nomi Language Demo - Core Features"""
+
+print("Nomi Demo: Key Features\n")
+
+# func keyword (replaces def)
+func greet(name):
+    return f"Hello, {name}!"
+
+print("1. func keyword:", greet("Nomi"))
+
+# Arrow functions (better lambda)
+add = (x, y) => x + y
+square = (x) => x * x
+print(f"2. Arrow functions: add(3,4)={add(3,4)}, square(5)={square(5)}")
+
+# binding validation
+is_positive = (x) => x > 0
+age:int, is_positive = 25
+print(f"3. Binding validation: age={age}")
+
+# Function parameter validation
+func process_score(score:(int, 0 <= score <= 100)):
+    return "Pass" if score >= 60 else "Fail"
+print(f"4. Param validation: score 85 = {process_score(85)}")
+
+# Yield-to-block patterns
+func times(n):
+    for i in range(n):
+        yield
+
+counter = 0
+times(3):
+    counter += 1
+print(f"5. Yield-to-block: times(3) → counter={counter}")
+
+# Retry pattern
+func retry(max_attempts):
+    for attempt in range(max_attempts):
+        try:
+            yield
+            print(f"  Success on attempt {attempt+1}")
+            return
+        except Exception as e:
+            if attempt == max_attempts - 1:
+                raise
+
+print("6. Retry pattern (will fail twice):")
+attempts = 0
+retry(3):
+    attempts += 1
+    if attempts < 3:
+        raise ValueError(f"Simulated error {attempts}")
+    print("  Succeeded!")
+
+# Iteration with block parameters
+func each(items):
+    for item in items:
+        yield item
+
+print("7. Block parameters:")
+each([10, 20, 30]) -> item:
+    print(f"  Item: {item}")
+
+# Real-world example: data filtering
+data = [15, -5, 30, 42, 8, 100]
+validators = [(x) => x > 0, (x) => x < 50]
+transform = (x) => x * 2
+
+func filter_and_transform(items, checks, mapper):
+    results = []
+    each(items) -> item:
+        valid = True
+        each(checks) -> check:
+            if not check(item):
+                valid = False
+        if valid:
+            results.append(mapper(item))
+    return results
+
+filtered = filter_and_transform(data, validators, transform)
+print(f"8. Data pipeline: {data} → {filtered}")
+
+print("\n✅ Demo completed")
