@@ -6,7 +6,6 @@ Nomi is an experimental programming language built on the simplest foundation: *
 
 Instead of piling on features, Nomi builds a **unified core** where expressiveness emerges naturally. This minimalism encourages intuitive composition, aligning programming more closely with how humans think about processes and abstractions.  
 
----
 
 # Vision  
 
@@ -130,3 +129,11 @@ This cycle should scale to unbounded complexity without sacrificing conceptual t
 To reach this goal, I will engage deeply with the foundational literature of programming languages—drawing on the systematic rigor of the ALGOL tradition and the semantic frameworks pioneered by Landin, Strachey, Scott, and Hoare. In parallel, I will analyze the convergent lessons of modern language design: Scala’s multiparadigm synthesis, Rust’s ownership discipline, Julia’s performance-oriented multiple dispatch.
 
 The challenge—and the opportunity—is to distill decades of theoretical insight and practical engineering into a single architecture: a language that is formally sound, semantically compositional, and a joy to think in.
+
+## On Ambition and Attrition
+
+Nomi is an experimental language shaped by curiosity, long-term thinking, and an awareness of uncertainty. History shows that many well-designed languages struggle to find adoption, not only because of technical limits, but because tooling, education, platforms, and community momentum matter just as much as ideas themselves. Nomi may grow slowly, change form, or even fade from view regardless of its internal merits. This is not a failure of intent but the normal pressure experienced by ambitious projects. If Nomi thrives, it will do so through shared effort; if it does not, its ideas can still travel forward through those who engage with it.
+
+Evaluating a programming language is a long-term, challenging endeavor, shaped by debates between theory and practice, academia and industry. Every perspective contributes value, and progress emerges through independence, perseverance, and constant feedback. I do not aim to produce world-changing theorems; instead, I focus on concrete tools, real-world experience, and careful iteration—grounded on Python as a practical baseline. At the same time, curiosity and historical insight—nourished by fortunate exposure to world-class physicists and scientists, and a habit of questioning even my own limitations—guide refinements toward coherence and orthogonality. These tensions are not obstacles to be resolved; they are productive sources of motion, balancing immediate utility with long-term structural clarity.
+
+For a deeper look at the intellectual lineage, design risks, and long-term context of Nomi, see [Positioning Within Ambition and Risk](documentation/positioning_ambition_risk.md)
