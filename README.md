@@ -6,6 +6,15 @@ Nomi is an experimental programming language built on the simplest foundation: *
 
 Instead of piling on features, Nomi builds a **unified core** where expressiveness emerges naturally. This minimalism encourages intuitive composition, aligning programming more closely with how humans think about processes and abstractions.  
 
+# Usage
+Nomi programs are executed through a Python-based runner (run_nomi.py) that parses Nomi source files with Lark, lowers them into a Python AST, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and embedded semantic extensions. 
+
+``` bash
+python run_nomi.py [filename]  # defaults to demo.nomi
+```
+> **Note on contributions**. Nomi is still at an early, fast-moving stage of development, and it may be slightly premature for broad public contribution. More formal contribution guidelines will be added gradually as the core stabilizes. That said, if you feel genuinely enthusiastic about the project, you are very welcome to follow this note and the linked documents, or to reach out with feedback and discussion.
+
+See [Artifacts and Usage](documentation/artifacts_and_usage.md) for more details.
 
 # Vision  
 
@@ -40,7 +49,7 @@ Over the years, I have explored **Java, JavaScript, Scala, Julia, Lisp/Scheme, A
 
 In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) (now dormant), capturing fragments of this vision. Since then, these fragments have matured into a more systematic thought process.  
 
-**Nomi is the culmination of a decade of exploration—minimal at its base, expansive in its reach.**  
+**Nomi is the culmination of years of exploration—minimal at its base, expansive in its reach.**  
 
 
 # Current Status Preview
@@ -116,8 +125,8 @@ This effort continues a long-standing intellectual pursuit: the search for a for
 
 The vision is a language that is both **industrial in capability** and **natural in expression**—one that prioritizes clear mental models and human comprehension over accidental complexity or sheer ecosystem mass. Realizing such a system demands a careful navigation of tradeoffs:
 
-- avoiding over-mathematization that yields elegance without usability,
-- avoiding abstraction that obscures rather than clarifies,
+- avoiding over-formalization that yields elegance without usability,
+- avoiding extreme abstraction that obscures rather than clarifies,
 - avoiding ad-hoc growth that erodes conceptual unity.
 
 The target is a system in which every construct composes cleanly, enabling a virtuous progression as espoused in famed SICP but with a cognitive touch:
