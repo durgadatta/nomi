@@ -1,5 +1,7 @@
 Artifacts and Usage
 ===
+While the project uses Python as a conceptual baseline, the necessary infrastructure beyond the standard Abstract Syntax Tree (AST) interface had to be completely built from the ground up. The Python built-in  `ast.parse` and `exec` are used only for functional tests, driving incremental changes and ensuring the new implementation aligns with the expected behavior of the conceptual Python baseline.
+Both parsing and evaluation can now be tweaked with a fair level of granularity. However, the resumable (generator/coroutine) part of the implementation is recognized as more brittle (passing comprehensive tests, but documented with caveats).
 
 Nomi programs are executed by running a Nomi source file through a
 Python-based runner. Parsing is performed with **Lark**, grammars live
@@ -61,7 +63,6 @@ The test suite is located under:
 
     prototype/tests/
 
-This has been central to driving small, incremental changes in parsing,
-AST transformation, and execution across both Python and Nomi layers.
 Most tests currently operate at the regression/functional level;
 finer-grained coverage will be introduced gradually.
+

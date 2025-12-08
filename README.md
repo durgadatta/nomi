@@ -1,66 +1,74 @@
-Nomi 
-=====
-**A Minimal, Systematic, and Intuitive Programming Language**  
+# Nomi
+**A Minimal, Systematic, and Intuitive Programming Language**
 
-Nomi is an experimental programming language built on the simplest foundation: **variables, function definitions, and function applications**. Inspired by functional programming and guided by cognitive principles, it emphasizes **clarity, coherence, and human-centered reasoning**.  
+Nomi is an experimental programming language built on a **small, coherent core**: variables, function definitions, and function applications. Inspired by functional programming and guided by cognitive principles, it emphasizes **clarity, coherence, and human-centered reasoning**.
 
-Instead of piling on features, Nomi builds a **unified core** where expressiveness emerges naturally. This minimalism encourages intuitive composition, aligning programming more closely with how humans think about processes and abstractions.  
+Rather than piling on features, Nomi constructs a unified core where expressiveness emerges naturally. This minimalism encourages intuitive composition, aligning programming with how humans think about processes and abstractions.
+
+---
 
 # Usage
-Nomi programs are executed through a Python-based runner (run_nomi.py) that parses Nomi source files with Lark, lowers them into a Python AST, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and embedded semantic extensions. 
 
-``` bash
+Nomi programs are executed through a Python-based runner (`run_nomi.py`) that parses Nomi source files using **Lark**, lowers them into a **Python AST**, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and embedded semantic extensions.
+
+```bash
 python run_nomi.py [filename]  # defaults to demo.nomi
 ```
-> **Note on contributions**. Nomi is still at an early, fast-moving stage of development, and it may be slightly premature for broad public contribution. More formal contribution guidelines will be added gradually as the core stabilizes. That said, if you feel genuinely enthusiastic about the project, you are very welcome to follow this note and the linked documents, or to reach out with feedback and discussion.
+
+> **Note on contributions:** Nomi is in an early, fast-moving stage. Broad public contributions may be premature. Contribution guidelines will be added as the core stabilizes. Enthusiastic participants are welcome to follow this note and the linked documentation, or reach out for feedback and discussion.
 
 See [Artifacts and Usage](documentation/artifacts_and_usage.md) for more details.
 
-# Vision  
+---
 
-Programming today is fragmented—split across domains like **frontend, backend, data science, AI, systems, embedded devices, and cloud computing, deployment, testing, infrastructure, configuration** etc. Each introduces its own languages, libraries, and mental models. The result is a patchwork that forces developers to constantly switch paradigms.  
+# Vision
 
-Most mainstream languages double down on **implementation details**—memory management, optimization tricks, platform quirks—while progress in **abstraction, readability, and usability** stagnates. Over time, technical debt and backward compatibility slow down innovation.  
+Programming today is fragmented across **frontend, backend, data science, AI, systems, embedded devices, cloud, deployment, testing, and configuration**, each with its own languages, libraries, and mental models. Developers constantly switch paradigms, while mainstream languages often focus on **implementation details**—memory, optimization, and platform quirks—leaving abstraction, readability, and usability stagnant.
 
-**Nomi takes a different path.**  
-- Built on a **minimal, coherent core** rooted in **Lambda Calculus**, it favors **expression and composition over machinery and quirks**.  
-- Adaptations, domain-specific features, and libraries can **layer naturally**, without breaking the underlying model.  
-- Its design keeps the **language small but its reach large**, enabling use across domains without fragmentation.  
+**Nomi takes a different path:**
 
-Performance is not the immediate goal. **Readability, composability, and human-centered expression come first.** Efficiency will emerge through simple, systematic decisions.  
+- Built on a **minimal, coherent core** rooted in **Lambda Calculus**, favoring **expression and composition over machinery and quirks**.
+- Domain-specific features and libraries can **layer naturally** without breaking the underlying model.
+- Small core, large reach: usable across domains without fragmentation.
+
+Performance is secondary; **readability, composability, and human-centered expression guide design**.
 
 ---
 
-# Principles  
+## AI Complementarity
 
-- **Minimal Core** → only variables, functions, and applications.  
-- **Systematic Extensions** → everything else is layered consistently.  
-- **Human-Centered** → aligns with natural reasoning, not machine quirks.  
-- **Domain-Agnostic** → one core, many applications, without paradigm shifts.  
-- **Simplicity First** → clarity before cleverness; efficiency through design.  
+AI dominates technical conversation, shaping how we think about software and computation. Nomi is not an AI system but exists in an AI-saturated world—and leverages that reality.
+
+AI expands semantic possibilities, exploring alternatives and accelerating synthesis. Programming languages, by contrast, reduce entropy: they crystallize intention into durable, composable structures that accumulate and stabilize thought.
+
+- **AI** broadens the search frontier.
+- **Languages** condense it into lasting form.
+
+Nomi sits at the compressive pole. AI accelerates design exploration, critique, and synthesis, while Nomi provides the semantics and constraints ensuring legibility, stability, and editability.
 
 ---
 
-# Context  
+# Context
 
-My journey began with **C**, which revealed the power of low-level control but also its cognitive burden. **Python** opened my eyes to readability and expressiveness. **Tcl** shifted my perspective to **language as a craft**, not just a tool.  
+To understand Nomi's approach, it helps to see the programming journey that shaped it. My experience spans:
 
-Over the years, I have explored **Java, JavaScript, Scala, Julia, Lisp/Scheme, ALGOL, Haskell, PowerShell, Bash, Mathematica (Wolfram Language), R,  and APL**—each contributing insights into abstraction, notation, and usability.  
+**C** – revealed low-level control and cognitive burden.  
+**Python** – highlighted readability and expressiveness.  
+**Tcl** – introduced language as craft rather than mere tool.
 
-In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) (now dormant), capturing fragments of this vision. Since then, these fragments have matured into a more systematic thought process.  
+Exploration continued through **Java, JavaScript, Scala, Julia, Lisp/Scheme, ALGOL, Haskell, PowerShell, Bash, Mathematica (Wolfram Language), R, and APL**, each contributing insights into abstraction, notation, and usability.
 
-**Nomi is the culmination of years of exploration—minimal at its base, expansive in its reach.**  
+In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) capturing fragments of this vision. Nomi is the culmination of these insights—minimal at its core, expansive in reach.
 
+---
 
-# Current Status Preview
+# Current Status
 
-## Functions, Binding, and Unified Control in Nomi
+Nomi refines Python’s **function, binding, and control flow** foundations into a more **systematic, expression-oriented model**.
 
-Nomi refines Python’s **function**, **binding**, and **control flow** foundations into a more **systematic, expression-oriented model**.
+## Functions
 
-### Functions
-
-`def` becomes **`func`** for semantic clarity, while an **arrow syntax** offers concise, expression-level functions:
+`def` becomes **`func`** for semantic clarity, while **arrow syntax** enables concise, expression-level functions:
 
 ```python
 @decorator
@@ -74,9 +82,9 @@ func greet(name):
 () => print("no args")
 ```
 
-### Binding and Validation
+## Binding and Validation
 
-All bindings — assignments, parameters, loops, etc. — can carry **type and predicate constraints** that are validated automatically:
+All bindings—assignments, parameters, loops—can carry **type and predicate constraints** validated automatically:
 
 ```python
 is_pos = (a) => a > 0
@@ -89,11 +97,9 @@ f(1, 30)   # OK
 f(1, 10)   # Fails
 ```
 
-### Generator Blocks and Unified Control
+## Generator Blocks and Unified Control
 
-Python’s **generators** are a specialized form of **coroutines** — resumable functions built around `yield`.  
-Nomi **generalizes generators**, extending their applicability beyond iteration to any block-structured control pattern.  
-This leads to the **yield-to-block** construct, which allows code blocks to be passed and executed at controlled suspension points:
+Python’s **generators** are a specialized form of **coroutines**. Nomi generalizes generators, extending them to any block-structured control pattern via the **yield-to-block** construct:
 
 ```python
 func retry(max_times):
@@ -111,38 +117,44 @@ retry(3):
     1 / 0
 ```
 
-This bridges **statements and expressions**, **functions and blocks**, and even **decorators and context managers** — realizing the latent generality of Python’s `yield` mechanism.
+This bridges **statements and expressions**, **functions and blocks**, and **decorators and context managers**, realizing the latent generality of Python’s `yield`.
 
-> See more details on [Delta on Python](documentation/delta_on_python.md) for detailed rationale and examples.
+> See [Delta on Python](documentation/delta_on_python.md) for detailed rationale and examples.
 
-# Future Direction: Bridging Foundational Design with Cognitive Pragmatism
+---
 
-> *Dedicated to **Peter Landin**, a fiercely independent mind who revealed the prose within computation, and championed abstraction not as a barrier of symbols but as a bridge for human thought*
+# Future Direction
 
-The project has reached an important inflection point. We now possess a functional, self-hosted Python interpreter—an extensible experimental substrate that already incorporates the emerging syntax and semantics of Nomi. While incremental improvements will continue, the primary work ahead is more foundational: constructing a principled, coherent design for the language itself.
+> *Dedicated to **Peter Landin**, who revealed the prose within computation and championed abstraction as a bridge for human thought.*
 
-This effort continues a long-standing intellectual pursuit: the search for a formal language of thought and computation. Its lineage runs from Leibniz’s *characteristica universalis*, through Boole’s algebra of logic, to Church’s Lambda Calculus. Yet the goal is not to produce a purely theoretical artifact. Instead, the ambition is synthetic: to unite the compositional clarity of foundational models (as seen in Lisp and the ALGOL family) with the cognitive usability and ergonomic simplicity that give Python its unique approachability.
+Nomi has a functional, self-hosted Python interpreter—an extensible substrate incorporating emerging Nomi syntax and semantics. The primary work ahead is foundational: constructing a **principled, coherent design** for the language itself.
 
-The vision is a language that is both **industrial in capability** and **natural in expression**—one that prioritizes clear mental models and human comprehension over accidental complexity or sheer ecosystem mass. Realizing such a system demands a careful navigation of tradeoffs:
+Its lineage traces from Leibniz’s *characteristica universalis*, through Boole’s algebra of logic, to Church’s Lambda Calculus. The goal is **synthetic**: uniting the compositional clarity of foundational models (Lisp, ALGOL) with the cognitive usability and simplicity of Python.
 
-- avoiding over-formalization that yields elegance without usability,
-- avoiding extreme abstraction that obscures rather than clarifies,
-- avoiding ad-hoc growth that erodes conceptual unity.
+The vision is a language that is **industrial in capability** and **natural in expression**—prioritizing clear mental models over accidental complexity. Key design principles:
 
-The target is a system in which every construct composes cleanly, enabling a virtuous progression as espoused in famed SICP but with a cognitive touch:
+- Avoid over-formalization that sacrifices usability.
+- Avoid abstraction that obscures clarity.
+- Avoid ad-hoc growth that erodes conceptual unity.
 
-**primitive → combination → abstraction → new primitive**
+The construct cycle remains: **primitive → combination → abstraction → new primitive**, scaling to unbounded complexity while preserving transparency.
 
-This cycle should scale to unbounded complexity without sacrificing conceptual transparency.
+This effort draws on:
 
-To reach this goal, I will engage deeply with the foundational literature of programming languages—drawing on the systematic rigor of the ALGOL tradition and the semantic frameworks pioneered by Landin, Strachey, Scott, and Hoare. In parallel, I will analyze the convergent lessons of modern language design: Scala’s multiparadigm synthesis, Rust’s ownership discipline, Julia’s performance-oriented multiple dispatch.
+- **Foundational rigor**: ALGOL, Landin, Strachey, Scott, Hoare  
+- **Modern synthesis**: Scala, Rust, Julia
 
-The challenge—and the opportunity—is to distill decades of theoretical insight and practical engineering into a single architecture: a language that is formally sound, semantically compositional, and a joy to think in.
+The challenge is to distill decades of theoretical and practical insight into a **formally sound, semantically compositional, and human-intuitive language**.
 
-## On Ambition and Attrition
+---
 
-Nomi is an experimental language shaped by curiosity, long-term thinking, and an awareness of uncertainty. History shows that many well-designed languages struggle to find adoption, not only because of technical limits, but because tooling, education, platforms, and community momentum matter just as much as ideas themselves. Nomi may grow slowly, change form, or even fade from view regardless of its internal merits. This is not a failure of intent but the normal pressure experienced by ambitious projects. If Nomi thrives, it will do so through shared effort; if it does not, its ideas can still travel forward through those who engage with it.
+# Ambition and Attrition
 
-Evaluating a programming language is a long-term, challenging endeavor, shaped by debates between theory and practice, academia and industry. Every perspective contributes value, and progress emerges through independence, perseverance, and constant feedback. I do not aim to produce world-changing theorems; instead, I focus on concrete tools, real-world experience, and careful iteration—grounded on Python as a practical baseline. At the same time, curiosity and historical insight—nourished by fortunate exposure to world-class physicists and scientists, and a habit of questioning even my own limitations—guide refinements toward coherence and orthogonality. These tensions are not obstacles to be resolved; they are productive sources of motion, balancing immediate utility with long-term structural clarity.
+Nomi is experimental, guided by curiosity and long-term thinking. History shows many well-designed languages struggle to gain adoption due to **tooling, education, platforms, and social momentum**. Nomi may evolve slowly, change form, or even fade regardless of its internal merits. This is not a failure—it is the **normal evolutionary pressure** of ambitious projects.
 
-For a deeper look at the intellectual lineage, design risks, and long-term context of Nomi, see [Positioning Within Ambition and Risk](documentation/positioning_ambition_risk.md)
+Evaluation of a programming language is inherently long-term, shaped by debates between **theory and practice, academia and industry**. Every perspective contributes, and progress emerges through **independence, perseverance, and continuous feedback**.
+
+I do not aim to produce world-changing theorems, but focus on **concrete tools, real-world experience, and careful iteration**, grounded in Python as a baseline. Historical insight and curiosity—nourished by exposure to world-class scientists and persistent questioning—guide refinement toward **coherence, orthogonality, and long-term clarity**.
+
+For a deeper look at the **intellectual lineage, design risks, and context of Nomi**, see [Positioning Within Ambition and Risk](documentation/positioning_ambition_risk.md).
+
