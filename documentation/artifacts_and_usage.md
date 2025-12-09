@@ -1,17 +1,8 @@
 Artifacts and Usage
 ===
-While the project uses Python as a conceptual baseline, the necessary infrastructure beyond the standard Abstract Syntax Tree (AST) interface had to be completely built from the ground up. The Python built-in  `ast.parse` and `exec` are used only for functional tests, driving incremental changes and ensuring the new implementation aligns with the expected behavior of the conceptual Python baseline.
-Both parsing and evaluation can now be tweaked with a fair level of granularity. However, the resumable (generator/coroutine) part of the implementation is recognized as more brittle (passing comprehensive tests, but documented with caveats).
+Nomi is executed through a Python-based runner, with parsing performed by Lark and programs lowered into a Python AST before being interpreted by a layered runtime. Python serves as the current host environment, enabling rapid iteration and reference testing during development.
 
-Nomi programs are executed by running a Nomi source file through a
-Python-based runner. Parsing is performed with **Lark**, grammars live
-under `prototype/grammar/`, and Nomi code is first lowered into a
-**Python AST** before being interpreted by the layered runtime in
-`prototype/interpreter/`. Python serves as the semantic baseline, with
-Nomi features introduced through explicit AST reduction and embedded
-semantic changes. Additional parsing and execution examples live under
-`prototype/test/data/sample_source/`, and tests are in
-`prototype/tests/`.
+Parsing and evaluation can now be modified with substantial granularity, though the resumable-control subsystem (generator/coroutine–based) remains one of the more delicate components—functional, tested, but documented with caveats.
 
 The primary entry point of the project is the execution of a **Nomi
 source file**, currently exposed through a Python-based runner:
@@ -40,12 +31,8 @@ syntax to runtime behavior.
 -   **Execution:** Execution is handled by a layered interpreter located
     in `prototype/interpreter/`.
 
-At each stage, Python structure is established first, and Nomi-specific
-behavior is then embedded on top of it---primarily via **AST reduction
-and semantic overlays** (via inheritance and controlled use of context
-managers). In effect, every Nomi feature is realized as a **systematic
-deformation of Python's AST and evaluation model**, rather than as a
-parallel runtime.
+
+Nomi-specific semantics are introduced through AST reduction, semantic overlays, and controlled context management. Semantic shifts—such as constraint handling or yield-to-block generalization—are implemented through explicit AST rewrites coupled with controlled deviations from the baseline semantics.
 
 This approach serves several purposes simultaneously:
 
@@ -66,3 +53,11 @@ The test suite is located under:
 Most tests currently operate at the regression/functional level;
 finer-grained coverage will be introduced gradually.
 
+
+## Building a New Substrate Beneath a Familiar Surface
+
+While Python serves as Nomi’s conceptual and semantic baseline, almost all infrastructure beyond the standard AST layer has been built from the ground up. The parser is hand-rolled with Lark; the evaluator, environment model, and resumable-control mechanisms are entirely new. Python’s built-in `ast.parse` and `exec` are used only for reference tests—ensuring that, where Nomi intentionally follows Python, alignment is exact.
+
+The implementation still uses Python’s concrete data structures (dicts, lists, objects) and function-calling mechanism, but only through thin, explicit abstraction layers. These layers are intentionally designed to be peeled away as the implementation matures—making room for a VM-based interpreter, custom bytecode, or a stack-machine execution model.
+
+Python is thus the host, the semantic reference, and the bootstrap substrate, but not the destination. The internal architecture is already oriented toward eventual decoupling, and many of the bridges into the Python runtime are intentionally one-way and marked for removal when the language is ready.
