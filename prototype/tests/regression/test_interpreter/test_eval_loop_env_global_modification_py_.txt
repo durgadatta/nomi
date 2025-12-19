@@ -1,0 +1,10 @@
+{
+  "x": 30,
+  "outer": "outer:class=<class 'function'>",
+  "stdout": [
+    "20",
+    "20",
+    "30",
+    ""
+  ]
+}
