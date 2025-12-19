@@ -16,7 +16,7 @@ class Environment(PyEnvironment):
             return self.constraints[name]
         if self.parent:
             return self.parent.get_constraints(name)
-        return []
+        return None
 
     def set_constraint(self, name: str, predicate: Callable[[Any], bool]):
         """Set constraint predicate for a variable."""
@@ -33,7 +33,7 @@ class Environment(PyEnvironment):
         new_env.constraints = self.constraints.copy()
         return new_env
     
-    def set(self, name: str, value: Any):
+    def setx(self, name: str, value: Any):
         #TODO: for global/non-local we should get constraints the same way 
         # we get the binding; get/set should be in sync with regards 
         # to scope
@@ -44,4 +44,29 @@ class Environment(PyEnvironment):
                 # this likely is shadowed; p(v) either is True or raise e
                 # refactor alter
                 raise TypeError(f"Constraint violation for '{name}': value {value!r} does not satisfy constraint")
+        super().set(name, value)
+
+
+    def set(self, name: str, value: Any):
+        # Get constraint from the appropriate scope based on variable declaration
+        constraint = None
+        
+        if name in self.declared_globals:
+            # For global variables, get constraint from global environment
+            constraint = self.interpreter.global_env.constraints.get(name)
+        elif name in self.declared_nonlocals:
+            # For nonlocal variables, find where it's actually bound and get constraint
+            env = self.parent
+            while env and name not in env.bindings:
+                env = env.parent
+            if env:
+                constraint = env.constraints.get(name)
+        else:
+            # For local variables, get constraint from local scope
+            constraint = self.constraints.get(name)
+        
+        # Check the constraint if it exists
+        if constraint is not None and not constraint(value):
+            raise TypeError(f"Constraint violation for '{name}': value {value!r} does not satisfy constraint")
+        
         super().set(name, value)
