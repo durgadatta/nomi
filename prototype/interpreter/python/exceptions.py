@@ -1,7 +1,7 @@
 import ast
 from typing import Any
 
-from .base import ReturnException, YieldException
+from .signals import ReturnException, YieldException
 
 class ExceptionMixin:
     def eval_Raise(self, node: ast.Raise) -> None:

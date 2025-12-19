@@ -1,5 +1,5 @@
 import ast
-from .base import ReturnException, YieldException
+from .signals import ReturnException, YieldException
 
 
 class ContextManagerMixin:

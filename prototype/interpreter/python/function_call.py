@@ -5,7 +5,7 @@ thus, separating this into a new file
 import ast
 from typing import Any
 
-from .base import YieldException
+from .signals import YieldException
 
 
 class FunctionCallResumable:
