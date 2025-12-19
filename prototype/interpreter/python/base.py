@@ -33,6 +33,8 @@ class Environment:
         self.declared_nonlocals: Set[str] = set()
 
     def get(self, name: str) -> Any:
+        if name in self.declared_globals:
+            return self.interpreter.global_env.get(name)
         if name in self.bindings:
             return self.bindings[name]
         if self.parent:
