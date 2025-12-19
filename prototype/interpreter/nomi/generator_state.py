@@ -1,8 +1,8 @@
-from ..python.generator_state import GeneratorState as PythonGeneratorState
+from ..python.generator_state import CoroutineState as PythonCoroutineState
 import ast
 
 
-class GeneratorState(PythonGeneratorState):
+class CoroutineState(PythonCoroutineState):
     def __init__(self, *args, block=None, **kwargs):
         super().__init__(*args, **kwargs)
         #TODO: make it explicit block/params/env
