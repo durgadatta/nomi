@@ -1,5 +1,5 @@
 from ...interpreter.python import Interpreter as PythonInterpreter
-from .base import Environment
+from .env import Environment
 from .generator_state import CoroutineState
 from .binding import BindingMixin
 from .functions import FunctionMixin

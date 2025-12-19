@@ -1,9 +1,7 @@
 import ast
 from typing import Any
 
-from .base import (
-    Environment, ReturnException, YieldException
-)
+from .base import ReturnException, YieldException
 
 class ExceptionMixin:
     def eval_Raise(self, node: ast.Raise) -> None:

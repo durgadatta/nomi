@@ -4,7 +4,7 @@ import builtins
 from contextlib import contextmanager
 
 
-from .base import (
+from .env import (
     Environment
 )
 from .generator_state import CoroutineState

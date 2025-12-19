@@ -1,9 +1,6 @@
-'''
-Later move env-specific part to a separate module (now they are in base.py)
-'''
 import pytest
 
-from prototype.interpreter.python.base import Environment
+from prototype.interpreter.python.env import Environment
 
 # Test double for Interpreter
 class MockInterpreter:
