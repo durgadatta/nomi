@@ -19,7 +19,7 @@ print(a)
 ensure that the exception raise inside the 
 while block is passed to the context manger 
 
-see more comments on GeneratorState class
+see more comments on CoroutineState class
 '''
 @contextmanager
 def error_printer_context():

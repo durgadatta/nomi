@@ -20,7 +20,7 @@
   "fibonacci_generator": "fibonacci_generator:class=<class 'function'>",
   "fibonacci_generator_while": "fibonacci_generator_while:class=<class 'function'>",
   "generator_with_loop": "generator_with_loop:class=<class 'function'>",
-  "gen": "un-named:class=<class 'prototype.interpreter.python.generator_state.GeneratorState'>",
+  "gen": "un-named:class=<class 'prototype.interpreter.python.generator_state.CoroutineState'>",
   "factorial": "factorial:class=<class 'function'>",
   "fibonacci_recursive": "fibonacci_recursive:class=<class 'function'>",
   "sum_list": "sum_list:class=<class 'function'>",

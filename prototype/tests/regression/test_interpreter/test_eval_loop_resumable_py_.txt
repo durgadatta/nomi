@@ -1,7 +1,7 @@
 {
   "contextmanager": "contextmanager:class=<class 'function'>",
   "gen": "gen:class=<class 'function'>",
-  "g": "un-named:class=<class 'prototype.interpreter.python.generator_state.GeneratorState'>",
+  "g": "un-named:class=<class 'prototype.interpreter.python.generator_state.CoroutineState'>",
   "cm": "cm:class=<class 'function'>",
   "stdout": [
     "should print: before after done",

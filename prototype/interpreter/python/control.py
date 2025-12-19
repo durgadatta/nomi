@@ -8,7 +8,7 @@ from .exceptions import ExceptionMixin
 
 class ControlMixin(ExceptionMixin):
 
-    def eval_If(self, node: ast.If, *, state=None, generator_state: 'GeneratorState' = None) -> None:
+    def eval_If(self, node: ast.If, *, state=None, generator_state: 'CoroutineState' = None) -> None:
         '''
         Note that elif's are already parses as nested if/orelse
         '''
@@ -76,7 +76,7 @@ class ControlMixin(ExceptionMixin):
             msg = self.eval(node.msg) if node.msg else None
             raise AssertionError(msg)
 
-    def eval_For(self, node: ast.For, *, state=None, generator_state: 'GeneratorState' = None) -> None:
+    def eval_For(self, node: ast.For, *, state=None, generator_state: 'CoroutineState' = None) -> None:
         """Evaluate a For loop node - unified approach."""
         
         #TODO: when gen-state is None, fallback to regular without out even creating
@@ -155,7 +155,7 @@ class ControlMixin(ExceptionMixin):
         if not state['broke']:
             self.eval(node.orelse)
 
-    def eval_While(self, node: ast.While, *, state=None, generator_state: 'GeneratorState' = None) -> None:
+    def eval_While(self, node: ast.While, *, state=None, generator_state: 'CoroutineState' = None) -> None:
         """Evaluate a While loop node - unified approach."""
         
         # Initialize state

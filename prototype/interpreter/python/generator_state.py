@@ -3,7 +3,7 @@ from typing import List, Optional, Any
 
 from .base import YieldException, ReturnException
 
-class GeneratorState:
+class CoroutineState:
     """
     Manages state for generator functions.
     
