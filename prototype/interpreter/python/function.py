@@ -1,7 +1,7 @@
 import ast
 from typing import List, Any
 
-from .base import ReturnException
+from .signals import ReturnException
 from .function_call import FunctionCallMixin
 
 class FunctionMixin(FunctionCallMixin):

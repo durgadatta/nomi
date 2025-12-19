@@ -1,5 +1,5 @@
 import ast
-from .base import YieldException
+from .signals import YieldException
 
 class BindingMixin:
     def del_target(self, node: ast.expr) -> None:

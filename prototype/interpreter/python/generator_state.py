@@ -1,7 +1,7 @@
 import ast
 from typing import List, Optional, Any
 
-from .base import YieldException, ReturnException
+from .signals import YieldException, ReturnException
 
 class CoroutineState:
     """
