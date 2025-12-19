@@ -1,5 +1,5 @@
 from typing import Any, List, Dict, Callable
-from ...interpreter.python.base import Environment as PyEnvironment
+from ..python.env import Environment as PyEnvironment
 
 class Environment(PyEnvironment):
     def __init__(self, *args, **kwargs):

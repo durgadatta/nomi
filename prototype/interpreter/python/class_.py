@@ -1,5 +1,4 @@
 import ast
-from .base import Environment
 from typing import Any
 
 class ClassMixin:
