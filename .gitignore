@@ -1,9 +1,13 @@
+# development
 .vscode/
 local/
-
 .env
 
+#execution
 *.pyc
 __pycache__/
+
+#packaging and distribution
+*egg-info/
 
 
