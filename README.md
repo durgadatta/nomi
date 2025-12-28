@@ -9,10 +9,25 @@ Rather than piling on features, Nomi constructs a unified core where expressiven
 
 # Usage
 
-Nomi programs are executed through a Python-based runner (`run_nomi.py`) that parses Nomi source files using **Lark**, lowers them into a **Python AST**, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and embedded semantic extensions.
+Nomi programs are executed through a Python-based runner that parses Nomi source files using **Lark**, lowers them into a **Python AST**, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and embedded semantic extensions.
 
+
+## Option 1: Install as a package (recommended for regular use)
 ```bash
-python run_nomi.py [filename]  # defaults to demo.nomi
+# Install in editable mode from source
+pip install -e .
+
+# Run Nomi programs
+nomi demo.nomi
+nomi script.py
+nomi --help
+```
+(This anticipates "nomi" becoming a general pip-installable PyPI package)
+
+## Option 2: Direct execution (no installation required)
+```bash
+# Run directly from the source directory
+python scripts/cli.py [filename]  # defaults to demo.nomi
 ```
 
 > **Note on contributions:** Nomi is in an early, fast-moving stage. Broad public contributions may be premature. Contribution guidelines will be added as the core stabilizes. Enthusiastic participants are welcome to follow this note and the linked documentation, or reach out for feedback and discussion.

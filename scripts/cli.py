@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """
-Nomi/Python Runner - Simple version
-Usage: python run_nomi.py [filename]
+Nomi CLI - Run Nomi or Python files
 """
 
 import sys
 from pathlib import Path
 
-# Import both evaluation loops
 from prototype.interpreter.python.usage import run_eval_loop as run_python
 from prototype.interpreter.nomi.usage import run_eval_loop as run_nomi
 
 def main():
     # Get filename from args or use default
-    filename = sys.argv[1] if len(sys.argv) > 1 else 'demo.nomi'
+    if len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help"]:
+        print("Usage: nomi [filename]")
+        print("  filename: .nomi or .py file (default: scripts/demo.nomi)")
+        return
+    
+    filename = sys.argv[1] if len(sys.argv) > 1 else 'scripts/demo.nomi'
     file_path = Path(filename)
     
     if not file_path.exists():
