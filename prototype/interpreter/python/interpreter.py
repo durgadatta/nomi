@@ -52,33 +52,47 @@ class Interpreter(
         '''
         :param state: State to resume from 
         :param generator_state: one per generator, 
-            uses stack to keep track of yields withing nested resume-ables
+            uses stack to keep track of yields within nested resume-ables
         '''
-
-        #TODO: why do we get this?
+        # Handle list of statements (common case)
+        if isinstance(node, list):
+            for stmt in node:
+                self.eval(stmt, state=state, generator_state=generator_state)
+            return None
+        
+        # Handle None node
         if node is None:
             return None
         
         node_name = node.__class__.__name__
         method = getattr(self, f'eval_{node_name}', None)
         if method is None:
-            raise NotImplementedError(f"Node type {node_name} not supported at line {self.get_lineno(node)}")
+            lineno = self.get_lineno(node)
+            raise NotImplementedError(
+                f"Node type {node_name} not supported at line {lineno}"
+            )
         try:
             if self.is_resumable(node):
                 return method(node, state=state, generator_state=generator_state)
             return method(node)
-        except (StopIteration, ZeroDivisionError):
+        except (StopIteration, ZeroDivisionError, StopAsyncIteration):
             # Re-raise semantic exceptions unchanged
             raise
         except Exception as e:
             # Only wrap "unexpected" exceptions, not user-raised ones
-            if isinstance(e, (RuntimeError, TypeError, ValueError, NameError, AttributeError, SyntaxError)):
+            if isinstance(e, (RuntimeError, TypeError, ValueError, 
+                            NameError, AttributeError, SyntaxError,
+                            IndexError, KeyError)):
                 # These are likely user-raised or Python built-in exceptions
                 # Let them propagate for try-except blocks to catch
                 raise
             else:
                 # Wrap other exceptions as interpreter errors
-                raise RuntimeError(f"Error evaluating {node.__class__.__name__} at line {self.get_lineno(node)}: {str(e)}") from e
+                lineno = self.get_lineno(node)
+                raise RuntimeError(
+                    f"Error evaluating {node.__class__.__name__} at line {lineno}: {str(e)}"
+                ) from e
+
 
     @contextmanager
     def this_env(self, env):

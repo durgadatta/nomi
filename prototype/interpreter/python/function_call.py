@@ -95,7 +95,7 @@ class FunctionCallResumable:
         
         result = func(*evaluated_args, **kwargs)
         
-        #NOTE this is an abuse of mechanism used in for send() to 
+        # NOTE: this is an abuse of mechanism used in for send() to 
         # communicate with assignment
         # review better way to deal with this
         if generator_state:
