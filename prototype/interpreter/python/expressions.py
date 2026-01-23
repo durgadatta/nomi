@@ -1,7 +1,7 @@
 import ast
 from typing import Any
 
-class ExpresssionMixin:
+class ExpressionMixin:
     def eval_Global(self, node: ast.Global) -> None:
         self.current_env.declared_globals.update(node.names)
 
