@@ -56,7 +56,7 @@ class DataStructMixin:
             
             # Handle set and list comprehensions (non-generator cases)
             for item in self.eval(gen.iter):
-                with self.this_env(self.env_class(self, self.curren_env)):
+                with self.this_env(self.env_class(self, self.current_env)):
                     self.assign_target(gen.target, item)
                     if all(self.eval(test) for test in gen.ifs):
                         inner = recurse(gens, index + 1)

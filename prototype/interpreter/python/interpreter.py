@@ -9,7 +9,7 @@ from .env import (
 )
 from .generator_state import CoroutineState
 from .function import FunctionMixin
-from .expressions import ExpresssionMixin
+from .expressions import ExpressionMixin
 from .ds import DataStructMixin
 from .control import ControlMixin
 from .patterns import PatternMixin
@@ -20,7 +20,7 @@ from .others import OthersMixin
 from .context_managers import ContextManagerMixin
 
 class Interpreter(
-    BindingMixin, FunctionMixin, ExpresssionMixin, DataStructMixin,
+    BindingMixin, FunctionMixin, ExpressionMixin, DataStructMixin,
     PatternMixin, ControlMixin, ClassMixin, ContextManagerMixin, OthersMixin
 ):
     """Evaluates AST nodes."""
