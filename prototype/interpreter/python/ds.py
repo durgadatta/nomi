@@ -1,5 +1,6 @@
 import ast
 from typing import Dict, Any, List, Iterator, Callable
+from typing import Tuple, Set, Callable, List, Dict, Any, Iterator
 
 
 class DataStructMixin:
@@ -23,58 +24,6 @@ class DataStructMixin:
     def eval_GeneratorExp(self, node: ast.GeneratorExp) -> Iterator[Any]:
         return self._eval_comp(node.elt, node.generators, (lambda x: (yield x)))
 
-    def _eval_comp(self, elt: ast.expr, generators: List[ast.comprehension], collector: Callable) -> Any:
-        def recurse(gens, index=0):
-            if index >= len(generators):
-                # Base case: evaluate the element
-                value = self.eval(elt)
-                if collector is set:
-                    return {value}
-                elif collector is list:
-                    return [value]
-                else:
-                    # Only use yield for actual generator expressions
-                    return collector(value)
-            
-            gen = gens[index]
-            
-            # Create the appropriate result container
-            if collector is set:
-                result = set()
-            elif collector is list:
-                result = []
-            else:
-                # For generator expressions, we need to yield values
-                def gen_func():
-                    for item in self.eval(gen.iter):
-                        with self.this_env(self.env_class(self, self.current_env)):
-                            self.assign_target(gen.target, item)
-                            if all(self.eval(test) for test in gen.ifs):
-                                inner = recurse(gens, index + 1)
-                                yield from inner
-                return gen_func()
-            
-            # Handle set and list comprehensions (non-generator cases)
-            for item in self.eval(gen.iter):
-                with self.this_env(self.env_class(self, self.current_env)):
-                    self.assign_target(gen.target, item)
-                    if all(self.eval(test) for test in gen.ifs):
-                        inner = recurse(gens, index + 1)
-                        
-                        if collector is set:
-                            if isinstance(inner, set):
-                                result |= inner
-                            else:
-                                result.add(inner)
-                        elif collector is list:
-                            if isinstance(inner, list):
-                                result.extend(inner)
-                            else:
-                                result.append(inner)
-            
-            return result
-        
-        return recurse(generators)
 
     def eval_DictComp(self, node: ast.DictComp) -> Dict[Any, Any]:
         result = {}
