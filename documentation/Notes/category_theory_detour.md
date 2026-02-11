@@ -49,3 +49,20 @@ Returning to this material has been slow and often disorienting. Intuitions fail
 The expectation is that this grounding will make it easier to project rough ideas into cleaner structures, interpolate between partial designs, and extrapolate without losing coherence.
 
 The recent silence, then, has not been inactivity but consolidation. This detour is less a diversion than a reinforcement of foundations, very much in the spirit of the traditions that motivated this project in the first place.
+
+
+# Temporary Conclusion on the Category Theory Detour
+
+I have now spent hundreds of hours exploring category theory in the context of thinking about Nomi. Over this period, I have learned a substantial amount of terminology and become familiar with many central concepts — adjunctions, limits and colimits, functors, natural transformations, universal properties, and the categorical view of logic. My coverage has expanded significantly. I now recognize recurring structural patterns across different areas, and the internal consistency of my understanding has improved. Ideas that once felt opaque now feel interconnected; I can often see why definitions are shaped the way they are, even if I cannot yet fully command them.
+
+At the same time, much of this knowledge remains partially digested. Some of it is still half-formed: I know the vocabulary, I can trace the formal shapes, but I do not yet grasp the ideas with enough depth and precision to responsibly embed them into the core design of Nomi. I cannot extract from category theory a foundation that feels both technically solid and conceptually earned.
+
+Throughout this detour, I have learned from a range of voices — the structural clarity of Eugenia Cheng, the logical discipline of Peter Smith, the programmer’s perspective of Bartosz Milewski, the applied and conceptual framing of David Spivak, the type-theoretic and foundational insights of Robert Harper and the logical depth of Robert Goldblatt, along with the expository precision of Tom Leinster, the structural and conceptual sensibility of Harold Simmons, and the computational and philosophical bridges built by Noson Yanofsky. Each contributed a different lens, and together they expanded my conceptual landscape.
+
+I remain vaguely but strongly convinced that category theory — particularly in its deep entanglement with logic — can help streamline and clarify many of the foundational ideas behind Nomi. It feels like the right altitude of abstraction. But at this stage, my understanding is not yet mature enough to integrate it in a principled way.
+
+So this path pauses here.
+
+I expect to return to it later, likely with sharper questions and more concrete pressures emerging from the language design itself. For now, category theory remains a background structure: suggestive, powerful, and unfinished in my hands.
+
+This is not an ending, only a suspension. 
