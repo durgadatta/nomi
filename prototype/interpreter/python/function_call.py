@@ -9,6 +9,29 @@ from .signals import YieldException
 
 
 class FunctionCallResumable:
+    def _extend_positional_arg(self, args, arg: ast.expr, *, generator_state=None):
+        if isinstance(arg, ast.Starred):
+            starred_val = self.eval(arg.value, generator_state=generator_state)
+            args.extend(starred_val)
+        else:
+            args.append(self.eval(arg, generator_state=generator_state))
+
+    def _merge_keyword_arg(self, kwargs, kw: ast.keyword, *, call_node=None, generator_state=None):
+        if kw.arg is None:
+            kw_val = self.eval(kw.value, generator_state=generator_state)
+            if not isinstance(kw_val, dict):
+                lineno = self.get_lineno(call_node or kw)
+                raise TypeError(f"argument after ** must be a mapping at line {lineno}")
+            kwargs.update(kw_val)
+            return
+
+        kwargs[kw.arg] = self._keyword_value(kw, generator_state=generator_state)
+
+    def _keyword_value(self, kw: ast.keyword, *, generator_state=None):
+        if kw.arg == '__block__':
+            return (*kw.value, self.current_env)
+        return self.eval(kw.value, generator_state=generator_state)
+
     def eval_Call(self, node: ast.Call, *, state=None, generator_state=None) -> Any:
         """
         Evaluate a function call, supporting yields in arguments.
@@ -46,12 +69,8 @@ class FunctionCallResumable:
                 if i == start_index and sent_value is not None:
                     evaluated_args.append(sent_value)
                     continue
-                        
-                if isinstance(arg, ast.Starred):
-                    starred_val = self.eval(arg.value, generator_state=generator_state)
-                    evaluated_args.extend(starred_val)
-                else:
-                    evaluated_args.append(self.eval(arg, generator_state=generator_state))
+
+                self._extend_positional_arg(evaluated_args, arg, generator_state=generator_state)
             
             # Process keyword arguments
             kw_start = 0
@@ -70,21 +89,8 @@ class FunctionCallResumable:
                         value = sent_value
                     kwargs[kw.arg] = value
                     continue
-                    
-                if kw.arg is None:
-                    # **kwargs
-                    kw_val = self.eval(kw.value, generator_state=generator_state)
-                    if not isinstance(kw_val, dict):
-                        raise TypeError(f"argument after ** must be a mapping at line {self.get_lineno(node)}")
-                    kwargs.update(kw_val)
-                else:
-                    # __block__ special handling - DON'T evaluate the value
-                    if kw.arg == '__block__':
-                        value = kw.value  
-                        value = (*value, self.current_env)  
-                    else:
-                        value = self.eval(kw.value, generator_state=generator_state)
-                    kwargs[kw.arg] = value
+
+                self._merge_keyword_arg(kwargs, kw, call_node=node, generator_state=generator_state)
                     
         except YieldException as ye:
             # Pause at current index (works for both positional and keyword args)
@@ -113,27 +119,11 @@ class FunctionCall:
         # Evaluate arguments
         posargs = []
         for arg in node.args:
-            if isinstance(arg, ast.Starred):
-                posargs.extend(self.eval(arg.value))
-            else:
-                posargs.append(self.eval(arg))
+            self._extend_positional_arg(posargs, arg)
 
         kwargs = {}
         for kw in node.keywords:
-            if kw.arg is None:
-                kw_val = self.eval(kw.value)
-                if not isinstance(kw_val, dict):
-                    raise TypeError(f"argument after ** must be a mapping at line {self.get_lineno(node)}")
-                kwargs.update(kw_val)
-            else:
-                value = kw.value
-                # if it is a block arg; don't eval it
-                # generator state will eval it in the caller's env
-                if kw.arg == '__block__':
-                    value = (*value, self.current_env)
-                else:
-                    value = self.eval(kw.value)
-                kwargs[kw.arg] = value
+            self._merge_keyword_arg(kwargs, kw, call_node=node)
 
         return func(*posargs, **kwargs)
     
