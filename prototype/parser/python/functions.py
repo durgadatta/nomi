@@ -10,6 +10,30 @@ class FunctionDefMixin:
     Reuses the same _build_arguments() logic for both.
     """
 
+    def _empty_arguments(self):
+        return ast.arguments(
+            posonlyargs=[], args=[], vararg=None,
+            kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]
+        )
+
+    def _flatten_items(self, items):
+        flattened_items = []
+        for item in items:
+            if isinstance(item, list):
+                flattened_items.extend(item)
+            else:
+                flattened_items.append(item)
+        return flattened_items
+
+    def _coerce_param_item(self, item):
+        if isinstance(item, tuple) and len(item) == 2:
+            return item
+        if isinstance(item, str):
+            return ast.arg(arg=item, annotation=None), None
+        if isinstance(item, ast.arg):
+            return item, None
+        return None, None
+
     
     def typedparam(self, items):
         """
@@ -88,20 +112,9 @@ class FunctionDefMixin:
         Simplified parameters processing without complex unpacking
         """
         if not items:
-            return ast.arguments(
-                posonlyargs=[], args=[], vararg=None,
-                kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]
-            )
+            return self._empty_arguments()
         
-        # Flatten any nested lists
-        flattened_items = []
-        for item in items:
-            if isinstance(item, list):
-                flattened_items.extend(item)
-            else:
-                flattened_items.append(item)
-        
-        items = flattened_items
+        items = self._flatten_items(items)
         
         # Now process items sequentially without complex unpacking
         posonlyargs = []
@@ -141,19 +154,8 @@ class FunctionDefMixin:
                 kwarg = item[1]
                 continue
 
-            # Handle all parameter types in one place
-            if isinstance(item, tuple) and len(item) == 2:
-                # Already processed: (ast.arg, default_expr)
-                arg_obj, default_expr = item
-            elif isinstance(item, str):
-                # Inline paramvalue: raw parameter name
-                arg_obj = ast.arg(arg=item, annotation=None)
-                default_expr = None
-            elif isinstance(item, ast.arg):
-                # Inline typedparam: parameter with annotation
-                arg_obj = item
-                default_expr = None
-            else:
+            arg_obj, default_expr = self._coerce_param_item(item)
+            if arg_obj is None:
                 continue
 
             current_list.append(arg_obj)

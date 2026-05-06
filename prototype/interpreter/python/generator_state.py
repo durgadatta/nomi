@@ -43,21 +43,29 @@ class CoroutineState:
         self.sent_value = None
         self.is_first_iteration = True
 
+    def _frame(self, node, state):
+        return {
+            'node': node,
+            'state': state,
+        }
+
+    def _is_processing_node(self, node) -> bool:
+        return self._processing_frame and self._processing_frame['node'] == node
+
+    def _queue_paused_frame(self, node, state) -> None:
+        self.paused_frames.append(self._frame(node, state))
+
+    def _queue_current_frame(self, node, state) -> None:
+        self.paused_frames.insert(0, self._frame(node, state))
 
     def pause(self, node, state):
         # Check if this yield comes from the frame we're currently processing
-        if self._processing_frame and self._processing_frame['node'] == node:
+        if self._is_processing_node(node):
             # Current frame yielded again - put at front for immediate continuation
-            self.paused_frames.insert(0, {
-                'node': node,
-                'state': state,
-            })
+            self._queue_current_frame(node, state)
         else:
             # New frame yielding - add to end (normal nesting)
-            self.paused_frames.append({
-                'node': node,
-                'state': state,
-            })
+            self._queue_paused_frame(node, state)
         self._processing_frame = None  # Reset processing state
 
     def resume(self):
@@ -214,4 +222,3 @@ class CoroutineState:
             return getattr(self.body[self.index], 'lineno', 1)
         
         return 
-

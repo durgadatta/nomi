@@ -9,6 +9,21 @@ class Environment:
         self.declared_globals: Set[str] = set()
         self.declared_nonlocals: Set[str] = set()
 
+    def _find_nonlocal_env(self, name: str) -> 'Environment':
+        env = self.parent
+        while env and name not in env.bindings:
+            env = env.parent
+        if env is None:
+            raise NameError(f"nonlocal name '{name}' not found")
+        return env
+
+    def _assignment_env(self, name: str) -> 'Environment':
+        if name in self.declared_globals:
+            return self.interpreter.global_env
+        if name in self.declared_nonlocals:
+            return self._find_nonlocal_env(name)
+        return self
+
     def get(self, name: str) -> Any:
         if name in self.declared_globals:
             return self.interpreter.global_env.get(name)
@@ -19,18 +34,7 @@ class Environment:
         raise NameError(f"name '{name}' is not defined")
 
     def set(self, name: str, value: Any):
-        if name in self.declared_globals:
-            self.interpreter.global_env.bindings[name] = value
-        elif name in self.declared_nonlocals:
-            env = self.parent
-            while env and name not in env.bindings:
-                env = env.parent
-            if env:
-                env.bindings[name] = value
-            else:
-                raise NameError(f"nonlocal name '{name}' not found")
-        else:
-            self.bindings[name] = value
+        self._assignment_env(name).bindings[name] = value
 
     def delete(self, name: str):
         if name in self.bindings:

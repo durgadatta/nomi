@@ -2,6 +2,81 @@ import ast
 from .signals import YieldException
 
 class BindingMixin:
+    def _iter_unpack_value(self, value, target):
+        try:
+            return iter(value)
+        except TypeError as e:
+            raise TypeError(f"Cannot unpack non-iterable {type(value).__name__} at line {self.get_lineno(target)}") from e
+
+    def _starred_indices(self, elts, target):
+        star_indices = [i for i, elt in enumerate(elts) if isinstance(elt, ast.Starred)]
+        if len(star_indices) > 1:
+            raise SyntaxError(f"multiple starred expressions in assignment at line {self.get_lineno(target)}")
+        return star_indices
+
+    def _assign_plain_sequence(self, elts, iterator, target):
+        needed = len(elts)
+        got = []
+        try:
+            for _ in range(needed):
+                got.append(next(iterator))
+        except StopIteration:
+            raise ValueError(f"Not enough values to unpack (expected {needed}) at line {self.get_lineno(target)}")
+
+        try:
+            next(iterator)
+            raise ValueError(f"Too many values to unpack (expected {needed}) at line {self.get_lineno(target)}")
+        except StopIteration:
+            pass
+
+        for subtarget, subval in zip(elts, got):
+            self.assign_target(subtarget, subval)
+
+    def _assign_starred_sequence(self, elts, star_i, iterator, target):
+        before = elts[:star_i]
+        star = elts[star_i]
+        after = elts[star_i + 1 :]
+
+        before_vals = []
+        try:
+            for _ in before:
+                before_vals.append(next(iterator))
+        except StopIteration:
+            min_needed = len(before) + len(after)
+            raise ValueError(
+                f"Not enough values to unpack (expected at least {min_needed}) at line {self.get_lineno(target)}"
+            )
+
+        rest = list(iterator)
+        if len(rest) < len(after):
+            min_needed = len(before) + len(after)
+            raise ValueError(
+                f"Not enough values to unpack (expected at least {min_needed}) at line {self.get_lineno(target)}"
+            )
+
+        if after:
+            star_vals = rest[: len(rest) - len(after)]
+            after_vals = rest[-len(after) :]
+        else:
+            star_vals = rest
+            after_vals = []
+
+        for subtarget, subval in zip(before, before_vals):
+            self.assign_target(subtarget, subval)
+        self.assign_target(star.value, list(star_vals))
+        for subtarget, subval in zip(after, after_vals):
+            self.assign_target(subtarget, subval)
+
+    def _assign_sequence_target(self, target, value):
+        elts = target.elts
+        star_indices = self._starred_indices(elts, target)
+        iterator = self._iter_unpack_value(value, target)
+
+        if not star_indices:
+            self._assign_plain_sequence(elts, iterator, target)
+        else:
+            self._assign_starred_sequence(elts, star_indices[0], iterator, target)
+
     def del_target(self, node: ast.expr) -> None:
         if isinstance(node, ast.Name):
             self.current_env.delete(node.id)
@@ -73,77 +148,7 @@ class BindingMixin:
 
         # Tuple/List unpacking (accept any iterable, including generators)
         if isinstance(target, (ast.Tuple, ast.List)):
-            elts = target.elts
-            # validate single starred target rule
-            star_indices = [i for i, e in enumerate(elts) if isinstance(e, ast.Starred)]
-            if len(star_indices) > 1:
-                raise SyntaxError(f"multiple starred expressions in assignment at line {self.get_lineno(target)}")
-
-            try:
-                iterator = iter(value)
-            except TypeError as e:
-                raise TypeError(f"Cannot unpack non-iterable {type(value).__name__} at line {self.get_lineno(target)}") from e
-
-            if not star_indices:
-                # Non-starred: must get exactly len(elts) items
-                needed = len(elts)
-                got = []
-                try:
-                    for _ in range(needed):
-                        got.append(next(iterator))
-                except StopIteration:
-                    raise ValueError(f"Not enough values to unpack (expected {needed}) at line {self.get_lineno(target)}")
-
-                # Ensure there are no trailing items
-                try:
-                    next(iterator)
-                    raise ValueError(f"Too many values to unpack (expected {needed}) at line {self.get_lineno(target)}")
-                except StopIteration:
-                    pass
-
-                for subtarget, subval in zip(elts, got):
-                    self.assign_target(subtarget, subval)
-
-            else:
-                # Starred present (Python allows exactly one)
-                star_i = star_indices[0]
-                before = elts[:star_i]
-                star = elts[star_i]            # ast.Starred
-                after = elts[star_i + 1 :]
-
-                # Collect 'before' items
-                before_vals = []
-                try:
-                    for _ in before:
-                        before_vals.append(next(iterator))
-                except StopIteration:
-                    min_needed = len(before) + len(after)
-                    raise ValueError(
-                        f"Not enough values to unpack (expected at least {min_needed}) at line {self.get_lineno(target)}"
-                    )
-
-                # Collect the remainder to slice off 'after' from the tail
-                rest = list(iterator)
-                if len(rest) < len(after):
-                    min_needed = len(before) + len(after)
-                    raise ValueError(
-                        f"Not enough values to unpack (expected at least {min_needed}) at line {self.get_lineno(target)}"
-                    )
-
-                if after:
-                    star_vals = rest[: len(rest) - len(after)]
-                    after_vals = rest[-len(after) :]
-                else:
-                    star_vals = rest
-                    after_vals = []
-
-                # Assign
-                for subtarget, subval in zip(before, before_vals):
-                    self.assign_target(subtarget, subval)
-                # starred target gets a list of remaining values
-                self.assign_target(star.value, list(star_vals))
-                for subtarget, subval in zip(after, after_vals):
-                    self.assign_target(subtarget, subval)
+            self._assign_sequence_target(target, value)
             return
 
         # Starred alone (should only appear inside Tuple/List target)

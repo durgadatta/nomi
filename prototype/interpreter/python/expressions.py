@@ -2,6 +2,29 @@ import ast
 from typing import Any
 
 class ExpressionMixin:
+    BINARY_OPERATORS = {
+        ast.Add: lambda l, r: l + r,
+        ast.Sub: lambda l, r: l - r,
+        ast.Mult: lambda l, r: l * r,
+        ast.Div: lambda l, r: l / r,
+        ast.FloorDiv: lambda l, r: l // r,
+        ast.Mod: lambda l, r: l % r,
+        ast.Pow: lambda l, r: l ** r,
+        ast.LShift: lambda l, r: l << r,
+        ast.RShift: lambda l, r: l >> r,
+        ast.BitOr: lambda l, r: l | r,
+        ast.BitXor: lambda l, r: l ^ r,
+        ast.BitAnd: lambda l, r: l & r,
+        ast.MatMult: lambda l, r: l @ r,
+    }
+
+    UNARY_OPERATORS = {
+        ast.Invert: lambda o: ~o,
+        ast.Not: lambda o: not o,
+        ast.UAdd: lambda o: +o,
+        ast.USub: lambda o: -o,
+    }
+
     def eval_Global(self, node: ast.Global) -> None:
         self.current_env.declared_globals.update(node.names)
 
@@ -37,25 +60,10 @@ class ExpressionMixin:
 
     def apply_operator(self, left, op, right, node=None):
         """Apply binary operator with proper error handling."""
-        operator_map = {
-            ast.Add: lambda l, r: l + r,
-            ast.Sub: lambda l, r: l - r,
-            ast.Mult: lambda l, r: l * r,
-            ast.Div: lambda l, r: l / r,
-            ast.FloorDiv: lambda l, r: l // r,
-            ast.Mod: lambda l, r: l % r,
-            ast.Pow: lambda l, r: l ** r,
-            ast.LShift: lambda l, r: l << r,
-            ast.RShift: lambda l, r: l >> r,
-            ast.BitOr: lambda l, r: l | r,
-            ast.BitXor: lambda l, r: l ^ r,
-            ast.BitAnd: lambda l, r: l & r,
-            ast.MatMult: lambda l, r: l @ r,
-        }
-        
         try:
-            if type(op) in operator_map:
-                return operator_map[type(op)](left, right)
+            operator = self.BINARY_OPERATORS.get(type(op))
+            if operator:
+                return operator(left, right)
             else:
                 raise TypeError(f"Unsupported operator {type(op).__name__}")
         except Exception as e:
@@ -70,13 +78,7 @@ class ExpressionMixin:
         
     def eval_UnaryOp(self, node: ast.UnaryOp) -> Any:
         operand = self.eval(node.operand)
-        op_map = {
-            ast.Invert: lambda o: ~o,
-            ast.Not: lambda o: not o,
-            ast.UAdd: lambda o: +o,
-            ast.USub: lambda o: -o,
-        }
-        func = op_map.get(type(node.op))
+        func = self.UNARY_OPERATORS.get(type(node.op))
         if func is None:
             raise NotImplementedError(f"Unary operator {type(node.op).__name__} not supported at line {self.get_lineno(node)}")
         try:
