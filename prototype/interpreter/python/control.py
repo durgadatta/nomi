@@ -7,26 +7,50 @@ from .signals import (
 from .exceptions import ExceptionMixin
 
 class ControlMixin(ExceptionMixin):
+    def _maybe_raise_injected_exception(self, generator_state) -> None:
+        if generator_state:
+            generator_state.raise_injected_exception()
+
+    def _pause_generator(self, node: ast.AST, state: dict, generator_state) -> None:
+        generator_state.pause(node, state)
+
+    def _initial_if_state(self, node: ast.If) -> dict:
+        chosen_body = node.body if self.eval(node.test) else node.orelse
+        return {
+            'chosen_body': chosen_body,
+            'body_index': 0,
+        }
+
+    def _initial_for_state(self, node: ast.For) -> dict:
+        iter_obj = self.eval(node.iter)
+        try:
+            iterator = iter(iter_obj)
+        except TypeError as e:
+            lineno = getattr(node, 'lineno', 1)
+            raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
+
+        return {
+            'node': node, # generator needs to know this to resume
+            'iterator': iterator,
+            'broke': False,
+            'body_index': 0
+        }
+
+    def _initial_while_state(self, node: ast.While) -> dict:
+        return {
+            'node' : node,
+            'broke': False,
+            'body_index': 0
+        }
 
     def eval_If(self, node: ast.If, *, state=None, generator_state: 'CoroutineState' = None) -> None:
         '''
         Note that elif's are already parses as nested if/orelse
         '''
         if state is None:
-            # First time: evaluate condition, choose branch, save it
-            test_val = self.eval(node.test)
-            if test_val:
-                chosen_body = node.body
-            else:
-                chosen_body = node.orelse
+            state = self._initial_if_state(node)
 
-            state = {
-                'chosen_body': chosen_body,
-                'body_index': 0,
-            }
-
-        if generator_state:
-            generator_state.raise_injected_exception()
+        self._maybe_raise_injected_exception(generator_state)
 
         # Execute the chosen body, resumably
         body = state['chosen_body']
@@ -39,7 +63,7 @@ class ControlMixin(ExceptionMixin):
                 i += 1
             except YieldException:
                 state['body_index'] = i + 1
-                generator_state.pause(node, state)
+                self._pause_generator(node, state, generator_state)
                 raise
 
     def eval_AsyncFor(self, node: ast.AsyncFor) -> None:
@@ -82,28 +106,13 @@ class ControlMixin(ExceptionMixin):
         #TODO: when gen-state is None, fallback to regular without out even creating
         # a state; now a state is created regardless
         if state is None:
-            # New execution - create iterator
-            iter_obj = self.eval(node.iter)
-            try:
-                iterator = iter(iter_obj)
-            except TypeError as e:
-                lineno = getattr(node, 'lineno', 1) 
-                raise TypeError(f"'{type(iter_obj).__name__}' object is not iterable at line {lineno}") from e
-
-            # Initialize state
-            state = {
-                'node': node, # generator needs to know this to resume 
-                'iterator': iterator,
-                'broke': False,
-                'body_index': 0
-            }
+            state = self._initial_for_state(node)
         try:
-            if generator_state:
-                generator_state.raise_injected_exception()
+            self._maybe_raise_injected_exception(generator_state)
             self._execute_for_loop(node, state, generator_state=generator_state)      
         except YieldException:
             # Save state and re-raise for generator handling
-            generator_state.pause(node, state)
+            self._pause_generator(node, state, generator_state)
             raise
 
     def _execute_for_loop(self, node: ast.For, state: dict, generator_state):
@@ -160,19 +169,13 @@ class ControlMixin(ExceptionMixin):
         
         # Initialize state
         if state is None:
-            # New execution
-            state = {
-                'node' : node,
-                'broke': False,
-                'body_index': 0
-            }
+            state = self._initial_while_state(node)
         try:
-            if generator_state:
-                generator_state.raise_injected_exception()
+            self._maybe_raise_injected_exception(generator_state)
             self._execute_while_loop(node, state)      
         except YieldException:
             # Save state and re-raise for generator handling
-            generator_state.pause(node, state)
+            self._pause_generator(node, state, generator_state)
             raise
 
 
