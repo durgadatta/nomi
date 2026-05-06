@@ -5,26 +5,32 @@ from .signals import ReturnException
 from .function_call import FunctionCallMixin
 
 class FunctionMixin(FunctionCallMixin):
+    FUNCTION_METADATA_ATTRS = ('__name__', 'ast_node', 'func_env')
+
+    def _new_closure_env(self):
+        return self.env_class(self, parent=self.current_env)
+
+    def _preserve_function_metadata(self, obj: Any) -> dict:
+        return {
+            attr_name: getattr(obj, attr_name)
+            for attr_name in self.FUNCTION_METADATA_ATTRS
+            if hasattr(obj, attr_name)
+        }
+
+    def _restore_function_metadata(self, obj: Any, metadata: dict) -> None:
+        for attr_name, attr_value in metadata.items():
+            setattr(obj, attr_name, attr_value)
+
     def apply_decorators(self, obj: Any, decorators: List[ast.expr]) -> Any:
         for dec in reversed(decorators):
             # Create new environment for decorator evaluation
-            dec_env = self.env_class(self, parent=self.current_env)
+            dec_env = self._new_closure_env()
             
             with self.this_env(dec_env):
                 dec_func = self.eval(dec)
-                
-                # Store all original attributes
-                original_attrs = {}
-                for attr_name in ['__name__', 'ast_node', 'func_env']:
-                    if hasattr(obj, attr_name):
-                        original_attrs[attr_name] = getattr(obj, attr_name)
-                
-                # Apply the decorator
+                original_attrs = self._preserve_function_metadata(obj)
                 obj = dec_func(obj)
-                
-                # Always restore critical attributes
-                for attr_name, attr_value in original_attrs.items():
-                    setattr(obj, attr_name, attr_value)
+                self._restore_function_metadata(obj, original_attrs)
         return obj
     
     def _is_generator_function(self, node: ast.FunctionDef) -> bool:
@@ -55,6 +61,13 @@ class FunctionMixin(FunctionCallMixin):
         ''' so that it can be overridden'''
         return self.gen_state(self, body, local_env)
 
+    def _execute_function_body(self, body):
+        try:
+            self.eval(body)
+            return None
+        except ReturnException as re:
+            return re.value
+
     def eval_Function(self, node: ast.FunctionDef) -> callable:
         '''
         isolate evaluating function from the binding
@@ -63,7 +76,7 @@ class FunctionMixin(FunctionCallMixin):
         created without bindings
         '''
         # Create function environment with closure as parent
-        func_env = self.env_class(self, parent=self.current_env)
+        func_env = self._new_closure_env()
         
         def func(*args, **kwargs):
             is_generator = self._is_generator_function(node)
@@ -78,11 +91,7 @@ class FunctionMixin(FunctionCallMixin):
                 return self.eval_generator_obj(node.body, local_env, block=block)
             else:                
                 with self.this_env(local_env):
-                    try:
-                        self.eval(node.body)
-                        return None
-                    except ReturnException as re:
-                        return re.value
+                    return self._execute_function_body(node.body)
    
         func.func_env = func_env 
         # this is used in eval_Call to determine user-defined function
@@ -108,7 +117,7 @@ class FunctionMixin(FunctionCallMixin):
 
     def eval_Lambda(self, node: ast.Lambda) -> Any:
         # Create function environment with closure as parent  
-        func_env = self.env_class(self, parent=self.current_env) 
+        func_env = self._new_closure_env()
         
         def lambda_func(*args, **kwargs):
             local_env = func_env.copy()
