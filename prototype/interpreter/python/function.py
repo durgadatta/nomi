@@ -129,6 +129,57 @@ class FunctionMixin(FunctionCallMixin):
         lambda_func.ast_node = node
         return lambda_func
 
+    def _bind_self_obj(self, env, params, self_obj):
+        if self_obj is None:
+            return params
+        if params:
+            env.set(params[0].arg, self_obj)
+            return params[1:]
+        return params
+
+    def _bind_declared_params(self, env, params, posargs, kwargs):
+        for i, param in enumerate(params):
+            if i < len(posargs):
+                env.set(param.arg, posargs[i])
+            elif param.arg in kwargs:
+                env.set(param.arg, kwargs[param.arg])
+
+    def _bind_keyword_values(self, env, params, posargs, kwargs):
+        bound_by_position = {param.arg for param in params[:len(posargs)]}
+        for key, value in kwargs.items():
+            if key not in bound_by_position:
+                env.set(key, value)
+
+    def _apply_param_defaults(self, env, params, defaults):
+        num_defaults = len(defaults)
+        if not num_defaults:
+            return
+
+        default_start = len(params) - num_defaults
+        for i, param in enumerate(params):
+            if param.arg not in env.bindings and i >= default_start:
+                default_idx = i - default_start
+                if default_idx < len(defaults):
+                    env.set(param.arg, self.eval(defaults[default_idx]))
+
+    def _bind_varargs(self, func_node, env, params, posargs):
+        if not func_node.args.vararg:
+            return
+
+        vararg_name = func_node.args.vararg.arg
+        consumed_pos = min(len(params), len(posargs))
+        remaining_args = posargs[consumed_pos:]
+        env.set(vararg_name, tuple(remaining_args))
+
+    def _bind_kwargs(self, func_node, env, params, kwargs):
+        if not func_node.args.kwarg:
+            return
+
+        kwarg_name = func_node.args.kwarg.arg
+        consumed_kw = {p.arg for p in params if p.arg in env.bindings}
+        extra_kwargs = {k: v for k, v in kwargs.items() if k not in consumed_kw}
+        env.set(kwarg_name, extra_kwargs)
+
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
         '''
         NOTE: this is called by both definition and call
@@ -144,52 +195,12 @@ class FunctionMixin(FunctionCallMixin):
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []
         
-        if self_obj is not None:
-            # Bind to first parameter, regardless of its name
-            if params:
-                env.set(params[0].arg, self_obj)
-                params = params[1:]  # Remove the bound parameter
-            else:
-                # No parameters but self_obj provided - might be an error case
-                # Or handle __init__ without parameters
-                pass
-
-        # Bind positional arguments (constraints checked by env.set())
-        for i, param in enumerate(params):
-            if i < len(posargs):
-                env.set(param.arg, posargs[i])
-            elif param.arg in kwargs:
-                env.set(param.arg, kwargs[param.arg])
-
-        # Bind keyword arguments
-        for key, value in kwargs.items():
-            # Only bind if not already bound by position
-            if key not in [p.arg for p in params[:len(posargs)]]:
-                env.set(key, value)
-
-        # Apply defaults
-        num_defaults = len(defaults)
-        if num_defaults:
-            default_start = len(params) - num_defaults
-            for i, param in enumerate(params):
-                if param.arg not in env.bindings and i >= default_start:
-                    default_idx = i - default_start
-                    if default_idx < len(defaults):
-                        env.set(param.arg, self.eval(defaults[default_idx]))
-
-        # Handle *args
-        if func_node.args.vararg:
-            vararg_name = func_node.args.vararg.arg
-            consumed_pos = min(len(params), len(posargs))
-            remaining_args = posargs[consumed_pos:]
-            env.set(vararg_name, tuple(remaining_args))
-
-        # Handle **kwargs
-        if func_node.args.kwarg:
-            kwarg_name = func_node.args.kwarg.arg
-            consumed_kw = {p.arg for p in params if p.arg in env.bindings}
-            extra_kwargs = {k: v for k, v in kwargs.items() if k not in consumed_kw}
-            env.set(kwarg_name, extra_kwargs)
+        params = self._bind_self_obj(env, params, self_obj)
+        self._bind_declared_params(env, params, posargs, kwargs)
+        self._bind_keyword_values(env, params, posargs, kwargs)
+        self._apply_param_defaults(env, params, defaults)
+        self._bind_varargs(func_node, env, params, posargs)
+        self._bind_kwargs(func_node, env, params, kwargs)
     
     def eval_Return(self, node: ast.Return) -> None:
         value = self.eval(node.value) if node.value else None
