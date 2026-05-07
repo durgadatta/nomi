@@ -14,11 +14,13 @@ dependencies = [
 jupyter = [
     "ipykernel",
     "jupyter_client",
+    "nbformat",
     "notebook",
 ]
 dev = [
     "ipykernel",
     "jupyter_client",
+    "nbformat",
     "notebook",
     "pytest",
     "pytest-cov",

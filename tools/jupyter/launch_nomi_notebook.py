@@ -55,6 +55,7 @@ def launch_notebook(root: Path, notebook: Path, no_browser: bool) -> None:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     root = project_root()
     default_notebook = root / "notebooks" / "nomi_syntax_tour.ipynb"
+    minimal_notebook = root / "notebooks" / "nomi_minimal.ipynb"
 
     parser = argparse.ArgumentParser(
         description="Install the local Nomi Jupyter kernel and open the syntax tour notebook."
@@ -65,6 +66,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         default=default_notebook,
         help="Notebook to open. Defaults to notebooks/nomi_syntax_tour.ipynb.",
+    )
+    parser.add_argument(
+        "--minimal",
+        action="store_true",
+        help="Open notebooks/nomi_minimal.ipynb instead of the full syntax tour.",
     )
     parser.add_argument(
         "--skip-install",
@@ -81,7 +87,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Start Notebook without opening a browser window.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.minimal:
+        args.notebook = minimal_notebook
+    return args
 
 
 def main(argv: list[str] | None = None) -> None:
