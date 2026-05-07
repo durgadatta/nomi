@@ -19,13 +19,14 @@ On macOS, the easiest path is to open `tools/vscode/nomi/scripts` in Finder and 
 - `test.command`: runs extension tests.
 - `package.command`: builds a local `.vsix`.
 - `install-local.command`: builds and installs the local `.vsix` into VS Code.
+- `enable-local.command`: builds/installs the local `.vsix`, then opens `scripts/demo.nomi` to activate it.
 - `clean.command`: removes generated local artifacts.
 
 The same interface is available from a terminal:
 
 ```bash
 python3 tools/vscode/nomi/scripts/nomi-vscode.py setup
-python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
 Run this to see every action:
@@ -44,6 +45,7 @@ Available tasks:
 - `Nomi Extension: Test`
 - `Nomi Extension: Package`
 - `Nomi Extension: Install Local Package`
+- `Nomi Extension: Enable Local Package`
 - `Nomi Extension: Publish Check`
 - `Nomi Extension: Clean`
 
@@ -83,16 +85,24 @@ Manual smoke test:
 5. Select a few lines and run `Nomi: Run Selection`.
 6. Use Outline, hover, completions, and go to definition on a local function call.
 
-## Local Install
+## Enable Locally
 
-To install the extension locally without publishing:
+To install or update the extension locally without publishing and activate it immediately:
 
 ```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
 This installs dependencies if needed, builds the `.vsix`, and runs
 `code-insiders --install-extension ... --force` when Insiders is available.
+It then opens `scripts/demo.nomi`, which activates the extension because `.nomi`
+files are registered to the Nomi language.
+
+If you only want to install/update the package without opening a file:
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+```
 
 ## Publish Prep
 

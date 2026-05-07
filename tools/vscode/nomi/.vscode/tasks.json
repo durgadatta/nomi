@@ -26,6 +26,12 @@
       "problemMatcher": []
     },
     {
+      "label": "Nomi Extension: Enable Local Package",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py enable-local",
+      "problemMatcher": []
+    },
+    {
       "label": "Nomi Extension: Publish Check",
       "type": "shell",
       "command": "python3 scripts/nomi-vscode.py publish-check",

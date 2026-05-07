@@ -29,6 +29,8 @@ def main() -> int:
             "test",
             "package",
             "install-local",
+            "enable-local",
+            "activate-local",
             "dev",
             "status",
             "clean",
@@ -54,6 +56,8 @@ def main() -> int:
         "test": test,
         "package": package,
         "install-local": install_local,
+        "enable-local": enable_local,
+        "activate-local": enable_local,
         "dev": dev,
         "status": status,
         "clean": clean,
@@ -72,6 +76,7 @@ Common actions:
   test           Run VS Code extension tests
   package        Build a local .vsix package
   install-local  Build and install the .vsix into local VS Code / Insiders
+  enable-local   Install/update the .vsix and open demo.nomi to activate it
   dev            Open this extension folder in VS Code / Insiders for F5 debugging
   status         Show environment, package, and generated artifact status
   clean          Remove generated local artifacts
@@ -80,7 +85,7 @@ Common actions:
 
 Examples:
   python3 tools/vscode/nomi/scripts/nomi-vscode.py setup
-  python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+  python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
   python3 tools/vscode/nomi/scripts/nomi-vscode.py publish-check --publisher your-publisher
 """
     )
@@ -112,6 +117,20 @@ def install_local() -> int:
     vsix = latest_vsix()
     run([code, "--install-extension", str(vsix), "--force"], cwd=REPO_ROOT)
     print("\nInstalled local Nomi extension package into VS Code.")
+    return 0
+
+
+def enable_local() -> int:
+    code = require_code()
+    install_local()
+    demo = REPO_ROOT / "scripts" / "demo.nomi"
+    if demo.exists():
+        run([code, "--reuse-window", str(demo)], cwd=REPO_ROOT)
+        print("\nOpened scripts/demo.nomi. The Nomi extension activates when a .nomi file opens.")
+    else:
+        run([code, "--reuse-window", str(REPO_ROOT)], cwd=REPO_ROOT)
+        print("\nOpened the Nomi repository. Open any .nomi file to activate the extension.")
+    print("If the extension was manually disabled in the UI, re-enable it from the Extensions view.")
     return 0
 
 

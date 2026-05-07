@@ -147,6 +147,7 @@
     "nomi": "python3 scripts/nomi-vscode.py",
     "setup": "python3 scripts/nomi-vscode.py setup",
     "local": "python3 scripts/nomi-vscode.py install-local",
+    "enable-local": "python3 scripts/nomi-vscode.py enable-local",
     "dev": "python3 scripts/nomi-vscode.py dev",
     "clean": "python3 scripts/nomi-vscode.py clean",
     "publish-check": "python3 scripts/nomi-vscode.py publish-check",
