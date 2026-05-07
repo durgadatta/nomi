@@ -38,10 +38,7 @@ python3 scripts/cli.py [filename]  # defaults to demo.nomi
 Install the notebook dependencies and register the local Nomi kernel:
 
 ```bash
-python3 -m pip install -e ".[jupyter]"
-python3 -m tools.jupyter.install_nomi_kernel --user
-python3 -m tools.jupyter.check_nomi_kernel
-python3 -m notebook notebooks/nomi_syntax_tour.ipynb
+python3 tools/jupyter/launch_nomi_notebook.py
 ```
 
 Then choose the `Nomi` kernel in Jupyter. The kernel keeps one Nomi interpreter

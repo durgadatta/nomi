@@ -11,13 +11,19 @@ From the repository root:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python3 -m pip install -e ".[jupyter]"
-python3 -m tools.jupyter.install_nomi_kernel --user
-python3 -m tools.jupyter.check_nomi_kernel
-python3 -m notebook notebooks/nomi_syntax_tour.ipynb
+python3 tools/jupyter/launch_nomi_notebook.py
 ```
 
-Then open a notebook and choose the `Nomi` kernel.
+The launcher installs the editable package with Jupyter dependencies,
+installs/refreshes the local kernelspec, smoke-tests the Nomi kernel, and opens
+the syntax tour notebook. Then choose the `Nomi` kernel if Jupyter does not pick
+it automatically.
+
+For a faster launch after the first run:
+
+```bash
+python3 tools/jupyter/launch_nomi_notebook.py --skip-install
+```
 
 The installer writes a kernelspec that points back to this checkout through
 `NOMI_PROJECT_ROOT` and `PYTHONPATH`. Re-run the installer if the repository is
