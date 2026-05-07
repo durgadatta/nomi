@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Nomi Extension: Setup",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py setup",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Test",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Package",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py package",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Install Local Package",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py install-local",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Publish Check",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py publish-check",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Clean",
+      "type": "shell",
+      "command": "python3 scripts/nomi-vscode.py clean",
+      "problemMatcher": []
+    }
+  ]
+}
