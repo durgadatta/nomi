@@ -2,3 +2,4 @@ lark
 
 pytest
 pytest-regressions
+pytest-xdist

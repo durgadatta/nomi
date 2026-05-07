@@ -13,3 +13,6 @@ packages = ["prototype"]
 
 [project.scripts]
 nomi = "scripts.cli:main"
+
+[tool.pytest.ini_options]
+addopts = "-n auto"
