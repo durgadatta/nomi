@@ -16,7 +16,7 @@ Nomi programs are executed through a Python-based runner that parses Nomi source
 
 ```bash
 # Install in editable mode from source
-pip install -e .
+python3 -m pip install -e .
 
 # Run Nomi programs
 nomi demo.nomi
@@ -30,8 +30,27 @@ nomi --help
 
 ```bash
 # Run directly from the source directory
-python scripts/cli.py [filename]  # defaults to demo.nomi
+python3 scripts/cli.py [filename]  # defaults to demo.nomi
 ```
+
+## Option 3: Jupyter Notebook Kernel
+
+Install the notebook dependencies and register the local Nomi kernel:
+
+```bash
+python3 -m pip install -e ".[jupyter]"
+python3 -m tools.jupyter.install_nomi_kernel --user
+python3 -m notebook
+```
+
+Then choose the `Nomi` kernel in Jupyter. The kernel keeps one Nomi interpreter
+alive per notebook, so definitions and bindings persist across cells. It also
+supports `%run scripts/demo.nomi`, `%who`, `%reset`, and `%ast`.
+
+Start with [notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb)
+for a notebook covering the syntax currently implemented in the prototype.
+
+More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
 
 ## Test Reports
 

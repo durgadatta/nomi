@@ -6,10 +6,29 @@ build-backend = "setuptools.build_meta"
 name = "nomi"
 version = "0.1.0"
 readme = "README.md"
+dependencies = [
+    "lark",
+]
 
-[tool.setuptools]
-py-modules = ["scripts"] 
-packages = ["prototype"]
+[project.optional-dependencies]
+jupyter = [
+    "ipykernel",
+    "jupyter_client",
+    "notebook",
+]
+dev = [
+    "ipykernel",
+    "jupyter_client",
+    "notebook",
+    "pytest",
+    "pytest-cov",
+    "pytest-html",
+    "pytest-regressions",
+    "pytest-xdist",
+]
+
+[tool.setuptools.packages.find]
+include = ["prototype*", "scripts*", "tools*"]
 
 [project.scripts]
 nomi = "scripts.cli:main"
