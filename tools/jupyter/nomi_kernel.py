@@ -109,7 +109,10 @@ class NomiKernel(Kernel):
         }
 
     def do_is_complete(self, code: str) -> dict:
-        if not code.strip():
+        stripped = code.strip()
+        if not stripped:
+            return {"status": "complete"}
+        if stripped.startswith("%"):
             return {"status": "complete"}
         try:
             generate_ast(code=self._normalize_source(code))
