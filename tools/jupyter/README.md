@@ -25,6 +25,18 @@ For a faster launch after the first run:
 python3 tools/jupyter/launch_nomi_notebook.py --skip-install
 ```
 
+For the smallest possible execution check:
+
+```bash
+python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
+```
+
+The notebooks are generated with clean metadata from:
+
+```bash
+python3 -m tools.jupyter.create_demo_notebooks
+```
+
 The installer writes a kernelspec that points back to this checkout through
 `NOMI_PROJECT_ROOT` and `PYTHONPATH`. Re-run the installer if the repository is
 moved.
@@ -91,8 +103,8 @@ execution unless it appears immediately beside a kernel startup traceback.
 
 ## Syntax Tour
 
-Open [nomi_syntax_tour.ipynb](../../notebooks/nomi_syntax_tour.ipynb) after the
-kernel is installed. It covers the Nomi syntax currently implemented in this
-repository: `func`, arrow functions, constrained binding, constrained
-parameters, Python-compatible expressions/control, matching, classes/imports,
-and yield-to-block calls.
+Open [nomi_minimal.ipynb](../../notebooks/nomi_minimal.ipynb) for a tiny smoke
+test, or [nomi_syntax_tour.ipynb](../../notebooks/nomi_syntax_tour.ipynb) for a
+tour of the syntax currently implemented in this repository: `func`, arrow
+functions, constrained binding, constrained parameters, Python-compatible
+expressions/control, matching, classes/imports, and yield-to-block calls.

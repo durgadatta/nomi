@@ -46,7 +46,12 @@ alive per notebook, so definitions and bindings persist across cells. It also
 supports `%run scripts/demo.nomi`, `%who`, `%reset`, and `%ast`.
 
 Start with [notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb)
-for a notebook covering the syntax currently implemented in the prototype.
+for a notebook covering the syntax currently implemented in the prototype, or
+open the minimal smoke notebook with:
+
+```bash
+python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
+```
 
 More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
 

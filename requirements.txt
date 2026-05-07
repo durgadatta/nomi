@@ -1,6 +1,7 @@
 lark
 ipykernel
 jupyter_client
+nbformat
 notebook
 
 pytest
