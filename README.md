@@ -61,10 +61,10 @@ An early VS Code extension scaffold lives at [tools/vscode/nomi](tools/vscode/no
 It registers `.nomi` files, provides syntax highlighting, snippets, run commands,
 document symbols, hover notes, and first-pass go to definition support.
 
-For the easiest local install without publishing, run:
+For the easiest local install and activation without publishing, run:
 
 ```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
 For active development, run:

@@ -31,6 +31,7 @@ Supported actions:
 - `test`: run VS Code extension tests.
 - `package`: build a local `.vsix`.
 - `install-local`: build and install the `.vsix` into local VS Code.
+- `enable-local`: build/install the `.vsix`, then open `scripts/demo.nomi` to activate it.
 - `dev`: open the extension folder in VS Code for `F5` debugging.
 - `status`: show environment and artifact status.
 - `clean`: remove generated artifacts.
@@ -43,7 +44,7 @@ On macOS, clickable `.command` wrappers live in:
 tools/vscode/nomi/scripts
 ```
 
-Double-click `install-local.command` for the easiest non-published local install.
+Double-click `enable-local.command` for the easiest non-published local install and activation.
 
 ## VS Code Tasks
 
@@ -51,19 +52,22 @@ Open `tools/vscode/nomi` in VS Code and run `Tasks: Run Task`.
 
 Tasks are provided for setup, test, package, local install, publish check, and clean.
 
-## Local Install Without Publishing
+## Enable Locally Without Publishing
 
 Run:
 
 ```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
 This:
 
 1. Installs dependencies if needed.
 2. Builds `nomi-vscode-<version>.vsix`.
-3. Installs it into VS Code with `code --install-extension ... --force`.
+3. Installs it into VS Code Insiders with `code-insiders --install-extension ... --force` when available.
+4. Opens `scripts/demo.nomi` to activate the extension.
+
+Use `install-local` instead if you want to install the package without opening a file.
 
 Prerequisites:
 

@@ -1,0 +1,6 @@
+# Keep this local-reference area local.
+#
+# Git should only see this ignore file. Actual reference content, including
+# tutorials, copied docs, screenshots, and experiments, stays local by default.
+*
+!.gitignore
