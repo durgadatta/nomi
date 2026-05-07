@@ -19,6 +19,8 @@ class PatternMixin:
         return items[0]
 
     def capture_pattern(self, items):
+        if items[0] == "_":
+            return ast.MatchAs(name=None, pattern=None)
         return ast.MatchAs(name=items[0], pattern=None)
 
     def any_pattern(self, items):

@@ -1,10 +1,16 @@
 import ast
 from lark import Lark
 from lark.indenter import PythonIndenter
+from lark.lexer import PatternRE
 
 from pathlib import Path
 
 from .ast_ import NomiToPythonAST
+
+
+def prefer_name_for_underscore_terminal(terminal):
+    if terminal.name == "UNDERSCORE":
+        terminal.pattern = PatternRE("(?!)_")
 
 
 def get_parser():
@@ -19,6 +25,7 @@ def get_parser():
             parser="earley",
             postlex=PythonIndenter(),
             start="file_input",
+            edit_terminals=prefer_name_for_underscore_terminal,
     )
     return parser
 
