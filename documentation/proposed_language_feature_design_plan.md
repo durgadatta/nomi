@@ -20,6 +20,10 @@
 > - [Radical Language Feature Ideas](radical_language_feature_ideas.md) collects
 >   more speculative ideas such as calculational blocks, relations, proof-carrying
 >   code, live values, worlds, semantic holes, and counterfactual execution.
+> - [Everyday Radical Language Ideas](everyday_radical_language_ideas.md)
+>   focuses on radical-but-common features for daily coding: validation,
+>   cleanup, defaults, collection transforms, retry/timeout, logging, config,
+>   forms, CLI commands, small parallel blocks, caching, patches, and undo.
 
 ## Purpose
 
