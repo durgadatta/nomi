@@ -2,8 +2,10 @@
 """Generate clickable pytest and coverage HTML reports."""
 
 from pathlib import Path
+import argparse
 import subprocess
 import sys
+import webbrowser
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +41,14 @@ def write_index():
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Generate pytest and coverage HTML reports.")
+    parser.add_argument(
+        "--no-open",
+        action="store_true",
+        help="generate reports without opening reports/index.html",
+    )
+    args = parser.parse_args()
+
     REPORTS.mkdir(exist_ok=True)
     command = [
         sys.executable,
@@ -57,6 +67,8 @@ def main():
         print(f"Reports written to: {INDEX.relative_to(ROOT)}")
         print(f"Coverage report:    {(COVERAGE_DIR / 'index.html').relative_to(ROOT)}")
         print(f"Pytest report:      {PYTEST_REPORT.relative_to(ROOT)}")
+        if not args.no_open:
+            webbrowser.open(INDEX.as_uri())
     return result.returncode
 
 
