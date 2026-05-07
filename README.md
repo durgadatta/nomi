@@ -33,6 +33,14 @@ nomi --help
 python scripts/cli.py [filename]  # defaults to demo.nomi
 ```
 
+## Test Reports
+
+```bash
+python3 scripts/test_report.py
+```
+
+Open `reports/index.html` from VS Code after the command finishes. It links to the pytest HTML report and the line-by-line coverage report.
+
 > **Note on contributions:** Nomi is in an early, fast-moving stage. Broad public contributions may be premature. Contribution guidelines will be added as the core stabilizes. Interested readers are encouraged to follow the notes and documentation, or reach out for discussion and feedback.
 
 See [Artifacts and Usage](documentation/artifacts_and_usage.md) for more details.
