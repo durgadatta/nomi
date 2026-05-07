@@ -6,8 +6,11 @@ local/
 #execution
 *.pyc
 __pycache__/
+reports/
+htmlcov/
+.coverage
+coverage.xml
 
 #packaging and distribution
 *egg-info/
-
 

@@ -1,5 +1,7 @@
 lark
 
 pytest
+pytest-cov
+pytest-html
 pytest-regressions
 pytest-xdist
