@@ -17,6 +17,9 @@
 >   forms.
 > - [Nomi Language Revision Report](nomi_language_revision_report.md) records a
 >   report-style proposed language revision.
+> - [Radical Language Feature Ideas](radical_language_feature_ideas.md) collects
+>   more speculative ideas such as calculational blocks, relations, proof-carrying
+>   code, live values, worlds, semantic holes, and counterfactual execution.
 
 ## Purpose
 
