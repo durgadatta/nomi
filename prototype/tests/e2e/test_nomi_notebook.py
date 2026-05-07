@@ -33,6 +33,7 @@ def test_syntax_tour_notebook_cells_run_on_current_nomi_interpreter():
     interpreter = Interpreter()
 
     for cell in notebook["cells"]:
+        assert cell.get("id")
         if cell["cell_type"] != "code":
             continue
         code = "".join(cell["source"])

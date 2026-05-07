@@ -2,6 +2,8 @@
 .vscode/
 local/
 .env
+.ipynb_checkpoints/
+Untitled*.ipynb
 
 #execution
 *.pyc
@@ -13,4 +15,3 @@ coverage.xml
 
 #packaging and distribution
 *egg-info/
-
