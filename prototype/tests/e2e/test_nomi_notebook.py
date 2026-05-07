@@ -1,11 +1,13 @@
 import ast
 import json
+import sys
 from pathlib import Path
 
 from prototype.interpreter.nomi.interpreter import Interpreter
 from prototype.parser.nomi.usage import generate_ast
 from tools.jupyter.check_nomi_kernel import run_smoke
 from tools.jupyter.install_nomi_kernel import kernel_json
+from tools.jupyter.launch_nomi_notebook import main as launch_main
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -99,3 +101,25 @@ def test_kernel_smoke_runner_reports_expected_output(monkeypatch):
 
     assert outputs == ["7\n", "30"]
     assert ("execute", "add = (x, y) => x + y\nprint(add(2, 5))\nadd(10, 20)") in calls
+
+
+def test_one_command_launcher_runs_setup_check_and_notebook(monkeypatch):
+    calls = []
+
+    def fake_run_step(args, *, cwd):
+        calls.append((args, cwd))
+
+    monkeypatch.setattr("tools.jupyter.launch_nomi_notebook.run_step", fake_run_step)
+
+    launch_main(["--skip-install", "--no-browser"])
+
+    assert calls[0][0] == [
+        sys.executable,
+        "-m",
+        "tools.jupyter.install_nomi_kernel",
+        "--user",
+    ]
+    assert calls[1][0] == [sys.executable, "-m", "tools.jupyter.check_nomi_kernel"]
+    assert calls[2][0][:3] == [sys.executable, "-m", "notebook"]
+    assert calls[2][0][3] == str(ROOT / "notebooks" / "nomi_syntax_tour.ipynb")
+    assert calls[2][0][4] == "--no-browser"
