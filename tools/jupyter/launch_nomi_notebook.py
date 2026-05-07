@@ -6,6 +6,7 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 
 def project_root() -> Path:
@@ -30,7 +31,22 @@ def check_kernel(root: Path) -> None:
 
 
 def launch_notebook(root: Path, notebook: Path, no_browser: bool) -> None:
-    args = [sys.executable, "-m", "notebook", str(notebook)]
+    server_root = root
+    try:
+        relative_notebook = notebook.relative_to(server_root)
+    except ValueError:
+        server_root = notebook.parent
+        relative_notebook = Path(notebook.name)
+
+    notebook_url = quote(relative_notebook.as_posix())
+    args = [
+        sys.executable,
+        "-m",
+        "notebook",
+        f"--ServerApp.root_dir={server_root}",
+        f"--ServerApp.default_url=/lab/tree/{notebook_url}",
+        "--LabServerApp.notebook_starts_kernel=True",
+    ]
     if no_browser:
         args.append("--no-browser")
     run_step(args, cwd=root)
@@ -89,4 +105,3 @@ def main(argv: list[str] | None = None) -> None:
 
 if __name__ == "__main__":
     main()
-

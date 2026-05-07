@@ -16,8 +16,8 @@ python3 tools/jupyter/launch_nomi_notebook.py
 
 The launcher installs the editable package with Jupyter dependencies,
 installs/refreshes the local kernelspec, smoke-tests the Nomi kernel, and opens
-the syntax tour notebook. Then choose the `Nomi` kernel if Jupyter does not pick
-it automatically.
+the syntax tour notebook directly through Jupyter's interactive notebook route.
+Then choose the `Nomi` kernel if Jupyter does not pick it automatically.
 
 For a faster launch after the first run:
 
