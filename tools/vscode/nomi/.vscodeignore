@@ -1,0 +1,10 @@
+node_modules/**
+.vscode/**
+.vscode-test/**
+.vscode-test.js
+scripts/**
+**/__pycache__/**
+*.log
+src/test/**
+*.vsix
+.DS_Store

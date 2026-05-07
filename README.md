@@ -55,6 +55,28 @@ python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
 
 More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
 
+## Option 4: VS Code Extension
+
+An early VS Code extension scaffold lives at [tools/vscode/nomi](tools/vscode/nomi).
+It registers `.nomi` files, provides syntax highlighting, snippets, run commands,
+document symbols, hover notes, and first-pass go to definition support.
+
+For the easiest local install without publishing, run:
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local
+```
+
+For active development, run:
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
+```
+
+Then press `F5` in VS Code to launch an Extension Development Host.
+See [VS Code Extension](documentation/vscode_extension.md) for the current tooling
+roadmap and packaging notes.
+
 ## Test Reports
 
 ```bash

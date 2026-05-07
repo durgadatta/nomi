@@ -1,0 +1,169 @@
+{
+  "name": "nomi-vscode",
+  "displayName": "Nomi",
+  "description": "Language support for Nomi: syntax highlighting, run commands, symbols, hover, and first-pass go to definition.",
+  "version": "0.0.1",
+  "publisher": "nomi-lang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nomi-lang/nomi.git",
+    "directory": "tools/vscode/nomi"
+  },
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "nomi",
+    "language",
+    "syntax",
+    "runner"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:nomi",
+    "onCommand:nomi.runFile",
+    "onCommand:nomi.runSelection",
+    "onCommand:nomi.openTerminal"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "nomi",
+        "aliases": [
+          "Nomi",
+          "nomi"
+        ],
+        "extensions": [
+          ".nomi"
+        ],
+        "filenames": [],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nomi",
+        "scopeName": "source.nomi",
+        "path": "./syntaxes/nomi.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "nomi",
+        "path": "./snippets/nomi.code-snippets"
+      }
+    ],
+    "commands": [
+      {
+        "command": "nomi.runFile",
+        "title": "Nomi: Run File",
+        "category": "Nomi",
+        "icon": "$(play)"
+      },
+      {
+        "command": "nomi.runSelection",
+        "title": "Nomi: Run Selection",
+        "category": "Nomi",
+        "icon": "$(run)"
+      },
+      {
+        "command": "nomi.openTerminal",
+        "title": "Nomi: Open Terminal",
+        "category": "Nomi",
+        "icon": "$(terminal)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "nomi.runFile",
+          "when": "resourceLangId == nomi",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "nomi.runSelection",
+          "when": "resourceLangId == nomi && editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "nomi.runFile",
+          "when": "resourceLangId == nomi",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "nomi.runFile",
+          "when": "resourceExtname == .nomi",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Nomi",
+      "properties": {
+        "nomi.runner": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "installed",
+            "source"
+          ],
+          "default": "auto",
+          "description": "How Nomi files are run. Auto prefers a workspace scripts/cli.py and falls back to the installed nomi command."
+        },
+        "nomi.executable": {
+          "type": "string",
+          "default": "nomi",
+          "description": "Command used when running through an installed Nomi executable."
+        },
+        "nomi.pythonExecutable": {
+          "type": "string",
+          "default": "python3",
+          "description": "Python command used when running the source CLI."
+        },
+        "nomi.sourceCliPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional path to scripts/cli.py. Relative paths are resolved from the workspace folder."
+        },
+        "nomi.definitionSearchLimit": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 2000,
+          "description": "Maximum number of Nomi files scanned by the lightweight definition provider."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "nomi": "python3 scripts/nomi-vscode.py",
+    "setup": "python3 scripts/nomi-vscode.py setup",
+    "local": "python3 scripts/nomi-vscode.py install-local",
+    "dev": "python3 scripts/nomi-vscode.py dev",
+    "clean": "python3 scripts/nomi-vscode.py clean",
+    "publish-check": "python3 scripts/nomi-vscode.py publish-check",
+    "test": "vscode-test",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "publish:patch": "vsce publish patch",
+    "publish:minor": "vsce publish minor",
+    "publish:major": "vsce publish major"
+  },
+  "devDependencies": {
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.1"
+  },
+  "overrides": {
+    "diff": "8.0.4",
+    "serialize-javascript": "7.0.5"
+  }
+}
