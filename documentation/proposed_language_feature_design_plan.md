@@ -12,6 +12,11 @@
 >   syntax catalog.
 > - [Language Syntax Synthesis](language_syntax_synthesis.md) explains the
 >   small-core philosophy and cross-language reductions behind the catalog.
+> - [Cross-Language Feature Synthesis Examples](cross_language_feature_synthesis.md)
+>   compares similar features across several languages before proposing Nomi
+>   forms.
+> - [Nomi Language Revision Report](nomi_language_revision_report.md) records a
+>   report-style proposed language revision.
 
 ## Purpose
 

@@ -598,10 +598,11 @@ retry(3):
 Risky:
 
 ```python
-send_request ⍣ 3
+send_request repeat_symbol 3
 ```
 
-The second may be elegant in an APL context, but it does not fit Nomi's surface.
+The second stands in for dense symbolic repetition. It may be elegant in an APL
+context, but it does not fit Nomi's surface.
 
 ### Reducibility
 
