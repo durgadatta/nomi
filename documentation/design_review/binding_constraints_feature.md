@@ -6,6 +6,16 @@
 > cognition-first language vision. The current prototype is relevant evidence,
 > not a boundary on the design.
 
+First-principles position:
+
+```text
+Name -> Judge -> Explain
+```
+
+Binding constraints exist because a program must name values, judge whether
+they satisfy a concept, and explain failures at the boundary where values enter
+meaningful use.
+
 ## One Sentence
 
 A Nomi binding may carry constraints; the value is tentatively bound, checked in

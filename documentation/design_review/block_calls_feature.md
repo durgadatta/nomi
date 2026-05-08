@@ -7,6 +7,15 @@
 > how they reduce to a small core without becoming a pile of copied Ruby,
 > Python, Kotlin, or Scheme syntax.
 
+First-principles position:
+
+```text
+Transform -> Sequence In Time -> Touch The World -> Explain
+```
+
+Block calls exist because some transformations are time-shaped policies:
+acquire, yield, retry, cancel, clean up, authorize, and explain.
+
 ## One Sentence
 
 A Nomi block call is an ordinary call with caller-side code attached; the callee

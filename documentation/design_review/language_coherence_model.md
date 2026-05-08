@@ -3,8 +3,10 @@
 > Status: active design constraint.
 >
 > Nomi must not become a collection of admired syntax from other languages.
-> Every imported idea must be translated into one coherent language model before
-> it is allowed to become Nomi syntax.
+> Every feature must first be justified from the
+> [First-Principles Programming Model](first_principles_programming_model.md),
+> then translated into one coherent language model before it is allowed to
+> become Nomi syntax.
 
 ## Central Claim
 
@@ -17,7 +19,8 @@ Haskell and Kotlin, whose symbolic layer should learn from Mathematica, whose
 control abstraction should learn from Ruby, and whose data transformation style
 should learn from APL.
 
-The source languages are teachers, not ingredients.
+The source languages are teachers, not ingredients. First principles are the
+spine.
 
 ## The Whole-Language Shape
 
@@ -40,7 +43,16 @@ or explain why the core needs a new role.
 
 ## Translation, Not Collection
 
-Borrowed features must be translated into Nomi's semantic vocabulary.
+Borrowed features must be translated into Nomi's semantic vocabulary. The order
+is always:
+
+```text
+primitive programming need
+  -> existing language references
+  -> extracted idea
+  -> Nomi semantic role
+  -> Nomi syntax
+```
 
 | Source idea | Do not copy | Nomi translation |
 | --- | --- | --- |

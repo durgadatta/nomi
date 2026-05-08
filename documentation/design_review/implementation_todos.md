@@ -2,13 +2,19 @@
 
 > Status: staged backlog for the forward-looking language design.
 
-This backlog turns [Cognitive Language Vision](cognitive_language_vision.md)
-and [Binding Constraints Feature](binding_constraints_feature.md) into
+This backlog turns
+[First-Principles Programming Model](first_principles_programming_model.md),
+[Cognitive Language Vision](cognitive_language_vision.md), and
+[Binding Constraints Feature](binding_constraints_feature.md) into
 implementation-sized work. The current prototype is a bootstrap path, not a
 limit on what should be designed.
 
-## Track 0: Language Vision And Design Fixtures
+## Track 0: First Principles, Vision, And Design Fixtures
 
+- [ ] Maintain the first-principles programming model as the main spine of the
+  language design.
+- [ ] For each feature, identify the primitive cognitive act it supports before
+  comparing language precedents.
 - [ ] Maintain one canonical cognitive-language vision document and keep it
   ahead of the implementation.
 - [ ] Maintain the language coherence model as a blocking design review for new
