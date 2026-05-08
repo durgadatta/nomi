@@ -109,6 +109,7 @@ limit on what should be designed.
 
 ## Track 2: Blocks As Control Values
 
+- [ ] Use `block_calls_feature.md` as the canonical focused feature spec.
 - [ ] Specify block calls as calls with attached caller-side code and explicit
   `yield` points.
 - [ ] Define block scoping: which names are read, rebound, shadowed, and

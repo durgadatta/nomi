@@ -78,6 +78,9 @@ to what is easiest to implement this month.
 - [Binding Constraints Feature](binding_constraints_feature.md): syntax,
   semantics, desugaring, examples, diagnostics, and edge cases for constrained
   binding as one detailed feature pillar.
+- [Block Calls As Control Values](block_calls_feature.md): focused study of
+  caller-side block syntax, `yield`, policy blocks, tradeoffs, and small-core
+  reduction.
 - [Implementation Todos](implementation_todos.md): staged tasks for both the
   broad language program and the constrained-binding pillar.
 
