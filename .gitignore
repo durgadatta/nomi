@@ -1,7 +1,22 @@
 # development
 .vscode/
+!.vscode/
+.vscode/*
+!.vscode/tasks.json
+!tools/vscode/nomi/.vscode/
+!tools/vscode/nomi/.vscode/launch.json
 local/
 .env
+.ipynb_checkpoints/
+Untitled*.ipynb
+node_modules/
+**/node_modules/
+.vscode-test/
+**/.vscode-test/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 #execution
 *.pyc
@@ -13,4 +28,7 @@ coverage.xml
 
 #packaging and distribution
 *egg-info/
-
+*.vsix
+*.tgz
+dist/
+out/

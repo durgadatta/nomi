@@ -1,4 +1,5 @@
 import ast
+from typing import Any
 
 class PatternMixin:
     def match_case(self, case: ast.match_case, subject: Any) -> bool:

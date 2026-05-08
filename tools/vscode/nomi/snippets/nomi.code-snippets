@@ -1,0 +1,44 @@
+{
+  "Function": {
+    "prefix": "func",
+    "body": [
+      "func ${1:name}(${2:args}):",
+      "    ${0:pass}"
+    ],
+    "description": "Define a Nomi function"
+  },
+  "Arrow Function": {
+    "prefix": "arrow",
+    "body": "(${1:x}) => ${0:x}",
+    "description": "Create a Nomi arrow function"
+  },
+  "Validated Binding": {
+    "prefix": "bind",
+    "body": "${1:name}:${2:type}, ${3:predicate} = ${0:value}",
+    "description": "Create a binding with validation"
+  },
+  "Yield Block Function": {
+    "prefix": "blockfunc",
+    "body": [
+      "func ${1:name}(${2:args}):",
+      "    ${3:yield}"
+    ],
+    "description": "Define a function intended for yield-to-block usage"
+  },
+  "Block Call": {
+    "prefix": "block",
+    "body": [
+      "${1:callee}(${2:args}):",
+      "    ${0:pass}"
+    ],
+    "description": "Call a yield-to-block function"
+  },
+  "Block Call With Parameter": {
+    "prefix": "each",
+    "body": [
+      "${1:callee}(${2:items}) -> ${3:item}:",
+      "    ${0:pass}"
+    ],
+    "description": "Call a yield-to-block function with a yielded value"
+  }
+}

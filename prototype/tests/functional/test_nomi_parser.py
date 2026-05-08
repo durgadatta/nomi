@@ -33,3 +33,11 @@ def test_nomi_parser_accepts_single_underscore_loop_target():
     assert isinstance(loop, ast.For)
     assert isinstance(loop.target, ast.Name)
     assert loop.target.id == "_"
+
+
+def test_nomi_parser_loads_grammar_independent_of_cwd(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+
+    node = generate_ast(code='print("still works")\n')
+
+    assert isinstance(node.body[0], ast.Expr)

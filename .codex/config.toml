@@ -1,0 +1,91 @@
+# Codex project config for Nomi.
+#
+# This file is intentionally tracked. Keep personal experiments, local provider
+# secrets, and private scratch config out of this committed file.
+
+
+# ---------------------------------------------------------------------------
+# Default behavior for this repository
+# ---------------------------------------------------------------------------
+
+# Nomi work often spans parser, interpreter, tests, documentation, notebooks,
+# and the local VS Code extension, so use the stronger default model.
+#
+# Useful options:
+#   "gpt-5.5"       - strongest default for complex implementation and review.
+#   "gpt-5.4"       - strong everyday coding model.
+#   "gpt-5.4-mini"  - faster/lower-cost option for small mechanical edits.
+#   "gpt-5.3-codex" - coding-optimized option when available in your setup.
+#   "gpt-5.2"       - stable professional-work fallback.
+model = "gpt-5.5"
+
+# Useful options:
+#   "low"    - small mechanical edits.
+#   "medium" - routine local changes.
+#   "high"   - default for Nomi because language behavior changes need care.
+#   "xhigh"  - difficult parser/interpreter debugging or large design shifts.
+model_reasoning_effort = "high"
+
+# Keep final answers concise by default. The code, tests, and diffs should carry
+# most of the detail.
+#
+# Common values:
+#   1 - terse
+#   3 - concise but useful.
+#   5 - more explanatory.
+verbosity = 3
+
+
+# ---------------------------------------------------------------------------
+# Safety and permissions
+# ---------------------------------------------------------------------------
+
+# Practical default for a coding repository: Codex can edit this workspace but
+# still needs approval for commands that escape the sandbox.
+#
+# Common options:
+#   "read-only"        - inspect/review only.
+#   "workspace-write"  - edit files in the repo.
+#   "danger-full-access" - broad machine access; avoid as a committed default.
+sandbox_mode = "workspace-write"
+
+# Common options:
+#   "untrusted"  - ask frequently.
+#   "on-request" - ask when extra permission is needed.
+#   "on-failure" - try sandboxed first, ask after sandbox failure.
+#   "never"      - do not ask; Codex must stay within allowed permissions.
+approval_policy = "on-request"
+
+
+# ---------------------------------------------------------------------------
+# Reusable profiles
+# ---------------------------------------------------------------------------
+
+# Default Nomi development profile.
+[profiles.default]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+# Fast profile for tiny docs, typo, and formatting changes.
+[profiles.fast]
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+# Review profile for code review, architecture reading, and risk analysis.
+[profiles.review]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+
+# Test-focused profile. Keeps the same model quality but documents the intended
+# workflow: make small changes, then run focused pytest/npm checks.
+[profiles.test]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"

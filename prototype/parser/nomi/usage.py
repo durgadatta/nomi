@@ -14,11 +14,7 @@ def prefer_name_for_underscore_terminal(terminal):
 
 
 def get_parser():
-    '''
-    TODO: make the path more robust, now assume
-    the entrypoint script will be at prototype/
-    '''
-    grammar_path = Path().joinpath('prototype/grammar/nomi.lark')
+    grammar_path = Path(__file__).resolve().parents[2] / 'grammar' / 'nomi.lark'
     grammar = grammar_path.read_text()
     parser = Lark(
             grammar,

@@ -16,7 +16,7 @@ Nomi programs are executed through a Python-based runner that parses Nomi source
 
 ```bash
 # Install in editable mode from source
-pip install -e .
+python3 -m pip install -e .
 
 # Run Nomi programs
 nomi demo.nomi
@@ -30,8 +30,77 @@ nomi --help
 
 ```bash
 # Run directly from the source directory
-python scripts/cli.py [filename]  # defaults to demo.nomi
+python3 scripts/cli.py [filename]  # defaults to demo.nomi
 ```
+
+## Option 3: Jupyter Notebook Kernel
+
+Install the notebook dependencies and register the local Nomi kernel:
+
+```bash
+python3 tools/jupyter/launch_nomi_notebook.py
+```
+
+Then choose the `Nomi` kernel in Jupyter. The kernel keeps one Nomi interpreter
+alive per notebook, so definitions and bindings persist across cells. It also
+supports `%run scripts/demo.nomi`, `%who`, `%reset`, and `%ast`.
+
+Start with [notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb)
+for a notebook covering the syntax currently implemented in the prototype, or
+open the minimal smoke notebook with:
+
+```bash
+python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
+```
+
+More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
+
+## Option 4: Dockerized Jupyter Notebook
+
+For the most portable demo path, use the host launcher:
+
+```bash
+python3 scripts/run_nomi_docker.py
+```
+
+On first run, the launcher checks for Docker. On macOS, if Docker is not ready,
+it can install the Docker CLI and Colima through Homebrew, start Colima, build
+`nomi:jupyter`, start the local container, and open the syntax tour notebook
+with the `Nomi` kernel selected. Later runs reuse the existing image and running
+container when possible. The default URL is:
+
+```text
+http://127.0.0.1:8888/lab/tree/notebooks/nomi_syntax_tour.ipynb?token=nomi
+```
+
+Use `--minimal` for the smoke notebook, `--port 8890` if port 8888 is already
+busy, `--rebuild` after dependency changes, and `--no-browser` on headless
+systems.
+
+On macOS, the launcher works with either Docker Desktop or a Docker-compatible
+Colima daemon.
+
+## Option 5: VS Code Extension
+
+An early VS Code extension scaffold lives at [tools/vscode/nomi](tools/vscode/nomi).
+It registers `.nomi` files, provides syntax highlighting, snippets, run commands,
+document symbols, hover notes, and first-pass go to definition support.
+
+For the easiest local install and activation without publishing, run:
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
+```
+
+For active development, run:
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
+```
+
+Then press `F5` in VS Code to launch an Extension Development Host.
+See [VS Code Extension](documentation/vscode_extension.md) for the current tooling
+roadmap and packaging notes.
 
 ## Test Reports
 
@@ -71,6 +140,10 @@ AI expands semantic possibility by exploring alternatives and accelerating synth
 * **Languages** condense it into lasting form.
 
 Nomi sits deliberately at the compressive pole. AI accelerates design exploration, critique, and synthesis, while Nomi provides semantics and constraints that preserve legibility, stability, and editability.
+
+See [AI Collaboration](documentation/ai_collaboration.md) and [AGENTS.md](AGENTS.md)
+for the repository's AI-assisted development workflow and agent operating
+guide.
 
 ---
 

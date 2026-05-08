@@ -1,5 +1,11 @@
 # Ruby-like Blocks in Python: Historical Context and Design Rationale
 
+> Current design note: block parameters should eventually reuse the same binding
+> engine as assignment and function parameters. See
+> [Binding Constraints Feature](design_review/binding_constraints_feature.md).
+> The broader forward-looking block design is
+> [Block Calls As Control Values](design_review/block_calls_feature.md).
+
 The idea of generalizing Python’s context managers to support **Ruby-style implicit block yielding** has appeared repeatedly throughout Python’s design history. These constructs offer elegant generalization and can subsume many specialized control-flow patterns. However, the Python community has traditionally been cautious: such features risk obscuring intent when used in place of explicit **control-flow constructs like loops or exception handlers**.
 
  > block will be almost like an anonymous function that is passed to generator (to be executed at the yield point) with a notable difference: this block is executed within's the caller environment, not a new function environment.
