@@ -45,6 +45,10 @@ layers below it.
 
 ## Research Method
 
+The companion [Research Notes Synthesis](research_notes_synthesis.md) maps the
+raw research anchors into this hierarchy. Use it as the intake layer before
+promoting scattered notes into focused feature specs.
+
 For each layer:
 
 1. Start from the first-principles need.
