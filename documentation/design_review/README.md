@@ -77,6 +77,9 @@ to what is easiest to implement this month.
 - [First-Principles Programming Model](first_principles_programming_model.md):
   the main spine that builds the language upward from primitive cognitive acts
   before consulting other languages.
+- [Hierarchical Language Research Plan](hierarchical_language_research_plan.md):
+  concrete bottom-up roadmap for researching and implementing Nomi's primitive
+  layers before progressively richer features.
 - [Language Coherence Model](language_coherence_model.md): the design constraint
   that prevents Nomi from becoming a syntax collage.
 - [Binding Constraints Feature](binding_constraints_feature.md): syntax,
