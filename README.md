@@ -116,6 +116,10 @@ AI expands semantic possibility by exploring alternatives and accelerating synth
 
 Nomi sits deliberately at the compressive pole. AI accelerates design exploration, critique, and synthesis, while Nomi provides semantics and constraints that preserve legibility, stability, and editability.
 
+See [AI Collaboration](documentation/ai_collaboration.md) and [AGENTS.md](AGENTS.md)
+for the repository's AI-assisted development workflow and agent operating
+guide.
+
 ---
 
 # Context
