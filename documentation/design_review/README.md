@@ -15,9 +15,9 @@ proposals.
 
 The active design focus is:
 
-> Nomi as a cognition-first general-purpose language: Python-readable at the
-> surface, but informed by Haskell, Mathematica, Kotlin, Ruby, Scheme, APL,
-> ALGOL, and related traditions.
+> Nomi as a first-principles, cognition-first general-purpose language that
+> builds upward from the primitive acts of programming, then uses other
+> languages as references rather than foundations.
 
 The first detailed feature spec is constrained binding, because it is a strong
 semantic spine for assignment, parameters, patterns, blocks, external data, and
@@ -30,10 +30,11 @@ effect, and diagnostic model.
 
 ## Design Spine
 
-Nomi should keep Python's local readability while giving the best cognitive
-ideas from other language families a smaller, more uniform semantic account.
-The design is allowed to be ambitious when the resulting code becomes easier to
-think with.
+Nomi should start from first principles: what values are, how names work, how
+truth is judged, how transformations compose, how time and effects enter, and
+how programs explain themselves. Python, Haskell, Mathematica, Kotlin, Ruby,
+Scheme, APL, ALGOL, and other languages are reference experiments that help
+answer those questions.
 
 The current core concepts are:
 
@@ -73,6 +74,9 @@ to what is easiest to implement this month.
 - [Cognitive Language Vision](cognitive_language_vision.md): the forward-looking
   language thesis, source-language synthesis, cognitive principles, and target
   feature families.
+- [First-Principles Programming Model](first_principles_programming_model.md):
+  the main spine that builds the language upward from primitive cognitive acts
+  before consulting other languages.
 - [Language Coherence Model](language_coherence_model.md): the design constraint
   that prevents Nomi from becoming a syntax collage.
 - [Binding Constraints Feature](binding_constraints_feature.md): syntax,

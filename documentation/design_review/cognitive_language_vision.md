@@ -15,8 +15,13 @@ resource is the programmer's ability to hold a program in mind, reshape it,
 trust it, explain it, and compose it with other ideas.
 
 Nomi should feel locally readable like Python, but it should not be "Python plus
-features." It should synthesize the durable ideas behind several language
-families into one coherent surface:
+features." More importantly, it should not begin by collecting features from
+other languages. The main design spine is the
+[First-Principles Programming Model](first_principles_programming_model.md):
+build upward from primitive cognitive acts, then use existing languages as
+reference experiments.
+
+Several language families illuminate the design:
 
 - Python's indentation, names, calls, libraries, and everyday readability,
 - Haskell's algebraic modeling, purity boundaries, compositional functions, and
@@ -30,8 +35,9 @@ families into one coherent surface:
 - APL's whole-collection thinking, rank awareness, and transformation density,
 - ALGOL's block structure, lexical scope, and procedural clarity.
 
-The goal is not eclectic syntax. The goal is a language where these ideas share
-one semantic grammar. The active coherence rules are defined in
+The goal is not eclectic syntax. The goal is a language where references from
+other languages are translated into one first-principles semantic grammar. The
+active coherence rules are defined in
 [Language Coherence Model](language_coherence_model.md).
 
 ## Not A Syntax Collage
