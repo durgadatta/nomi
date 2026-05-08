@@ -80,6 +80,9 @@ to what is easiest to implement this month.
 - [Hierarchical Language Research Plan](hierarchical_language_research_plan.md):
   concrete bottom-up roadmap for researching and implementing Nomi's primitive
   layers before progressively richer features.
+- [Research Notes Synthesis](research_notes_synthesis.md): curated synthesis of
+  raw multi-month notes into design pressures, layer mappings, and concrete
+  follow-up feature specs.
 - [Language Coherence Model](language_coherence_model.md): the design constraint
   that prevents Nomi from becoming a syntax collage.
 - [Binding Constraints Feature](binding_constraints_feature.md): syntax,

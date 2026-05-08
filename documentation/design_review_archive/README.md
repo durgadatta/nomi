@@ -12,6 +12,7 @@ Current active focus:
 
 - `../design_review/first_principles_programming_model.md`
 - `../design_review/hierarchical_language_research_plan.md`
+- `../design_review/research_notes_synthesis.md`
 - `../design_review/cognitive_language_vision.md`
 - `../design_review/language_coherence_model.md`
 - `../design_review/binding_constraints_feature.md`
