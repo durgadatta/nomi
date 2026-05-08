@@ -74,6 +74,28 @@ Use `AGENTS.md` as the first stop for agent work, then follow its links into
 the active design-review documents before changing parser, interpreter,
 constraint, or yield-to-block behavior.
 
+## Portable Docker Notebook
+
+The repository can be packaged into a portable Linux-based Jupyter image with:
+
+```bash
+python3 scripts/run_nomi_docker.py
+```
+
+The launcher is designed to be the single host command for first run and reuse.
+It checks for Docker, can set up Docker CLI plus Colima on macOS through
+Homebrew when Docker is not ready, builds the root `Dockerfile` when needed,
+starts or reuses the `nomi:jupyter` container, and opens
+`notebooks/nomi_syntax_tour.ipynb` in Jupyter Lab with the local `Nomi` kernel
+registered inside the container.
+
+The Docker context is bounded by `.dockerignore`, which excludes local scratch
+files, generated reports, installed JavaScript dependencies, Python caches, and
+distribution artifacts while keeping source, notebooks, documentation, and AI
+artifacts in the image.
+
+The container entrypoint lives at `tools/docker/serve_nomi_notebook.py`.
+
 
 ## Building a New Substrate Beneath a Familiar Surface
 

@@ -52,6 +52,7 @@ work with the active design-review directory.
 - Install development extras: `python3 -m pip install -e '.[dev]'`
 - Run the CLI: `nomi scripts/demo.nomi`
 - Run without installation: `python3 scripts/cli.py scripts/demo.nomi`
+- Build/run the Dockerized notebook: `python3 scripts/run_nomi_docker.py`
 - Start the notebook tooling: `python3 tools/jupyter/launch_nomi_notebook.py`
 - Enable the local VS Code extension:
   `python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local`
@@ -80,6 +81,7 @@ then the broader relevant suite.
   regression samples.
 - `scripts/`: CLI, demo program, and report generation.
 - `tools/jupyter/`: Nomi notebook kernel and helpers.
+- `tools/docker/`: Docker container entrypoint for the notebook image.
 - `tools/vscode/nomi/`: local VS Code extension scaffold.
 - `documentation/design_review/`: active language design workspace.
 - `documentation/design_review_archive/`: preserved AI-assisted and exploratory

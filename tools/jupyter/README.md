@@ -31,6 +31,38 @@ For the smallest possible execution check:
 python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
 ```
 
+## Docker Setup
+
+For a portable Linux-based notebook environment, run one host command:
+
+```bash
+python3 scripts/run_nomi_docker.py
+```
+
+The launcher is the whole front door. On first run it checks for Docker. On
+macOS, if Docker is not ready, it can install the Docker CLI and Colima through
+Homebrew, start Colima, build the `nomi:jupyter` image, start a container named
+`nomi-jupyter`, wait for Jupyter Lab, and open
+`notebooks/nomi_syntax_tour.ipynb` with token `nomi`. Later runs reuse the
+existing image and running container when possible.
+
+Useful variants:
+
+```bash
+python3 scripts/run_nomi_docker.py --minimal
+python3 scripts/run_nomi_docker.py --port 8890
+python3 scripts/run_nomi_docker.py --no-browser
+python3 scripts/run_nomi_docker.py --rebuild
+python3 scripts/run_nomi_docker.py --restart-container
+python3 scripts/run_nomi_docker.py --no-runtime-setup
+```
+
+Stop the running container with:
+
+```bash
+docker stop nomi-jupyter
+```
+
 The notebooks are generated with clean metadata from:
 
 ```bash

@@ -55,7 +55,32 @@ python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
 
 More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
 
-## Option 4: VS Code Extension
+## Option 4: Dockerized Jupyter Notebook
+
+For the most portable demo path, use the host launcher:
+
+```bash
+python3 scripts/run_nomi_docker.py
+```
+
+On first run, the launcher checks for Docker. On macOS, if Docker is not ready,
+it can install the Docker CLI and Colima through Homebrew, start Colima, build
+`nomi:jupyter`, start the local container, and open the syntax tour notebook
+with the `Nomi` kernel selected. Later runs reuse the existing image and running
+container when possible. The default URL is:
+
+```text
+http://127.0.0.1:8888/lab/tree/notebooks/nomi_syntax_tour.ipynb?token=nomi
+```
+
+Use `--minimal` for the smoke notebook, `--port 8890` if port 8888 is already
+busy, `--rebuild` after dependency changes, and `--no-browser` on headless
+systems.
+
+On macOS, the launcher works with either Docker Desktop or a Docker-compatible
+Colima daemon.
+
+## Option 5: VS Code Extension
 
 An early VS Code extension scaffold lives at [tools/vscode/nomi](tools/vscode/nomi).
 It registers `.nomi` files, provides syntax highlighting, snippets, run commands,

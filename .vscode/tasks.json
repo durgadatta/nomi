@@ -2,6 +2,28 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Nomi Docker: Open Notebook",
+      "detail": "Set up Docker if needed, build/run the image, and open the Nomi syntax tour notebook.",
+      "type": "shell",
+      "command": "python3 scripts/run_nomi_docker.py",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Docker: Open Minimal Notebook",
+      "detail": "Build/run the Docker image and open the minimal Nomi smoke notebook.",
+      "type": "shell",
+      "command": "python3 scripts/run_nomi_docker.py --minimal",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Docker: Stop Notebook",
+      "detail": "Stop the running Nomi Jupyter Docker container.",
+      "type": "shell",
+      "command": "docker stop nomi-jupyter",
+      "problemMatcher": []
+    },
+    {
       "label": "Nomi Extension: Setup",
       "detail": "Install VS Code extension dependencies.",
       "type": "shell",
