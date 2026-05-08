@@ -10,19 +10,9 @@ Early VS Code support for the Nomi language.
 - Adds `Nomi: Run File`, `Nomi: Run Selection`, and `Nomi: Open Terminal`.
 - Adds lightweight document symbols, hover text, completions, and go to definition.
 
-## One-Click Workflow
+## Local Workflow
 
-On macOS, the easiest path is to open `tools/vscode/nomi/scripts` in Finder and double-click:
-
-- `setup.command`: installs extension dependencies.
-- `dev.command`: opens the extension project in VS Code; press `F5` there.
-- `test.command`: runs extension tests.
-- `package.command`: builds a local `.vsix`.
-- `install-local.command`: builds and installs the local `.vsix` into VS Code.
-- `enable-local.command`: builds/installs the local `.vsix`, then opens `scripts/demo.nomi` to activate it.
-- `clean.command`: removes generated local artifacts.
-
-The same interface is available from a terminal:
+Use the project wrapper from a terminal:
 
 ```bash
 python3 tools/vscode/nomi/scripts/nomi-vscode.py setup
@@ -37,7 +27,11 @@ python3 tools/vscode/nomi/scripts/nomi-vscode.py
 
 ## VS Code Task Workflow
 
-Open `tools/vscode/nomi` in VS Code and run `Tasks: Run Task`.
+If the repository root is open in VS Code, run `Tasks: Run Task` and choose one
+of the namespaced `Nomi Extension: ...` tasks from the root `.vscode/tasks.json`.
+
+If only `tools/vscode/nomi` is open as the VS Code workspace, VS Code uses this
+folder's `.vscode/tasks.json` instead.
 
 Available tasks:
 
@@ -54,17 +48,10 @@ Available tasks:
 - VS Code Desktop
 - Python 3
 - Node.js and npm
-- VS Code's `code-insiders` or `code` CLI for `install-local` and `dev`
+- a VS Code-compatible CLI, usually `code`, for `install-local` and `dev`
 
-On macOS with Homebrew:
-
-```bash
-brew install node
-```
-
-The wrapper prefers `code-insiders` when it is available, then falls back to `code`.
-To install a VS Code CLI, open VS Code or VS Code Insiders and run `Shell Command:
-Install 'code' command in PATH` from the Command Palette.
+To use a different compatible CLI command, set `NOMI_VSCODE_CLI` before running
+the wrapper.
 
 ## Local Development
 
@@ -94,7 +81,7 @@ python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
 This installs dependencies if needed, builds the `.vsix`, and runs
-`code-insiders --install-extension ... --force` when Insiders is available.
+`code --install-extension ... --force`.
 It then opens `scripts/demo.nomi`, which activates the extension because `.nomi`
 files are registered to the Nomi language.
 

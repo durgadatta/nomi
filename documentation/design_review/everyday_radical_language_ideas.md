@@ -947,7 +947,7 @@ Varargs and keyword args were radical once. Nomi can smooth common cases.
 
 ```python
 func connect(
-    host = "localhost",
+    host = "db.example",
     port:int = 5432,
     timeout = 2 seconds,
     **options,
@@ -1289,7 +1289,7 @@ YAML, JSON, flags, secrets, and defaults.
 
 ```python
 config AppConfig:
-    host:str = "localhost"
+    host:str = "app.example"
     port:int = 8000
     debug:bool = False
     database_url:str from env "DATABASE_URL"

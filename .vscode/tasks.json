@@ -1,0 +1,80 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Nomi Extension: Setup",
+      "detail": "Install VS Code extension dependencies.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py setup",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Test",
+      "detail": "Run the VS Code extension test suite.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Package",
+      "detail": "Build a local .vsix package.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py package",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Install Local Package",
+      "detail": "Build and install the local .vsix into VS Code.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py install-local",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Enable Local Package",
+      "detail": "Install the extension and open scripts/demo.nomi.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Dev Window",
+      "detail": "Open the extension folder for F5 extension-host debugging.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Publish Check",
+      "detail": "Show the Marketplace publishing checklist.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py publish-check",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Clean",
+      "detail": "Remove generated extension artifacts.",
+      "type": "shell",
+      "command": "python3 tools/vscode/nomi/scripts/nomi-vscode.py clean",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Extension: Full Local Check",
+      "detail": "Run tests, then build a local package.",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Nomi Extension: Test",
+        "Nomi Extension: Package"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
