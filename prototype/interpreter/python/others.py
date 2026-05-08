@@ -1,6 +1,6 @@
 import ast
 from .signals import  YieldException, YieldFromException
-from typing import Optional
+from typing import Any, Optional
 class AsyncMixin:
     def eval_AsyncWith(self, node: ast.AsyncWith) -> None:
         exits = []

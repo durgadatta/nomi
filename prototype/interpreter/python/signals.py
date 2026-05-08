@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Any, Iterator
 
 # control flow exception should not be caught
 # by broad "Exception", so use one level up!
@@ -22,4 +22,3 @@ class YieldException(ControlException):
 class YieldFromException(ControlException):
     def __init__(self, iterator: Iterator):
         self.iterator = iterator
-

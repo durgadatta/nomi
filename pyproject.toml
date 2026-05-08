@@ -13,12 +13,14 @@ dependencies = [
 [project.optional-dependencies]
 jupyter = [
     "ipykernel",
+    "jupyterlab",
     "jupyter_client",
     "nbformat",
     "notebook",
 ]
 dev = [
     "ipykernel",
+    "jupyterlab",
     "jupyter_client",
     "nbformat",
     "notebook",
