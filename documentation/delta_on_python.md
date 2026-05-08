@@ -72,6 +72,10 @@ Nomi introduces a concise **arrow syntax** for function literals:
 
 # Binding
 
+> Current design note: the active, implementation-oriented version of this idea
+> now lives in
+> [Binding Constraints Feature](design_review/binding_constraints_feature.md).
+
 Binding is a fundamental concept as well. This is deeply connected to functions - function call is literally the evaluation of the function body with the arguments bound to the parameter on top of existing binding at the time of function definition (lexical closure -only this supported here for now) or the execution time (dynamic closure). It occurs in many contexts, most visibly in **assignment**, but also in:
 
 * Function call arguments-to-parameter mapping  
