@@ -1,5 +1,8 @@
 # development
 .vscode/
+!.vscode/
+.vscode/*
+!.vscode/tasks.json
 !tools/vscode/nomi/.vscode/
 !tools/vscode/nomi/.vscode/launch.json
 local/

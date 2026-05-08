@@ -38,19 +38,16 @@ Supported actions:
 - `publish-check`: show Marketplace readiness checklist.
 - `publish`: run tests, package, and publish with `vsce`.
 
-On macOS, clickable `.command` wrappers live in:
-
-```text
-tools/vscode/nomi/scripts
-```
-
-Double-click `enable-local.command` for the easiest non-published local install and activation.
-
 ## VS Code Tasks
 
-Open `tools/vscode/nomi` in VS Code and run `Tasks: Run Task`.
+Open the repository root in VS Code and run `Tasks: Run Task`. The root
+`.vscode/tasks.json` exposes namespaced extension tasks such as
+`Nomi Extension: Test`, `Nomi Extension: Package`, and
+`Nomi Extension: Enable Local Package`.
 
-Tasks are provided for setup, test, package, local install, publish check, and clean.
+The extension folder also has its own `tools/vscode/nomi/.vscode/tasks.json` for
+the narrower workflow where only `tools/vscode/nomi` is opened as the VS Code
+workspace.
 
 ## Enable Locally Without Publishing
 
@@ -64,7 +61,7 @@ This:
 
 1. Installs dependencies if needed.
 2. Builds `nomi-vscode-<version>.vsix`.
-3. Installs it into VS Code Insiders with `code-insiders --install-extension ... --force` when available.
+3. Installs it into VS Code with `code --install-extension ... --force`.
 4. Opens `scripts/demo.nomi` to activate the extension.
 
 Use `install-local` instead if you want to install the package without opening a file.
@@ -74,11 +71,10 @@ Prerequisites:
 - VS Code Desktop
 - Python 3
 - Node.js/npm
-- VS Code's `code-insiders` or `code` CLI
+- a VS Code-compatible CLI, usually `code`
 
-The wrapper prefers `code-insiders` when it is available, then falls back to
-`code`. To install a VS Code CLI, run `Shell Command: Install 'code' command in
-PATH` from VS Code or VS Code Insiders.
+To use a different compatible CLI command, set `NOMI_VSCODE_CLI` before running
+the wrapper.
 
 ## Development Host
 

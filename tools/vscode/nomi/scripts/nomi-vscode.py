@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -75,9 +76,9 @@ Common actions:
   setup          Install npm dependencies
   test           Run VS Code extension tests
   package        Build a local .vsix package
-  install-local  Build and install the .vsix into local VS Code / Insiders
+  install-local  Build and install the .vsix into local VS Code
   enable-local   Install/update the .vsix and open demo.nomi to activate it
-  dev            Open this extension folder in VS Code / Insiders for F5 debugging
+  dev            Open this extension folder in VS Code for F5 debugging
   status         Show environment, package, and generated artifact status
   clean          Remove generated local artifacts
   publish-check  Show the Marketplace publishing checklist
@@ -93,7 +94,7 @@ Examples:
 
 
 def setup() -> int:
-    require("npm", "Node.js/npm is required. On macOS: brew install node")
+    require("npm", "Node.js/npm is required. Install Node.js with your platform's package manager.")
     run(["npm", "install"])
     return 0
 
@@ -217,7 +218,7 @@ def publish(yes: bool) -> int:
 
 
 def ensure_dependencies() -> None:
-    require("npm", "Node.js/npm is required. On macOS: brew install node")
+    require("npm", "Node.js/npm is required. Install Node.js with your platform's package manager.")
     if not (EXTENSION_ROOT / "node_modules").exists():
         print("Dependencies are missing; running setup first.", flush=True)
         setup()
@@ -246,29 +247,20 @@ def require_code() -> str:
     if code:
         return code
     raise SystemExit(
-        "VS Code's 'code-insiders' or 'code' CLI is required. In VS Code, run: "
-        "Shell Command: Install 'code' command in PATH"
+        "A VS Code-compatible CLI is required. Install the editor's shell command in PATH, "
+        "or set NOMI_VSCODE_CLI to the command name."
     )
 
 
 def resolve_code_command() -> str | None:
-    insiders = shutil.which("code-insiders")
-    if insiders:
-        return insiders
+    configured = os.environ.get("NOMI_VSCODE_CLI", "").strip()
+    if configured:
+        return shutil.which(configured) or configured
 
     code = shutil.which("code")
     if code:
         return code
 
-    candidates = [
-        Path("/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code-insiders"),
-        Path.home() / "Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code-insiders",
-        Path("/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"),
-        Path.home() / "Applications/Visual Studio Code.app/Contents/Resources/app/bin/code",
-    ]
-    for candidate in candidates:
-        if candidate.exists():
-            return str(candidate)
     return None
 
 
