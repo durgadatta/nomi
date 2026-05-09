@@ -772,25 +772,6 @@ rewrite_rules_feature.md
 scoped_notation_feature.md
 ```
 
-## Concrete Commit Sequence
-
-The next design commits should move bottom-up:
-
-1. `docs: design source contexts and spans`
-2. `docs: design values and literal semantics`
-3. `docs: design bindings and lexical scope`
-4. `docs: deepen constraints and diagnostics`
-5. `docs: design functions and call mapping`
-6. `docs: design data declarations and shape binding`
-7. `docs: design patterns and match as choice`
-8. `docs: design pipelines and collection transforms`
-9. `docs: refine block scope and yield control`
-10. `docs: design effects worlds and capabilities`
-11. `docs: design examples traces and explanation`
-12. `docs: design quote rewrite and scoped notation`
-
-Each commit should focus on one idea, compare variations, record tradeoffs, and
-state the reduction into the smaller core.
 
 ## First Implementation Spine
 

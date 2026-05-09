@@ -2,97 +2,101 @@
 
 > Status: active design workspace.
 
-This directory is the active working surface for Nomi language design. It is
-not limited to what the prototype already implements. The prototype is a seed
-and a laboratory; the design target is a fully operational general-purpose
-language optimized for human thought, explanation, and compositional power.
+This directory is the active working surface for Nomi language design. The
+prototype is a seed and a laboratory; the design target is a usable
+general-purpose language for ordinary, medium-level programming that can grow
+into deeper sophistication without losing its core.
 
-Broad exploratory material has been moved to `../design_review_archive/` so the
-active directory can carry one coherent direction instead of nine overlapping
-proposals.
+The current canonical entry point is
+[Nomi Language Foundation](language_foundation.md). Start there before reading
+or editing the older synthesis documents.
 
 ## Current Focus
 
 The active design focus is:
 
-> Nomi as a first-principles, cognition-first general-purpose language that
-> builds upward from the primitive acts of programming, then uses other
-> languages as references rather than foundations.
+> A friendly everyday language whose sophistication emerges from a small set of
+> remembered operations: values, bindings, constraints, functions, calls, data,
+> patterns, collections, blocks, examples, traces, and diagnostics.
 
-The first detailed feature spec is constrained binding, because it is a strong
-semantic spine for assignment, parameters, patterns, blocks, external data, and
-diagnostics. It is not the limit of the language.
-
-The most important design constraint is coherence: Nomi should learn from many
-languages without collecting their syntax. Every borrowed idea must be
-translated into Nomi's own binding, block, pattern, expression-flow, symbolic,
-effect, and diagnostic model.
+The next design pass should converge from the foundation document into focused
+feature specs and executable syntax examples. Broad vision without operational
+syntax is not enough; every accepted idea needs a reduction, diagnostic story,
+implementation slice, and tests.
 
 ## Design Spine
 
 Nomi should start from first principles: what values are, how names work, how
-truth is judged, how transformations compose, how time and effects enter, and
-how programs explain themselves. Python, Haskell, Mathematica, Kotlin, Ruby,
-Scheme, APL, ALGOL, and other languages are reference experiments that help
-answer those questions.
+truth is judged, how transformations compose, how values group, how choices are
+made, how repeated transformations stay readable, and how programs explain
+themselves. Python, ML/Haskell, Lisp/Scheme, ALGOL, Ruby, Kotlin, Rust, Swift,
+R, APL, SQL, Mathematica, Pydantic, JSON Schema, and other efforts are reference
+experiments, not syntax inventories.
 
 The current core concepts are:
 
 ```text
-value
-binding
-constraint
-function
-call
-block
-yield
-pattern
-shape
-data
-collection
-table
-quote
-rewrite
-effect
-world
-capability
-example
-trace
-diagnostic
+Source
+Value
+Binding
+Constraint
+Function
+Call
+Data
+Pattern
+Match
+Collection
+Block
+Example
+Trace
+Diagnostic
+Module
 ```
 
 The admission rule for new syntax is:
 
 > Add syntax only when it reduces to a small semantic primitive and makes a
-> common or cognitively important programming pattern clearer at the call site.
+> common programming pattern clearer at the call site, with diagnostics and
+> tests that prove the intended semantics.
 
-Current implementation effort should follow the design, not shrink the design
-to what is easiest to implement this month.
+Advanced symbolic rewrite, effects, capabilities, async, concurrency, memory
+models, and custom notation remain research topics until the everyday core is
+stable.
 
 ## Active Documents
 
-- [Cognitive Language Vision](cognitive_language_vision.md): the forward-looking
-  language thesis, source-language synthesis, cognitive principles, and target
-  feature families.
-- [First-Principles Programming Model](first_principles_programming_model.md):
-  the main spine that builds the language upward from primitive cognitive acts
-  before consulting other languages.
-- [Hierarchical Language Research Plan](hierarchical_language_research_plan.md):
-  concrete bottom-up roadmap for researching and implementing Nomi's primitive
-  layers before progressively richer features.
-- [Research Notes Synthesis](research_notes_synthesis.md): curated synthesis of
-  raw multi-month notes into design pressures, layer mappings, and concrete
-  follow-up feature specs.
-- [Language Coherence Model](language_coherence_model.md): the design constraint
-  that prevents Nomi from becoming a syntax collage.
+- [Nomi Language Foundation](language_foundation.md): canonical foundation for
+  the next phase. It consolidates the broad design direction, rethinks
+  `shape`/`data`, defines the operational core, and gives a concrete syntax
+  runway.
+- [Nomi Language Specification](language_spec.md): draft concrete language spec
+  for the intended Nomi language: lexical structure, values, bindings,
+  constraints, functions, data, patterns, collections, blocks, modules,
+  examples, diagnostics, and conformance.
 - [Binding Constraints Feature](binding_constraints_feature.md): syntax,
   semantics, desugaring, examples, diagnostics, and edge cases for constrained
-  binding as one detailed feature pillar.
+  binding. This should be revised against the foundation before implementation
+  expansion.
 - [Block Calls As Control Values](block_calls_feature.md): focused study of
   caller-side block syntax, `yield`, policy blocks, tradeoffs, and small-core
-  reduction.
-- [Implementation Todos](implementation_todos.md): staged tasks for both the
-  broad language program and the constrained-binding pillar.
+  reduction. This remains useful, but advanced concurrency implications are not
+  first-path work.
+- [Implementation Todos](implementation_todos.md): staged backlog. It should be
+  updated after focused specs are rewritten from the foundation.
+
+## Supporting Source Notes
+
+These files are useful background, but they are no longer parallel canonical
+visions:
+
+- [Cognitive Language Vision](cognitive_language_vision.md)
+- [First-Principles Programming Model](first_principles_programming_model.md)
+- [Hierarchical Language Research Plan](hierarchical_language_research_plan.md)
+- [Research Notes Synthesis](research_notes_synthesis.md)
+- [Language Coherence Model](language_coherence_model.md)
+
+Use them to recover rationale. Use `language_foundation.md` to decide what to
+build next.
 
 ## Archived Source Notes
 
