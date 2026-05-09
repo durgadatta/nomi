@@ -3,10 +3,10 @@
 > Status: staged backlog for the forward-looking language design.
 
 This backlog turns
-[First-Principles Programming Model](first_principles_programming_model.md),
-[Hierarchical Language Research Plan](hierarchical_language_research_plan.md),
-[Cognitive Language Vision](cognitive_language_vision.md), and
-[Binding Constraints Feature](binding_constraints_feature.md) into
+[First-Principles Programming Model](../research/first_principles_programming_model.md),
+[Hierarchical Language Research Plan](../research/hierarchical_language_research_plan.md),
+[Cognitive Language Vision](../research/cognitive_language_vision.md), and
+[Binding Constraints Feature](../features/binding_constraints_feature.md) into
 implementation-sized work. The current prototype is a bootstrap path, not a
 limit on what should be designed.
 
@@ -22,7 +22,7 @@ limit on what should be designed.
   ahead of the implementation.
 - [ ] Maintain the language coherence model as a blocking design review for new
   features.
-- [ ] Extract promising ideas from `documentation/design_review_archive/` into
+- [ ] Extract promising ideas from `../archive/design_review/` into
   active feature specs only when they can share the same semantic spine.
 - [ ] For each promoted idea, document what Nomi keeps from the source language
   and what it deliberately refuses to copy.
@@ -118,7 +118,8 @@ limit on what should be designed.
 
 ## Track 2: Blocks As Control Values
 
-- [ ] Use `block_calls_feature.md` as the canonical focused feature spec.
+- [ ] Use `../features/block_calls_feature.md` as the canonical focused feature
+  spec.
 - [ ] Specify block calls as calls with attached caller-side code and explicit
   `yield` points.
 - [ ] Define block scoping: which names are read, rebound, shadowed, and
@@ -203,15 +204,15 @@ limit on what should be designed.
 ## Track 10: Cleanups And Coherence Checks
 
 - [ ] Before implementing a feature, answer the coherence questions from
-  `language_coherence_model.md`.
+  `../research/language_coherence_model.md`.
 - [ ] Reject or redesign any feature that adds a second unrelated story for
   binding, blocks, patterns, expression flow, symbolic code, effects, or
   diagnostics.
 - [ ] Remove duplicate ad hoc validation paths after the shared binding engine
   covers assignment, parameters, blocks, and patterns.
-- [ ] Update `documentation/delta_on_python.md` to point to the canonical
+- [ ] Update `delta_on_python.md` to point to the canonical
   constrained-binding spec.
-- [ ] Update `documentation/yield_to_block.md` with the block-parameter binding
+- [ ] Update `../features/yield_to_block.md` with the block-parameter binding
   decision once implemented.
 - [ ] Add a conformance-style test file containing the design tests from the
   feature spec.

@@ -122,7 +122,7 @@ Sources:
 
 - [PEP 340 - Anonymous Block Statements](https://peps.python.org/pep-0340/)
 - [PEP 343 - The "with" Statement](https://peps.python.org/pep-0343/)
-- [Nomi block calls feature](block_calls_feature.md)
+- [Nomi block calls feature](../features/block_calls_feature.md)
 
 ## 3. Overloadable Boolean Operators
 
@@ -334,7 +334,7 @@ Sources:
 
 - [PEP 484 - Type Hints](https://peps.python.org/pep-0484/)
 - [PEP 316 - Programming by Contract for Python](https://peps.python.org/pep-0316/)
-- [Nomi binding constraints feature](binding_constraints_feature.md)
+- [Nomi binding constraints feature](../features/binding_constraints_feature.md)
 
 ## 8. Exhaustive Pattern Matching And Algebraic Data
 
@@ -429,7 +429,7 @@ Sources:
 
 - [PEP 3150 - Statement local namespaces](https://peps.python.org/pep-3150/)
 - [PEP 403 - General purpose decorator clause](https://peps.python.org/pep-0403/)
-- [Nomi delta on Python](../delta_on_python.md)
+- [Nomi delta on Python](../language/delta_on_python.md)
 
 ## Nomi Design Heuristics From These Cases
 

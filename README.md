@@ -99,7 +99,7 @@ python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
 ```
 
 Then press `F5` in VS Code to launch an Extension Development Host.
-See [VS Code Extension](documentation/vscode_extension.md) for the current tooling
+See [VS Code Extension](docs/orientation/vscode_extension.md) for the current tooling
 roadmap and packaging notes.
 
 ## Test Reports
@@ -112,7 +112,7 @@ Open `reports/index.html` from VS Code after the command finishes. It links to t
 
 > **Note on contributions:** Nomi is in an early, fast-moving stage. Broad public contributions may be premature. Contribution guidelines will be added as the core stabilizes. Interested readers are encouraged to follow the notes and documentation, or reach out for discussion and feedback.
 
-See [Artifacts and Usage](documentation/artifacts_and_usage.md) for more details.
+See [Artifacts and Usage](docs/orientation/artifacts_and_usage.md) for more details.
 
 ---
 
@@ -141,7 +141,7 @@ AI expands semantic possibility by exploring alternatives and accelerating synth
 
 Nomi sits deliberately at the compressive pole. AI accelerates design exploration, critique, and synthesis, while Nomi provides semantics and constraints that preserve legibility, stability, and editability.
 
-See [AI Collaboration](documentation/ai_collaboration.md) and [AGENTS.md](AGENTS.md)
+See [AI Collaboration](docs/orientation/ai_collaboration.md) and [AGENTS.md](AGENTS.md)
 for the repository's AI-assisted development workflow and agent operating
 guide.
 
@@ -218,7 +218,7 @@ retry(3):
 
 This bridges **statements and expressions**, **functions and blocks**, and **decorators and context managers**, exposing the latent generality of Python’s `yield`.
 
-> See [Delta on Python](documentation/delta_on_python.md) for detailed rationale and examples.
+> See [Delta on Python](docs/language/delta_on_python.md) for detailed rationale and examples.
 
 ---
 
@@ -255,4 +255,4 @@ Evaluation of a programming language is inherently long-term, shaped by debates 
 
 Rather than aiming for sweeping claims, the focus here is on **concrete tools, real-world grounding, and careful iteration**, anchored in Python as a baseline. Historical perspective and persistent questioning guide refinement toward **coherence, orthogonality, and long-term clarity**.
 
-For a deeper look at the **intellectual lineage, design risks, and context of Nomi**, see [Positioning Within Ambition and Risk](documentation/positioning_ambition_risk.md).
+For a deeper look at the **intellectual lineage, design risks, and context of Nomi**, see [Positioning Within Ambition and Risk](docs/notes/positioning_ambition_risk.md).

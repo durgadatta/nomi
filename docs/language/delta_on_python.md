@@ -74,7 +74,7 @@ Nomi introduces a concise **arrow syntax** for function literals:
 
 > Current design note: the active, implementation-oriented version of this idea
 > now lives in
-> [Binding Constraints Feature](design_review/binding_constraints_feature.md).
+> [Binding Constraints Feature](../features/binding_constraints_feature.md).
 
 Binding is a fundamental concept as well. This is deeply connected to functions - function call is literally the evaluation of the function body with the arguments bound to the parameter on top of existing binding at the time of function definition (lexical closure -only this supported here for now) or the execution time (dynamic closure). It occurs in many contexts, most visibly in **assignment**, but also in:
 
@@ -182,7 +182,7 @@ retry(3):
 Here, the block following retry(3): is implicitly passed to the function and executed at the yield point — allowing the retry logic to surround it seamlessly.
 Such a mechanism generalizes Python’s existing context manager model while remaining minimal and explicit.
 > *This concept builds on coroutine fundamentals and extends them toward systematic language design.*  
-> *See the section on [Ruby-like Blocks](yield_to_block.md) for the historical background and rationale.*  
+> *See the section on [Ruby-like Blocks](../features/yield_to_block.md) for the historical background and rationale.*  
 > *As discussed there, the above construct cannot be implemented naturally in current Python — as noted in this [Stack Overflow question](https://stackoverflow.com/questions/16919570/encapsulating-retries-into-with-block) — a limitation that appears to be intentional by design.*
 
 Blocks can take parameters as well:

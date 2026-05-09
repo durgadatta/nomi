@@ -1,0 +1,108 @@
+# Nomi Docs
+
+> Status: documentation entry point.
+>
+> This directory is organized by conceptual category and rough concreteness:
+> orientation and project-process docs first, current language direction next,
+> focused feature designs after that, then broader research notes, essays,
+> archive material, and drafts.
+
+## Reading Order
+
+Start here for most design or implementation work:
+
+1. [Language Foundation](language/language_foundation.md)
+2. [Language Specification](language/language_spec.md)
+3. [Implementation Todos](language/implementation_todos.md)
+4. [Artifacts And Usage](orientation/artifacts_and_usage.md)
+5. [AI Collaboration](orientation/ai_collaboration.md)
+
+For feature work, read the relevant focused design under
+[features](features/) after the foundation.
+
+## Orientation
+
+Concrete project, process, and tooling docs.
+
+- [Artifacts And Usage](orientation/artifacts_and_usage.md): current runtime
+  pipeline and artifact map.
+- [Implementation Guideline](orientation/implementation_guideline.md):
+  implementation posture and AI tool history.
+- [AI Collaboration](orientation/ai_collaboration.md): accepted AI use cases,
+  critique workflow, and checkpoint doctrine.
+- [VS Code Extension](orientation/vscode_extension.md): local extension
+  surface and roadmap.
+
+## Language
+
+Canonical or near-canonical language direction. These are the decision surface
+for the next implementation pass.
+
+- [Language Foundation](language/language_foundation.md): current design
+  foundation and operational core.
+- [Language Specification](language/language_spec.md): draft concrete spec.
+- [Implementation Todos](language/implementation_todos.md): staged backlog.
+- [Delta On Python](language/delta_on_python.md): rationale for changes
+  relative to Python.
+
+## Features
+
+Focused feature designs. These are more concrete than research notes but may
+still contain open design questions.
+
+- [Binding Constraints Feature](features/binding_constraints_feature.md):
+  constrained binding syntax, semantics, and diagnostics.
+- [Block Calls As Control Values](features/block_calls_feature.md): caller-side
+  blocks, `yield`, and policy blocks.
+- [Yield To Block](features/yield_to_block.md): historical and delicate
+  resumable-control notes.
+- [Structured Collections And Query Language](features/structured_collections_query_language.md):
+  collection/table/query API and syntax design.
+- [Symbolic And Structural Computation](features/symbolic_structural_computation.md):
+  computation descriptions, plans, rewrites, and backend lowering.
+
+## Research
+
+Source notes and speculative synthesis. Use these to recover rationale, compare
+language traditions, or seed future focused specs.
+
+- [Cognitive Language Vision](research/cognitive_language_vision.md)
+- [First-Principles Programming Model](research/first_principles_programming_model.md)
+- [Hierarchical Language Research Plan](research/hierarchical_language_research_plan.md)
+- [Research Notes Synthesis](research/research_notes_synthesis.md)
+- [Language Coherence Model](research/language_coherence_model.md)
+- [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md)
+- [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md)
+- [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md)
+- [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md)
+
+## Notes
+
+Essays and detours that frame Nomi's philosophy, risk, or design context.
+
+- [Positioning Ambition Risk](notes/positioning_ambition_risk.md)
+- [Tractable Sophistication](notes/tractable_sophistication.md)
+- [Category Theory Detour](notes/category_theory_detour.md)
+- [Notes Meta](notes/meta.md)
+
+## Archive
+
+Historical design material. These files are source material, not active
+specification.
+
+- [Archived Design Review](archive/design_review/README.md)
+
+## Drafts
+
+Raw draft material and large combined synthesis artifacts. Treat these as
+scratch/reference input unless a task points to them directly.
+
+- [Drafts](drafts/)
+
+## Admission Rule
+
+The current admission rule for new syntax remains:
+
+> Add syntax only when it reduces to a small semantic primitive and makes a
+> common programming pattern clearer at the call site, with diagnostics and
+> tests that prove the intended semantics.

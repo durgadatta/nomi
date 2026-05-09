@@ -26,15 +26,16 @@ clear semantics, tests, examples, and documentation.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
-- `documentation/Implementation_guideline.md`: records the early use of
+- `implementation_guideline.md`: records the early use of
   ChatGPT, Grok, DeepSeek, Gemini, and Claude for parser/evaluator
   infrastructure and syntax-layer exploration.
-- `documentation/design_review_archive/ai-codex_project_overview_vision.md`:
+- `../archive/design_review/ai-codex_project_overview_vision.md`:
   Codex-generated project overview preserved as an AI-assisted summary, not a
   canonical specification.
-- `documentation/design_review/`: active synthesis layer where AI-generated and
-  human-written ideas must be reconciled into one coherent direction.
-- `documentation/artifacts_and_usage.md`: artifact map, now including the AI
+- `../language/`, `../features/`, and `../research/`: active synthesis layers
+  where AI-generated and human-written ideas must be reconciled into one
+  coherent direction.
+- `artifacts_and_usage.md`: artifact map, now including the AI
   agent entrypoint.
 
 ## Collaboration Roles
@@ -115,8 +116,8 @@ than making it runtime behavior.
 
 - Keep `AGENTS.md` concise and operational.
 - Put broader AI process notes here.
-- Put canonical language direction in `documentation/design_review/`.
+- Put canonical language direction in `../language/`.
 - Put historical or superseded AI synthesis in
-  `documentation/design_review_archive/`.
+  `../archive/design_review/`.
 - Mention AI provenance when a document is primarily AI-generated or
   AI-synthesized.

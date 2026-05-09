@@ -22,29 +22,31 @@ local reasoning, readable syntax, and inspectable reduction.
 Start with these files before broad design or implementation changes:
 
 - `README.md`: user-facing project vision, usage, current status, and examples.
-- `documentation/artifacts_and_usage.md`: current runtime pipeline and artifact
+- `docs/orientation/artifacts_and_usage.md`: current runtime pipeline and artifact
   map.
-- `documentation/Implementation_guideline.md`: implementation posture and AI
+- `docs/orientation/implementation_guideline.md`: implementation posture and AI
   tool history.
-- `documentation/ai_collaboration.md`: AI collaboration doctrine, accepted use
+- `docs/orientation/ai_collaboration.md`: AI collaboration doctrine, accepted use
   cases, and checkpoint workflow.
-- `documentation/design_review/README.md`: active design workspace and design
-  spine.
-- `documentation/design_review/implementation_todos.md`: staged design and
+- `docs/README.md`: docs map and current design spine.
+- `docs/language/language_foundation.md`: canonical foundation for the next
+  design pass.
+- `docs/language/language_spec.md`: draft concrete language specification.
+- `docs/language/implementation_todos.md`: staged design and
   implementation tasks.
-- `documentation/design_review/binding_constraints_feature.md`: constrained
+- `docs/features/binding_constraints_feature.md`: constrained
   binding feature pillar.
-- `documentation/design_review/block_calls_feature.md`: yield-to-block and
+- `docs/features/block_calls_feature.md`: yield-to-block and
   block-call control design.
-- `documentation/delta_on_python.md`: rationale for Nomi changes relative to
+- `docs/language/delta_on_python.md`: rationale for Nomi changes relative to
   Python.
-- `documentation/yield_to_block.md`: delicate resumable-control notes.
-- `documentation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
+- `docs/features/yield_to_block.md`: delicate resumable-control notes.
+- `docs/orientation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
   surfaces.
 
-Archived design notes under `documentation/design_review_archive/` are source
+Archived design notes under `docs/archive/design_review/` are source
 material, not active specification. Use them to recover history, then reconcile
-work with the active design-review directory.
+work with the active docs in `docs/language/` and `docs/features/`.
 
 ## Setup Commands
 
@@ -83,10 +85,11 @@ then the broader relevant suite.
 - `tools/jupyter/`: Nomi notebook kernel and helpers.
 - `tools/docker/`: Docker container entrypoint for the notebook image.
 - `tools/vscode/nomi/`: local VS Code extension scaffold.
-- `documentation/design_review/`: active language design workspace.
-- `documentation/design_review_archive/`: preserved AI-assisted and exploratory
+- `docs/language/`, `docs/features/`, and `docs/research/`: active language
+  design workspace grouped by concreteness.
+- `docs/archive/design_review/`: preserved AI-assisted and exploratory
   design material.
-- `documentation/ai_collaboration.md`: process note for AI-assisted design,
+- `docs/orientation/ai_collaboration.md`: process note for AI-assisted design,
   implementation, critique, and checkpointing.
 - `local/` and `PLAY/`: scratch/reference material; do not treat as canonical
   unless the user points there directly.

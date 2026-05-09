@@ -60,18 +60,18 @@ the project-level working map for setup commands, test commands, repository
 structure, design-document reading order, and long-running Codex-style
 checkpoint workflow.
 
-The companion process note `documentation/ai_collaboration.md` explains how
+The companion process note `ai_collaboration.md` explains how
 Nomi uses AI for exploration, critique, implementation planning, test pressure,
 and checkpointing while keeping code, tests, and active design docs as the
 source of truth.
 
 These artifacts follow the public AGENTS.md convention and reflect the existing
-Nomi AI collaboration history documented in `Implementation_guideline.md`, the
+Nomi AI collaboration history documented in `implementation_guideline.md`, the
 tracked `.codex/config.toml`, and the AI-assisted design notes under
-`documentation/design_review_archive/`.
+`../archive/design_review/`.
 
 Use `AGENTS.md` as the first stop for agent work, then follow its links into
-the active design-review documents before changing parser, interpreter,
+the active design documents before changing parser, interpreter,
 constraint, or yield-to-block behavior.
 
 ## Portable Docker Notebook

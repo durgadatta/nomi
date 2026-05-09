@@ -9,8 +9,8 @@
 > Related notes:
 >
 > - [Symbolic And Structural Computation](symbolic_structural_computation.md)
-> - [High-Level Language Usability Syntax Notes](high_level_language_usability_syntax_notes.md)
-> - [Python Syntax Stretch Feature Atlas](python_syntax_stretch_feature_atlas.md)
+> - [High-Level Language Usability Syntax Notes](../research/high_level_language_usability_syntax_notes.md)
+> - [Python Syntax Stretch Feature Atlas](../research/python_syntax_stretch_feature_atlas.md)
 
 ## Design Goal
 

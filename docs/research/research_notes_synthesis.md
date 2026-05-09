@@ -271,7 +271,7 @@ L10 traces and explanation
 Concrete future specs:
 
 ```text
-block_calls_feature.md
+../features/block_calls_feature.md
 block_scope_and_control_flow_feature.md
 signals_conditions_restarts_feature.md
 effects_worlds_capabilities_feature.md

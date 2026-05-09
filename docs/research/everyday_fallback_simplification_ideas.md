@@ -9,10 +9,10 @@
 >
 > Related notes:
 >
-> - [Nomi Language Foundation](language_foundation.md)
-> - [Structured Collections And Query Language](structured_collections_query_language.md)
-> - [Symbolic And Structural Computation](symbolic_structural_computation.md)
-> - [Block Calls As Control Values](block_calls_feature.md)
+> - [Nomi Language Foundation](../language/language_foundation.md)
+> - [Structured Collections And Query Language](../features/structured_collections_query_language.md)
+> - [Symbolic And Structural Computation](../features/symbolic_structural_computation.md)
+> - [Block Calls As Control Values](../features/block_calls_feature.md)
 
 ## Why This Document Exists
 

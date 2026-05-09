@@ -293,7 +293,7 @@ Small prototype:
 Focused spec already started:
 
 ```text
-binding_constraints_feature.md
+../features/binding_constraints_feature.md
 ```
 
 Next focused spec:
@@ -581,7 +581,7 @@ policy -> function that controls when/how block is invoked
 
 Small prototype:
 
-- use `block_calls_feature.md`,
+- use `../features/block_calls_feature.md`,
 - replace ad hoc block keyword with explicit block representation,
 - route block parameters through binding engine,
 - add yield diagnostics.
@@ -589,7 +589,7 @@ Small prototype:
 Focused spec already started:
 
 ```text
-block_calls_feature.md
+../features/block_calls_feature.md
 ```
 
 Next focused specs:
