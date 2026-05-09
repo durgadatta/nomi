@@ -90,10 +90,16 @@ These files are useful background, but they are no longer parallel canonical
 visions:
 
 - [Cognitive Language Vision](cognitive_language_vision.md)
+- [Everyday Fallback Simplification Ideas](everyday_fallback_simplification_ideas.md)
 - [First-Principles Programming Model](first_principles_programming_model.md)
+- [High-Level Language Usability Syntax Notes](high_level_language_usability_syntax_notes.md)
 - [Hierarchical Language Research Plan](hierarchical_language_research_plan.md)
+- [Python Language Changes Deferred By Complexity](python_changes_deferred_by_complexity.md)
+- [Python Syntax Stretch Feature Atlas](python_syntax_stretch_feature_atlas.md)
 - [Research Notes Synthesis](research_notes_synthesis.md)
 - [Language Coherence Model](language_coherence_model.md)
+- [Structured Collections And Query Language](structured_collections_query_language.md)
+- [Symbolic And Structural Computation](symbolic_structural_computation.md)
 
 Use them to recover rationale. Use `language_foundation.md` to decide what to
 build next.
