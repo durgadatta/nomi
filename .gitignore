@@ -27,6 +27,10 @@ htmlcov/
 coverage.xml
 .nomi/
 
+# codex
+.codex/*
+!.codex/config.toml
+
 #packaging and distribution
 *egg-info/
 *.vsix

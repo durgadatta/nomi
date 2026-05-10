@@ -55,15 +55,36 @@ sandbox_mode = "workspace-write"
 #   "on-failure" - try sandboxed first, ask after sandbox failure.
 #   "never"      - do not ask; Codex must stay within allowed permissions.
 approval_policy = "on-request"
+personality = "pragmatic"
 
 
 # ---------------------------------------------------------------------------
 # Reusable profiles
 # ---------------------------------------------------------------------------
 
+# Usage note: To use these profiles, launch Codex with the local home directory:
+#   CODEX_HOME=$PWD/.codex codex --profile qwen-local
+
 # Default Nomi development profile.
 [profiles.default]
 model = "gpt-5.5"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+# Local Qwen3.5 profile using Ollama.
+[profiles.qwen-local]
+model_provider = "ollama-local"
+model = "qwen3.5:latest"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+# Cloud DeepSeek V4 Pro profile.
+# Note: Requires DEEPSEEK_API_KEY to be set in your environment.
+[profiles.deepseek-cloud]
+model_provider = "deepseek-remote"
+model = "deepseek-chat"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
@@ -89,3 +110,22 @@ model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+
+
+# ---------------------------------------------------------------------------
+# Model providers
+# ---------------------------------------------------------------------------
+
+[model_providers.ollama-local]
+name = "Ollama Local"
+base_url = "http://localhost:11434/v1/"
+
+[model_providers.deepseek-remote]
+name = "DeepSeek Remote"
+base_url = "https://api.deepseek.com/v1/"
+
+[projects."/Users/durgakandel/Projects/nomi"]
+trust_level = "trusted"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 1
