@@ -32,6 +32,8 @@ Concrete project, process, and tooling docs.
   critique workflow, and checkpoint doctrine.
 - [VS Code Extension](orientation/vscode_extension.md): local extension
   surface and roadmap.
+- [RAG MCP Context](orientation/rag_mcp.md): local retrieval and MCP scaffold
+  for codebase and programming-book context.
 
 ## Language
 

@@ -36,6 +36,8 @@ include = ["prototype*", "scripts*", "tools*"]
 
 [project.scripts]
 nomi = "scripts.cli:main"
+nomi-rag = "tools.rag_mcp.cli:main"
+nomi-rag-mcp = "tools.rag_mcp.mcp_server:main"
 
 [tool.pytest.ini_options]
 addopts = "-n auto"

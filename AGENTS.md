@@ -66,6 +66,8 @@ work with the active docs in `docs/language/` and `docs/features/`.
 - Generate HTML reports: `python3 scripts/test_report.py --no-open`
 - Check the Nomi Jupyter kernel:
   `python3 -m tools.jupyter.check_nomi_kernel`
+- Build local RAG context: `python3 -m tools.rag_mcp.cli build`
+- Search local RAG context: `python3 -m tools.rag_mcp.cli search "binding constraints"`
 
 The project config currently sets pytest addopts to `-n auto`, so tests may run
 in parallel. For parser/interpreter work, prefer a focused failing test first,
@@ -85,6 +87,11 @@ then the broader relevant suite.
 - `tools/jupyter/`: Nomi notebook kernel and helpers.
 - `tools/docker/`: Docker container entrypoint for the notebook image.
 - `tools/vscode/nomi/`: local VS Code extension scaffold.
+- `tools/rag_mcp/`: local RAG index and MCP server scaffold for codebase plus
+  programming-book context.
+- `config/rag_sources.json`: tracked RAG source map. It points at this repo and
+  a placeholder `Local_Programming_Books` folder that can later be replaced by
+  the real programming-books path.
 - `docs/language/`, `docs/features/`, and `docs/research/`: active language
   design workspace grouped by concreteness.
 - `docs/archive/design_review/`: preserved AI-assisted and exploratory
@@ -117,6 +124,16 @@ Nomi has already used ChatGPT, Grok, DeepSeek, Gemini, Claude, and Codex for
 design critique, synthesis, and infrastructure work. Treat AI output as design
 material that must be reconciled with the repo, tests, and the user's current
 intent.
+
+When local RAG/MCP context is available, use it as a source-discovery layer for
+questions about Nomi and nearby programming-language references. Prefer
+`rag_search` results that cite repository paths or configured book paths, then
+reconcile those results with the active docs and code before changing behavior.
+Run the MCP server with:
+
+```bash
+python3 -m tools.rag_mcp.mcp_server
+```
 
 For longer Codex sessions, use this loop:
 

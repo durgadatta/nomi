@@ -25,6 +25,7 @@ reports/
 htmlcov/
 .coverage
 coverage.xml
+.nomi/
 
 #packaging and distribution
 *egg-info/

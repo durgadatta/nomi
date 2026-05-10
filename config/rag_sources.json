@@ -1,0 +1,41 @@
+{
+  "index_path": ".nomi/rag_index.json",
+  "sources": [
+    {
+      "name": "nomi-codebase",
+      "kind": "codebase",
+      "path": ".",
+      "include": [
+        "AGENTS.md",
+        "README.md",
+        "docs/**/*.md",
+        "prototype/**/*.py",
+        "prototype/**/*.lark",
+        "scripts/**/*.py",
+        "tools/**/*.py"
+      ],
+      "exclude": [
+        ".git/**",
+        ".nomi/**",
+        ".pytest_cache/**",
+        "docs/archive/**",
+        "docs/drafts/**",
+        "local/**",
+        "PLAY/**",
+        "reports/**",
+        "**/__pycache__/**"
+      ]
+    },
+    {
+      "name": "programming-books",
+      "kind": "books",
+      "path": "Local_Programming_Books",
+      "include": [
+        "**/*.md",
+        "**/*.txt",
+        "**/*.rst"
+      ],
+      "exclude": []
+    }
+  ]
+}
