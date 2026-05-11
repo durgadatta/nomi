@@ -24,22 +24,23 @@ def ensure_store(node):
     Mainly used in assignment; but there are also other implicit assignment
         - with .. as var
     '''
+    lineno = getattr(node, 'lineno', 1)
+    col_offset = getattr(node, 'col_offset', 0)
+    
     if isinstance(node, ast.Name):
-        return ast.Name(id=node.id, ctx=ast.Store())
+        return ast.Name(id=node.id, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     elif isinstance(node, ast.Attribute):
-        return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store())
+        return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     elif isinstance(node, ast.Subscript):
-        return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store())
+        return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     elif isinstance(node, ast.Starred):
-        # Python allows starred expressions in assignment: *a, b = ...
-        return ast.Starred(value=ensure_store(node.value), ctx=ast.Store())
+        return ast.Starred(value=ensure_store(node.value), ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     elif isinstance(node, ast.Tuple):
-        return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store())
+        return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     elif isinstance(node, list):
-        # Lark transformer may return a list for comma-separated targets
-        return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store())
+        return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
     else:
-        return node  # unknown node types, leave as-is
+        return node
     
 
 # parser usage utilities
