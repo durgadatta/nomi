@@ -20,3 +20,9 @@ class Interpreter(NomiInterpreter):
             "Pass should be desugared at parse time. "
             "Desugarer replaces pass with a constant expression."
         )
+
+    def eval_With(self, node, *, state=None, generator_state=None):
+        raise NotImplementedError(
+            "With should be desugared at parse time. "
+            "Desugarer expands with into enter/assign/try/except/else."
+        )
