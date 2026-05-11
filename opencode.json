@@ -1,0 +1,335 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // =========================================================================
+  // 1. MODEL
+  // =========================================================================
+  // Format: "provider/model-id". List available models via /connect or /models.
+  // Provider options (apiKey, timeout, etc.) go in "provider" section below.
+
+  "model": "deepseek/deepseek-v4-pro",
+
+  // Small/cheap model for lightweight tasks (title generation, summaries).
+  // Falls back to main model if unset or unavailable.
+  "small_model": "deepseek/deepseek-v4-flash",
+
+  // =========================================================================
+  // 2. PROVIDER
+  // =========================================================================
+  // Per-provider configuration: timeouts, caching, region, API keys via env.
+  // Uncomment and adjust as needed.
+
+  // "provider": {
+  //   "deepseek": {
+  //     "options": {
+  //       "apiKey": "{env:DEEPSEEK_API_KEY}",
+  //       "timeout": 600000,          // Request timeout in ms (default: 300000). false = disable.
+  //       "chunkTimeout": 30000      // Timeout between streamed chunks in ms
+  //     }
+  //   },
+  //   "anthropic": {
+  //     "options": {
+  //       "apiKey": "{env:ANTHROPIC_API_KEY}",
+  //       "timeout": 600000,
+  //       "chunkTimeout": 30000,
+  //       "setCacheKey": true        // Ensure cache key is set for prompt caching
+  //     }
+  //   },
+  //   "openai": {
+  //     "options": {
+  //       "apiKey": "{env:OPENAI_API_KEY}",
+  //       "timeout": 600000
+  //     }
+  //   },
+  //   "gemini": {
+  //     "options": {
+  //       "apiKey": "{env:GEMINI_API_KEY}",
+  //       "timeout": 600000
+  //     }
+  //   },
+  //   "amazon-bedrock": {
+  //     "options": {
+  //       "region": "us-east-1",
+  //       "profile": "default"       // AWS named profile from ~/.aws/credentials
+  //     }
+  //   }
+  // },
+
+  // =========================================================================
+  // 3. PROVIDER ALLOWLIST / BLOCKLIST
+  // =========================================================================
+  // Control which providers OpenCode loads at startup.
+  // "disabled_providers" takes priority over "enabled_providers".
+
+  // "enabled_providers": ["deepseek", "anthropic", "openai"],
+  // "disabled_providers": ["azure-openai", "openrouter"],
+
+  // =========================================================================
+  // 4. SHELL
+  // =========================================================================
+  // Shell used for tool calls. Auto-detected if unset.
+  // Accepts a short name or absolute path.
+
+  // "shell": "zsh",
+  // "shell": "/bin/bash",
+
+  // =========================================================================
+  // 5. LSP (Language Server Protocol)
+  // =========================================================================
+  // Provides code intelligence (diagnostics, go-to-def, hover, etc.).
+  // Set to true to enable all built-in servers. Omit to disable all.
+  // OpenCode auto-starts matching servers when a supported file is opened.
+
+  "lsp": {
+    "pyright": {
+      "extensions": [".py", ".pyi"],
+      // "env": { "PYRIGHT_PYTHON_FORCE_VERSION": "3.12" },   // environment vars
+      // "initialization": {                                   // LSP init options
+      //   "typeCheckingMode": "basic"
+      // }
+    }
+
+    // Disable a specific built-in server:
+    // "typescript": { "disabled": true },
+
+    // Add a custom LSP server:
+    // "custom-lsp": {
+    //   "command": ["my-lsp", "--stdio"],
+    //   "extensions": [".custom"]
+    // }
+  },
+
+  // =========================================================================
+  // 6. FORMATTER
+  // =========================================================================
+  // Auto-formats files after edits. Set to true to enable all built-ins.
+  // Omit to disable. Use an object for fine-grained control.
+
+  "formatter": {
+    "ruff": {
+      "extensions": [".py", ".pyi"]
+    }
+
+    // Disable a specific formatter:
+    // "prettier": { "disabled": true },
+
+    // Custom formatter example:
+    // "black": {
+    //   "command": ["black", "--quiet", "$FILE"],
+    //   "extensions": [".py", ".pyi"]
+    // },
+    // "isort": {
+    //   "command": ["isort", "$FILE"],
+    //   "extensions": [".py", ".pyi"]
+    // }
+  },
+
+  // =========================================================================
+  // 7. INSTRUCTIONS (aka RULES)
+  // =========================================================================
+  // Extends AGENTS.md with additional instruction files.
+  // Supports local paths, glob patterns, and remote URLs.
+  // AGENTS.md (project & global) is loaded automatically.
+
+  "instructions": [
+    "docs/README.md",
+    "docs/language/implementation_todos.md"
+    // "docs/language/language_foundation.md",
+    // "docs/features/binding_constraints_feature.md",
+    // "CONTRIBUTING.md",
+    // ".cursor/rules/*.md",
+    // "https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"
+  ],
+
+  // =========================================================================
+  // 8. PERMISSIONS
+  // =========================================================================
+  // Control whether tools need user approval.
+  // Options: "allow" (default), "ask", "deny"
+  // Wildcards supported: "mymcp_*" matches all tools from that MCP server.
+  // By default, ALL tools are allowed without prompting.
+
+  "permission": {
+    // "edit": "ask",         // Prompt before modifying files
+    // "write": "ask",        // Prompt before creating/overwriting files
+    // "bash": "ask",         // Prompt before running shell commands
+    // "read": "allow",
+    // "grep": "allow",
+    // "glob": "allow",
+    // "webfetch": "allow",
+    // "websearch": "allow",
+    // "question": "allow",
+    // "todowrite": "allow",
+    // "skill": "allow"
+
+    // Stricter: deny dangerous patterns
+    // "bash": {
+    //   "*": "ask",
+    //   "rm -rf *": "deny",
+    //   "git push --force*": "deny",
+    //   "sudo *": "ask"
+    // }
+  },
+
+  // =========================================================================
+  // 9. WATCHER
+  // =========================================================================
+  // File change watcher. Ignore noisy directories to reduce load.
+  // Patterns use glob syntax.
+
+  "watcher": {
+    "ignore": [
+      "__pycache__/**",
+      "*.pyc",
+      "reports/**",
+      "htmlcov/**",
+      ".coverage",
+      "coverage.xml",
+      ".nomi/**",
+      "node_modules/**",
+      "dist/**",
+      "*.egg-info/**",
+      "*.tgz",
+      "*.vsix",
+      ".vscode-test/**",
+      ".git/**"
+    ]
+  },
+
+  // =========================================================================
+  // 10. COMPACTION
+  // =========================================================================
+  // Controls context window management. Keeps conversation within model limits.
+
+  "compaction": {
+    "auto": true,       // Automatically compact when context is full
+    "prune": true,      // Remove old tool outputs to free tokens
+    "reserved": 10000   // Token buffer to avoid overflow during compaction
+  },
+
+  // =========================================================================
+  // 11. SNAPSHOT
+  // =========================================================================
+  // Track file changes for undo/redo within a session. Enabled by default.
+  // Disable if your repo is very large and performance suffers.
+  // "snapshot": false,
+
+  // =========================================================================
+  // 12. AUTOUPDATE
+  // =========================================================================
+  // OpenCode auto-downloads new versions on startup.
+  // Set to "notify" to only show a notification without auto-downloading.
+  // "autoupdate": true,
+  // "autoupdate": "notify",
+  // "autoupdate": false,
+
+  // =========================================================================
+  // 13. SHARE
+  // =========================================================================
+  // Controls conversation sharing: "manual" (default), "auto", "disabled"
+  // "share": "manual",
+
+  // =========================================================================
+  // 14. SERVER
+  // =========================================================================
+  // For opencode serve / opencode web. Only needed if running as a server.
+
+  // "server": {
+  //   "port": 4096,
+  //   "hostname": "0.0.0.0",
+  //   "mdns": true,                          // Enable mDNS for local network discovery
+  //   "mdnsDomain": "nomi.local",            // Custom mDNS domain
+  //   "cors": ["http://localhost:5173"]      // Additional CORS origins
+  // },
+
+  // =========================================================================
+  // 15. AGENTS
+  // =========================================================================
+  // Specialized sub-agents for specific tasks.
+  // Can also be defined via markdown files in .opencode/agents/ or
+  // ~/.config/opencode/agents/.
+
+  // "agent": {
+  //   "code-reviewer": {
+  //     "description": "Reviews code for best practices and potential issues",
+  //     "model": "deepseek/deepseek-v4-pro",
+  //     "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
+  //     "tools": {
+  //       "edit": false,
+  //       "write": false
+  //     }
+  //   },
+  //   "tester": {
+  //     "description": "Writes and runs tests for Nomi language features",
+  //     "model": "deepseek/deepseek-chat",
+  //     "prompt": "You are a test engineer. Write thorough pytest tests for Nomi.",
+  //     "tools": {
+  //       "bash": true,
+  //       "read": true,
+  //       "edit": true
+  //     }
+  //   }
+  // },
+
+  // Default agent when none is specified. Must be a primary agent, not a subagent.
+  // Built-in options: "build", "plan"
+  // "default_agent": "build",
+
+  // =========================================================================
+  // 16. COMMANDS
+  // =========================================================================
+  // Custom slash-commands. Can also be defined as markdown files in
+  // .opencode/commands/ or ~/.config/opencode/commands/.
+  // $ARGUMENTS captures positional args from invocation.
+
+  // "command": {
+  //   "test": {
+  //     "template": "Run the full test suite with pytest. Show only failing tests and suggest fixes for them.",
+  //     "description": "Run tests and diagnose failures",
+  //     "agent": "build"
+  //   },
+  //   "test-focus": {
+  //     "template": "Run pytest on $ARGUMENTS. Show only failing tests and suggest fixes.",
+  //     "description": "Run focused test file(s)"
+  //   },
+  //   "lint": {
+  //     "template": "Run ruff on the changed files and fix any linting issues.",
+  //     "description": "Lint with ruff and fix issues"
+  //   },
+  //   "docs": {
+  //     "template": "Read the docs at docs/ and update AGENTS.md with any new build/test commands or conventions discovered.",
+  //     "description": "Sync AGENTS.md from docs"
+  //   }
+  // },
+
+  // =========================================================================
+  // 17. PLUGINS
+  // =========================================================================
+  // Load npm plugins for extended functionality.
+  // Also loadable from .opencode/plugins/ or ~/.config/opencode/plugins/.
+
+  // "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"],
+
+  // =========================================================================
+  // 18. EXPERIMENTAL
+  // =========================================================================
+  // Features under active development. Unstable — may change or be removed.
+
+  // "experimental": {
+  //   // LSP tool support (go-to-def, find-refs, etc. exposed to the LLM)
+  //   // Requires: OPENCODE_EXPERIMENTAL_LSP_TOOL=true env var
+  // },
+
+  // =========================================================================
+  // 19. MCP SERVERS
+  // =========================================================================
+  // Model Context Protocol servers for external tools & integrations.
+
+  // "mcp": {
+  //   "jira": {
+  //     "type": "remote",
+  //     "url": "https://jira.example.com/mcp",
+  //     "enabled": true
+  //   }
+  // }
+}

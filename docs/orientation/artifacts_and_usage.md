@@ -55,10 +55,15 @@ finer-grained coverage will be introduced gradually.
 
 ## AI Agent Entry Point
 
-The repository now includes a root `AGENTS.md` file for AI coding agents. It is
-the project-level working map for setup commands, test commands, repository
-structure, design-document reading order, and long-running Codex-style
-checkpoint workflow.
+The repository includes a root `opencode.json` config file for AI coding
+agents running under OpenCode. It sets the default model, enables `pyright` LSP
+and `ruff` formatting for Python files, maps instruction files, controls
+permissions, and provides commented-out templates for providers, agents,
+commands, and MCP servers.
+
+The root `AGENTS.md` file serves as the project-level working map for setup
+commands, test commands, repository structure, design-document reading order,
+and long-running Codex-style checkpoint workflow.
 
 The companion process note `ai_collaboration.md` explains how
 Nomi uses AI for exploration, critique, implementation planning, test pressure,

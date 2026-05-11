@@ -83,6 +83,8 @@ then the broader relevant suite.
 - `prototype/tests/`: unit, functional, regression, and end-to-end tests.
 - `prototype/tests/data/sample_sources/`: executable language examples and
   regression samples.
+- `opencode.json`: project-level OpenCode config (model, LSP, formatter,
+  permissions, instructions, etc.).
 - `scripts/`: CLI, demo program, and report generation.
 - `tools/jupyter/`: Nomi notebook kernel and helpers.
 - `tools/docker/`: Docker container entrypoint for the notebook image.
@@ -137,7 +139,7 @@ python3 -m tools.rag_mcp.mcp_server
 
 For longer Codex sessions, use this loop:
 
-1. Read this file and the most relevant design docs.
+1. Read this file, `opencode.json`, and the most relevant design docs.
 2. Restate the concrete goal and identify the files likely to change.
 3. Make a short implementation plan before editing.
 4. Work in focused increments: implement, test, checkpoint, continue.

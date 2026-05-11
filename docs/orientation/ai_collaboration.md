@@ -23,6 +23,9 @@ clear semantics, tests, examples, and documentation.
 
 ## Existing AI-Influenced Artifacts
 
+- `opencode.json`: project-level OpenCode config (model, LSP, formatter,
+  permissions, instructions, watcher, compaction, and commented-out templates
+  for providers, agents, commands, plugins, and MCP servers).
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
@@ -115,6 +118,8 @@ than making it runtime behavior.
 ## Practical Defaults
 
 - Keep `AGENTS.md` concise and operational.
+- Keep `opencode.json` in sync with the project toolchain (model, LSP,
+  formatter) and uncomment sections as the project adopts new tooling.
 - Put broader AI process notes here.
 - Put canonical language direction in `../language/`.
 - Put historical or superseded AI synthesis in
