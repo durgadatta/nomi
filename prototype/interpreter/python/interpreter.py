@@ -82,7 +82,7 @@ class Interpreter(
             # Only wrap "unexpected" exceptions, not user-raised ones
             if isinstance(e, (RuntimeError, TypeError, ValueError, 
                             NameError, AttributeError, SyntaxError,
-                            IndexError, KeyError)):
+                            IndexError, KeyError, AssertionError)):
                 # These are likely user-raised or Python built-in exceptions
                 # Let them propagate for try-except blocks to catch
                 raise
