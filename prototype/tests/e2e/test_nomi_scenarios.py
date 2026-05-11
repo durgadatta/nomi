@@ -1,7 +1,11 @@
-from prototype.interpreter.nomi.usage import run_eval_loop
+import pytest
+from prototype.interpreter.helpers import get_run_eval_loop
 
 
-def test_validation_functions_and_match_work_together():
+def test_validation_functions_and_match_work_together(interpreter_mode):
+    if interpreter_mode == 'python':
+        pytest.skip('Nomi-specific syntax (func, =>, constraints) not supported by Python parser')
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
             "is_positive = (x) => x > 0\n"
@@ -20,7 +24,10 @@ def test_validation_functions_and_match_work_together():
     assert bindings["label"] == "regular"
 
 
-def test_block_iteration_data_pipeline_scenario():
+def test_block_iteration_data_pipeline_scenario(interpreter_mode):
+    if interpreter_mode == 'python':
+        pytest.skip('Nomi-specific syntax (func, block calls) not supported by Python parser')
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
             "func each(items):\n"
@@ -38,7 +45,10 @@ def test_block_iteration_data_pipeline_scenario():
     assert bindings["item"] == 8
 
 
-def test_retry_style_yield_to_block_scenario():
+def test_retry_style_yield_to_block_scenario(interpreter_mode):
+    if interpreter_mode == 'python':
+        pytest.skip('Nomi-specific syntax (func, block calls) not supported by Python parser')
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
             "func retry(max_attempts):\n"
@@ -62,7 +72,10 @@ def test_retry_style_yield_to_block_scenario():
     assert bindings["success"] == 3
 
 
-def test_nested_functions_constraints_and_nonlocal_scenario():
+def test_nested_functions_constraints_and_nonlocal_scenario(interpreter_mode):
+    if interpreter_mode == 'python':
+        pytest.skip('Nomi-specific syntax (func, constraints) not supported by Python parser')
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
             "func make_counter(start: (int, start >= 0)):\n"

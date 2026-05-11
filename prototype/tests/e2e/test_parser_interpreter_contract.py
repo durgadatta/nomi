@@ -2,8 +2,7 @@ import ast
 
 import pytest
 
-from prototype.interpreter.nomi.usage import run_eval_loop as run_nomi
-from prototype.interpreter.python.usage import run_eval_loop as run_python
+from prototype.interpreter.helpers import get_run_eval_loop
 from prototype.parser.nomi.usage import generate_ast as generate_nomi_ast
 from prototype.parser.python.utils import generate_ast as generate_python_ast
 
@@ -24,18 +23,18 @@ PYTHON_PROGRAMS = [
 
 
 @pytest.mark.parametrize("code,key,expected", NOMI_PROGRAMS)
-def test_nomi_parser_output_runs_in_nomi_interpreter(code, key, expected):
+def test_nomi_parser_output_runs_in_interpreter(code, key, expected, interpreter_mode):
+    if interpreter_mode == 'python':
+        pytest.skip("Nomi programs require 'nomi' or 'reduced' interpreter")
     tree = ast.fix_missing_locations(generate_nomi_ast(code=code))
-
-    bindings = run_nomi(tree=tree)
-
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
+    bindings = run_eval_loop(tree=tree)
     assert bindings[key] == expected
 
 
 @pytest.mark.parametrize("code,key,expected", PYTHON_PROGRAMS)
-def test_python_parser_output_runs_in_python_interpreter(code, key, expected):
+def test_python_parser_output_runs_in_interpreter(code, key, expected, interpreter_mode):
     tree = ast.fix_missing_locations(generate_python_ast(code=code))
-
-    bindings = run_python(tree=tree)
-
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
+    bindings = run_eval_loop(tree=tree)
     assert bindings[key] == expected

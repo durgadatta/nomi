@@ -7,15 +7,10 @@ import json
 import io
 import contextlib
 
-# Directory containing test source files
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
-ALL_SOURCES = SAMPLE_DIR.glob('*.{py,nomi}')
-
-
 ALL_SOURCES = list(SAMPLE_DIR.glob('*.py')) + list(SAMPLE_DIR.glob('*.nomi'))
 
-from prototype.interpreter.python.usage import run_eval_loop as run_eval_loop_py
-from prototype.interpreter.nomi.usage import run_eval_loop as run_eval_loop_nomi
+from prototype.interpreter.helpers import get_run_eval_loop
 
     
 
@@ -58,14 +53,16 @@ def stabilize_locals(local_vars, exclude_private=True):
 
 
 @pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
-def test_eval_loop(source_file, file_regression, capsys):
+def test_eval_loop(source_file, file_regression, capsys, interpreter_mode):
+    ext = source_file.suffix
+    if ext == '.py' and interpreter_mode != 'python':
+        pytest.skip(f".py source requires 'python' interpreter mode, got {interpreter_mode!r}")
+    if ext == '.nomi' and interpreter_mode == 'python':
+        pytest.skip(f".nomi source requires 'nomi' or 'reduced' interpreter mode, got {interpreter_mode!r}")
+
     code = source_file.read_text()
 
-    ext = source_file.suffix
-    if ext == '.py':
-        run_eval_loop = run_eval_loop_py
-    elif ext == '.nomi':
-        run_eval_loop = run_eval_loop_nomi
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
 
     eval_loop_stdout = io.StringIO()
     with capsys.disabled():

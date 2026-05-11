@@ -1,6 +1,7 @@
 import ast
+import pytest
 
-from prototype.interpreter.nomi.usage import run_eval_loop
+from prototype.interpreter.helpers import get_run_eval_loop
 from prototype.parser.nomi.usage import generate_ast
 from prototype.parser.nomi.usage import get_parser
 
@@ -17,14 +18,16 @@ def test_regression_single_underscore_is_name_outside_match_pattern():
     assert second.value.id == "_"
 
 
-def test_regression_single_underscore_match_pattern_does_not_bind():
+def test_regression_single_underscore_match_pattern_does_not_bind(interpreter_mode):
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(code="_ = 'existing'\nmatch 10:\n    case _:\n        value = _\n")
 
     assert bindings["_"] == "existing"
     assert bindings["value"] == "existing"
 
 
-def test_regression_double_underscore_match_pattern_still_captures():
+def test_regression_double_underscore_match_pattern_still_captures(interpreter_mode):
+    run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(code="match 10:\n    case __:\n        value = __\n")
 
     assert bindings["__"] == 10

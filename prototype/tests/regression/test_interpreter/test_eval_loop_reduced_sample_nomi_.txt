@@ -1,0 +1,19 @@
+{
+  "contextmanager": "contextmanager:class=<class 'function'>",
+  "is_positive": "is_positive:class=<class 'function'>",
+  "add": "add:class=<class 'function'>",
+  "v": 3,
+  "error_printer": "instance of:ErrorPrinter:class=<class 'type'>",
+  "ErrorPrinter": "ErrorPrinter:class=<class 'type'>",
+  "double_limited_pos": "double_limited_pos:class=<class 'function'>",
+  "doubled_5": 10,
+  "stdout": [
+    "An error occurred: Constraint violations:",
+    "  Constraint '20 < a < 30' failed for value 10",
+    "An error occurred: Constraint violations:",
+    "  Callable constraint is_positive failed for value -1",
+    "  Constraint '1 < a < 100' failed for value -1",
+    "3",
+    ""
+  ]
+}

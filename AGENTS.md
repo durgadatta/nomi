@@ -63,6 +63,17 @@ work with the active docs in `docs/language/` and `docs/features/`.
 
 - Run the full Python test suite: `pytest`
 - Run a focused test file: `pytest prototype/tests/path/to/test_file.py`
+- Run tests on a specific interpreter only:
+  `pytest --interpreter-modes reduced`
+  `NOMI_INTERPRETER_MODE=reduced pytest`
+- Available interpreter modes: `python`, `nomi`, `reduced`, `all`
+  (default: all three). The `--interpreter-modes` flag and
+  `NOMI_INTERPRETER_MODE` env var are defined in
+  `prototype/tests/conftest.py`.
+- Tests that use `interpreter_mode` fixture are auto-parametrized.
+  Tests that hardcode a specific interpreter import are unaffected.
+- Regenerate regression snapshots after semantic changes:
+  `pytest --force-regen prototype/tests/regression/test_interpreter.py`
 - Generate HTML reports: `python3 scripts/test_report.py --no-open`
 - Check the Nomi Jupyter kernel:
   `python3 -m tools.jupyter.check_nomi_kernel`
@@ -80,7 +91,14 @@ then the broader relevant suite.
 - `prototype/parser/nomi/`: Nomi-specific syntax handling.
 - `prototype/interpreter/python/`: Python-compatible custom interpreter layers.
 - `prototype/interpreter/nomi/`: Nomi-specific runtime behavior.
+- `prototype/interpreter/reduced/`: minimal-semantics interpreter; inherits from
+  Nomi interpreter. Each reduction commit removes `eval_*` methods from this
+  interpreter as the corresponding syntactic form is desugared at parse time.
+- `prototype/interpreter/helpers.py`: dispatch helper for selecting an interpreter
+  at test time via `interpreter_mode` fixture.
 - `prototype/tests/`: unit, functional, regression, and end-to-end tests.
+- `prototype/tests/conftest.py`: shared fixtures (`interpreter_mode`) and
+  `--interpreter-modes` CLI flag for multi-interpreter testing.
 - `prototype/tests/data/sample_sources/`: executable language examples and
   regression samples.
 - `opencode.json`: project-level OpenCode config (model, LSP, formatter,
