@@ -4,6 +4,13 @@
 # secrets, and private scratch config out of this committed file.
 
 
+### codex config issue
+## codex does not seem to allow project level info in local config. To make that work
+## we need to change CODEX_HOME to local project folder but that will cause to write
+## tui config which changes every session (making git tracking noisy)
+## For now, most used profile have been moved/duplicated in global config outside git.
+
+
 # ---------------------------------------------------------------------------
 # Default behavior for this repository
 # ---------------------------------------------------------------------------
@@ -82,9 +89,9 @@ approval_policy = "on-request"
 
 # Cloud DeepSeek V4 Pro profile.
 # Note: Requires DEEPSEEK_API_KEY to be set in your environment.
-[profiles.deepseek-cloud]
-model_provider = "deepseek-remote"
-model = "deepseek-chat"
+[profiles.deepseek]
+model_provider = "deepseek"
+model = "deepseek-v4-pro"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
@@ -120,12 +127,9 @@ approval_policy = "on-request"
 name = "Ollama Local"
 base_url = "http://localhost:11434/v1/"
 
-[model_providers.deepseek-remote]
+[model_providers.deepseek]
 name = "DeepSeek Remote"
-base_url = "https://api.deepseek.com/v1/"
+base_url = "https://api.deepseek.com"
 
 [projects."/Users/durgakandel/Projects/nomi"]
 trust_level = "trusted"
-
-[tui.model_availability_nux]
-"gpt-5.5" = 1
