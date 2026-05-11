@@ -127,9 +127,20 @@ class _DecoratorDesugarer(_BaseDesugarer):
         return self._desugar_decorators(node, node.name)
 
 
+class _PassDesugarer(_BaseDesugarer):
+    """pass  →  Expr(Constant(0))"""
+
+    def visit_Pass(self, node):
+        return ast.copy_location(
+            ast.Expr(value=ast.Constant(value=0)),
+            node,
+        )
+
+
 def desugar_module(tree: ast.Module) -> ast.Module:
     tree = _AugAssignDesugarer().visit(tree)
     tree = _AssertDesugarer().visit(tree)
     tree = _DecoratorDesugarer().visit(tree)
+    tree = _PassDesugarer().visit(tree)
     ast.fix_missing_locations(tree)
     return tree

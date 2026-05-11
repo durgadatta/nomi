@@ -14,3 +14,9 @@ class Interpreter(NomiInterpreter):
             "Assert should be desugared at parse time. "
             "Desugarer transforms assert into if/raise."
         )
+
+    def eval_Pass(self, node):
+        raise NotImplementedError(
+            "Pass should be desugared at parse time. "
+            "Desugarer replaces pass with a constant expression."
+        )
