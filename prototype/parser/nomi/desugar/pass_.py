@@ -1,9 +1,9 @@
 import ast
 
-from .base import BaseDesugarer
+from .base import NomiDesugarer
 
 
-class Pass(BaseDesugarer):
+class Pass(NomiDesugarer):
     """pass  →  Expr(Constant(0))"""
 
     def visit_Pass(self, node):

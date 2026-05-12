@@ -1,9 +1,9 @@
 import ast
 
-from .base import BaseDesugarer
+from .base import NomiDesugarer
 
 
-class Decorator(BaseDesugarer):
+class Decorator(NomiDesugarer):
     """"@deco\\nfunc f(): body"  →  "func f(): body\\nf = deco(f)"
 
     Decorators on class definitions are desugared the same way.

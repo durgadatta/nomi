@@ -22,11 +22,10 @@ class CoroutineState(PythonCoroutineState):
 
                 self.interpreter.eval(block)
 
-    def _handle_yield(self, yield_values):
+    def _handle_yield(self, yield_value=None):
         super()._handle_yield()
         try:
-            self._handle_yield_to_block(yield_values)
+            self._handle_yield_to_block(yield_value)
         except Exception as e:
-            # transfer the exception from block to the generator state
             self.throw(e)
         

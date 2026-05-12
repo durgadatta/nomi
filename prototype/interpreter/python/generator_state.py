@@ -82,38 +82,6 @@ class CoroutineState:
             self.eval(stmt, state=None)
             self.index += 1
 
-    def process_block(self, body, node, state):
-        ''''
-        TODO:NOTE:
-        this is currently not in use but this 
-        is the same pattern in
-        all resumable blocks For/While/If/Try/With.
-
-        Later abstract out; minimize dependencies, maybe
-        the only thing required here is the index to start 
-        from and return thee index paused at; both are
-        there in the state;
-
-        Then also unify the sequential execution (the second part of resume() here);
-        before that, need to unify how index are accessed and set (. vs [])
-
-        one complication is that generator_state maybe None in node eval
-        (unless called from generator state); so the conditional handing at the call site
-        might defeat the purpose partially, but it will still propagate changes from one place
-
-        This is a partial manifestation of the "function color problem" 
-        '''
-        i = state['body_index']
-        while i < len(body):
-            stmt = body[i]
-            try:
-                self.interpreter.eval(stmt, self)
-                i += 1
-            except YieldException:
-                state['body_index'] = i + 1
-                self.pause(node, state)
-                raise
-        
     def frame_to_resume(self):
         #TODO: this essentially make this queue, not a stack, change this later
         if self.paused_frames:

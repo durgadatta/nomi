@@ -1,9 +1,9 @@
 import ast
 
-from .base import BaseDesugarer
+from .base import NomiDesugarer
 
 
-class With(BaseDesugarer):
+class With(NomiDesugarer):
     """Desugar with-statement into enter/assign/try/except/else blocks.
 
     with ctx as x:

@@ -2,10 +2,16 @@ import ast
 
 
 class BaseDesugarer(ast.NodeTransformer):
-    """Common helpers for all desugar passes.
+    """Base class for desugar passes. Extends ast.NodeTransformer."""
+    pass
 
-    Handles recursive visitation of AST nodes embedded in tuples
-    (block bodies stored in ast.keyword.value).
+
+class NomiDesugarer(BaseDesugarer):
+    """Desugarer base that handles Nomi-specific AST features.
+
+    Nomi stores block-call bodies as tuples inside ast.keyword.value.
+    Standard ast.NodeTransformer does not recurse into tuples, so
+    we override visit_keyword to handle them.
     """
 
     def visit_keyword(self, node):

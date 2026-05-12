@@ -1,9 +1,9 @@
 import ast
 
-from .base import BaseDesugarer
+from .base import NomiDesugarer
 
 
-class AugAssign(BaseDesugarer):
+class AugAssign(NomiDesugarer):
     """x += y  →  x = x + y"""
 
     def _to_load(self, node):

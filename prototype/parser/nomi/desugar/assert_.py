@@ -1,9 +1,9 @@
 import ast
 
-from .base import BaseDesugarer
+from .base import NomiDesugarer
 
 
-class Assert(BaseDesugarer):
+class Assert(NomiDesugarer):
     """assert cond [, msg]  →  if not cond: raise AssertionError([msg])"""
 
     def visit_Assert(self, node):
