@@ -138,6 +138,21 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             keywords=[],
         )
 
+    # -- pipe expression: x |> f  →  f(x),  x |> f |> g  →  g(f(x)) --
+
+    def pipe_expr(self, items):
+        if len(items) == 1:
+            return items[0]
+        result = items[0]
+        for i in range(1, len(items), 2):
+            right = items[i + 1]
+            if isinstance(right, ast.Call):
+                right.args.insert(0, result)
+                result = right
+            else:
+                result = ast.Call(func=right, args=[result], keywords=[])
+        return result
+
     def comparison(self, items):
         if not items:
             return ast.Constant(value=False)
