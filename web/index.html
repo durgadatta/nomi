@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomi Playground</title>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+    background: #1a1a2e; color: #e0e0e0; height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  header {
+    padding: 12px 20px; background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    display: flex; align-items: center; gap: 12px;
+  }
+  header h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
+  header .status { font-size: 12px; color: #888; }
+  header .status.ready { color: #4ade80; }
+  .examples { margin-left: auto; display: flex; gap: 6px; }
+  .examples button {
+    background: #0f3460; color: #a0b4d0; border: none;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
+  }
+  .examples button:hover { background: #1a4a7a; color: #fff; }
+  main { flex: 1; display: flex; overflow: hidden; }
+  .editor-panel { flex: 1; display: flex; flex-direction: column; }
+  .editor-panel textarea {
+    flex: 1; background: #16213e; color: #e0e0e0; border: none;
+    padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px; line-height: 1.6; resize: none; outline: none;
+    tab-size: 4;
+  }
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 16px; background: #1a1a2e; border-top: 1px solid #0f3460;
+  }
+  .toolbar button {
+    background: #4ade80; color: #1a1a2e; border: none;
+    padding: 8px 24px; border-radius: 6px; font-size: 14px;
+    font-weight: 600; cursor: pointer; letter-spacing: 1px;
+  }
+  .toolbar button:hover { background: #22c55e; }
+  .toolbar button:disabled { background: #555; color: #888; cursor: not-allowed; }
+  .output-panel {
+    width: 380px; background: #0f0f23; border-left: 1px solid #0f3460;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .output-panel h3 {
+    padding: 12px 16px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 2px; color: #888; border-bottom: 1px solid #0f3460;
+  }
+  .output-panel pre {
+    flex: 1; padding: 16px; overflow: auto; font-size: 13px;
+    line-height: 1.5; white-space: pre-wrap; word-break: break-all;
+  }
+  .output-panel pre.error { color: #f87171; }
+  .bindings { padding: 8px 16px; border-top: 1px solid #0f3460; font-size: 12px; }
+  .bindings span { color: #4ade80; }
+  .loading-overlay {
+    position: fixed; inset: 0; background: rgba(26,26,46,0.95);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; z-index: 100;
+  }
+  .loading-overlay p { margin-top: 16px; font-size: 14px; color: #888; }
+  .spinner {
+    width: 40px; height: 40px; border: 3px solid #0f3460;
+    border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <p id="loading-msg">Loading Nomi...</p>
+</div>
+
+<header>
+  <h1>Nomi</h1>
+  <span class="status" id="status">initializing</span>
+  <div class="examples">
+    <button onclick="loadExample('basic')">Basic</button>
+    <button onclick="loadExample('block')">Block call</button>
+    <button onclick="loadExample('constraint')">Constraints</button>
+  </div>
+</header>
+
+<main>
+  <div class="editor-panel">
+    <textarea id="editor" spellcheck="false">func greet(name):
+    return f"Hello, {name}!"
+
+result = greet("World")
+print(result)</textarea>
+    <div class="toolbar">
+      <span style="color:#888;font-size:12px;">Ctrl+Enter to run</span>
+      <button id="run-btn" onclick="run()" disabled>Run ▸</button>
+    </div>
+  </div>
+  <div class="output-panel">
+    <h3>Output</h3>
+    <pre id="output"></pre>
+    <div class="bindings" id="bindings"></div>
+  </div>
+</main>
+
+<script>
+let ready = false;
+let _runFn = null;
+
+function log(msg) {
+  console.log("[web]", msg);
+  document.getElementById("loading-msg").textContent = msg;
+}
+
+async function init() {
+  try {
+    log("Loading Pyodide...");
+    const pyodide = await loadPyodide();
+
+    log("Installing lark...");
+    await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install("lark");
+
+    log("Loading Nomi modules...");
+    const nomiPy = await fetch("./nomi_web.py").then(r => r.text());
+    await pyodide.runPythonAsync(nomiPy);
+
+    log("Initializing...");
+    const initFn = pyodide.globals.get("init_nomi");
+    if (!initFn) throw new Error("init_nomi not found");
+    await initFn();
+
+    _runFn = pyodide.globals.get("run_nomi");
+    if (!_runFn) throw new Error("run_nomi not found");
+
+    window.pyodide = pyodide;
+    ready = true;
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("status").textContent = "ready";
+    document.getElementById("status").classList.add("ready");
+    document.getElementById("run-btn").disabled = false;
+    log("Ready");
+  } catch (e) {
+    log("Error: " + e.message);
+    console.error(e);
+  }
+}
+
+async function run() {
+  if (!ready || !_runFn) return;
+  const code = document.getElementById("editor").value;
+  const out = document.getElementById("output");
+  const bind = document.getElementById("bindings");
+  const btn = document.getElementById("run-btn");
+  btn.disabled = true; btn.textContent = "...";
+
+  try {
+    const result = await _runFn(code);
+    const r = result.toJs();
+    if (r.has("error")) {
+      out.textContent = r.get("error");
+      out.className = "error";
+      bind.innerHTML = "";
+    } else {
+      out.textContent = r.get("output") || "(no output)";
+      out.className = "";
+      const bindings = r.get("bindings");
+      if (bindings && bindings.size > 0) {
+        let html = "";
+        bindings.forEach((v, k) => html += `<span>${k}</span> = ${esc(v)}<br>`);
+        bind.innerHTML = html;
+      } else {
+        bind.innerHTML = "";
+      }
+    }
+  } catch (e) {
+    out.textContent = String(e);
+    out.className = "error";
+  }
+  btn.disabled = false; btn.textContent = "Run ▸";
+}
+
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function loadExample(name) {
+  const ex = {
+    basic: `func greet(name):\n    return f"Hello, {name}!"\n\nresult = greet("World")\nprint(result)`,
+    block: `func each(items):\n    for item in items:\n        yield item\n\ntotal = 0\neach([1, -2, 3, 8]) -> item:\n    if item > 0:\n        total += item\n\nprint(f"total = {total}")`,
+    constraint: `is_positive = (x) => x > 0\nscore: int, is_positive = 72\n\nmatch score:\n    case 100:\n        label = "perfect"\n    case _:\n        label = "regular"\n\nprint(f"score={score}, grade={label}")`
+  };
+  document.getElementById("editor").value = ex[name] || ex.basic;
+}
+
+document.getElementById("editor").addEventListener("keydown", e => {
+  if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); run(); }
+});
+
+init();
+</script>
+</body>
+</html>
