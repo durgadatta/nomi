@@ -131,5 +131,3 @@ base_url = "http://localhost:11434/v1/"
 name = "DeepSeek Remote"
 base_url = "https://api.deepseek.com"
 
-[projects."/Users/durgakandel/Projects/nomi"]
-trust_level = "trusted"

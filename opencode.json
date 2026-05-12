@@ -83,6 +83,7 @@
   "lsp": {
     "pyright": {
       "extensions": [".py", ".pyi"],
+      "command": ["pyright-langserver", "--stdio"]  
       // "env": { "PYRIGHT_PYTHON_FORCE_VERSION": "3.12" },   // environment vars
       // "initialization": {                                   // LSP init options
       //   "typeCheckingMode": "basic"
