@@ -177,3 +177,7 @@ generateSequence(1) { it + 1 }.take(10).toList()
 | Spread in literals `[*a, *b]` | low | medium |
 | Slice sugar | already | — |
 | Lazy sequences | medium | medium |
+| Scalar broadcasting `.op` | medium | very high |
+| R `%>%` pipe | already via `\|>` | — |
+| R formula `~` | niche | — |
+
