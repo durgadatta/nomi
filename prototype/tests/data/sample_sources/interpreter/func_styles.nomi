@@ -1,5 +1,5 @@
 # Nomi function definition styles — comprehensive sample
-# Shows: funcdef, arrow, equation, piecewise, underscore lambdas
+# Shows: funcdef, arrow, equation, piecewise, underscore lambdas, where
 
 # ── 1. classic funcdef ────────────────────────────────────────────
 func classic_add(a, b):
@@ -13,7 +13,7 @@ add(a, b) = a + b
 pi() = 3.14
 greet(name) = "Hello, " + name
 
-# ── 4. piecewise (Haskell-style) ───────────────────────────────────
+# ── 4. piecewise (Haskell-style pattern matching) ──────────────────
 fact(1) = 1
 fact(n) = fact(n - 1) * n
 
@@ -27,50 +27,71 @@ upcase = _.upper()
 get_name = _["name"]
 add_two = _ + _
 
-# ── 6. where clause — local bindings (Haskell-style) ───────────────
-area = radius * radius * pi_val where:
-    pi_val = 3.14159
-    radius = 5
+# ── 6. where clause — local bindings ───────────────────────────────
+# simple: compute with helpers
+area = pi * r * r where:
+    pi = 3.14159
+    r = 5
 
+# mixed: where + underscore hole
+scaled_double = scale_value where:
+    scale = _ * 3
+    scale_value = scale(7)
+
+# mixed: where + equation
 greeting(name) = prefix + name where:
     prefix = "Hello, "
 
+# mixed: where + piecewise
+fib7 = f(7) where:
+    f(0) = 0
+    f(1) = 1
+    f(n) = f(n - 1) + f(n - 2)
+
+# mixed: where cascading helpers
+stats = (total, avg) where:
+    data = [2, 4, 6, 8]
+    total = sum(data)
+    avg = total / len(data)
+
 
 result_classic = classic_add(1, 2)
-print(f"1. classic func:        1 + 2 = {result_classic}")
+print("1. classic func:        1 + 2 = " + str(result_classic))
 
 result_arrow = arrow_square(5)
-print(f"2. arrow (x)=>x*x:      5²  = {result_arrow}")
+print("2. arrow (x)=>x*x:      5^2  = " + str(result_arrow))
 
 result_eq = add(3, 4)
-print(f"3. equation:            3 + 4 = {result_eq}")
+print("3. equation:            3 + 4 = " + str(result_eq))
 
 result_pi = pi()
-print(f"3. no-params:           pi() = {result_pi}")
+print("3. no-params:           pi() = " + str(result_pi))
 
 result_greet = greet("world")
-print(f"3. param:               greet(world) = {result_greet}")
+print("3. param:               greet(world) = " + result_greet)
 
 result_fact5 = fact(5)
-print(f"4. piecewise fact(5):   5!  = {result_fact5}")
+print("4. piecewise fact(5):   5!  = " + str(result_fact5))
 
 result_fib6 = fib(6)
-print(f"4. piecewise fib(6):    fib = {result_fib6}")
+print("4. piecewise fib(6):    fib = " + str(result_fib6))
 
 result_double = double(21)
-print(f"5. hole _ * 2:          21*2 = {result_double}")
+print("5. hole _ * 2:          21*2 = " + str(result_double))
 
 result_upcase = upcase("hello")
-print(f"5. hole _.upper():      HELLO = {result_upcase}")
+print("5. hole _.upper():      HELLO = " + result_upcase)
 
 result_get = get_name({"name": "alice"})
-print(f"5. hole _[\"name\"]:       alice = {result_get}")
+print("5. hole _[\"name\"]:       alice = " + result_get)
 
 result_addtwo = add_two(10, 20)
-print(f"5. hole _ + _:          10+20 = {result_addtwo}")
+print("5. hole _ + _:          10+20 = " + str(result_addtwo))
 
-result_area = area
-print(f"6. where area:           pi*r² = {result_area}")
+print("6. where area:          pi*r^2 = " + str(area))
+print("6. where + hole:       7*3    = " + str(scaled_double))
+r = greeting("where")
+print("6. where + equation:   Hello, where = " + r)
+print("6. where + piecewise:  fib(7) = " + str(fib7))
+print("6. where cascade:      stats  = " + str(stats))
 
-result_where_greet = greeting("where")
-print(f"6. where greeting:       Hello, where = {result_where_greet}")

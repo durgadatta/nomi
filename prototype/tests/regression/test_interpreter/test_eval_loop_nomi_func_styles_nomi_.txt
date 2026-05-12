@@ -11,7 +11,13 @@
   "get_name": "func:class=<class 'function'>",
   "add_two": "func:class=<class 'function'>",
   "area": 78.53975,
+  "scaled_double": 21,
   "greeting": "greeting:class=<class 'function'>",
+  "fib7": 13,
+  "stats": [
+    20,
+    5.0
+  ],
   "result_classic": 3,
   "result_arrow": 25,
   "result_eq": 7,
@@ -23,11 +29,10 @@
   "result_upcase": "HELLO",
   "result_get": "alice",
   "result_addtwo": 30,
-  "result_area": 78.53975,
-  "result_where_greet": "Hello, where",
+  "r": "Hello, where",
   "stdout": [
     "1. classic func:        1 + 2 = 3",
-    "2. arrow (x)=>x*x:      5\u00b2  = 25",
+    "2. arrow (x)=>x*x:      5^2  = 25",
     "3. equation:            3 + 4 = 7",
     "3. no-params:           pi() = 3.14",
     "3. param:               greet(world) = Hello, world",
@@ -37,8 +42,11 @@
     "5. hole _.upper():      HELLO = HELLO",
     "5. hole _[\"name\"]:       alice = alice",
     "5. hole _ + _:          10+20 = 30",
-    "6. where area:           pi*r\u00b2 = 78.53975",
-    "6. where greeting:       Hello, where = Hello, where",
+    "6. where area:          pi*r^2 = 78.53975",
+    "6. where + hole:       7*3    = 21",
+    "6. where + equation:   Hello, where = Hello, where",
+    "6. where + piecewise:  fib(7) = 13",
+    "6. where cascade:      stats  = (20, 5.0)",
     ""
   ]
 }

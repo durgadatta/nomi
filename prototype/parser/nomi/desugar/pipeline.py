@@ -16,9 +16,9 @@ from .fstring import FString
 
 
 DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
-    UnderscoreLambda,
     PiecewiseFunction,
     WhereClause,
+    UnderscoreLambda,
     AugAssign,
     Assert,
     Decorator,

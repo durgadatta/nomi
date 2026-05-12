@@ -8,9 +8,9 @@ from ..runner import make_runner
 
 def _nomi_desugar(tree):
     """Nomi-only desugar passes (run before interpreter eval)."""
-    tree = UnderscoreLambda().visit(tree)
     tree = PiecewiseFunction().visit(tree)
     tree = WhereClause().visit(tree)
+    tree = UnderscoreLambda().visit(tree)
     import ast
     ast.fix_missing_locations(tree)
     return tree

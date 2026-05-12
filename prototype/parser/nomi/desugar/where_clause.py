@@ -29,6 +29,21 @@ class WhereClause(BaseDesugarer):
 
     def visit_Module(self, node):
         self.generic_visit(node)
+        # Run piecewise merging on the where-bodies before extracting
+        from .piecewise import PiecewiseFunction
+        pw = PiecewiseFunction()
+        new_body = []
+        for stmt in node.body:
+            where_body = getattr(stmt, '_nomi_where_body', None)
+            if where_body is not None:
+                # Merge piecewise equations in the where-body
+                fake_module = ast.Module(body=list(where_body), type_ignores=[])
+                fake_module = pw.visit(fake_module)
+                stmt._nomi_where_body = fake_module.body
+            new_body.append(stmt)
+        node.body = new_body
+
+        # Now desugar the where clauses
         new_body = []
         for stmt in node.body:
             where_body = getattr(stmt, '_nomi_where_body', None)
