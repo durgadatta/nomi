@@ -80,10 +80,6 @@ class OthersMixin(AsyncMixin):
         except ImportError as e:
             raise ImportError(f"Cannot import from module '{node.module}' at line {self.get_lineno(node)}: {str(e)}") from e
 
-    def get_lineno(self, node: Optional[ast.AST]) -> int:
-        """Get line number from node, with a default if missing."""
-        return getattr(node, 'lineno', 1)
-    
     
     def eval_Delete(self, node: ast.Delete) -> None:
         for target in node.targets:

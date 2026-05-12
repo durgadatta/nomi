@@ -19,28 +19,52 @@ def ensure_expr(x):
 
 
 # --- Helper: recursively set Store() context for LHS ---
+_STORE_DISPATCH = {}  # populated below
+
+def _register_store(*types):
+    def deco(fn):
+        for t in types:
+            _STORE_DISPATCH[t] = fn
+        return fn
+    return deco
+
+@_register_store(ast.Name)
+def _store_name(node, lineno, col_offset):
+    return ast.Name(id=node.id, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
+@_register_store(ast.Attribute)
+def _store_attr(node, lineno, col_offset):
+    return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
+@_register_store(ast.Subscript)
+def _store_subscript(node, lineno, col_offset):
+    return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
+@_register_store(ast.Starred)
+def _store_starred(node, lineno, col_offset):
+    return ast.Starred(value=ensure_store(node.value), ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
+@_register_store(ast.Tuple)
+def _store_tuple(node, lineno, col_offset):
+    return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
+@_register_store(list)
+def _store_list(node, lineno, col_offset):
+    return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
+
 def ensure_store(node):
     '''
     Mainly used in assignment; but there are also other implicit assignment
         - with .. as var
+
+    New target types register via _register_store decorator.
     '''
     lineno = getattr(node, 'lineno', 1)
     col_offset = getattr(node, 'col_offset', 0)
-    
-    if isinstance(node, ast.Name):
-        return ast.Name(id=node.id, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    elif isinstance(node, ast.Attribute):
-        return ast.Attribute(value=node.value, attr=node.attr, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    elif isinstance(node, ast.Subscript):
-        return ast.Subscript(value=node.value, slice=node.slice, ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    elif isinstance(node, ast.Starred):
-        return ast.Starred(value=ensure_store(node.value), ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    elif isinstance(node, ast.Tuple):
-        return ast.Tuple(elts=[ensure_store(e) for e in node.elts], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    elif isinstance(node, list):
-        return ast.Tuple(elts=[ensure_store(e) for e in node], ctx=ast.Store(), lineno=lineno, col_offset=col_offset)
-    else:
-        return node
+    handler = _STORE_DISPATCH.get(type(node))
+    if handler:
+        return handler(node, lineno, col_offset)
+    return node
     
 
 # parser usage utilities

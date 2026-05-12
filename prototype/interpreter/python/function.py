@@ -35,27 +35,28 @@ class FunctionMixin(FunctionCallMixin):
         return obj
     
     def _is_generator_function(self, node: ast.FunctionDef) -> bool:
-        """Determine if a function is a generator by checking for yield statements, skipping nested functions."""
-        
-        def _check_for_yield(node: ast.AST) -> bool:
-            """Recursively check for yield in this node and its children, skipping nested functions."""
-            # Check current node
-            if isinstance(node, (ast.Yield, ast.YieldFrom)):
-                return True
-            
-            # Check children, but skip nested function/class definitions
-            for child in ast.iter_child_nodes(node):
-                # Skip function and class definitions - don't descend into them
-                if isinstance(child, (ast.FunctionDef, ast.ClassDef)):
-                    continue
-                if _check_for_yield(child):
-                    return True
-            return False
+        """Check for yield/yield-from in the function body, skipping nested definitions."""
 
-        # Just use the recursive function on the entire function body
-        # It will automatically skip nested functions due to the check in _check_for_yield
-        is_generator = _check_for_yield(node)
-        return is_generator
+        class _YieldFinder(ast.NodeVisitor):
+            def __init__(self):
+                self.found = False
+
+            def visit_Yield(self, node):
+                self.found = True
+
+            def visit_YieldFrom(self, node):
+                self.found = True
+
+            def visit_FunctionDef(self, node):
+                pass  # do not descend into nested functions
+
+            def visit_ClassDef(self, node):
+                pass  # do not descend into nested classes
+
+        finder = _YieldFinder()
+        for stmt in node.body:
+            finder.visit(stmt)
+        return finder.found
     
 
     def eval_generator_obj(self, body, local_env, block=None):

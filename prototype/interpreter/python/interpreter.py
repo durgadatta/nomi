@@ -45,11 +45,37 @@ class Interpreter(
         AssertionError,
     )
 
+    __eval_dispatch = None
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.__eval_dispatch = cls._build_eval_dispatch()
+
+    @classmethod
+    def _build_eval_dispatch(cls):
+        """Auto-build {ast_type: method_name} from eval_* methods in the MRO."""
+        dispatch = {}
+        for attr_name in dir(cls):
+            if not attr_name.startswith('eval_') or attr_name == 'eval_list':
+                continue
+            node_name = attr_name[5:]
+            node_type = getattr(ast, node_name, None)
+            if node_type is not None:
+                dispatch[node_type] = attr_name
+        return dispatch
+
     def __init__(self):
         self.builtin_env = self.env_class(self)
         self.builtin_env.bindings = builtins.__dict__.copy()
         self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
+        if type(self).__eval_dispatch is None:
+            type(self).__eval_dispatch = self._build_eval_dispatch()
+
+    @staticmethod
+    def get_lineno(node):
+        """Get line number from node, defaulting to 1 if missing."""
+        return getattr(node, 'lineno', 1)
 
     @classmethod
     def is_resumable(cls, node):
@@ -72,12 +98,13 @@ class Interpreter(
             return None
 
         node_name = node.__class__.__name__
-        method = getattr(self, f'eval_{node_name}', None)
-        if method is None:
+        eval_name = self.__eval_dispatch.get(type(node))
+        if eval_name is None:
             lineno = self.get_lineno(node)
             raise NotImplementedError(
                 f"Node type {node_name} not supported at line {lineno}"
             )
+        method = getattr(self, eval_name)
         try:
             if self.is_resumable(node):
                 return method(node, state=state, generator_state=generator_state)

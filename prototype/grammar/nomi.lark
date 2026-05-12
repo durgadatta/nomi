@@ -1,23 +1,31 @@
-// modified on top of
-// taken from https://github.com/lark-parser/lark/blob/e332c2df2f7d400460a5f1204d9bc36b49b25635/lark/grammars/python.lark
-
-//TODO: later simplify to bare minimum
-
-
-
-
-// Python 3 grammar for Lark
-
-// This grammar should parse all python 3.x code successfully.
-
-// Adapted from: https://docs.python.org/3/reference/grammar.html
-
-// Start symbols for the grammar:
-//       single_input is a single interactive statement;
-//       file_input is a module or sequence of commands read from an input file;
-//       eval_input is the input for the eval() functions.
-// NB: compound_stmt in single_input is followed by extra NEWLINE!
+// Nomi grammar -- single-file Lark grammar for Earley + PythonIndenter.
 //
+// Derived from Lark's python.lark; adapted from CPython 3 grammar.
+// https://github.com/lark-parser/lark/blob/master/lark/grammars/python.lark
+// https://docs.python.org/3/reference/grammar.html
+//
+// ORGANIZATION (top to bottom; rules must be defined before first use):
+//   S1  Directives            %ignore, %declare (must stay at top)
+//   S2  Start rules           single_input, file_input, eval_input
+//   S3  Statements & control  stmt, funcdef, if, for, while, try, with, match
+//   S4  Binding & assignment  annassign, assign, augassign, parameters
+//   S5  Expressions           test, or_test, comparison, expr, atom, ...
+//   S6  Function calls        atom_expr, funccall, block_call_stmt
+//   S7  Collections & slices  list, tuple, dict, set, subscript, comp
+//   S8  Terminals             NAME, NUMBER, STRING, COMMENT, _NEWLINE, ...
+//
+// EXTENSION POINTS (when adding new syntax):
+//   (a) Add rule in the appropriate section,
+//   (b) Wire into the correct disjunction (stmt, compound_stmt, small_stmt,
+//       atom, test, pattern, etc.),
+//   (c) Add AST lowering in prototype/parser/nomi/,
+//   (d) Add eval_* handler in prototype/interpreter/.
+//
+// Nomi-specific adaptations are marked with "//Nomi".
+//
+// TODO: later simplify to bare minimum
+
+// -- S2: Start rules -------------------------------------------------
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*
@@ -47,13 +55,17 @@ kwparams: "**" typedparam ","?
 ?typedparam: name (":" test)?
 
 
+// -- S3: Statements -------------------------------------------------
+
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
 ?small_stmt: (expr_stmt | assign_stmt | del_stmt | pass_stmt | flow_stmt | import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
 expr_stmt: testlist_star_expr
 assign_stmt: annassign | augassign | assign
 
-//annassign: testlist_star_expr ":" test ["=" test]
+// -- S4: Binding & assignment ---------------------------------------
+
+//Nomi: annotation accepts a testlist for multi-constraint lists
 annassign: testlist_star_expr ":" testlist_star_expr  ["=" test]
 assign: testlist_star_expr ("=" (yield_expr|testlist_star_expr))+
 augassign: testlist_star_expr augassign_op (yield_expr|testlist)
@@ -156,6 +168,8 @@ keyw_arg_pattern: NAME "=" as_pattern
 
 suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 
+// -- S5: Expressions ------------------------------------------------
+
 ?test: func_expr 
      |or_test ("if" or_test "else" test)?
      | assign_expr
@@ -192,14 +206,18 @@ star_expr: "*" expr
 ?await_expr: AWAIT? atom_expr
 AWAIT: "await"
 
+// -- S6: Function calls & block calls --------------------------------
+
 ?atom_expr: atom_expr "(" [arguments] ")"      -> funccall
           //| "func" [name] "(" [parameters] ")" ["->" test] ":" test -> funcexpr
           | atom_expr "[" subscriptlist "]"  -> getitem
           | atom_expr "." name               -> getattr
           | atom
 
-// Add block call as a statement type
+// Nomi: block call -- call with attached caller-side block body
 block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
+
+// -- S7: Atoms, collections & slices ---------------------------------
 
 ?atom: "(" yield_expr ")"  
      | "(" _tuple_inner? ")" -> tuple
@@ -273,6 +291,8 @@ number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_
 string: STRING | LONG_STRING
 
 // Other terminals
+
+// -- S8: Terminals ---------------------------------------------------
 
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 
