@@ -4,7 +4,6 @@ import ast
 from typing import List, Type
 
 from .base import BaseDesugarer
-from .precedence import Precedence
 from .augassign import AugAssign
 from .assert_ import Assert
 from .decorator import Decorator
@@ -14,7 +13,6 @@ from .fstring import FString
 
 
 DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
-    Precedence,
     AugAssign,
     Assert,
     Decorator,

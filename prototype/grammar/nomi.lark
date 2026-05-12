@@ -1,6 +1,5 @@
 // Nomi grammar — assembled from layers in prototype/grammar/layers/
-//
-// Regenerate with:  from prototype.grammar.assemble import assemble_grammar
+// Regenerate: from prototype.grammar.assemble import assemble_grammar
 
 // Layer: terminals — must be assembled first (%declare, %ignore, terminal defs)
 //

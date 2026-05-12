@@ -6,7 +6,7 @@ from lark.lexer import PatternRE
 from pathlib import Path
 
 from .ast_ import NomiToPythonAST
-from ...grammar.assemble import assemble_grammar
+from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 
 
 def prefer_name_for_underscore_terminal(terminal):
@@ -31,6 +31,10 @@ def generate_ast(filename=None, code=None, dump=False):
     if code is None:
         code = Path(filename).read_text()
     tree = get_parser().parse(code)
+
+    pipeline = get_layer_pipeline()
+    tree = pipeline.run(tree)
+
     node = NomiToPythonAST().transform(tree)
     if dump:
         return ast.dump(node, include_attributes=False, indent=2)

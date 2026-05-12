@@ -1,17 +1,25 @@
 """
-Grammar assembly — concatenates layered ``.lark`` fragments into a single
-grammar string for Lark.
+Grammar assembly — composes layered ``.lark`` fragments into a single
+grammar string, and builds the corresponding parse-tree transform pipeline.
 
-The fragments live in ``prototype/grammar/layers/``, one per concern.
-Assembly order: terminals must come first (``%declare`` / ``%ignore`` are
-position-sensitive in Lark).  The remaining layers are order-independent.
+Each layer defines:
+  - a grammar fragment (``.lark`` file in ``layers/``)
+  - an optional ``LayerTransform`` (Python module alongside the fragment)
+
+The pipeline::
+
+    Source → assembled grammar → raw Lark Tree
+          → LayerTransform chain → final Lark Tree
+          → NomiToPythonAST → Python AST → desugar → Interpreter
 """
 
 from pathlib import Path
 
+from .layer import LayerPipeline
+from .layers.expression_transform import ExpressionLayer
+
 _LAYERS_DIR = Path(__file__).resolve().parent / "layers"
 
-# Order matters: terminals must be assembled first.
 _LAYER_ORDER = [
     "terminals.lark",
     "expressions.lark",
@@ -21,15 +29,14 @@ _LAYER_ORDER = [
     "calls.lark",
 ]
 
+# Transforms run AFTER the raw parse, in this order
+_LAYER_TRANSFORMS = [
+    ExpressionLayer(),
+]
+
 
 def assemble_grammar(extra_layers=None):
-    """Read layer files and return a single grammar string.
-
-    ``extra_layers`` is an optional list of additional layer file names
-    that are appended after the built-in layers.  This is the primary
-    extension point: to add experimental syntax, drop a ``.lark``
-    fragment into ``layers/`` and pass its name here.
-    """
+    """Concatenate layer grammar files into a single Lark grammar string."""
     parts = []
     all_layers = list(_LAYER_ORDER)
     if extra_layers:
@@ -40,6 +47,11 @@ def assemble_grammar(extra_layers=None):
             raise FileNotFoundError(f"Grammar layer not found: {path}")
         parts.append(path.read_text(encoding="utf-8"))
     return "\n\n".join(parts)
+
+
+def get_layer_pipeline():
+    """Return the LayerPipeline that transforms the raw parse tree."""
+    return LayerPipeline(list(_LAYER_TRANSFORMS))
 
 
 def get_grammar_text():
