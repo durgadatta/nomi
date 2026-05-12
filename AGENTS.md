@@ -120,6 +120,10 @@ then the broader relevant suite.
 - `config/rag_sources.json`: tracked RAG source map. It points at this repo and
   a placeholder `Local_Programming_Books` folder that can later be replaced by
   the real programming-books path.
+- `.opencode/skills/`: AI assistant skill definitions. Each subdirectory
+  contains a `SKILL.md` with YAML frontmatter. The agent loads them on demand
+  via the `skill` tool. See `docs/orientation/ai_collaboration.md` for the full
+  list and usage.
 - `docs/language/`, `docs/features/`, and `docs/research/`: active language
   design workspace grouped by concreteness.
 - `docs/archive/design_review/`: preserved AI-assisted and exploratory
