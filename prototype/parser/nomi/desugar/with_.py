@@ -20,6 +20,8 @@ class With(NomiDesugarer):
     Multiple items nest outermost-first.
     """
 
+    removed_node_types = (ast.With,)
+
     _counter = 0
 
     def _fresh_mgr(self):

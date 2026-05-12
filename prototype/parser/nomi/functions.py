@@ -1,5 +1,5 @@
 import ast
-from ...interpreter.constants import BLOCK_KWARG
+from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
     def func_expr(self, items):
@@ -38,7 +38,7 @@ class FunctionsMixin:
             regular call
         '''
         call, params, block = items 
-        block = ast.keyword(arg=BLOCK_KWARG, value=(block, params))
+        block = ast.keyword(arg=BLOCK_KWARG, value=Block(body=block, params=params))
         call.keywords.append(block)
 
          # Make it a statement, note that ast.Expr < ast.stmt

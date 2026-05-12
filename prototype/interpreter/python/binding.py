@@ -2,6 +2,25 @@ import ast
 from .signals import YieldException
 
 class BindingMixin:
+    # --- assign_target dispatch table -----------------------------------
+    # Maps AST node type → method name.  Subclasses extend this dict to
+    # register new assignment-target forms without touching the dispatch.
+    _ASSIGN_TARGET_DISPATCH = {
+        ast.Name: '_assign_name',
+        ast.Attribute: '_assign_attr',
+        ast.Subscript: '_assign_subscript',
+        ast.Tuple: '_assign_sequence',
+        ast.List: '_assign_sequence',
+        ast.Starred: '_assign_starred',
+    }
+
+    # --- del_target dispatch table --------------------------------------
+    _DEL_TARGET_DISPATCH = {
+        ast.Name: '_del_name',
+        ast.Attribute: '_del_attr',
+        ast.Subscript: '_del_subscript',
+    }
+
     def _iter_unpack_value(self, value, target):
         try:
             return iter(value)
@@ -78,20 +97,34 @@ class BindingMixin:
             self._assign_starred_sequence(elts, star_indices[0], iterator, target)
 
     def del_target(self, node: ast.expr) -> None:
-        if isinstance(node, ast.Name):
-            self.current_env.delete(node.id)
-        elif isinstance(node, ast.Attribute):
-            try:
-                delattr(self.eval(node.value), node.attr)
-            except AttributeError as e:
-                raise AttributeError(f"Cannot delete attribute '{node.attr}' at line {self.get_lineno(node)}: {str(e)}") from e
-        elif isinstance(node, ast.Subscript):
-            try:
-                del self.eval(node.value)[self.eval(node.slice)]
-            except (IndexError, KeyError) as e:
-                raise IndexError(f"Subscript deletion error at line {self.get_lineno(node)}: {str(e)}") from e
-        else:
-            raise NotImplementedError(f"Delete target {node.__class__.__name__} not supported at line {self.get_lineno(node)}")
+        handler = self._DEL_TARGET_DISPATCH.get(type(node))
+        if handler:
+            return getattr(self, handler)(node)
+        raise NotImplementedError(
+            f"Delete target {node.__class__.__name__} not supported "
+            f"at line {self.get_lineno(node)}"
+        )
+
+    def _del_name(self, node):
+        self.current_env.delete(node.id)
+
+    def _del_attr(self, node):
+        try:
+            delattr(self.eval(node.value), node.attr)
+        except AttributeError as e:
+            raise AttributeError(
+                f"Cannot delete attribute '{node.attr}' "
+                f"at line {self.get_lineno(node)}: {str(e)}"
+            ) from e
+
+    def _del_subscript(self, node):
+        try:
+            del self.eval(node.value)[self.eval(node.slice)]
+        except (IndexError, KeyError) as e:
+            raise IndexError(
+                f"Subscript deletion error at line "
+                f"{self.get_lineno(node)}: {str(e)}"
+            ) from e
 
     def eval_Assign(self, node: ast.Assign, *, state=None, generator_state=None) -> None:
         """
@@ -125,37 +158,30 @@ class BindingMixin:
 
     def assign_target(self, target, value):
         """Recursive assignment helper. Supports: Name, Attribute, Subscript,
-        Tuple/List unpacking (from any iterable), and Starred targets."""
-        # Simple name
-        if isinstance(target, ast.Name):
-            self.current_env.set(target.id, value)
-            return
+        Tuple/List unpacking (from any iterable), and Starred targets.
+        New target types are registered via _ASSIGN_TARGET_DISPATCH."""
+        handler = self._ASSIGN_TARGET_DISPATCH.get(type(target))
+        if handler:
+            return getattr(self, handler)(target, value)
+        raise TypeError(
+            f"Unsupported assignment target {target.__class__.__name__} "
+            f"at line {self.get_lineno(target)}"
+        )
 
-        # Attribute: obj.attr = value
-        if isinstance(target, ast.Attribute):
-            obj = self.eval(target.value)
-            setattr(obj, target.attr, value)
-            return
+    def _assign_name(self, target, value):
+        self.current_env.set(target.id, value)
 
-        # Subscript: obj[key] = value
-        if isinstance(target, ast.Subscript):
-            obj = self.eval(target.value)
-            # target.slice may be an ast.Index or node depending on Python version;
-            # reuse your existing eval logic for slice nodes
-            key = self.eval(target.slice)
-            obj[key] = value
-            return
+    def _assign_attr(self, target, value):
+        obj = self.eval(target.value)
+        setattr(obj, target.attr, value)
 
-        # Tuple/List unpacking (accept any iterable, including generators)
-        if isinstance(target, (ast.Tuple, ast.List)):
-            self._assign_sequence_target(target, value)
-            return
+    def _assign_subscript(self, target, value):
+        obj = self.eval(target.value)
+        key = self.eval(target.slice)
+        obj[key] = value
 
-        # Starred alone (should only appear inside Tuple/List target)
-        if isinstance(target, ast.Starred):
-            # Treat like assigning the whole iterable as list
-            self.assign_target(target.value, list(value))
-            return
+    def _assign_sequence(self, target, value):
+        self._assign_sequence_target(target, value)
 
-        # Unsupported target
-        raise TypeError(f"Unsupported assignment target {target.__class__.__name__} at line {self.get_lineno(target)}")   
+    def _assign_starred(self, target, value):
+        self.assign_target(target.value, list(value))

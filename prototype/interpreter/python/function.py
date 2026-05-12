@@ -1,7 +1,7 @@
 import ast
 from typing import List, Any
 
-from ..constants import BLOCK_KWARG
+from ..constants import BLOCK_KWARG, Block
 from .signals import ReturnException
 from .function_call import FunctionCallMixin
 

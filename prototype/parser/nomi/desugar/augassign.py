@@ -6,6 +6,8 @@ from .base import NomiDesugarer
 class AugAssign(NomiDesugarer):
     """x += y  →  x = x + y"""
 
+    removed_node_types = (ast.AugAssign,)
+
     def _to_load(self, node):
         if isinstance(node, ast.Name):
             return ast.Name(id=node.id, ctx=ast.Load())

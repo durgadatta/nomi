@@ -15,8 +15,9 @@ Examples::
 import pytest
 import os
 
+from prototype.interpreter.helpers import INTERPRETER_MODES
 
-AVAILABLE_MODES = ("python", "nomi", "reduced")
+AVAILABLE_MODES = INTERPRETER_MODES
 
 
 def pytest_addoption(parser):

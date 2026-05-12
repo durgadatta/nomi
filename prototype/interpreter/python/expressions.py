@@ -25,6 +25,30 @@ class ExpressionMixin:
         ast.USub: lambda o: -o,
     }
 
+    _EVAL_TARGET_DISPATCH = {
+        ast.Name: '_eval_target_name',
+        ast.Attribute: '_eval_target_attr',
+        ast.Subscript: '_eval_target_subscript',
+    }
+
+    def eval_target(self, node: ast.expr) -> Any:
+        handler = self._EVAL_TARGET_DISPATCH.get(type(node))
+        if handler:
+            return getattr(self, handler)(node)
+        raise NotImplementedError(
+            f"Target evaluation {node.__class__.__name__} not supported "
+            f"at line {self.get_lineno(node)}"
+        )
+
+    def _eval_target_name(self, node):
+        return self.current_env.get(node.id)
+
+    def _eval_target_attr(self, node):
+        return getattr(self.eval(node.value), node.attr)
+
+    def _eval_target_subscript(self, node):
+        return self.eval(node.value)[self.eval(node.slice)]
+
     def eval_Global(self, node: ast.Global) -> None:
         self.current_env.declared_globals.update(node.names)
 
@@ -117,12 +141,3 @@ class ExpressionMixin:
             left = right
         return True
     
-    def eval_target(self, node: ast.expr) -> Any:
-        if isinstance(node, ast.Name):
-            return self.current_env.get(node.id)
-        elif isinstance(node, ast.Attribute):
-            return getattr(self.eval(node.value), node.attr)
-        elif isinstance(node, ast.Subscript):
-            return self.eval(node.value)[self.eval(node.slice)]
-        else:
-            raise NotImplementedError(f"Target evaluation {node.__class__.__name__} not supported at line {self.get_lineno(node)}")

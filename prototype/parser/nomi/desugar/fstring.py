@@ -11,6 +11,8 @@ class FString(NomiDesugarer):
     f"{x!r}"         →  format(repr(x), '')
     """
 
+    removed_node_types = (ast.JoinedStr, ast.FormattedValue,)
+
     def _format_call(self, value, format_spec):
         if format_spec is not None:
             spec = self.visit(format_spec)

@@ -3,60 +3,39 @@ Reduced interpreter.
 
 Inherits from NomiInterpreter. Each reduction commit removes one or more
 ``eval_*`` methods from this interpreter after the corresponding syntactic
-form is desugared at parse time (see prototypical/parser/nomi/desugar/).
+form is desugared at parse time (see prototype/parser/nomi/desugar/).
 
 Every removed method is replaced with an override that raises
 NotImplementedError so that any AST form reaching this interpreter is
 caught as an error rather than silently passing through to the parent.
+
+The set of overridden methods is auto-derived from the desugar pipeline's
+``removed_node_types`` metadata so the two stay in sync.
 """
 
+import ast
+
 from ..nomi.interpreter import Interpreter as NomiInterpreter
+from ...parser.nomi.desugar.pipeline import get_removed_node_types
 
 
 class Interpreter(NomiInterpreter):
+    pass
 
-    # --- augassign -------------------------------------------------------
-    # Desugarer: prototype/parser/nomi/desugar/augassign.py
-    def eval_AugAssign(self, node):
-        raise NotImplementedError(
-            "Augmented assignment should be desugared at parse time. "
-            "Desugarer transforms x+=y into x=x+y."
-        )
 
-    # --- assert ----------------------------------------------------------
-    # Desugarer: prototype/parser/nomi/desugar/assert_.py
-    def eval_Assert(self, node):
-        raise NotImplementedError(
-            "Assert should be desugared at parse time. "
-            "Desugarer transforms assert into if/raise."
-        )
+# --- Auto-generated NotImplementedError overrides ---
+# These match the removed_node_types declared by the desugar pipeline.
 
-    # --- pass ------------------------------------------------------------
-    # Desugarer: prototype/parser/nomi/desugar/pass_.py
-    def eval_Pass(self, node):
-        raise NotImplementedError(
-            "Pass should be desugared at parse time. "
-            "Desugarer replaces pass with a constant expression."
-        )
+for _node_type in sorted(get_removed_node_types(), key=lambda t: t.__name__):
+    _method_name = f'eval_{_node_type.__name__}'
 
-    # --- with ------------------------------------------------------------
-    # Desugarer: prototype/parser/nomi/desugar/with_.py
-    def eval_With(self, node, *, state=None, generator_state=None):
-        raise NotImplementedError(
-            "With should be desugared at parse time. "
-            "Desugarer expands with into enter/assign/try/except/else."
-        )
+    def _make_stub(node_type):
+        """Closure factory so each override captures the right node type."""
+        def _stub(self, node, *, state=None, generator_state=None):
+            raise NotImplementedError(
+                f"{node_type.__name__} should be desugared at parse time. "
+                f"Check the desugar pipeline in prototype/parser/nomi/desugar/."
+            )
+        return _stub
 
-    # --- f-strings -------------------------------------------------------
-    # Desugarer: prototype/parser/nomi/desugar/fstring.py
-    def eval_JoinedStr(self, node):
-        raise NotImplementedError(
-            "F-strings should be desugared at parse time. "
-            "Desugarer expands f-strings into concatenation and format calls."
-        )
-
-    def eval_FormattedValue(self, node):
-        raise NotImplementedError(
-            "F-strings should be desugared at parse time. "
-            "Desugarer expands f-strings into concatenation and format calls."
-        )
+    setattr(Interpreter, _method_name, _make_stub(_node_type))

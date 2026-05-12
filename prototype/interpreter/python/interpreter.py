@@ -19,42 +19,41 @@ from .others import OthersMixin
 
 from .context_managers import ContextManagerMixin
 
-_PASS_THROUGH_EXCEPTIONS = (
-    StopIteration, ZeroDivisionError, StopAsyncIteration,
-    RuntimeError, TypeError, ValueError, NameError,
-    AttributeError, SyntaxError, IndexError, KeyError,
-    AssertionError,
-)
-
-
 class Interpreter(
     BindingMixin, FunctionMixin, ExpressionMixin, DataStructMixin,
     PatternMixin, ControlMixin, ClassMixin, ContextManagerMixin, OthersMixin
 ):
     """Evaluates AST nodes."""
+
     env_class = Environment
     gen_state = CoroutineState
+
+    resumable_node_types: tuple = (
+        ast.If,
+        ast.For,
+        ast.While,
+        ast.Try,
+        ast.With,
+        ast.Assign,
+        ast.Call,
+    )
+
+    pass_through_exceptions: tuple = (
+        StopIteration, ZeroDivisionError, StopAsyncIteration,
+        RuntimeError, TypeError, ValueError, NameError,
+        AttributeError, SyntaxError, IndexError, KeyError,
+        AssertionError,
+    )
+
     def __init__(self):
         self.builtin_env = self.env_class(self)
         self.builtin_env.bindings = builtins.__dict__.copy()
         self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
 
-
-    @staticmethod
-    def is_resumable(node):
-        #TODO: make a general base class for all resumable nodes
-        #TODO: we could tag on the method itself. @resumable 
-        can_resume = (
-            ast.If,
-            ast.For,
-            ast.While,
-            ast.Try,
-            ast.With, 
-            ast.Assign,
-            ast.Call
-        )
-        return isinstance(node, can_resume)
+    @classmethod
+    def is_resumable(cls, node):
+        return isinstance(node, cls.resumable_node_types)
 
     def eval(self, node: Optional[ast.AST|List], *, state=None, generator_state=None) -> Any:
         '''
@@ -67,11 +66,11 @@ class Interpreter(
             for stmt in node:
                 self.eval(stmt, state=state, generator_state=generator_state)
             return None
-        
+
         # Handle None node
         if node is None:
             return None
-        
+
         node_name = node.__class__.__name__
         method = getattr(self, f'eval_{node_name}', None)
         if method is None:
@@ -83,7 +82,7 @@ class Interpreter(
             if self.is_resumable(node):
                 return method(node, state=state, generator_state=generator_state)
             return method(node)
-        except _PASS_THROUGH_EXCEPTIONS:
+        except self.pass_through_exceptions:
             raise
         except Exception as e:
             lineno = self.get_lineno(node)

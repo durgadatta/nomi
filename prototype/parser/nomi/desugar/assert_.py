@@ -6,6 +6,8 @@ from .base import NomiDesugarer
 class Assert(NomiDesugarer):
     """assert cond [, msg]  →  if not cond: raise AssertionError([msg])"""
 
+    removed_node_types = (ast.Assert,)
+
     def visit_Assert(self, node):
         exc_args = [node.msg] if node.msg else []
         raise_stmt = ast.Raise(

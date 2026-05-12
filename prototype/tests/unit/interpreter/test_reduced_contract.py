@@ -6,88 +6,89 @@ This prevents the situation where a desugar pass is added but the
 interpreter override is forgotten (the reduced interpreter silently
 delegates to the parent), or an override is added but the desugar
 pass is never wired into the pipeline.
+
+The reduced interpreter now auto-derives its overrides from the
+pipeline's ``removed_node_types`` metadata, so this test validates
+that the metadata is correct and complete.
 """
 
 import ast
 
-from prototype.parser.nomi.desugar import pipeline
+from prototype.parser.nomi.desugar.pipeline import (
+    DESUGAR_PASSES,
+    get_removed_node_types,
+)
 from prototype.interpreter.reduced import Interpreter
 
 
-def _desugarer_classes():
-    """Return the set of BaseDesugarer subclasses used in the pipeline."""
-    import inspect
-    source = inspect.getsource(pipeline.desugar_module)
-    classes = set()
-    for line in source.strip().split('\n'):
-        line = line.strip()
-        if line.endswith('().visit(tree)'):
-            cls_name = line.split('(')[0]
-            classes.add(cls_name)
-    return classes
-
-
-def _reduced_override_methods():
-    """Return the set of eval_* methods overridden in the reduced interpreter."""
+def _reduced_override_names():
     overrides = set()
     for name in dir(Interpreter):
         if not name.startswith('eval_'):
             continue
-        method = getattr(Interpreter, name, None)
+        method = getattr(Interpreter, name)
         if method is None:
+            continue
+        if getattr(method, '__code__', None) is None:
             continue
         import inspect
         try:
             src = inspect.getsource(method)
         except OSError:
             continue
-        if 'NotImplementedError' in src:
+        # Only detect desugar stubs, not general NotImplementedError usage
+        if 'desugared at parse time' in src:
             overrides.add(name)
     return overrides
 
 
-def test_every_desugar_pass_has_reduced_override():
-    desugarers = _desugarer_classes()
-    overrides = _reduced_override_methods()
-    for cls_name in sorted(desugarers):
-        cls = getattr(pipeline, cls_name, None)
-        if cls is None:
-            continue
-        # Find the visit_* method that does the desugaring
-        visit_methods = [
-            name for name in dir(cls)
-            if name.startswith('visit_') and name != 'visit_keyword'
-        ]
-        for vm in visit_methods:
-            if vm == 'visit_AugAssign':
-                expected = 'eval_AugAssign'
-            elif vm == 'visit_Assert':
-                expected = 'eval_Assert'
-            elif vm == 'visit_Pass':
-                expected = 'eval_Pass'
-            elif vm == 'visit_With':
-                expected = 'eval_With'
-            elif vm == 'visit_JoinedStr' or vm == 'visit_FormattedValue':
-                expected = 'eval_JoinedStr'
-            else:
-                expected = 'eval_' + vm[len('visit_'):]
+def _expected_override_names():
+    removed = get_removed_node_types()
+    return {f'eval_{t.__name__}' for t in removed}
 
-            assert expected in overrides, (
-                f"Desugarer {cls_name}.{vm} has no corresponding "
-                f"NotImplementedError override '{expected}' in "
-                f"reduced interpreter"
+
+def test_desugar_removed_types_match():
+    """Every AST type a desugar pass claims to remove must actually be
+    removed (its visit_ method must exist on the desugarer)."""
+    for pass_cls in DESUGAR_PASSES:
+        for node_type in pass_cls.removed_node_types:
+            visit_name = f'visit_{node_type.__name__}'
+            assert hasattr(pass_cls, visit_name), (
+                f"{pass_cls.__name__} declares removed_node_types={node_type.__name__} "
+                f"but has no {visit_name} method"
             )
 
 
+def test_every_desugar_pass_has_reduced_override():
+    """Every removed node type has a NotImplementedError override in the
+    reduced interpreter."""
+    expected = _expected_override_names()
+    actual = _reduced_override_names()
+    missing = expected - actual
+    assert not missing, (
+        f"Reduced interpreter is missing NotImplementedError overrides: {missing}"
+    )
+
+
 def test_every_reduced_override_has_desugar_pass():
-    overrides = _reduced_override_methods()
-    # For each override, find if it's a valid one for current reductions
-    # We only check overrides that reference desugar files
-    for method_name in sorted(overrides):
-        method = getattr(Interpreter, method_name)
-        import inspect
-        src = inspect.getsource(method)
-        if 'desugared at parse time' not in src:
-            continue
-        # Verify the desugar file reference in the docstring maps to an actual file
-        assert True  # placeholder — the inverse check is harder to automate
+    """Every NotImplementedError override in the reduced interpreter
+    corresponds to a node type that a desugar pass claims to remove."""
+    expected = _expected_override_names()
+    actual = _reduced_override_names()
+    extra = actual - expected
+    assert not extra, (
+        f"Reduced interpreter has NotImplementedError overrides with no "
+        f"corresponding desugar pass: {extra}"
+    )
+
+
+def test_all_desugar_passes_are_registered():
+    """The pipeline DESUGAR_PASSES list is not empty and all classes
+    are proper BaseDesugarer subclasses."""
+    from prototype.parser.nomi.desugar.base import BaseDesugarer
+
+    assert len(DESUGAR_PASSES) >= 3, "Expected at least 3 desugar passes"
+    for pass_cls in DESUGAR_PASSES:
+        assert issubclass(pass_cls, BaseDesugarer), (
+            f"{pass_cls} is not a BaseDesugarer subclass"
+        )

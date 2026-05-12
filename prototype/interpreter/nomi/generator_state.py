@@ -1,26 +1,20 @@
 from ..python.generator_state import CoroutineState as PythonCoroutineState
+from ..constants import Block
 import ast
 
 
 class CoroutineState(PythonCoroutineState):
     def __init__(self, *args, block=None, **kwargs):
         super().__init__(*args, **kwargs)
-        #TODO: make it explicit block/params/env
-        self.block = block 
-
+        self.block: Block = block
 
     def _handle_yield_to_block(self, yield_values):
-        if self.block:
-            block, params, env = self.block
-            if block is None:
-                return 
-            
-            #TODO: use the same mechanism as function params binding here
-            with self.interpreter.this_env(env): 
-                if params:
-                    self.interpreter.assign_target(params, yield_values)
-
-                self.interpreter.eval(block)
+        block = self.block
+        if block and block.body:
+            with self.interpreter.this_env(block.env):
+                if block.params:
+                    self.interpreter.assign_target(block.params, yield_values)
+                self.interpreter.eval(block.body)
 
     def _handle_yield(self, yield_value=None):
         super()._handle_yield()
@@ -28,4 +22,3 @@ class CoroutineState(PythonCoroutineState):
             self._handle_yield_to_block(yield_value)
         except Exception as e:
             self.throw(e)
-        

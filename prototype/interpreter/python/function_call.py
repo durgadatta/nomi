@@ -3,7 +3,7 @@ essentially all expression are function call or var ref, so most changes will co
 thus, separating this into a new file
 '''
 import ast
-from ..constants import BLOCK_KWARG
+from ..constants import BLOCK_KWARG, Block
 from typing import Any
 
 from .signals import YieldException
@@ -29,8 +29,10 @@ class FunctionCallResumable:
         kwargs[kw.arg] = self._keyword_value(kw, generator_state=generator_state)
 
     def _keyword_value(self, kw: ast.keyword, *, generator_state=None):
-        if kw.arg == '__block__':
-            return (*kw.value, self.current_env)
+        if kw.arg == BLOCK_KWARG:
+            block = kw.value
+            block.env = self.current_env
+            return block
         return self.eval(kw.value, generator_state=generator_state)
 
     def eval_Call(self, node: ast.Call, *, state=None, generator_state=None) -> Any:
@@ -84,8 +86,9 @@ class FunctionCallResumable:
                 # If we have a sent_value for this keyword (resuming from yield)
                 if len(node.args) + kw_index == start_index and sent_value is not None:
                     if kw.arg == BLOCK_KWARG:
-                        # Handle __block__ specially
-                        value = (*sent_value, self.current_env)
+                        value = sent_value
+                        if isinstance(value, Block):
+                            value.env = self.current_env
                     else:
                         value = sent_value
                     kwargs[kw.arg] = value

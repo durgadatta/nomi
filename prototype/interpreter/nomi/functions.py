@@ -1,4 +1,5 @@
-import ast 
+import ast
+from ..constants import Block
 
 class BlockFunctionMixin:
     def eval_arg(self, node:ast.arg):
@@ -40,9 +41,8 @@ class BlockFunctionMixin:
     
 
     def eval_generator_obj(self, body, local_env, block=None):
-        #TODO: better organize the passing of block from call to here
         gen = self.gen_state(self, body, local_env, block=block)
         if block is not None:
-            if block[0] is not None:
-                list(gen) # for the generator to exhaust (complete the call)
+            if block:
+                list(gen)
         return gen
