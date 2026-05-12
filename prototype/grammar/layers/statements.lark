@@ -12,7 +12,11 @@ funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
 async_funcdef: "async" funcdef
 
 // -- lightweight function equation: f(a, b) = expr  (Nomi) ------------
-func_equation: name "(" [parameters] ")" "=" test
+// Simple form:  add(a, b) = a + b
+// Piecewise:    fact(1) = 1; fact(n) = fact(n-1) * n  (contiguous merge)
+func_equation: name "(" [func_eq_args] ")" "=" test
+func_eq_args: func_eq_arg ("," func_eq_arg)*
+?func_eq_arg: NAME -> name_arg | test -> value_arg
 
 // -- decorators -------------------------------------------------------
 decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE

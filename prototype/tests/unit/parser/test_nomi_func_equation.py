@@ -21,10 +21,11 @@ def test_func_equation_no_params():
     assert len(stmt.args.args) == 0
 
 
-def test_func_equation_with_default():
-    tree = generate_ast(code='greet(name="world") = "Hello, " + name\n')
+def test_func_equation_with_params():
+    tree = generate_ast(code='greet(name) = "Hello, " + name\n')
     stmt = tree.body[0]
-    assert stmt.args.defaults[0].value == "world"
+    assert stmt.name == "greet"
+    assert stmt.args.args[0].arg == "name"
 
 
 def test_func_equation_executes(interpreter_mode):

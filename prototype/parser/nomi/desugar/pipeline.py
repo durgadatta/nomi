@@ -5,6 +5,7 @@ from typing import List, Type
 
 from .base import BaseDesugarer
 from .underscore_lambda import UnderscoreLambda
+from .piecewise import PiecewiseFunction
 from .augassign import AugAssign
 from .assert_ import Assert
 from .decorator import Decorator
@@ -15,6 +16,7 @@ from .fstring import FString
 
 DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
     UnderscoreLambda,
+    PiecewiseFunction,
     AugAssign,
     Assert,
     Decorator,

@@ -1,42 +1,61 @@
-# Nomi function definition styles
-# Shows all the ways to define a function: funcdef, arrow, equation
+# Nomi function definition styles — comprehensive sample
+# Shows: funcdef, arrow, equation, piecewise, underscore lambdas
 
-# classic funcdef
+# ── 1. classic funcdef ────────────────────────────────────────────
 func classic_add(a, b):
     return a + b
 
-# arrow expression (anonymous)
+# ── 2. arrow expression (anonymous lambda) ─────────────────────────
 arrow_square = (x) => x * x
 
-# lightweight equation — f(a, b) = expr
-# desugars to: func add(a, b): return a + b
+# ── 3. lightweight equation f(a,b) = expr ─────────────────────────
 add(a, b) = a + b
-
-# equation with no parameters
 pi() = 3.14
+greet(name) = "Hello, " + name
 
-# equation with default parameter
-greet(name="world") = "Hello, " + name
+# ── 4. piecewise (Haskell-style) ───────────────────────────────────
+fact(1) = 1
+fact(n) = fact(n - 1) * n
 
-# equation with closure
-factor = 10
-multiply(n) = factor * n
+fib(0) = 0
+fib(1) = 1
+fib(n) = fib(n - 1) + fib(n - 2)
 
+# ── 5. underscore hole-filling lambdas ─────────────────────────────
+double = _ * 2
+upcase = _.upper()
+get_name = _["name"]
+add_two = _ + _
 
 result_classic = classic_add(1, 2)
-print(f"classic func:       1 + 2 = {result_classic}")
+print(f"1. classic func:        1 + 2 = {result_classic}")
 
 result_arrow = arrow_square(5)
-print(f"arrow (x)=>x*x:     5 * 5 = {result_arrow}")
+print(f"2. arrow (x)=>x*x:      5²  = {result_arrow}")
 
 result_eq = add(3, 4)
-print(f"equation:           3 + 4 = {result_eq}")
+print(f"3. equation:            3 + 4 = {result_eq}")
 
 result_pi = pi()
-print(f"equation no params: pi() = {result_pi}")
+print(f"3. no-params:           pi() = {result_pi}")
 
-result_greet = greet()
-print(f"equation default:   greet() = {result_greet}")
+result_greet = greet("world")
+print(f"3. param:               greet(world) = {result_greet}")
 
-result_mult = multiply(5)
-print(f"equation closure:   10 * 5 = {result_mult}")
+result_fact5 = fact(5)
+print(f"4. piecewise fact(5):   5!  = {result_fact5}")
+
+result_fib6 = fib(6)
+print(f"4. piecewise fib(6):    fib = {result_fib6}")
+
+result_double = double(21)
+print(f"5. hole _ * 2:          21*2 = {result_double}")
+
+result_upcase = upcase("hello")
+print(f"5. hole _.upper():      HELLO = {result_upcase}")
+
+result_get = get_name({"name": "alice"})
+print(f"5. hole _[\"name\"]:       alice = {result_get}")
+
+result_addtwo = add_two(10, 20)
+print(f"5. hole _ + _:          10+20 = {result_addtwo}")

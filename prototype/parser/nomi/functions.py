@@ -3,19 +3,40 @@ from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
     def func_equation(self, items):
-        """func_equation: name '(' [parameters] ')' '=' test
+        """func_equation: name '(' [func_eq_args] ')' '=' test
 
-        Syntactic sugar for ``func f(a, b): return expr``.
+        Simple:  add(a, b) = a + b  →  func add(a, b): return a + b
+        Literal: fact(1) = 1       →  func fact(__0): return 1
+        (PiecewiseFunction pass merges adjacent same-name equations.)
         """
-        name, parameters, body = items
-        return_node = ast.Return(value=body)
-        return ast.FunctionDef(
-            name=name,
-            args=parameters or self.parameters([]),
-            body=[return_node],
-            decorator_list=[],
-            returns=None,
+        name, eq_args, body = items
+        if eq_args is None:
+            eq_args = []
+        args_list = []
+        for i, arg in enumerate(eq_args):
+            if isinstance(arg, str):
+                args_list.append(ast.arg(arg=arg))
+            else:
+                args_list.append(ast.arg(arg=f'__{i}'))
+        params = ast.arguments(
+            posonlyargs=[], args=args_list, kwonlyargs=[], kw_defaults=[],
+            defaults=[], vararg=None, kwarg=None,
         )
+        fn = ast.FunctionDef(
+            name=name, args=params, body=[ast.Return(value=body)],
+            decorator_list=[], returns=None,
+        )
+        fn._nomi_eq_args = eq_args  # preserved for PiecewiseFunction pass
+        return fn
+
+    def func_eq_args(self, items):
+        return items
+
+    def name_arg(self, items):
+        return items[0]
+
+    def value_arg(self, items):
+        return items[0]
 
     def func_expr(self, items):
         '''
