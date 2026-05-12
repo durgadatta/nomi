@@ -36,6 +36,7 @@ AWAIT: "await"
 
 // -- atoms ------------------------------------------------------------
 ?atom: "(" yield_expr ")"
+     | "(" section ")" -> section
      | "(" _tuple_inner? ")" -> tuple
      | "(" comprehension{test_or_star_expr} ")" -> tuple_comprehension
      | "[" _exprlist? "]"  -> list
@@ -69,6 +70,11 @@ testlist_tuple: test (("," test)+ [","] | ",")
 _exprlist: test_or_star_expr (","  test_or_star_expr)* [","]
 _dict_exprlist: (key_value | "**" expr) ("," (key_value | "**" expr))* [","]
 key_value: test ":"  test
+
+// -- operator sections: (+2), (2*), (+)  (Haskell-style) --------------
+?section: _binary_op test  -> left_section
+        | test _binary_op  -> right_section
+        | _binary_op       -> operator_value
 
 // -- subscript --------------------------------------------------------
 ?subscriptlist: subscript | subscript (("," subscript)+ [","] | ",") -> subscript_tuple

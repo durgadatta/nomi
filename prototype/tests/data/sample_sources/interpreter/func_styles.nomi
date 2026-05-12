@@ -55,6 +55,14 @@ stats = (total, avg) where:
     avg = total / len(data)
 
 
+# ── 7. operator sections (Haskell-style) ─────────────────────────────
+plus_two = (+2)          # (x) => x + 2
+times_two = (2*)         # (x) => 2 * x
+plus = (+)               # (x, y) => x + y
+
+scaled = list(map((2*), [1, 2, 3]))
+
+
 result_classic = classic_add(1, 2)
 print("1. classic func:        1 + 2 = " + str(result_classic))
 
@@ -94,4 +102,12 @@ r = greeting("where")
 print("6. where + equation:   Hello, where = " + r)
 print("6. where + piecewise:  fib(7) = " + str(fib7))
 print("6. where cascade:      stats  = " + str(stats))
+
+result_plus2 = plus_two(5)
+result_double2 = times_two(10)
+result_plus = plus(30, 40)
+print("7. op section (+2):     (+2)(5) = " + str(result_plus2))
+print("7. op section (2*):     (2*)(10) = " + str(result_double2))
+print("7. op section (+):      (+)(30,40) = " + str(result_plus))
+print("7. op section map:      " + str(scaled))
 
