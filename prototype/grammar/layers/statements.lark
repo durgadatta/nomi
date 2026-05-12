@@ -3,6 +3,8 @@
 
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
+            | flow_stmt "if" test _NEWLINE -> postfix_if
+            | flow_stmt "unless" test _NEWLINE -> postfix_unless
             | small_stmt "where" ":" suite  -> assign_where
             | small_stmt "where" small_stmt _NEWLINE  -> assign_where_inline
 ?small_stmt: (func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt

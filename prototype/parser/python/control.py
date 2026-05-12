@@ -190,6 +190,20 @@ class ControlMixin(CompMixin):
             orelse=[],
         )
 
+    def postfix_if(self, items):
+        """return x if cond  →  if cond: return x"""
+        stmt, condition = items
+        return ast.If(test=condition, body=[stmt], orelse=[])
+
+    def postfix_unless(self, items):
+        """return x unless cond  →  if not cond: return x"""
+        stmt, condition = items
+        return ast.If(
+            test=ast.UnaryOp(op=ast.Not(), operand=condition),
+            body=[stmt],
+            orelse=[],
+        )
+
     def while_stmt(self, items):
         test, body, orelse = items 
         orelse = orelse or []
