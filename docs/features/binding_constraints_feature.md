@@ -61,7 +61,7 @@ score:int, is_positive = 72
 
 Relevant implementation points:
 
-- `prototype/grammar/nomi.lark` parses annotated assignment with a constraint
+- `prototype/grammar/layers/bindings.lark` handles annotated assignment with constraint lists (the `annassign` rule accepts a `testlist_star_expr` annotation for compound constraints).
   list.
 - `prototype/parser/python/binding.py` lowers annotated assignment to
   `ast.AnnAssign`.

@@ -55,5 +55,5 @@ def get_layer_pipeline():
 
 
 def get_grammar_text():
-    """Return the assembled grammar (cached in nomi.lark for compatibility)."""
+    """Return the assembled grammar (cached in nomi.ref.lark for reference)."""
     return assemble_grammar()

@@ -5,7 +5,7 @@ This file provides Gemini-specific instructions for working on the Nomi project.
 ## Project Overview
 Nomi is an experimental programming language built around a small, coherent core: values, bindings, functions, calls, blocks, constraints, and controlled evaluation. It is currently implemented as a Python-hosted prototype.
 
-- **Parsing**: Uses Lark (`prototype/grammar/nomi.lark`).
+- **Parsing**: Uses Lark with layered grammar (`prototype/grammar/layers/`).
 - **AST**: Lowers to Python AST where possible, with custom Nomi AST for specific features.
 - **Interpreter**: Custom layers for Python-compatible and Nomi-specific behavior.
 

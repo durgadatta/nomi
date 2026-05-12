@@ -160,7 +160,7 @@ Official references:
 
 ## Next Iterations
 
-- Replace regex definition scanning with parser-backed symbol extraction from `prototype/grammar/nomi.lark`.
+- Replace regex definition scanning with parser-backed symbol extraction from `prototype/grammar/layers/`.
 - Add diagnostics by running the parser on document changes.
 - Add formatting once the syntax stabilizes.
 - Split richer behavior into a Language Server Protocol process.

@@ -32,7 +32,7 @@ The **canonical grammar** lives in `prototype/grammar/layers/`.  Each
 | `bindings.lark` | `assign`, `annassign`, `augassign`, `parameters` | 36 |
 | `calls.lark` | `atom_expr`, `funccall`, comprehensions | 19 |
 
-The file `nomi.lark` at this level is a **generated snapshot** — it is
+The file `nomi.ref.lark` at this level is a **generated snapshot** — it is
 not read by the parser.  Regenerate it with:
 
 ```python
