@@ -3,7 +3,7 @@ from typing import Dict, Any
 from pathlib import Path
 
 
-from ..nomi.interpreter import Interpreter
+from .interpreter import Interpreter
 from ...parser.nomi.usage import generate_ast
 
 

@@ -15,7 +15,6 @@ def run_eval_loop(code=None, file_name=None, tree=None) -> Dict[str, Any]:
         tree = generate_ast(code=code, dump=False)
 
     tree = desugar_module(tree)
-    tree = ast.fix_missing_locations(tree)
     interpreter = Interpreter()
     try:
         interpreter.eval(tree)

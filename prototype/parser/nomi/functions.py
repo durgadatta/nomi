@@ -1,4 +1,5 @@
 import ast
+from ...interpreter.constants import BLOCK_KWARG
 
 class FunctionsMixin:
     def func_expr(self, items):
@@ -37,10 +38,7 @@ class FunctionsMixin:
             regular call
         '''
         call, params, block = items 
-        #TODO: collect __block__ into a central labels/enums
-
-        # insert the block to be extracted by gen-state
-        block = ast.keyword(arg='__block__', value=(block, params))
+        block = ast.keyword(arg=BLOCK_KWARG, value=(block, params))
         call.keywords.append(block)
 
          # Make it a statement, note that ast.Expr < ast.stmt

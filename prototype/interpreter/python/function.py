@@ -1,6 +1,7 @@
 import ast
 from typing import List, Any
 
+from ..constants import BLOCK_KWARG
 from .signals import ReturnException
 from .function_call import FunctionCallMixin
 
@@ -84,7 +85,7 @@ class FunctionMixin(FunctionCallMixin):
             #env is copied so that constraints work properly
             # Constraints from parent are relevant only on global/non-local scope (to-implement)
             local_env = func_env.copy()
-            block = kwargs.pop('__block__', None)
+            block = kwargs.pop(BLOCK_KWARG, None)
             with self.this_env(local_env):
                 self._bind_function_args(node, local_env, args, kwargs)
             if is_generator:

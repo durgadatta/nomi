@@ -3,6 +3,7 @@ essentially all expression are function call or var ref, so most changes will co
 thus, separating this into a new file
 '''
 import ast
+from ..constants import BLOCK_KWARG
 from typing import Any
 
 from .signals import YieldException
@@ -82,7 +83,7 @@ class FunctionCallResumable:
                 
                 # If we have a sent_value for this keyword (resuming from yield)
                 if len(node.args) + kw_index == start_index and sent_value is not None:
-                    if kw.arg == '__block__':
+                    if kw.arg == BLOCK_KWARG:
                         # Handle __block__ specially
                         value = (*sent_value, self.current_env)
                     else:
