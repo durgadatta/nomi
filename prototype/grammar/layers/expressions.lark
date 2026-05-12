@@ -65,6 +65,7 @@ AWAIT: "await"
 
 // -- func_expr --------------------------------------------------------
 func_expr: "(" [parameters] ")" "=>" test
+         | NAME "=>" test
 assign_expr: name ":=" test
 
 // -- tuple / list expression helpers ----------------------------------

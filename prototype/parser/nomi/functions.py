@@ -121,19 +121,24 @@ class FunctionsMixin:
 
     def func_expr(self, items):
         '''
-        Reduce it to funcdef
-        
-        name may or may not be there; 
-        body is a single expression
-
-        #TODO: when the value is FunctionDef
-        update assignment to change the name of FunctionDef
+        Reduce it to funcdef.
+        Supports: (x,y) => expr, (x) => expr, x => expr
         '''
-        
-        # this is an anonymous function 
-        # TODO: later handle FunctionDef to handle function without name
-        # or just abstract the function without name
-        # when None is passed eval_FunctionDef is expected not to bind name
+        # Single-param: NAME "=>" test  → 2 items: [name, body]
+        if len(items) == 2 and isinstance(items[0], str):
+            name, body = items
+            param = ast.arg(arg=name)
+            params = ast.arguments(
+                posonlyargs=[], args=[param], kwonlyargs=[], kw_defaults=[],
+                defaults=[], vararg=None, kwarg=None,
+            )
+            return_node = ast.Return(value=body)
+            return ast.FunctionDef(
+                name=None, args=params, body=[return_node],
+                decorator_list=[], returns=None,
+            )
+
+        # Multi-param: "(" [parameters] ")" "=>" test
         name = None
         items.insert(0, name)
 
