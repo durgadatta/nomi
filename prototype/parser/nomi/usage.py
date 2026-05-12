@@ -6,6 +6,7 @@ from lark.lexer import PatternRE
 from pathlib import Path
 
 from .ast_ import NomiToPythonAST
+from ...grammar.assemble import assemble_grammar
 
 
 def prefer_name_for_underscore_terminal(terminal):
@@ -13,9 +14,8 @@ def prefer_name_for_underscore_terminal(terminal):
         terminal.pattern = PatternRE("(?!)_")
 
 
-def get_parser():
-    grammar_path = Path(__file__).resolve().parents[2] / 'grammar' / 'nomi.lark'
-    grammar = grammar_path.read_text()
+def get_parser(extra_layers=None):
+    grammar = assemble_grammar(extra_layers=extra_layers)
     parser = Lark(
             grammar,
             parser="earley",

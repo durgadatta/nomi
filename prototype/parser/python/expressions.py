@@ -132,11 +132,9 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         i = 1
         while i < len(items):
             op_node = items[i]
-            # For tokens, use comp_op to convert them to AST operators
             if isinstance(op_node, Token):
                 op_node = self.comp_op([op_node])
             elif not isinstance(op_node, ast.AST):
-                # Fallback for strings or other types
                 op_node = self.comp_op([str(op_node)])
             
             ops.append(op_node)
@@ -146,84 +144,55 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             i += 2
             
         return ast.Compare(left=left, ops=ops, comparators=comparators)
-    
-    def term(self, items):
-        """
-        term: factor (_mul_op factor)*
-        Let Lark handle the low-level token processing
-        """
+
+    # -- flattened binary expression (precedence handled by Precedence pass) --
+
+    _BINOP_MAP = {
+        '*': ast.Mult, '/': ast.Div, '%': ast.Mod, '//': ast.FloorDiv, '@': ast.MatMult,
+        '+': ast.Add, '-': ast.Sub,
+        '<<': ast.LShift, '>>': ast.RShift,
+        '&': ast.BitAnd, '|': ast.BitOr, '^': ast.BitXor,
+    }
+
+    def bin_expr(self, items):
+        """Nomi-only: bin_expr builds flat left-to-right BinOp chain."""
         if len(items) == 1:
-            return ensure_expr(items[0])
-        
-        left = ensure_expr(items[0])
-        
+            return items[0]
+        left = items[0]
         for i in range(1, len(items), 2):
-            # Lark will automatically convert tokens to their string values
-            op_str = items[i]  
-            right = ensure_expr(items[i + 1])
-            
-            op_map = {
-                '*': ast.Mult(),
-                '@': ast.MatMult(),
-                '/': ast.Div(),
-                '%': ast.Mod(),
-                '//': ast.FloorDiv()
-            }
-            
-            if op_str not in op_map:
-                raise ValueError(f"Unknown multiplication operator: '{op_str}'")
-            
-            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
-        
+            op_str = items[i] if isinstance(items[i], str) else str(items[i])
+            right = items[i + 1]
+            op_cls = self._BINOP_MAP.get(op_str)
+            if op_cls is None:
+                raise ValueError(f"Unknown binary operator: {op_str!r}")
+            left = ast.BinOp(left=left, op=op_cls(), right=right)
         return left
+
+    # -- legacy level-specific methods (used by Python parser's LALR grammar) --
+
+    def _binop_chain(self, items, op_map):
+        if len(items) == 1:
+            return items[0]
+        left = items[0]
+        for i in range(1, len(items), 2):
+            op_str = items[i] if isinstance(items[i], str) else str(items[i])
+            right = items[i + 1]
+            if op_str not in op_map:
+                raise ValueError(f"Unknown operator in chain: {op_str!r}")
+            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
+        return left
+
+    def term(self, items):
+        return self._binop_chain(items, {
+            '*': ast.Mult(), '@': ast.MatMult(), '/': ast.Div(),
+            '%': ast.Mod(), '//': ast.FloorDiv(),
+        })
 
     def arith_expr(self, items):
-        """
-        arith_expr: term (_add_op term)*
-        """
-        if len(items) == 1:
-            return items[0]
-            
-        left = items[0]
-        for i in range(1, len(items), 2):
-            op_str = items[i]  # Lark handles token conversion
-            right = items[i + 1]
-            
-            op_map = {
-                '+': ast.Add(),
-                '-': ast.Sub()
-            }
-            
-            if op_str not in op_map:
-                raise ValueError(f"Unknown addition operator: '{op_str}'")
-            
-            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
-        
-        return left
+        return self._binop_chain(items, {'+': ast.Add(), '-': ast.Sub()})
 
     def shift_expr(self, items):
-        """
-        shift_expr: arith_expr (_shift_op arith_expr)*
-        """
-        if len(items) == 1:
-            return items[0]
-            
-        left = items[0]
-        for i in range(1, len(items), 2):
-            op_str = items[i]  # Lark handles token conversion
-            right = items[i + 1]
-            
-            op_map = {
-                '<<': ast.LShift(),
-                '>>': ast.RShift()
-            }
-            
-            if op_str not in op_map:
-                raise ValueError(f"Unknown shift operator: '{op_str}'")
-            
-            left = ast.BinOp(left=left, op=op_map[op_str], right=right)
-        
-        return left
+        return self._binop_chain(items, {'<<': ast.LShift(), '>>': ast.RShift()})
 
     def factor(self, items):
         """

@@ -1,0 +1,76 @@
+// Layer: expressions — logical, comparison, arithmetic, atoms
+//
+// Binary operators produce flat left-to-right BinOp chains.
+// Precedence is restructured by the Precedence desugar pass.
+
+single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
+file_input: (_NEWLINE | stmt)*
+eval_input: testlist _NEWLINE*
+
+suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
+
+// -- logical ---------------------------------------------------------
+?test: func_expr
+     | or_test ("if" or_test "else" test)?
+     | assign_expr
+?test_nocond: or_test
+?or_test: and_test ("or" and_test)*
+?and_test: not_test_ ("and" not_test_)*
+?not_test_: "not" not_test_ -> not_test | comparison
+
+// -- comparisons (chains: a < b < c) ---------------------------------
+?comparison: expr (comp_op expr)*
+!comp_op: "<"|">"|"=="|">="|"<="|"<>"|"!="|"in"|"not" "in"|"is"|"is" "not"
+
+// -- flat binary ops (restructured by Precedence pass) ----------------
+?expr: bin_expr
+?bin_expr: factor ((_binary_op) factor)*
+!_binary_op: "|" | "^" | "&" | "<<" | ">>" | "+" | "-" | "*" | "@" | "/" | "%" | "//"
+
+// -- unary, power, await ----------------------------------------------
+?factor: _unary_op factor | power
+!_unary_op: "+"|"-"|"~"
+?power: await_expr ("**" factor)?
+?await_expr: AWAIT? atom_expr
+AWAIT: "await"
+
+// -- atoms ------------------------------------------------------------
+?atom: "(" yield_expr ")"
+     | "(" _tuple_inner? ")" -> tuple
+     | "(" comprehension{test_or_star_expr} ")" -> tuple_comprehension
+     | "[" _exprlist? "]"  -> list
+     | "[" comprehension{test_or_star_expr} "]"  -> list_comprehension
+     | "{" _dict_exprlist? "}" -> dict
+     | "{" comprehension{key_value} "}" -> dict_comprehension
+     | "{" _exprlist "}" -> set
+     | "{" comprehension{test} "}" -> set_comprehension
+     | name -> var
+     | number
+     | string_concat
+     | "(" test ")"
+     | "..." -> ellipsis
+     | "None"    -> const_none
+     | "True"    -> const_true
+     | "False"   -> const_false
+
+?string_concat: string+
+
+// -- func_expr --------------------------------------------------------
+func_expr: "(" [parameters] ")" "=>" test
+assign_expr: name ":=" test
+
+// -- tuple / list expression helpers ----------------------------------
+star_expr: "*" expr
+_tuple_inner: test_or_star_expr (("," test_or_star_expr)+ [","] | ",")
+?test_or_star_expr: test | star_expr
+?testlist: test | testlist_tuple
+testlist_tuple: test (("," test)+ [","] | ",")
+?exprlist: (expr|star_expr) | (expr|star_expr) (("," (expr|star_expr))+ [","]|",")
+_exprlist: test_or_star_expr (","  test_or_star_expr)* [","]
+_dict_exprlist: (key_value | "**" expr) ("," (key_value | "**" expr))* [","]
+key_value: test ":"  test
+
+// -- subscript --------------------------------------------------------
+?subscriptlist: subscript | subscript (("," subscript)+ [","] | ",") -> subscript_tuple
+?subscript: test | ([test] ":" [test] [sliceop]) -> slice
+sliceop: ":" [test]

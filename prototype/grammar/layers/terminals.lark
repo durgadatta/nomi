@@ -1,0 +1,36 @@
+// Layer: terminals — must be assembled first (%declare, %ignore, terminal defs)
+//
+// All token-level definitions: whitespace, comments, newlines,
+// identifiers, numbers, strings, and the %declare/%ignore directives
+// required by Lark's PythonIndenter postlexer.
+//
+// IMPORTANT: terminals referenced by %ignore (COMMENT) must be defined
+// BEFORE the %ignore directive.
+
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+COMMENT: /#[^\n]*/
+
+%ignore /[\t \f]+/
+%ignore /\\[\t \f]*\r?\n/
+%ignore COMMENT
+%declare _INDENT _DEDENT
+
+!name: NAME | "match" | "case"
+NAME: /[^\W\d]\w*/
+
+STRING: /([ubf]?r?|r[ubf])("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
+LONG_STRING: /([ubf]?r?|r[ubf])(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
+number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
+string: STRING | LONG_STRING
+
+_SPECIAL_DEC: "0".."9"        ("_"?  "0".."9"                       )*
+DEC_NUMBER:   "1".."9"        ("_"?  "0".."9"                       )*
+          |   "0"             ("_"?  "0"                            )* /(?![1-9])/
+HEX_NUMBER.2: "0" ("x" | "X") ("_"? ("0".."9" | "a".."f" | "A".."F"))+
+OCT_NUMBER.2: "0" ("o" | "O") ("_"?  "0".."7"                       )+
+BIN_NUMBER.2: "0" ("b" | "B") ("_"?  "0".."1"                       )+
+_EXP: ("e"|"E") ["+" | "-"] _SPECIAL_DEC
+DECIMAL: "." _SPECIAL_DEC | _SPECIAL_DEC "." _SPECIAL_DEC?
+FLOAT_NUMBER.2: _SPECIAL_DEC _EXP | DECIMAL _EXP?
+IMAG_NUMBER.2: (_SPECIAL_DEC | FLOAT_NUMBER) ("J" | "j")

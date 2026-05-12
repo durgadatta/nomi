@@ -1,0 +1,19 @@
+// Layer: calls — function call, attribute/subscript access, comprehensions.
+
+?atom_expr: atom_expr "(" [arguments] ")"      -> funccall
+          | atom_expr "[" subscriptlist "]"  -> getitem
+          | atom_expr "." name               -> getattr
+          | atom
+
+// -- comprehensions ---------------------------------------------------
+comprehension{comp_result}: comp_result comp_fors [comp_if]
+comp_fors: comp_for+
+comp_for: [ASYNC] "for" exprlist "in" or_test
+ASYNC: "async"
+?comp_if: "if" test_nocond
+
+encoding_decl: name
+
+// utility
+cs_list{item}: item ("," item)* ","?
+_cs_list{item}: item ("," item)* ","?

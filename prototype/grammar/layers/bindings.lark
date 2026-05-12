@@ -1,0 +1,36 @@
+// Layer: bindings — assignment, augmented assignment, parameters.
+
+assign_stmt: annassign | augassign | assign
+
+// Nomi: annotation accepts a testlist for multi-constraint lists
+annassign: testlist_star_expr ":" testlist_star_expr  ["=" test]
+assign: testlist_star_expr ("=" (yield_expr|testlist_star_expr))+
+augassign: testlist_star_expr augassign_op (yield_expr|testlist)
+!augassign_op: "+=" | "-=" | "*=" | "@=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=" | "**=" | "//="
+
+?testlist_star_expr: test_or_star_expr
+                   | test_or_star_expr ("," test_or_star_expr)+ ","?  -> tuple
+                   | test_or_star_expr ","  -> tuple
+
+// -- function / call parameters --------------------------------------
+parameters: paramvalue ("," paramvalue)* ["," SLASH ("," paramvalue)*] ["," [starparams | kwparams]]
+          | starparams
+          | kwparams
+SLASH: "/"
+starparams: (starparam | starguard) poststarparams
+starparam: "*" typedparam
+starguard: "*"
+poststarparams: ("," paramvalue)* ["," kwparams]
+kwparams: "**" typedparam ","?
+?paramvalue: typedparam ("=" test)?
+?typedparam: name (":" test)?
+
+// -- call arguments ---------------------------------------------------
+arguments: argvalue ("," argvalue)*  ("," [ starargs | kwargs])?
+         | starargs
+         | kwargs
+         | comprehension{test}
+starargs: stararg ("," stararg)* ("," argvalue)* ["," kwargs]
+stararg: "*" test
+kwargs: "**" test ("," argvalue)*
+?argvalue: test ("=" test)?

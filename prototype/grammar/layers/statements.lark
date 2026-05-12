@@ -1,0 +1,69 @@
+// Layer: statements — stmt, compound_stmt, funcdef, classdef,
+// block_call_stmt, imports, control flow.
+
+?stmt: simple_stmt | compound_stmt | block_call_stmt
+?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
+?small_stmt: (expr_stmt | assign_stmt | del_stmt | pass_stmt | flow_stmt
+             | import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
+
+// -- funcdef (Nomi: "func" replaces "def") ----------------------------
+funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
+async_funcdef: "async" funcdef
+
+// -- decorators -------------------------------------------------------
+decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE
+decorators: decorator+
+decorated: decorators (classdef | funcdef | async_funcdef)
+
+// -- classdef ---------------------------------------------------------
+classdef: "class" name ["(" [arguments] ")"] ":" suite
+
+// -- simple statements ------------------------------------------------
+expr_stmt: testlist_star_expr
+pass_stmt: "pass"
+?flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
+break_stmt: "break"
+continue_stmt: "continue"
+return_stmt: "return" [testlist]
+yield_stmt: yield_expr
+raise_stmt: "raise" [test ["from" test]]
+global_stmt: "global" name ("," name)*
+nonlocal_stmt: "nonlocal" name ("," name)*
+assert_stmt: "assert" test ["," test]
+del_stmt: "del" exprlist
+
+// -- imports ----------------------------------------------------------
+import_stmt: import_name | import_from
+import_name: "import" dotted_as_names
+import_from: "from" (dots? dotted_name | dots) "import" ("*" | "(" import_as_names ")" | import_as_names)
+!dots: "."+
+import_as_name: name ["as" name]
+dotted_as_name: dotted_name ["as" name]
+import_as_names: import_as_name ("," import_as_name)* [","]
+dotted_as_names: dotted_as_name ("," dotted_as_name)*
+dotted_name: name ("." name)*
+
+// -- compound statements ----------------------------------------------
+?compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | match_stmt
+              | with_stmt | funcdef | classdef | decorated | async_stmt
+async_stmt: "async" (funcdef | with_stmt | for_stmt)
+if_stmt: "if" test ":" suite elifs ["else" ":" suite]
+elifs: elif_*
+elif_: "elif" test ":" suite
+while_stmt: "while" test ":" suite ["else" ":" suite]
+for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
+try_stmt: "try" ":" suite except_clauses ["else" ":" suite] [finally]
+        | "try" ":" suite finally   -> try_finally
+finally: "finally" ":" suite
+except_clauses: except_clause+
+except_clause: "except" [test ["as" name]] ":" suite
+with_stmt: "with" with_items ":" suite
+with_items: with_item ("," with_item)*
+with_item: test ["as" name]
+
+// -- block call (Nomi) ------------------------------------------------
+block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
+
+// -- yield ------------------------------------------------------------
+yield_expr: "yield" [testlist]
+          | "yield" "from" test -> yield_from
