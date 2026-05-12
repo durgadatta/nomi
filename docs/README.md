@@ -63,6 +63,24 @@ still contain open design questions.
 - [Symbolic And Structural Computation](features/symbolic_structural_computation.md):
   computation descriptions, plans, rewrites, and backend lowering.
 
+## Convenience
+
+Per-feature research on syntactic sugar and shortcuts found across
+languages — candidates for selective implementation in Nomi.
+
+- [Convenience Index](convenience/README.md)
+- [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
+- [Collections](convenience/collections.md) — map/filter/reduce, pipelines, ranges, spread
+- [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards
+- [Null Handling](convenience/null_handling.md) — `?.`, `??`, Option/Result types
+- [Error Handling](convenience/error_handling.md) — `?`, try-as-expression, guard
+- [Strings](convenience/strings.md) — interpolation, multi-line, regex
+- [Types](convenience/types.md) — data classes, type aliases, extension methods
+- [Scope & Context](convenience/scope_context.md) — where clause, scope functions, builder DSL
+- [Concurrency](convenience/concurrency.md) — async/await, channels, structured concurrency
+- [Modules & Imports](convenience/modules_imports.md) — aliases, re-exports
+- [Meta & Testing](convenience/meta_testing.md) — decorators, macros, inline tests
+
 ## Research
 
 Source notes and speculative synthesis. Use these to recover rationale, compare
