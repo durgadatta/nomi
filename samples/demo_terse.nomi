@@ -1,0 +1,27 @@
+# Nomi by Example — Terse
+
+# Functions
+func greet(name): return "Hello, " + name
+square = x => x * x
+add(a, b) = a + b
+double = _ * 2
+fact(1) = 1; fact(n) = fact(n - 1) * n
+area = pi * r * r where: pi = 3.14159; r = 5
+
+# Control
+unless 1 > 10: label = "ok"
+
+# Null
+name = None ?? "anonymous"
+v1 = {"k": 1}?.get("k")
+v2 = None?.get("k")
+
+# Collections
+1..5 |> list             # [1,2,3,4,5]
+1..<5 |> list            # [1,2,3,4]
+1..10 |> list |> sum     # 55
+
+print(greet("Nomi"))
+print(fact(5))
+print(name)
+print(1..10 |> sum)
