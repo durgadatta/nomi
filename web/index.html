@@ -6,71 +6,109 @@
 <title>Nomi Playground</title>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
 <style>
+  :root {
+    --bg: #1e1e2e; --panel: #181825; --border: #313244;
+    --text: #cdd6f4; --muted: #6c7086; --green: #a6e3a1;
+    --blue: #89b4fa; --red: #f38ba8; --yellow: #f9e2af;
+    --surface: #11111b;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
-    background: #1a1a2e; color: #e0e0e0; height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text);
     display: flex; flex-direction: column;
   }
   header {
-    padding: 12px 20px; background: #16213e;
-    border-bottom: 1px solid #0f3460;
-    display: flex; align-items: center; gap: 12px;
+    height: 40px; min-height: 40px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 12px; gap: 12px;
   }
-  header h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
-  header .status { font-size: 12px; color: #888; }
-  header .status.ready { color: #4ade80; }
-  .examples { margin-left: auto; display: flex; gap: 6px; }
-  .examples button {
-    background: #0f3460; color: #a0b4d0; border: none;
-    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
+  header h1 { font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--green); }
+  header .status { font-size: 11px; color: var(--muted); margin-left: 4px; }
+  header .sep { flex: 1; }
+  header button {
+    background: var(--surface); color: var(--text); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
   }
-  .examples button:hover { background: #1a4a7a; color: #fff; }
-  main { flex: 1; display: flex; overflow: hidden; }
-  .editor-panel { flex: 1; display: flex; flex-direction: column; }
-  .editor-panel textarea {
-    flex: 1; background: #16213e; color: #e0e0e0; border: none;
-    padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 14px; line-height: 1.6; resize: none; outline: none;
-    tab-size: 4;
+  header button:hover { background: var(--border); }
+
+  main { flex: 1; display: flex; min-height: 0; }
+  .sidebar {
+    width: 200px; min-width: 140px; background: var(--panel);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .toolbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 16px; background: #1a1a2e; border-top: 1px solid #0f3460;
+  .sidebar h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    padding: 10px 12px; color: var(--muted);
   }
-  .toolbar button {
-    background: #4ade80; color: #1a1a2e; border: none;
-    padding: 8px 24px; border-radius: 6px; font-size: 14px;
-    font-weight: 600; cursor: pointer; letter-spacing: 1px;
+  .sidebar .file-list {
+    flex: 1; overflow-y: auto; padding: 0 0 8px 0;
   }
-  .toolbar button:hover { background: #22c55e; }
-  .toolbar button:disabled { background: #555; color: #888; cursor: not-allowed; }
+  .sidebar .file-list div {
+    padding: 5px 12px 5px 18px; font-size: 12px; cursor: pointer;
+    color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sidebar .file-list div:hover { background: var(--surface); color: var(--text); }
+  .sidebar .file-list div.active { color: var(--green); background: var(--surface); }
+
+  .editor-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .cm-editor { height: 100%; font-size: 14px; }
+  .cm-editor .cm-scroller { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace; }
+  .cm-editor.cm-focused { outline: none; }
+
   .output-panel {
-    width: 380px; background: #0f0f23; border-left: 1px solid #0f3460;
-    display: flex; flex-direction: column; overflow: hidden;
+    width: 360px; min-width: 200px; background: var(--surface);
+    border-left: 1px solid var(--border); display: flex; flex-direction: column;
   }
-  .output-panel h3 {
-    padding: 12px 16px; font-size: 12px; text-transform: uppercase;
-    letter-spacing: 2px; color: #888; border-bottom: 1px solid #0f3460;
+  .output-panel .tabs {
+    display: flex; border-bottom: 1px solid var(--border);
   }
-  .output-panel pre {
-    flex: 1; padding: 16px; overflow: auto; font-size: 13px;
+  .output-panel .tabs div {
+    flex: 1; text-align: center; padding: 8px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+    color: var(--muted); border-bottom: 2px solid transparent;
+  }
+  .output-panel .tabs div.active { color: var(--green); border-bottom-color: var(--green); }
+  .output-panel .content {
+    flex: 1; padding: 12px; overflow: auto; font-size: 13px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     line-height: 1.5; white-space: pre-wrap; word-break: break-all;
   }
-  .output-panel pre.error { color: #f87171; }
-  .bindings { padding: 8px 16px; border-top: 1px solid #0f3460; font-size: 12px; }
-  .bindings span { color: #4ade80; }
+  .output-panel .content.error { color: var(--red); }
+  .output-panel .bindings { border-top: 1px solid var(--border); padding: 8px 12px; font-size: 12px; }
+  .output-panel .bindings span { color: var(--blue); }
+
+  .toolbar {
+    height: 36px; min-height: 36px;
+    background: var(--panel); border-top: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 12px; gap: 8px;
+  }
+  .toolbar .hint { font-size: 11px; color: var(--muted); }
+  .toolbar .sep2 { flex: 1; }
+  .toolbar button.run {
+    background: var(--green); color: var(--surface); border: none;
+    padding: 5px 20px; border-radius: 4px; font-size: 13px;
+    font-weight: 600; cursor: pointer; letter-spacing: 1px;
+  }
+  .toolbar button.run:hover { filter: brightness(1.1); }
+  .toolbar button.run:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
   .loading-overlay {
-    position: fixed; inset: 0; background: rgba(26,26,46,0.95);
+    position: fixed; inset: 0; background: rgba(17,17,27,0.95);
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; z-index: 100;
   }
-  .loading-overlay p { margin-top: 16px; font-size: 14px; color: #888; }
+  .loading-overlay p { margin-top: 16px; font-size: 14px; color: var(--muted); }
   .spinner {
-    width: 40px; height: 40px; border: 3px solid #0f3460;
-    border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite;
+    width: 36px; height: 36px; border: 3px solid var(--border);
+    border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .resize-handle { width: 4px; cursor: col-resize; background: transparent; }
+  .resize-handle:hover, .resize-handle.dragging { background: var(--blue); }
 </style>
 </head>
 <body>
@@ -83,35 +121,48 @@
 <header>
   <h1>Nomi</h1>
   <span class="status" id="status">initializing</span>
-  <div class="examples">
-    <button onclick="loadExample('basic')">Basic</button>
-    <button onclick="loadExample('block')">Block call</button>
-    <button onclick="loadExample('constraint')">Constraints</button>
-  </div>
+  <span class="sep"></span>
+  <button onclick="loadFile('demo')">Demo</button>
+  <button onclick="loadFile('block')">Blocks</button>
+  <button onclick="loadFile('constraint')">Constraints</button>
 </header>
 
 <main>
-  <div class="editor-panel">
-    <textarea id="editor" spellcheck="false">func greet(name):
-    return f"Hello, {name}!"
-
-result = greet("World")
-print(result)</textarea>
-    <div class="toolbar">
-      <span style="color:#888;font-size:12px;">Ctrl+Enter to run</span>
-      <button id="run-btn" onclick="run()" disabled>Run ▸</button>
-    </div>
+  <div class="sidebar" id="sidebar">
+    <h3>Examples</h3>
+    <div class="file-list" id="file-list"></div>
   </div>
+  <div class="resize-handle" id="resize-handle"></div>
+  <div class="editor-panel" id="editor-container"></div>
+  <div class="resize-handle" id="resize-handle-r"></div>
   <div class="output-panel">
-    <h3>Output</h3>
-    <pre id="output"></pre>
+    <div class="tabs">
+      <div class="active" onclick="switchTab('output')">Output</div>
+      <div onclick="switchTab('vars')">Variables</div>
+    </div>
+    <div class="content" id="output-content"></div>
     <div class="bindings" id="bindings"></div>
   </div>
 </main>
 
-<script>
+<div class="toolbar">
+  <span class="hint">Ctrl+Enter to run</span>
+  <span class="sep2"></span>
+  <button class="run" id="run-btn" onclick="run()" disabled>Run ▸</button>
+</div>
+
+<script type="module">
+import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "https://esm.sh/@codemirror/view@6";
+import { EditorState } from "https://esm.sh/@codemirror/state@6";
+import { defaultKeymap, history, historyKeymap, indentWithTab } from "https://esm.sh/@codemirror/commands@6";
+import { python } from "https://esm.sh/@codemirror/lang-python@6";
+import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark@6";
+import { bracketMatching } from "https://esm.sh/@codemirror/language@6";
+import { closeBrackets } from "https://esm.sh/@codemirror/autocomplete@6";
+
 let ready = false;
 let _runFn = null;
+let editorView = null;
 
 function log(msg) {
   console.log("[web]", msg);
@@ -125,52 +176,141 @@ async function init() {
 
     log("Installing lark...");
     await pyodide.loadPackage("micropip");
-    const micropip = pyodide.pyimport("micropip");
-    await micropip.install("lark");
+    const mp = pyodide.pyimport("micropip");
+    await mp.install("lark");
 
-    log("Loading Nomi modules...");
+    log("Initializing Nomi...");
     const nomiPy = await fetch("./nomi_web.py").then(r => r.text());
     await pyodide.runPythonAsync(nomiPy);
-
-    log("Initializing...");
     const initFn = pyodide.globals.get("init_nomi");
-    if (!initFn) throw new Error("init_nomi not found");
     await initFn();
 
     _runFn = pyodide.globals.get("run_nomi");
-    if (!_runFn) throw new Error("run_nomi not found");
-
     window.pyodide = pyodide;
+
     ready = true;
     document.getElementById("loading").style.display = "none";
     document.getElementById("status").textContent = "ready";
-    document.getElementById("status").classList.add("ready");
     document.getElementById("run-btn").disabled = false;
-    log("Ready");
+    console.log("[web] Ready");
   } catch (e) {
     log("Error: " + e.message);
     console.error(e);
   }
 }
 
+// --- CodeMirror setup ---
+function setupEditor() {
+  const ext = [
+    python(),
+    oneDark,
+    lineNumbers(),
+    highlightActiveLine(),
+    highlightActiveLineGutter(),
+    bracketMatching(),
+    closeBrackets(),
+    history(),
+    keymap.of([
+      ...defaultKeymap,
+      ...historyKeymap,
+      indentWithTab,
+      { key: "Ctrl-Enter", run: () => { run(); return true; } },
+      { key: "Cmd-Enter", run: () => { run(); return true; } },
+    ]),
+    EditorView.updateListener.of(update => {
+      if (update.docChanged) {
+        setPending(true);
+      }
+    }),
+  ];
+
+  const state = EditorState.create({
+    doc: DEMOS["demo"],
+    extensions: ext,
+  });
+
+  editorView = new EditorView({
+    state,
+    parent: document.getElementById("editor-container"),
+  });
+}
+
+// --- File loading ---
+let pendingChanges = false;
+function setPending(v) { pendingChanges = v; }
+
+const DEMOS = {
+  demo: `func greet(name):
+    return f"Hello, {name}!"
+
+result = greet("World")
+print(result)`,
+  block: `func each(items):
+    for item in items:
+        yield item
+
+total = 0
+each([1, -2, 3, 8]) -> item:
+    if item > 0:
+        total += item
+
+print(f"total = {total}")`,
+  constraint: `is_positive = (x) => x > 0
+score: int, is_positive = 72
+
+match score:
+    case 100:
+        label = "perfect"
+    case _:
+        label = "regular"
+
+print(f"score={score}, grade={label}")`
+};
+
+window.loadFile = function(name) {
+  if (DEMOS[name]) {
+    editorView.dispatch({
+      changes: { from: 0, to: editorView.state.doc.length, insert: DEMOS[name] }
+    });
+    setPending(true);
+  }
+};
+
+function buildFileList() {
+  const list = document.getElementById("file-list");
+  for (const [name] of Object.entries(DEMOS)) {
+    const el = document.createElement("div");
+    el.textContent = name + ".nomi";
+    el.onclick = () => {
+      loadFile(name);
+      list.querySelectorAll("div").forEach(d => d.classList.remove("active"));
+      el.classList.add("active");
+    };
+    list.appendChild(el);
+  }
+  list.firstElementChild?.classList.add("active");
+}
+
+// --- Run ---
 async function run() {
   if (!ready || !_runFn) return;
-  const code = document.getElementById("editor").value;
-  const out = document.getElementById("output");
+  const code = editorView.state.doc.toString();
+  const out = document.getElementById("output-content");
   const bind = document.getElementById("bindings");
   const btn = document.getElementById("run-btn");
   btn.disabled = true; btn.textContent = "...";
+  setPending(false);
 
   try {
     const result = await _runFn(code);
     const r = result.toJs();
     if (r.has("error")) {
       out.textContent = r.get("error");
-      out.className = "error";
+      out.className = "content error";
       bind.innerHTML = "";
     } else {
       out.textContent = r.get("output") || "(no output)";
-      out.className = "";
+      out.className = "content";
       const bindings = r.get("bindings");
       if (bindings && bindings.size > 0) {
         let html = "";
@@ -182,27 +322,66 @@ async function run() {
     }
   } catch (e) {
     out.textContent = String(e);
-    out.className = "error";
+    out.className = "content error";
   }
   btn.disabled = false; btn.textContent = "Run ▸";
 }
 
+window.run = run;
+
 function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
-function loadExample(name) {
-  const ex = {
-    basic: `func greet(name):\n    return f"Hello, {name}!"\n\nresult = greet("World")\nprint(result)`,
-    block: `func each(items):\n    for item in items:\n        yield item\n\ntotal = 0\neach([1, -2, 3, 8]) -> item:\n    if item > 0:\n        total += item\n\nprint(f"total = {total}")`,
-    constraint: `is_positive = (x) => x > 0\nscore: int, is_positive = 72\n\nmatch score:\n    case 100:\n        label = "perfect"\n    case _:\n        label = "regular"\n\nprint(f"score={score}, grade={label}")`
-  };
-  document.getElementById("editor").value = ex[name] || ex.basic;
+// --- Output tabs ---
+let activeTab = "output";
+window.switchTab = function(name) {
+  activeTab = name;
+  document.querySelectorAll(".tabs div").forEach(d => d.classList.remove("active"));
+  document.querySelector(`.tabs div:${name === "output" ? "first" : "last"}-child`).classList.add("active");
+};
+
+// --- Resize handles ---
+function setupResize(handle, leftPane, rightPane, direction) {
+  let dragging = false;
+  handle.addEventListener("mousedown", () => {
+    dragging = true;
+    handle.classList.add("dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    if (direction === "left") {
+      leftPane.style.width = Math.max(100, e.clientX - leftPane.getBoundingClientRect().left) + "px";
+    } else {
+      const rect = rightPane.getBoundingClientRect();
+      rightPane.style.width = Math.max(100, rect.right - e.clientX) + "px";
+    }
+  });
+  document.addEventListener("mouseup", () => {
+    dragging = false;
+    handle.classList.remove("dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  });
 }
 
-document.getElementById("editor").addEventListener("keydown", e => {
-  if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); run(); }
-});
-
+// --- Init ---
+buildFileList();
+setupEditor();
 init();
+
+setupResize(
+  document.getElementById("resize-handle"),
+  document.getElementById("sidebar"),
+  document.getElementById("editor-container"),
+  "left"
+);
+setupResize(
+  document.getElementById("resize-handle-r"),
+  document.getElementById("editor-container"),
+  document.querySelector(".output-panel"),
+  "right"
+);
 </script>
 </body>
 </html>
