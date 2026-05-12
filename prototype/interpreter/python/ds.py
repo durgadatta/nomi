@@ -157,14 +157,7 @@ class DataStructMixin:
             if isinstance(value_node, ast.Constant):
                 parts.append(str(value_node.value))
             elif isinstance(value_node, ast.FormattedValue):
-                # Evaluate the expression inside {}
-                value = self.eval(value_node.value)
-                # Apply formatting if specified
-                if value_node.format_spec:
-                    format_spec = self._eval_format_spec(value_node.format_spec)
-                    parts.append(format(value, format_spec))
-                else:
-                    parts.append(str(value))
+                parts.append(self.eval_FormattedValue(value_node))
             else:
                 # Handle other node types if needed
                 value = self.eval(value_node)

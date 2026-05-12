@@ -205,3 +205,47 @@ class TestWithDesugar:
         tree = ast.parse("with lock:\n    pass\n")
         tree = desugar_module(tree)
         assert find_node(tree, ast.With) is None
+
+
+class TestFStringDesugar:
+    def test_simple_fstring(self):
+        tree = ast.parse("f'hello {name}'\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.JoinedStr) is None
+        assert find_node(tree, ast.FormattedValue) is None
+        binop = find_node(tree, ast.BinOp)
+        assert isinstance(binop.op, ast.Add)
+
+    def test_format_spec(self):
+        tree = ast.parse("f'{x:.2f}'\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.FormattedValue) is None
+
+    def test_conversion(self):
+        tree = ast.parse("f'{x!r}'\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.FormattedValue) is None
+        assert find_node(tree, ast.JoinedStr) is None
+
+    def test_empty_fstring(self):
+        tree = ast.parse("f''\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.JoinedStr) is None
+    def test_simple_with(self):
+        tree = ast.parse("with open('f') as f:\n    pass\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.With) is None
+        assert find_node(tree, ast.Try) is not None
+        assert find_node(tree, ast.Pass) is None
+
+    def test_with_multiple_items(self):
+        tree = ast.parse("with a as x, b as y:\n    pass\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.With) is None
+        tries = [n for n in ast.walk(tree) if isinstance(n, ast.Try)]
+        assert len(tries) == 2
+
+    def test_with_no_as(self):
+        tree = ast.parse("with lock:\n    pass\n")
+        tree = desugar_module(tree)
+        assert find_node(tree, ast.With) is None

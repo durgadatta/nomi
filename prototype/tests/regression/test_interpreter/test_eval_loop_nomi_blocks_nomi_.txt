@@ -17,10 +17,10 @@
     "each 1",
     "each 2",
     "each 3",
-    "each_key_val key=one, val=1",
-    "each_key_val key=two, val=2",
-    "each key=one, val=1",
-    "each key=two, val=2",
+    "each_key_val key='one', val=1",
+    "each_key_val key='two', val=2",
+    "each key='one', val=1",
+    "each key='two', val=2",
     ""
   ]
 }

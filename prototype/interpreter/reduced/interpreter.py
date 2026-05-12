@@ -26,3 +26,15 @@ class Interpreter(NomiInterpreter):
             "With should be desugared at parse time. "
             "Desugarer expands with into enter/assign/try/except/else."
         )
+
+    def eval_JoinedStr(self, node):
+        raise NotImplementedError(
+            "F-strings should be desugared at parse time. "
+            "Desugarer expands f-strings into concatenation and format calls."
+        )
+
+    def eval_FormattedValue(self, node):
+        raise NotImplementedError(
+            "F-strings should be desugared at parse time. "
+            "Desugarer expands f-strings into concatenation and format calls."
+        )

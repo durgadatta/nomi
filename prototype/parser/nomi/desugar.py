@@ -248,11 +248,178 @@ class _WithDesugarer(_BaseDesugarer):
         return inner_body
 
 
+class _ForDesugarer(_BaseDesugarer):
+    """Desugar for-loop into while + iterator protocol.
+
+    for target in iter_expr:
+        body
+    else:
+        orelse
+    →
+    _iter = iter(iter_expr)
+    _ok = False
+    while True:
+        _exh = True
+        try:
+            target = next(_iter)
+            _exh = False
+        except StopIteration:
+            pass
+        if _exh:
+            _ok = True
+            break
+        body
+    if _ok:
+        orelse
+
+    User break skips orelse because _ok stays False.
+    """
+
+    _counter = 0
+
+    def _fresh(self, prefix):
+        self._counter += 1
+        return f"_{prefix}_{self._counter}"
+
+    def visit_For(self, node):
+        iter_name = self._fresh("iter")
+        has_else = bool(node.orelse)
+
+        stmts = []
+
+        stmts.append(ast.Assign(
+            targets=[ast.Name(id=iter_name, ctx=ast.Store())],
+            value=ast.Call(
+                func=ast.Name(id="iter", ctx=ast.Load()),
+                args=[node.iter],
+                keywords=[],
+            ),
+        ))
+
+        if has_else:
+            ok_name = self._fresh("ok")
+            stmts.append(ast.Assign(
+                targets=[ast.Name(id=ok_name, ctx=ast.Store())],
+                value=ast.Constant(value=False),
+            ))
+
+        exh_name = self._fresh("exh")
+
+        exh_assign_true = ast.Assign(
+            targets=[ast.Name(id=exh_name, ctx=ast.Store())],
+            value=ast.Constant(value=True),
+        )
+
+        next_call = ast.Call(
+            func=ast.Name(id="next", ctx=ast.Load()),
+            args=[ast.Name(id=iter_name, ctx=ast.Load())],
+            keywords=[],
+        )
+        exh_assign_false = ast.Assign(
+            targets=[ast.Name(id=exh_name, ctx=ast.Store())],
+            value=ast.Constant(value=False),
+        )
+
+        try_body = [ast.Assign(
+            targets=[node.target],
+            value=next_call,
+        ), exh_assign_false]
+
+        try_node = ast.Try(
+            body=try_body,
+            handlers=[ast.ExceptHandler(
+                type=ast.Name(id="StopIteration", ctx=ast.Load()),
+                name=None,
+                body=[],
+            )],
+            orelse=[],
+            finalbody=[],
+        )
+
+        if has_else:
+            if_exh_body = [
+                ast.Assign(
+                    targets=[ast.Name(id=ok_name, ctx=ast.Store())],
+                    value=ast.Constant(value=True),
+                ),
+                ast.Break(),
+            ]
+        else:
+            if_exh_body = [ast.Break()]
+
+        if_exh_node = ast.If(
+            test=ast.Name(id=exh_name, ctx=ast.Load()),
+            body=if_exh_body,
+            orelse=[],
+        )
+
+        while_body = [exh_assign_true, try_node, if_exh_node] + list(node.body)
+        while_node = ast.While(
+            test=ast.Constant(value=True),
+            body=while_body,
+            orelse=[],
+        )
+        stmts.append(while_node)
+
+        if has_else:
+            stmts.append(ast.If(
+                test=ast.Name(id=ok_name, ctx=ast.Load()),
+                body=list(node.orelse),
+                orelse=[],
+            ))
+
+        return stmts
+
+
+class _FStringDesugarer(_BaseDesugarer):
+    """Desugar f-strings into string concatenation and format calls.
+
+    f"hello {name}"  →  "hello " + format(name, '')
+    f"{x:.2f}"       →  format(x, ".2f")
+    f"{x!r}"         →  format(repr(x), '')
+    """
+
+    def _format_call(self, value, format_spec):
+        if format_spec is not None:
+            spec = self.visit(format_spec)
+        else:
+            spec = ast.Constant(value="")
+        return ast.Call(
+            func=ast.Name(id="format", ctx=ast.Load()),
+            args=[value, spec],
+            keywords=[],
+        )
+
+    def visit_FormattedValue(self, node):
+        value = self.visit(node.value)
+        if node.conversion != -1:
+            conv_func = {115: "str", 114: "repr", 97: "ascii"}.get(node.conversion)
+            if conv_func:
+                value = ast.Call(
+                    func=ast.Name(id=conv_func, ctx=ast.Load()),
+                    args=[value],
+                    keywords=[],
+                )
+        return self._format_call(value, node.format_spec)
+
+    def visit_JoinedStr(self, node):
+        values = [self.visit(v) for v in node.values]
+        if not values:
+            return ast.copy_location(ast.Constant(value=""), node)
+        result = values[0]
+        for v in values[1:]:
+            result = ast.copy_location(
+                ast.BinOp(left=result, op=ast.Add(), right=v), node
+            )
+        return result
+
+
 def desugar_module(tree: ast.Module) -> ast.Module:
     tree = _AugAssignDesugarer().visit(tree)
     tree = _AssertDesugarer().visit(tree)
     tree = _DecoratorDesugarer().visit(tree)
     tree = _PassDesugarer().visit(tree)
     tree = _WithDesugarer().visit(tree)
+    tree = _FStringDesugarer().visit(tree)
     ast.fix_missing_locations(tree)
     return tree
