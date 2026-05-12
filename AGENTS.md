@@ -89,6 +89,12 @@ then the broader relevant suite.
 - `prototype/grammar/`: Lark grammar definitions.
 - `prototype/parser/python/`: Python-compatible parsing and AST lowering.
 - `prototype/parser/nomi/`: Nomi-specific syntax handling.
+- `prototype/parser/nomi/desugar/`: AST desugaring package. Each module
+  implements one reduction pass. The `pipeline.py` chains them in order.
+  To add a reduction: (1) create a module with a ``BaseDesugarer`` subclass,
+  (2) add it to the pipeline, (3) add the corresponding ``eval_*`` override
+  in the reduced interpreter, (4) add tests under
+  ``prototype/tests/unit/parser/desugar/``.
 - `prototype/interpreter/python/`: Python-compatible custom interpreter layers.
 - `prototype/interpreter/nomi/`: Nomi-specific runtime behavior.
 - `prototype/interpreter/reduced/`: minimal-semantics interpreter; inherits from
