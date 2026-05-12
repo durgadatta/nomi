@@ -1,6 +1,8 @@
 // Layer: calls — function call, attribute/subscript access, comprehensions.
 
-?atom_expr: atom_expr "(" [arguments] ")"      -> funccall
+?atom_expr: atom_expr SAFE_DOT name "(" [arguments] ")" -> safe_call
+          | atom_expr SAFE_DOT name          -> safe_getattr
+          | atom_expr "(" [arguments] ")"      -> funccall
           | atom_expr "[" subscriptlist "]"  -> getitem
           | atom_expr "." name               -> getattr
           | atom

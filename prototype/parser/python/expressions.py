@@ -153,6 +153,40 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
                 result = ast.Call(func=right, args=[result], keywords=[])
         return result
 
+    def safe_call(self, items):
+        """a?.m(args)  →  None if a is None else a.m(args)"""
+        if len(items) == 3:
+            obj, _tok, name = items
+            args_tuple = ([], [])
+        else:
+            obj, _tok, name, args_tuple = items
+            if args_tuple is None:
+                args_tuple = ([], [])
+        args, keywords = args_tuple
+        attr_name = name if isinstance(name, str) else name.id
+        call = ast.Call(
+            func=ast.Attribute(value=obj, attr=attr_name, ctx=ast.Load()),
+            args=args,
+            keywords=keywords,
+        )
+        return ast.IfExp(
+            test=ast.Compare(left=obj, ops=[ast.IsNot()],
+                              comparators=[ast.Constant(value=None)]),
+            body=call,
+            orelse=ast.Constant(value=None),
+        )
+
+    def safe_getattr(self, items):
+        """a?.b  →  a.b if a is not None else None"""
+        obj, _tok, name = items
+        attr_name = name if isinstance(name, str) else name.id
+        return ast.IfExp(
+            test=ast.Compare(left=obj, ops=[ast.IsNot()],
+                              comparators=[ast.Constant(value=None)]),
+            body=ast.Attribute(value=obj, attr=attr_name, ctx=ast.Load()),
+            orelse=ast.Constant(value=None),
+        )
+
     def comparison(self, items):
         if not items:
             return ast.Constant(value=False)
