@@ -3,12 +3,16 @@
 
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
-?small_stmt: (expr_stmt | assign_stmt | del_stmt | pass_stmt | flow_stmt
-             | import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
+?small_stmt: (func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
+             | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
+             | assert_stmt)
 
 // -- funcdef (Nomi: "func" replaces "def") ----------------------------
 funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
 async_funcdef: "async" funcdef
+
+// -- lightweight function equation: f(a, b) = expr  (Nomi) ------------
+func_equation: name "(" [parameters] ")" "=" test
 
 // -- decorators -------------------------------------------------------
 decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE

@@ -2,6 +2,21 @@ import ast
 from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
+    def func_equation(self, items):
+        """func_equation: name '(' [parameters] ')' '=' test
+
+        Syntactic sugar for ``func f(a, b): return expr``.
+        """
+        name, parameters, body = items
+        return_node = ast.Return(value=body)
+        return ast.FunctionDef(
+            name=name,
+            args=parameters or self.parameters([]),
+            body=[return_node],
+            decorator_list=[],
+            returns=None,
+        )
+
     def func_expr(self, items):
         '''
         Reduce it to funcdef

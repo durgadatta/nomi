@@ -1,0 +1,42 @@
+# Nomi function definition styles
+# Shows all the ways to define a function: funcdef, arrow, equation
+
+# classic funcdef
+func classic_add(a, b):
+    return a + b
+
+# arrow expression (anonymous)
+arrow_square = (x) => x * x
+
+# lightweight equation — f(a, b) = expr
+# desugars to: func add(a, b): return a + b
+add(a, b) = a + b
+
+# equation with no parameters
+pi() = 3.14
+
+# equation with default parameter
+greet(name="world") = "Hello, " + name
+
+# equation with closure
+factor = 10
+multiply(n) = factor * n
+
+
+result_classic = classic_add(1, 2)
+print(f"classic func:       1 + 2 = {result_classic}")
+
+result_arrow = arrow_square(5)
+print(f"arrow (x)=>x*x:     5 * 5 = {result_arrow}")
+
+result_eq = add(3, 4)
+print(f"equation:           3 + 4 = {result_eq}")
+
+result_pi = pi()
+print(f"equation no params: pi() = {result_pi}")
+
+result_greet = greet()
+print(f"equation default:   greet() = {result_greet}")
+
+result_mult = multiply(5)
+print(f"equation closure:   10 * 5 = {result_mult}")

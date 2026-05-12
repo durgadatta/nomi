@@ -1,0 +1,24 @@
+{
+  "classic_add": "classic_add:class=<class 'function'>",
+  "arrow_square": "func:class=<class 'function'>",
+  "add": "add:class=<class 'function'>",
+  "pi": "pi:class=<class 'function'>",
+  "greet": "greet:class=<class 'function'>",
+  "factor": 10,
+  "multiply": "multiply:class=<class 'function'>",
+  "result_classic": 3,
+  "result_arrow": 25,
+  "result_eq": 7,
+  "result_pi": 3.14,
+  "result_greet": "Hello, world",
+  "result_mult": 50,
+  "stdout": [
+    "classic func:       1 + 2 = 3",
+    "arrow (x)=>x*x:     5 * 5 = 25",
+    "equation:           3 + 4 = 7",
+    "equation no params: pi() = 3.14",
+    "equation default:   greet() = Hello, world",
+    "equation closure:   10 * 5 = 50",
+    ""
+  ]
+}
