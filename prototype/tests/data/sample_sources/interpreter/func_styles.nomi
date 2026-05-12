@@ -42,11 +42,9 @@ scaled_double = scale_value where:
 greeting(name) = prefix + name where:
     prefix = "Hello, "
 
-# mixed: where + piecewise
-fib7 = f(7) where:
-    f(0) = 0
-    f(1) = 1
-    f(n) = f(n - 1) + f(n - 2)
+# mixed: where + local function definition
+sum_squares(x, y) = s(x) + s(y) where:
+    s(n) = n * n
 
 # mixed: where cascading helpers
 stats = (total, avg) where:
@@ -100,7 +98,8 @@ print("6. where area:          pi*r^2 = " + str(area))
 print("6. where + hole:       7*3    = " + str(scaled_double))
 r = greeting("where")
 print("6. where + equation:   Hello, where = " + r)
-print("6. where + piecewise:  fib(7) = " + str(fib7))
+result_sq = sum_squares(3, 4)
+print("6. where + local fn:   3^2+4^2 = " + str(result_sq))
 print("6. where cascade:      stats  = " + str(stats))
 
 result_plus2 = plus_two(5)
