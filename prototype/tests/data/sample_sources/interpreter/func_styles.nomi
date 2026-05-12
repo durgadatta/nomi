@@ -27,6 +27,15 @@ upcase = _.upper()
 get_name = _["name"]
 add_two = _ + _
 
+# ── 6. where clause — local bindings (Haskell-style) ───────────────
+area = radius * radius * pi_val where:
+    pi_val = 3.14159
+    radius = 5
+
+greeting(name) = prefix + name where:
+    prefix = "Hello, "
+
+
 result_classic = classic_add(1, 2)
 print(f"1. classic func:        1 + 2 = {result_classic}")
 
@@ -59,3 +68,9 @@ print(f"5. hole _[\"name\"]:       alice = {result_get}")
 
 result_addtwo = add_two(10, 20)
 print(f"5. hole _ + _:          10+20 = {result_addtwo}")
+
+result_area = area
+print(f"6. where area:           pi*r² = {result_area}")
+
+result_where_greet = greeting("where")
+print(f"6. where greeting:       Hello, where = {result_where_greet}")

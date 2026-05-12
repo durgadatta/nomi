@@ -2,6 +2,18 @@ import ast
 from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
+    def assign_where(self, items):
+        """assign_where: small_stmt 'where' ':' suite
+
+        Converted to the small_stmt with where_body stored as a custom
+        attribute.  ``WhereClause`` desugar pass does the actual rewriting.
+        """
+        stmt, where_body = items
+        if hasattr(stmt, '_nomi_where_body'):
+            stmt._nomi_where_body.extend(where_body)
+        else:
+            stmt._nomi_where_body = where_body
+        return stmt
     def func_equation(self, items):
         """func_equation: name '(' [func_eq_args] ')' '=' test
 

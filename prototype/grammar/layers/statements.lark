@@ -3,6 +3,7 @@
 
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
+            | small_stmt "where" ":" suite  -> assign_where
 ?small_stmt: (func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
              | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
              | assert_stmt)
