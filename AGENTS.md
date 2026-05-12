@@ -79,6 +79,8 @@ work with the active docs in `docs/language/` and `docs/features/`.
   `python3 -m tools.jupyter.check_nomi_kernel`
 - Build local RAG context: `python3 -m tools.rag_mcp.cli build`
 - Search local RAG context: `python3 -m tools.rag_mcp.cli search "binding constraints"`
+- Regenerate web manifest: `python3 scripts/make_web.py`
+- Run web playground locally: `python3 -m http.server 8080` → open `http://localhost:8080/web/`
 
 The project config currently sets pytest addopts to `-n auto`, so tests may run
 in parallel. For parser/interpreter work, prefer a focused failing test first,
