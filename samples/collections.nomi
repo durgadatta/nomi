@@ -1,0 +1,8 @@
+# Nomi by Example — Collections & Data
+
+# -- Range syntax: 1..5 (inclusive), 1..<5 (exclusive) ------------
+inclusive = list(1..5)         # [1, 2, 3, 4, 5]
+exclusive = list(1..<5)        # [1, 2, 3, 4]
+
+print("1..5 = " + str(inclusive))
+print("1..<5 = " + str(exclusive))

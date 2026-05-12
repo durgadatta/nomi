@@ -19,8 +19,13 @@ suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 ?not_test_: "not" not_test_ -> not_test | comparison
 
 // -- comparisons (chains: a < b < c) ---------------------------------
-?comparison: expr (comp_op expr)*
+?comparison: range_expr (comp_op range_expr)*
 !comp_op: "<"|">"|"=="|">="|"<="|"<>"|"!="|"in"|"not" "in"|"is"|"is" "not"
+
+// -- range: start..end (inclusive), start..<end (exclusive) ------------
+?range_expr: bin_expr
+           | bin_expr RANGE_INCL bin_expr -> range_inclusive
+           | bin_expr RANGE_EXCL bin_expr -> range_exclusive
 
 // -- flat binary ops (restructured by Precedence pass) ----------------
 ?expr: bin_expr

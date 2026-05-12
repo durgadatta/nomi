@@ -19,6 +19,10 @@ COMMENT: /#[^\n]*/
 !name: NAME | "match" | "case"
 NAME: /[^\W\d]\w*/
 
+// Range operators — must be before number definitions to avoid float collision
+RANGE_INCL: /\.\./
+RANGE_EXCL: /\.\.</
+
 STRING: /([ubf]?r?|r[ubf])("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
 LONG_STRING: /([ubf]?r?|r[ubf])(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
 number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
@@ -31,6 +35,6 @@ HEX_NUMBER.2: "0" ("x" | "X") ("_"? ("0".."9" | "a".."f" | "A".."F"))+
 OCT_NUMBER.2: "0" ("o" | "O") ("_"?  "0".."7"                       )+
 BIN_NUMBER.2: "0" ("b" | "B") ("_"?  "0".."1"                       )+
 _EXP: ("e"|"E") ["+" | "-"] _SPECIAL_DEC
-DECIMAL: "." _SPECIAL_DEC | _SPECIAL_DEC "." _SPECIAL_DEC?
+DECIMAL: "." _SPECIAL_DEC | _SPECIAL_DEC "." _SPECIAL_DEC
 FLOAT_NUMBER.2: _SPECIAL_DEC _EXP | DECIMAL _EXP?
 IMAG_NUMBER.2: (_SPECIAL_DEC | FLOAT_NUMBER) ("J" | "j")

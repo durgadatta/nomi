@@ -119,6 +119,25 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         
         return ast.Eq()
 
+    def range_expr(self, items):
+        return items[0]
+
+    def range_inclusive(self, items):
+        left, _tok, right = items
+        return ast.Call(
+            func=ast.Name(id='range', ctx=ast.Load()),
+            args=[left, ast.BinOp(left=right, op=ast.Add(), right=ast.Constant(value=1))],
+            keywords=[],
+        )
+
+    def range_exclusive(self, items):
+        left, _tok, right = items
+        return ast.Call(
+            func=ast.Name(id='range', ctx=ast.Load()),
+            args=[left, right],
+            keywords=[],
+        )
+
     def comparison(self, items):
         if not items:
             return ast.Constant(value=False)
