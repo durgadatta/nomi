@@ -268,11 +268,35 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         return ast.UnaryOp(op=ast.Not(), operand=operand)
 
     def nullish_expr(self, items):
-        if len(items) == 1:
-            return items[0]
-        result = items[0]
-        for i in range(1, len(items), 2):
-            right = items[i + 1]
+        """nullish_expr: and_test (NULLISH and_test)*
+
+        and_test is inline (?and_test), so its children leak into
+        nullish_expr.  We find NULLISH tokens to split the stream.
+        """
+        if not any(isinstance(it, Token) and it.type == 'NULLISH' for it in items):
+            return items[0] if len(items) == 1 else items  # passthrough
+
+        # Find NULLISH positions, split into groups, and chain
+        groups = []
+        current = []
+        for it in items:
+            if isinstance(it, Token) and it.type == 'NULLISH':
+                groups.append(current)
+                current = []
+            else:
+                current.append(it)
+        groups.append(current)
+
+        # Convert each group back (first element or pass to and_test handler)
+        def _to_expr(group):
+            if len(group) == 1:
+                return group[0]
+            # Re-wrap for and_test transformer
+            return self.and_test(group)
+
+        result = _to_expr(groups[0])
+        for g in groups[1:]:
+            right = _to_expr(g)
             result = ast.IfExp(
                 test=ast.Compare(left=result, ops=[ast.IsNot()],
                                   comparators=[ast.Constant(value=None)]),
