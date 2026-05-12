@@ -14,8 +14,10 @@ suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 ?pipe_expr: or_test (PIPE_FWD or_test)*
 PIPE_FWD: "|>"
 ?test_nocond: or_test
-?or_test: and_test ("or" and_test)*
-?and_test: not_test_ ("and" not_test_)*
+?or_test: nullish_expr ("or" nullish_expr)*
+nullish_expr: and_test (NULLISH and_test)*
+and_test: not_test_ ("and" not_test_)*
+NULLISH: "??"
 ?not_test_: "not" not_test_ -> not_test | comparison
 
 // -- comparisons (chains: a < b < c) ---------------------------------

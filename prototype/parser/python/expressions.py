@@ -267,6 +267,20 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         operand = items[0]
         return ast.UnaryOp(op=ast.Not(), operand=operand)
 
+    def nullish_expr(self, items):
+        if len(items) == 1:
+            return items[0]
+        result = items[0]
+        for i in range(1, len(items), 2):
+            right = items[i + 1]
+            result = ast.IfExp(
+                test=ast.Compare(left=result, ops=[ast.IsNot()],
+                                  comparators=[ast.Constant(value=None)]),
+                body=result,
+                orelse=right,
+            )
+        return result
+
     def or_test(self, items):
         if not items:
             return ast.Constant(False)
