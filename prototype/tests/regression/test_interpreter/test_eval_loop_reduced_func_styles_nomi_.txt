@@ -13,10 +13,18 @@
   "area": 78.53975,
   "scaled_double": 21,
   "greeting": "greeting:class=<class 'function'>",
-  "fib7": 13,
+  "sum_squares": "sum_squares:class=<class 'function'>",
   "stats": [
     20,
     5.0
+  ],
+  "plus_two": "func:class=<class 'function'>",
+  "times_two": "func:class=<class 'function'>",
+  "plus": "func:class=<class 'function'>",
+  "scaled": [
+    2,
+    4,
+    6
   ],
   "result_classic": 3,
   "result_arrow": 25,
@@ -30,6 +38,10 @@
   "result_get": "alice",
   "result_addtwo": 30,
   "r": "Hello, where",
+  "result_sq": 25,
+  "result_plus2": 7,
+  "result_double2": 20,
+  "result_plus": 70,
   "stdout": [
     "1. classic func:        1 + 2 = 3",
     "2. arrow (x)=>x*x:      5^2  = 25",
@@ -45,8 +57,12 @@
     "6. where area:          pi*r^2 = 78.53975",
     "6. where + hole:       7*3    = 21",
     "6. where + equation:   Hello, where = Hello, where",
-    "6. where + piecewise:  fib(7) = 13",
+    "6. where + local fn:   3^2+4^2 = 25",
     "6. where cascade:      stats  = (20, 5.0)",
+    "7. op section (+2):     (+2)(5) = 7",
+    "7. op section (2*):     (2*)(10) = 20",
+    "7. op section (+):      (+)(30,40) = 70",
+    "7. op section map:      [2, 4, 6]",
     ""
   ]
 }
