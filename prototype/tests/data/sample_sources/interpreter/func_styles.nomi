@@ -52,6 +52,12 @@ stats = (total, avg) where:
     total = sum(data)
     avg = total / len(data)
 
+# inline where (same line, no colon block)
+twice = x * 2 where x = 5
+
+# inline where on func_equation
+ss(x, y) = s(x) + s(y) where s(n) = n * n
+
 
 # ── 7. operator sections (Haskell-style) ─────────────────────────────
 plus_two = (+2)          # (x) => x + 2
@@ -101,6 +107,9 @@ print("6. where + equation:   Hello, where = " + r)
 result_sq = sum_squares(3, 4)
 print("6. where + local fn:   3^2+4^2 = " + str(result_sq))
 print("6. where cascade:      stats  = " + str(stats))
+print("6. where inline:       x*2    = " + str(twice))
+result_ss = ss(3, 4)
+print("6. where inline fn:    3^2+4^2 = " + str(result_ss))
 
 result_plus2 = plus_two(5)
 result_double2 = times_two(10)
