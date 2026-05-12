@@ -259,9 +259,25 @@ def test_where_not_pollute_namespace(interpreter_mode):
     if interpreter_mode == "python":
         pytest.skip("Nomi-specific syntax")
     run = get_run_eval_loop(interpreter_mode)
-    # x and y are local to where, should not be available globally
     bindings = run(code="result = x + y where:\n    x = 10\n    y = 20\n")
     assert bindings["result"] == 30
     assert "x" not in bindings
     assert "y" not in bindings
+
+
+def test_where_inline(interpreter_mode):
+    if interpreter_mode == "python":
+        pytest.skip("Nomi-specific syntax")
+    run = get_run_eval_loop(interpreter_mode)
+    bindings = run(code="ss(x, y) = s(x) + s(y) where s(n) = n * n\nr = ss(3, 4)\n")
+    assert bindings["r"] == 25
+
+
+def test_where_inline_assign(interpreter_mode):
+    if interpreter_mode == "python":
+        pytest.skip("Nomi-specific syntax")
+    run = get_run_eval_loop(interpreter_mode)
+    bindings = run(code="result = x * 2 where x = 10\nr = result\n")
+    assert bindings["r"] == 20
+    assert "x" not in bindings
 

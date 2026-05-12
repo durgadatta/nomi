@@ -14,6 +14,14 @@ class FunctionsMixin:
         else:
             stmt._nomi_where_body = where_body
         return stmt
+
+    def assign_where_inline(self, items):
+        """assign_where_inline: small_stmt 'where' small_stmt _NEWLINE
+
+        Single-statement inline where: result = x + y where x = 10"""
+        stmt, where_stmt = items
+        stmt._nomi_where_body = [where_stmt]
+        return stmt
     def func_equation(self, items):
         """func_equation: name '(' [func_eq_args] ')' '=' test
 
