@@ -54,12 +54,13 @@ dotted_as_names: dotted_as_name ("," dotted_as_name)*
 dotted_name: name ("." name)*
 
 // -- compound statements ----------------------------------------------
-?compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | match_stmt
+?compound_stmt: if_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
               | with_stmt | funcdef | classdef | decorated | async_stmt
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
 if_stmt: "if" test ":" suite elifs ["else" ":" suite]
 elifs: elif_*
 elif_: "elif" test ":" suite
+unless_stmt: "unless" test ":" suite
 while_stmt: "while" test ":" suite ["else" ":" suite]
 for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
 try_stmt: "try" ":" suite except_clauses ["else" ":" suite] [finally]

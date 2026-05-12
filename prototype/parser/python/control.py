@@ -178,8 +178,17 @@ class ControlMixin(CompMixin):
         elif_: "elif" test ":" suite
         Returns: (test, body) tuple
         """
-        # items: [test, suite]
         return (items[0], items[1])
+
+    def unless_stmt(self, items):
+        """unless_stmt: 'unless' test ':' suite
+        Desugars to: if not test: suite"""
+        test_expr, body = items
+        return ast.If(
+            test=ast.UnaryOp(op=ast.Not(), operand=test_expr),
+            body=body,
+            orelse=[],
+        )
 
     def while_stmt(self, items):
         test, body, orelse = items 
