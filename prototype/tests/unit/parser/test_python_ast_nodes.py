@@ -1,14 +1,11 @@
 import ast
 
 from prototype.parser.python.utils import generate_ast
-
-
-def parse_stmt(code):
-    return generate_ast(code=code).body[0]
+from prototype.tests.shared_utils import parse_stmt
 
 
 def test_operator_precedence_builds_nested_binop():
-    stmt = parse_stmt("x = 1 + 2 * 3\n")
+    stmt = parse_stmt(generate_ast, "x = 1 + 2 * 3\n")
 
     assert isinstance(stmt, ast.Assign)
     assert isinstance(stmt.value, ast.BinOp)
@@ -18,7 +15,7 @@ def test_operator_precedence_builds_nested_binop():
 
 
 def test_list_comprehension_keeps_target_iter_and_filter():
-    stmt = parse_stmt("values = [x * 2 for x in range(4) if x % 2 == 0]\n")
+    stmt = parse_stmt(generate_ast, "values = [x * 2 for x in range(4) if x % 2 == 0]\n")
     comp = stmt.value
 
     assert isinstance(comp, ast.ListComp)
@@ -29,7 +26,7 @@ def test_list_comprehension_keeps_target_iter_and_filter():
 
 
 def test_function_definition_preserves_defaults_and_return():
-    stmt = parse_stmt("def add(a, b=2):\n    return a + b\n")
+    stmt = parse_stmt(generate_ast, "def add(a, b=2):\n    return a + b\n")
 
     assert isinstance(stmt, ast.FunctionDef)
     assert stmt.name == "add"
@@ -39,7 +36,7 @@ def test_function_definition_preserves_defaults_and_return():
 
 
 def test_try_except_finally_ast_shape():
-    stmt = parse_stmt(
+    stmt = parse_stmt(generate_ast,
         "try:\n"
         "    risky()\n"
         "except ValueError as exc:\n"
@@ -55,7 +52,7 @@ def test_try_except_finally_ast_shape():
 
 
 def test_with_statement_preserves_optional_vars():
-    stmt = parse_stmt("with manager() as resource:\n    value = resource\n")
+    stmt = parse_stmt(generate_ast, "with manager() as resource:\n    value = resource\n")
 
     assert isinstance(stmt, ast.With)
     assert stmt.items[0].context_expr.func.id == "manager"

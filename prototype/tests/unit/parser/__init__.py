@@ -1,0 +1,1 @@
+# required to avoid conflict in pytest module with same names even in different directory

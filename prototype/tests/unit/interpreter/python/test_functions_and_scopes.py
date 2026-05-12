@@ -1,3 +1,5 @@
+import pytest
+
 from prototype.interpreter.python.usage import run_eval_loop
 
 
@@ -9,7 +11,6 @@ def test_function_uses_positional_default_varargs_keywords_and_kwargs():
             "result = combine(1, 3, 4, scale=2, extra=5)\n"
         )
     )
-
     assert bindings["result"] == 26
 
 
@@ -23,7 +24,6 @@ def test_function_can_call_another_function():
             "result = apply(4)\n"
         )
     )
-
     assert bindings["result"] == 9
 
 
@@ -37,7 +37,6 @@ def test_recursive_function_can_reference_itself():
             "result = factorial(5)\n"
         )
     )
-
     assert bindings["result"] == 120
 
 
@@ -52,7 +51,6 @@ def test_global_declaration_updates_global_binding():
             "bump()\n"
         )
     )
-
     assert bindings["counter"] == 2
 
 
@@ -69,5 +67,4 @@ def test_nonlocal_declaration_updates_enclosing_binding():
             "result = outer()\n"
         )
     )
-
     assert bindings["result"] == 5

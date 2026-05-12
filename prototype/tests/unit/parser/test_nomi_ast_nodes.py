@@ -1,14 +1,11 @@
 import ast
 
 from prototype.parser.nomi.usage import generate_ast
-
-
-def parse_stmt(code):
-    return generate_ast(code=code).body[0]
+from prototype.tests.shared_utils import parse_stmt
 
 
 def test_func_keyword_builds_function_def():
-    stmt = parse_stmt("func add(a, b=2):\n    return a + b\n")
+    stmt = parse_stmt(generate_ast, "func add(a, b=2):\n    return a + b\n")
 
     assert isinstance(stmt, ast.FunctionDef)
     assert stmt.name == "add"
@@ -17,7 +14,7 @@ def test_func_keyword_builds_function_def():
 
 
 def test_arrow_function_expression_builds_anonymous_function_def():
-    stmt = parse_stmt("inc = (x) => x + 1\n")
+    stmt = parse_stmt(generate_ast, "inc = (x) => x + 1\n")
 
     assert isinstance(stmt, ast.Assign)
     assert stmt.targets[0].id == "inc"
@@ -28,7 +25,7 @@ def test_arrow_function_expression_builds_anonymous_function_def():
 
 
 def test_annotated_assignment_allows_constraint_list():
-    stmt = parse_stmt("age: int, age > 0 = 42\n")
+    stmt = parse_stmt(generate_ast, "age: int, age > 0 = 42\n")
 
     assert isinstance(stmt, ast.AnnAssign)
     assert stmt.target.id == "age"
@@ -38,7 +35,7 @@ def test_annotated_assignment_allows_constraint_list():
 
 
 def test_block_call_attaches_block_keyword():
-    stmt = parse_stmt("retry(3):\n    value = 1\n")
+    stmt = parse_stmt(generate_ast, "retry(3):\n    value = 1\n")
 
     assert isinstance(stmt, ast.Expr)
     assert isinstance(stmt.value, ast.Call)
@@ -47,7 +44,7 @@ def test_block_call_attaches_block_keyword():
 
 
 def test_match_statement_builds_match_cases():
-    stmt = parse_stmt("match value:\n    case 1:\n        result = 'one'\n    case _:\n        result = 'any'\n")
+    stmt = parse_stmt(generate_ast, "match value:\n    case 1:\n        result = 'one'\n    case _:\n        result = 'any'\n")
 
     assert isinstance(stmt, ast.Match)
     assert len(stmt.cases) == 2

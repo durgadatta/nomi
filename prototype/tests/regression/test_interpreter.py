@@ -1,55 +1,15 @@
 import ast
 import pytest
 from pathlib import Path
-from typing import Mapping, Sequence, Set, Generator, Dict, Any
-import types
 import json
 import io
 import contextlib
 
+from prototype.interpreter.helpers import get_run_eval_loop
+from prototype.tests.shared_utils import stabilize_value, stabilize_locals
+
 SAMPLE_DIR = Path(__file__).resolve().parents[1]/'data/sample_sources/interpreter'
 ALL_SOURCES = list(SAMPLE_DIR.glob('*.py')) + list(SAMPLE_DIR.glob('*.nomi'))
-
-from prototype.interpreter.helpers import get_run_eval_loop
-
-    
-
-def stabilize_value(value):
-    """Convert unstable objects to short stable string form
-        stable across runs / platforms
-    """
-    
-    # Handle collections recursively (preserve original type)
-    if isinstance(value, Mapping):
-        return type(value)({k: stabilize_value(v) for k, v in value.items()})
-    if isinstance(value, Set):
-        # set are not json-serializable
-        return str(type(value)({stabilize_value(v) for v in value}))
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-        return type(value)(stabilize_value(v) for v in value)
-    if (
-            callable(value)
-            or isinstance(value, (Generator, types.ModuleType))
-    ):
-        name = getattr(value, '__name__', 'un-named')
-        return f'{name}:class={type(value)}'
-    
-    # object instances
-    if hasattr(value, '__dict__'):
-        return f'instance of:{stabilize_value(type(value))}'
-    
-    return value
-
-
-def stabilize_locals(local_vars, exclude_private=True):
-    """Convert local variables to stable k:v pairs"""
-    return {
-        name: stabilize_value(value)
-        for name, value in local_vars.items()
-        if not (exclude_private and name.startswith('_'))
-    }
-
-
 
 
 @pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
