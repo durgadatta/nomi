@@ -12,7 +12,9 @@ PROTOTYPE_DIR = ROOT / "prototype"
 
 files = []
 for p in sorted(PROTOTYPE_DIR.rglob("*")):
-    if p.is_file() and p.suffix in (".py", ".lark") and "backup" not in str(p):
+    if p.is_file() and p.suffix in (".py", ".lark"):
+        if "backup" in str(p) or "/tests/" in str(p):
+            continue
         rel = str(p.relative_to(ROOT))
         files.append(rel)
 
