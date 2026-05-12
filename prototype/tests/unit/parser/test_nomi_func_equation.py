@@ -1,10 +1,7 @@
 import ast
-import pytest
 
 from prototype.parser.nomi.usage import generate_ast
 from prototype.interpreter.helpers import get_run_eval_loop
-
-pytestmark = pytest.mark.nomi_only
 
 
 def test_func_equation_produces_function_def():
@@ -31,25 +28,25 @@ def test_func_equation_with_params():
     assert stmt.args.args[0].arg == "name"
 
 
-def test_func_equation_executes(interpreter_mode):
-    if interpreter_mode == "python":
+def test_func_equation_executes(nomi_mode):
+    if nomi_mode == "python":
         return  # Nomi-specific syntax
-    run = get_run_eval_loop(interpreter_mode)
+    run = get_run_eval_loop(nomi_mode)
     bindings = run(code="add(a, b) = a + b\nresult = add(3, 4)\n")
     assert bindings["result"] == 7
 
 
-def test_func_equation_can_be_called(interpreter_mode):
-    if interpreter_mode == "python":
+def test_func_equation_can_be_called(nomi_mode):
+    if nomi_mode == "python":
         return
-    run = get_run_eval_loop(interpreter_mode)
+    run = get_run_eval_loop(nomi_mode)
     bindings = run(code='greet() = "hi"\nr = greet()\n')
     assert bindings["r"] == "hi"
 
 
-def test_func_equation_closure(interpreter_mode):
-    if interpreter_mode == "python":
+def test_func_equation_closure(nomi_mode):
+    if nomi_mode == "python":
         return
-    run = get_run_eval_loop(interpreter_mode)
+    run = get_run_eval_loop(nomi_mode)
     bindings = run(code="x = 10\nadder(n) = x + n\nr = adder(5)\n")
     assert bindings["r"] == 15

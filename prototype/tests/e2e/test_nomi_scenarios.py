@@ -1,11 +1,9 @@
 import pytest
 from prototype.interpreter.helpers import get_run_eval_loop
 
-pytestmark = pytest.mark.nomi_only
 
-
-def test_validation_functions_and_match_work_together(interpreter_mode):
-    run_eval_loop = get_run_eval_loop(interpreter_mode)
+def test_validation_functions_and_match_work_together(nomi_mode):
+    run_eval_loop = get_run_eval_loop(nomi_mode)
     bindings = run_eval_loop(
         code=(
             "is_positive = (x) => x > 0\n"
@@ -24,8 +22,8 @@ def test_validation_functions_and_match_work_together(interpreter_mode):
     assert bindings["label"] == "regular"
 
 
-def test_block_iteration_data_pipeline_scenario(interpreter_mode):
-    run_eval_loop = get_run_eval_loop(interpreter_mode)
+def test_block_iteration_data_pipeline_scenario(nomi_mode):
+    run_eval_loop = get_run_eval_loop(nomi_mode)
     bindings = run_eval_loop(
         code=(
             "func each(items):\n"
@@ -43,8 +41,8 @@ def test_block_iteration_data_pipeline_scenario(interpreter_mode):
     assert bindings["item"] == 8
 
 
-def test_retry_style_yield_to_block_scenario(interpreter_mode):
-    run_eval_loop = get_run_eval_loop(interpreter_mode)
+def test_retry_style_yield_to_block_scenario(nomi_mode):
+    run_eval_loop = get_run_eval_loop(nomi_mode)
     bindings = run_eval_loop(
         code=(
             "func retry(max_attempts):\n"
@@ -68,10 +66,10 @@ def test_retry_style_yield_to_block_scenario(interpreter_mode):
     assert bindings["success"] == 3
 
 
-def test_nested_functions_constraints_and_nonlocal_scenario(interpreter_mode):
-    if interpreter_mode == 'python':
+def test_nested_functions_constraints_and_nonlocal_scenario(nomi_mode):
+    if nomi_mode == 'python':
         pytest.skip('Nomi-specific syntax (func, constraints) not supported by Python parser')
-    run_eval_loop = get_run_eval_loop(interpreter_mode)
+    run_eval_loop = get_run_eval_loop(nomi_mode)
     bindings = run_eval_loop(
         code=(
             "func make_counter(start: (int, start >= 0)):\n"
