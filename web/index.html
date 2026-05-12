@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nomi Playground</title>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
 <style>
   :root {
     --bg: #1e1e2e; --panel: #181825; --border: #313244;
     --text: #cdd6f4; --muted: #6c7086; --green: #a6e3a1;
-    --blue: #89b4fa; --red: #f38ba8; --yellow: #f9e2af;
-    --surface: #11111b;
+    --blue: #89b4fa; --red: #f38ba8; --surface: #11111b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
@@ -35,17 +35,14 @@
 
   main { flex: 1; display: flex; min-height: 0; }
   .sidebar {
-    width: 200px; min-width: 140px; background: var(--panel);
+    width: 200px; min-width: 100px; background: var(--panel);
     border-right: 1px solid var(--border); display: flex; flex-direction: column;
-    overflow: hidden;
   }
   .sidebar h3 {
     font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
     padding: 10px 12px; color: var(--muted);
   }
-  .sidebar .file-list {
-    flex: 1; overflow-y: auto; padding: 0 0 8px 0;
-  }
+  .sidebar .file-list { flex: 1; overflow-y: auto; padding: 0 0 8px 0; }
   .sidebar .file-list div {
     padding: 5px 12px 5px 18px; font-size: 12px; cursor: pointer;
     color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -53,13 +50,10 @@
   .sidebar .file-list div:hover { background: var(--surface); color: var(--text); }
   .sidebar .file-list div.active { color: var(--green); background: var(--surface); }
 
-  .editor-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
-  .cm-editor { height: 100%; font-size: 14px; }
-  .cm-editor .cm-scroller { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace; }
-  .cm-editor.cm-focused { outline: none; }
+  #editor-container { flex: 1; min-width: 0; }
 
   .output-panel {
-    width: 360px; min-width: 200px; background: var(--surface);
+    width: 360px; min-width: 180px; background: var(--surface);
     border-left: 1px solid var(--border); display: flex; flex-direction: column;
   }
   .output-panel .tabs {
@@ -129,12 +123,12 @@
 
 <main>
   <div class="sidebar" id="sidebar">
-    <h3>Examples</h3>
+    <h3>Samples</h3>
     <div class="file-list" id="file-list"></div>
   </div>
-  <div class="resize-handle" id="resize-handle"></div>
-  <div class="editor-panel" id="editor-container"></div>
-  <div class="resize-handle" id="resize-handle-r"></div>
+  <div class="resize-handle" id="resize-l"></div>
+  <div id="editor-container"></div>
+  <div class="resize-handle" id="resize-r"></div>
   <div class="output-panel">
     <div class="tabs">
       <div class="active" onclick="switchTab('output')">Output</div>
@@ -151,94 +145,17 @@
   <button class="run" id="run-btn" onclick="run()" disabled>Run ▸</button>
 </div>
 
-<script type="module">
-import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "https://esm.sh/@codemirror/view@6";
-import { EditorState } from "https://esm.sh/@codemirror/state@6";
-import { defaultKeymap, history, historyKeymap, indentWithTab } from "https://esm.sh/@codemirror/commands@6";
-import { python } from "https://esm.sh/@codemirror/lang-python@6";
-import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark@6";
-import { bracketMatching } from "https://esm.sh/@codemirror/language@6";
-import { closeBrackets } from "https://esm.sh/@codemirror/autocomplete@6";
-
-let ready = false;
+<script>
+let _pyodide = null;
 let _runFn = null;
-let editorView = null;
+let _editor = null;
+let _ready = false;
 
-function log(msg) {
-  console.log("[web]", msg);
-  document.getElementById("loading-msg").textContent = msg;
-}
+function log(msg) { console.log("[web]", msg); document.getElementById("loading-msg").textContent = msg; }
 
-async function init() {
-  try {
-    log("Loading Pyodide...");
-    const pyodide = await loadPyodide();
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
-    log("Installing lark...");
-    await pyodide.loadPackage("micropip");
-    const mp = pyodide.pyimport("micropip");
-    await mp.install("lark");
-
-    log("Initializing Nomi...");
-    const nomiPy = await fetch("./nomi_web.py").then(r => r.text());
-    await pyodide.runPythonAsync(nomiPy);
-    const initFn = pyodide.globals.get("init_nomi");
-    await initFn();
-
-    _runFn = pyodide.globals.get("run_nomi");
-    window.pyodide = pyodide;
-
-    ready = true;
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("status").textContent = "ready";
-    document.getElementById("run-btn").disabled = false;
-    console.log("[web] Ready");
-  } catch (e) {
-    log("Error: " + e.message);
-    console.error(e);
-  }
-}
-
-// --- CodeMirror setup ---
-function setupEditor() {
-  const ext = [
-    python(),
-    oneDark,
-    lineNumbers(),
-    highlightActiveLine(),
-    highlightActiveLineGutter(),
-    bracketMatching(),
-    closeBrackets(),
-    history(),
-    keymap.of([
-      ...defaultKeymap,
-      ...historyKeymap,
-      indentWithTab,
-      { key: "Ctrl-Enter", run: () => { run(); return true; } },
-      { key: "Cmd-Enter", run: () => { run(); return true; } },
-    ]),
-    EditorView.updateListener.of(update => {
-      if (update.docChanged) {
-        setPending(true);
-      }
-    }),
-  ];
-
-  const state = EditorState.create({
-    doc: DEMOS["demo"],
-    extensions: ext,
-  });
-
-  editorView = new EditorView({
-    state,
-    parent: document.getElementById("editor-container"),
-  });
-}
-
-// --- File loading ---
-let pendingChanges = false;
-function setPending(v) { pendingChanges = v; }
-
+// --- File demos ---
 const DEMOS = {
   demo: `func greet(name):
     return f"Hello, {name}!"
@@ -267,121 +184,248 @@ match score:
 print(f"score={score}, grade={label}")`
 };
 
-window.loadFile = function(name) {
-  if (DEMOS[name]) {
-    editorView.dispatch({
-      changes: { from: 0, to: editorView.state.doc.length, insert: DEMOS[name] }
-    });
-    setPending(true);
-  }
-};
-
+// --- Sidebar ---
 function buildFileList() {
   const list = document.getElementById("file-list");
   for (const [name] of Object.entries(DEMOS)) {
     const el = document.createElement("div");
     el.textContent = name + ".nomi";
-    el.onclick = () => {
-      loadFile(name);
-      list.querySelectorAll("div").forEach(d => d.classList.remove("active"));
-      el.classList.add("active");
-    };
+    el.onclick = () => { loadFile(name); };
     list.appendChild(el);
   }
-  list.firstElementChild?.classList.add("active");
 }
+
+window.loadFile = function(name) {
+  if (DEMOS[name] && _editor) {
+    _editor.setValue(DEMOS[name]);
+    const list = document.getElementById("file-list");
+    list.querySelectorAll("div").forEach(d => d.classList.remove("active"));
+    list.querySelector(`div:nth-child(${Object.keys(DEMOS).indexOf(name) + 1})`).classList.add("active");
+  }
+};
 
 // --- Run ---
 async function run() {
-  if (!ready || !_runFn) return;
-  const code = editorView.state.doc.toString();
+  if (!_ready || !_runFn) return;
+  const code = _editor.getValue();
   const out = document.getElementById("output-content");
   const bind = document.getElementById("bindings");
   const btn = document.getElementById("run-btn");
   btn.disabled = true; btn.textContent = "...";
-  setPending(false);
 
   try {
     const result = await _runFn(code);
     const r = result.toJs();
     if (r.has("error")) {
-      out.textContent = r.get("error");
-      out.className = "content error";
+      out.textContent = r.get("error"); out.className = "content error";
       bind.innerHTML = "";
     } else {
-      out.textContent = r.get("output") || "(no output)";
-      out.className = "content";
-      const bindings = r.get("bindings");
-      if (bindings && bindings.size > 0) {
-        let html = "";
-        bindings.forEach((v, k) => html += `<span>${k}</span> = ${esc(v)}<br>`);
+      out.textContent = r.get("output") || "(no output)"; out.className = "content";
+      const b = r.get("bindings");
+      if (b && b.size > 0) {
+        let html = ""; b.forEach((v,k) => html += `<span>${k}</span> = ${esc(v)}<br>`);
         bind.innerHTML = html;
-      } else {
-        bind.innerHTML = "";
-      }
+      } else { bind.innerHTML = ""; }
     }
-  } catch (e) {
-    out.textContent = String(e);
-    out.className = "content error";
-  }
+  } catch(e) { out.textContent = String(e); out.className = "content error"; }
   btn.disabled = false; btn.textContent = "Run ▸";
 }
 
 window.run = run;
 
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-// --- Output tabs ---
-let activeTab = "output";
 window.switchTab = function(name) {
-  activeTab = name;
   document.querySelectorAll(".tabs div").forEach(d => d.classList.remove("active"));
-  document.querySelector(`.tabs div:${name === "output" ? "first" : "last"}-child`).classList.add("active");
+  document.querySelector(`.tabs div:${name==="output"?"first":"last"}-child`).classList.add("active");
 };
 
-// --- Resize handles ---
-function setupResize(handle, leftPane, rightPane, direction) {
-  let dragging = false;
-  handle.addEventListener("mousedown", () => {
-    dragging = true;
-    handle.classList.add("dragging");
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
+// --- Resize ---
+function setupResize(h, left, right, dir) {
+  let d = false;
+  h.addEventListener("mousedown",()=>{ d=true; h.classList.add("dragging"); document.body.style.cursor="col-resize"; document.body.style.userSelect="none"; });
+  addEventListener("mousemove",(e)=>{
+    if(!d) return;
+    if(dir==="left") left.style.width=Math.max(80,e.clientX-left.getBoundingClientRect().left)+"px";
+    else right.style.width=Math.max(80,right.getBoundingClientRect().right-e.clientX)+"px";
   });
-  document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-    if (direction === "left") {
-      leftPane.style.width = Math.max(100, e.clientX - leftPane.getBoundingClientRect().left) + "px";
-    } else {
-      const rect = rightPane.getBoundingClientRect();
-      rightPane.style.width = Math.max(100, rect.right - e.clientX) + "px";
-    }
-  });
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-    handle.classList.remove("dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
+  addEventListener("mouseup",()=>{ d=false; h.classList.remove("dragging"); document.body.style.cursor=""; document.body.style.userSelect=""; });
+}
+
+// --- Init everything ---
+async function init() {
+  buildFileList();
+
+  // 1. Pyodide
+  log("Loading Pyodide...");
+  _pyodide = await loadPyodide();
+  log("Installing lark...");
+  await _pyodide.loadPackage("micropip");
+  const mp = _pyodide.pyimport("micropip");
+  await mp.install("lark");
+
+  // 2. Nomi runtime
+  log("Initializing Nomi...");
+  const nomiPy = await fetch("./nomi_web.py").then(r => r.text());
+  await _pyodide.runPythonAsync(nomiPy);
+  await _pyodide.globals.get("init_nomi")();
+  _runFn = _pyodide.globals.get("run_nomi");
+
+  // 3. Monaco editor
+  log("Loading editor...");
+  await initMonaco();
+
+  _ready = true;
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("status").textContent = "ready";
+  document.getElementById("run-btn").disabled = false;
+  console.log("[web] Ready");
+}
+
+// --- Monaco ---
+async function initMonaco() {
+  return new Promise((resolve) => {
+    require.config({
+      paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" },
+      "vs/nls": { availableLanguages: { "*": "en" } }
+    });
+    require(["vs/editor/editor.main"], function() {
+      // Register Nomi language
+      monaco.languages.register({ id: "nomi", extensions: [".nomi"], aliases: ["Nomi"] });
+
+      // Monarch tokenizer — mirrors the TextMate grammar in tools/vscode/nomi/syntaxes/nomi.tmLanguage.json
+      monaco.languages.setMonarchTokensProvider("nomi", {
+        tokenizer: {
+          root: [
+            [/#.*$/, "comment"],
+            [/f?r?"""/, { token: "string.quote", bracket: "@open", next: "@tqstring" }],
+            [/f?r?'''/, { token: "string.quote", bracket: "@open", next: "@tqstring2" }],
+            [/f?r?"/, { token: "string.quote", bracket: "@open", next: "@dqstring" }],
+            [/f?r?'/, { token: "string.quote", bracket: "@open", next: "@sqstring" }],
+            [/@[a-zA-Z_]\w*/, "tag"],
+            [/\b(func|class|data|const|module|export)\b/, "keyword"],
+            [/\b(if|elif|else|for|while|try|except|finally|with|as|match|case|return|yield|from|raise|break|continue|pass|in|is|not|and|or|async|await|global|nonlocal|assert|del|import)\b/, "keyword"],
+            [/\b(True|False|None|Ellipsis)\b/, "keyword"],
+            [/\b\d+(\.\d+)?([eE][+-]?\d+)?\b/, "number"],
+            [/[+\-*/%&|^~<>!=]=?|\.\.\.|->|=>|:=/, "operator"],
+            [/[{}()[\]]/, "@brackets"],
+            [/[a-zA-Z_]\w*(?=\s*\()/, "type.identifier"],
+            [/[a-zA-Z_]\w*/, "identifier"],
+          ],
+          tqstring: [
+            [/"""/, { token: "string.quote", bracket: "@close", next: "@pop" }],
+            [/[^\\"]+/, "string"],
+            [/./, "string"],
+          ],
+          tqstring2: [
+            [/'''/, { token: "string.quote", bracket: "@close", next: "@pop" }],
+            [/[^\\']+/, "string"],
+            [/./, "string"],
+          ],
+          dqstring: [
+            [/"/, { token: "string.quote", bracket: "@close", next: "@pop" }],
+            [/\\[\\'"nrtbfv]/, "string.escape"],
+            [/{/, { token: "string.interpolated", next: "@interp" }],
+            [/[^\\"{]+/, "string"],
+            [/./, "string"],
+          ],
+          sqstring: [
+            [/'/, { token: "string.quote", bracket: "@close", next: "@pop" }],
+            [/\\[\\'"nrtbfv]/, "string.escape"],
+            [/{/, { token: "string.interpolated", next: "@interp" }],
+            [/[^\\'{]+/, "string"],
+            [/./, "string"],
+          ],
+          interp: [
+            [/}/, { token: "string.interpolated", next: "@pop" }],
+            [/[a-zA-Z_]\w*/, "identifier"],
+            [/[^}]+/, "string"],
+          ],
+        },
+      });
+
+      // Language configuration — mirrors tools/vscode/nomi/language-configuration.json
+      monaco.languages.setLanguageConfiguration("nomi", {
+        comments: { lineComment: "#" },
+        brackets: [["{", "}"], ["[", "]"], ["(", ")"]],
+        autoClosingPairs: [
+          { open: "{", close: "}" }, { open: "[", close: "]" }, { open: "(", close: ")" },
+          { open: '"', close: '"' }, { open: "'", close: "'" },
+        ],
+        surroundingPairs: [
+          ["{", "}"], ["[", "]"], ["(", ")"], ['"', '"'], ["'", "'"],
+        ],
+        folding: { offSide: true },
+        indentationRules: {
+          increaseIndentPattern: /^.*:\s*$/,
+          decreaseIndentPattern: /^\s*(elif|else|except|finally|case)\b/,
+        },
+      });
+
+      // Monaco theme — Catppuccin Mocha
+      monaco.editor.defineTheme("nomi-dark", {
+        base: "vs-dark",
+        inherit: true,
+        rules: [
+          { token: "comment", foreground: "6c7086", fontStyle: "italic" },
+          { token: "keyword", foreground: "cba6f7" },
+          { token: "string", foreground: "a6e3a1" },
+          { token: "string.escape", foreground: "f9e2af" },
+          { token: "string.interpolated", foreground: "f9e2af", fontStyle: "bold" },
+          { token: "number", foreground: "fab387" },
+          { token: "operator", foreground: "89dceb" },
+          { token: "tag", foreground: "f38ba8" },
+          { token: "type.identifier", foreground: "89b4fa" },
+          { token: "identifier", foreground: "cdd6f4" },
+          { token: "", foreground: "cdd6f4" },
+        ],
+        colors: {
+          "editor.background": "#1e1e2e",
+          "editor.foreground": "#cdd6f4",
+          "editor.lineHighlightBackground": "#181825",
+          "editor.selectionBackground": "#45475a",
+          "editor.inactiveSelectionBackground": "#313244",
+          "editorCursor.foreground": "#f5e0dc",
+          "editorLineNumber.foreground": "#585b70",
+          "editorLineNumber.activeForeground": "#a6adc8",
+        },
+      });
+
+      _editor = monaco.editor.create(document.getElementById("editor-container"), {
+        value: DEMOS["demo"],
+        language: "nomi",
+        theme: "nomi-dark",
+        fontSize: 14,
+        fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
+        lineNumbers: "on",
+        minimap: { enabled: false },
+        bracketPairColorization: { enabled: true },
+        autoIndent: "full",
+        formatOnPaste: true,
+        tabSize: 4,
+        insertSpaces: false,
+        renderWhitespace: "selection",
+        scrollBeyondLastLine: false,
+        folding: true,
+        smoothScrolling: true,
+        cursorBlinking: "smooth",
+        cursorSmoothCaretAnimation: "on",
+      });
+
+      _editor.addAction({
+        id: "run-nomi",
+        label: "Run Nomi",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+        run: () => run(),
+      });
+
+      resolve();
+    });
   });
 }
 
-// --- Init ---
-buildFileList();
-setupEditor();
-init();
-
-setupResize(
-  document.getElementById("resize-handle"),
-  document.getElementById("sidebar"),
-  document.getElementById("editor-container"),
-  "left"
-);
-setupResize(
-  document.getElementById("resize-handle-r"),
-  document.getElementById("editor-container"),
-  document.querySelector(".output-panel"),
-  "right"
-);
+init().then(() => {
+  setupResize(document.getElementById("resize-l"), document.getElementById("sidebar"), document.getElementById("editor-container"), "left");
+  setupResize(document.getElementById("resize-r"), document.getElementById("editor-container"), document.querySelector(".output-panel"), "right");
+});
 </script>
 </body>
 </html>
