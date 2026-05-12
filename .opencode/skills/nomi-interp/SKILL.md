@@ -1,0 +1,56 @@
+---
+name: nomi-interp
+description: Modify the Nomi interpreter — add/change runtime behavior, evaluation, environment, control flow.
+compatibility: deepseek
+---
+
+## Key files
+- `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
+- `prototype/interpreter/python/binding.py` — Assignment, augmented assignment, annotated assignment
+- `prototype/interpreter/python/function.py` — Function definition, argument binding, closures
+- `prototype/interpreter/python/function_call.py` — Resumable call evaluation
+- `prototype/interpreter/python/control.py` — If, For, While, Break, Continue, Assert
+- `prototype/interpreter/python/expressions.py` — Binary/unary/boolean/comparison operators
+- `prototype/interpreter/python/ds.py` — Collections, comprehensions, f-strings
+- `prototype/interpreter/python/class_.py` — Class definition, attribute/subscript access
+- `prototype/interpreter/python/patterns.py` — Match/case pattern matching
+- `prototype/interpreter/python/exceptions.py` — Try/except/finally, raise
+- `prototype/interpreter/python/context_managers.py` — With statement
+- `prototype/interpreter/python/others.py` — Yield, yield-from, import, async
+- `prototype/interpreter/python/env.py` — Scoped environment (get/set/delete/parent chain)
+- `prototype/interpreter/python/generator_state.py` — CoroutineState (pause/resume/send/throw)
+- `prototype/interpreter/python/signals.py` — ControlException hierarchy
+
+## Nomi overrides (python/ → nomi/)
+- `prototype/interpreter/nomi/binding.py` — ConstraintBindingMixin: eval_AnnAssign adds predicate checking
+- `prototype/interpreter/nomi/functions.py` — BlockFunctionMixin: eval_FunctionDef adds param constraints, eval_generator_obj adds block support
+- `prototype/interpreter/nomi/env.py` — Environment: adds constraints dict, overrides set() to enforce
+- `prototype/interpreter/nomi/generator_state.py` — CoroutineState: adds block attribute, _handle_yield_to_block
+
+## Reduced interpreter
+- `prototype/interpreter/reduced/interpreter.py` — Inherits from NomiInterpreter, overrides removed eval_* methods with NotImplementedError
+- `prototype/interpreter/runner.py` — make_runner() factory, shared by all three usage.py files
+
+## Interpreter dispatch (eval method)
+```
+eval(node, state, generator_state):
+  1. If node is list → iterate
+  2. If None → return None
+  3. Look up eval_<NodeClassName>
+  4. If resumable → method(node, state=state, generator_state=generator_state)
+  5. Else → method(node)
+  6. If error → pass through _PASS_THROUGH_EXCEPTIONS, else wrap in RuntimeError
+```
+
+## Exceptions
+- ControlException (BaseException): ReturnException, BreakException, ContinueException
+- YieldException, YieldFromException propagate through resumable nodes
+- _PASS_THROUGH_EXCEPTIONS = (StopIteration, ZeroDivisionError, StopAsyncIteration, RuntimeError, TypeError, ValueError, NameError, AttributeError, SyntaxError, IndexError, KeyError, AssertionError)
+- Everything else wrapped in RuntimeError("Error evaluating <Node> at line <n>: <msg>")
+
+## Testing interpreters
+```bash
+pytest                                  # all three (python, nomi, reduced)
+pytest --interpreter-modes reduced      # only reduced
+NOMI_INTERPRETER_MODE=reduced pytest   # env var alternative
+```
