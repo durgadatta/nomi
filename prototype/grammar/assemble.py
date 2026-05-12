@@ -16,7 +16,12 @@ The pipeline::
 from pathlib import Path
 
 from .layer import LayerPipeline
-from .layers.expression_transform import ExpressionLayer
+
+
+# Transforms run AFTER the raw parse, in this order.
+# ExpressionLayer is lazy-imported to break circular dependency
+# (assemble → parser/nomi/__init__ → usage → assemble).
+_LAYER_TRANSFORMS = None
 
 _LAYERS_DIR = Path(__file__).resolve().parent / "layers"
 
@@ -27,11 +32,6 @@ _LAYER_ORDER = [
     "patterns.lark",
     "bindings.lark",
     "calls.lark",
-]
-
-# Transforms run AFTER the raw parse, in this order
-_LAYER_TRANSFORMS = [
-    ExpressionLayer(),
 ]
 
 
@@ -51,6 +51,10 @@ def assemble_grammar(extra_layers=None):
 
 def get_layer_pipeline():
     """Return the LayerPipeline that transforms the raw parse tree."""
+    global _LAYER_TRANSFORMS
+    if _LAYER_TRANSFORMS is None:
+        from ..parser.nomi.desugar.parse_tree_precedence import ExpressionLayer
+        _LAYER_TRANSFORMS = [ExpressionLayer()]
     return LayerPipeline(list(_LAYER_TRANSFORMS))
 
 

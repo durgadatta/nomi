@@ -7,7 +7,7 @@ Python AST transformer.
 
 from lark import Tree, Token
 
-from ..layer import LayerTransform
+from ....grammar.layer import LayerTransform
 
 # (lbp, rbp, is_left_associative)
 _PRECEDENCE = {

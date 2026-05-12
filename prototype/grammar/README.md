@@ -32,12 +32,32 @@ The **canonical grammar** lives in `prototype/grammar/layers/`.  Each
 | `bindings.lark` | `assign`, `annassign`, `augassign`, `parameters` | 36 |
 | `calls.lark` | `atom_expr`, `funccall`, comprehensions | 19 |
 
-The file `nomi.ref.lark` at this level is a **generated snapshot** — it is
-not read by the parser.  Regenerate it with:
+The file `nomi.ref.lark` at this level is a **full assembled grammar**
+(regenerated from the layers below).  It is not read by the parser at
+runtime — the parser calls ``assemble_grammar()`` directly.  It exists
+for:
 
-```python
-from prototype.grammar.assemble import assemble_grammar
-```
+* **Reference** — see the complete grammar in one file
+* **Tooling** — IDEs, linters, syntax highlighters can consume it
+* **Debugging** — compare against what the layered assembly produces
+
+Regenerate it with::
+
+    from prototype.grammar.assemble import assemble_grammar
+    text = assemble_grammar()
+    Path("prototype/grammar/nomi.ref.lark").write_text(text)
+
+## Parse-Tree vs AST Transforms
+
+Two categories of transforms, operating at different levels:
+
+| Level | Location | Base class |
+|-------|----------|------------|
+| **Lark parse tree** | `parser/nomi/desugar/parse_tree_precedence.py` | `LayerTransform` (in `grammar/layer.py`) |
+| **Python AST** | `parser/nomi/desugar/*.py` | `BaseDesugarer` |
+
+Parse-tree transforms run **before** ``NomiToPythonAST``.
+AST desugar passes run **after**, before the interpreter.
 
 ## How Expressions Work
 

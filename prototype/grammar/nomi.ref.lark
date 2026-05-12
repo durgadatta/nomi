@@ -1,5 +1,5 @@
 // Nomi grammar — assembled from layers in prototype/grammar/layers/
-// Regenerate: from prototype.grammar.assemble import assemble_grammar
+// Not read at runtime.  Regenerate: from prototype.grammar.assemble import assemble_grammar
 
 // Layer: terminals — must be assembled first (%declare, %ignore, terminal defs)
 //
@@ -77,6 +77,7 @@ AWAIT: "await"
 
 // -- atoms ------------------------------------------------------------
 ?atom: "(" yield_expr ")"
+     | "(" section ")" -> section
      | "(" _tuple_inner? ")" -> tuple
      | "(" comprehension{test_or_star_expr} ")" -> tuple_comprehension
      | "[" _exprlist? "]"  -> list
@@ -111,6 +112,11 @@ _exprlist: test_or_star_expr (","  test_or_star_expr)* [","]
 _dict_exprlist: (key_value | "**" expr) ("," (key_value | "**" expr))* [","]
 key_value: test ":"  test
 
+// -- operator sections: (+2), (2*), (+)  (Haskell-style) --------------
+?section: _binary_op test  -> left_section
+        | test _binary_op  -> right_section
+        | _binary_op       -> operator_value
+
 // -- subscript --------------------------------------------------------
 ?subscriptlist: subscript | subscript (("," subscript)+ [","] | ",") -> subscript_tuple
 ?subscript: test | ([test] ":" [test] [sliceop]) -> slice
@@ -122,12 +128,22 @@ sliceop: ":" [test]
 
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
-?small_stmt: (expr_stmt | assign_stmt | del_stmt | pass_stmt | flow_stmt
-             | import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
+            | small_stmt "where" ":" suite  -> assign_where
+            | small_stmt "where" small_stmt _NEWLINE  -> assign_where_inline
+?small_stmt: (func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
+             | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
+             | assert_stmt)
 
 // -- funcdef (Nomi: "func" replaces "def") ----------------------------
 funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
 async_funcdef: "async" funcdef
+
+// -- lightweight function equation: f(a, b) = expr  (Nomi) ------------
+// Simple form:  add(a, b) = a + b
+// Piecewise:    fact(1) = 1; fact(n) = fact(n-1) * n  (contiguous merge)
+func_equation: name "(" [func_eq_args] ")" "=" test
+func_eq_args: func_eq_arg ("," func_eq_arg)*
+?func_eq_arg: NAME -> name_arg | test -> value_arg
 
 // -- decorators -------------------------------------------------------
 decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE
