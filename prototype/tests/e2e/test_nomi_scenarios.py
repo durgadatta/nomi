@@ -1,10 +1,10 @@
 import pytest
 from prototype.interpreter.helpers import get_run_eval_loop
 
+pytestmark = pytest.mark.nomi_only
+
 
 def test_validation_functions_and_match_work_together(interpreter_mode):
-    if interpreter_mode == 'python':
-        pytest.skip('Nomi-specific syntax (func, =>, constraints) not supported by Python parser')
     run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
@@ -25,8 +25,6 @@ def test_validation_functions_and_match_work_together(interpreter_mode):
 
 
 def test_block_iteration_data_pipeline_scenario(interpreter_mode):
-    if interpreter_mode == 'python':
-        pytest.skip('Nomi-specific syntax (func, block calls) not supported by Python parser')
     run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(
@@ -46,8 +44,6 @@ def test_block_iteration_data_pipeline_scenario(interpreter_mode):
 
 
 def test_retry_style_yield_to_block_scenario(interpreter_mode):
-    if interpreter_mode == 'python':
-        pytest.skip('Nomi-specific syntax (func, block calls) not supported by Python parser')
     run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(
         code=(

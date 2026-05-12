@@ -1,7 +1,10 @@
 import ast
+import pytest
 
 from prototype.parser.nomi.usage import generate_ast
 from prototype.interpreter.helpers import get_run_eval_loop
+
+pytestmark = pytest.mark.nomi_only
 
 
 def test_func_equation_produces_function_def():

@@ -66,6 +66,16 @@ def pytest_generate_tests(metafunc):
 def pytest_configure(config):
     modes = _resolve_modes(config)
     config._nomi_interpreter_modes = modes
+    config.addinivalue_line("markers", "nomi_only: skip when running under python interpreter mode")
 
 
 collect_ignore = ["smoke"]
+
+
+def pytest_runtest_setup(item):
+    """Auto-skip tests marked with ``nomi_only`` when running under python mode."""
+    if "nomi_only" not in item.keywords:
+        return
+    mode = item.callspec.params.get("interpreter_mode") if hasattr(item, "callspec") else None
+    if mode == "python":
+        pytest.skip("Nomi-specific syntax")

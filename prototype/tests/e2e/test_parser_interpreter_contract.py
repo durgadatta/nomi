@@ -23,9 +23,8 @@ PYTHON_PROGRAMS = [
 
 
 @pytest.mark.parametrize("code,key,expected", NOMI_PROGRAMS)
+@pytest.mark.nomi_only
 def test_nomi_parser_output_runs_in_interpreter(code, key, expected, interpreter_mode):
-    if interpreter_mode == 'python':
-        pytest.skip("Nomi programs require 'nomi' or 'reduced' interpreter")
     tree = ast.fix_missing_locations(generate_nomi_ast(code=code))
     run_eval_loop = get_run_eval_loop(interpreter_mode)
     bindings = run_eval_loop(tree=tree)
