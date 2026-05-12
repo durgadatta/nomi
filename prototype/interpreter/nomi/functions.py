@@ -1,6 +1,6 @@
 import ast 
 
-class FunctionMixin:
+class BlockFunctionMixin:
     def eval_arg(self, node:ast.arg):
         #TODO: this is currently not reached
         # we can later use this when the function parameters are bound at definition site

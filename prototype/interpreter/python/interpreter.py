@@ -19,6 +19,14 @@ from .others import OthersMixin
 
 from .context_managers import ContextManagerMixin
 
+_PASS_THROUGH_EXCEPTIONS = (
+    StopIteration, ZeroDivisionError, StopAsyncIteration,
+    RuntimeError, TypeError, ValueError, NameError,
+    AttributeError, SyntaxError, IndexError, KeyError,
+    AssertionError,
+)
+
+
 class Interpreter(
     BindingMixin, FunctionMixin, ExpressionMixin, DataStructMixin,
     PatternMixin, ControlMixin, ClassMixin, ContextManagerMixin, OthersMixin
@@ -75,23 +83,13 @@ class Interpreter(
             if self.is_resumable(node):
                 return method(node, state=state, generator_state=generator_state)
             return method(node)
-        except (StopIteration, ZeroDivisionError, StopAsyncIteration):
-            # Re-raise semantic exceptions unchanged
+        except _PASS_THROUGH_EXCEPTIONS:
             raise
         except Exception as e:
-            # Only wrap "unexpected" exceptions, not user-raised ones
-            if isinstance(e, (RuntimeError, TypeError, ValueError, 
-                            NameError, AttributeError, SyntaxError,
-                            IndexError, KeyError, AssertionError)):
-                # These are likely user-raised or Python built-in exceptions
-                # Let them propagate for try-except blocks to catch
-                raise
-            else:
-                # Wrap other exceptions as interpreter errors
-                lineno = self.get_lineno(node)
-                raise RuntimeError(
-                    f"Error evaluating {node.__class__.__name__} at line {lineno}: {str(e)}"
-                ) from e
+            lineno = self.get_lineno(node)
+            raise RuntimeError(
+                f"Error evaluating {node.__class__.__name__} at line {lineno}: {str(e)}"
+            ) from e
 
 
     @contextmanager

@@ -136,7 +136,7 @@ class Annotations:
         return combined_predicate
 
 
-class BindingMixin:
+class ConstraintBindingMixin:
     def eval_AnnAssign(self, node: ast.AnnAssign) -> None:
         """Add the constraints and delegate to Python's handler"""
         # Always set constraints from the annotation
