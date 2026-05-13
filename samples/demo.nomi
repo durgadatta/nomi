@@ -61,6 +61,16 @@ n = 5
 twice_n = 2n                   # 10
 poly = 2(n + 1)                # 12
 
+# Type aliases — give short names to types
+type UserId = str
+type Age = int
+
+# If-let — conditional pattern matching
+x = 42
+matched = "no"
+if 42 = x:
+    matched = "yes"             # executes when pattern matches
+
 
 # ── 3. Null Handling ────────────────────────────────────────────────
 # Null coalescing: use a default when value is None
@@ -101,6 +111,7 @@ print("1. fullname(Ada, Lovelace) = " + fullname("Ada", "Lovelace"))
 print("1. area = " + str(area))
 
 print("2. label = " + label)
+print("2. if-let matched = " + matched)
 print("2. 2n where n=5 = " + str(twice_n))
 print("2. 2(n+1) where n=5 = " + str(poly))
 

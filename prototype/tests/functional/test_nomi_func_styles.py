@@ -510,3 +510,43 @@ def test_implicit_mul_no_break_regular(nomi_mode):
     bindings = run(code="result = x + y where:\n    x = 10\n    y = 20\n")
     assert bindings["result"] == 30
 
+
+# ── type aliases ────────────────────────────────────────────────────
+
+def test_type_alias_basic(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="type UserId = str\n")
+    assert bindings["UserId"] == str
+
+
+def test_type_alias_multiple(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="type Age = int\ntype Name = str\nresult = Name('hello') + ' ' + str(Age(42))\n")
+    assert bindings["result"] == "hello 42"
+
+
+# ── if-let ───────────────────────────────────────────────────────────
+
+def test_if_let_literal_match(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="x = 42\nresult = 'none'\nif 42 = x:\n    result = 'yes'\n")
+    assert bindings["result"] == "yes"
+
+
+def test_if_let_literal_no_match(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="x = 5\nresult = 'none'\nif 42 = x:\n    result = 'yes'\n")
+    assert bindings["result"] == "none"
+
+
+def test_if_let_with_else(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="x = 5\nresult = 'none'\nif 42 = x:\n    result = 'yes'\nelse:\n    result = 'no'\n")
+    assert bindings["result"] == "no"
+
+
+def test_if_let_capture(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="x = 99\nresult = 'none'\nif val = x:\n    result = val\n")
+    assert bindings["result"] == 99
+

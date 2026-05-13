@@ -15,6 +15,42 @@ class FunctionsMixin:
         num, test_expr = items
         return ast.BinOp(left=num, op=ast.Mult(), right=test_expr)
 
+    # ── type alias ──────────────────────────────────────────────────
+
+    def type_alias(self, items):
+        """type_alias: 'type' NAME '=' test
+
+        type UserId = str  →  UserId = str  (simple assignment)
+        """
+        name, value = items
+        return ast.Assign(
+            targets=[ast.Name(id=name, ctx=ast.Store())],
+            value=value,
+        )
+
+    # ── if-let ───────────────────────────────────────────────────────
+
+    def if_let_stmt(self, items):
+        """if_let_stmt: 'if' pattern '=' test ':' suite ['else' ':' suite]
+
+        if Some(v) = opt: body  →  match opt: case Some(v): body; case _: pass
+        """
+        if len(items) == 4:
+            pattern, expr, body, else_body = items
+        else:
+            pattern, expr, body = items
+            else_body = []
+
+        match_case = ast.match_case(pattern=pattern, body=body)
+        wildcard = ast.match_case(
+            pattern=ast.MatchAs(pattern=None),
+            body=else_body if else_body else [],
+        )
+        return ast.Match(
+            subject=expr,
+            cases=[match_case, wildcard],
+        )
+
     # ── where clause ────────────────────────────────────────────────
 
     def assign_where(self, items):

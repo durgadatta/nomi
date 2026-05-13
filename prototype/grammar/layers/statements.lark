@@ -7,7 +7,7 @@
             | flow_stmt "unless" test _NEWLINE -> postfix_unless
             | small_stmt "where" ":" suite  -> assign_where
             | small_stmt "where" small_stmt _NEWLINE  -> assign_where_inline
-?small_stmt: (func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
+?small_stmt: (type_alias | func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
              | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
              | assert_stmt)
 
@@ -24,6 +24,9 @@ func_equation: name "(" [func_eq_args] ")" ["when" test] "=" test
              | name NAME ["when" test] "=" test -> func_equation_no_parens
 func_eq_args: func_eq_arg ("," func_eq_arg)*
 ?func_eq_arg: NAME -> name_arg | test -> value_arg
+
+// -- type alias (Nomi) -------------------------------------------------
+type_alias: "type" NAME "=" test
 
 // -- decorators -------------------------------------------------------
 decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE
@@ -63,6 +66,7 @@ dotted_name: name ("." name)*
               | with_stmt | funcdef | classdef | decorated | async_stmt
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
 if_stmt: "if" test ":" suite elifs ["else" ":" suite]
+       | "if" pattern "=" test ":" suite ["else" ":" suite] -> if_let_stmt
 elifs: elif_*
 elif_: "elif" test ":" suite
 unless_stmt: "unless" test ":" suite

@@ -16,7 +16,7 @@ COMMENT: /#[^\n]*/
 %ignore COMMENT
 %declare _INDENT _DEDENT
 
-!name: NAME | "match" | "case"
+!name: NAME | "match" | "case" | "type"
 NAME: /[^\W\d]\w*/
 
 // Positional hole references (Swift-style) — before number definitions
