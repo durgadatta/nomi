@@ -4,7 +4,6 @@ and provides run_nomi(code) and reset_session() entry points.
 """
 
 import ast
-import builtins
 import contextlib
 import io
 import json
@@ -25,25 +24,49 @@ def _log(msg):
         print(f"[nomi] {msg}", file=sys.stderr)
 
 
-_SESSION_KEY = "__nomi_interpreter__"
-_COUNTER_KEY = "__nomi_session_counter__"
+def _session_get(key, default=None):
+    if PYODIDE:
+        from pyodide.ffi import JsException
+        try:
+            v = pyodide.globals.get(key)
+            if v is not None:
+                return v
+        except JsException:
+            pass
+    return getattr(_session_store, key, default)
+
+
+def _session_set(key, value):
+    setattr(_session_store, key, value)
+    if PYODIDE:
+        pyodide.globals.set(key, value)
+
+
+class _Store:
+    pass
+
+
+_session_store = _Store()
 
 
 def _get_interpreter():
-    return getattr(builtins, _SESSION_KEY, None)
+    interp = _session_get("__nomi_interpreter__")
+    _log(f"_get_interpreter -> {'found' if interp else 'None'}")
+    return interp
 
 
 def _set_interpreter(interp):
-    setattr(builtins, _SESSION_KEY, interp)
+    _session_set("__nomi_interpreter__", interp)
+    _log(f"_set_interpreter: new interpreter stored")
 
 
 def _get_counter():
-    return getattr(builtins, _COUNTER_KEY, 0)
+    return _session_get("__nomi_counter__", 0)
 
 
 def _inc_counter():
     n = _get_counter() + 1
-    setattr(builtins, _COUNTER_KEY, n)
+    _session_set("__nomi_counter__", n)
     return n
 
 
@@ -135,6 +158,7 @@ def _eval_in_session(code: str) -> dict:
     tree = _nomi_desugar(tree)
     tree = ast.fix_missing_locations(tree)
     interp.eval(tree)
+    _log(f"Session #{_get_counter()} bindings after eval: {list(interp.global_env.bindings.keys())}")
     return interp.global_env.bindings
 
 
@@ -148,4 +172,6 @@ async def run_nomi(code: str) -> dict:
         raw = stdout.getvalue()
         return {"output": raw, "bindings": _clean_bindings(bindings), "session": _get_counter()}
     except Exception as e:
+        import traceback
+        _log(f"Error in run_nomi: {e}\n{traceback.format_exc()}")
         return {"error": str(e), "output": stdout.getvalue(), "session": _get_counter()}
