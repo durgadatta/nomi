@@ -454,6 +454,7 @@ class FunctionsMixin:
             that accepts block, later to be fully harmonized with 
             regular call
         '''
+        # TODO: lower block calls through the same call node as ordinary calls once the binding path is unified.
         call, params, block = items 
         block = ast.keyword(arg=BLOCK_KWARG, value=Block(body=block, params=params))
         call.keywords.append(block)

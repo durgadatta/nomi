@@ -33,9 +33,8 @@ class CoroutineState:
         # node specific (stack) - review later
         self.injected_exception: Optional[Exception] = None
 
-        #TODO: move this to a separate class later
-        # List(Dict(node, state)
-        # This is only for compound statements (For/While/Try)
+        # TODO: move paused frame bookkeeping into a dedicated resumable-frame type.
+        # This is only for compound statements (For/While/Try).
         self.paused_frames = []
         self._processing_frame = None  # Frame currently being evaluated 
 
@@ -83,7 +82,7 @@ class CoroutineState:
             self.index += 1
 
     def frame_to_resume(self):
-        #TODO: this essentially make this queue, not a stack, change this later
+        # TODO: make the pause/resume policy explicit instead of relying on list order here.
         if self.paused_frames:
             frame = self.paused_frames.pop(0)
             self._processing_frame = frame  # Track what we're processing
@@ -185,7 +184,7 @@ class CoroutineState:
 
     def get_lineno(self) -> int:
         """Get current line number for error reporting."""
-        #TODO: handle lines from compound state stack 
+        # TODO: derive line info from the active paused frame stack, not just the current index.
         if self.index < len(self.body):
             return getattr(self.body[self.index], 'lineno', 1)
         

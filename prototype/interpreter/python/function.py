@@ -88,6 +88,7 @@ class FunctionMixin(FunctionCallMixin):
         func_env = self._new_closure_env()
         
         def func(*args, **kwargs):
+            # TODO: cache generator detection on the node; this is recomputed on every call.
             is_generator = self._is_generator_function(node)
             
             #env is copied so that constraints work properly
@@ -200,6 +201,7 @@ class FunctionMixin(FunctionCallMixin):
 
 
         # Note: constraints are already set up in parent env, so env.set() will check them automatically
+        # TODO: route this through the shared binding/constraint engine once the parser and runtime agree on one path.
         
         params = list(func_node.args.args)
         defaults = func_node.args.defaults or []

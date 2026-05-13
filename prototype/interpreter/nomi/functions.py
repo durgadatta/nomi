@@ -41,6 +41,7 @@ class BlockFunctionMixin:
     
 
     def eval_generator_obj(self, body, local_env, block=None):
+        # TODO: make block invocation explicit here instead of threading it through generator creation.
         gen = self.gen_state(self, body, local_env, block=block)
         if block is not None:
             if block:
