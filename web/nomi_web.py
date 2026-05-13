@@ -76,14 +76,17 @@ async def init_nomi():
 
 
 _SESSION_INTERPRETER = None
+_SESSION_ID = 0
 
 
 def reset_session() -> dict:
-    global _SESSION_INTERPRETER
+    global _SESSION_INTERPRETER, _SESSION_ID
     from prototype.interpreter.nomi.interpreter import Interpreter
 
     _SESSION_INTERPRETER = Interpreter()
-    return {"ok": True}
+    _SESSION_ID += 1
+    _log(f"Session #{_SESSION_ID} created")
+    return {"ok": True, "session": _SESSION_ID}
 
 
 def _clean_bindings(bindings: dict) -> dict:
@@ -99,12 +102,13 @@ def _clean_bindings(bindings: dict) -> dict:
 
 
 def _eval_in_session(code: str) -> dict:
-    global _SESSION_INTERPRETER
+    global _SESSION_INTERPRETER, _SESSION_ID
     from prototype.interpreter.nomi.usage import _nomi_desugar
     from prototype.parser.nomi.usage import generate_ast
 
     if _SESSION_INTERPRETER is None:
         reset_session()
+        _log(f"Auto-created session #{_SESSION_ID}")
 
     tree = generate_ast(code=code, dump=False)
     tree = _nomi_desugar(tree)
@@ -114,6 +118,7 @@ def _eval_in_session(code: str) -> dict:
 
 
 async def run_nomi(code: str) -> dict:
+    global _SESSION_ID
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()
@@ -121,6 +126,6 @@ async def run_nomi(code: str) -> dict:
         with contextlib.redirect_stdout(stdout):
             bindings = _eval_in_session(code)
         raw = stdout.getvalue()
-        return {"output": raw, "bindings": _clean_bindings(bindings)}
+        return {"output": raw, "bindings": _clean_bindings(bindings), "session": _SESSION_ID}
     except Exception as e:
-        return {"error": str(e), "output": stdout.getvalue()}
+        return {"error": str(e), "output": stdout.getvalue(), "session": _SESSION_ID}

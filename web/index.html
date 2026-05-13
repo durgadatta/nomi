@@ -25,7 +25,7 @@
     --blue: #9bbdf2;
     --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
     --sidebar-width: 248px;
-    --output-width: 380px;
+    --notebook-height: 280px;
   }
 
   * {
@@ -184,8 +184,20 @@
   .workspace {
     min-height: 0;
     display: grid;
-    grid-template-columns: var(--sidebar-width) 4px minmax(320px, 1fr) 4px var(--output-width);
+    grid-template-columns: var(--sidebar-width) 4px minmax(320px, 1fr);
     background: var(--surface);
+  }
+
+  .center-pane {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 4px auto;
+    background: var(--surface);
+  }
+
+  .center-pane.notebook-closed {
+    grid-template-rows: minmax(0, 1fr) 4px 0;
   }
 
   .sidebar {
@@ -289,6 +301,16 @@
     background: var(--teal);
   }
 
+  .resize-handle-h {
+    background: transparent;
+    cursor: row-resize;
+  }
+
+  .resize-handle-h:hover,
+  .resize-handle-h.dragging {
+    background: var(--teal);
+  }
+
   .editor-shell {
     min-width: 0;
     min-height: 0;
@@ -341,13 +363,13 @@
     min-height: 0;
   }
 
-  .output-panel {
+  .notebook-pane {
     min-width: 0;
     min-height: 0;
     display: grid;
-    grid-template-rows: 44px 40px minmax(0, 1fr) auto;
+    grid-template-rows: 44px 40px minmax(0, var(--notebook-height)) auto;
     background: var(--panel);
-    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
   }
 
   .tabs {
@@ -700,11 +722,16 @@
       margin: 0;
     }
 
-    .resize-handle {
+    .resize-handle,
+    .resize-handle-h {
       display: none;
     }
 
-    .output-panel {
+    .center-pane {
+      grid-template-rows: minmax(0, 1fr) 0 auto;
+    }
+
+    .notebook-pane {
       border-left: 0;
       border-top: 1px solid var(--line);
       min-height: 320px;
@@ -725,11 +752,11 @@
     }
 
     .editor-shell,
-    .output-panel {
+    .notebook-pane {
       grid-template-rows: auto minmax(0, 1fr);
     }
 
-    .output-panel {
+    .notebook-pane {
       grid-template-rows: auto 40px minmax(0, 1fr) auto;
     }
 
@@ -790,49 +817,51 @@
 
     <div class="resize-handle" id="resize-l"></div>
 
-    <section class="editor-shell">
-      <div class="editor-bar">
-        <div class="editor-title">
-          <h2 id="current-file">demo.nomi</h2>
-          <span id="editor-meta">0 lines</span>
+    <div class="center-pane" id="center-pane">
+      <section class="editor-shell">
+        <div class="editor-bar">
+          <div class="editor-title">
+            <h2 id="current-file">demo.nomi</h2>
+            <span id="editor-meta">0 lines</span>
+          </div>
+          <div class="editor-actions">
+            <button type="button" onclick="resetCurrentSample()">Reset</button>
+            <button type="button" onclick="resetRuntime()" id="reset-runtime-btn" disabled>Restart</button>
+            <button type="button" onclick="runCurrentCell()" id="run-cell-btn" disabled>Run Cell</button>
+            <button type="button" onclick="runAllCells()" id="run-all-btn" disabled>Run All</button>
+            <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run File</button>
+          </div>
         </div>
-        <div class="editor-actions">
-          <button type="button" onclick="resetCurrentSample()">Reset</button>
-          <button type="button" onclick="resetRuntime()" id="reset-runtime-btn" disabled>Restart</button>
-          <button type="button" onclick="runCurrentCell()" id="run-cell-btn" disabled>Run Cell</button>
-          <button type="button" onclick="runAllCells()" id="run-all-btn" disabled>Run All</button>
-          <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run File</button>
-        </div>
-      </div>
-      <div id="editor-container"></div>
-    </section>
+        <div id="editor-container"></div>
+      </section>
 
-    <div class="resize-handle" id="resize-r"></div>
+      <div class="resize-handle-h" id="resize-h"></div>
 
-    <aside class="output-panel">
-      <div class="output-bar">
-        <div class="output-title">
-          <h2>Result</h2>
-          <span id="run-state">Not run yet</span>
+      <aside class="notebook-pane" id="notebook-pane">
+        <div class="output-bar">
+          <div class="output-title">
+            <h2>Result</h2>
+            <span id="run-state">Not run yet</span>
+          </div>
+          <div class="output-actions">
+            <button type="button" onclick="copyOutput()">Copy</button>
+            <button type="button" onclick="clearOutput()">Clear</button>
+          </div>
         </div>
-        <div class="output-actions">
-          <button type="button" onclick="copyOutput()">Copy</button>
-          <button type="button" onclick="clearOutput()">Clear</button>
+        <div class="tabs" role="tablist" aria-label="Result views">
+          <button type="button" class="tab active" id="tab-cells" onclick="switchTab('cells')">Notebook</button>
+          <button type="button" class="tab" id="tab-output" onclick="switchTab('output')">Output</button>
+          <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
         </div>
-      </div>
-      <div class="tabs" role="tablist" aria-label="Result views">
-        <button type="button" class="tab active" id="tab-cells" onclick="switchTab('cells')">Notebook</button>
-        <button type="button" class="tab" id="tab-output" onclick="switchTab('output')">Output</button>
-        <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
-      </div>
-      <div class="cells-content" id="cells-content"><span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span></div>
-      <div class="output-content" id="output-content" style="display:none"><span class="empty-output">Output appears here after a run.</span></div>
-      <div class="bindings-content" id="bindings-content"></div>
-      <div class="run-summary">
-        <span id="summary-text">Ready when the runtime finishes loading.</span>
-        <span id="binding-count">0 bindings</span>
-      </div>
-    </aside>
+        <div class="cells-content" id="cells-content"><span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span></div>
+        <div class="output-content" id="output-content" style="display:none"><span class="empty-output">Output appears here after a run.</span></div>
+        <div class="bindings-content" id="bindings-content"></div>
+        <div class="run-summary">
+          <span id="summary-text">Ready when the runtime finishes loading.</span>
+          <span id="binding-count">0 bindings</span>
+        </div>
+      </aside>
+    </div>
   </main>
 
   <footer class="footer">
@@ -1271,6 +1300,10 @@ async function executeCode(code, options = {}) {
   _lastBindings = bindings;
   renderBindings(bindings);
 
+  if (r.has("session")) {
+    byId("runtime-detail").textContent = "Pyodide · session " + r.get("session");
+  }
+
   if (recordCell) {
     _executionCounter += 1;
     _cellRuns.push({
@@ -1451,17 +1484,39 @@ function setupResize(handle, left, right, dir) {
     if (!dragging) {
       return;
     }
-    if (dir === "left") {
-      document.documentElement.style.setProperty(
-        "--sidebar-width",
-        `${Math.max(180, Math.min(420, event.clientX - left.getBoundingClientRect().left))}px`
-      );
-    } else {
-      document.documentElement.style.setProperty(
-        "--output-width",
-        `${Math.max(280, Math.min(560, right.getBoundingClientRect().right - event.clientX))}px`
-      );
+    document.documentElement.style.setProperty(
+      "--sidebar-width",
+      `${Math.max(180, Math.min(420, event.clientX - left.getBoundingClientRect().left))}px`
+    );
+    if (_editor) {
+      _editor.layout();
     }
+  });
+
+  addEventListener("mouseup", () => {
+    dragging = false;
+    handle.classList.remove("dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  });
+}
+
+function setupResizeH(handle, top, bottom) {
+  let dragging = false;
+  handle.addEventListener("mousedown", () => {
+    dragging = true;
+    handle.classList.add("dragging");
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+  });
+
+  addEventListener("mousemove", (event) => {
+    if (!dragging) {
+      return;
+    }
+    const paneTop = bottom.getBoundingClientRect().top;
+    const h = Math.max(120, Math.min(600, bottom.getBoundingClientRect().bottom - event.clientY));
+    document.documentElement.style.setProperty("--notebook-height", `${h}px`);
     if (_editor) {
       _editor.layout();
     }
@@ -1676,7 +1731,7 @@ async function initMonaco() {
 
 init().then(() => {
   setupResize(byId("resize-l"), byId("sidebar"), byId("editor-container"), "left");
-  setupResize(byId("resize-r"), byId("editor-container"), document.querySelector(".output-panel"), "right");
+  setupResizeH(byId("resize-h"), byId("editor-container"), byId("notebook-pane"));
   addEventListener("resize", () => {
     if (_editor) {
       _editor.layout();
