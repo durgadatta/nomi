@@ -102,6 +102,29 @@ Then press `F5` in VS Code to launch an Extension Development Host.
 See [VS Code Extension](docs/orientation/vscode_extension.md) for the current tooling
 roadmap and packaging notes.
 
+## Option 6: Web Playground
+
+The browser playground lives at [web](web/). It uses Monaco for editing and
+Pyodide to run the Python-hosted prototype in the browser. The sample list is
+generated from `samples/*.nomi`, so `samples/demo.nomi`,
+`samples/demo_terse.nomi`, and focused sample files stay in sync with the web
+editor.
+
+```bash
+python3 scripts/launch_web.py
+```
+
+The launcher regenerates `web/manifest.json`, chooses a local port, starts a
+static server, and opens `http://127.0.0.1:8080/web/` by default. Use
+`--no-browser` for headless use or `--port 8090` if the default port is busy.
+
+After adding or removing runtime files or sample `.nomi` files, regenerate the
+manifest directly with:
+
+```bash
+python3 scripts/make_web.py
+```
+
 ## Test Reports
 
 ```bash

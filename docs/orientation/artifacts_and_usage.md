@@ -79,6 +79,41 @@ Use `AGENTS.md` as the first stop for agent work, then follow its links into
 the active design documents before changing parser, interpreter,
 constraint, or yield-to-block behavior.
 
+## Web Playground
+
+The web playground under `web/` provides a browser-based Nomi editor backed by
+Monaco and Pyodide. It is a static site: the Python-hosted prototype is loaded
+into the browser from files listed in `web/manifest.json`, and sample programs
+are loaded from `samples/*.nomi`.
+
+Use the launcher for local testing:
+
+```bash
+python3 scripts/launch_web.py
+```
+
+The launcher regenerates the manifest, picks the requested port or the next
+available one, starts `python3 -m http.server`, and opens the playground. Common
+options:
+
+```bash
+python3 scripts/launch_web.py --no-browser
+python3 scripts/launch_web.py --port 8090
+python3 scripts/launch_web.py --strict-port
+```
+
+Regenerate or check the manifest directly with:
+
+```bash
+python3 scripts/make_web.py
+python3 scripts/make_web.py --check
+```
+
+`make_web.py` includes prototype `.py` and `.lark` runtime files plus
+`samples/*.nomi`. When `samples/demo.nomi`, `samples/demo_terse.nomi`, or a
+focused sample changes, rerun the manifest generator before testing the web
+editor.
+
 ## Portable Docker Notebook
 
 The repository can be packaged into a portable Linux-based Jupyter image with:

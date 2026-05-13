@@ -5,7 +5,8 @@ inclusive = list(1..5)         # [1, 2, 3, 4, 5]
 exclusive = list(1..<5)        # [1, 2, 3, 4]
 
 # -- Pipeline: x |> f |> g  ==  g(f(x)) ----------------------------
-doubled = 5 |> (x) => x * 2            # 10
+double = x => x * 2
+doubled = 5 |> double                  # 10
 range_sum = 1..10 |> list |> sum       # 55
 
 print("1..5 = " + str(inclusive))

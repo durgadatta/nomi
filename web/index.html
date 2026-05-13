@@ -8,141 +8,693 @@
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
 <style>
   :root {
-    --bg: #1e1e2e; --panel: #181825; --border: #313244;
-    --text: #cdd6f4; --muted: #6c7086; --green: #a6e3a1;
-    --blue: #89b4fa; --red: #f38ba8; --surface: #11111b;
+    --bg: #151716;
+    --panel: #1f2321;
+    --panel-2: #242a27;
+    --panel-3: #2d3530;
+    --surface: #101211;
+    --line: #3c443f;
+    --line-soft: #2c332f;
+    --text: #eef3ef;
+    --muted: #a9b3ad;
+    --dim: #747f78;
+    --green: #a7d67a;
+    --teal: #77d0c2;
+    --amber: #e8c16f;
+    --red: #ef8f8f;
+    --blue: #9bbdf2;
+    --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    --sidebar-width: 248px;
+    --output-width: 380px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg); color: var(--text);
-    display: flex; flex-direction: column;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
   }
-  header {
-    height: 40px; min-height: 40px;
-    background: var(--panel); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; padding: 0 12px; gap: 12px;
-  }
-  header h1 { font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--green); }
-  header .status { font-size: 11px; color: var(--muted); margin-left: 4px; }
-  header .sep { flex: 1; }
-  header button {
-    background: var(--surface); color: var(--text); border: 1px solid var(--border);
-    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
-  }
-  header button:hover { background: var(--border); }
 
-  main { flex: 1; display: flex; min-height: 0; }
+  body {
+    color: var(--text);
+    background: var(--bg);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: 0;
+  }
+
+  button,
+  textarea,
+  input {
+    font: inherit;
+  }
+
+  button {
+    min-height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--text);
+    background: var(--panel-2);
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--panel-3);
+    border-color: #56625a;
+  }
+
+  button:focus-visible,
+  .sample:focus-visible,
+  .tab:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    color: var(--dim);
+    background: var(--panel);
+  }
+
+  .app {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 52px minmax(0, 1fr) 34px;
+    background: var(--bg);
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(180px, auto) 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .mark {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    color: #172013;
+    background: var(--green);
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 700;
+  }
+
+  .brand span {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 14px;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .top-actions button,
+  .editor-actions button,
+  .output-actions button {
+    padding: 0 11px;
+    font-size: 12px;
+  }
+
+  .status-pill {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 126px;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    background: var(--surface);
+    font-size: 12px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .status-pill.ready .status-dot {
+    background: var(--green);
+  }
+
+  .status-pill.running .status-dot {
+    background: var(--teal);
+  }
+
+  .status-pill.error .status-dot {
+    background: var(--red);
+  }
+
+  .workspace {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 4px minmax(320px, 1fr) 4px var(--output-width);
+    background: var(--surface);
+  }
+
   .sidebar {
-    width: 200px; min-width: 100px; background: var(--panel);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    min-width: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
   }
-  .sidebar h3 {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
-    padding: 10px 12px; color: var(--muted);
-  }
-  .sidebar .file-list { flex: 1; overflow-y: auto; padding: 0 0 8px 0; }
-  .sidebar .file-list div {
-    padding: 5px 12px 5px 18px; font-size: 12px; cursor: pointer;
-    color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .sidebar .file-list div:hover { background: var(--surface); color: var(--text); }
-  .sidebar .file-list div.active { color: var(--green); background: var(--surface); }
 
-  #editor-container { flex: 1; min-width: 0; }
+  .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .panel-heading h2,
+  .editor-title h2,
+  .output-title h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .panel-heading span,
+  .editor-title span,
+  .output-title span {
+    color: var(--dim);
+    font-size: 11px;
+  }
+
+  .sample-list {
+    min-height: 0;
+    overflow: auto;
+    padding: 10px;
+  }
+
+  .sample {
+    width: 100%;
+    min-height: 64px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 3px;
+    align-items: center;
+    padding: 10px;
+    margin: 0 0 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--muted);
+    background: transparent;
+    text-align: left;
+  }
+
+  .sample:hover {
+    color: var(--text);
+    background: var(--panel-2);
+    border-color: var(--line);
+  }
+
+  .sample.active {
+    color: var(--text);
+    background: #263128;
+    border-color: #587149;
+  }
+
+  .sample-name {
+    overflow: hidden;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sample-meta {
+    color: var(--dim);
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px;
+  }
+
+  .sample-desc {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .resize-handle {
+    background: transparent;
+    cursor: col-resize;
+  }
+
+  .resize-handle:hover,
+  .resize-handle.dragging {
+    background: var(--teal);
+  }
+
+  .editor-shell {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 44px minmax(0, 1fr);
+    background: #181c1a;
+  }
+
+  .editor-bar,
+  .output-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 0 12px 0 14px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--panel);
+  }
+
+  .editor-title,
+  .output-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .editor-actions,
+  .output-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  .run-button {
+    min-width: 78px;
+    color: #13200f;
+    border-color: transparent;
+    background: var(--green);
+    font-weight: 800;
+  }
+
+  .run-button:hover {
+    background: #b9e28d;
+  }
+
+  #editor-container {
+    min-width: 0;
+    min-height: 0;
+  }
 
   .output-panel {
-    width: 360px; min-width: 180px; background: var(--surface);
-    border-left: 1px solid var(--border); display: flex; flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 44px 40px minmax(0, 1fr) auto;
+    background: var(--panel);
+    border-left: 1px solid var(--line);
   }
-  .output-panel .tabs {
-    display: flex; border-bottom: 1px solid var(--border);
-  }
-  .output-panel .tabs div {
-    flex: 1; text-align: center; padding: 8px; font-size: 11px;
-    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-    color: var(--muted); border-bottom: 2px solid transparent;
-  }
-  .output-panel .tabs div.active { color: var(--green); border-bottom-color: var(--green); }
-  .output-panel .content {
-    flex: 1; padding: 12px; overflow: auto; font-size: 13px;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    line-height: 1.5; white-space: pre-wrap; word-break: break-all;
-  }
-  .output-panel .content.error { color: var(--red); }
-  .output-panel .bindings { border-top: 1px solid var(--border); padding: 8px 12px; font-size: 12px; }
-  .output-panel .bindings span { color: var(--blue); }
 
-  .toolbar {
-    height: 36px; min-height: 36px;
-    background: var(--panel); border-top: 1px solid var(--border);
-    display: flex; align-items: center; padding: 0 12px; gap: 8px;
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
   }
-  .toolbar .hint { font-size: 11px; color: var(--muted); }
-  .toolbar .sep2 { flex: 1; }
-  .toolbar button.run {
-    background: var(--green); color: var(--surface); border: none;
-    padding: 5px 20px; border-radius: 4px; font-size: 13px;
-    font-weight: 600; cursor: pointer; letter-spacing: 1px;
+
+  .tab {
+    min-height: 28px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    color: var(--muted);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 650;
   }
-  .toolbar button.run:hover { filter: brightness(1.1); }
-  .toolbar button.run:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+  .tab:hover {
+    color: var(--text);
+    border-color: var(--line);
+    background: var(--panel);
+  }
+
+  .tab.active {
+    color: var(--text);
+    border-color: #4e6543;
+    background: #253026;
+  }
+
+  .output-content,
+  .bindings-content {
+    min-height: 0;
+    overflow: auto;
+    padding: 14px;
+    color: var(--text);
+    background: var(--surface);
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .output-content.error {
+    color: var(--red);
+  }
+
+  .empty-output {
+    color: var(--dim);
+  }
+
+  .bindings-content {
+    display: none;
+  }
+
+  .binding-row {
+    display: grid;
+    grid-template-columns: minmax(70px, 0.45fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .binding-name {
+    color: var(--teal);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .binding-value {
+    color: var(--text);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .run-summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--line-soft);
+    color: var(--muted);
+    background: var(--panel);
+    font-size: 12px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 0 14px;
+    color: var(--dim);
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+  }
+
+  .footer .spacer {
+    flex: 1;
+  }
 
   .loading-overlay {
-    position: fixed; inset: 0; background: rgba(17,17,27,0.95);
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; z-index: 100;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: rgba(16, 18, 17, 0.96);
   }
-  .loading-overlay p { margin-top: 16px; font-size: 14px; color: var(--muted); }
-  .spinner {
-    width: 36px; height: 36px; border: 3px solid var(--border);
-    border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .resize-handle { width: 4px; cursor: col-resize; background: transparent; }
-  .resize-handle:hover, .resize-handle.dragging { background: var(--blue); }
+  .loading-card {
+    width: min(360px, calc(100vw - 32px));
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .loader-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border: 3px solid var(--line);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+
+  .loading-card strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .loading-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 920px) {
+    body {
+      overflow: auto;
+    }
+
+    .app {
+      min-height: 100%;
+      height: auto;
+      grid-template-rows: auto auto auto;
+    }
+
+    .topbar {
+      grid-template-columns: 1fr;
+      align-items: stretch;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .status-pill {
+      justify-self: stretch;
+    }
+
+    .top-actions {
+      justify-content: stretch;
+    }
+
+    .top-actions button {
+      flex: 1;
+    }
+
+    .workspace {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 54vh auto;
+    }
+
+    .sidebar {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sample-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .sample {
+      margin: 0;
+    }
+
+    .resize-handle {
+      display: none;
+    }
+
+    .output-panel {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      min-height: 320px;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .sample-list {
+      grid-template-columns: 1fr;
+    }
+
+    .editor-bar,
+    .output-bar {
+      align-items: stretch;
+      flex-direction: column;
+      height: auto;
+      padding: 10px;
+    }
+
+    .editor-shell,
+    .output-panel {
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .output-panel {
+      grid-template-rows: auto 40px minmax(0, 1fr) auto;
+    }
+
+    .editor-actions,
+    .output-actions {
+      width: 100%;
+    }
+
+    .editor-actions button,
+    .output-actions button {
+      flex: 1;
+    }
+  }
 </style>
 </head>
 <body>
-
-<div class="loading-overlay" id="loading">
-  <div class="spinner"></div>
-  <p id="loading-msg">Loading Nomi...</p>
-</div>
-
-<header>
-  <h1>Nomi</h1>
-  <span class="status" id="status">initializing</span>
-  <span class="sep"></span>
-  <button onclick="loadFile('demo')">Demo</button>
-  <button onclick="loadFile('block')">Blocks</button>
-  <button onclick="loadFile('constraint')">Constraints</button>
-</header>
-
-<main>
-  <div class="sidebar" id="sidebar">
-    <h3>Samples</h3>
-    <div class="file-list" id="file-list"></div>
-  </div>
-  <div class="resize-handle" id="resize-l"></div>
-  <div id="editor-container"></div>
-  <div class="resize-handle" id="resize-r"></div>
-  <div class="output-panel">
-    <div class="tabs">
-      <div class="active" onclick="switchTab('output')">Output</div>
-      <div onclick="switchTab('vars')">Variables</div>
+<div class="app">
+  <div class="loading-overlay" id="loading">
+    <div class="loading-card">
+      <div class="loader-row">
+        <div class="spinner"></div>
+        <div>
+          <strong>Starting Nomi</strong>
+          <p id="loading-msg">Loading runtime...</p>
+        </div>
+      </div>
     </div>
-    <div class="content" id="output-content"></div>
-    <div class="bindings" id="bindings"></div>
   </div>
-</main>
 
-<div class="toolbar">
-  <span class="hint">Ctrl+Enter to run</span>
-  <span class="sep2"></span>
-  <button class="run" id="run-btn" onclick="run()" disabled>Run ▸</button>
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">N</div>
+      <div class="brand-text">
+        <strong>Nomi Playground</strong>
+        <span>Browser editor</span>
+      </div>
+    </div>
+    <div class="status-pill" id="status-pill">
+      <span class="status-dot"></span>
+      <span id="status">initializing</span>
+    </div>
+    <div class="top-actions">
+      <button type="button" onclick="loadFile('demo')">Demo</button>
+      <button type="button" onclick="loadFile('block')">Blocks</button>
+      <button type="button" onclick="loadFile('constraint')">Constraints</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar" id="sidebar">
+      <div class="panel-heading">
+        <h2>Samples</h2>
+        <span id="sample-count">0</span>
+      </div>
+      <div class="sample-list" id="file-list"></div>
+    </aside>
+
+    <div class="resize-handle" id="resize-l"></div>
+
+    <section class="editor-shell">
+      <div class="editor-bar">
+        <div class="editor-title">
+          <h2 id="current-file">demo.nomi</h2>
+          <span id="editor-meta">0 lines</span>
+        </div>
+        <div class="editor-actions">
+          <button type="button" onclick="resetCurrentSample()">Reset</button>
+          <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run</button>
+        </div>
+      </div>
+      <div id="editor-container"></div>
+    </section>
+
+    <div class="resize-handle" id="resize-r"></div>
+
+    <aside class="output-panel">
+      <div class="output-bar">
+        <div class="output-title">
+          <h2>Result</h2>
+          <span id="run-state">Not run yet</span>
+        </div>
+        <div class="output-actions">
+          <button type="button" onclick="copyOutput()">Copy</button>
+          <button type="button" onclick="clearOutput()">Clear</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Result views">
+        <button type="button" class="tab active" id="tab-output" onclick="switchTab('output')">Output</button>
+        <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
+      </div>
+      <div class="output-content" id="output-content"><span class="empty-output">Output appears here after a run.</span></div>
+      <div class="bindings-content" id="bindings-content"></div>
+      <div class="run-summary">
+        <span id="summary-text">Ready when the runtime finishes loading.</span>
+        <span id="binding-count">0 bindings</span>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>Ctrl+Enter runs the current file.</span>
+    <span class="spacer"></span>
+    <span id="runtime-detail">Pyodide</span>
+  </footer>
 </div>
 
 <script>
@@ -150,19 +702,82 @@ let _pyodide = null;
 let _runFn = null;
 let _editor = null;
 let _ready = false;
+let _currentSample = "demo";
+let _currentTab = "output";
+let _lastOutput = "";
+let _lastBindings = new Map();
 
-function log(msg) { console.log("[web]", msg); document.getElementById("loading-msg").textContent = msg; }
+function byId(id) {
+  return document.getElementById(id);
+}
 
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function log(msg) {
+  console.log("[web]", msg);
+  byId("loading-msg").textContent = msg;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function setStatus(text, mode) {
+  byId("status").textContent = text;
+  const pill = byId("status-pill");
+  pill.classList.remove("ready", "running", "error");
+  if (mode) {
+    pill.classList.add(mode);
+  }
+}
+
+function lineCount(text) {
+  if (!text) {
+    return 0;
+  }
+  return text.split(/\r\n|\r|\n/).length;
+}
+
+function updateEditorMeta() {
+  if (!_editor) {
+    return;
+  }
+  const value = _editor.getValue();
+  byId("editor-meta").textContent = `${lineCount(value)} lines`;
+}
 
 // --- File demos ---
 const DEMOS = {
-  demo: `func greet(name):
+  demo: {
+    title: "demo.nomi",
+    desc: "Guided tour from samples/demo.nomi.",
+    source: "samples/demo.nomi",
+    code: `func greet(name):
     return f"Hello, {name}!"
 
 result = greet("World")
-print(result)`,
-  block: `func each(items):
+print(result)`
+  },
+  terse: {
+    title: "demo_terse.nomi",
+    desc: "Compact syntax tour from samples/demo_terse.nomi.",
+    source: "samples/demo_terse.nomi",
+    code: `# Nomi by Example - Terse
+func greet(name): return "Hello, " + name
+print(greet("Nomi"))`
+  },
+  collections: {
+    title: "collections.nomi",
+    desc: "Collection examples from samples/collections.nomi.",
+    source: "samples/collections.nomi",
+    code: `inclusive = list(1..5)
+print("1..5 = " + str(inclusive))`
+  },
+  block: {
+    title: "blocks.nomi",
+    desc: "Yield-to-block control with a running total.",
+    code: `func each(items):
     for item in items:
         yield item
 
@@ -171,8 +786,12 @@ each([1, -2, 3, 8]) -> item:
     if item > 0:
         total += item
 
-print(f"total = {total}")`,
-  constraint: `is_positive = (x) => x > 0
+print(f"total = {total}")`
+  },
+  constraint: {
+    title: "constraints.nomi",
+    desc: "Binding constraints and a match statement.",
+    code: `is_positive = (x) => x > 0
 score: int, is_positive = 72
 
 match score:
@@ -182,76 +801,255 @@ match score:
         label = "regular"
 
 print(f"score={score}, grade={label}")`
+  }
 };
+
+const SAMPLE_DESCRIPTIONS = {
+  "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
+  "samples/demo_terse.nomi": "Compact syntax tour from samples/demo_terse.nomi.",
+  "samples/collections.nomi": "Collection examples from samples/collections.nomi."
+};
+
+function sampleKey(path) {
+  return path
+    .replace(/^samples\//, "")
+    .replace(/\.nomi$/, "")
+    .replace(/_/g, "-");
+}
+
+async function loadSampleSources() {
+  try {
+    const response = await fetch("./manifest.json");
+    if (!response.ok) {
+      return;
+    }
+    const manifest = await response.json();
+    const samplePaths = manifest.samples || [];
+    for (const path of samplePaths) {
+      const key = path === "samples/demo.nomi"
+        ? "demo"
+        : path === "samples/demo_terse.nomi"
+          ? "terse"
+          : sampleKey(path);
+      const sampleUrl = new URL(`../${path}`, location.href);
+      const sampleResponse = await fetch(sampleUrl);
+      if (!sampleResponse.ok) {
+        continue;
+      }
+      const code = await sampleResponse.text();
+      const existing = DEMOS[key] || {};
+      DEMOS[key] = {
+        title: path.split("/").pop(),
+        desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`,
+        source: path,
+        code,
+        ...existing,
+        code
+      };
+    }
+  } catch (error) {
+    console.warn("[web] Could not load samples from manifest", error);
+  }
+}
 
 // --- Sidebar ---
 function buildFileList() {
-  const list = document.getElementById("file-list");
-  for (const [name] of Object.entries(DEMOS)) {
-    const el = document.createElement("div");
-    el.textContent = name + ".nomi";
-    el.onclick = () => { loadFile(name); };
+  const list = byId("file-list");
+  list.innerHTML = "";
+  const entries = Object.entries(DEMOS);
+  byId("sample-count").textContent = `${entries.length} files`;
+  for (const [name, demo] of entries) {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "sample";
+    el.dataset.sample = name;
+    el.onclick = () => loadFile(name);
+    el.innerHTML = `
+      <span class="sample-name">${esc(demo.title)}</span>
+      <span class="sample-meta">${lineCount(demo.code)} lines</span>
+      <span class="sample-desc">${esc(demo.desc)}</span>
+    `;
     list.appendChild(el);
   }
 }
 
 window.loadFile = function(name) {
-  if (DEMOS[name] && _editor) {
-    _editor.setValue(DEMOS[name]);
-    const list = document.getElementById("file-list");
-    list.querySelectorAll("div").forEach(d => d.classList.remove("active"));
-    list.querySelector(`div:nth-child(${Object.keys(DEMOS).indexOf(name) + 1})`).classList.add("active");
+  if (!DEMOS[name] || !_editor) {
+    return;
+  }
+  _currentSample = name;
+  _editor.setValue(DEMOS[name].code);
+  byId("current-file").textContent = DEMOS[name].title;
+  document.querySelectorAll(".sample").forEach((el) => {
+    el.classList.toggle("active", el.dataset.sample === name);
+  });
+  updateEditorMeta();
+  _editor.focus();
+};
+
+window.resetCurrentSample = function() {
+  loadFile(_currentSample);
+};
+
+// --- Output ---
+function renderBindings(bindings) {
+  const target = byId("bindings-content");
+  if (!bindings || bindings.size === 0) {
+    target.innerHTML = `<span class="empty-output">No public bindings were produced.</span>`;
+    byId("binding-count").textContent = "0 bindings";
+    return;
+  }
+
+  let html = "";
+  bindings.forEach((value, key) => {
+    html += `
+      <div class="binding-row">
+        <span class="binding-name">${esc(key)}</span>
+        <span class="binding-value">${esc(value)}</span>
+      </div>
+    `;
+  });
+  target.innerHTML = html;
+  byId("binding-count").textContent = `${bindings.size} bindings`;
+}
+
+function showOutput(text, isError) {
+  const out = byId("output-content");
+  out.className = isError ? "output-content error" : "output-content";
+  if (text) {
+    out.textContent = text;
+  } else {
+    out.innerHTML = `<span class="empty-output">(no output)</span>`;
+  }
+  _lastOutput = text || "";
+}
+
+window.switchTab = function(name) {
+  _currentTab = name;
+  byId("tab-output").classList.toggle("active", name === "output");
+  byId("tab-vars").classList.toggle("active", name === "vars");
+  byId("output-content").style.display = name === "output" ? "block" : "none";
+  byId("bindings-content").style.display = name === "vars" ? "block" : "none";
+};
+
+window.clearOutput = function() {
+  _lastOutput = "";
+  _lastBindings = new Map();
+  showOutput("", false);
+  renderBindings(_lastBindings);
+  byId("run-state").textContent = "Cleared";
+  byId("summary-text").textContent = "No run result.";
+  switchTab("output");
+};
+
+window.copyOutput = async function() {
+  const text = _currentTab === "vars"
+    ? Array.from(_lastBindings.entries()).map(([k, v]) => `${k} = ${v}`).join("\n")
+    : _lastOutput;
+  if (!text) {
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    byId("summary-text").textContent = "Copied.";
+  } catch (error) {
+    byId("summary-text").textContent = "Copy failed.";
   }
 };
 
 // --- Run ---
 async function run() {
-  if (!_ready || !_runFn) return;
+  if (!_ready || !_runFn) {
+    return;
+  }
   const code = _editor.getValue();
-  const out = document.getElementById("output-content");
-  const bind = document.getElementById("bindings");
-  const btn = document.getElementById("run-btn");
-  btn.disabled = true; btn.textContent = "...";
+  const btn = byId("run-btn");
+  const start = performance.now();
+  btn.disabled = true;
+  btn.textContent = "Running";
+  setStatus("running", "running");
+  byId("run-state").textContent = "Running";
+  byId("summary-text").textContent = "Evaluating current file.";
 
   try {
     const result = await _runFn(code);
     const r = result.toJs();
+    const elapsed = Math.max(1, Math.round(performance.now() - start));
     if (r.has("error")) {
-      out.textContent = r.get("error"); out.className = "content error";
-      bind.innerHTML = "";
+      showOutput(r.get("error"), true);
+      _lastBindings = new Map();
+      renderBindings(_lastBindings);
+      byId("run-state").textContent = "Error";
+      byId("summary-text").textContent = `Failed in ${elapsed} ms.`;
+      setStatus("error", "error");
+      switchTab("output");
     } else {
-      out.textContent = r.get("output") || "(no output)"; out.className = "content";
-      const b = r.get("bindings");
-      if (b && b.size > 0) {
-        let html = ""; b.forEach((v,k) => html += `<span>${k}</span> = ${esc(v)}<br>`);
-        bind.innerHTML = html;
-      } else { bind.innerHTML = ""; }
+      const output = r.get("output") || "";
+      const bindings = r.get("bindings") || new Map();
+      showOutput(output, false);
+      _lastBindings = bindings;
+      renderBindings(bindings);
+      byId("run-state").textContent = "Complete";
+      byId("summary-text").textContent = `Ran in ${elapsed} ms.`;
+      setStatus("ready", "ready");
+      switchTab("output");
     }
-  } catch(e) { out.textContent = String(e); out.className = "content error"; }
-  btn.disabled = false; btn.textContent = "Run ▸";
+  } catch (error) {
+    showOutput(String(error), true);
+    _lastBindings = new Map();
+    renderBindings(_lastBindings);
+    byId("run-state").textContent = "Error";
+    byId("summary-text").textContent = "Runtime call failed.";
+    setStatus("error", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Run";
+  }
 }
 
 window.run = run;
 
-window.switchTab = function(name) {
-  document.querySelectorAll(".tabs div").forEach(d => d.classList.remove("active"));
-  document.querySelector(`.tabs div:${name==="output"?"first":"last"}-child`).classList.add("active");
-};
-
 // --- Resize ---
-function setupResize(h, left, right, dir) {
-  let d = false;
-  h.addEventListener("mousedown",()=>{ d=true; h.classList.add("dragging"); document.body.style.cursor="col-resize"; document.body.style.userSelect="none"; });
-  addEventListener("mousemove",(e)=>{
-    if(!d) return;
-    if(dir==="left") left.style.width=Math.max(80,e.clientX-left.getBoundingClientRect().left)+"px";
-    else right.style.width=Math.max(80,right.getBoundingClientRect().right-e.clientX)+"px";
+function setupResize(handle, left, right, dir) {
+  let dragging = false;
+  handle.addEventListener("mousedown", () => {
+    dragging = true;
+    handle.classList.add("dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
   });
-  addEventListener("mouseup",()=>{ d=false; h.classList.remove("dragging"); document.body.style.cursor=""; document.body.style.userSelect=""; });
+
+  addEventListener("mousemove", (event) => {
+    if (!dragging) {
+      return;
+    }
+    if (dir === "left") {
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        `${Math.max(180, Math.min(420, event.clientX - left.getBoundingClientRect().left))}px`
+      );
+    } else {
+      document.documentElement.style.setProperty(
+        "--output-width",
+        `${Math.max(280, Math.min(560, right.getBoundingClientRect().right - event.clientX))}px`
+      );
+    }
+    if (_editor) {
+      _editor.layout();
+    }
+  });
+
+  addEventListener("mouseup", () => {
+    dragging = false;
+    handle.classList.remove("dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  });
 }
 
 // --- Init everything ---
 async function init() {
+  await loadSampleSources();
   buildFileList();
 
   // 1. Pyodide
@@ -274,9 +1072,11 @@ async function init() {
   await initMonaco();
 
   _ready = true;
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("status").textContent = "ready";
-  document.getElementById("run-btn").disabled = false;
+  byId("loading").style.display = "none";
+  setStatus("ready", "ready");
+  byId("runtime-detail").textContent = "Pyodide runtime ready";
+  byId("summary-text").textContent = "Ready.";
+  byId("run-btn").disabled = false;
   console.log("[web] Ready");
 }
 
@@ -291,7 +1091,7 @@ async function initMonaco() {
       // Register Nomi language
       monaco.languages.register({ id: "nomi", extensions: [".nomi"], aliases: ["Nomi"] });
 
-      // Monarch tokenizer — mirrors the TextMate grammar in tools/vscode/nomi/syntaxes/nomi.tmLanguage.json
+      // Monarch tokenizer mirrors tools/vscode/nomi/syntaxes/nomi.tmLanguage.json.
       monaco.languages.setMonarchTokensProvider("nomi", {
         tokenizer: {
           root: [
@@ -301,13 +1101,14 @@ async function initMonaco() {
             [/f?r?"/, { token: "string.quote", bracket: "@open", next: "@dqstring" }],
             [/f?r?'/, { token: "string.quote", bracket: "@open", next: "@sqstring" }],
             [/@[a-zA-Z_]\w*/, "tag"],
-            [/\b(func|class|data|const|module|export)\b/, "keyword"],
+            [/\b(func|class|data|const|module|export|type|guard|unless)\b/, "keyword"],
             [/\b(if|elif|else|for|while|try|except|finally|with|as|match|case|return|yield|from|raise|break|continue|pass|in|is|not|and|or|async|await|global|nonlocal|assert|del|import)\b/, "keyword"],
-            [/\b(True|False|None|Ellipsis)\b/, "keyword"],
+            [/\b(true|false|none|True|False|None|Ellipsis)\b/, "keyword"],
             [/\b\d+(\.\d+)?([eE][+-]?\d+)?\b/, "number"],
-            [/[+\-*/%&|^~<>!=]=?|\.\.\.|->|=>|:=/, "operator"],
+            [/[+\-*/%&|^~<>!=]=?|\.\.\.?|->|=>|:=|\?\?|\?\./, "operator"],
             [/[{}()[\]]/, "@brackets"],
-            [/[a-zA-Z_]\w*(?=\s*\()/, "type.identifier"],
+            [/[A-Z][a-zA-Z_]\w*/, "type.identifier"],
+            [/[a-zA-Z_]\w*(?=\s*\()/, "function.identifier"],
             [/[a-zA-Z_]\w*/, "identifier"],
           ],
           tqstring: [
@@ -342,7 +1143,7 @@ async function initMonaco() {
         },
       });
 
-      // Language configuration — mirrors tools/vscode/nomi/language-configuration.json
+      // Language configuration mirrors tools/vscode/nomi/language-configuration.json.
       monaco.languages.setLanguageConfiguration("nomi", {
         comments: { lineComment: "#" },
         brackets: [["{", "}"], ["[", "]"], ["(", ")"]],
@@ -360,41 +1161,47 @@ async function initMonaco() {
         },
       });
 
-      // Monaco theme — Catppuccin Mocha
       monaco.editor.defineTheme("nomi-dark", {
         base: "vs-dark",
         inherit: true,
         rules: [
-          { token: "comment", foreground: "6c7086", fontStyle: "italic" },
-          { token: "keyword", foreground: "cba6f7" },
-          { token: "string", foreground: "a6e3a1" },
-          { token: "string.escape", foreground: "f9e2af" },
-          { token: "string.interpolated", foreground: "f9e2af", fontStyle: "bold" },
-          { token: "number", foreground: "fab387" },
-          { token: "operator", foreground: "89dceb" },
-          { token: "tag", foreground: "f38ba8" },
-          { token: "type.identifier", foreground: "89b4fa" },
-          { token: "identifier", foreground: "cdd6f4" },
-          { token: "", foreground: "cdd6f4" },
+          { token: "comment", foreground: "7f8a83", fontStyle: "italic" },
+          { token: "keyword", foreground: "d6a36f" },
+          { token: "string", foreground: "a7d67a" },
+          { token: "string.escape", foreground: "e8c16f" },
+          { token: "string.interpolated", foreground: "e8c16f", fontStyle: "bold" },
+          { token: "number", foreground: "f0b07a" },
+          { token: "operator", foreground: "77d0c2" },
+          { token: "tag", foreground: "ef8f8f" },
+          { token: "type.identifier", foreground: "9bbdf2" },
+          { token: "function.identifier", foreground: "eef3ef" },
+          { token: "identifier", foreground: "dce5df" },
+          { token: "", foreground: "eef3ef" },
         ],
         colors: {
-          "editor.background": "#1e1e2e",
-          "editor.foreground": "#cdd6f4",
-          "editor.lineHighlightBackground": "#181825",
-          "editor.selectionBackground": "#45475a",
-          "editor.inactiveSelectionBackground": "#313244",
-          "editorCursor.foreground": "#f5e0dc",
-          "editorLineNumber.foreground": "#585b70",
-          "editorLineNumber.activeForeground": "#a6adc8",
+          "editor.background": "#181c1a",
+          "editor.foreground": "#eef3ef",
+          "editor.lineHighlightBackground": "#202621",
+          "editor.selectionBackground": "#405146",
+          "editor.inactiveSelectionBackground": "#2d3530",
+          "editorCursor.foreground": "#a7d67a",
+          "editorLineNumber.foreground": "#657168",
+          "editorLineNumber.activeForeground": "#c8d2cc",
+          "editorIndentGuide.background1": "#2d3530",
+          "editorIndentGuide.activeBackground1": "#526259",
+          "editorGutter.background": "#181c1a",
+          "editorWidget.background": "#1f2321",
+          "editorWidget.border": "#3c443f",
         },
       });
 
-      _editor = monaco.editor.create(document.getElementById("editor-container"), {
-        value: DEMOS["demo"],
+      _editor = monaco.editor.create(byId("editor-container"), {
+        value: DEMOS.demo.code,
         language: "nomi",
         theme: "nomi-dark",
         fontSize: 14,
-        fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
+        fontFamily: "'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+        lineHeight: 22,
         lineNumbers: "on",
         minimap: { enabled: false },
         bracketPairColorization: { enabled: true },
@@ -408,7 +1215,11 @@ async function initMonaco() {
         smoothScrolling: true,
         cursorBlinking: "smooth",
         cursorSmoothCaretAnimation: "on",
+        padding: { top: 14, bottom: 14 },
+        overviewRulerBorder: false,
       });
+
+      _editor.onDidChangeModelContent(updateEditorMeta);
 
       _editor.addAction({
         id: "run-nomi",
@@ -417,14 +1228,22 @@ async function initMonaco() {
         run: () => run(),
       });
 
+      loadFile("demo");
+      switchTab("output");
+      renderBindings(_lastBindings);
       resolve();
     });
   });
 }
 
 init().then(() => {
-  setupResize(document.getElementById("resize-l"), document.getElementById("sidebar"), document.getElementById("editor-container"), "left");
-  setupResize(document.getElementById("resize-r"), document.getElementById("editor-container"), document.querySelector(".output-panel"), "right");
+  setupResize(byId("resize-l"), byId("sidebar"), byId("editor-container"), "left");
+  setupResize(byId("resize-r"), byId("editor-container"), document.querySelector(".output-panel"), "right");
+  addEventListener("resize", () => {
+    if (_editor) {
+      _editor.layout();
+    }
+  });
 });
 </script>
 </body>
