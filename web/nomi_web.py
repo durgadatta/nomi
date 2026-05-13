@@ -25,21 +25,11 @@ def _log(msg):
 
 
 def _session_get(key, default=None):
-    if PYODIDE:
-        from pyodide.ffi import JsException
-        try:
-            v = pyodide.globals.get(key)
-            if v is not None:
-                return v
-        except JsException:
-            pass
     return getattr(_session_store, key, default)
 
 
 def _session_set(key, value):
     setattr(_session_store, key, value)
-    if PYODIDE:
-        pyodide.globals.set(key, value)
 
 
 class _Store:
@@ -152,13 +142,11 @@ def _eval_in_session(code: str) -> dict:
     if interp is None:
         reset_session()
         interp = _get_interpreter()
-        _log(f"Auto-created session #{_get_counter()}")
 
     tree = generate_ast(code=code, dump=False)
     tree = _nomi_desugar(tree)
     tree = ast.fix_missing_locations(tree)
     interp.eval(tree)
-    _log(f"Session #{_get_counter()} bindings after eval: {list(interp.global_env.bindings.keys())}")
     return interp.global_env.bindings
 
 
