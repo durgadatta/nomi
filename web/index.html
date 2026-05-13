@@ -23,752 +23,198 @@
     --amber: #e8c16f;
     --red: #ef8f8f;
     --blue: #9bbdf2;
-    --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    --shadow: 0 18px 40px rgba(0,0,0,0.28);
     --sidebar-width: 248px;
-    --notebook-height: 280px;
   }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html,
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
   body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  body {
-    color: var(--text);
-    background: var(--bg);
+    color: var(--text); background: var(--bg);
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    letter-spacing: 0;
   }
-
-  button,
-  textarea,
-  input {
-    font: inherit;
-  }
-
+  button, textarea, input { font: inherit; }
   button {
-    min-height: 32px;
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    color: var(--text);
-    background: var(--panel-2);
-    cursor: pointer;
+    min-height: 32px; border: 1px solid var(--line); border-radius: 7px;
+    color: var(--text); background: var(--panel-2); cursor: pointer;
   }
+  button:hover { background: var(--panel-3); border-color: #56625a; }
+  button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  button:disabled { cursor: not-allowed; color: var(--dim); background: var(--panel); }
 
-  button:hover {
-    background: var(--panel-3);
-    border-color: #56625a;
-  }
-
-  button:focus-visible,
-  .sample:focus-visible,
-  .tab:focus-visible {
-    outline: 2px solid var(--teal);
-    outline-offset: 2px;
-  }
-
-  button:disabled {
-    cursor: not-allowed;
-    color: var(--dim);
-    background: var(--panel);
-  }
-
-  .app {
-    height: 100%;
-    display: grid;
-    grid-template-rows: 52px minmax(0, 1fr) 34px;
-    background: var(--bg);
-  }
-
+  .app { height: 100%; display: grid; grid-template-rows: 52px minmax(0,1fr) 34px; background: var(--bg); }
   .topbar {
-    display: grid;
-    grid-template-columns: minmax(180px, auto) 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 0 16px;
-    background: var(--panel);
-    border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: minmax(180px,auto) 1fr auto;
+    align-items: center; gap: 16px; padding: 0 16px;
+    background: var(--panel); border-bottom: 1px solid var(--line);
   }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .mark {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 7px;
-    color: #172013;
-    background: var(--green);
-    font-size: 15px;
-    font-weight: 800;
+    width: 28px; height: 28px; display: grid; place-items: center;
+    border-radius: 7px; color: #172013; background: var(--green);
+    font-size: 15px; font-weight: 800;
   }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .brand strong {
-    font-size: 14px;
-    line-height: 17px;
-    font-weight: 700;
-  }
-
-  .brand span {
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 14px;
-  }
-
-  .top-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
-  .top-actions button,
-  .editor-actions button,
-  .output-actions button {
-    padding: 0 11px;
-    font-size: 12px;
-  }
-
+  .brand-text { display: flex; flex-direction: column; min-width: 0; }
+  .brand strong { font-size: 14px; line-height: 17px; font-weight: 700; }
+  .brand span { color: var(--muted); font-size: 11px; line-height: 14px; }
+  .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+  .top-actions button { padding: 0 11px; font-size: 12px; }
   .status-pill {
-    justify-self: start;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 126px;
-    height: 28px;
-    padding: 0 10px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    color: var(--muted);
-    background: var(--surface);
-    font-size: 12px;
+    justify-self: start; display: inline-flex; align-items: center; gap: 8px;
+    min-width: 126px; height: 28px; padding: 0 10px; border: 1px solid var(--line);
+    border-radius: 999px; color: var(--muted); background: var(--surface); font-size: 12px;
   }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--amber);
-  }
-
-  .status-pill.ready .status-dot {
-    background: var(--green);
-  }
-
-  .status-pill.running .status-dot {
-    background: var(--teal);
-  }
-
-  .status-pill.error .status-dot {
-    background: var(--red);
-  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+  .status-pill.ready .status-dot { background: var(--green); }
+  .status-pill.running .status-dot { background: var(--teal); }
+  .status-pill.error .status-dot { background: var(--red); }
 
   .workspace {
-    min-height: 0;
-    display: grid;
+    min-height: 0; display: grid;
     grid-template-columns: var(--sidebar-width) 4px minmax(320px, 1fr);
     background: var(--surface);
   }
-
-  .center-pane {
-    min-width: 0;
-    min-height: 0;
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) 4px auto;
-    background: var(--surface);
-  }
-
-  .center-pane.notebook-closed {
-    grid-template-rows: minmax(0, 1fr) 4px 0;
-  }
-
   .sidebar {
-    min-width: 0;
-    background: var(--panel);
-    border-right: 1px solid var(--line);
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    min-width: 0; background: var(--panel); border-right: 1px solid var(--line);
+    display: grid; grid-template-rows: auto minmax(0, 1fr);
   }
-
   .panel-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 44px;
-    padding: 0 14px;
-    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 44px; padding: 0 14px; border-bottom: 1px solid var(--line-soft);
   }
-
-  .panel-heading h2,
-  .editor-title h2,
-  .output-title h2 {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0;
-  }
-
-  .panel-heading span,
-  .editor-title span,
-  .output-title span {
-    color: var(--dim);
-    font-size: 11px;
-  }
-
-  .sample-list {
-    min-height: 0;
-    overflow: auto;
-    padding: 10px;
-  }
-
+  .panel-heading h2 { margin: 0; font-size: 12px; font-weight: 700; }
+  .panel-heading span { color: var(--dim); font-size: 11px; }
+  .sample-list { min-height: 0; overflow: auto; padding: 10px; }
   .sample {
-    width: 100%;
-    min-height: 64px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    column-gap: 10px;
-    row-gap: 3px;
-    align-items: center;
-    padding: 10px;
-    margin: 0 0 8px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    color: var(--muted);
-    background: transparent;
-    text-align: left;
+    width: 100%; min-height: 64px; display: grid;
+    grid-template-columns: 1fr auto; grid-template-rows: auto auto;
+    column-gap: 10px; row-gap: 3px; align-items: center;
+    padding: 10px; margin: 0 0 8px; border: 1px solid transparent;
+    border-radius: 8px; color: var(--muted); background: transparent; text-align: left;
   }
+  .sample:hover { color: var(--text); background: var(--panel-2); border-color: var(--line); }
+  .sample.active { color: var(--text); background: #263128; border-color: #587149; }
+  .sample-name { overflow: hidden; color: inherit; font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+  .sample-meta { color: var(--dim); font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 11px; }
+  .sample-desc { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 16px; }
 
-  .sample:hover {
-    color: var(--text);
-    background: var(--panel-2);
-    border-color: var(--line);
+  .resize-handle { background: transparent; cursor: col-resize; }
+  .resize-handle:hover, .resize-handle.dragging { background: var(--teal); }
+
+  .nb-scroll {
+    min-width: 0; min-height: 0; overflow: auto;
+    background: var(--surface); padding: 0;
   }
-
-  .sample.active {
-    color: var(--text);
-    background: #263128;
-    border-color: #587149;
+  .nb-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: var(--panel);
+    border-bottom: 1px solid var(--line-soft); position: sticky; top: 0; z-index: 10;
   }
-
-  .sample-name {
-    overflow: hidden;
-    color: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sample-meta {
-    color: var(--dim);
-    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 11px;
-  }
-
-  .sample-desc {
-    grid-column: 1 / -1;
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 16px;
-  }
-
-  .resize-handle {
-    background: transparent;
-    cursor: col-resize;
-  }
-
-  .resize-handle:hover,
-  .resize-handle.dragging {
-    background: var(--teal);
-  }
-
-  .resize-handle-h {
-    background: transparent;
-    cursor: row-resize;
-  }
-
-  .resize-handle-h:hover,
-  .resize-handle-h.dragging {
-    background: var(--teal);
-  }
-
-  .editor-shell {
-    min-width: 0;
-    min-height: 0;
-    display: grid;
-    grid-template-rows: 44px minmax(0, 1fr);
-    background: #181c1a;
-  }
-
-  .editor-bar,
-  .output-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    min-width: 0;
-    padding: 0 12px 0 14px;
-    border-bottom: 1px solid var(--line-soft);
-    background: var(--panel);
-  }
-
-  .editor-title,
-  .output-title {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .editor-actions,
-  .output-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-  }
-
+  .nb-toolbar .nb-title { font-weight: 700; font-size: 12px; margin-right: auto; }
+  .nb-toolbar button { padding: 0 10px; font-size: 12px; }
   .run-button {
-    min-width: 78px;
-    color: #13200f;
-    border-color: transparent;
-    background: var(--green);
-    font-weight: 800;
+    min-width: 72px; color: #13200f; border-color: transparent;
+    background: var(--green); font-weight: 800;
   }
+  .run-button:hover { background: #b9e28d; }
 
-  .run-button:hover {
-    background: #b9e28d;
+  .nb-cells { padding: 14px 14px 40px; }
+  .nb-cell {
+    margin-bottom: 16px; border: 1px solid var(--line-soft);
+    border-radius: 8px; overflow: hidden; background: #1a1e1b;
   }
-
-  #editor-container {
-    min-width: 0;
-    min-height: 0;
+  .nb-cell.active { border-color: #587149; }
+  .nb-cell-header {
+    display: flex; align-items: center; gap: 8px;
+    min-height: 32px; padding: 4px 10px;
+    background: #1f2421; border-bottom: 1px solid var(--line-soft);
   }
-
-  .notebook-pane {
-    min-width: 0;
-    min-height: 0;
-    display: grid;
-    grid-template-rows: 44px 40px minmax(0, var(--notebook-height)) auto;
-    background: var(--panel);
-    border-top: 1px solid var(--line);
-  }
-
-  .tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-    padding: 6px 10px;
-    border-bottom: 1px solid var(--line-soft);
-    background: var(--surface);
-  }
-
-  .tab {
-    min-height: 28px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    color: var(--muted);
-    background: transparent;
-    font-size: 12px;
-    font-weight: 650;
-  }
-
-  .tab:hover {
-    color: var(--text);
-    border-color: var(--line);
-    background: var(--panel);
-  }
-
-  .tab.active {
-    color: var(--text);
-    border-color: #4e6543;
-    background: #253026;
-  }
-
-  .output-content,
-  .bindings-content,
-  .cells-content {
-    min-height: 0;
-    overflow: auto;
-    padding: 14px;
-    color: var(--text);
-    background: var(--surface);
+  .nb-cell-index {
+    display: grid; place-items: center; min-width: 32px; height: 22px;
+    border-radius: 4px; color: var(--teal); background: #1a2926;
     font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 13px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
+    font-size: 11px; font-weight: 700;
   }
-
-  .output-content.error {
-    color: var(--red);
+  .nb-cell-run {
+    min-height: 26px; padding: 0 8px; font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
   }
-
-  .empty-output {
-    color: var(--dim);
+  .nb-cell-run.running { opacity: 0.6; }
+  .nb-cell-spacer { flex: 1; }
+  .nb-cell-time { color: var(--dim); font-size: 11px; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+  .nb-cell-delete {
+    min-height: 26px; padding: 0 8px; font-size: 11px;
+    color: var(--dim); border-color: transparent; background: transparent;
   }
+  .nb-cell-delete:hover { color: var(--red); }
 
-  .bindings-content,
-  .cells-content {
-    display: none;
+  .nb-cell-editor { min-height: 60px; }
+  .nb-cell-output {
+    display: none; border-top: 2px solid var(--line-soft);
+    padding: 12px 14px; background: #151816;
   }
-
-  .cells-content {
-    padding: 10px 12px;
-    font-family: inherit;
-    white-space: normal;
-    background: #0d0f0e;
-  }
-
-  .cell-run {
-    margin-bottom: 14px;
-    border: 1px solid var(--line-soft);
-    border-radius: 9px;
-    overflow: hidden;
-    background: var(--panel);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  .cell-run:last-child {
-    margin-bottom: 0;
-  }
-
-  .cell-run-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 34px;
-    padding: 6px 12px;
-    background: #1a1f1c;
-    border-bottom: 1px solid var(--line-soft);
-  }
-
-  .cell-run-number {
-    display: grid;
-    place-items: center;
-    min-width: 28px;
-    height: 22px;
-    padding: 0 6px;
-    border-radius: 4px;
-    color: var(--teal);
-    background: #1a2926;
+  .nb-cell-output.show { display: block; }
+  .nb-cell-output .out-label {
+    display: inline-block; margin-bottom: 6px;
     font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 11px; font-weight: 700; color: var(--amber);
   }
-
-  .cell-run-title {
-    min-width: 0;
-    flex: 1;
-    overflow: hidden;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .cell-run-time {
-    flex: 0 0 auto;
-    color: var(--dim);
-    font-size: 11px;
+  .nb-cell-output.error .out-label { color: var(--red); }
+  .nb-cell-output pre {
+    margin: 0; color: var(--text);
     font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
   }
+  .nb-cell-output.error pre { color: var(--red); }
 
-  .cell-in {
-    background: #141715;
-    padding: 12px 14px;
-    border-bottom: 2px solid var(--line-soft);
+  .nb-add-btn {
+    display: block; width: 100%; min-height: 40px;
+    border: 1px dashed var(--line); border-radius: 8px;
+    color: var(--muted); background: transparent; font-size: 13px;
   }
-
-  .cell-in-label,
-  .cell-out-label {
-    display: inline-block;
-    margin-bottom: 6px;
-    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-
-  .cell-in-label {
-    color: var(--teal);
-  }
-
-  .cell-out-label {
-    color: var(--amber);
-  }
-
-  .cell-code {
-    margin: 0;
-    color: var(--text);
-    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 13px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .cell-out {
-    background: #171c19;
-    padding: 12px 14px;
-  }
-
-  .cell-output {
-    margin: 0;
-    color: var(--text);
-    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 13px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .cell-output.error {
-    color: var(--red);
-  }
-
-  .cell-run.error {
-    border-left: 3px solid var(--red);
-    border-color: rgba(239, 143, 143, 0.35);
-  }
-
-  .cell-run.error .cell-run-number {
-    color: var(--red);
-    background: #2c1c1f;
-  }
-
-  .cell-run.error .cell-out-label {
-    color: var(--red);
-  }
-
-  .cell-marker-line {
-    background: rgba(119, 208, 194, 0.07);
-  }
-
-  .cell-marker-glyph {
-    border-left: 3px solid var(--teal);
-  }
-
-  .binding-row {
-    display: grid;
-    grid-template-columns: minmax(70px, 0.45fr) minmax(0, 1fr);
-    gap: 12px;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--line-soft);
-  }
-
-  .binding-name {
-    color: var(--teal);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .binding-value {
-    color: var(--text);
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .run-summary {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    align-items: center;
-    min-height: 42px;
-    padding: 8px 12px;
-    border-top: 1px solid var(--line-soft);
-    color: var(--muted);
-    background: var(--panel);
-    font-size: 12px;
-  }
+  .nb-add-btn:hover { border-color: var(--teal); color: var(--teal); }
 
   .footer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-    padding: 0 14px;
-    color: var(--dim);
-    background: var(--panel);
-    border-top: 1px solid var(--line);
-    font-size: 12px;
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+    padding: 0 14px; color: var(--dim); background: var(--panel);
+    border-top: 1px solid var(--line); font-size: 12px;
   }
-
-  .footer .spacer {
-    flex: 1;
-  }
+  .footer .spacer { flex: 1; }
 
   .loading-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: grid;
-    place-items: center;
-    background: rgba(16, 18, 17, 0.96);
+    position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+    background: rgba(16,18,17,0.96);
   }
-
   .loading-card {
-    width: min(360px, calc(100vw - 32px));
-    padding: 22px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--panel);
-    box-shadow: var(--shadow);
+    width: min(360px, calc(100vw - 32px)); padding: 22px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--panel); box-shadow: var(--shadow);
   }
-
-  .loader-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .loader-row { display: flex; align-items: center; gap: 12px; }
   .spinner {
-    width: 30px;
-    height: 30px;
-    flex: 0 0 auto;
-    border: 3px solid var(--line);
-    border-top-color: var(--green);
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
+    width: 30px; height: 30px; flex: 0 0 auto;
+    border: 3px solid var(--line); border-top-color: var(--green);
+    border-radius: 50%; animation: spin 0.75s linear infinite;
   }
-
-  .loading-card strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 14px;
-  }
-
-  .loading-card p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 18px;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  .loading-card strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  .loading-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 18px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 920px) {
-    body {
-      overflow: auto;
-    }
-
-    .app {
-      min-height: 100%;
-      height: auto;
-      grid-template-rows: auto auto auto;
-    }
-
-    .topbar {
-      grid-template-columns: 1fr;
-      align-items: stretch;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .status-pill {
-      justify-self: stretch;
-    }
-
-    .top-actions {
-      justify-content: stretch;
-    }
-
-    .top-actions button {
-      flex: 1;
-    }
-
-    .workspace {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 54vh auto;
-    }
-
-    .sidebar {
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .sample-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      padding: 10px;
-    }
-
-    .sample {
-      margin: 0;
-    }
-
-    .resize-handle,
-    .resize-handle-h {
-      display: none;
-    }
-
-    .center-pane {
-      grid-template-rows: minmax(0, 1fr) 0 auto;
-    }
-
-    .notebook-pane {
-      border-left: 0;
-      border-top: 1px solid var(--line);
-      min-height: 320px;
-    }
+    body { overflow: auto; }
+    .app { min-height: 100%; height: auto; grid-template-rows: auto auto auto; }
+    .topbar { grid-template-columns: 1fr; align-items: stretch; gap: 10px; padding: 12px; }
+    .status-pill { justify-self: stretch; }
+    .top-actions { justify-content: stretch; }
+    .top-actions button { flex: 1; }
+    .workspace { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+    .sidebar { border-right: 0; border-bottom: 1px solid var(--line); }
+    .sample-list { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; padding: 10px; }
+    .sample { margin: 0; }
+    .resize-handle { display: none; }
   }
-
   @media (max-width: 620px) {
-    .sample-list {
-      grid-template-columns: 1fr;
-    }
-
-    .editor-bar,
-    .output-bar {
-      align-items: stretch;
-      flex-direction: column;
-      height: auto;
-      padding: 10px;
-    }
-
-    .editor-shell,
-    .notebook-pane {
-      grid-template-rows: auto minmax(0, 1fr);
-    }
-
-    .notebook-pane {
-      grid-template-rows: auto 40px minmax(0, 1fr) auto;
-    }
-
-    .editor-actions,
-    .output-actions {
-      width: 100%;
-    }
-
-    .editor-actions button,
-    .output-actions button {
-      flex: 1;
-    }
+    .sample-list { grid-template-columns: 1fr; }
+    .nb-toolbar { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -791,7 +237,7 @@
       <div class="mark">N</div>
       <div class="brand-text">
         <strong>Nomi Playground</strong>
-        <span>Browser editor</span>
+        <span>Browser notebook</span>
       </div>
     </div>
     <div class="status-pill" id="status-pill">
@@ -814,58 +260,20 @@
       </div>
       <div class="sample-list" id="file-list"></div>
     </aside>
-
     <div class="resize-handle" id="resize-l"></div>
-
-    <div class="center-pane" id="center-pane">
-      <section class="editor-shell">
-        <div class="editor-bar">
-          <div class="editor-title">
-            <h2 id="current-file">demo.nomi</h2>
-            <span id="editor-meta">0 lines</span>
-          </div>
-          <div class="editor-actions">
-            <button type="button" onclick="resetCurrentSample()">Reset</button>
-            <button type="button" onclick="resetRuntime()" id="reset-runtime-btn" disabled>Restart</button>
-            <button type="button" onclick="runCurrentCell()" id="run-cell-btn" disabled>Run Cell</button>
-            <button type="button" onclick="runAllCells()" id="run-all-btn" disabled>Run All</button>
-            <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run File</button>
-          </div>
-        </div>
-        <div id="editor-container"></div>
-      </section>
-
-      <div class="resize-handle-h" id="resize-h"></div>
-
-      <aside class="notebook-pane" id="notebook-pane">
-        <div class="output-bar">
-          <div class="output-title">
-            <h2>Result</h2>
-            <span id="run-state">Not run yet</span>
-          </div>
-          <div class="output-actions">
-            <button type="button" onclick="copyOutput()">Copy</button>
-            <button type="button" onclick="clearOutput()">Clear</button>
-          </div>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Result views">
-          <button type="button" class="tab active" id="tab-cells" onclick="switchTab('cells')">Notebook</button>
-          <button type="button" class="tab" id="tab-output" onclick="switchTab('output')">Output</button>
-          <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
-        </div>
-        <div class="cells-content" id="cells-content"><span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span></div>
-        <div class="output-content" id="output-content" style="display:none"><span class="empty-output">Output appears here after a run.</span></div>
-        <div class="bindings-content" id="bindings-content"></div>
-        <div class="run-summary">
-          <span id="summary-text">Ready when the runtime finishes loading.</span>
-          <span id="binding-count">0 bindings</span>
-        </div>
-      </aside>
+    <div class="nb-scroll" id="nb-scroll">
+      <div class="nb-toolbar">
+        <span class="nb-title" id="current-file">demo.nomi</span>
+        <button type="button" id="restart-btn" disabled>Restart</button>
+        <button type="button" class="run-button" id="run-all-btn" disabled>Run All</button>
+        <button type="button" onclick="addCell()">+ Cell</button>
+      </div>
+      <div class="nb-cells" id="nb-cells"></div>
     </div>
   </main>
 
   <footer class="footer">
-    <span id="cell-detail">1 cell</span>
+    <span id="cell-detail">0 cells</span>
     <span class="spacer"></span>
     <span id="runtime-detail">Pyodide</span>
   </footer>
@@ -875,135 +283,33 @@
 let _pyodide = null;
 let _runFn = null;
 let _resetFn = null;
-let _editor = null;
 let _ready = false;
 let _currentSample = "demo";
-let _currentTab = "cells";
-let _lastOutput = "";
-let _lastBindings = new Map();
-let _cellRuns = [];
+let _cellEditors = [];
 let _executionCounter = 0;
-let _cellDecorations = [];
+let _activeCellIndex = 0;
 
-function byId(id) {
-  return document.getElementById(id);
-}
-
-function log(msg) {
-  console.log("[web]", msg);
-  byId("loading-msg").textContent = msg;
-}
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+function byId(id) { return document.getElementById(id); }
+function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function setStatus(text, mode) {
   byId("status").textContent = text;
   const pill = byId("status-pill");
-  pill.classList.remove("ready", "running", "error");
-  if (mode) {
-    pill.classList.add(mode);
-  }
+  pill.classList.remove("ready","running","error");
+  if (mode) pill.classList.add(mode);
 }
 
-function lineCount(text) {
-  if (!text) {
-    return 0;
-  }
-  return text.split(/\r\n|\r|\n/).length;
+function lineCount(text) { return text ? text.split(/\r\n|\r|\n/).length : 0; }
+
+function setControlsDisabled(disabled) {
+  ["restart-btn","run-all-btn"].forEach(id => byId(id).disabled = disabled || !_ready);
 }
 
-function updateEditorMeta() {
-  if (!_editor) {
-    return;
-  }
-  const value = _editor.getValue();
-  const cells = getCells();
-  byId("editor-meta").textContent = `${lineCount(value)} lines · ${cells.length} ${cells.length === 1 ? "cell" : "cells"}`;
-  byId("cell-detail").textContent = `${cells.length} ${cells.length === 1 ? "cell" : "cells"}`;
-  updateCellDecorations(cells);
-}
-
-function markerMatch(line) {
-  return line.match(/^\s*#\s*%%\s*(.*)$/);
-}
-
-function getCells() {
-  if (!_editor) {
-    return [];
-  }
-  const value = _editor.getValue();
-  const lines = value.split(/\r\n|\r|\n/);
-  const markers = [];
-  lines.forEach((line, index) => {
-    const match = markerMatch(line);
-    if (match) {
-      markers.push({
-        line: index + 1,
-        title: match[1].trim(),
-      });
-    }
-  });
-
-  if (markers.length === 0) {
-    return [{
-      index: 1,
-      title: "File",
-      markerLine: 1,
-      startLine: 1,
-      endLine: Math.max(1, lines.length),
-      code: value,
-    }];
-  }
-
-  return markers.map((marker, index) => {
-    const next = markers[index + 1];
-    const startLine = marker.line + 1;
-    const endLine = next ? next.line - 1 : lines.length;
-    const code = lines.slice(startLine - 1, endLine).join("\n");
-    return {
-      index: index + 1,
-      title: marker.title || `Cell ${index + 1}`,
-      markerLine: marker.line,
-      startLine,
-      endLine,
-      code,
-    };
-  });
-}
-
-function currentCell() {
-  const cells = getCells();
-  const line = _editor ? _editor.getPosition().lineNumber : 1;
-  return cells.find((cell) => line >= cell.markerLine && line <= Math.max(cell.endLine, cell.markerLine)) || cells[0];
-}
-
-function updateCellDecorations(cells = getCells()) {
-  if (!_editor || typeof monaco === "undefined") {
-    return;
-  }
-  const decorations = cells
-    .filter((cell) => cell.markerLine > 0 && markerMatch(_editor.getModel().getLineContent(cell.markerLine)))
-    .map((cell) => ({
-      range: new monaco.Range(cell.markerLine, 1, cell.markerLine, 1),
-      options: {
-        isWholeLine: true,
-        className: "cell-marker-line",
-        glyphMarginClassName: "cell-marker-glyph",
-      },
-    }));
-  _cellDecorations = _editor.deltaDecorations(_cellDecorations, decorations);
-}
-
-// --- File demos ---
+// --- DEMOS ---
 const DEMOS = {
   demo: {
-    title: "demo.nomi",
-    desc: "Guided tour from samples/demo.nomi.",
+    title: "demo.nomi", desc: "Guided tour from samples/demo.nomi.",
     source: "samples/demo.nomi",
     code: `func greet(name):
     return f"Hello, {name}!"
@@ -1012,8 +318,7 @@ result = greet("World")
 print(result)`
   },
   "notebook-intro": {
-    title: "notebook_intro.nomi",
-    desc: "Lightweight cell workflow with # %% markers.",
+    title: "notebook_intro.nomi", desc: "Notebook cells example.",
     source: "samples/notebook_intro.nomi",
     code: `# %% Define a reusable function
 func normalize_name(name):
@@ -1031,23 +336,19 @@ for name in names:
 print(clean_names)`
   },
   terse: {
-    title: "demo_terse.nomi",
-    desc: "Compact syntax tour from samples/demo_terse.nomi.",
+    title: "demo_terse.nomi", desc: "Compact syntax tour from samples/demo_terse.nomi.",
     source: "samples/demo_terse.nomi",
-    code: `# Nomi by Example - Terse
-func greet(name): return "Hello, " + name
+    code: `func greet(name): return "Hello, " + name
 print(greet("Nomi"))`
   },
   collections: {
-    title: "collections.nomi",
-    desc: "Collection examples from samples/collections.nomi.",
+    title: "collections.nomi", desc: "Collection examples from samples/collections.nomi.",
     source: "samples/collections.nomi",
     code: `inclusive = list(1..5)
 print("1..5 = " + str(inclusive))`
   },
   block: {
-    title: "blocks.nomi",
-    desc: "Yield-to-block control with a running total.",
+    title: "blocks.nomi", desc: "Yield-to-block control with a running total.",
     code: `func each(items):
     for item in items:
         yield item
@@ -1060,8 +361,7 @@ each([1, -2, 3, 8]) -> item:
 print(f"total = {total}")`
   },
   constraint: {
-    title: "constraints.nomi",
-    desc: "Binding constraints and a match statement.",
+    title: "constraints.nomi", desc: "Binding constraints and a match statement.",
     code: `is_positive = (x) => x > 0
 score: int, is_positive = 72
 
@@ -1074,54 +374,32 @@ match score:
 print(f"score={score}, grade={label}")`
   }
 };
-
 const SAMPLE_DESCRIPTIONS = {
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
   "samples/demo_terse.nomi": "Compact syntax tour from samples/demo_terse.nomi.",
   "samples/collections.nomi": "Collection examples from samples/collections.nomi.",
-  "samples/notebook_intro.nomi": "Lightweight cell workflow with # %% markers."
+  "samples/notebook_intro.nomi": "Notebook cells example."
 };
 
 function sampleKey(path) {
-  return path
-    .replace(/^samples\//, "")
-    .replace(/\.nomi$/, "")
-    .replace(/_/g, "-");
+  return path.replace(/^samples\//,"").replace(/\.nomi$/,"").replace(/_/g,"-");
 }
 
 async function loadSampleSources() {
   try {
-    const response = await fetch("./manifest.json");
-    if (!response.ok) {
-      return;
-    }
-    const manifest = await response.json();
-    const samplePaths = manifest.samples || [];
-    for (const path of samplePaths) {
-      const key = path === "samples/demo.nomi"
-        ? "demo"
-        : path === "samples/demo_terse.nomi"
-          ? "terse"
-          : sampleKey(path);
+    const resp = await fetch("./manifest.json");
+    if (!resp.ok) return;
+    const manifest = await resp.json();
+    for (const path of (manifest.samples || [])) {
+      const key = path === "samples/demo.nomi" ? "demo" : path === "samples/demo_terse.nomi" ? "terse" : sampleKey(path);
       const sampleUrl = new URL(`../${path}`, location.href);
-      const sampleResponse = await fetch(sampleUrl);
-      if (!sampleResponse.ok) {
-        continue;
-      }
-      const code = await sampleResponse.text();
+      const r = await fetch(sampleUrl);
+      if (!r.ok) continue;
+      const code = await r.text();
       const existing = DEMOS[key] || {};
-      DEMOS[key] = {
-        title: path.split("/").pop(),
-        desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`,
-        source: path,
-        code,
-        ...existing,
-        code
-      };
+      DEMOS[key] = { title: path.split("/").pop(), desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`, source: path, code, ...existing, code };
     }
-  } catch (error) {
-    console.warn("[web] Could not load samples from manifest", error);
-  }
+  } catch (e) { console.warn("[web] Could not load samples from manifest", e); }
 }
 
 // --- Sidebar ---
@@ -1132,410 +410,308 @@ function buildFileList() {
   byId("sample-count").textContent = `${entries.length} files`;
   for (const [name, demo] of entries) {
     const el = document.createElement("button");
-    el.type = "button";
-    el.className = "sample";
-    el.dataset.sample = name;
+    el.type = "button"; el.className = "sample"; el.dataset.sample = name;
     el.onclick = () => loadFile(name);
-    el.innerHTML = `
-      <span class="sample-name">${esc(demo.title)}</span>
-      <span class="sample-meta">${lineCount(demo.code)} lines</span>
-      <span class="sample-desc">${esc(demo.desc)}</span>
-    `;
+    el.innerHTML = `<span class="sample-name">${esc(demo.title)}</span><span class="sample-meta">${lineCount(demo.code)} lines</span><span class="sample-desc">${esc(demo.desc)}</span>`;
     list.appendChild(el);
   }
 }
 
 window.loadFile = function(name) {
-  if (!DEMOS[name] || !_editor) {
-    return;
-  }
+  if (!DEMOS[name]) return;
   _currentSample = name;
-  _editor.setValue(DEMOS[name].code);
   byId("current-file").textContent = DEMOS[name].title;
-  document.querySelectorAll(".sample").forEach((el) => {
-    el.classList.toggle("active", el.dataset.sample === name);
+  document.querySelectorAll(".sample").forEach(el => el.classList.toggle("active", el.dataset.sample === name));
+  loadCode(DEMOS[name].code);
+};
+
+// --- Cell management ---
+function markerMatch(line) { return line.match(/^\s*#\s*%%\s*(.*)$/); }
+
+function splitCode(code) {
+  const lines = code.split(/\r\n|\r|\n/);
+  const markers = [];
+  lines.forEach((line, i) => { const m = markerMatch(line); if (m) markers.push({ line: i+1, title: m[1].trim() }); });
+  if (markers.length === 0) return [code.trim() || "# empty cell"];
+  return markers.map((mk, i) => {
+    const start = mk.line + 1;
+    const end = (markers[i+1] ? markers[i+1].line - 1 : lines.length);
+    return lines.slice(start - 1, end).join("\n").trim() || "# empty cell";
   });
-  updateEditorMeta();
-  _editor.focus();
-};
-
-window.resetCurrentSample = function() {
-  loadFile(_currentSample);
-};
-
-// --- Output ---
-function renderBindings(bindings) {
-  const target = byId("bindings-content");
-  if (!bindings || bindings.size === 0) {
-    target.innerHTML = `<span class="empty-output">No public bindings were produced.</span>`;
-    byId("binding-count").textContent = "0 bindings";
-    return;
-  }
-
-  let html = "";
-  bindings.forEach((value, key) => {
-    html += `
-      <div class="binding-row">
-        <span class="binding-name">${esc(key)}</span>
-        <span class="binding-value">${esc(value)}</span>
-      </div>
-    `;
-  });
-  target.innerHTML = html;
-  byId("binding-count").textContent = `${bindings.size} bindings`;
 }
 
-function showOutput(text, isError) {
-  const out = byId("output-content");
-  out.className = isError ? "output-content error" : "output-content";
-  if (text) {
-    out.textContent = text;
-  } else {
-    out.innerHTML = `<span class="empty-output">(no output)</span>`;
-  }
-  _lastOutput = text || "";
-}
-
-function renderCellRuns() {
-  const target = byId("cells-content");
-  if (_cellRuns.length === 0) {
-    target.innerHTML = `<span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span>`;
-    return;
-  }
-
-  target.innerHTML = _cellRuns.map((run) => `
-    <article class="cell-run ${run.error ? "error" : ""}">
-      <header class="cell-run-header">
-        <span class="cell-run-number">[${run.execution}]</span>
-        <span class="cell-run-title">${esc(run.title)}</span>
-        <span class="cell-run-time">${run.elapsed} ms</span>
-      </header>
-      <div class="cell-in">
-        <div class="cell-in-label">In [${run.execution}]:</div>
-        <pre class="cell-code">${esc(run.code.trim() || "# empty cell")}</pre>
-      </div>
-      <div class="cell-out">
-        <div class="cell-out-label">Out[${run.execution}]:</div>
-        <pre class="cell-output ${run.error ? "error" : ""}">${esc(run.output || "(no output)")}</pre>
-      </div>
-    </article>
-  `).join("");
-  target.scrollTop = target.scrollHeight;
-}
-
-function cellRunsText() {
-  return _cellRuns.map((run) => [
-    `In [${run.execution}]: ${run.title}`,
-    run.code.trim(),
-    `Out [${run.execution}]:`,
-    run.output || "(no output)",
-  ].join("\n")).join("\n\n");
-}
-
-window.switchTab = function(name) {
-  _currentTab = name;
-  byId("tab-output").classList.toggle("active", name === "output");
-  byId("tab-vars").classList.toggle("active", name === "vars");
-  byId("tab-cells").classList.toggle("active", name === "cells");
-  byId("output-content").style.display = name === "output" ? "block" : "none";
-  byId("bindings-content").style.display = name === "vars" ? "block" : "none";
-  byId("cells-content").style.display = name === "cells" ? "block" : "none";
-};
-
-window.clearOutput = function() {
-  _lastOutput = "";
-  _lastBindings = new Map();
-  _cellRuns = [];
+function loadCode(code) {
+  disposeAllCells();
+  const chunks = splitCode(code);
+  chunks.forEach(c => createCell(c));
   _executionCounter = 0;
-  showOutput("", false);
-  renderBindings(_lastBindings);
-  renderCellRuns();
-  byId("run-state").textContent = "Cleared";
-  byId("summary-text").textContent = "No run result.";
-  switchTab("cells");
-};
+  updateFooter();
+}
 
-window.copyOutput = async function() {
-  const text = _currentTab === "vars"
-    ? Array.from(_lastBindings.entries()).map(([k, v]) => `${k} = ${v}`).join("\n")
-    : _currentTab === "cells"
-      ? cellRunsText()
-      : _lastOutput;
-  if (!text) {
-    return;
+function addCell(initialCode) {
+  createCell(initialCode || "");
+  scrollToBottom();
+}
+
+function createCell(code) {
+  const cells = byId("nb-cells");
+  const idx = _cellEditors.length;
+  const outer = document.createElement("div");
+  outer.className = "nb-cell";
+  outer.dataset.index = idx;
+  outer.innerHTML = `
+    <div class="nb-cell-header">
+      <span class="nb-cell-index">[${idx+1}]</span>
+      <button class="nb-cell-run" data-idx="${idx}" title="Run (Ctrl+Enter)">&#9654; Run</button>
+      <span class="nb-cell-spacer"></span>
+      <span class="nb-cell-time"></span>
+      <button class="nb-cell-delete" data-idx="${idx}" title="Delete">&times;</button>
+    </div>
+    <div class="nb-cell-editor" data-idx="${idx}"></div>
+    <div class="nb-cell-output" data-idx="${idx}">
+      <div class="out-label">Out[<span class="out-num">?</span>]:</div>
+      <pre></pre>
+    </div>`;
+  cells.appendChild(outer);
+
+  outer.addEventListener("click", () => setActiveCell(idx));
+
+  outer.querySelector(".nb-cell-run").addEventListener("click", (e) => {
+    e.stopPropagation();
+    runCell(idx, false);
+  });
+
+  outer.querySelector(".nb-cell-delete").addEventListener("click", (e) => {
+    e.stopPropagation();
+    deleteCell(idx);
+  });
+
+  createEditor(idx, code);
+  updateFooter();
+
+  if (_cellEditors.length === 1) setActiveCell(0);
+  return idx;
+}
+
+function createEditor(idx, code) {
+  const el = document.querySelector(`.nb-cell-editor[data-idx="${idx}"]`);
+  if (!el || typeof monaco === "undefined") return;
+
+  const editor = monaco.editor.create(el, {
+    value: code,
+    language: "nomi",
+    theme: "nomi-dark",
+    fontSize: 14,
+    fontFamily: "'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+    lineHeight: 22,
+    lineNumbers: "on",
+    glyphMargin: false,
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    folding: true,
+    automaticLayout: true,
+    overviewRulerBorder: false,
+    renderLineHighlight: "line",
+    wordWrap: "on",
+    scrollbar: { vertical: "hidden", horizontal: "auto" },
+    padding: { top: 8, bottom: 8 },
+  });
+
+  editor.onDidContentSizeChange((e) => {
+    const h = Math.max(60, e.contentHeight);
+    el.style.height = h + "px";
+    editor.layout();
+  });
+
+  editor.onDidFocusEditorText(() => setActiveCell(idx));
+
+  editor.addAction({
+    id: `run-cell-${idx}`,
+    label: "Run Cell",
+    keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+    run: () => runCell(idx, false),
+  });
+  editor.addAction({
+    id: `run-cell-advance-${idx}`,
+    label: "Run Cell and Advance",
+    keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
+    run: () => runCell(idx, true),
+  });
+
+  _cellEditors[idx] = editor;
+}
+
+function disposeAllCells() {
+  _cellEditors.forEach(e => e && e.dispose());
+  _cellEditors = [];
+  byId("nb-cells").innerHTML = "";
+}
+
+function deleteCell(idx) {
+  if (_cellEditors.length <= 1) return;
+  const editors = _cellEditors[idx];
+  if (editors) editors.dispose();
+  _cellEditors.splice(idx, 1);
+  const el = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (el) el.remove();
+  reindexCells();
+  updateFooter();
+}
+
+function reindexCells() {
+  document.querySelectorAll(".nb-cell").forEach((el, i) => {
+    el.dataset.index = i;
+    el.querySelector(".nb-cell-index").textContent = `[${i+1}]`;
+    el.querySelector(".nb-cell-run").dataset.idx = i;
+    el.querySelector(".nb-cell-delete").dataset.idx = i;
+    el.querySelector(".nb-cell-editor").dataset.idx = i;
+    el.querySelector(".nb-cell-output").dataset.idx = i;
+  });
+}
+
+function setActiveCell(idx) {
+  _activeCellIndex = idx;
+  document.querySelectorAll(".nb-cell").forEach(el => el.classList.remove("active"));
+  const el = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (el) {
+    el.classList.add("active");
+    const editor = _cellEditors[idx];
+    if (editor) editor.focus();
   }
-  try {
-    await navigator.clipboard.writeText(text);
-    byId("summary-text").textContent = "Copied.";
-  } catch (error) {
-    byId("summary-text").textContent = "Copy failed.";
-  }
-};
+}
+
+function updateFooter() {
+  const n = _cellEditors.length;
+  byId("cell-detail").textContent = `${n} cell${n!==1?"s":""}`;
+}
+
+function scrollToBottom() {
+  const s = byId("nb-scroll");
+  s.scrollTop = s.scrollHeight;
+}
 
 // --- Run ---
-function setRunControlsDisabled(disabled) {
-  ["run-btn", "run-cell-btn", "run-all-btn", "reset-runtime-btn"].forEach((id) => {
-    byId(id).disabled = disabled || !_ready;
-  });
-}
+async function runCell(idx, advance) {
+  if (!_ready || !_runFn) return;
+  const editor = _cellEditors[idx];
+  if (!editor) return;
+  const code = editor.getValue().trim();
+  if (!code) return;
 
-async function executeCode(code, options = {}) {
-  const {
-    reset = true,
-    title = "File",
-    recordCell = null,
-  } = options;
+  setControlsDisabled(true);
+  setStatus("running", "running");
+
+  const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  const runBtn = outer.querySelector(".nb-cell-run");
+  const timeEl = outer.querySelector(".nb-cell-time");
+  const outDiv = outer.querySelector(".nb-cell-output");
+  const outNum = outDiv.querySelector(".out-num");
+  const outPre = outDiv.querySelector("pre");
+  runBtn.classList.add("running");
+  runBtn.textContent = "...";
+
   const start = performance.now();
-  if (reset && _resetFn) {
-    await _resetFn();
-  }
-  const result = await _runFn(code);
-  const r = result.toJs();
-  const elapsed = Math.max(1, Math.round(performance.now() - start));
-  const error = r.has("error") ? r.get("error") : "";
-  const output = error || r.get("output") || "";
-  const bindings = error ? new Map() : r.get("bindings") || new Map();
-
-  showOutput(output, Boolean(error));
-  _lastBindings = bindings;
-  renderBindings(bindings);
-
-  if (r.has("session")) {
-    byId("runtime-detail").textContent = "Pyodide · session " + r.get("session");
-  }
-
-  if (recordCell) {
-    _executionCounter += 1;
-    _cellRuns.push({
-      execution: _executionCounter,
-      title,
-      code,
-      output,
-      error: Boolean(error),
-      elapsed,
-    });
-    renderCellRuns();
-  }
-
-  return { error, output, bindings, elapsed };
-}
-
-async function run() {
-  if (!_ready || !_runFn) {
-    return;
-  }
-  const code = _editor.getValue();
-  const btn = byId("run-btn");
-  btn.textContent = "Running";
-  setRunControlsDisabled(true);
-  setStatus("running", "running");
-  byId("run-state").textContent = "Running file";
-  byId("summary-text").textContent = "Evaluating current file.";
-
   try {
-    const result = await executeCode(code, { reset: true, title: "File", recordCell: { title: "File" } });
-    if (result.error) {
-      byId("run-state").textContent = "Error";
-      byId("summary-text").textContent = `Failed in ${result.elapsed} ms.`;
-      setStatus("error", "error");
-    } else {
-      byId("run-state").textContent = "Complete";
-      byId("summary-text").textContent = `Ran file in ${result.elapsed} ms.`;
-      setStatus("ready", "ready");
+    const result = await _runFn(code);
+    const r = result.toJs();
+    const elapsed = Math.max(1, Math.round(performance.now() - start));
+    const error = r.has("error") ? r.get("error") : "";
+    const output = error || r.get("output") || "(no output)";
+
+    _executionCounter++;
+    timeEl.textContent = `${elapsed} ms`;
+    outNum.textContent = _executionCounter;
+    outPre.textContent = output;
+    outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
+
+    if (r.has("session")) {
+      byId("runtime-detail").textContent = "Pyodide · session " + r.get("session");
     }
-    switchTab("cells");
-  } catch (error) {
-    showOutput(String(error), true);
-    _lastBindings = new Map();
-    renderBindings(_lastBindings);
-    byId("run-state").textContent = "Error";
-    byId("summary-text").textContent = "Runtime call failed.";
-    setStatus("error", "error");
-  } finally {
-    setRunControlsDisabled(false);
-    btn.textContent = "Run File";
+  } catch (e) {
+    const elapsed = Math.max(1, Math.round(performance.now() - start));
+    _executionCounter++;
+    timeEl.textContent = `${elapsed} ms`;
+    outNum.textContent = _executionCounter;
+    outPre.textContent = String(e);
+    outDiv.className = "nb-cell-output error show";
+  }
+
+  runBtn.classList.remove("running");
+  runBtn.innerHTML = "&#9654; Run";
+  setControlsDisabled(false);
+  setStatus("ready", "ready");
+
+  if (advance) {
+    const nextIdx = idx + 1;
+    if (nextIdx < _cellEditors.length) {
+      setActiveCell(nextIdx);
+      document.querySelector(`.nb-cell[data-index="${nextIdx}"]`).scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      addCell("");
+      setActiveCell(_cellEditors.length - 1);
+      scrollToBottom();
+    }
   }
 }
 
-window.run = run;
-
-async function runCell(advance = false) {
-  if (!_ready || !_runFn) {
-    return;
-  }
-  const cell = currentCell();
-  if (!cell || !cell.code.trim()) {
-    byId("summary-text").textContent = "Current cell is empty.";
-    return;
-  }
-
-  setRunControlsDisabled(true);
+async function runAllCells() {
+  if (!_ready || !_runFn || !_resetFn) return;
+  setControlsDisabled(true);
   setStatus("running", "running");
-  byId("run-state").textContent = `Running cell ${cell.index}`;
-  byId("summary-text").textContent = `Evaluating ${cell.title}.`;
-
-  try {
-    const result = await executeCode(cell.code, {
-      reset: false,
-      title: cell.title,
-      recordCell: cell,
-    });
-    if (result.error) {
-      byId("run-state").textContent = "Cell error";
-      byId("summary-text").textContent = `Cell ${cell.index} failed in ${result.elapsed} ms.`;
-      setStatus("error", "error");
-    } else {
-      byId("run-state").textContent = `Cell ${cell.index} complete`;
-      byId("summary-text").textContent = `Ran cell ${cell.index} in ${result.elapsed} ms.`;
-      setStatus("ready", "ready");
-      if (advance) {
-        const cells = getCells();
-        const next = cells[cell.index] || cell;
-        _editor.setPosition({ lineNumber: next.startLine, column: 1 });
-        _editor.revealLineInCenterIfOutsideViewport(next.startLine);
-      }
-    }
-    switchTab("cells");
-  } catch (error) {
-    showOutput(String(error), true);
-    byId("run-state").textContent = "Cell error";
-    byId("summary-text").textContent = "Runtime call failed.";
-    setStatus("error", "error");
-    switchTab("cells");
-  } finally {
-    setRunControlsDisabled(false);
-  }
-}
-
-window.runCurrentCell = () => runCell(false);
-
-window.runAllCells = async function() {
-  if (!_ready || !_runFn || !_resetFn) {
-    return;
-  }
-  const cells = getCells().filter((cell) => cell.code.trim());
-  if (cells.length === 0) {
-    byId("summary-text").textContent = "No runnable cells.";
-    return;
-  }
-
-  setRunControlsDisabled(true);
-  setStatus("running", "running");
-  byId("run-state").textContent = "Running cells";
-  byId("summary-text").textContent = `Evaluating ${cells.length} cells.`;
-  _cellRuns = [];
   _executionCounter = 0;
-  renderCellRuns();
   await _resetFn();
 
-  try {
-    for (const cell of cells) {
-      const result = await executeCode(cell.code, {
-        reset: false,
-        title: cell.title,
-        recordCell: cell,
-      });
-      if (result.error) {
-        byId("run-state").textContent = `Cell ${cell.index} error`;
-        byId("summary-text").textContent = `Stopped at cell ${cell.index} after ${result.elapsed} ms.`;
-        setStatus("error", "error");
-        switchTab("cells");
-        return;
-      }
+  for (let i = 0; i < _cellEditors.length; i++) {
+    await runCell(i, false);
+    const outDiv = document.querySelector(`.nb-cell-output[data-idx="${i}"]`);
+    if (outDiv && outDiv.classList.contains("error")) {
+      setStatus("error", "error");
+      gotoCell(i);
+      return;
     }
-    byId("run-state").textContent = "Cells complete";
-    byId("summary-text").textContent = `Ran ${cells.length} cells.`;
-    setStatus("ready", "ready");
-    switchTab("cells");
-  } catch (error) {
-    showOutput(String(error), true);
-    byId("run-state").textContent = "Cell error";
-    byId("summary-text").textContent = "Runtime call failed.";
-    setStatus("error", "error");
-    switchTab("cells");
-  } finally {
-    setRunControlsDisabled(false);
   }
-};
+  setStatus("ready", "ready");
+  setControlsDisabled(false);
+}
 
-window.resetRuntime = async function() {
-  if (!_ready || !_resetFn) {
-    return;
-  }
+function gotoCell(idx) {
+  const el = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+window.restartRuntime = async function() {
+  if (!_ready || !_resetFn) return;
   await _resetFn();
-  _lastBindings = new Map();
-  renderBindings(_lastBindings);
-  byId("run-state").textContent = "Runtime reset";
-  byId("summary-text").textContent = "Cell runtime cleared.";
+  _executionCounter = 0;
+  document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
+  document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
+  byId("runtime-detail").textContent = "Pyodide · restarted";
   setStatus("ready", "ready");
 };
 
 // --- Resize ---
-function setupResize(handle, left, right, dir) {
+function setupResize(handle, left) {
   let dragging = false;
   handle.addEventListener("mousedown", () => {
-    dragging = true;
-    handle.classList.add("dragging");
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
+    dragging = true; handle.classList.add("dragging");
+    document.body.style.cursor = "col-resize"; document.body.style.userSelect = "none";
   });
-
-  addEventListener("mousemove", (event) => {
-    if (!dragging) {
-      return;
-    }
-    document.documentElement.style.setProperty(
-      "--sidebar-width",
-      `${Math.max(180, Math.min(420, event.clientX - left.getBoundingClientRect().left))}px`
-    );
-    if (_editor) {
-      _editor.layout();
-    }
+  addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    document.documentElement.style.setProperty("--sidebar-width", `${Math.max(180, Math.min(420, e.clientX - left.getBoundingClientRect().left))}px`);
+    _cellEditors.forEach(ed => ed && ed.layout());
   });
-
   addEventListener("mouseup", () => {
-    dragging = false;
-    handle.classList.remove("dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
+    dragging = false; handle.classList.remove("dragging");
+    document.body.style.cursor = ""; document.body.style.userSelect = "";
   });
 }
 
-function setupResizeH(handle, top, bottom) {
-  let dragging = false;
-  handle.addEventListener("mousedown", () => {
-    dragging = true;
-    handle.classList.add("dragging");
-    document.body.style.cursor = "row-resize";
-    document.body.style.userSelect = "none";
-  });
-
-  addEventListener("mousemove", (event) => {
-    if (!dragging) {
-      return;
-    }
-    const paneTop = bottom.getBoundingClientRect().top;
-    const h = Math.max(120, Math.min(600, bottom.getBoundingClientRect().bottom - event.clientY));
-    document.documentElement.style.setProperty("--notebook-height", `${h}px`);
-    if (_editor) {
-      _editor.layout();
-    }
-  });
-
-  addEventListener("mouseup", () => {
-    dragging = false;
-    handle.classList.remove("dragging");
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  });
-}
-
-// --- Init everything ---
+// --- Init ---
 async function init() {
   await loadSampleSources();
   buildFileList();
 
-  // 1. Pyodide
   log("Loading Pyodide...");
   _pyodide = await loadPyodide();
   log("Installing lark...");
@@ -1543,7 +719,6 @@ async function init() {
   const mp = _pyodide.pyimport("micropip");
   await mp.install("lark");
 
-  // 2. Nomi runtime
   log("Initializing Nomi...");
   const nomiPy = await fetch("./nomi_web.py").then(r => r.text());
   await _pyodide.runPythonAsync(nomiPy);
@@ -1551,7 +726,6 @@ async function init() {
   _runFn = _pyodide.globals.get("run_nomi");
   _resetFn = _pyodide.globals.get("reset_session");
 
-  // 3. Monaco editor
   log("Loading editor...");
   await initMonaco();
 
@@ -1559,12 +733,12 @@ async function init() {
   byId("loading").style.display = "none";
   setStatus("ready", "ready");
   byId("runtime-detail").textContent = "Pyodide runtime ready";
-  byId("summary-text").textContent = "Ready.";
-  setRunControlsDisabled(false);
+  setControlsDisabled(false);
+
+  loadFile("demo");
   console.log("[web] Ready");
 }
 
-// --- Monaco ---
 async function initMonaco() {
   return new Promise((resolve) => {
     require.config({
@@ -1572,10 +746,7 @@ async function initMonaco() {
       "vs/nls": { availableLanguages: { "*": "en" } }
     });
     require(["vs/editor/editor.main"], function() {
-      // Register Nomi language
       monaco.languages.register({ id: "nomi", extensions: [".nomi"], aliases: ["Nomi"] });
-
-      // Monarch tokenizer mirrors tools/vscode/nomi/syntaxes/nomi.tmLanguage.json.
       monaco.languages.setMonarchTokensProvider("nomi", {
         tokenizer: {
           root: [
@@ -1597,27 +768,23 @@ async function initMonaco() {
           ],
           tqstring: [
             [/"""/, { token: "string.quote", bracket: "@close", next: "@pop" }],
-            [/[^\\"]+/, "string"],
-            [/./, "string"],
+            [/[^\\"]+/, "string"], [/./, "string"],
           ],
           tqstring2: [
             [/'''/, { token: "string.quote", bracket: "@close", next: "@pop" }],
-            [/[^\\']+/, "string"],
-            [/./, "string"],
+            [/[^\\']+/, "string"], [/./, "string"],
           ],
           dqstring: [
             [/"/, { token: "string.quote", bracket: "@close", next: "@pop" }],
             [/\\[\\'"nrtbfv]/, "string.escape"],
             [/{/, { token: "string.interpolated", next: "@interp" }],
-            [/[^\\"{]+/, "string"],
-            [/./, "string"],
+            [/[^\\"{]+/, "string"], [/./, "string"],
           ],
           sqstring: [
             [/'/, { token: "string.quote", bracket: "@close", next: "@pop" }],
             [/\\[\\'"nrtbfv]/, "string.escape"],
             [/{/, { token: "string.interpolated", next: "@interp" }],
-            [/[^\\'{]+/, "string"],
-            [/./, "string"],
+            [/[^\\'{]+/, "string"], [/./, "string"],
           ],
           interp: [
             [/}/, { token: "string.interpolated", next: "@pop" }],
@@ -1626,28 +793,16 @@ async function initMonaco() {
           ],
         },
       });
-
-      // Language configuration mirrors tools/vscode/nomi/language-configuration.json.
       monaco.languages.setLanguageConfiguration("nomi", {
         comments: { lineComment: "#" },
-        brackets: [["{", "}"], ["[", "]"], ["(", ")"]],
-        autoClosingPairs: [
-          { open: "{", close: "}" }, { open: "[", close: "]" }, { open: "(", close: ")" },
-          { open: '"', close: '"' }, { open: "'", close: "'" },
-        ],
-        surroundingPairs: [
-          ["{", "}"], ["[", "]"], ["(", ")"], ['"', '"'], ["'", "'"],
-        ],
+        brackets: [["{","}"],["[","]"],["(",")"]],
+        autoClosingPairs: [{ open:"{",close:"}" },{ open:"[",close:"]" },{ open:"(",close:")" },{ open:'"',close:'"' },{ open:"'",close:"'" }],
+        surroundingPairs: [["{","}"],["[","]"],["(",")"],['"','"'],["'","'"]],
         folding: { offSide: true },
-        indentationRules: {
-          increaseIndentPattern: /^.*:\s*$/,
-          decreaseIndentPattern: /^\s*(elif|else|except|finally|case)\b/,
-        },
+        indentationRules: { increaseIndentPattern: /^.*:\s*$/, decreaseIndentPattern: /^\s*(elif|else|except|finally|case)\b/ },
       });
-
       monaco.editor.defineTheme("nomi-dark", {
-        base: "vs-dark",
-        inherit: true,
+        base: "vs-dark", inherit: true,
         rules: [
           { token: "comment", foreground: "7f8a83", fontStyle: "italic" },
           { token: "keyword", foreground: "d6a36f" },
@@ -1663,80 +818,22 @@ async function initMonaco() {
           { token: "", foreground: "eef3ef" },
         ],
         colors: {
-          "editor.background": "#181c1a",
-          "editor.foreground": "#eef3ef",
-          "editor.lineHighlightBackground": "#202621",
-          "editor.selectionBackground": "#405146",
-          "editor.inactiveSelectionBackground": "#2d3530",
-          "editorCursor.foreground": "#a7d67a",
-          "editorLineNumber.foreground": "#657168",
-          "editorLineNumber.activeForeground": "#c8d2cc",
-          "editorIndentGuide.background1": "#2d3530",
-          "editorIndentGuide.activeBackground1": "#526259",
-          "editorGutter.background": "#181c1a",
-          "editorWidget.background": "#1f2321",
-          "editorWidget.border": "#3c443f",
+          "editor.background": "#181c1a", "editor.foreground": "#eef3ef",
+          "editor.lineHighlightBackground": "#202621", "editor.selectionBackground": "#405146",
+          "editor.inactiveSelectionBackground": "#2d3530", "editorCursor.foreground": "#a7d67a",
+          "editorLineNumber.foreground": "#657168", "editorLineNumber.activeForeground": "#c8d2cc",
+          "editorIndentGuide.background1": "#2d3530", "editorIndentGuide.activeBackground1": "#526259",
+          "editorGutter.background": "#181c1a", "editorWidget.background": "#1f2321", "editorWidget.border": "#3c443f",
         },
       });
-
-      _editor = monaco.editor.create(byId("editor-container"), {
-        value: DEMOS.demo.code,
-        language: "nomi",
-        theme: "nomi-dark",
-        fontSize: 14,
-        fontFamily: "'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
-        lineHeight: 22,
-        lineNumbers: "on",
-        glyphMargin: true,
-        minimap: { enabled: false },
-        bracketPairColorization: { enabled: true },
-        autoIndent: "full",
-        formatOnPaste: true,
-        tabSize: 4,
-        insertSpaces: false,
-        renderWhitespace: "selection",
-        scrollBeyondLastLine: false,
-        folding: true,
-        smoothScrolling: true,
-        cursorBlinking: "smooth",
-        cursorSmoothCaretAnimation: "on",
-        padding: { top: 14, bottom: 14 },
-        overviewRulerBorder: false,
-      });
-
-      _editor.onDidChangeModelContent(updateEditorMeta);
-
-      _editor.addAction({
-        id: "run-nomi",
-        label: "Run Nomi",
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-        run: () => run(),
-      });
-
-      _editor.addAction({
-        id: "run-nomi-cell",
-        label: "Run Nomi Cell",
-        keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
-        run: () => runCell(true),
-      });
-
-      loadFile("demo");
-      switchTab("cells");
-      renderBindings(_lastBindings);
-      renderCellRuns();
       resolve();
     });
   });
 }
 
 init().then(() => {
-  setupResize(byId("resize-l"), byId("sidebar"), byId("editor-container"), "left");
-  setupResizeH(byId("resize-h"), byId("editor-container"), byId("notebook-pane"));
-  addEventListener("resize", () => {
-    if (_editor) {
-      _editor.layout();
-    }
-  });
+  setupResize(byId("resize-l"), byId("sidebar"));
+  addEventListener("resize", () => _cellEditors.forEach(ed => ed && ed.layout()));
 });
 </script>
 </body>
