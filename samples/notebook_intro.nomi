@@ -1,0 +1,32 @@
+# Nomi Notebook-Style Sample
+#
+# Use Run Cell or Shift+Enter in the web playground.
+
+# %% Define a reusable function
+func normalize_name(name):
+    return name.strip().title()
+
+print(normalize_name(" ada lovelace "))
+
+# %% Bind data that later cells can reuse
+names = [" ada ", "grace", " alan turing "]
+clean_names = []
+
+for name in names:
+    clean_names.append(normalize_name(name))
+
+print(clean_names)
+
+# %% Transform a collection
+name_lengths = []
+
+for name in clean_names:
+    name_lengths.append(len(name))
+
+print(name_lengths)
+
+# %% Add a constraint
+is_positive = (n) => n > 0
+first_length:int, is_positive = name_lengths[0]
+
+print("first length = " + str(first_length))

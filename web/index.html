@@ -352,7 +352,7 @@
 
   .tabs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
     padding: 6px 10px;
     border-bottom: 1px solid var(--line-soft);
@@ -382,7 +382,8 @@
   }
 
   .output-content,
-  .bindings-content {
+  .bindings-content,
+  .cells-content {
     min-height: 0;
     overflow: auto;
     padding: 14px;
@@ -403,8 +404,98 @@
     color: var(--dim);
   }
 
-  .bindings-content {
+  .bindings-content,
+  .cells-content {
     display: none;
+  }
+
+  .cells-content {
+    padding: 10px;
+    font-family: inherit;
+    white-space: normal;
+  }
+
+  .cell-run {
+    margin-bottom: 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #171a18;
+  }
+
+  .cell-run.error {
+    border-color: rgba(239, 143, 143, 0.65);
+  }
+
+  .cell-run-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 32px;
+    padding: 6px 9px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .cell-run-title {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cell-run-time {
+    flex: 0 0 auto;
+    color: var(--dim);
+  }
+
+  .cell-io {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .cell-io:last-child {
+    border-bottom: 0;
+  }
+
+  .cell-label {
+    padding: 9px 8px;
+    color: var(--dim);
+    background: #131614;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .cell-code,
+  .cell-output {
+    min-width: 0;
+    margin: 0;
+    padding: 9px 10px;
+    overflow: auto;
+    color: var(--text);
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .cell-output.error {
+    color: var(--red);
+  }
+
+  .cell-marker-line {
+    background: rgba(119, 208, 194, 0.07);
+  }
+
+  .cell-marker-glyph {
+    border-left: 3px solid var(--teal);
   }
 
   .binding-row {
@@ -634,6 +725,7 @@
     </div>
     <div class="top-actions">
       <button type="button" onclick="loadFile('demo')">Demo</button>
+      <button type="button" onclick="loadFile('notebook-intro')">Notebook</button>
       <button type="button" onclick="loadFile('block')">Blocks</button>
       <button type="button" onclick="loadFile('constraint')">Constraints</button>
     </div>
@@ -658,7 +750,10 @@
         </div>
         <div class="editor-actions">
           <button type="button" onclick="resetCurrentSample()">Reset</button>
-          <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run</button>
+          <button type="button" onclick="resetRuntime()" id="reset-runtime-btn" disabled>Restart</button>
+          <button type="button" onclick="runCurrentCell()" id="run-cell-btn" disabled>Run Cell</button>
+          <button type="button" onclick="runAllCells()" id="run-all-btn" disabled>Run All</button>
+          <button type="button" class="run-button" id="run-btn" onclick="run()" disabled>Run File</button>
         </div>
       </div>
       <div id="editor-container"></div>
@@ -680,9 +775,11 @@
       <div class="tabs" role="tablist" aria-label="Result views">
         <button type="button" class="tab active" id="tab-output" onclick="switchTab('output')">Output</button>
         <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
+        <button type="button" class="tab" id="tab-cells" onclick="switchTab('cells')">Cells</button>
       </div>
       <div class="output-content" id="output-content"><span class="empty-output">Output appears here after a run.</span></div>
       <div class="bindings-content" id="bindings-content"></div>
+      <div class="cells-content" id="cells-content"><span class="empty-output">Cell runs appear here after Run Cell or Run All.</span></div>
       <div class="run-summary">
         <span id="summary-text">Ready when the runtime finishes loading.</span>
         <span id="binding-count">0 bindings</span>
@@ -691,7 +788,7 @@
   </main>
 
   <footer class="footer">
-    <span>Ctrl+Enter runs the current file.</span>
+    <span id="cell-detail">1 cell</span>
     <span class="spacer"></span>
     <span id="runtime-detail">Pyodide</span>
   </footer>
@@ -700,12 +797,16 @@
 <script>
 let _pyodide = null;
 let _runFn = null;
+let _resetFn = null;
 let _editor = null;
 let _ready = false;
 let _currentSample = "demo";
 let _currentTab = "output";
 let _lastOutput = "";
 let _lastBindings = new Map();
+let _cellRuns = [];
+let _executionCounter = 0;
+let _cellDecorations = [];
 
 function byId(id) {
   return document.getElementById(id);
@@ -744,7 +845,81 @@ function updateEditorMeta() {
     return;
   }
   const value = _editor.getValue();
-  byId("editor-meta").textContent = `${lineCount(value)} lines`;
+  const cells = getCells();
+  byId("editor-meta").textContent = `${lineCount(value)} lines · ${cells.length} ${cells.length === 1 ? "cell" : "cells"}`;
+  byId("cell-detail").textContent = `${cells.length} ${cells.length === 1 ? "cell" : "cells"}`;
+  updateCellDecorations(cells);
+}
+
+function markerMatch(line) {
+  return line.match(/^\s*#\s*%%\s*(.*)$/);
+}
+
+function getCells() {
+  if (!_editor) {
+    return [];
+  }
+  const value = _editor.getValue();
+  const lines = value.split(/\r\n|\r|\n/);
+  const markers = [];
+  lines.forEach((line, index) => {
+    const match = markerMatch(line);
+    if (match) {
+      markers.push({
+        line: index + 1,
+        title: match[1].trim(),
+      });
+    }
+  });
+
+  if (markers.length === 0) {
+    return [{
+      index: 1,
+      title: "File",
+      markerLine: 1,
+      startLine: 1,
+      endLine: Math.max(1, lines.length),
+      code: value,
+    }];
+  }
+
+  return markers.map((marker, index) => {
+    const next = markers[index + 1];
+    const startLine = marker.line + 1;
+    const endLine = next ? next.line - 1 : lines.length;
+    const code = lines.slice(startLine - 1, endLine).join("\n");
+    return {
+      index: index + 1,
+      title: marker.title || `Cell ${index + 1}`,
+      markerLine: marker.line,
+      startLine,
+      endLine,
+      code,
+    };
+  });
+}
+
+function currentCell() {
+  const cells = getCells();
+  const line = _editor ? _editor.getPosition().lineNumber : 1;
+  return cells.find((cell) => line >= cell.markerLine && line <= Math.max(cell.endLine, cell.markerLine)) || cells[0];
+}
+
+function updateCellDecorations(cells = getCells()) {
+  if (!_editor || typeof monaco === "undefined") {
+    return;
+  }
+  const decorations = cells
+    .filter((cell) => cell.markerLine > 0 && markerMatch(_editor.getModel().getLineContent(cell.markerLine)))
+    .map((cell) => ({
+      range: new monaco.Range(cell.markerLine, 1, cell.markerLine, 1),
+      options: {
+        isWholeLine: true,
+        className: "cell-marker-line",
+        glyphMarginClassName: "cell-marker-glyph",
+      },
+    }));
+  _cellDecorations = _editor.deltaDecorations(_cellDecorations, decorations);
 }
 
 // --- File demos ---
@@ -758,6 +933,25 @@ const DEMOS = {
 
 result = greet("World")
 print(result)`
+  },
+  "notebook-intro": {
+    title: "notebook_intro.nomi",
+    desc: "Lightweight cell workflow with # %% markers.",
+    source: "samples/notebook_intro.nomi",
+    code: `# %% Define a reusable function
+func normalize_name(name):
+    return name.strip().title()
+
+print(normalize_name(" ada lovelace "))
+
+# %% Bind data that later cells can reuse
+names = [" ada ", "grace", " alan turing "]
+clean_names = []
+
+for name in names:
+    clean_names.append(normalize_name(name))
+
+print(clean_names)`
   },
   terse: {
     title: "demo_terse.nomi",
@@ -807,7 +1001,8 @@ print(f"score={score}, grade={label}")`
 const SAMPLE_DESCRIPTIONS = {
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
   "samples/demo_terse.nomi": "Compact syntax tour from samples/demo_terse.nomi.",
-  "samples/collections.nomi": "Collection examples from samples/collections.nomi."
+  "samples/collections.nomi": "Collection examples from samples/collections.nomi.",
+  "samples/notebook_intro.nomi": "Lightweight cell workflow with # %% markers."
 };
 
 function sampleKey(path) {
@@ -924,19 +1119,59 @@ function showOutput(text, isError) {
   _lastOutput = text || "";
 }
 
+function renderCellRuns() {
+  const target = byId("cells-content");
+  if (_cellRuns.length === 0) {
+    target.innerHTML = `<span class="empty-output">Cell runs appear here after Run Cell or Run All.</span>`;
+    return;
+  }
+
+  target.innerHTML = _cellRuns.map((run) => `
+    <article class="cell-run ${run.error ? "error" : ""}">
+      <header class="cell-run-header">
+        <span class="cell-run-title">In [${run.execution}]: ${esc(run.title)}</span>
+        <span class="cell-run-time">${run.elapsed} ms</span>
+      </header>
+      <div class="cell-io">
+        <span class="cell-label">In</span>
+        <pre class="cell-code">${esc(run.code.trim() || "# empty cell")}</pre>
+      </div>
+      <div class="cell-io">
+        <span class="cell-label">Out</span>
+        <pre class="cell-output ${run.error ? "error" : ""}">${esc(run.output || "(no output)")}</pre>
+      </div>
+    </article>
+  `).join("");
+  target.scrollTop = target.scrollHeight;
+}
+
+function cellRunsText() {
+  return _cellRuns.map((run) => [
+    `In [${run.execution}]: ${run.title}`,
+    run.code.trim(),
+    `Out [${run.execution}]:`,
+    run.output || "(no output)",
+  ].join("\n")).join("\n\n");
+}
+
 window.switchTab = function(name) {
   _currentTab = name;
   byId("tab-output").classList.toggle("active", name === "output");
   byId("tab-vars").classList.toggle("active", name === "vars");
+  byId("tab-cells").classList.toggle("active", name === "cells");
   byId("output-content").style.display = name === "output" ? "block" : "none";
   byId("bindings-content").style.display = name === "vars" ? "block" : "none";
+  byId("cells-content").style.display = name === "cells" ? "block" : "none";
 };
 
 window.clearOutput = function() {
   _lastOutput = "";
   _lastBindings = new Map();
+  _cellRuns = [];
+  _executionCounter = 0;
   showOutput("", false);
   renderBindings(_lastBindings);
+  renderCellRuns();
   byId("run-state").textContent = "Cleared";
   byId("summary-text").textContent = "No run result.";
   switchTab("output");
@@ -945,7 +1180,9 @@ window.clearOutput = function() {
 window.copyOutput = async function() {
   const text = _currentTab === "vars"
     ? Array.from(_lastBindings.entries()).map(([k, v]) => `${k} = ${v}`).join("\n")
-    : _lastOutput;
+    : _currentTab === "cells"
+      ? cellRunsText()
+      : _lastOutput;
   if (!text) {
     return;
   }
@@ -958,39 +1195,68 @@ window.copyOutput = async function() {
 };
 
 // --- Run ---
+function setRunControlsDisabled(disabled) {
+  ["run-btn", "run-cell-btn", "run-all-btn", "reset-runtime-btn"].forEach((id) => {
+    byId(id).disabled = disabled || !_ready;
+  });
+}
+
+async function executeCode(code, options = {}) {
+  const {
+    reset = true,
+    title = "File",
+    recordCell = null,
+  } = options;
+  const start = performance.now();
+  const result = await _runFn(code, reset);
+  const r = result.toJs();
+  const elapsed = Math.max(1, Math.round(performance.now() - start));
+  const error = r.has("error") ? r.get("error") : "";
+  const output = error || r.get("output") || "";
+  const bindings = error ? new Map() : r.get("bindings") || new Map();
+
+  showOutput(output, Boolean(error));
+  _lastBindings = bindings;
+  renderBindings(bindings);
+
+  if (recordCell) {
+    _executionCounter += 1;
+    _cellRuns.push({
+      execution: _executionCounter,
+      title,
+      code,
+      output,
+      error: Boolean(error),
+      elapsed,
+    });
+    renderCellRuns();
+  }
+
+  return { error, output, bindings, elapsed };
+}
+
 async function run() {
   if (!_ready || !_runFn) {
     return;
   }
   const code = _editor.getValue();
   const btn = byId("run-btn");
-  const start = performance.now();
-  btn.disabled = true;
   btn.textContent = "Running";
+  setRunControlsDisabled(true);
   setStatus("running", "running");
-  byId("run-state").textContent = "Running";
+  byId("run-state").textContent = "Running file";
   byId("summary-text").textContent = "Evaluating current file.";
 
   try {
-    const result = await _runFn(code);
-    const r = result.toJs();
-    const elapsed = Math.max(1, Math.round(performance.now() - start));
-    if (r.has("error")) {
-      showOutput(r.get("error"), true);
-      _lastBindings = new Map();
-      renderBindings(_lastBindings);
+    const result = await executeCode(code, { reset: true, title: "File" });
+    if (result.error) {
       byId("run-state").textContent = "Error";
-      byId("summary-text").textContent = `Failed in ${elapsed} ms.`;
+      byId("summary-text").textContent = `Failed in ${result.elapsed} ms.`;
       setStatus("error", "error");
       switchTab("output");
     } else {
-      const output = r.get("output") || "";
-      const bindings = r.get("bindings") || new Map();
-      showOutput(output, false);
-      _lastBindings = bindings;
-      renderBindings(bindings);
       byId("run-state").textContent = "Complete";
-      byId("summary-text").textContent = `Ran in ${elapsed} ms.`;
+      byId("summary-text").textContent = `Ran file in ${result.elapsed} ms.`;
       setStatus("ready", "ready");
       switchTab("output");
     }
@@ -1002,12 +1268,123 @@ async function run() {
     byId("summary-text").textContent = "Runtime call failed.";
     setStatus("error", "error");
   } finally {
-    btn.disabled = false;
-    btn.textContent = "Run";
+    setRunControlsDisabled(false);
+    btn.textContent = "Run File";
   }
 }
 
 window.run = run;
+
+async function runCell(advance = false) {
+  if (!_ready || !_runFn) {
+    return;
+  }
+  const cell = currentCell();
+  if (!cell || !cell.code.trim()) {
+    byId("summary-text").textContent = "Current cell is empty.";
+    return;
+  }
+
+  setRunControlsDisabled(true);
+  setStatus("running", "running");
+  byId("run-state").textContent = `Running cell ${cell.index}`;
+  byId("summary-text").textContent = `Evaluating ${cell.title}.`;
+
+  try {
+    const result = await executeCode(cell.code, {
+      reset: false,
+      title: cell.title,
+      recordCell: cell,
+    });
+    if (result.error) {
+      byId("run-state").textContent = "Cell error";
+      byId("summary-text").textContent = `Cell ${cell.index} failed in ${result.elapsed} ms.`;
+      setStatus("error", "error");
+    } else {
+      byId("run-state").textContent = `Cell ${cell.index} complete`;
+      byId("summary-text").textContent = `Ran cell ${cell.index} in ${result.elapsed} ms.`;
+      setStatus("ready", "ready");
+      if (advance) {
+        const cells = getCells();
+        const next = cells[cell.index] || cell;
+        _editor.setPosition({ lineNumber: next.startLine, column: 1 });
+        _editor.revealLineInCenterIfOutsideViewport(next.startLine);
+      }
+    }
+    switchTab("cells");
+  } catch (error) {
+    showOutput(String(error), true);
+    byId("run-state").textContent = "Cell error";
+    byId("summary-text").textContent = "Runtime call failed.";
+    setStatus("error", "error");
+    switchTab("output");
+  } finally {
+    setRunControlsDisabled(false);
+  }
+}
+
+window.runCurrentCell = () => runCell(false);
+
+window.runAllCells = async function() {
+  if (!_ready || !_runFn || !_resetFn) {
+    return;
+  }
+  const cells = getCells().filter((cell) => cell.code.trim());
+  if (cells.length === 0) {
+    byId("summary-text").textContent = "No runnable cells.";
+    return;
+  }
+
+  setRunControlsDisabled(true);
+  setStatus("running", "running");
+  byId("run-state").textContent = "Running cells";
+  byId("summary-text").textContent = `Evaluating ${cells.length} cells.`;
+  _cellRuns = [];
+  _executionCounter = 0;
+  renderCellRuns();
+  await _resetFn();
+
+  try {
+    for (const cell of cells) {
+      const result = await executeCode(cell.code, {
+        reset: false,
+        title: cell.title,
+        recordCell: cell,
+      });
+      if (result.error) {
+        byId("run-state").textContent = `Cell ${cell.index} error`;
+        byId("summary-text").textContent = `Stopped at cell ${cell.index} after ${result.elapsed} ms.`;
+        setStatus("error", "error");
+        switchTab("cells");
+        return;
+      }
+    }
+    byId("run-state").textContent = "Cells complete";
+    byId("summary-text").textContent = `Ran ${cells.length} cells.`;
+    setStatus("ready", "ready");
+    switchTab("cells");
+  } catch (error) {
+    showOutput(String(error), true);
+    byId("run-state").textContent = "Cell error";
+    byId("summary-text").textContent = "Runtime call failed.";
+    setStatus("error", "error");
+    switchTab("output");
+  } finally {
+    setRunControlsDisabled(false);
+  }
+};
+
+window.resetRuntime = async function() {
+  if (!_ready || !_resetFn) {
+    return;
+  }
+  await _resetFn();
+  _lastBindings = new Map();
+  renderBindings(_lastBindings);
+  byId("run-state").textContent = "Runtime reset";
+  byId("summary-text").textContent = "Cell runtime cleared.";
+  setStatus("ready", "ready");
+};
 
 // --- Resize ---
 function setupResize(handle, left, right, dir) {
@@ -1066,6 +1443,7 @@ async function init() {
   await _pyodide.runPythonAsync(nomiPy);
   await _pyodide.globals.get("init_nomi")();
   _runFn = _pyodide.globals.get("run_nomi");
+  _resetFn = _pyodide.globals.get("reset_session");
 
   // 3. Monaco editor
   log("Loading editor...");
@@ -1076,7 +1454,7 @@ async function init() {
   setStatus("ready", "ready");
   byId("runtime-detail").textContent = "Pyodide runtime ready";
   byId("summary-text").textContent = "Ready.";
-  byId("run-btn").disabled = false;
+  setRunControlsDisabled(false);
   console.log("[web] Ready");
 }
 
@@ -1203,6 +1581,7 @@ async function initMonaco() {
         fontFamily: "'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
         lineHeight: 22,
         lineNumbers: "on",
+        glyphMargin: true,
         minimap: { enabled: false },
         bracketPairColorization: { enabled: true },
         autoIndent: "full",
@@ -1228,9 +1607,17 @@ async function initMonaco() {
         run: () => run(),
       });
 
+      _editor.addAction({
+        id: "run-nomi-cell",
+        label: "Run Nomi Cell",
+        keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
+        run: () => runCell(true),
+      });
+
       loadFile("demo");
       switchTab("output");
       renderBindings(_lastBindings);
+      renderCellRuns();
       resolve();
     });
   });

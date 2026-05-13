@@ -110,6 +110,11 @@ generated from `samples/*.nomi`, so `samples/demo.nomi`,
 `samples/demo_terse.nomi`, and focused sample files stay in sync with the web
 editor.
 
+The editor also supports lightweight notebook-style cells. Mark cells with
+`# %%`, use `Shift+Enter` to run the current cell in a persistent browser
+session, use `Run All` to restart the session and evaluate cells top to bottom,
+and use `Run File` or `Ctrl+Enter` for a normal full-file run.
+
 ```bash
 python3 scripts/launch_web.py
 ```

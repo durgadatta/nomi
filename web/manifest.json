@@ -93,6 +93,7 @@
   "samples": [
     "samples/collections.nomi",
     "samples/demo.nomi",
-    "samples/demo_terse.nomi"
+    "samples/demo_terse.nomi",
+    "samples/notebook_intro.nomi"
   ]
 }

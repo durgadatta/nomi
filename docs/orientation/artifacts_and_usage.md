@@ -86,6 +86,13 @@ Monaco and Pyodide. It is a static site: the Python-hosted prototype is loaded
 into the browser from files listed in `web/manifest.json`, and sample programs
 are loaded from `samples/*.nomi`.
 
+The playground has two execution modes. `Run File` and `Ctrl+Enter` evaluate
+the current editor contents from a clean interpreter session. `# %%` comments
+split a file into lightweight cells; `Run Cell` and `Shift+Enter` evaluate the
+current cell against the browser session, while `Run All` restarts that session
+and evaluates all cells in order. The `Cells` result tab keeps a compact
+input/output history beside the plain output and bindings views.
+
 Use the launcher for local testing:
 
 ```bash
@@ -110,9 +117,9 @@ python3 scripts/make_web.py --check
 ```
 
 `make_web.py` includes prototype `.py` and `.lark` runtime files plus
-`samples/*.nomi`. When `samples/demo.nomi`, `samples/demo_terse.nomi`, or a
-focused sample changes, rerun the manifest generator before testing the web
-editor.
+`samples/*.nomi`. When `samples/demo.nomi`, `samples/demo_terse.nomi`,
+`samples/notebook_intro.nomi`, or another focused sample changes, rerun the
+manifest generator before testing the web editor.
 
 ## Portable Docker Notebook
 

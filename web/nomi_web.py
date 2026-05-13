@@ -4,6 +4,7 @@ and provides a run_nomi(code) entry point.
 """
 
 import ast
+import contextlib
 import io
 import json
 import os
@@ -74,24 +75,54 @@ async def init_nomi():
     await _ensure_prototype_loaded()
 
 
-async def run_nomi(code: str) -> dict:
-    from prototype.interpreter.nomi.usage import run_eval_loop as _run_nomi
+_SESSION_INTERPRETER = None
+
+
+def reset_session() -> dict:
+    global _SESSION_INTERPRETER
+    from prototype.interpreter.nomi.interpreter import Interpreter
+
+    _SESSION_INTERPRETER = Interpreter()
+    return {"ok": True}
+
+
+def _clean_bindings(bindings: dict) -> dict:
+    clean = {}
+    for k, v in bindings.items():
+        if k.startswith("_"):
+            continue
+        try:
+            clean[k] = repr(v)
+        except Exception:
+            clean[k] = str(type(v).__name__)
+    return clean
+
+
+def _eval_in_session(code: str) -> dict:
+    global _SESSION_INTERPRETER
+    from prototype.interpreter.nomi.usage import _nomi_desugar
+    from prototype.parser.nomi.usage import generate_ast
+
+    if _SESSION_INTERPRETER is None:
+        reset_session()
+
+    tree = generate_ast(code=code, dump=False)
+    tree = _nomi_desugar(tree)
+    tree = ast.fix_missing_locations(tree)
+    _SESSION_INTERPRETER.eval(tree)
+    return _SESSION_INTERPRETER.global_env.bindings
+
+
+async def run_nomi(code: str, reset: bool = True) -> dict:
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()
     try:
-        import contextlib
         with contextlib.redirect_stdout(stdout):
-            bindings = _run_nomi(code=code)
+            if reset:
+                reset_session()
+            bindings = _eval_in_session(code)
         raw = stdout.getvalue()
-        clean = {}
-        for k, v in bindings.items():
-            if k.startswith("_"):
-                continue
-            try:
-                clean[k] = repr(v)
-            except Exception:
-                clean[k] = str(type(v).__name__)
-        return {"output": raw, "bindings": clean}
+        return {"output": raw, "bindings": _clean_bindings(bindings)}
     except Exception as e:
         return {"error": str(e), "output": stdout.getvalue()}
