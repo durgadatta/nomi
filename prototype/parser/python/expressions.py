@@ -165,27 +165,67 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         args, keywords = args_tuple
         attr_name = name if isinstance(name, str) else name.id
         call = ast.Call(
-            func=ast.Attribute(value=obj, attr=attr_name, ctx=ast.Load()),
+            func=ast.Attribute(value=self._safe_receiver_name(), attr=attr_name, ctx=ast.Load()),
             args=args,
             keywords=keywords,
         )
-        return ast.IfExp(
-            test=ast.Compare(left=obj, ops=[ast.IsNot()],
-                              comparators=[ast.Constant(value=None)]),
-            body=call,
-            orelse=ast.Constant(value=None),
-        )
+        return self._safe_access(obj, call)
 
     def safe_getattr(self, items):
         """a?.b  →  a.b if a is not None else None"""
         obj, _tok, name = items
         attr_name = name if isinstance(name, str) else name.id
-        return ast.IfExp(
-            test=ast.Compare(left=obj, ops=[ast.IsNot()],
-                              comparators=[ast.Constant(value=None)]),
-            body=ast.Attribute(value=obj, attr=attr_name, ctx=ast.Load()),
-            orelse=ast.Constant(value=None),
+        return self._safe_access(
+            obj,
+            ast.Attribute(value=self._safe_receiver_name(), attr=attr_name, ctx=ast.Load()),
         )
+
+    def safe_getitem(self, items):
+        """a?.[i]  →  a[i] if a is not None else None"""
+        obj = items[0]
+        subscr = items[-1]
+        return self._safe_access(
+            obj,
+            ast.Subscript(
+                value=self._safe_receiver_name(),
+                slice=self._subscript_slice(subscr),
+                ctx=ast.Load(),
+            ),
+        )
+
+    @staticmethod
+    def _safe_receiver_name():
+        return ast.Name(id='__safe', ctx=ast.Load())
+
+    @staticmethod
+    def _safe_receiver_arg():
+        return ast.arg(arg='__safe')
+
+    def _safe_access(self, obj, body):
+        """Evaluate the receiver once, then perform a guarded access."""
+        receiver = self._safe_receiver_name()
+        test = ast.Compare(
+            left=receiver,
+            ops=[ast.IsNot()],
+            comparators=[ast.Constant(value=None)],
+        )
+        empty_args = ast.arguments(
+            posonlyargs=[], args=[self._safe_receiver_arg()],
+            kwonlyargs=[], kw_defaults=[], defaults=[],
+            vararg=None, kwarg=None,
+        )
+        func = ast.FunctionDef(
+            name=None,
+            args=empty_args,
+            body=[ast.Return(value=ast.IfExp(
+                test=test,
+                body=body,
+                orelse=ast.Constant(value=None),
+            ))],
+            decorator_list=[],
+            returns=None,
+        )
+        return ast.Call(func=func, args=[obj], keywords=[])
 
     def comparison(self, items):
         if not items:
@@ -376,7 +416,9 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         items: [value_expr, subscriptlist_expr]
         """
         value = ensure_expr(items[0])
-        subscr = items[1]
+        return ast.Subscript(value=value, slice=self._subscript_slice(items[1]), ctx=ast.Load())
+
+    def _subscript_slice(self, subscr):
         # Check if subscr is a direct subscript (not a list) or a single-element list
         if not isinstance(subscr, list):
             # Single subscript: could be test or slice
@@ -387,7 +429,7 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         else:
             # Multiple subscripts (from subscript_tuple): produce ast.Tuple
             slice_node = ast.Tuple(elts=[ensure_expr(s) for s in subscr], ctx=ast.Load())
-        return ast.Subscript(value=value, slice=slice_node, ctx=ast.Load())
+        return slice_node
 
     def subscript(self, items):
         """

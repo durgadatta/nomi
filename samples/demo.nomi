@@ -111,6 +111,8 @@ d1 = {"key": "found"}
 d2 = None
 v1 = d1?.get("key")     # "found"
 v2 = d2?.get("key")     # None
+v3 = [10, 20]?.[1]      # 20
+v4 = d2?.[0] ?? "none"  # "none"
 
 
 # ── 4. Collections & Data ───────────────────────────────────────────
@@ -163,6 +165,8 @@ print("2. while-let sum = " + str(while_sum))
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)
 print("3. d2?.get(key) = " + str(v2))
+print("3. [10,20]?.[1] = " + str(v3))
+print("3. None?.[0] ?? none = " + v4)
 
 print("4. 1..5 = " + str(one_to_five))
 print("4. 1..<5 = " + str(one_to_four))

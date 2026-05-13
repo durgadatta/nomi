@@ -23,7 +23,7 @@ val result = obj?.method()
 let name = user?.address?.city
 ```
 
-**Nomi proposal**:
+**Nomi**:
 
 ```nomi
 name = user?.address?.city
@@ -31,7 +31,16 @@ first = list?.[0]
 result = obj?.method()
 ```
 
-AST desugaring:
+Attribute access, method calls, and subscript access are implemented.  The
+receiver is evaluated once and then guarded against `None`:
+
+```nomi
+first = items?.[0] ?? "missing"
+name = user?.profile?.name
+value = config?.get("key")
+```
+
+Conceptual desugaring:
 ```
 user?.address?.city
 → if user is None: None else user.address?.city
@@ -58,13 +67,14 @@ val name = user.name ?: "anonymous"
 let name = user.name ?? "anonymous"
 ```
 
-**Nomi proposal**:
+**Nomi**:
 
 ```nomi
 name = user.name ?? "anonymous"
 ```
 
-Desugars to: `user.name if user.name is not None else "anonymous"`.
+Implemented.  Desugars to a conditional expression equivalent to
+`user.name if user.name is not None else "anonymous"`.
 
 ---
 
@@ -166,8 +176,8 @@ data Result[T, E]:
 
 | Feature | Effort | Impact |
 |---------|--------|--------|
-| `??` null coalesce | low | high |
-| `?.` optional chain | medium | high |
+| `??` null coalesce | done | high |
+| `?.` optional chain | done for attr/call/subscript | high |
 | Option type | high | high |
 | Result type | high | high |
 | Elvis `?? return` | medium | medium |

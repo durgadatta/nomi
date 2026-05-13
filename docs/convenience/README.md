@@ -17,7 +17,7 @@ current Nomi status, and implementation notes.
 | [if_let_detail.md](if_let_detail.md) | If-let: difference from `if`, patterns, edge cases, cross-lang ref | implemented |
 | [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial; pipeline/ranges/spread done |
 | [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial; match expressions now work in expression-valued forms |
-| [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | partial; `??`, safe attr/call done |
+| [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | partial; `??` and safe attr/call/subscript done |
 | [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | partial; try-expr and defer done |
 | [strings.md](strings.md) | interpolation, multi-line, heredocs, regex literals | partial; simple f-strings+triple-quote done |
 | [types.md](types.md) | data classes, type aliases, extension methods, operator overloading | type aliases done |

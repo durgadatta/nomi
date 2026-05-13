@@ -39,7 +39,7 @@ These convenience features are already present enough to teach with examples:
 | Composition | `|>`, `>>>`, `<<<` | The sample now uses `3 |> (dbl >>> inc)` to avoid precedence confusion. |
 | Control | `unless`, postfix `return ... if/unless ...`, if-let | Expression-postfix conditionals are still not settled. |
 | Pattern matching | match statements, guards, or-patterns, if-let, inline match expressions, indented expression-valued match cases | Full value-producing statement suites remain open. |
-| Null handling | `??`, safe method/property access via `?.` | Safe subscript `list?.[0]` is still absent. |
+| Null handling | `??`, safe method/property/subscript access via `?.` | Elvis `?? return` still needs statement-level lowering. |
 | Error handling | single-line `try` expression, `defer` | Multi-line try expressions need the same value-producing block decision as match suites. |
 | Collections | ranges `1..5`, `1..<5`, spread in lists/tuples, comprehensions | Step syntax is still absent. |
 | Strings | normal strings, raw strings, triple strings, simple f-strings via desugar | `strings.md` is stale about f-string support. |
@@ -112,8 +112,8 @@ first = items?.[0]                   # not implemented
 value = config[key] ?? return        # not implemented
 ```
 
-Safe subscript is a compact candidate: it fits beside `safe_getattr` and
-`safe_call` in `calls.lark` and `ExpressionMixin`.
+Safe subscript now fits beside `safe_getattr` and `safe_call` in `calls.lark`
+and `ExpressionMixin`.
 
 ### `error_handling.md`
 
@@ -170,10 +170,10 @@ This queue favors small, reversible changes that compose with existing passes.
 | Rank | Feature | Why It Fits | Main Risk |
 |------|---------|-------------|-----------|
 | Done | `while pattern = expr:` | Reuses `if_let_stmt`, match patterns, `while`, and `break` | Else semantics were intentionally left out. |
-| 1 | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Must avoid evaluating receiver twice. |
-| 2 | range step `1..10 by 2` | Extends existing range lowering | `by` as soft keyword may conflict with identifiers. |
-| 3 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
-| 4 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
+| Done | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Receiver is evaluated once through IIFE lowering. |
+| 1 | range step `1..10 by 2` | Extends existing range lowering | `by` as soft keyword may conflict with identifiers. |
+| 2 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
+| 3 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
 
 ## Recommended Implementation Discipline
 
