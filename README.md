@@ -6,6 +6,9 @@ Nomi is an experimental programming language built on a **small, coherent core**
 
 Rather than piling on features, Nomi focuses on a unified core where expressiveness emerges naturally. This minimalism encourages intuitive composition and sharp mental models, aligning programming with how humans reason about processes and abstractions.
 
+> **Try it live:** [durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/) —
+> a browser playground with Monaco editor, Pyodide runtime, and interactive samples.
+
 ---
 
 # Usage
@@ -104,11 +107,12 @@ roadmap and packaging notes.
 
 ## Option 6: Web Playground
 
-The browser playground lives at [web](web/). It uses Monaco for editing and
-Pyodide to run the Python-hosted prototype in the browser. The sample list is
-generated from `samples/*.nomi`, so `samples/demo.nomi`,
-`samples/demo_terse.nomi`, and focused sample files stay in sync with the web
-editor.
+A live instance runs at **[durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/)**.
+
+To run locally, the playground lives at [web](web/). It uses Monaco for editing
+and Pyodide to run the Python-hosted prototype in the browser. The sample list
+is generated from `samples/*.nomi` and `samples/*.nomi.nb`, so sample files
+stay in sync with the web editor.
 
 The editor also supports lightweight notebook-style cells. Mark cells with
 `# %%`, use `Shift+Enter` to run the current cell in a persistent browser
