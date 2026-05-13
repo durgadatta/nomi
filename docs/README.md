@@ -72,6 +72,8 @@ normal forms so Nomi grows by reduction instead of feature collection.
 - [Convenience Index](convenience/README.md)
 - [Convenience Review And Roadmap](convenience/review_and_roadmap.md) — normal
   forms, overlap critique, new candidates, implementation phases
+- [Expanded Language Research](convenience/expanded_language_research.md) —
+  newer languages, PL research ideas, consolidation decisions
 - [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
 - [Collections](convenience/collections.md) — map/filter/reduce, pipelines, ranges, spread
 - [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards

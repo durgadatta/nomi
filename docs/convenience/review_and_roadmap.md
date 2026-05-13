@@ -326,6 +326,13 @@ Consolidation decisions:
 These candidates extend the convenience roadmap while staying inside the
 normal forms above.
 
+For a broader second-pass survey of newer languages and PL research, including
+Gleam, Roc, Unison, Koka, Flix, Zig, Mojo, Hylo, Vale, Verse, ReScript, CUE,
+Nickel, Pkl, Dhall, Darklang, and modern array-language work, see
+[expanded_language_research.md](expanded_language_research.md). That document
+adds source-specific comparisons and keeps the admission decision tied to the
+same normal forms.
+
 | Candidate | Status | Normal form | Rationale | Critique |
 | --- | --- | --- | --- | --- |
 | Unified decode protocol for `data` | prototype-ready | data boundary + binding | Makes JSON/config/CLI/CSV one workflow. | Needs missing/extra field policy and source spans. |
@@ -342,6 +349,12 @@ normal forms above.
 | Regex/string capture patterns | design-needed | pattern + binding | Useful for logs and text extraction. | Regex syntax must not become a second pattern language. |
 | Query plans with `explain` | design-needed | flow + trace | Lets collection/table transforms scale to backends. | Needs plan/value boundary before syntax. |
 | Shape/rank collection functions | research-only, library-first later | flow + collection | Learns from APL/J/Julia without glyph density. | Must not conflict with Python-compatible list arithmetic. |
+| Field provenance for decoded values | prototype-ready after decode | data boundary + diagnostic | Makes CLI/config/JSON/CSV errors name source and raw value. | Requires source spans/provenance to survive decode. |
+| Merge policies for layered config | library-first | data boundary + flow | Defaults/file/env/args need one predictable layering story. | Merge order and conflict policy must be explicit. |
+| Result pipelines | design-needed | flow + result | Chaining expected failures should not force nested matches. | Must not hide error conversion or early exits. |
+| Failure-only cleanup | library-first | block policy | Zig-style `errdefer` solves real cleanup friction. | Should integrate with transactions, not become a separate exit system. |
+| Pure/read-only blocks | research-only | effect/capability boundary | Supports local reasoning without systems ownership syntax. | Too early before capabilities and mutation policy. |
+| Projection bindings | research-only | binding target + data policy | Hylo-style projections could make focused updates expressive. | Aliasing and mutation semantics are not settled. |
 
 ## Cross-Feature Overlap And Decisions
 
@@ -536,6 +549,8 @@ small, tested, documented, and reflected in samples.
 ### Phase 0: Documentation Cleanup
 
 - [ ] Update each convenience doc with the status labels from this review.
+- [ ] Use `expanded_language_research.md` as source material when updating
+  feature docs with newer-language and PL-research comparisons.
 - [ ] Remove stale "not implemented" claims for features already covered by
   tests or samples.
 - [ ] Add a "Normal form" subsection to each feature doc.
