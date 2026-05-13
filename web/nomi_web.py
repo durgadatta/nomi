@@ -4,6 +4,7 @@ and provides run_nomi(code) and reset_session() entry points.
 """
 
 import ast
+import builtins
 import contextlib
 import io
 import json
@@ -22,6 +23,28 @@ except ImportError:
 def _log(msg):
     if PYODIDE:
         print(f"[nomi] {msg}", file=sys.stderr)
+
+
+_SESSION_KEY = "__nomi_interpreter__"
+_COUNTER_KEY = "__nomi_session_counter__"
+
+
+def _get_interpreter():
+    return getattr(builtins, _SESSION_KEY, None)
+
+
+def _set_interpreter(interp):
+    setattr(builtins, _SESSION_KEY, interp)
+
+
+def _get_counter():
+    return getattr(builtins, _COUNTER_KEY, 0)
+
+
+def _inc_counter():
+    n = _get_counter() + 1
+    setattr(builtins, _COUNTER_KEY, n)
+    return n
 
 
 def _base_url():
@@ -75,18 +98,15 @@ async def init_nomi():
     await _ensure_prototype_loaded()
 
 
-_SESSION_INTERPRETER = None
-_SESSION_ID = 0
-
 
 def reset_session() -> dict:
-    global _SESSION_INTERPRETER, _SESSION_ID
     from prototype.interpreter.nomi.interpreter import Interpreter
 
-    _SESSION_INTERPRETER = Interpreter()
-    _SESSION_ID += 1
-    _log(f"Session #{_SESSION_ID} created")
-    return {"ok": True, "session": _SESSION_ID}
+    interp = Interpreter()
+    _set_interpreter(interp)
+    sid = _inc_counter()
+    _log(f"Session #{sid} created")
+    return {"ok": True, "session": sid}
 
 
 def _clean_bindings(bindings: dict) -> dict:
@@ -102,23 +122,23 @@ def _clean_bindings(bindings: dict) -> dict:
 
 
 def _eval_in_session(code: str) -> dict:
-    global _SESSION_INTERPRETER, _SESSION_ID
     from prototype.interpreter.nomi.usage import _nomi_desugar
     from prototype.parser.nomi.usage import generate_ast
 
-    if _SESSION_INTERPRETER is None:
+    interp = _get_interpreter()
+    if interp is None:
         reset_session()
-        _log(f"Auto-created session #{_SESSION_ID}")
+        interp = _get_interpreter()
+        _log(f"Auto-created session #{_get_counter()}")
 
     tree = generate_ast(code=code, dump=False)
     tree = _nomi_desugar(tree)
     tree = ast.fix_missing_locations(tree)
-    _SESSION_INTERPRETER.eval(tree)
-    return _SESSION_INTERPRETER.global_env.bindings
+    interp.eval(tree)
+    return interp.global_env.bindings
 
 
 async def run_nomi(code: str) -> dict:
-    global _SESSION_ID
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()
@@ -126,6 +146,6 @@ async def run_nomi(code: str) -> dict:
         with contextlib.redirect_stdout(stdout):
             bindings = _eval_in_session(code)
         raw = stdout.getvalue()
-        return {"output": raw, "bindings": _clean_bindings(bindings), "session": _SESSION_ID}
+        return {"output": raw, "bindings": _clean_bindings(bindings), "session": _get_counter()}
     except Exception as e:
-        return {"error": str(e), "output": stdout.getvalue(), "session": _SESSION_ID}
+        return {"error": str(e), "output": stdout.getvalue(), "session": _get_counter()}
