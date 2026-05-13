@@ -113,6 +113,13 @@ async def init_nomi():
 
 
 def reset_session() -> dict:
+    # Clear cached prototype modules so Restart picks up code changes
+    # without a full page reload.  Pyodide's sys.modules persists across
+    # interpreter resets within the same page session.
+    for mod in list(sys.modules.keys()):
+        if mod.startswith("prototype"):
+            del sys.modules[mod]
+
     from prototype.interpreter.nomi.interpreter import Interpreter
 
     interp = Interpreter()
