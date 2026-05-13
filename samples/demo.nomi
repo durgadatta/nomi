@@ -105,6 +105,18 @@ one_to_four = list(1..<5)
 # Pipeline: thread a value through functions
 total = 1..10 |> list |> sum    # 55
 
+# Function composition — >>> (forward) and <<< (backward)
+dbl(x) = x * 2
+inc(x) = x + 1
+composed = dbl >>> inc          # apply dbl, then inc
+pipe_result = dbl >>> inc |> 3  # (dbl >>> inc)(3) = 7
+
+# Defer — schedule code to run when function exits (LIFO)
+func defer_demo():
+    defer print("deferred: third")
+    defer print("deferred: second")
+    print("immediate: first")
+
 
 # ── Results ─────────────────────────────────────────────────────────
 print("1. greet(Alice) = " + greet("Alice"))

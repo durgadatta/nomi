@@ -56,6 +56,9 @@ class ExpressionMixin:
         self.current_env.declared_nonlocals.update(node.names)
 
     def eval_Expr(self, node: ast.Expr) -> Any:
+        if getattr(node, '_nomi_defer', False):
+            self._defer_stack.append(node)
+            return None
         return self.eval(node.value)
 
     def eval_BoolOp(self, node: ast.BoolOp) -> bool:

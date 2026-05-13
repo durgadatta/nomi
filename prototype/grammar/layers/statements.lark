@@ -7,7 +7,7 @@
             | flow_stmt "unless" test _NEWLINE -> postfix_unless
             | small_stmt "where" ":" suite  -> assign_where
             | small_stmt "where" small_stmt _NEWLINE  -> assign_where_inline
-?small_stmt: (type_alias | func_equation | expr_stmt | assign_stmt | del_stmt | pass_stmt
+?small_stmt: (type_alias | func_equation | defer_stmt | expr_stmt | assign_stmt | del_stmt | pass_stmt
              | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
              | assert_stmt)
 
@@ -28,6 +28,9 @@ func_eq_args: func_eq_arg ("," func_eq_arg)*
 
 // -- type alias (Nomi) -------------------------------------------------
 type_alias: "type" NAME "=" test
+
+// -- defer (Nomi) ------------------------------------------------------
+defer_stmt: "defer" (expr_stmt | assign_stmt)
 
 // -- decorators -------------------------------------------------------
 decorator: "@" dotted_name [ "(" [arguments] ")" ] _NEWLINE

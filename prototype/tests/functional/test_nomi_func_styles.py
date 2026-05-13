@@ -598,3 +598,43 @@ def test_spread_tuple(nomi_mode):
     bindings = run(code="a = (3, 4)\nresult = (1, 2, *a)\n")
     assert bindings["result"] == (1, 2, 3, 4)
 
+
+# ── function composition >>> / <<< ──────────────────────────────────
+
+def test_compose_forward(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="dbl(x) = x * 2\ninc(x) = x + 1\nf = dbl >>> inc\nresult = f(5)\n")
+    assert bindings["result"] == 11
+
+
+def test_compose_backward(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="dbl(x) = x * 2\ninc(x) = x + 1\nf = inc <<< dbl\nresult = f(5)\n")
+    assert bindings["result"] == 11
+
+
+def test_compose_chain(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="inc(x) = x + 1\ndbl(x) = x * 2\nsq(x) = x * x\nf = inc >>> dbl >>> sq\nresult = f(3)\n")
+    assert bindings["result"] == 64
+
+
+# ── defer ────────────────────────────────────────────────────────────
+
+def test_defer_basic(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="func test():\n    defer x = 1\n    x = 2\n    return x\nresult = test()\n")
+    assert bindings["result"] == 2
+
+
+def test_defer_lifo_order(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = []\nfunc test():\n    defer result.append('third')\n    defer result.append('second')\n    result.append('first')\ntest()\n")
+    assert bindings["result"] == ["first", "second", "third"]
+
+
+def test_defer_with_return(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="func test():\n    defer x = 1\n    return 99\nresult = test()\n")
+    assert bindings["result"] == 99
+

@@ -124,6 +124,58 @@ class FunctionsMixin:
         """
         return ast.Name(id=items[0].value, ctx=ast.Load())
 
+    # ── function composition ─────────────────────────────────────────
+
+    def compose_expr(self, items):
+        """compose_expr: or_test ((COMP_BWD | COMP_FWD) or_test)*
+
+        f >>> g  →  (__x) => g(f(__x))   — forward: apply f, then g
+        f <<< g  →  (__x) => f(g(__x))   — backward: apply g, then f
+        Chaining: f >>> g >>> h  →  (__x) => h(g(f(__x)))
+        """
+        if len(items) == 1:
+            return items[0]
+
+        x = ast.Name(id='__x', ctx=ast.Load())
+
+        if str(items[1]) == '>>>':
+            body = self._compose_call(items[0], x)
+            i = 2
+            while i < len(items):
+                body = self._compose_call(items[i], body)
+                i += 2
+        else:
+            body = self._compose_call(items[-1], x)
+            i = len(items) - 3
+            while i >= 0:
+                body = self._compose_call(items[i], body)
+                i -= 2
+
+        param = ast.arg(arg='__x')
+        params = ast.arguments(
+            posonlyargs=[], args=[param], kwonlyargs=[], kw_defaults=[],
+            defaults=[], vararg=None, kwarg=None,
+        )
+        return ast.FunctionDef(
+            name=None, args=params, body=[ast.Return(value=body)],
+            decorator_list=[], returns=None,
+        )
+
+    @staticmethod
+    def _compose_call(func, arg):
+        return ast.Call(func=func, args=[arg], keywords=[])
+
+    # ── defer ────────────────────────────────────────────────────────
+
+    def defer_stmt(self, items):
+        """defer_stmt: 'defer' expr_stmt
+
+        defer file.close()  →  stores the stmt on _nomi_defer for runtime
+        """
+        stmt = items[0]
+        stmt._nomi_defer = True
+        return stmt
+
     def func_equation_no_parens(self, items):
         """func_equation_no_parens: name NAME ['when' test] '=' test
 

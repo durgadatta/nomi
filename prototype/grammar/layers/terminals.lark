@@ -28,6 +28,10 @@ RANGE_INCL: /\.\./
 RANGE_EXCL: /\.\.</
 SAFE_DOT: "?."
 
+// Function composition
+COMP_FWD: ">>>"
+COMP_BWD: "<<<"
+
 STRING: /([ubf]?r?|r[ubf])("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
 LONG_STRING: /([ubf]?r?|r[ubf])(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?''')/is
 number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER

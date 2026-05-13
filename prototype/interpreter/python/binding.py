@@ -130,6 +130,9 @@ class BindingMixin:
         """
         Evaluate assignment statements, supporting tuple/list unpacking and starred targets.
         """
+        if getattr(node, '_nomi_defer', False):
+            self._defer_stack.append(node)
+            return
         if state is None:
             # First time - try to evaluate the value
             try:

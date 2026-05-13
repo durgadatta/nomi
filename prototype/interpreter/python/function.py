@@ -64,11 +64,18 @@ class FunctionMixin(FunctionCallMixin):
         return self.gen_state(self, body, local_env)
 
     def _execute_function_body(self, body):
+        self._defer_stack = []
         try:
             self.eval(body)
             return None
         except ReturnException as re:
             return re.value
+        finally:
+            for stmt in reversed(self._defer_stack):
+                if hasattr(stmt, '_nomi_defer'):
+                    delattr(stmt, '_nomi_defer')
+                self.eval(stmt)
+            self._defer_stack = []
 
     def eval_Function(self, node: ast.FunctionDef) -> callable:
         '''

@@ -11,7 +11,8 @@ suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 
 // -- logical ---------------------------------------------------------
 ?test: func_expr | pipe_expr ("if" or_test "else" test)? | assign_expr | try_expr
-?pipe_expr: or_test (PIPE_FWD or_test)*
+?pipe_expr: compose_expr (PIPE_FWD compose_expr)*
+?compose_expr: or_test ((COMP_BWD | COMP_FWD) or_test)*
 PIPE_FWD: "|>"
 ?test_nocond: or_test
 ?or_test: nullish_expr ("or" nullish_expr)*

@@ -204,6 +204,20 @@ class ControlMixin(CompMixin):
             orelse=[],
         )
 
+    def postfix_if_expr(self, items):
+        """x = compute() if flag  →  if flag: x = compute()"""
+        stmt, condition = items
+        return ast.If(test=condition, body=[stmt], orelse=[])
+
+    def postfix_unless_expr(self, items):
+        """x = compute() unless flag  →  if not flag: x = compute()"""
+        stmt, condition = items
+        return ast.If(
+            test=ast.UnaryOp(op=ast.Not(), operand=condition),
+            body=[stmt],
+            orelse=[],
+        )
+
     def while_stmt(self, items):
         test, body, orelse = items 
         orelse = orelse or []
