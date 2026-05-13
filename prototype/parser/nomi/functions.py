@@ -51,6 +51,49 @@ class FunctionsMixin:
             cases=[match_case, wildcard],
         )
 
+    # ── try expression ───────────────────────────────────────────────
+
+    def try_except_clause(self, items):
+        """Normalize optional 'as' to always output (exc_type, exc_name, handler)."""
+        exc_type, handler_expr = items[0], items[-1]
+        exc_name = items[1] if len(items) == 3 else None
+        return (exc_type, exc_name, handler_expr)
+
+    def try_expr(self, items):
+        """try_expr: 'try' test try_except_clause+
+
+        try body except ValueError as e: handler
+        Wraps in IIFE so it can be used in expression position.
+        """
+        body_expr, *clauses = items
+        handlers = []
+        for exc_type, exc_name, handler_expr in clauses:
+            exc_node = ast.Name(id=exc_type, ctx=ast.Load())
+            handlers.append(
+                ast.ExceptHandler(
+                    type=exc_node,
+                    name=exc_name,
+                    body=[ast.Return(value=handler_expr)],
+                )
+            )
+
+        try_node = ast.Try(
+            body=[ast.Return(value=body_expr)],
+            handlers=handlers,
+            orelse=[],
+            finalbody=[],
+        )
+
+        empty_args = ast.arguments(
+            posonlyargs=[], args=[], kwonlyargs=[], kw_defaults=[],
+            defaults=[], vararg=None, kwarg=None,
+        )
+        func = ast.FunctionDef(
+            name=None, args=empty_args, body=[try_node],
+            decorator_list=[], returns=None,
+        )
+        return ast.Call(func=func, args=[], keywords=[])
+
     # ── where clause ────────────────────────────────────────────────
 
     def assign_where(self, items):
@@ -126,14 +169,20 @@ class FunctionsMixin:
         else:
             eq_args = [eq_args]  # single item
         args_list = []
+        defaults = []
         for i, arg in enumerate(eq_args):
-            if isinstance(arg, str):
+            if isinstance(arg, tuple):
+                arg_name, arg_default = arg
+                args_list.append(ast.arg(arg=arg_name))
+                if arg_default is not None:
+                    defaults.append(arg_default)
+            elif isinstance(arg, str):
                 args_list.append(ast.arg(arg=arg))
             else:
                 args_list.append(ast.arg(arg=f'__{i}'))
         params = ast.arguments(
             posonlyargs=[], args=args_list, kwonlyargs=[], kw_defaults=[],
-            defaults=[], vararg=None, kwarg=None,
+            defaults=defaults, vararg=None, kwarg=None,
         )
         fn = ast.FunctionDef(
             name=name, args=params, body=[ast.Return(value=body)],
@@ -205,7 +254,9 @@ class FunctionsMixin:
         return items
 
     def name_arg(self, items):
-        return items[0]
+        if len(items) == 1:
+            return (items[0], None)
+        return (items[0], items[1])
 
     def value_arg(self, items):
         return items[0]

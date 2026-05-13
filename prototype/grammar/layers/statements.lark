@@ -23,7 +23,8 @@ async_funcdef: "async" funcdef
 func_equation: name "(" [func_eq_args] ")" ["when" test] "=" test
              | name NAME ["when" test] "=" test -> func_equation_no_parens
 func_eq_args: func_eq_arg ("," func_eq_arg)*
-?func_eq_arg: NAME -> name_arg | test -> value_arg
+?func_eq_arg: NAME ["=" test] -> name_arg
+            | test -> value_arg
 
 // -- type alias (Nomi) -------------------------------------------------
 type_alias: "type" NAME "=" test

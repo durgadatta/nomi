@@ -17,6 +17,9 @@ add = (a, b) => a + b
 # Lightweight equation — f(a, b) = expr
 pi() = 3.14
 
+# Equations with default arguments
+add_default(a, b=10) = a + b
+
 # Underscore hole-filling lambdas (Scala-style)
 double = _ * 2
 upcase = _.upper()
@@ -65,11 +68,22 @@ poly = 2(n + 1)                # 12
 type UserId = str
 type Age = int
 
+# Triple-quoted strings — multi-line with """ or '''
+doc = """line one
+line two"""
+
+# Try as expression — single-line form
+safe = try int("not a number") except ValueError: 0
+
 # If-let — conditional pattern matching
 x = 42
 matched = "no"
 if 42 = x:
     matched = "yes"             # executes when pattern matches
+
+# Spread in literals — * unpacks iterables
+parts = [2, 3]
+merged = [1, *parts, 4]         # [1, 2, 3, 4]
 
 
 # ── 3. Null Handling ────────────────────────────────────────────────
@@ -122,3 +136,8 @@ print("3. d2?.get(key) = " + str(v2))
 print("4. 1..5 = " + str(one_to_five))
 print("4. 1..<5 = " + str(one_to_four))
 print("4. 1..10 |> sum = " + str(total))
+print("4. spread [1, *[2,3], 4] = " + str(merged))
+
+print("5. add_default(3) = " + str(add_default(3)))
+print("5. safe = try int('abc') except: 0 = " + str(safe))
+print("5. doc triple-quoted = " + doc)

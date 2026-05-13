@@ -139,10 +139,22 @@ class DataStructMixin:
         return node.value
     
     def eval_List(self, node: ast.List) -> List[Any]:
-        return [self.eval(elt) for elt in node.elts]
+        result = []
+        for elt in node.elts:
+            if isinstance(elt, ast.Starred):
+                result.extend(self.eval(elt))
+            else:
+                result.append(self.eval(elt))
+        return result
 
     def eval_Tuple(self, node: ast.Tuple) -> Tuple[Any, ...]:
-        return tuple(self.eval(elt) for elt in node.elts)
+        result = []
+        for elt in node.elts:
+            if isinstance(elt, ast.Starred):
+                result.extend(self.eval(elt))
+            else:
+                result.append(self.eval(elt))
+        return tuple(result)
 
     def eval_Slice(self, node: ast.Slice) -> slice:
         lower = self.eval(node.lower) if node.lower else None

@@ -550,3 +550,51 @@ def test_if_let_capture(nomi_mode):
     bindings = run(code="x = 99\nresult = 'none'\nif val = x:\n    result = val\n")
     assert bindings["result"] == 99
 
+
+# ── defaults in equation args ────────────────────────────────────────
+
+def test_eq_defaults_basic(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="add(a, b=1) = a + b\nresult = add(5)\n")
+    assert bindings["result"] == 6
+
+
+def test_eq_defaults_override(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="add(a, b=1) = a + b\nresult = add(5, 3)\n")
+    assert bindings["result"] == 8
+
+
+def test_eq_defaults_string(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="greet(name, greeting='Hello') = greeting + ', ' + name\nresult = greet('World')\n")
+    assert bindings["result"] == "Hello, World"
+
+
+# ── try as expression ────────────────────────────────────────────────
+
+def test_try_expr_success(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = try 42 except ValueError: 0\n")
+    assert bindings["result"] == 42
+
+
+def test_try_expr_catch(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = try int('abc') except ValueError: 0\n")
+    assert bindings["result"] == 0
+
+
+# ── spread in literals ───────────────────────────────────────────────
+
+def test_spread_list(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="a = [1, 2]\nresult = [0, *a, 3]\n")
+    assert bindings["result"] == [0, 1, 2, 3]
+
+
+def test_spread_tuple(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="a = (3, 4)\nresult = (1, 2, *a)\n")
+    assert bindings["result"] == (1, 2, 3, 4)
+

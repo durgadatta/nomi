@@ -10,7 +10,7 @@ eval_input: testlist _NEWLINE*
 suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 
 // -- logical ---------------------------------------------------------
-?test: func_expr | pipe_expr ("if" or_test "else" test)? | assign_expr
+?test: func_expr | pipe_expr ("if" or_test "else" test)? | assign_expr | try_expr
 ?pipe_expr: or_test (PIPE_FWD or_test)*
 PIPE_FWD: "|>"
 ?test_nocond: or_test
@@ -92,3 +92,8 @@ key_value: test ":"  test
 ?subscriptlist: subscript | subscript (("," subscript)+ [","] | ",") -> subscript_tuple
 ?subscript: test | ([test] ":" [test] [sliceop]) -> slice
 sliceop: ":" [test]
+
+// -- try expression (Nomi) --------------------------------------------
+// Single-line form: try body except Error as e: handler
+try_expr: "try" test try_except_clause+
+?try_except_clause: "except" NAME ["as" NAME] ":" test

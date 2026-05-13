@@ -92,7 +92,10 @@ class PiecewiseFunction(BaseDesugarer):
     def _build_pattern(self, eq_args):
         patterns = []
         for arg in eq_args:
-            if isinstance(arg, str):
+            if isinstance(arg, tuple):
+                name, _default = arg
+                patterns.append(ast.MatchAs(pattern=None, name=name))
+            elif isinstance(arg, str):
                 patterns.append(ast.MatchAs(pattern=None, name=arg))
             elif isinstance(arg, ast.Constant):
                 patterns.append(ast.MatchValue(value=arg))
