@@ -263,6 +263,10 @@ intentionally small, file-specific hints for the next cleanup pass.
 - [ ] Replace the provisional `#TODO` comments in runtime code with tracked
   backlog items or tests so implementation comments do not become the only
   record of remaining work.
+- [ ] Fix side-by-side editor/output scrolling in the web playground
+  ([`web/index.html`](../../web/index.html)); known constraints and approaches
+  documented in
+  [`web/web_playground_ui_challenges.md`](../../web/web_playground_ui_challenges.md).
 
 ## Milestone Sequence
 

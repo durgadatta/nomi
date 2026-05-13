@@ -121,6 +121,9 @@ python3 scripts/make_web.py --check
 `samples/notebook_intro.nomi`, or another focused sample changes, rerun the
 manifest generator before testing the web editor.
 
+Known UI issues (side-by-side scrolling, Monaco layout) are tracked in
+`web/web_playground_ui_challenges.md`.
+
 ## Portable Docker Notebook
 
 The repository can be packaged into a portable Linux-based Jupyter image with:
