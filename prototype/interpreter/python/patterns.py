@@ -34,18 +34,44 @@ class PatternMixin:
         pattern = case.pattern
         if not hasattr(subject, '__iter__') or isinstance(subject, (str, bytes)):
             return False
-        subject_iter = iter(subject)
-        for pat in pattern.patterns:
-            try:
-                if not self.match_case(ast.match_case(pattern=pat), next(subject_iter)):
-                    return False
-            except StopIteration:
+        values = list(subject)
+        patterns = pattern.patterns
+        star_indexes = [
+            index for index, pat in enumerate(patterns)
+            if isinstance(pat, ast.MatchStar)
+        ]
+
+        if not star_indexes:
+            if len(values) != len(patterns):
                 return False
-        try:
-            next(subject_iter)
+            return all(
+                self.match_case(ast.match_case(pattern=pat), value)
+                for pat, value in zip(patterns, values)
+            )
+
+        if len(star_indexes) > 1:
             return False
-        except StopIteration:
-            return True
+
+        star_index = star_indexes[0]
+        prefix = patterns[:star_index]
+        suffix = patterns[star_index + 1:]
+        if len(values) < len(prefix) + len(suffix):
+            return False
+
+        for pat, value in zip(prefix, values[:len(prefix)]):
+            if not self.match_case(ast.match_case(pattern=pat), value):
+                return False
+
+        suffix_values = values[len(values) - len(suffix):] if suffix else []
+        for pat, value in zip(suffix, suffix_values):
+            if not self.match_case(ast.match_case(pattern=pat), value):
+                return False
+
+        star_pattern = patterns[star_index]
+        if star_pattern.name:
+            end = len(values) - len(suffix) if suffix else len(values)
+            self.current_env.set(star_pattern.name, values[len(prefix):end])
+        return True
 
     def _match_mapping(self, case, subject):
         pattern = case.pattern

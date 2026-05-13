@@ -169,11 +169,11 @@ This queue favors small, reversible changes that compose with existing passes.
 
 | Rank | Feature | Why It Fits | Main Risk |
 |------|---------|-------------|-----------|
-| 1 | `while pattern = expr:` | Reuses `if_let_stmt`, match patterns, `while`, and `break` | Else semantics need a clear choice. |
-| 2 | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Must avoid evaluating receiver twice. |
-| 3 | range step `1..10 by 2` | Extends existing range lowering | `by` as soft keyword may conflict with identifiers. |
-| 4 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
-| 5 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
+| Done | `while pattern = expr:` | Reuses `if_let_stmt`, match patterns, `while`, and `break` | Else semantics were intentionally left out. |
+| 1 | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Must avoid evaluating receiver twice. |
+| 2 | range step `1..10 by 2` | Extends existing range lowering | `by` as soft keyword may conflict with identifiers. |
+| 3 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
+| 4 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
 
 ## Recommended Implementation Discipline
 
@@ -185,4 +185,3 @@ This queue favors small, reversible changes that compose with existing passes.
 4. Do not implement research-only ideas until the active language docs define
    their semantics.
 5. Commit one feature at a time, with docs and tests in the same commit.
-

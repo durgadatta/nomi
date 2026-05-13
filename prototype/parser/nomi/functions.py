@@ -51,6 +51,28 @@ class FunctionsMixin:
             cases=[match_case, wildcard],
         )
 
+    def while_let_stmt(self, items):
+        """while_let_stmt: 'while' pattern '=' test ':' suite
+
+        while [head, *tail] = items:
+            ...
+
+        Desugars to a ``while True`` loop whose first statement matches the
+        expression.  Non-match breaks out of the loop.
+        """
+        pattern, expr, body = items
+        match_case = ast.match_case(pattern=pattern, guard=None, body=body)
+        wildcard = ast.match_case(
+            pattern=ast.MatchAs(pattern=None),
+            guard=None,
+            body=[ast.Break()],
+        )
+        return ast.While(
+            test=ast.Constant(value=True),
+            body=[ast.Match(subject=expr, cases=[match_case, wildcard])],
+            orelse=[],
+        )
+
     # ── try expression ───────────────────────────────────────────────
 
     def try_except_clause(self, items):

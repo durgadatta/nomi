@@ -138,12 +138,37 @@ if let value = optional {
 guard let value = optional else { return }
 ```
 
-**Nomi proposal**:
+**Nomi**:
 
 ```nomi
 if Some(value) = optional:
     print(value)
+```
 
+`if-let` is implemented and supports an `else` branch:
+
+```nomi
+if [head, *tail] = items:
+    print(head)
+else:
+    print("empty")
+```
+
+`while-let` is also implemented.  The expression is re-evaluated each
+iteration; the loop exits when the pattern no longer matches:
+
+```nomi
+items = [1, 2, 3]
+total = 0
+
+while [head, *tail] = items:
+    total += head
+    items = tail
+```
+
+Future guard-let remains a proposal:
+
+```nomi
 guard Some(value) = optional:
     return
 ```
@@ -207,7 +232,8 @@ match value {  // error: non-exhaustive patterns
 
 | Feature | Effort | Impact |
 |---------|--------|--------|
-| Match as expression | medium | high |
-| If-let / guard-let | medium | high |
+| Match as expression | done for expression-valued cases | high |
+| If-let / while-let | done | high |
+| Guard-let | medium | high |
 | Exhaustiveness | high | medium |
 | Destructuring all forms | partial | done |

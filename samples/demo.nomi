@@ -90,6 +90,13 @@ matched = "no"
 if 42 = x:
     matched = "yes"             # executes when pattern matches
 
+# While-let — repeat while a pattern matches
+numbers = [1, 2, 3]
+while_sum = 0
+while [head, *tail] = numbers:
+    while_sum += head
+    numbers = tail
+
 # Spread in literals — * unpacks iterables
 parts = [2, 3]
 merged = [1, *parts, 4]         # [1, 2, 3, 4]
@@ -151,6 +158,7 @@ print("2. 2n where n=5 = " + str(twice_n))
 print("2. 2(n+1) where n=5 = " + str(poly))
 print("2. inline match 2 = " + size_label)
 print("2. indented match 3 = " + size_label_block)
+print("2. while-let sum = " + str(while_sum))
 
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)

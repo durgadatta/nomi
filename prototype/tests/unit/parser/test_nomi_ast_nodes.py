@@ -65,6 +65,17 @@ def test_inline_match_expression_builds_iife_call():
     assert isinstance(match_stmt.cases[0].body[0], ast.Return)
 
 
+def test_while_let_builds_while_match_break():
+    stmt = parse_stmt(generate_ast, "while [head, *tail] = items:\n    items = tail\n")
+
+    assert isinstance(stmt, ast.While)
+    assert isinstance(stmt.test, ast.Constant)
+    assert stmt.test.value is True
+    assert isinstance(stmt.body[0], ast.Match)
+    assert len(stmt.body[0].cases) == 2
+    assert isinstance(stmt.body[0].cases[1].body[0], ast.Break)
+
+
 def test_indented_match_expression_builds_iife_call():
     stmt = parse_stmt(generate_ast, "result = match value:\n    case 1: 'one'\n    case _: 'many'\n")
 
