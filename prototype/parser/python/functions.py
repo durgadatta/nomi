@@ -219,7 +219,6 @@ class FunctionDefMixin:
             body=suite,
             decorator_list=[],  # Handled by decorated rule
             returns=returns,    # Can be None
-            type_comment=None
         )
 
     def async_funcdef(self, items):
@@ -235,7 +234,6 @@ class FunctionDefMixin:
             body=func_def.body,
             decorator_list=func_def.decorator_list,
             returns=func_def.returns,
-            type_comment=None
         )
 
     def return_stmt(self, items):
