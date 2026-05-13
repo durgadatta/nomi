@@ -1,6 +1,6 @@
 """
 Nomi browser runtime — loads the prototype source tree into Pyodide
-and provides a run_nomi(code) entry point.
+and provides run_nomi(code) and reset_session() entry points.
 """
 
 import ast
@@ -113,14 +113,12 @@ def _eval_in_session(code: str) -> dict:
     return _SESSION_INTERPRETER.global_env.bindings
 
 
-async def run_nomi(code: str, reset: bool = True) -> dict:
+async def run_nomi(code: str) -> dict:
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()
     try:
         with contextlib.redirect_stdout(stdout):
-            if reset:
-                reset_session()
             bindings = _eval_in_session(code)
         raw = stdout.getvalue()
         return {"output": raw, "bindings": _clean_bindings(bindings)}

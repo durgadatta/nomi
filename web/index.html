@@ -1208,7 +1208,10 @@ async function executeCode(code, options = {}) {
     recordCell = null,
   } = options;
   const start = performance.now();
-  const result = await _runFn(code, reset);
+  if (reset && _resetFn) {
+    await _resetFn();
+  }
+  const result = await _runFn(code);
   const r = result.toJs();
   const elapsed = Math.max(1, Math.round(performance.now() - start));
   const error = r.has("error") ? r.get("error") : "";
