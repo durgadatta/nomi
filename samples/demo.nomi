@@ -78,6 +78,12 @@ safe = try int("not a number") except ValueError: 0
 # Inline match as expression — single-line, value-producing form
 size_label = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"
 
+# Indented match as expression — expression-valued cases
+size_label_block = match 3:
+    case 1: "one"
+    case 2: "two"
+    case _: "many"
+
 # If-let — conditional pattern matching
 x = 42
 matched = "no"
@@ -144,6 +150,7 @@ print("2. if-let matched = " + matched)
 print("2. 2n where n=5 = " + str(twice_n))
 print("2. 2(n+1) where n=5 = " + str(poly))
 print("2. inline match 2 = " + size_label)
+print("2. indented match 3 = " + size_label_block)
 
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)

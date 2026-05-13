@@ -617,6 +617,71 @@ def test_inline_match_expr_capture_and_guard(nomi_mode):
     assert bindings["result"] == 40
 
 
+def test_indented_match_expr_assignment(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "result = match 2:\n"
+            "    case 1: 'one'\n"
+            "    case 2: 'two'\n"
+            "    case _: 'many'\n"
+        )
+    )
+    assert bindings["result"] == "two"
+
+
+def test_indented_match_expr_return(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "func describe(n):\n"
+            "    return match n:\n"
+            "        case 0: 'zero'\n"
+            "        case _: 'nonzero'\n"
+            "result = describe(5)\n"
+        )
+    )
+    assert bindings["result"] == "nonzero"
+
+
+def test_indented_match_expr_capture_and_guard(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "result = match 4:\n"
+            "    case n if n > 3: n * 10\n"
+            "    case _: 0\n"
+        )
+    )
+    assert bindings["result"] == 40
+
+
+def test_indented_match_expr_nested_inline_match_value(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "result = match 'json':\n"
+            "    case 'json': match 200: case 200 => 'ok'; case _ => 'bad'\n"
+            "    case _: 'unknown'\n"
+        )
+    )
+    assert bindings["result"] == "ok"
+
+
+def test_indented_match_expr_nested_indented_match_value(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "result = match 'json':\n"
+            "    case 'json': match 200:\n"
+            "        case 200: 'ok'\n"
+            "        case _: 'bad'\n"
+            "    case _: 'unknown'\n"
+        )
+    )
+    assert bindings["result"] == "ok"
+
+
 # ── spread in literals ───────────────────────────────────────────────
 
 def test_spread_list(nomi_mode):

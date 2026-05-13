@@ -63,3 +63,15 @@ def test_inline_match_expression_builds_iife_call():
     assert isinstance(match_stmt, ast.Match)
     assert len(match_stmt.cases) == 2
     assert isinstance(match_stmt.cases[0].body[0], ast.Return)
+
+
+def test_indented_match_expression_builds_iife_call():
+    stmt = parse_stmt(generate_ast, "result = match value:\n    case 1: 'one'\n    case _: 'many'\n")
+
+    assert isinstance(stmt, ast.Assign)
+    assert isinstance(stmt.value, ast.Call)
+    assert isinstance(stmt.value.func, ast.FunctionDef)
+    match_stmt = stmt.value.func.body[0]
+    assert isinstance(match_stmt, ast.Match)
+    assert len(match_stmt.cases) == 2
+    assert isinstance(match_stmt.cases[0].body[0], ast.Return)

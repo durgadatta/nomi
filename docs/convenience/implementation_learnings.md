@@ -62,6 +62,31 @@ Cases use `=>` so the match delimiter can remain `:` without colliding with
 case bodies.  The transformer lowers each case body to `return expr` inside
 an immediately-invoked anonymous function.
 
+Indented `match` expressions work when each case body is a single expression:
+
+```nomi
+result = match value:
+    case 1: "one"
+    case _: "many"
+```
+
+This form deliberately does not use `suite` for case bodies.  It parses a
+block of expression-valued case lines and lowers them to the same IIFE shape.
+Because the inner block consumes the final newline before `_DEDENT`, assignment
+and return positions need statement-level grammar entries such as
+`target = match_block_expr` and `return match_block_expr`.
+
+Nested match values need a specific case alternative:
+
+```lark
+case_block_expr: "case" pattern ["if" test] ":" match_block_expr
+               | "case" pattern ["if" test] ":" test _NEWLINE
+```
+
+Without the first alternative, an indented nested match consumes its own final
+newline before `_DEDENT`, then the outer case still expects another `_NEWLINE`
+before the next outer `case`.
+
 ## AST: Variable Name Shadowing in Loops
 
 ### `name` reassigned in `func_equation` loop
@@ -117,7 +142,7 @@ mixing hole types in one expression.
 
 | Feature | Blocker | Doc |
 |---------|---------|-----|
-| Indented match as expression | Lark INDENT in `test` context | `challenges_match_as_expression.md` |
+| Full-suite match as expression | Lark INDENT/suite in `test` context | `challenges_match_as_expression.md` |
 | Elvis `?? return/raise` | `ast.IfExp` can't hold statements | Below |
 | Postfix `if` on expr | Conflicts with ternary `if` | Below |
 | Postfix `unless` on expr | Conflicts with expression grammar | Below |

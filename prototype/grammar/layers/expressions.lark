@@ -10,7 +10,7 @@ eval_input: testlist _NEWLINE*
 suite: simple_stmt | _NEWLINE _INDENT stmt+ _DEDENT
 
 // -- logical ---------------------------------------------------------
-?test: func_expr | match_inline | pipe_expr ("if" or_test "else" test)? | assign_expr | try_expr
+?test: func_expr | match_block_expr | match_inline | pipe_expr ("if" or_test "else" test)? | assign_expr | try_expr
 ?pipe_expr: compose_expr (PIPE_FWD compose_expr)*
 ?compose_expr: or_test ((COMP_BWD | COMP_FWD) or_test)*
 PIPE_FWD: "|>"
@@ -103,3 +103,8 @@ try_expr: "try" test try_except_clause+
 // Single-line form: match value: case 1 => "one"; case _ => "many"
 match_inline: "match" test ":" case_expr (";" case_expr)* [";"]
 case_expr: "case" pattern ["if" test] "=>" test
+
+// Indented expression form: match value:\n    case 1: "one"
+match_block_expr: "match" test ":" _NEWLINE _INDENT case_block_expr+ _DEDENT
+case_block_expr: "case" pattern ["if" test] ":" match_block_expr
+               | "case" pattern ["if" test] ":" test _NEWLINE

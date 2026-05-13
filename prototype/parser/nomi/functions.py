@@ -109,12 +109,28 @@ class FunctionsMixin:
             body=[ast.Return(value=value)],
         )
 
+    def case_block_expr(self, items):
+        """case_block_expr: 'case' pattern ['if' test] ':' test _NEWLINE"""
+        return self.case_expr(items)
+
     def match_inline(self, items):
         """match_inline: 'match' test ':' case_expr (';' case_expr)* [';']
 
         match value: case 1 => "one"; case _ => "many"
         Wraps in an IIFE so it can be used in expression position.
         """
+        return self._match_expr_iife(items)
+
+    def match_block_expr(self, items):
+        """match_block_expr: 'match' test ':' _NEWLINE _INDENT case_block_expr+ _DEDENT
+
+        match value:
+            case 1: "one"
+            case _: "many"
+        """
+        return self._match_expr_iife(items)
+
+    def _match_expr_iife(self, items):
         subject, *cases = items
         match_node = ast.Match(subject=subject, cases=cases)
         empty_args = ast.arguments(
@@ -126,6 +142,14 @@ class FunctionsMixin:
             decorator_list=[], returns=None,
         )
         return ast.Call(func=func, args=[], keywords=[])
+
+    def assign_match_block(self, items):
+        """assign_match_block: testlist_star_expr '=' match_block_expr"""
+        return self.assign(items)
+
+    def return_match_block(self, items):
+        """return_match_block: 'return' match_block_expr"""
+        return ast.Return(value=items[0])
 
     # ── where clause ────────────────────────────────────────────────
 

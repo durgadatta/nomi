@@ -1,8 +1,9 @@
 # Match as Expression — Challenges & Progress
 
 > Status: **partially implemented**.  Inline `match` expressions using
-> `=>`-separated cases are implemented.  Indented statement-style `match`
-> blocks in expression position remain deferred for the reasons captured here.
+> `=>`-separated cases are implemented.  Indented expression-valued case
+> lines are also implemented for assignment and return positions.  Full
+> statement-suite case bodies in expression position remain deferred.
 
 ## What We Want
 
@@ -140,11 +141,122 @@ messages would point to rewritten code, not original source.
 - `match_stmt` works correctly as a compound statement with INDENT/DEDENT
 - Inline match expressions work in expression position:
   `result = match value: case 1 => "one"; case _ => "many"`
+- Indented match expressions work for assignment and return positions when
+  each case body is a single expression:
+  `result = match value:\n    case 1: "one"\n    case _: "many"`
 - `match` guard evaluation was fixed (see commit `ca94916`)
 - The IIFE-transformer logic exists in the codebase (was written then
   reverted; see commit history around `match_expr` in `functions.py`)
 - `if_let_stmt` successfully uses pattern-matching-as-expression via
   desugaring to `match`
+
+## Known Unsupported Case
+
+The current indented expression form supports one expression per case line.
+That expression can itself be complex, including another match expression:
+
+```nomi
+result = match "json":
+    case "json": match 200:
+        case 200: "ok"
+        case _: "bad"
+    case _: "unknown"
+```
+
+It does **not** support full statement-suite case bodies:
+
+Full-fledged desired example that does **not** work today:
+
+```nomi
+func describe_status(response):
+    status = response["status"]
+
+    return match status:
+        case 200:
+            body = response["body"].strip()
+            print("successful response")
+            "ok: " + body
+
+        case code if code >= 500:
+            print("server failure")
+            "retry later: " + str(code)
+
+        case code:
+            print("non-success response")
+            "failed: " + str(code)
+
+result = describe_status({"status": 200, "body": " ready "})
+```
+
+The intended result would be:
+
+```nomi
+result == "ok: ready"
+```
+
+That example fails today at the first expression-style case suite:
+
+```nomi
+        case 200:
+            body = response["body"].strip()
+```
+
+Current indented match expressions only accept this narrower shape:
+
+```nomi
+return match status:
+    case 200: "ok"
+    case code if code >= 500: "retry later"
+    case code: "failed"
+```
+
+The key distinction is expression value vs. statement suite.  A nested
+`match` is still one expression value, so it can be returned from the outer
+case.  A body with local statements before the value, such as
+`body = response["body"].strip(); print(...); "ok: " + body`, needs
+value-producing block semantics that Nomi has not implemented yet.
+
+Concrete reasons this does not work yet:
+
+1. The implemented rule is intentionally narrow:
+   `case_block_expr` accepts either one expression on the case line or a nested
+   `match_block_expr`.  After `case 200:` it does not accept an arbitrary
+   newline plus indented statement suite.
+2. Reusing Python-style `suite` directly would parse statements, not a value.
+   A case body like `print("matched one"); "one"` must define which statement
+   produces the match expression's value.  Python AST has `ast.Match` as a
+   statement, not an expression, so there is no built-in place to store that
+   value.
+3. The current lowering uses an IIFE:
+   each expression-valued case becomes `case pattern: return expr`.  For a full
+   suite, the transformer would need to convert the selected suite into
+   statements that eventually `return` a value, while preserving ordinary
+   control flow like `raise`, nested `return`, `break`/`continue` errors, and
+   local bindings.
+4. The statement grammar also matters.  The working assignment/return forms
+   have special entries because the inner match block consumes the final
+   newline before `_DEDENT`.  Full-suite bodies would add another indentation
+   level and need careful statement termination so the outer assignment or
+   return can complete cleanly.
+
+What would be required to make it work:
+
+1. Add a separate grammar rule for value-producing match suites, probably
+   distinct from normal `suite`, so expression-position `match` can parse:
+   `case pattern ":" _NEWLINE _INDENT stmt* value_stmt _DEDENT`.
+2. Define Nomi's value-producing block rule.  Options include "last expression
+   wins", explicit `yield`/`return` from expression blocks, or requiring every
+   case body to end with an expression statement.  This must be specified
+   before implementation so diagnostics are coherent.
+3. Lower each selected case suite into IIFE function-body statements ending in
+   `ast.Return(value=...)`.  For example, the first case above would lower to
+   `print("matched one"); return "one"` inside the anonymous function.
+4. Add validation and diagnostics for non-value-producing cases, mixed
+   statement/value branches, and illegal control flow inside match-expression
+   suites.
+5. Add parser and interpreter tests covering full-suite case bodies,
+   fallthrough, guards, captures, side effects before the returned value, and
+   the no-match behavior.
 
 ## Concrete Next Steps
 
@@ -159,10 +271,24 @@ included:
    function, and call that function immediately
 3. Tests for assignment, return position, call arguments, captures, and guards
 
-**Next attempt if inline is insufficient:** Approach 2 with a grammar
-change that teaches Lark's indenter about `match` in expression context.
-This requires modifying the Lark-based `PythonIndenter` or switching to
-a different indentation strategy.
+**Implemented follow-up:** Indented expression-valued cases are supported
+without using `suite` in the expression grammar:
+
+```nomi
+result = match value:
+    case 1: "one"
+    case _: "many"
+```
+
+This required special statement-level entries for assignment and return,
+because the inner block consumes the terminating newline that ordinary
+`simple_stmt` assignment/return expects.
+
+**Next attempt if full block bodies are needed:** Approach 2 with a grammar
+change that teaches Lark's indenter about full `suite` bodies in expression
+context, or a deliberate source-level rewrite. This requires modifying the
+Lark-based `PythonIndenter` strategy or switching to a different indentation
+strategy.
 
 **Investigate in parallel:** Whether the Lark `earley` parser can handle
 `suite` inside a `test` if we tell the indenter to expect INDENT at that

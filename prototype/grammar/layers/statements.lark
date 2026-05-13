@@ -2,7 +2,8 @@
 // block_call_stmt, imports, control flow.
 
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
-?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
+?simple_stmt: match_block_simple_stmt
+            | small_stmt (";" small_stmt)* [";"] _NEWLINE
             | flow_stmt "if" test _NEWLINE -> postfix_if
             | flow_stmt "unless" test _NEWLINE -> postfix_unless
             | small_stmt "where" ":" suite  -> assign_where
@@ -10,6 +11,8 @@
 ?small_stmt: (type_alias | func_equation | defer_stmt | expr_stmt | assign_stmt | del_stmt | pass_stmt
              | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
              | assert_stmt)
+?match_block_simple_stmt: testlist_star_expr "=" match_block_expr -> assign_match_block
+                        | "return" match_block_expr -> return_match_block
 
 // -- funcdef (Nomi: "func" replaces "def") ----------------------------
 funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
