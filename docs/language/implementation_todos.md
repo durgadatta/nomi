@@ -27,16 +27,19 @@ limit on what should be designed.
 - [ ] For each promoted idea, document what Nomi keeps from the source language
   and what it deliberately refuses to copy.
 - [ ] Add target Nomi programs that intentionally use not-yet-implemented
-  features: shape binding, algebraic data, pipelines, block policies, symbolic
-  rewrite, table queries, and examples.
-- [ ] Add executable examples for the accepted surface forms under
-  `prototype/tests/data/sample_sources/interpreter/`.
+  features: explicit data decoding, algebraic data, pipelines, block policies,
+  symbolic rewrite, table queries, and examples.
+- [ ] Add executable examples for accepted surface forms only after focused
+  tests pass. Update `samples/demo.nomi` with the full teaching example and
+  `samples/demo_terse.nomi` with the compressed memory-refresh example. When a
+  feature belongs in interpreter regression coverage, also update the relevant
+  file under `prototype/tests/data/sample_sources/interpreter/`.
 - [ ] Add a small design-fixture file that contains desired future syntax even
   before all examples parse.
 - [ ] Add a test matrix that distinguishes currently supported, planned, and
   intentionally rejected syntax.
 
-## Track 1: Binding, Constraints, And Shape
+## Track 1: Binding, Constraints, And Data Boundaries
 
 - [ ] Introduce a runtime `BindingError` type with fields for name, value,
   failed constraint, source span when available, binding kind, and optional
@@ -107,14 +110,18 @@ limit on what should be designed.
 - [ ] Include the failing source expression when available.
 - [ ] Add regression tests for multi-constraint failures.
 
-### Shape Binding
+### Data Boundary Decoding
 
-- [ ] Add a minimal `shape` declaration grammar.
-- [ ] Implement shape validation over mappings first.
-- [ ] Support optional fields with `?`.
-- [ ] Support defaulted fields.
-- [ ] Reuse binding constraints for each field.
-- [ ] Add examples for request JSON, config, form data, and CLI args.
+- [ ] Follow `language_foundation.md`: do not add a first-layer `shape`
+  keyword as a peer to `data`.
+- [ ] Specify explicit `Data.decode(value)` conversion for external mappings
+  before considering a named structural `shape` form.
+- [ ] Reuse binding constraints for each decoded field.
+- [ ] Define missing-field, extra-field, default-field, and optional-field
+  policy.
+- [ ] Preserve source/provenance for request JSON, config, form data, CLI args,
+  CSV rows, and environment variables.
+- [ ] Add examples for explicit decode boundaries after tests pass.
 
 ## Track 2: Blocks As Control Values
 
@@ -157,7 +164,8 @@ limit on what should be designed.
   `group`, `join`, `sort`, `fold`, and `window`.
 - [ ] Decide which operations are syntax and which remain library-led block
   calls.
-- [ ] Add table/row/column shape concepts that reuse binding and constraints.
+- [ ] Add table/row/column structure concepts that reuse binding and
+  constraints without introducing a second validation story.
 - [ ] Explore APL-style rank and whole-array operations with readable spelling.
 - [ ] Add examples for ordinary lists, records, dataframes, and time-indexed
   data.
@@ -186,7 +194,7 @@ limit on what should be designed.
 
 ## Track 8: Examples, Tests, Explanation, And Trace
 
-- [ ] Specify `examples:` blocks inside functions and data/shape declarations.
+- [ ] Specify `examples:` blocks inside functions and data declarations.
 - [ ] Let examples serve as tests, documentation, and behavioral anchors.
 - [ ] Add `explain(expr)` or equivalent runtime explanation hooks.
 - [ ] Add trace objects for constraints, matches, pipelines, block control, and
@@ -216,6 +224,8 @@ limit on what should be designed.
   decision once implemented.
 - [ ] Add a conformance-style test file containing the design tests from the
   feature spec.
+- [ ] For every implemented convenience feature, update `samples/demo.nomi` and
+  `samples/demo_terse.nomi` in the same commit after tests pass.
 - [ ] Mark archived design-review docs as background source material only.
 
 ## Milestone Sequence
@@ -240,14 +250,14 @@ Milestone 1 means:
 - tests cover success and failure,
 - docs and implementation use the same vocabulary.
 
-Milestone 2 should make blocks and shape binding real:
+Milestone 2 should make product data and explicit boundary conversion real:
 
 ```python
-shape SignupPayload:
+data SignupPayload:
     email:str, contains(email, "@")
     age:int, age >= 13
 
-payload:SignupPayload = request.json
+payload = SignupPayload.decode(request.json)
 
 transaction(db):
     db.users.insert(payload.email)

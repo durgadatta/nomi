@@ -41,7 +41,7 @@ Binding appears everywhere:
 - imports,
 - destructuring,
 - pattern matching,
-- future shape binding for JSON, forms, config, and CLI values.
+- explicit decoding for JSON, forms, config, and CLI values.
 
 Python already has pieces of this idea, but they are split across type hints,
 dataclasses, `pydantic`, `argparse`, pattern matching, manual validation, and
@@ -193,26 +193,37 @@ Pattern failure and constraint failure are different:
 For `match`, constraint failure should make the case fail unless the case body
 has already started. For direct assignment, constraint failure raises.
 
-### Shape Binding
+### External Data Boundary Binding
 
-`shape` is a future declaration form for external structural data:
+External request/config/form/CLI data should reuse binding constraints without
+introducing a second field system. The first everyday spelling should be
+explicit decode into owned `data`:
 
 ```python
-shape SignupPayload:
+data SignupPayload:
     email:str, contains(email, "@")
     age:int, age >= 13 else "Must be at least 13"
-    name:str?
+    name:str = "anonymous"
 ```
 
 Usage:
 
 ```python
-payload:SignupPayload = request.json
+payload = SignupPayload.decode(request.json)
 ```
 
-`shape` is one of the most important downstream use cases for the feature. It
-turns request/config/form/CLI validation into ordinary binding and should shape
-the design even before it is implemented.
+Structural patterns cover cases where the program only needs to recognize a
+received value without constructing an owned domain value:
+
+```python
+match request.json:
+    case {"email": email:str, "age": age:(int, age >= 13)}:
+        signup(email, age)
+```
+
+Named structural contracts may be reconsidered later, but a future `shape`
+keyword must mean a named structural pattern/constraint, not a second data
+declaration.
 
 ## Constraint Kinds
 
@@ -230,7 +241,7 @@ isinstance(value, int)
 
 Open question: exact handling of generics such as `list[int]` depends on the
 eventual type/value representation. The design target should still include
-parameterized constraints, algebraic data, and shape declarations.
+parameterized constraints, algebraic data, and external data decoding.
 
 ### Predicate Constraint
 
@@ -395,11 +406,12 @@ argument mapping and yielded-value mapping.
 `data User(id:int, email:str)` creates an owned value type. The field
 constraints are binding constraints on constructor arguments.
 
-### Future `shape`
+### Future Named Structural Contracts
 
-`shape SignupPayload` creates a structural binding constraint over external
-data. A shape is not an owned runtime class by default; it is a validation and
-projection boundary.
+If admitted, a named structural contract creates a validation/projection
+boundary over external data. It must not create constructors, nominal variants,
+or a second field validation system separate from binding constraints and
+`data.decode`.
 
 ## Non-Goals For The First Detailed Pass
 

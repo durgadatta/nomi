@@ -374,7 +374,7 @@ Nomi should be designed upward in this order:
 2. bindings: how values become named concepts
 3. constraints: how concepts are judged and refined
 4. functions/calls: how values transform
-5. data/shapes: how values group into structure
+5. data/external structure: how values group and cross boundaries
 6. patterns/match: how structure is inspected
 7. collections/tables: how transformation scales across many values
 8. blocks/yield: how time-shaped control is abstracted

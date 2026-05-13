@@ -129,13 +129,13 @@ wrong layer.
 
 ## Feature Pillars
 
-### 1. Binding, Constraints, And Shape
+### 1. Binding, Constraints, And Data Boundaries
 
 Binding is the act of receiving a value into a name or structure. Constraints
 turn that act into a semantic boundary.
 
 ```python
-payload:SignupPayload = request.json
+payload = SignupPayload.decode(request.json)
 user = User(id=new_id(), email=payload.email)
 ```
 
@@ -272,16 +272,18 @@ forcing every problem into generic syntax.
 ## Target Daily Example
 
 ```python
-shape SignupPayload:
+data SignupPayload:
     email:str, contains(email, "@") else "Invalid email"
     age:int, age >= 13 else "Must be at least 13"
     plan:Plan = Plan.Free
 
 data User(id:UserId, email:str, plan:Plan)
 
-func signup(payload:SignupPayload) -> Result[User, SignupError]:
+func signup(raw:dict) -> Result[User, SignupError]:
     examples:
         {"email": "a@b.com", "age": 18} => Ok(User(...))
+
+    payload = SignupPayload.decode(raw)
 
     user =
         payload
@@ -295,10 +297,10 @@ func signup(payload:SignupPayload) -> Result[User, SignupError]:
     return Ok(user)
 ```
 
-This example combines shape binding, data modeling, result values, examples,
-pipelines, transactions, and audit policy. The ambition is not to implement all
-of this immediately. The ambition is to keep every implemented feature pointed
-toward code like this.
+This example combines explicit data decoding, data modeling, result values,
+examples, pipelines, transactions, and audit policy. The ambition is not to
+implement all of this immediately. The ambition is to keep every implemented
+feature pointed toward code like this.
 
 ## Design Discipline
 

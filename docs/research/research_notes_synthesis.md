@@ -315,15 +315,16 @@ The notes repeatedly point to a duality:
 
 Nomi implication:
 
-`data`, `shape`, constructor calls, pattern matching, and deconstruction should
-be designed together. Scala's `apply/unapply` is useful evidence, but Nomi
-should choose names and syntax that reveal construction/deconstruction directly
-instead of relying on convention.
+`data`, explicit decode boundaries, structural patterns, constructor calls,
+pattern matching, and deconstruction should be designed together. Scala's
+`apply/unapply` is useful evidence, but Nomi should choose names and syntax
+that reveal construction/deconstruction directly instead of relying on
+convention.
 
 Layer placement:
 
 ```text
-L5 data and shape
+L5 data and external structure
 L6 patterns and choice
 L10 examples and explanation
 ```
@@ -332,7 +333,7 @@ Concrete future specs:
 
 ```text
 data_declarations_feature.md
-shape_binding_feature.md
+data_decode_boundaries_feature.md
 constructors_and_deconstructors_feature.md
 patterns_and_match_feature.md
 recursive_data_and_folds_feature.md
@@ -342,7 +343,8 @@ Small-core reduction:
 
 ```text
 data declaration -> constructors + fields + pattern shape
-shape declaration -> structural constraint + projection
+decode boundary -> structural validation + projection
+structural pattern -> one-off recognition + projection
 deconstructor -> Pattern producer
 fold/catamorphism -> structured recursion over data
 lens -> focus + residue + reconstruction rule
@@ -379,13 +381,14 @@ Important distinctions:
 Nomi implication:
 
 Collection behavior should be designed as a layer over functions, calls,
-binding, and shape. Do not add ad hoc list magic one operation at a time.
+binding, and explicit structure. Do not add ad hoc list magic one operation at
+a time.
 
 Layer placement:
 
 ```text
 L4 functions and calls
-L5 data and shape
+L5 data and external structure
 L7 collections, tables, repetition
 ```
 
@@ -657,7 +660,7 @@ example-check
 | L2 binding/scope | Tennent binding/store, ALGOL blocks, R env/data masks, Scala val/var, Pascal with | `bindings_and_scope_feature.md` |
 | L3 constraints/judgement | refinement types, description logic, modal truth, BindingError, examples/tests | `constraints_and_diagnostics_feature.md` |
 | L4 functions/calls | Landin/Strachey, Lisp apply, Backus, pipelines, Kleisli, function algebra | `functions_and_calls_feature.md` |
-| L5 data/shape | ADTs, GADTs, Scala apply/unapply, Pascal records/subranges, shape validation | `data_declarations_feature.md` |
+| L5 data/external structure | ADTs, GADTs, Scala apply/unapply, Pascal records/subranges, explicit decode validation | `data_declarations_feature.md` |
 | L6 patterns/choice | unapply, pattern matching, unification, conditionals, dynamic logic | `patterns_and_match_feature.md` |
 | L7 collections/tables | APL/J/K/Q, R vectors/dataframes, Mathematica Listable/Thread, Pandas pipe/query | `collection_transforms_feature.md` |
 | L8 blocks/yield | Ruby blocks, Python generators/context managers, coroutines, delimited continuations | `block_scope_and_control_flow_feature.md` |

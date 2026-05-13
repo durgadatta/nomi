@@ -65,10 +65,13 @@ still contain open design questions.
 
 ## Convenience
 
-Per-feature research on syntactic sugar and shortcuts found across
-languages — candidates for selective implementation in Nomi.
+Per-feature research on syntactic sugar and shortcuts found across languages.
+Start with the convenience review: it consolidates candidates around shared
+normal forms so Nomi grows by reduction instead of feature collection.
 
 - [Convenience Index](convenience/README.md)
+- [Convenience Review And Roadmap](convenience/review_and_roadmap.md) — normal
+  forms, overlap critique, new candidates, implementation phases
 - [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
 - [Collections](convenience/collections.md) — map/filter/reduce, pipelines, ranges, spread
 - [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards

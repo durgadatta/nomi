@@ -209,7 +209,8 @@ Advanced power is welcome when its boundary is visible:
 - `quote:` for symbolic/code-as-data,
 - `use name:` for scoped notation,
 - `world(...)` for capability scopes,
-- `shape` for external data boundaries,
+- explicit `Data.decode(...)` and structural patterns for external data
+  boundaries,
 - block calls for control policies.
 
 Invisible ambient behavior should be treated as design debt.
@@ -244,7 +245,7 @@ This example intentionally combines ideas from several traditions while making
 them pass through one Nomi shape.
 
 ```python
-shape SignupPayload:
+data SignupPayload:
     email:str, contains(email, "@") else "Invalid email"
     age:int, age >= 13 else "Must be at least 13"
     plan:Plan = Plan.Free
@@ -257,7 +258,7 @@ func signup(raw:dict, services:SignupServices) -> SignupResult:
     examples:
         {"email": "a@b.com", "age": 18} => Created(...)
 
-    payload:SignupPayload = raw
+    payload = SignupPayload.decode(raw)
 
     user =
         payload
@@ -273,8 +274,8 @@ func signup(raw:dict, services:SignupServices) -> SignupResult:
 
 This is not syntax collage:
 
-- `shape` uses binding and constraints.
-- `data` creates pattern-matchable variants.
+- `decode` makes the external-data boundary explicit.
+- `data` uses binding and constraints for owned values and variants.
 - `examples` attach behavior to a function.
 - `|>` expresses value flow.
 - `transaction` is a block policy.

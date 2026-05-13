@@ -30,7 +30,7 @@ L1  values
 L2  bindings and scope
 L3  constraints, judgement, diagnostics
 L4  functions, calls, transformation
-L5  data and shape
+L5  data and external structure
 L6  patterns and choice
 L7  collections, tables, repetition
 L8  blocks, yield, time-shaped control
@@ -384,32 +384,34 @@ Concrete ideas:
 - `data` for owned program values,
 - product data: `data User(id:UserId, email:str)`,
 - sum data: variants such as `Ok(value)` and `Err(error)`,
-- `shape` for external structural data,
+- explicit `Data.decode(value)` for external structural data,
+- structural patterns for received values that do not become owned data,
 - optional fields and defaulted fields,
 - constructor constraints,
-- shape-to-data transformation.
+- decode-to-data transformation.
 
 Variations to research:
 
 - `data User(...)` single-line form versus block form,
 - product-only first versus sum types from the beginning,
-- structural shape versus nominal shape,
+- structural pattern versus nominal data,
 - optional marker `?` versus `Option[T]`,
-- default values in shape declarations versus separate normalization step.
+- defaults inside data declarations versus a separate normalization step.
 
 Reduction:
 
 ```text
 data declaration -> constructors + field bindings + pattern shape
-shape declaration -> named Constraint over external structure
+decode declaration/protocol -> structural validation over external structure
+structural pattern -> one-off recognition/projection over external structure
 field -> binding plus optional constraint/default
 ```
 
 Small prototype:
 
 - implement a minimal `data` declaration as constructor plus fields,
-- implement `shape` over dictionaries,
-- allow shape binding with structured diagnostics.
+- implement explicit `Data.decode(mapping)` over dictionaries,
+- allow structural pattern binding with structured diagnostics.
 
 Focused specs to write:
 
