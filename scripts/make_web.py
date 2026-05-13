@@ -15,7 +15,7 @@ PROTOTYPE_DIR = ROOT / "prototype"
 SAMPLES_DIR = ROOT / "samples"
 MANIFEST_PATH = ROOT / "web" / "manifest.json"
 RUNTIME_SUFFIXES = {".py", ".lark"}
-SAMPLE_SUFFIXES = {".nomi"}
+SAMPLE_SUFFIXES = {".nomi", ".nomi.nb"}
 IGNORED_PARTS = {"__pycache__", "tests"}
 
 
@@ -36,7 +36,7 @@ def build_manifest() -> dict:
     samples = [
         str(path.relative_to(ROOT))
         for path in sorted(SAMPLES_DIR.rglob("*"))
-        if path.is_file() and path.suffix in SAMPLE_SUFFIXES
+        if path.is_file() and (path.suffix in SAMPLE_SUFFIXES or str(path).endswith(".nomi.nb"))
     ]
     return {"files": files, "samples": samples}
 

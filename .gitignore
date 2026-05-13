@@ -27,9 +27,10 @@ htmlcov/
 coverage.xml
 .nomi/
 
-# codex
+# ai-tools
 .codex/*
 !.codex/config.toml
+.deepseek/*
 
 #packaging and distribution
 *egg-info/

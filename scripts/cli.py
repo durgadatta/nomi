@@ -24,7 +24,7 @@ def main():
         sys.exit(1)
     
     # Choose interpreter based on file extension
-    if file_path.suffix == '.nomi':
+    if file_path.suffix == '.nomi' or file_path.name.endswith('.nomi.nb'):
         run_eval_loop = run_nomi
     else:  # .py or any other extension
         run_eval_loop = run_python

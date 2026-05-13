@@ -1,0 +1,61 @@
+# Nomi by Example — Binding Constraints & Match
+#
+# A binding can carry constraints checked at assignment time.
+# `match` lets you branch on value shape with pattern cases.
+
+# -- Type + predicate constraint --------------------------------------
+is_positive = (x) => x > 0
+score: int, is_positive = 72
+
+print("score = " + str(score))
+
+# -- Constraint failure is caught at the binding ----------------------
+# Uncomment to see a BindingError:
+# bad_score: int, is_positive = -5
+
+# -- Match block expression (indented, expr on same line as case) -----
+result = match score:
+    case 100: "perfect"
+    case s if s >= 90: "excellent"
+    case _: "regular"
+
+print("grade = " + result)
+
+# -- Match inline expression (single-line, => and ;) ------------------
+label = match score: case 100 => "perfect"; case _ => "ok"
+print("label = " + label)
+
+# -- Match statement with suite bodies --------------------------------
+match score:
+    case 100:
+        print("top marks!")
+    case _:
+        print("keep going")
+
+# -- Function parameter with inline constraint ------------------------
+func double_limited(x: (int, x > 0, x < 100)):
+    return x * 2
+
+print("double_limited(5) = " + str(double_limited(5)))
+
+# -- Rebinding keeps the constraint until replaced --------------------
+age: int, age >= 0 = 30
+age = 35                       # still checked: age >= 0
+print("age = " + str(age))
+
+# Uncomment to see a constraint violation on rebind:
+# age = -1
+
+# -- Match with guard ------------------------------------------------
+value = 42
+match value:
+    case n if n < 0:
+        signal = "negative"
+    case 0:
+        signal = "zero"
+    case n if n > 100:
+        signal = "large"
+    case _:
+        signal = "normal"
+
+print("signal = " + signal)

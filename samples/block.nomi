@@ -1,0 +1,53 @@
+# Nomi by Example — Block Calls & Yield
+#
+# A block call attaches caller-side code to a function.
+# The callee invokes it with `yield` — no new control syntax needed.
+
+# -- Basic: callee yields zero values ---------------------------------
+func times(n):
+    for i in range(n):
+        yield
+
+a = 1
+times(2):
+    a = a + 1
+    print("tick " + str(a))
+
+print("a = " + str(a))
+
+# -- Policy: retry with error handling --------------------------------
+func retry(max_times, exc=None):
+    if exc is None:
+        exc = Exception
+    for i in range(max_times):
+        try:
+            yield
+            print("succeeded after " + str(i + 1) + " attempt(s)")
+            return
+        except exc as e:
+            print("attempt " + str(i + 1) + " failed: " + str(e))
+
+retry(3):
+    print("trying…")
+
+# -- Yielding values to the block -------------------------------------
+func each(items):
+    for item in items:
+        yield item
+
+each([1, 2, 3]) -> item:
+    print("each: " + str(item))
+
+# -- Multiple yielded values ------------------------------------------
+# The block parameter behaves like assignment — no special unpacking needed.
+
+each({"one": 1, "two": 2}.items()) -> key, val:
+    print("pair: " + key + " = " + str(val))
+
+# -- Running total with a filter --------------------------------------
+total = 0
+each([1, -2, 3, 8]) -> n:
+    if n > 0:
+        total += n
+
+print("sum of positives = " + str(total))
