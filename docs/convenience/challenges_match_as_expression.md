@@ -1,8 +1,8 @@
 # Match as Expression — Challenges & Progress
 
-> Status: **not yet implemented**.  This doc captures the design intent,
-> approaches tried, obstacles hit, and concrete paths for the next
-> implementation attempt.  Treat it as a handoff note.
+> Status: **partially implemented**.  Inline `match` expressions using
+> `=>`-separated cases are implemented.  Indented statement-style `match`
+> blocks in expression position remain deferred for the reasons captured here.
 
 ## What We Want
 
@@ -138,6 +138,8 @@ messages would point to rewritten code, not original source.
 ## Current State
 
 - `match_stmt` works correctly as a compound statement with INDENT/DEDENT
+- Inline match expressions work in expression position:
+  `result = match value: case 1 => "one"; case _ => "many"`
 - `match` guard evaluation was fixed (see commit `ca94916`)
 - The IIFE-transformer logic exists in the codebase (was written then
   reverted; see commit history around `match_expr` in `functions.py`)
@@ -146,18 +148,18 @@ messages would point to rewritten code, not original source.
 
 ## Concrete Next Steps
 
-**Recommended first attempt:** Approach 4 (inline match with `=>`).
+**Implemented first attempt:** Approach 4 (inline match with `=>`).
 It avoids the INDENT problem entirely, covers most use cases, and is
 backward-compatible (doesn't change existing `match_stmt`).  This
-needs:
+included:
 
-1. Grammar: add `match_inline: "match" test ":" case_expr (";" case_expr)*`
-   with `case_expr: "case" pattern "=>" test`
-2. Transformer: collect cases, wrap in FunctionDef+Call (the IIFE logic
-   already drafted in the codebase)
-3. Tests + demo update
+1. Grammar: `match_inline: "match" test ":" case_expr (";" case_expr)*`
+   with `case_expr: "case" pattern ["if" test] "=>" test`
+2. Transformer: collect cases, return each case expression from an anonymous
+   function, and call that function immediately
+3. Tests for assignment, return position, call arguments, captures, and guards
 
-**Second attempt if inline is insufficient:** Approach 2 with a grammar
+**Next attempt if inline is insufficient:** Approach 2 with a grammar
 change that teaches Lark's indenter about `match` in expression context.
 This requires modifying the Lark-based `PythonIndenter` or switching to
 a different indentation strategy.

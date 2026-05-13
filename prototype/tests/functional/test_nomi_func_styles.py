@@ -585,6 +585,38 @@ def test_try_expr_catch(nomi_mode):
     assert bindings["result"] == 0
 
 
+# ── inline match as expression ───────────────────────────────────────
+
+def test_inline_match_expr_assignment(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = match 2: case 1 => 'one'; case 2 => 'two'; case _ => 'many'\n")
+    assert bindings["result"] == "two"
+
+
+def test_inline_match_expr_return(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "func describe(n):\n"
+            "    return match n: case 0 => 'zero'; case _ => 'nonzero'\n"
+            "result = describe(5)\n"
+        )
+    )
+    assert bindings["result"] == "nonzero"
+
+
+def test_inline_match_expr_argument(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = len(match 1: case 1 => 'one'; case _ => 'many')\n")
+    assert bindings["result"] == 3
+
+
+def test_inline_match_expr_capture_and_guard(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = match 4: case n if n > 3 => n * 10; case _ => 0\n")
+    assert bindings["result"] == 40
+
+
 # ── spread in literals ───────────────────────────────────────────────
 
 def test_spread_list(nomi_mode):
@@ -637,4 +669,3 @@ def test_defer_with_return(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
     bindings = run(code="func test():\n    defer x = 1\n    return 99\nresult = test()\n")
     assert bindings["result"] == 99
-

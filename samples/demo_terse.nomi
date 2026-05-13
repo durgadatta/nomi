@@ -10,6 +10,7 @@ area = pi * r * r where: pi = 3.14159; r = 5
 
 # Control
 unless 1 > 10: label = "ok"
+size_label = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"
 
 # Null
 name = None ?? "anonymous"
@@ -23,5 +24,6 @@ v2 = None?.get("k")
 
 print(greet("Nomi"))
 print(fact(5))
+print(size_label)
 print(name)
 print(1..10 |> sum)

@@ -75,6 +75,9 @@ line two"""
 # Try as expression — single-line form
 safe = try int("not a number") except ValueError: 0
 
+# Inline match as expression — single-line, value-producing form
+size_label = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"
+
 # If-let — conditional pattern matching
 x = 42
 matched = "no"
@@ -109,7 +112,7 @@ total = 1..10 |> list |> sum    # 55
 dbl(x) = x * 2
 inc(x) = x + 1
 composed = dbl >>> inc          # apply dbl, then inc
-pipe_result = dbl >>> inc |> 3  # (dbl >>> inc)(3) = 7
+pipe_result = 3 |> (dbl >>> inc)  # (dbl >>> inc)(3) = 7
 
 # Defer — schedule code to run when function exits (LIFO)
 func defer_demo():
@@ -140,6 +143,7 @@ print("2. label = " + label)
 print("2. if-let matched = " + matched)
 print("2. 2n where n=5 = " + str(twice_n))
 print("2. 2(n+1) where n=5 = " + str(poly))
+print("2. inline match 2 = " + size_label)
 
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)

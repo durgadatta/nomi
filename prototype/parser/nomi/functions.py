@@ -94,6 +94,39 @@ class FunctionsMixin:
         )
         return ast.Call(func=func, args=[], keywords=[])
 
+    # ── inline match expression ──────────────────────────────────────
+
+    def case_expr(self, items):
+        """case_expr: 'case' pattern ['if' test] '=>' test"""
+        if len(items) == 3:
+            pattern, guard, value = items
+        else:
+            pattern, value = items
+            guard = None
+        return ast.match_case(
+            pattern=pattern,
+            guard=guard,
+            body=[ast.Return(value=value)],
+        )
+
+    def match_inline(self, items):
+        """match_inline: 'match' test ':' case_expr (';' case_expr)* [';']
+
+        match value: case 1 => "one"; case _ => "many"
+        Wraps in an IIFE so it can be used in expression position.
+        """
+        subject, *cases = items
+        match_node = ast.Match(subject=subject, cases=cases)
+        empty_args = ast.arguments(
+            posonlyargs=[], args=[], kwonlyargs=[], kw_defaults=[],
+            defaults=[], vararg=None, kwarg=None,
+        )
+        func = ast.FunctionDef(
+            name=None, args=empty_args, body=[match_node],
+            decorator_list=[], returns=None,
+        )
+        return ast.Call(func=func, args=[], keywords=[])
+
     # ── where clause ────────────────────────────────────────────────
 
     def assign_where(self, items):
@@ -359,4 +392,4 @@ class FunctionsMixin:
 
          # Make it a statement, note that ast.Expr < ast.stmt
          # else it will be ignored by file_start parsing
-        return ast.Expr(value=call) 
+        return ast.Expr(value=call)

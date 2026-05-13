@@ -52,6 +52,16 @@ For `try_expr`, using a single-line form (`try body except E: handler`)
 avoids INDENT entirely.  The `except` clauses use `:` between exception
 type and handler expression, which doesn't require indentation.
 
+The same workaround is used for inline `match` expressions:
+
+```nomi
+result = match value: case 1 => "one"; case _ => "many"
+```
+
+Cases use `=>` so the match delimiter can remain `:` without colliding with
+case bodies.  The transformer lowers each case body to `return expr` inside
+an immediately-invoked anonymous function.
+
 ## AST: Variable Name Shadowing in Loops
 
 ### `name` reassigned in `func_equation` loop
@@ -107,7 +117,7 @@ mixing hole types in one expression.
 
 | Feature | Blocker | Doc |
 |---------|---------|-----|
-| Match as expression | Lark INDENT in `test` context | `challenges_match_as_expression.md` |
+| Indented match as expression | Lark INDENT in `test` context | `challenges_match_as_expression.md` |
 | Elvis `?? return/raise` | `ast.IfExp` can't hold statements | Below |
 | Postfix `if` on expr | Conflicts with ternary `if` | Below |
 | Postfix `unless` on expr | Conflicts with expression grammar | Below |
