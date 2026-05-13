@@ -228,6 +228,42 @@ limit on what should be designed.
   `samples/demo_terse.nomi` in the same commit after tests pass.
 - [ ] Mark archived design-review docs as background source material only.
 
+## Codebase Scan Backlog
+
+These items came from a fresh scan of the prototype and tooling. They are
+intentionally small, file-specific hints for the next cleanup pass.
+
+- [ ] Update [`Dockerfile`](../../Dockerfile) to a newer Python base image once
+  the runtime and notebook stack are verified on that image.
+- [ ] Split the macOS-specific Docker/Colima bootstrap out of
+  [`scripts/run_nomi_docker.py`](../../scripts/run_nomi_docker.py) so the
+  cross-platform path stays small and the Apple-specific setup is isolated.
+- [ ] Finish the return-annotation TODO in
+  [`prototype/parser/nomi/functions.py`](../../prototype/parser/nomi/functions.py)
+  so equation-style function lowering does not depend on ad hoc placeholder
+  rewrites.
+- [ ] Clean up the generator-state comments and frame queueing in
+  [`prototype/interpreter/python/generator_state.py`](../../prototype/interpreter/python/generator_state.py)
+  so resumable execution has one named policy instead of several tentative
+  stacks and queues.
+- [ ] Revisit the generator/resumable hook-up in
+  [`prototype/interpreter/python/function.py`](../../prototype/interpreter/python/function.py)
+  and [`prototype/interpreter/python/control.py`](../../prototype/interpreter/python/control.py)
+  so the block/yield path is easier to follow.
+- [ ] Remove the stale comment about the collapsed `name` field in
+  [`prototype/parser/python/expressions.py`](../../prototype/parser/python/expressions.py)
+  after confirming the AST shape is stable.
+- [ ] Move the dedicated resumable examples into
+  [`prototype/tests/data/sample_sources/interpreter/resumable.py`](../../prototype/tests/data/sample_sources/interpreter/resumable.py)
+  and keep related examples together instead of scattering them across older
+  sample files.
+- [ ] Rewrite the block-parameter handling note in
+  [`prototype/tests/data/sample_sources/interpreter/blocks.nomi`](../../prototype/tests/data/sample_sources/interpreter/blocks.nomi)
+  once the shared binding engine is the only supported path.
+- [ ] Replace the provisional `#TODO` comments in runtime code with tracked
+  backlog items or tests so implementation comments do not become the only
+  record of remaining work.
+
 ## Milestone Sequence
 
 The first milestone should still be coherent, but it should point beyond the
