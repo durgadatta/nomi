@@ -88,13 +88,17 @@ range(1, 10, 2)     # 1,3,5,7,9
 stride(from: 1, to: 10, by: 2)
 ```
 
-**Nomi proposal**:
+**Nomi**:
 
 ```nomi
 1..10               // desugars to range(1, 11)
 1..<10              // desugars to range(1, 10)
-1..10//2            // desugars to range(1, 10, 2)
+1..10 by 2          // desugars to range(1, 11, 2)
+1..<10 by 2         // desugars to range(1, 10, 2)
 ```
+
+The `by` step form is intentionally word-based instead of `//` because `//`
+already means floor division.
 
 ---
 
@@ -173,11 +177,11 @@ generateSequence(1) { it + 1 }.take(10).toList()
 | Feature | Effort | Impact |
 |---------|--------|--------|
 | `|>` pipeline | low | high |
-| `1..10` range syntax | low | high |
+| `1..10` range syntax | done | high |
+| `1..10 by 2` range step | done | medium |
 | Spread in literals `[*a, *b]` | low | medium |
 | Slice sugar | already | — |
 | Lazy sequences | medium | medium |
 | Scalar broadcasting `.op` | medium | very high |
 | R `%>%` pipe | already via `\|>` | — |
 | R formula `~` | niche | — |
-

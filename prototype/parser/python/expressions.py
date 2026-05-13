@@ -14,6 +14,9 @@ from . import ensure_expr
 class IdentifierMixin:
     def NAME(self, token):
         return token.value 
+
+    def BY(self, token):
+        return token.value
     
     def name(self, items):
         ''' almost always str form is used; in certain context ast.Name is required
@@ -123,18 +126,24 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         return items[0]
 
     def range_inclusive(self, items):
-        left, _tok, right = items
+        left, _tok, right, *step = items
+        args = [left, ast.BinOp(left=right, op=ast.Add(), right=ast.Constant(value=1))]
+        if step and step[-1] is not None:
+            args.append(step[-1])
         return ast.Call(
             func=ast.Name(id='range', ctx=ast.Load()),
-            args=[left, ast.BinOp(left=right, op=ast.Add(), right=ast.Constant(value=1))],
+            args=args,
             keywords=[],
         )
 
     def range_exclusive(self, items):
-        left, _tok, right = items
+        left, _tok, right, *step = items
+        args = [left, right]
+        if step and step[-1] is not None:
+            args.append(step[-1])
         return ast.Call(
             func=ast.Name(id='range', ctx=ast.Load()),
-            args=[left, right],
+            args=args,
             keywords=[],
         )
 

@@ -41,7 +41,7 @@ These convenience features are already present enough to teach with examples:
 | Pattern matching | match statements, guards, or-patterns, if-let, inline match expressions, indented expression-valued match cases | Full value-producing statement suites remain open. |
 | Null handling | `??`, safe method/property/subscript access via `?.` | Elvis `?? return` still needs statement-level lowering. |
 | Error handling | single-line `try` expression, `defer` | Multi-line try expressions need the same value-producing block decision as match suites. |
-| Collections | ranges `1..5`, `1..<5`, spread in lists/tuples, comprehensions | Step syntax is still absent. |
+| Collections | ranges `1..5`, `1..<5`, range steps `1..10 by 2`, spread in lists/tuples, comprehensions | Broadcasting remains research-only. |
 | Strings | normal strings, raw strings, triple strings, simple f-strings via desugar | `strings.md` is stale about f-string support. |
 | Types | type aliases | `data` and native sum types are still future work. |
 
@@ -88,18 +88,16 @@ feature because it can desugar to `while True` plus a `match`.
 
 ### `collections.md`
 
-The priority table is stale: pipeline, ranges, and spread literals are already
-implemented.  The next collection feature with good fit is range step syntax.
-The current proposal `1..10//2` is too ambiguous because `//` is already floor
-division.  A clearer candidate is:
+The priority table is stale: pipeline, ranges, range-step syntax, and spread
+literals are already implemented.  Range steps use `by` instead of the old
+`//` proposal because `//` is already floor division:
 
 ```nomi
 odds = 1..10 by 2       # range(1, 11, 2)
 evens = 2..<10 by 2     # range(2, 10, 2)
 ```
 
-This needs a new keyword-like grammar shape and careful interaction with names,
-so it is less direct than `while-let`.
+`by` remains usable as an identifier outside the range-step position.
 
 ### `null_handling.md`
 
@@ -171,9 +169,9 @@ This queue favors small, reversible changes that compose with existing passes.
 |------|---------|-------------|-----------|
 | Done | `while pattern = expr:` | Reuses `if_let_stmt`, match patterns, `while`, and `break` | Else semantics were intentionally left out. |
 | Done | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Receiver is evaluated once through IIFE lowering. |
-| 1 | range step `1..10 by 2` | Extends existing range lowering | `by` as soft keyword may conflict with identifiers. |
-| 2 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
-| 3 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
+| Done | range step `1..10 by 2` | Extends existing range lowering | `by` is a soft keyword and remains valid as a name. |
+| 1 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
+| 2 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
 
 ## Recommended Implementation Discipline
 

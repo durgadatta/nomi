@@ -15,7 +15,7 @@ current Nomi status, and implementation notes.
 | [implementation_learnings.md](implementation_learnings.md) | Tricky grammar interactions, AST bugs, deferred features | living reference |
 | [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression: implemented forms and remaining full-suite challenge | partial |
 | [if_let_detail.md](if_let_detail.md) | If-let: difference from `if`, patterns, edge cases, cross-lang ref | implemented |
-| [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial; pipeline/ranges/spread done |
+| [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial; pipeline/ranges/range-step/spread done |
 | [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial; match expressions now work in expression-valued forms |
 | [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | partial; `??` and safe attr/call/subscript done |
 | [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | partial; try-expr and defer done |

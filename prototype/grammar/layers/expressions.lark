@@ -27,8 +27,8 @@ NULLISH: "??"
 
 // -- range: start..end (inclusive), start..<end (exclusive) ------------
 ?range_expr: bin_expr
-           | bin_expr RANGE_INCL bin_expr -> range_inclusive
-           | bin_expr RANGE_EXCL bin_expr -> range_exclusive
+           | bin_expr RANGE_INCL bin_expr ["by" bin_expr] -> range_inclusive
+           | bin_expr RANGE_EXCL bin_expr ["by" bin_expr] -> range_exclusive
 
 // -- flat binary ops (restructured by Precedence pass) ----------------
 ?expr: bin_expr
