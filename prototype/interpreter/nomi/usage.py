@@ -3,6 +3,7 @@ from ...parser.nomi.usage import generate_ast
 from ...parser.nomi.desugar.underscore_lambda import UnderscoreLambda
 from ...parser.nomi.desugar.piecewise import PiecewiseFunction
 from ...parser.nomi.desugar.where_clause import WhereClause
+from ...parser.nomi.desugar.positional_hole import PositionalHole
 from ..runner import make_runner
 
 
@@ -11,6 +12,7 @@ def _nomi_desugar(tree):
     tree = PiecewiseFunction().visit(tree)
     tree = WhereClause().visit(tree)
     tree = UnderscoreLambda().visit(tree)
+    tree = PositionalHole().visit(tree)
     import ast
     ast.fix_missing_locations(tree)
     return tree

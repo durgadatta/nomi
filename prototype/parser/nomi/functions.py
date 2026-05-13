@@ -22,14 +22,52 @@ class FunctionsMixin:
         stmt, where_stmt = items
         stmt._nomi_where_body = [where_stmt]
         return stmt
+    def dollar_hole(self, items):
+        """Positional hole references: $1, $2, $3 ... (Swift-style)
+
+        Lowered to ast.Name nodes with a '$' prefix id.
+        The PositionalHole desugar pass wraps them in lambda functions.
+        """
+        return ast.Name(id=items[0].value, ctx=ast.Load())
+
+    def func_equation_no_parens(self, items):
+        """func_equation_no_parens: name NAME ['when' test] '=' test
+
+        double x = x * 2       →  func double(x): return x * 2
+        sign n when n > 0 = 1  →  func sign(n): return 1  (with guard)
+        """
+        if len(items) == 3:
+            name, param_name, body = items
+            guard = None
+        else:
+            name, param_name, guard, body = items
+        args_list = [ast.arg(arg=param_name)]
+        params = ast.arguments(
+            posonlyargs=[], args=args_list, kwonlyargs=[], kw_defaults=[],
+            defaults=[], vararg=None, kwarg=None,
+        )
+        fn = ast.FunctionDef(
+            name=name, args=params, body=[ast.Return(value=body)],
+            decorator_list=[], returns=None,
+        )
+        fn._nomi_eq_args = [param_name]
+        if guard:
+            fn._nomi_eq_guard = guard
+        return fn
+
     def func_equation(self, items):
-        """func_equation: name '(' [func_eq_args] ')' '=' test
+        """func_equation: name '(' [func_eq_args] ')' ['when' test] '=' test
 
         Simple:  add(a, b) = a + b  →  func add(a, b): return a + b
         Literal: fact(1) = 1       →  func fact(__0): return 1
+        Guarded: sign(n) when n > 0 = 1
         (PiecewiseFunction pass merges adjacent same-name equations.)
         """
-        name, eq_args, body = items
+        if len(items) == 3:
+            name, eq_args, body = items
+            guard = None
+        else:
+            name, eq_args, guard, body = items
         if eq_args is None:
             eq_args = []
         elif isinstance(eq_args, list):
@@ -51,6 +89,8 @@ class FunctionsMixin:
             decorator_list=[], returns=None,
         )
         fn._nomi_eq_args = eq_args  # preserved for PiecewiseFunction pass
+        if guard:
+            fn._nomi_eq_guard = guard
         return fn
 
     _BINOP_CLS = {

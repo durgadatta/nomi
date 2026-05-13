@@ -71,8 +71,9 @@ class PiecewiseFunction(BaseDesugarer):
         cases = []
         for eq in group:
             eq_args = getattr(eq, '_nomi_eq_args', [])
+            guard = getattr(eq, '_nomi_eq_guard', None)
             pattern = self._build_pattern(eq_args)
-            cases.append(ast.match_case(pattern=pattern, body=eq.body))
+            cases.append(ast.match_case(pattern=pattern, guard=guard, body=eq.body))
 
         subject = ast.Name(id=synth_name, ctx=ast.Load())
         match_stmt = ast.Match(subject=subject, cases=cases)

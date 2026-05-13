@@ -19,6 +19,10 @@ COMMENT: /#[^\n]*/
 !name: NAME | "match" | "case"
 NAME: /[^\W\d]\w*/
 
+// Positional hole references (Swift-style) — before number definitions
+DOLLAR_HOLE: /\$[0-9]+/
+DOLLAR_NAME: /\$[^\W\d]\w*/
+
 // Range + safe navigation operators — before number definitions
 RANGE_INCL: /\.\./
 RANGE_EXCL: /\.\.</

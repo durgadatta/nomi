@@ -26,6 +26,22 @@ upcase = _.upper()
 fact(1) = 1
 fact(n) = fact(n - 1) * n
 
+# Piecewise with guards — add "when" conditions to equation clauses
+sign(n) when n > 0 = 1
+sign(n) when n < 0 = -1
+sign(n) = 0
+
+# Single-arg equation without parens — omit () for a single variable param
+sq x = x * x
+
+# Positional hole lambdas — $1, $2 refer to positional params (Swift-style)
+inc = $1 + 1
+fmt = $1 + $2 + $3
+
+# Named hole lambdas — $name uses the identifier as the parameter name
+greet = "Hello, " + $name
+fullname = $first + " " + $last
+
 # Where clause — local bindings
 area = pi * r * r where:
     pi = 3.14159
@@ -69,6 +85,14 @@ print("1. pi() = " + str(pi()))
 print("1. double(21) = " + str(double(21)))
 print("1. upcase(hi) = " + upcase("hi"))
 print("1. fact(5) = " + str(fact(5)))
+print("1. sign(10) = " + str(sign(10)))
+print("1. sign(-5) = " + str(sign(-5)))
+print("1. sign(0)  = " + str(sign(0)))
+print("1. sq(5) = " + str(sq(5)))
+print("1. inc(7) = " + str(inc(7)))
+print("1. fmt(a,b,c) = " + fmt("a", "b", "c"))
+print("1. greet(world) = " + greet("world"))
+print("1. fullname(Ada, Lovelace) = " + fullname("Ada", "Lovelace"))
 print("1. area = " + str(area))
 
 print("2. label = " + label)

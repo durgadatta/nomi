@@ -17,7 +17,11 @@ class PatternMixin:
         pattern = case.pattern
         handler = self._MATCH_PATTERN_DISPATCH.get(type(pattern))
         if handler:
-            return getattr(self, handler)(case, subject)
+            if not getattr(self, handler)(case, subject):
+                return False
+            if case.guard:
+                return bool(self.eval(case.guard))
+            return True
         return False
 
     def _match_value(self, case, subject):

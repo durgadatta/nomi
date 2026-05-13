@@ -4,6 +4,7 @@ import ast
 from typing import List, Type
 
 from .base import BaseDesugarer
+from .positional_hole import PositionalHole
 from .underscore_lambda import UnderscoreLambda
 from .piecewise import PiecewiseFunction
 from .where_clause import WhereClause
@@ -19,6 +20,7 @@ DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
     PiecewiseFunction,
     WhereClause,
     UnderscoreLambda,
+    PositionalHole,
     AugAssign,
     Assert,
     Decorator,

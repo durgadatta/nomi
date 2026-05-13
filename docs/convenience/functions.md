@@ -505,23 +505,92 @@ sort(List(3, 1, 2))  // ord passed implicitly
 
 ---
 
+## 16. Other Languages — Function Shortcuts Survey
+
+A research catalogue of how different language traditions create functions
+concisely.  Source material for future convenience features.
+
+### Implicit Parameters
+
+| Language | Form | Mechanism |
+|----------|------|-----------|
+| Scala | `_.name`, `_ + _` | Underscore holes (Nomi adopted) |
+| Swift | `$0`, `$1`, ... | Positional dollar holes (Nomi adopted) |
+| Kotlin | `it` | Implicit single-param name in trailing lambda |
+| Elixir | `&(&1 + &2)` | `&` capture operator, `&1`, `&2` positional |
+| F# | `fun x y -> x + y` | Lightweight lambda keyword |
+
+### Explicit Lambdas
+
+| Language | Form | Expression body? |
+|----------|------|------------------|
+| Nomi | `x => expr`, `(x,y) => expr` | Yes |
+| JS/TS | `(x, y) => expr` | Yes |
+| Rust | `\|x\| x + 1`, `\|x, y\| { ... }` | Single-expression or block |
+| Ruby | `{ \|x\| x + 1 }`, `-> (x) { x + 1 }` | Block or stabby lambda |
+| C++ | `[](int x) { return x + 1; }` | Block only |
+| Java | `(x) -> x + 1`, `String::length` | Expression or method ref |
+| Python | `lambda x: x + 1` | Expression only |
+
+### Operator / Expression Shorthands
+
+| Language | Form | What it does |
+|----------|------|-------------|
+| Haskell | `(+2)`, `(2*)`, `(+)` | Operator sections (Nomi adopted) |
+| Haskell | `f . g` | Function composition |
+| F# / Elm / Roc | `f >> g`, `f << g` | Forward/backward composition |
+| Java | `String::length` | Method reference → function |
+| Swift | `\Type.method` | Key-path as function reference |
+| Python | `functools.partial(f, x)` | Partial application |
+| J / APL | `+/ % #` | Point-free (tacit) via forks & hooks |
+
+### Blocks as Functions
+
+| Language | Form | Yield points |
+|----------|------|-------------|
+| Ruby | `method { \|x\| x + 1 }` | Block attached to call |
+| Kotlin | `method { it + 1 }` | Trailing lambda convention |
+| Nomi | `method() -> x: body` | Explicit yield-to-block (implemented) |
+| Groovy | `method { x -> x + 1 }` | Closure blocks |
+
+### Tacit / Point-Free
+
+| Language | Form | Mechanism |
+|----------|------|-----------|
+| J / APL | `mean =: +/ % #` | Forks (pair) and hooks |
+| Haskell | `sum = foldr (+) 0` | Currying + sections |
+| Joy / Factor | `[dup *]` | Concatenative (stack-based) |
+
+### Candidates for Future Nomi
+
+| Idea | Source | Viability |
+|------|--------|-----------|
+| `it` as implicit lambda param (top-level) | Kotlin | Simple, conflicts with var name |
+| `&` capture operator | Elixir | High effort, overlaps with `$N` |
+| `String::length` method refs | Java/Swift | Medium, needs type info |
+| `>>` / `<<` composition | F#/Elm | Conflicts with bit-shift operators |
+| `.` composition | Haskell | High effort syntax change |
+| `partial(f, x)` built-in | Python | Simple, library-level |
+
+---
+
 ## Priority Order for Nomi
 
 What to add next, roughly in order of impact:
 
-| # | Feature | Effort | Impact |
-|---|---------|--------|--------|
-| 1 | Operator sections `(+2)`, `(2*)`, `(+)` | low | high |
-| 2 | `$1`, `$2` positional hole (Swift-style) | low | medium |
-| 3 | Guards in piecewise `| n > 0` | medium | high |
-| 4 | Function composition `<<`, `>>` | low | high |
-| 5 | Pipeline `|>` | low | high |
-| 6 | Single-arg equation without parens `double x = x*2` | low | medium |
-| 7 | `match` as expression (return value) | medium | high |
-| 8 | Defaults in equation args `f(a, b=2) = a+b` | medium | medium |
-| 9 | Currying / partial application `f(_, b)` | medium | medium |
-| 10 | Multi-line `where` for compound stmts | medium | medium |
-| 11 | `function` / `\case` keyword | low | medium |
-| 12 | Point-free combinators | high | low |
-| 13 | Do-notation / monad sugar | high | low |
-| 14 | Implicit parameters | high | low |
+| # | Feature | Effort | Impact | Status |
+|---|---------|--------|--------|--------|
+| 1 | Operator sections `(+2)`, `(2*)`, `(+)` | low | high | **done** |
+| 2 | `$1`, `$2` positional hole (Swift-style) | low | medium | **done** |
+| 3 | `$name` named hole | low | medium | **done** |
+| 4 | Guards in piecewise `when n > 0` | medium | high | **done** |
+| 5 | Function composition `<<`, `>>` | medium | high | not started |
+| 6 | Single-arg equation without parens `double x = x*2` | low | medium | **done** |
+| 7 | `match` as expression (return value) | medium | high | not started |
+| 8 | Defaults in equation args `f(a, b=2) = a+b` | medium | medium | not started |
+| 9 | Currying / partial application `f(_, b)` | medium | medium | not started |
+| 10 | Multi-line `where` for compound stmts | medium | medium | not started |
+| 11 | `function` / `\case` keyword | low | medium | not started |
+| 12 | Point-free combinators | high | low | not started |
+| 13 | Do-notation / monad sugar | high | low | not started |
+| 14 | Implicit parameters | high | low | not started |

@@ -17,8 +17,11 @@ async_funcdef: "async" funcdef
 
 // -- lightweight function equation: f(a, b) = expr  (Nomi) ------------
 // Simple form:  add(a, b) = a + b
+// No-parens:    double x = x * 2  (single-arg only)
+// Guarded:      sign(n) when n > 0 = 1
 // Piecewise:    fact(1) = 1; fact(n) = fact(n-1) * n  (contiguous merge)
-func_equation: name "(" [func_eq_args] ")" "=" test
+func_equation: name "(" [func_eq_args] ")" ["when" test] "=" test
+             | name NAME ["when" test] "=" test -> func_equation_no_parens
 func_eq_args: func_eq_arg ("," func_eq_arg)*
 ?func_eq_arg: NAME -> name_arg | test -> value_arg
 

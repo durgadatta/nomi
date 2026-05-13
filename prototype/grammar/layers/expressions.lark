@@ -56,10 +56,12 @@ AWAIT: "await"
      | number
      | string_concat
      | "(" test ")"
-     | "..." -> ellipsis
-     | "None"    -> const_none
-     | "True"    -> const_true
-     | "False"   -> const_false
+      | DOLLAR_HOLE -> dollar_hole
+      | DOLLAR_NAME -> dollar_hole
+      | "..." -> ellipsis
+      | "None"    -> const_none
+      | "True"    -> const_true
+      | "False"   -> const_false
 
 ?string_concat: string+
 

@@ -255,3 +255,220 @@ def test_where_mutual_recursion_odd(nomi_mode):
     ]))
     assert bindings["result"] is True
 
+
+# ═══════════════════════════════════════════════════════════════════
+# New features
+# ═══════════════════════════════════════════════════════════════════
+
+# ── positional holes $1, $2 ────────────────────────────────────────
+
+def test_dollar_hole_single(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="double = $1 * 2\nresult = double(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_dollar_hole_two_params(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="adder = $1 + $2\nresult = adder(3, 4)\n")
+    assert bindings["result"] == 7
+
+
+def test_dollar_hole_attribute(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code='get_name = $1.name\nclass P: pass\np = P()\np.name = "alice"\nresult = get_name(p)\n')
+    assert bindings["result"] == "alice"
+
+
+def test_dollar_hole_three_params(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="fmt = $1 + $2 + $3\nresult = fmt('a', 'b', 'c')\n")
+    assert bindings["result"] == "abc"
+
+
+def test_dollar_hole_where_clause(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = scale(10) where:\n    scale = $1 * 3\n")
+    assert bindings["result"] == 30
+
+
+# ── single-arg equations without parens ─────────────────────────────
+
+def test_no_parens_equation(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="double x = x * 2\nresult = double(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_no_parens_equation_method_call(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code='upcase s = s.upper()\nresult = upcase("hello")\n')
+    assert bindings["result"] == "HELLO"
+
+
+def test_no_parens_mixed_styles(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="sq x = x * x\ndbl(x) = x + x\nr1 = sq(4)\nr2 = dbl(4)\n")
+    assert bindings["r1"] == 16
+    assert bindings["r2"] == 8
+
+
+def test_no_parens_with_where(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="area r = pi * r * r where:\n    pi = 3.14\nresult = area(2)\n")
+    assert abs(bindings["result"] - 12.56) < 0.01
+
+
+def test_no_parens_piecewise_mixed(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "fib(1) = 1",
+        "fib(2) = 1",
+        "fib n = fib(n - 1) + fib(n - 2)",
+        "result = fib(6)",
+        "",
+    ]))
+    assert bindings["result"] == 8
+
+
+# ── guards in piecewise equations ───────────────────────────────────
+
+def test_guards_sign_function(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "sign(n) when n > 0 = 1",
+        "sign(n) when n < 0 = -1",
+        "sign(n) = 0",
+        "pos = sign(10)",
+        "neg = sign(-5)",
+        "zero = sign(0)",
+        "",
+    ]))
+    assert bindings["pos"] == 1
+    assert bindings["neg"] == -1
+    assert bindings["zero"] == 0
+
+
+def test_guards_no_parens_form(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "classify n when n > 0 = 'positive'",
+        "classify n = 'non-positive'",
+        "r1 = classify(5)",
+        "r2 = classify(-3)",
+        "",
+    ]))
+    assert bindings["r1"] == "positive"
+    assert bindings["r2"] == "non-positive"
+
+
+def test_guards_fallthrough(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "describe(n) when n > 100 = 'huge'",
+        "describe(n) when n > 10 = 'big'",
+        "describe(n) = 'small'",
+        "r1 = describe(200)",
+        "r2 = describe(50)",
+        "r3 = describe(5)",
+        "",
+    ]))
+    assert bindings["r1"] == "huge"
+    assert bindings["r2"] == "big"
+    assert bindings["r3"] == "small"
+
+
+def test_guards_single_equation(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "is_even(n) when n % 2 == 0 = True",
+        "r1 = is_even(4)",
+        "",
+    ]))
+    assert bindings["r1"] == True
+
+
+def test_guards_is_positive_piecewise(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "abs_desc(n) when n >= 0 = 'non_negative'",
+        "abs_desc(n) when n < 0 = 'negative'",
+        "r1 = abs_desc(42)",
+        "r2 = abs_desc(-7)",
+        "",
+    ]))
+    assert bindings["r1"] == "non_negative"
+    assert bindings["r2"] == "negative"
+
+
+# ── Python match guards ────────────────────────────────────────────
+
+def test_match_guard_in_statement(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "result = 'none'",
+        "match 42:",
+        "    case n if n > 100: result = 'big'",
+        "    case n if n > 0: result = 'small'",
+        "    case _: result = 'zero'",
+        "",
+    ]))
+    assert bindings["result"] == "small"
+
+
+def test_match_guard_falls_through(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "result = 'none'",
+        "match -1:",
+        "    case n if n > 100: result = 'big'",
+        "    case n if n > 0: result = 'small'",
+        "    case _: result = 'zero'",
+        "",
+    ]))
+    assert bindings["result"] == "zero"
+
+
+# ── named dollar holes $name ────────────────────────────────────────
+
+def test_named_dollar_basic(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="add = $x + $y\nresult = add(3, 4)\n")
+    assert bindings["result"] == 7
+
+
+def test_named_dollar_duplicate(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="dup = $x + $x\nresult = dup(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_named_dollar_mixed_positional(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="mix = $name + $1\nresult = mix('alice', '_suf')\n")
+    assert bindings["result"] == "alice_suf"
+
+
+def test_named_dollar_order(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="order = $b + $a\nresult = order(2, 1)\n")
+    assert bindings["result"] == 3
+
+
+def test_named_dollar_three(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="fmt = $a + $b + $c\nresult = fmt('x', 'y', 'z')\n")
+    assert bindings["result"] == "xyz"
+
+
+def test_named_dollar_where_clause(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="result = greet('dolly') where:\n    greet = 'Hello ' + $name\n")
+    assert bindings["result"] == "Hello dolly"
+
+
+def test_named_dollar_meaningful_names(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="full = $first + ' ' + $last\nresult = full('Alice', 'Smith')\n")
+    assert bindings["result"] == "Alice Smith"
+
