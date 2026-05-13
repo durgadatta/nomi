@@ -168,5 +168,9 @@ async def run_nomi(code: str) -> dict:
         return {"output": raw, "bindings": _clean_bindings(bindings), "session": _get_counter()}
     except Exception as e:
         import traceback
-        _log(f"Error in run_nomi: {e}\n{traceback.format_exc()}")
-        return {"error": str(e), "output": stdout.getvalue(), "session": _get_counter()}
+        tb = traceback.format_exc()
+        _log(f"Error in run_nomi: {e}\n{tb}")
+        # Show last 5 traceback lines to pinpoint the source file
+        lines = tb.strip().split("\n")
+        short_tb = "\n".join(lines[-6:]) if len(lines) > 5 else tb
+        return {"error": short_tb, "output": stdout.getvalue(), "session": _get_counter()}
