@@ -85,9 +85,6 @@ async def _ensure_prototype_loaded():
                 os.makedirs(dir_path)
             except OSError:
                 pass
-        if os.path.isfile(path):
-            ok += 1
-            continue
         try:
             resp = await pyfetch(base + path)
             if resp.status == 200:
