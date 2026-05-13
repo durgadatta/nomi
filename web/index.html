@@ -71,6 +71,7 @@
   .workspace {
     min-height: 0; display: grid;
     grid-template-columns: var(--sidebar-width) 4px minmax(320px, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     background: var(--surface);
   }
   .sidebar {
@@ -172,6 +173,31 @@
     color: var(--muted); background: transparent; font-size: 13px;
   }
   .nb-add-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* --- side-by-side (single-cell / non-notebook) --- */
+  .nb-scroll.single-cell { overflow: hidden; display: flex; flex-direction: column; }
+  .nb-cells.single-cell {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    padding: 14px;
+  }
+  .nb-cells.single-cell .nb-cell {
+    flex: 1; min-height: 0; margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .nb-cells.single-cell .nb-cell-header { grid-column: 1 / -1; }
+  .nb-cells.single-cell .nb-cell-editor {
+    min-height: 0;
+    border-right: 1px solid var(--line-soft);
+  }
+  .nb-cells.single-cell .nb-cell-output {
+    overflow: auto;
+    border-top: none; border-left: 1px solid var(--line-soft);
+  }
+  .nb-cells.single-cell .nb-cell-output.show { display: block; }
+  .nb-cells.single-cell .nb-cell-output:not(.show) { display: none; }
 
   .footer {
     display: flex; align-items: center; gap: 10px; min-width: 0;
@@ -445,11 +471,16 @@ function loadCode(code) {
   const chunks = splitCode(code);
   chunks.forEach(c => createCell(c));
   _executionCounter = 0;
+  const single = chunks.length === 1;
+  byId("nb-scroll").classList.toggle("single-cell", single);
+  byId("nb-cells").classList.toggle("single-cell", single);
   updateFooter();
 }
 
 function addCell(initialCode) {
   createCell(initialCode || "");
+  byId("nb-scroll").classList.remove("single-cell");
+  byId("nb-cells").classList.remove("single-cell");
   scrollToBottom();
 }
 
@@ -459,9 +490,10 @@ function createCell(code) {
   const outer = document.createElement("div");
   outer.className = "nb-cell";
   outer.dataset.index = idx;
+  outer.dataset.execCount = "";
   outer.innerHTML = `
     <div class="nb-cell-header">
-      <span class="nb-cell-index">[${idx+1}]</span>
+      <span class="nb-cell-index">In[ ]:</span>
       <button class="nb-cell-run" data-idx="${idx}" title="Run (Ctrl+Enter)">&#9654; Run</button>
       <span class="nb-cell-spacer"></span>
       <span class="nb-cell-time"></span>
@@ -555,13 +587,17 @@ function deleteCell(idx) {
   const el = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   if (el) el.remove();
   reindexCells();
+  const single = _cellEditors.length === 1;
+  byId("nb-scroll").classList.toggle("single-cell", single);
+  byId("nb-cells").classList.toggle("single-cell", single);
   updateFooter();
 }
 
 function reindexCells() {
   document.querySelectorAll(".nb-cell").forEach((el, i) => {
     el.dataset.index = i;
-    el.querySelector(".nb-cell-index").textContent = `[${i+1}]`;
+    const count = el.dataset.execCount || "";
+    el.querySelector(".nb-cell-index").textContent = count ? `In[${count}]:` : "In[ ]:";
     el.querySelector(".nb-cell-run").dataset.idx = i;
     el.querySelector(".nb-cell-delete").dataset.idx = i;
     el.querySelector(".nb-cell-editor").dataset.idx = i;
@@ -619,6 +655,8 @@ async function runCell(idx, advance) {
     const output = error || r.get("output") || "(no output)";
 
     _executionCounter++;
+    outer.dataset.execCount = _executionCounter;
+    outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
     timeEl.textContent = `${elapsed} ms`;
     outNum.textContent = _executionCounter;
     outPre.textContent = output;
@@ -630,6 +668,8 @@ async function runCell(idx, advance) {
   } catch (e) {
     const elapsed = Math.max(1, Math.round(performance.now() - start));
     _executionCounter++;
+    outer.dataset.execCount = _executionCounter;
+    outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
     timeEl.textContent = `${elapsed} ms`;
     outNum.textContent = _executionCounter;
     outPre.textContent = String(e);
@@ -659,6 +699,10 @@ async function runAllCells() {
   setControlsDisabled(true);
   setStatus("running", "running");
   _executionCounter = 0;
+  document.querySelectorAll(".nb-cell").forEach(el => {
+    el.dataset.execCount = "";
+    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
+  });
   await _resetFn();
 
   for (let i = 0; i < _cellEditors.length; i++) {
@@ -683,6 +727,10 @@ window.restartRuntime = async function() {
   if (!_ready || !_resetFn) return;
   await _resetFn();
   _executionCounter = 0;
+  document.querySelectorAll(".nb-cell").forEach(el => {
+    el.dataset.execCount = "";
+    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
+  });
   document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
   document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
   byId("runtime-detail").textContent = "Pyodide · restarted";
