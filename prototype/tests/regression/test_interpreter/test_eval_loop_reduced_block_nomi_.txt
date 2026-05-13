@@ -1,0 +1,25 @@
+{
+  "times": "times:class=<class 'function'>",
+  "a": 3,
+  "retry": "retry:class=<class 'function'>",
+  "each": "each:class=<class 'function'>",
+  "item": 3,
+  "key": "two",
+  "val": 2,
+  "total": 12,
+  "n": 8,
+  "stdout": [
+    "tick 2",
+    "tick 3",
+    "a = 3",
+    "trying\u2026",
+    "succeeded after 1 attempt(s)",
+    "each: 1",
+    "each: 2",
+    "each: 3",
+    "pair: one = 1",
+    "pair: two = 2",
+    "sum of positives = 12",
+    ""
+  ]
+}

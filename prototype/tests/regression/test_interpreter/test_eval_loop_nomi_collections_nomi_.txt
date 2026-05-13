@@ -1,0 +1,25 @@
+{
+  "inclusive": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "exclusive": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "double": "func:class=<class 'function'>",
+  "doubled": 10,
+  "range_sum": 55,
+  "stdout": [
+    "1..5 = [1, 2, 3, 4, 5]",
+    "1..<5 = [1, 2, 3, 4]",
+    "5 |> double = 10",
+    "1..10 |> list |> sum = 55",
+    ""
+  ]
+}

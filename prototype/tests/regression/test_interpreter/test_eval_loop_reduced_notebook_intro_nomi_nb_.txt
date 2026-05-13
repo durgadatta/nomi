@@ -1,0 +1,28 @@
+{
+  "normalize_name": "normalize_name:class=<class 'function'>",
+  "names": [
+    " ada ",
+    "grace",
+    " alan turing "
+  ],
+  "clean_names": [
+    "Ada",
+    "Grace",
+    "Alan Turing"
+  ],
+  "name": "Alan Turing",
+  "name_lengths": [
+    3,
+    5,
+    11
+  ],
+  "is_positive": "func:class=<class 'function'>",
+  "first_length": 3,
+  "stdout": [
+    "Ada Lovelace",
+    "['Ada', 'Grace', 'Alan Turing']",
+    "[3, 5, 11]",
+    "first length = 3",
+    ""
+  ]
+}

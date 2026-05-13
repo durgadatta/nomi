@@ -1,0 +1,21 @@
+{
+  "greet": "greet:class=<class 'function'>",
+  "square": "func:class=<class 'function'>",
+  "add": "add:class=<class 'function'>",
+  "double": "func:class=<class 'function'>",
+  "fact": "fact:class=<class 'function'>",
+  "area": 78.53975,
+  "label": "ok",
+  "size_label": "two",
+  "name": "anonymous",
+  "v1": 1,
+  "v2": null,
+  "stdout": [
+    "Hello, Nomi",
+    "120",
+    "two",
+    "anonymous",
+    "55",
+    ""
+  ]
+}

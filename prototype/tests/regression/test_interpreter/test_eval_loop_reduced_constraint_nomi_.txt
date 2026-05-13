@@ -1,0 +1,21 @@
+{
+  "is_positive": "func:class=<class 'function'>",
+  "score": 72,
+  "result": "regular",
+  "label": "ok",
+  "double_limited": "double_limited:class=<class 'function'>",
+  "age": 35,
+  "value": 42,
+  "n": 42,
+  "signal": "normal",
+  "stdout": [
+    "score = 72",
+    "grade = regular",
+    "label = ok",
+    "keep going",
+    "double_limited(5) = 10",
+    "age = 35",
+    "signal = normal",
+    ""
+  ]
+}
