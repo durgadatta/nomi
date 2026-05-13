@@ -17,6 +17,9 @@ class IdentifierMixin:
 
     def BY(self, token):
         return token.value
+
+    def GUARD(self, token):
+        return token.value
     
     def name(self, items):
         ''' almost always str form is used; in certain context ast.Name is required

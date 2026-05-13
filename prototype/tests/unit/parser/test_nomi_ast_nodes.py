@@ -76,6 +76,15 @@ def test_while_let_builds_while_match_break():
     assert isinstance(stmt.body[0].cases[1].body[0], ast.Break)
 
 
+def test_guard_let_builds_match_with_failure_body():
+    stmt = parse_stmt(generate_ast, "guard [head, *tail] = items:\n    return None\n")
+
+    assert isinstance(stmt, ast.Match)
+    assert len(stmt.cases) == 2
+    assert isinstance(stmt.cases[0].body[0], ast.Pass)
+    assert isinstance(stmt.cases[1].body[0], ast.Return)
+
+
 def test_indented_match_expression_builds_iife_call():
     stmt = parse_stmt(generate_ast, "result = match value:\n    case 1: 'one'\n    case _: 'many'\n")
 

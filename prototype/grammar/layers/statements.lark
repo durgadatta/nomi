@@ -69,11 +69,12 @@ dotted_as_names: dotted_as_name ("," dotted_as_name)*
 dotted_name: name ("." name)*
 
 // -- compound statements ----------------------------------------------
-?compound_stmt: if_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
+?compound_stmt: if_stmt | guard_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
               | with_stmt | funcdef | classdef | decorated | async_stmt
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
 if_stmt: "if" test ":" suite elifs ["else" ":" suite]
        | "if" pattern "=" test ":" suite ["else" ":" suite] -> if_let_stmt
+guard_stmt: "guard" pattern "=" test ":" suite
 elifs: elif_*
 elif_: "elif" test ":" suite
 unless_stmt: "unless" test ":" suite

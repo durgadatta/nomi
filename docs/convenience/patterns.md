@@ -166,12 +166,18 @@ while [head, *tail] = items:
     items = tail
 ```
 
-Future guard-let remains a proposal:
+`guard-let` is implemented.  On match, captures are bound and execution
+continues.  On non-match, the guard body runs:
 
 ```nomi
-guard Some(value) = optional:
-    return
+func first(items):
+    guard [head, *tail] = items:
+        return "empty"
+    return head
 ```
+
+The current prototype does not yet enforce that the guard body exits.  That
+diagnostic is future work.
 
 ---
 
@@ -234,6 +240,6 @@ match value {  // error: non-exhaustive patterns
 |---------|--------|--------|
 | Match as expression | done for expression-valued cases | high |
 | If-let / while-let | done | high |
-| Guard-let | medium | high |
+| Guard-let | implemented; exit diagnostics future | high |
 | Exhaustiveness | high | medium |
 | Destructuring all forms | partial | done |

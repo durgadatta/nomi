@@ -97,6 +97,15 @@ while [head, *tail] = numbers:
     while_sum += head
     numbers = tail
 
+# Guard-let — require a pattern before continuing
+func first_or_empty(items):
+    guard [first, *rest] = items:
+        return "empty"
+    return str(first)
+
+first_value = first_or_empty([9, 8])
+empty_value = first_or_empty([])
+
 # Spread in literals — * unpacks iterables
 parts = [2, 3]
 merged = [1, *parts, 4]         # [1, 2, 3, 4]
@@ -162,6 +171,7 @@ print("2. 2(n+1) where n=5 = " + str(poly))
 print("2. inline match 2 = " + size_label)
 print("2. indented match 3 = " + size_label_block)
 print("2. while-let sum = " + str(while_sum))
+print("2. guard-let first = " + first_value + ", empty = " + empty_value)
 
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)

@@ -37,7 +37,7 @@ These convenience features are already present enough to teach with examples:
 | Implicit functions | `_`, `$1`, `$name`, operator sections | This is now a strong local idiom and should be documented as one family. |
 | Local bindings | block and inline `where` | Good fit: implemented as desugar, not core runtime magic. |
 | Composition | `|>`, `>>>`, `<<<` | The sample now uses `3 |> (dbl >>> inc)` to avoid precedence confusion. |
-| Control | `unless`, postfix `return ... if/unless ...`, if-let | Expression-postfix conditionals are still not settled. |
+| Control | `unless`, postfix `return ... if/unless ...`, if-let, while-let, guard-let | Expression-postfix conditionals are still not settled. |
 | Pattern matching | match statements, guards, or-patterns, if-let, inline match expressions, indented expression-valued match cases | Full value-producing statement suites remain open. |
 | Null handling | `??`, safe method/property/subscript access via `?.` | Elvis `?? return` still needs statement-level lowering. |
 | Error handling | single-line `try` expression, `defer` | Multi-line try expressions need the same value-producing block decision as match suites. |
@@ -82,9 +82,9 @@ label = match n:
     case _: "many"
 ```
 
-The if-let section should split implemented `if pattern = expr` from future
-`while pattern = expr` and `guard pattern = expr`.  `while-let` is a good next
-feature because it can desugar to `while True` plus a `match`.
+The if-let section now splits implemented `if pattern = expr`, `while pattern
+= expr`, and `guard pattern = expr` from future exhaustiveness and control-flow
+diagnostics.
 
 ### `collections.md`
 
@@ -170,8 +170,8 @@ This queue favors small, reversible changes that compose with existing passes.
 | Done | `while pattern = expr:` | Reuses `if_let_stmt`, match patterns, `while`, and `break` | Else semantics were intentionally left out. |
 | Done | safe subscript `obj?.[index]` | Extends existing safe navigation grammar | Receiver is evaluated once through IIFE lowering. |
 | Done | range step `1..10 by 2` | Extends existing range lowering | `by` is a soft keyword and remains valid as a name. |
-| 1 | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Needs explicit "failure body must exit" diagnostics. |
-| 2 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
+| Done | guard-let `guard pattern = expr: suite` | Reuses match patterns and early-exit idioms | Exit diagnostics are still future work. |
+| 1 | value-producing statement suites for match/try expressions | Unblocks full expression blocks | Requires a Nomi block-value semantic decision. |
 
 ## Recommended Implementation Discipline
 

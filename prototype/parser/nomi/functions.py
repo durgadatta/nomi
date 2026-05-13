@@ -73,6 +73,28 @@ class FunctionsMixin:
             orelse=[],
         )
 
+    def guard_stmt(self, items):
+        """guard_stmt: 'guard' pattern '=' test ':' suite
+
+        guard [head, *tail] = items:
+            return None
+
+        On match, captures are bound and execution continues.  On non-match,
+        the guard body runs.
+        """
+        pattern, expr, failure_body = items
+        match_case = ast.match_case(
+            pattern=pattern,
+            guard=None,
+            body=[ast.Pass()],
+        )
+        wildcard = ast.match_case(
+            pattern=ast.MatchAs(pattern=None),
+            guard=None,
+            body=failure_body,
+        )
+        return ast.Match(subject=expr, cases=[match_case, wildcard])
+
     # ── try expression ───────────────────────────────────────────────
 
     def try_except_clause(self, items):

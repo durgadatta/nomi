@@ -97,6 +97,46 @@ def test_while_let_no_initial_match_skips_body(nomi_mode):
     assert bindings["result"] == "skipped"
 
 
+def test_guard_let_binds_on_match_and_continues(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "guard [head, *tail] = [1, 2, 3]:\n"
+            "    result = 'failed'\n"
+            "result = [head, tail]\n"
+        )
+    )
+    assert bindings["result"] == [1, [2, 3]]
+
+
+def test_guard_let_runs_body_on_no_match(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "result = 'start'\n"
+            "guard [head, *tail] = []:\n"
+            "    result = 'empty'\n"
+        )
+    )
+    assert bindings["result"] == "empty"
+
+
+def test_guard_let_can_return_from_function_on_no_match(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(
+        code=(
+            "func first(items):\n"
+            "    guard [head, *tail] = items:\n"
+            "        return 'empty'\n"
+            "    return head\n"
+            "r1 = first([10, 20])\n"
+            "r2 = first([])\n"
+        )
+    )
+    assert bindings["r1"] == 10
+    assert bindings["r2"] == "empty"
+
+
 # ── match as expression ──────────────────────────────────────────────
 
 def test_inline_match_expr_assignment(nomi_mode):
@@ -192,4 +232,3 @@ def test_indented_match_expr_nested_indented_match_value(nomi_mode):
         )
     )
     assert bindings["result"] == "ok"
-

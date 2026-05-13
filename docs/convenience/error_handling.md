@@ -101,7 +101,7 @@ let Some(value) = optional else { return };
 let Ok(parsed) = parse(input) else { continue };
 ```
 
-**Nomi proposal**:
+**Nomi**:
 
 ```nomi
 guard Some(value) = optional:
@@ -110,6 +110,20 @@ guard Some(value) = optional:
 guard Ok(parsed) = parse(input):
     continue
 ```
+
+`guard pattern = expr:` is implemented as a pattern guard.  If the pattern
+matches, captures are bound and execution continues.  If it does not match,
+the guard body runs:
+
+```nomi
+func first(items):
+    guard [head, *tail] = items:
+        return "empty"
+    return head
+```
+
+The current prototype does not yet verify that the guard body exits.  That
+should become a diagnostic once control-flow analysis exists.
 
 ---
 
@@ -137,5 +151,5 @@ defer { file.close() }
 |---------|--------|--------|
 | `?` propagate | low (with Result) | very high |
 | try as expression | medium | high |
-| guard / let-else | medium | high |
+| guard / let-else | partial: guard-let done, exit diagnostics future | high |
 | defer | low | medium |
