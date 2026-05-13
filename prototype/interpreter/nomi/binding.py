@@ -64,9 +64,11 @@ class Annotation:
         func_def = ast.FunctionDef(
             name='_constraint_predicate',
             args=ast.arguments(
-                args=[ast.arg(arg=var_name)],
+                posonlyargs=[], args=[ast.arg(arg=var_name)], kwonlyargs=[],
+                kw_defaults=[], defaults=[], vararg=None, kwarg=None,
             ),
             body=func_body,
+            decorator_list=[], returns=None,
         )
         
         # Evaluate the function definition in current environment
