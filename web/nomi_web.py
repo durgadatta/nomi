@@ -62,7 +62,10 @@ def _inc_counter():
 
 def _base_url():
     from js import location
-    return location.origin + location.pathname.replace("/web/", "/")
+    # Strip everything after (and including) "/web/" to get the repo root.
+    # Works for both /user/repo/web/ and /user/repo/web/index.html.
+    idx = location.pathname.index("/web/")
+    return location.origin + location.pathname[:idx] + "/"
 
 
 async def _ensure_prototype_loaded():
