@@ -410,39 +410,55 @@
   }
 
   .cells-content {
-    padding: 10px;
+    padding: 10px 12px;
     font-family: inherit;
     white-space: normal;
+    background: #0d0f0e;
   }
 
   .cell-run {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     border: 1px solid var(--line-soft);
-    border-radius: 8px;
+    border-radius: 9px;
     overflow: hidden;
-    background: #171a18;
+    background: var(--panel);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
-  .cell-run.error {
-    border-color: rgba(239, 143, 143, 0.65);
+  .cell-run:last-child {
+    margin-bottom: 0;
   }
 
   .cell-run-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
-    min-height: 32px;
-    padding: 6px 9px;
+    min-height: 34px;
+    padding: 6px 12px;
+    background: #1a1f1c;
     border-bottom: 1px solid var(--line-soft);
-    color: var(--muted);
+  }
+
+  .cell-run-number {
+    display: grid;
+    place-items: center;
+    min-width: 28px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 4px;
+    color: var(--teal);
+    background: #1a2926;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
     font-size: 11px;
+    font-weight: 700;
   }
 
   .cell-run-title {
     min-width: 0;
+    flex: 1;
     overflow: hidden;
     color: var(--text);
+    font-size: 14px;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -451,42 +467,74 @@
   .cell-run-time {
     flex: 0 0 auto;
     color: var(--dim);
+    font-size: 11px;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
   }
 
-  .cell-io {
-    display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
-    border-bottom: 1px solid var(--line-soft);
+  .cell-in {
+    background: #141715;
+    padding: 12px 14px;
+    border-bottom: 2px solid var(--line-soft);
   }
 
-  .cell-io:last-child {
-    border-bottom: 0;
-  }
-
-  .cell-label {
-    padding: 9px 8px;
-    color: var(--dim);
-    background: #131614;
+  .cell-in-label,
+  .cell-out-label {
+    display: inline-block;
+    margin-bottom: 6px;
     font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
     font-size: 11px;
-    text-align: right;
+    font-weight: 700;
+    letter-spacing: 0.3px;
   }
 
-  .cell-code,
-  .cell-output {
-    min-width: 0;
+  .cell-in-label {
+    color: var(--teal);
+  }
+
+  .cell-out-label {
+    color: var(--amber);
+  }
+
+  .cell-code {
     margin: 0;
-    padding: 9px 10px;
-    overflow: auto;
     color: var(--text);
     font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .cell-out {
+    background: #171c19;
+    padding: 12px 14px;
+  }
+
+  .cell-output {
+    margin: 0;
+    color: var(--text);
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.55;
     white-space: pre-wrap;
     word-break: break-word;
   }
 
   .cell-output.error {
+    color: var(--red);
+  }
+
+  .cell-run.error {
+    border-left: 3px solid var(--red);
+    border-color: rgba(239, 143, 143, 0.35);
+  }
+
+  .cell-run.error .cell-run-number {
+    color: var(--red);
+    background: #2c1c1f;
+  }
+
+  .cell-run.error .cell-out-label {
     color: var(--red);
   }
 
@@ -773,13 +821,13 @@
         </div>
       </div>
       <div class="tabs" role="tablist" aria-label="Result views">
-        <button type="button" class="tab active" id="tab-output" onclick="switchTab('output')">Output</button>
+        <button type="button" class="tab active" id="tab-cells" onclick="switchTab('cells')">Notebook</button>
+        <button type="button" class="tab" id="tab-output" onclick="switchTab('output')">Output</button>
         <button type="button" class="tab" id="tab-vars" onclick="switchTab('vars')">Variables</button>
-        <button type="button" class="tab" id="tab-cells" onclick="switchTab('cells')">Cells</button>
       </div>
-      <div class="output-content" id="output-content"><span class="empty-output">Output appears here after a run.</span></div>
+      <div class="cells-content" id="cells-content"><span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span></div>
+      <div class="output-content" id="output-content" style="display:none"><span class="empty-output">Output appears here after a run.</span></div>
       <div class="bindings-content" id="bindings-content"></div>
-      <div class="cells-content" id="cells-content"><span class="empty-output">Cell runs appear here after Run Cell or Run All.</span></div>
       <div class="run-summary">
         <span id="summary-text">Ready when the runtime finishes loading.</span>
         <span id="binding-count">0 bindings</span>
@@ -801,7 +849,7 @@ let _resetFn = null;
 let _editor = null;
 let _ready = false;
 let _currentSample = "demo";
-let _currentTab = "output";
+let _currentTab = "cells";
 let _lastOutput = "";
 let _lastBindings = new Map();
 let _cellRuns = [];
@@ -1122,22 +1170,23 @@ function showOutput(text, isError) {
 function renderCellRuns() {
   const target = byId("cells-content");
   if (_cellRuns.length === 0) {
-    target.innerHTML = `<span class="empty-output">Cell runs appear here after Run Cell or Run All.</span>`;
+    target.innerHTML = `<span class="empty-output">Run cells with Ctrl+Enter or Shift+Enter to see results here.</span>`;
     return;
   }
 
   target.innerHTML = _cellRuns.map((run) => `
     <article class="cell-run ${run.error ? "error" : ""}">
       <header class="cell-run-header">
-        <span class="cell-run-title">In [${run.execution}]: ${esc(run.title)}</span>
+        <span class="cell-run-number">[${run.execution}]</span>
+        <span class="cell-run-title">${esc(run.title)}</span>
         <span class="cell-run-time">${run.elapsed} ms</span>
       </header>
-      <div class="cell-io">
-        <span class="cell-label">In</span>
+      <div class="cell-in">
+        <div class="cell-in-label">In [${run.execution}]:</div>
         <pre class="cell-code">${esc(run.code.trim() || "# empty cell")}</pre>
       </div>
-      <div class="cell-io">
-        <span class="cell-label">Out</span>
+      <div class="cell-out">
+        <div class="cell-out-label">Out[${run.execution}]:</div>
         <pre class="cell-output ${run.error ? "error" : ""}">${esc(run.output || "(no output)")}</pre>
       </div>
     </article>
@@ -1174,7 +1223,7 @@ window.clearOutput = function() {
   renderCellRuns();
   byId("run-state").textContent = "Cleared";
   byId("summary-text").textContent = "No run result.";
-  switchTab("output");
+  switchTab("cells");
 };
 
 window.copyOutput = async function() {
@@ -1251,18 +1300,17 @@ async function run() {
   byId("summary-text").textContent = "Evaluating current file.";
 
   try {
-    const result = await executeCode(code, { reset: true, title: "File" });
+    const result = await executeCode(code, { reset: true, title: "File", recordCell: { title: "File" } });
     if (result.error) {
       byId("run-state").textContent = "Error";
       byId("summary-text").textContent = `Failed in ${result.elapsed} ms.`;
       setStatus("error", "error");
-      switchTab("output");
     } else {
       byId("run-state").textContent = "Complete";
       byId("summary-text").textContent = `Ran file in ${result.elapsed} ms.`;
       setStatus("ready", "ready");
-      switchTab("output");
     }
+    switchTab("cells");
   } catch (error) {
     showOutput(String(error), true);
     _lastBindings = new Map();
@@ -1320,7 +1368,7 @@ async function runCell(advance = false) {
     byId("run-state").textContent = "Cell error";
     byId("summary-text").textContent = "Runtime call failed.";
     setStatus("error", "error");
-    switchTab("output");
+    switchTab("cells");
   } finally {
     setRunControlsDisabled(false);
   }
@@ -1371,7 +1419,7 @@ window.runAllCells = async function() {
     byId("run-state").textContent = "Cell error";
     byId("summary-text").textContent = "Runtime call failed.";
     setStatus("error", "error");
-    switchTab("output");
+    switchTab("cells");
   } finally {
     setRunControlsDisabled(false);
   }
@@ -1618,7 +1666,7 @@ async function initMonaco() {
       });
 
       loadFile("demo");
-      switchTab("output");
+      switchTab("cells");
       renderBindings(_lastBindings);
       renderCellRuns();
       resolve();
