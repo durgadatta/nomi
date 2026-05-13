@@ -11,6 +11,7 @@ current Nomi status, and implementation notes.
 |-----|---------|--------|
 | [functions.md](functions.md) | Equation, piecewise, hole lambda, where, operator sections | **mostly implemented** |
 | [implicit_functions_nuance.md](implicit_functions_nuance.md) | Nuance comparison of `_`, `$1`, `$name`, `(+)`, `=>` | living reference |
+| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression: intent, failed approaches, next steps | handoff note |
 | [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial |
 | [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial |
 | [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | not started |
