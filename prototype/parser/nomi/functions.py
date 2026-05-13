@@ -2,6 +2,21 @@ import ast
 from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
+
+    # ── implicit multiplication ─────────────────────────────────────
+
+    def implicit_mul_name(self, items):
+        """implicit_mul_name: number power → number * power  (2x → 2*x)"""
+        num, rhs = items
+        return ast.BinOp(left=num, op=ast.Mult(), right=rhs)
+
+    def implicit_mul_parens(self, items):
+        """implicit_mul_parens: number '(' test ')' → number * test  (2(x+y) → 2*(x+y))"""
+        num, test_expr = items
+        return ast.BinOp(left=num, op=ast.Mult(), right=test_expr)
+
+    # ── where clause ────────────────────────────────────────────────
+
     def assign_where(self, items):
         """assign_where: small_stmt 'where' ':' suite
 

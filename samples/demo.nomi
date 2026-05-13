@@ -56,6 +56,11 @@ x = 5
 unless x > 10:
     label = "not big"         # executes when condition is False
 
+# Implicit multiplication — 2x means 2*x, 2(x+y) means 2*(x+y)
+n = 5
+twice_n = 2n                   # 10
+poly = 2(n + 1)                # 12
+
 
 # ── 3. Null Handling ────────────────────────────────────────────────
 # Null coalescing: use a default when value is None
@@ -96,6 +101,8 @@ print("1. fullname(Ada, Lovelace) = " + fullname("Ada", "Lovelace"))
 print("1. area = " + str(area))
 
 print("2. label = " + label)
+print("2. 2n where n=5 = " + str(twice_n))
+print("2. 2(n+1) where n=5 = " + str(poly))
 
 print("3. None ?? anonymous = " + name)
 print("3. d1?.get(key) = " + v1)

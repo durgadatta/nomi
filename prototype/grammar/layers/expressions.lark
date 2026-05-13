@@ -35,7 +35,9 @@ NULLISH: "??"
 !_binary_op: "|" | "^" | "&" | "<<" | ">>" | "+" | "-" | "*" | "@" | "/" | "%" | "//"
 
 // -- unary, power, await ----------------------------------------------
-?factor: _unary_op factor | power
+?factor: _unary_op factor | implicit_mul | power
+?implicit_mul: number power -> implicit_mul_name
+             | number "(" test ")" -> implicit_mul_parens
 !_unary_op: "+"|"-"|"~"
 ?power: await_expr ("**" factor)?
 ?await_expr: AWAIT? atom_expr
