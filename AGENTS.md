@@ -89,6 +89,26 @@ The project config currently sets pytest addopts to `-n auto`, so tests may run
 in parallel. For parser/interpreter work, prefer a focused failing test first,
 then the broader relevant suite.
 
+### Test Layout
+
+- `prototype/tests/unit/` — isolated unit tests (parser desugar passes, utilities).
+- `prototype/tests/functional/` — behaviour-focused tests for specific features.
+- `prototype/tests/regression/` — snapshot-based regression tests.
+  - `test_interpreter.py` runs every ``.nomi`` / ``.py`` file in
+    `data/sample_sources/interpreter/` **and** every ``.nomi`` / ``.nomi.nb``
+    file in `samples/` through all three interpreter modes. Sample-file
+    snapshots are namespaced with a ``sample-`` prefix (e.g.
+    ``test_eval_loop_nomi_sample-demo_nomi_.txt``).
+  - After a semantic change that alters output, regenerate snapshots:
+    `pytest --force-regen prototype/tests/regression/test_interpreter.py`
+- `prototype/tests/e2e/` — end-to-end scenarios exercising the CLI, Pyodide
+  bridge behaviour, and the full runtime pipeline.
+- `prototype/tests/data/sample_sources/` — fixture ``.nomi`` and ``.py`` files
+  consumed by regression and functional tests.
+- `samples/` — user-facing sample files (demo, block, constraint, etc.).
+  These are **always** part of the regression suite; adding or renaming a
+  file here requires regenerating snapshots.
+
 ## Repository Map
 
 - `prototype/grammar/`: Lark grammar definitions.

@@ -20,7 +20,14 @@ def _is_nomi_source(path: Path) -> bool:
     return path.suffix == '.nomi' or path.name.endswith('.nomi.nb')
 
 
-@pytest.mark.parametrize("source_file", ALL_SOURCES, ids=lambda p: p.name)
+def _param_id(path: Path) -> str:
+    """Name snapshots so ``samples/`` files are grouped under a ``sample-`` prefix."""
+    if str(path).startswith(str(SAMPLES_DIR)):
+        return f"sample-{path.name}"
+    return path.name
+
+
+@pytest.mark.parametrize("source_file", ALL_SOURCES, ids=_param_id)
 def test_eval_loop(source_file, file_regression, capsys, interpreter_mode):
     ext = source_file.suffix
     if ext == '.py' and interpreter_mode != 'python':
