@@ -584,10 +584,10 @@ What to add next, roughly in order of impact:
 | 2 | `$1`, `$2` positional hole (Swift-style) | low | medium | **done** |
 | 3 | `$name` named hole | low | medium | **done** |
 | 4 | Guards in piecewise `when n > 0` | medium | high | **done** |
-| 5 | Function composition `<<`, `>>` | medium | high | not started |
+| 5 | Function composition `>>>`, `<<<` | low | high | **done** |
 | 6 | Single-arg equation without parens `double x = x*2` | low | medium | **done** |
 | 7 | `match` as expression (return value) | medium | high | not started |
-| 8 | Defaults in equation args `f(a, b=2) = a+b` | medium | medium | not started |
+| 8 | Defaults in equation args `f(a, b=2) = a+b` | medium | medium | **done** |
 | 9 | Currying / partial application `f(_, b)` | medium | medium | not started |
 | 10 | Multi-line `where` for compound stmts | medium | medium | not started |
 | 11 | `function` / `\case` keyword | low | medium | not started |

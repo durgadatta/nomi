@@ -15,12 +15,12 @@ current Nomi status, and implementation notes.
 | [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression: intent, failed approaches, next steps | handoff note |
 | [if_let_detail.md](if_let_detail.md) | If-let: difference from `if`, patterns, edge cases, cross-lang ref | implemented |
 | [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial |
-| [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial |
-| [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | not started |
-| [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | not started |
-| [strings.md](strings.md) | interpolation, multi-line, heredocs, regex literals | f-strings partial |
-| [types.md](types.md) | data classes, type aliases, extension methods, operator overloading | not started |
-| [scope_context.md](scope_context.md) | scope functions (let/apply/also), implicit params, builder DSL | where clause done |
+| [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial (match+if-let done) |
+| [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | done |
+| [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | partial (try-expr done) |
+| [strings.md](strings.md) | interpolation, multi-line, heredocs, regex literals | f-strings+triple-quote |
+| [types.md](types.md) | data classes, type aliases, extension methods, operator overloading | type aliases done |
+| [scope_context.md](scope_context.md) | scope functions (let/apply/also), implicit params, builder DSL | where+defer done |
 | [concurrency.md](concurrency.md) | async/await, structured concurrency, channels, actors | async/await |
 | [modules_imports.md](modules_imports.md) | import aliases, re-exports, wildcard, multi-import | basic imports |
 | [meta_testing.md](meta_testing.md) | decorators, macros, inline tests, doctests | decorators done |
