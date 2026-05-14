@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
@@ -23,6 +24,7 @@ class ExecutionResult:
     pipeline: PipelineSpec
     bindings: dict[str, Any] = field(default_factory=dict)
     exception: Exception | None = None
+    timings: dict[str, float] = field(default_factory=dict)
 
     @property
     def ok(self) -> bool:
@@ -38,6 +40,7 @@ class InspectionResult:
     pipeline: PipelineSpec
     stage: str
     output: str
+    timings: dict[str, float] = field(default_factory=dict)
 
 
 def execute(
@@ -59,9 +62,11 @@ def execute(
     pipeline = build_pipeline_spec(mode=mode, profile=profile)
 
     runner = pipeline.mode_spec.load_runner()
+    started = perf_counter()
     try:
         bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:
+        timings = {"total": perf_counter() - started}
         if raise_on_error:
             raise
         return ExecutionResult(
@@ -69,15 +74,18 @@ def execute(
             profile=profile,
             pipeline=pipeline,
             exception=exc,
+            timings=timings,
         )
+    timings = {"total": perf_counter() - started}
 
-    # TODO(NOMI-ARCH-004): Add stdout/stderr, diagnostics, events, and stage
-    # timings once frontends migrate to this structured result.
+    # TODO(NOMI-ARCH-004): Add stdout/stderr, diagnostics, events, and detailed
+    # stage timings once frontends migrate to this structured result.
     return ExecutionResult(
         mode=mode,
         profile=profile,
         pipeline=pipeline,
         bindings=bindings,
+        timings=timings,
     )
 
 
@@ -98,11 +106,14 @@ def inspect(
         raise ValueError(f"Unsupported inspection stage: {stage!r}")
 
     parser = pipeline.mode_spec.load_parser()
+    started = perf_counter()
     output = parser(filename=filename, code=source, dump=True)
+    timings = {"total": perf_counter() - started}
     return InspectionResult(
         mode=mode,
         profile=profile,
         pipeline=pipeline,
         stage=stage,
         output=output,
+        timings=timings,
     )

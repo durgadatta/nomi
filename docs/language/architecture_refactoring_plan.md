@@ -218,8 +218,10 @@ Progress:
   current `python_ast` artifact.
 - Done after inspection facade: added `PipelineSpec` metadata shared by
   execution and inspection.
-- Still pending: stdout/stderr capture, diagnostics, events, timings, richer
-  inspection stages, and frontend migration.
+- Done after `PipelineSpec`: added coarse `total` timings to execution and
+  inspection results.
+- Still pending: stdout/stderr capture, diagnostics, events, detailed stage
+  timings, richer inspection stages, and frontend migration.
 
 ### Package B: Mode Registry Metadata
 
@@ -258,8 +260,8 @@ The most user-visible surfaces are where ad hoc state management hurts most.
 
 Next safe extension:
 
-- Add timing fields to `ExecutionResult`/`InspectionResult` before changing
-  frontend execution paths.
+- Add `RuntimeSession` as a facade over current persistent web/notebook
+  execution before changing frontend execution paths.
 
 ## Open Questions
 
