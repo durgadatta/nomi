@@ -150,10 +150,13 @@ def reset_session() -> dict:
 
     from prototype.runtime import RuntimeSession
 
-    _runtime_session = RuntimeSession(
-        mode="nomi",
-        cache_size=_SESSION_AST_CACHE_LIMIT,
-    )
+    if _runtime_session is None:
+        _runtime_session = RuntimeSession(
+            mode="nomi",
+            cache_size=_SESSION_AST_CACHE_LIMIT,
+        )
+    else:
+        _runtime_session.reset(clear_cache=True)
     _set_interpreter(_runtime_session.interpreter)
     sid = _inc_counter()
     _log(f"Session #{sid} created")

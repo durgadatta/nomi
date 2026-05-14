@@ -33,3 +33,20 @@ def test_web_runtime_bridge_uses_persistent_session_with_cache():
     assert second["timing"]["cache_hit"] is True
     assert "parse_ms" in first["timing"]
     assert "cache_ms" in second["timing"]
+
+
+def test_web_runtime_reset_clears_session_cache():
+    async def run():
+        nomi_web = load_nomi_web()
+        await nomi_web.init_nomi()
+        await nomi_web.run_nomi("web_value = 4\n")
+        cached = await nomi_web.run_nomi("web_value = 4\n")
+        reset = nomi_web.reset_session()
+        after_reset = await nomi_web.run_nomi("web_value = 4\n")
+        return cached, reset, after_reset
+
+    cached, reset, after_reset = asyncio.run(run())
+
+    assert cached["timing"]["cache_hit"] is True
+    assert reset["ok"] is True
+    assert after_reset["timing"]["cache_hit"] is False

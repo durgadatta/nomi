@@ -35,9 +35,11 @@ class RuntimeSession:
     def bindings(self) -> dict[str, Any]:
         return self.interpreter.global_env.bindings
 
-    def reset(self) -> None:
+    def reset(self, *, clear_cache: bool = False) -> None:
         interpreter_cls = self.pipeline.mode_spec.load_interpreter_class()
         self.interpreter = interpreter_cls()
+        if clear_cache:
+            self._ast_cache.clear()
 
     def run(
         self,

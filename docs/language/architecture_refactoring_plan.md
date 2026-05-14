@@ -273,8 +273,11 @@ Progress:
 - Done after notebook execution: migrated `web/nomi_web.py` to
   `RuntimeSession(cache_size=64)` while preserving its worker response shape
   and millisecond timing names.
-- Still pending: add cancellation/restart policy and decide whether web should
-  expose structured runtime results directly.
+- Done after web migration: made session reset policy explicit with
+  `RuntimeSession.reset(clear_cache=True)`, and wired the web reset path to
+  clear cached lowered ASTs without restarting Pyodide.
+- Still pending: add hard cancellation/restart policy and decide whether web
+  should expose structured runtime results directly.
 
 Notes from implementation:
 
@@ -295,11 +298,12 @@ Notes from implementation:
 - Web still returns its historic plain dict with `output`, `session`, and
   `timing`. The bridge maps runtime timing names to the UI's millisecond names
   until the frontend is ready to consume structured results.
+- Web reset now means "fresh interpreter and cleared AST cache in the same
+  worker." Hard cancellation should remain a separate worker-level operation.
 
 Next safe extension:
 
-- Add cancellation/restart policy around `RuntimeSession` in the web worker,
-  likely by terminating/recreating the worker for hard cancellation.
+- Add a hard worker restart/cancel path separately from soft session reset.
 
 ## Open Questions
 

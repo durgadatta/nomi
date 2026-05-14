@@ -26,6 +26,18 @@ def test_session_reset_replaces_interpreter_state():
     assert "x" not in session.bindings
 
 
+def test_session_reset_can_clear_ast_cache():
+    session = create_session(mode="nomi", cache_size=2)
+    session.run(source="cached_value = 4\n")
+    session.run(source="cached_value = 4\n")
+
+    assert session._ast_cache
+
+    session.reset(clear_cache=True)
+
+    assert session._ast_cache == {}
+
+
 def test_session_can_return_exception_without_raising():
     session = create_session(mode="nomi")
 
