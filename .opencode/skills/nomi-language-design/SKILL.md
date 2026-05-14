@@ -54,6 +54,10 @@ Read the smallest relevant set before changing docs or making recommendations:
 For philosophical framing, use `docs/research/` and `docs/notes/` as source
 material, then reconcile claims back into the active docs above.
 
+For broad language-family coverage, check
+`docs/research/language_family_coverage_map.md` before adding a new source
+tradition or claiming a gap is already covered.
+
 ## Nomi Normal Forms
 
 Every accepted convenience should reduce to one or more of these:

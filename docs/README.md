@@ -106,6 +106,7 @@ language traditions, or seed future focused specs.
 - [Hierarchical Language Research Plan](research/hierarchical_language_research_plan.md)
 - [Research Notes Synthesis](research/research_notes_synthesis.md)
 - [Language Coherence Model](research/language_coherence_model.md)
+- [Language Family Coverage Map](research/language_family_coverage_map.md)
 - [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md)
 - [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md)
 - [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md)

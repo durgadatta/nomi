@@ -55,6 +55,10 @@ This pass adds or sharpens pressure from:
 - Racket contracts, CUE, Nickel, Pkl, Dhall, JSON Schema, and Pydantic-style
   systems: boundary validation, defaults, documentation, and error paths.
 
+For a broader map of source-language families, adoption lessons, and
+under-covered research dimensions, see
+[Language Family Coverage Map](../research/language_family_coverage_map.md).
+
 ## Feature Families
 
 | Need | Source-language forms | Nuanced difference | Nomi recommendation |

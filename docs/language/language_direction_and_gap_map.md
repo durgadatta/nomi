@@ -14,6 +14,9 @@ Nomi's docs already contain a strong semantic spine:
 - [Language Specification](language_spec.md) gives a concrete draft.
 - [Language Coherence Model](../research/language_coherence_model.md) protects
   against feature collection.
+- [Language Family Coverage Map](../research/language_family_coverage_map.md)
+  tracks source-language traditions, under-covered dimensions, and follow-up
+  research priorities.
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) groups
   cross-language syntax ideas by normal form.
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how
