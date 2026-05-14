@@ -47,3 +47,30 @@ def test_session_can_reuse_cached_ast_for_repeated_source():
     assert "parse" in first.timings
     assert "cache" in second.timings
     assert "parse" not in second.timings
+
+
+def test_session_can_capture_display_last_expression_value():
+    session = create_session(mode="nomi")
+
+    result = session.run(
+        source="x = 2\nx + 3\n",
+        display_last_expr=True,
+    )
+
+    assert result.ok
+    assert result.has_value
+    assert result.value == 5
+    assert result.bindings["x"] == 2
+
+
+def test_session_does_not_capture_value_when_display_is_disabled():
+    session = create_session(mode="nomi")
+
+    result = session.run(
+        source="x = 2\nx + 3\n",
+        display_last_expr=False,
+    )
+
+    assert result.ok
+    assert not result.has_value
+    assert result.value is None

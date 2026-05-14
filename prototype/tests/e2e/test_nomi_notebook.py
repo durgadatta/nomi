@@ -94,6 +94,19 @@ def test_kernel_owns_runtime_session_facade():
     assert kernel.interpreter is kernel.runtime_session.interpreter
 
 
+def test_kernel_executes_nomi_through_runtime_session(monkeypatch):
+    kernel = NomiKernel()
+    sent = []
+
+    monkeypatch.setattr(kernel, "_send_execute_result", sent.append)
+
+    result = kernel._execute_nomi("x = 2\nx + 3\n", silent=False)
+
+    assert result == 5
+    assert sent == [5]
+    assert kernel.runtime_session.bindings["x"] == 2
+
+
 def test_kernel_smoke_runner_reports_expected_output(monkeypatch):
     calls = []
 

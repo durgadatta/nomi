@@ -25,6 +25,8 @@ class ExecutionResult:
     bindings: dict[str, Any] = field(default_factory=dict)
     exception: Exception | None = None
     timings: dict[str, float] = field(default_factory=dict)
+    value: Any = None
+    has_value: bool = False
 
     @property
     def ok(self) -> bool:

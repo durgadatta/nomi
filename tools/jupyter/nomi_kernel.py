@@ -8,7 +8,6 @@ cells in the expected notebook style.
 
 from __future__ import annotations
 
-import ast
 import io
 import os
 import shlex
@@ -184,39 +183,13 @@ class NomiKernel(Kernel):
         raise ValueError(f"Unknown Nomi kernel command: {name}. Try %help.")
 
     def _execute_nomi(self, code: str, *, silent: bool) -> Any:
-        tree = generate_ast(code=self._normalize_source(code))
-        tree = ast.fix_missing_locations(tree)
-        body = list(tree.body)
-
-        if not body:
-            return None
-
-        last = body[-1]
-        should_display = (
-            isinstance(last, ast.Expr)
-            and not self._is_block_call_expr(last)
-            and not silent
+        result = self.runtime_session.run(
+            source=self._normalize_source(code),
+            display_last_expr=not silent,
         )
-
-        if should_display and len(body) > 1:
-            leading = ast.Module(body=body[:-1], type_ignores=[])
-            leading = ast.fix_missing_locations(leading)
-            self.interpreter.eval(leading)
-            result = self.interpreter.eval(last)
-        else:
-            result = self.interpreter.eval(tree)
-
-        if should_display and result is not None:
-            self._send_execute_result(result)
-
-        return result
-
-    def _is_block_call_expr(self, node: ast.Expr) -> bool:
-        value = node.value
-        return (
-            isinstance(value, ast.Call)
-            and any(keyword.arg == "__block__" for keyword in value.keywords)
-        )
+        if result.has_value and result.value is not None:
+            self._send_execute_result(result.value)
+        return result.value if result.has_value else None
 
     def _send_execute_result(self, value: Any) -> None:
         self.send_response(

@@ -46,6 +46,7 @@ class RuntimeSession:
         filename: str | Path | None = None,
         tree: Any | None = None,
         raise_on_error: bool = True,
+        display_last_expr: bool = False,
     ) -> ExecutionResult:
         started = perf_counter()
         timings: dict[str, float] = {}
@@ -66,7 +67,10 @@ class RuntimeSession:
 
             tree = ast.fix_missing_locations(tree)
             eval_started = perf_counter()
-            self.interpreter.eval(tree)
+            has_value, value = self._eval_tree(
+                tree,
+                display_last_expr=display_last_expr,
+            )
             timings["eval"] = perf_counter() - eval_started
         except Exception as exc:
             timings["total"] = perf_counter() - started
@@ -88,7 +92,26 @@ class RuntimeSession:
             pipeline=self.pipeline,
             bindings=self.bindings,
             timings=timings,
+            value=value,
+            has_value=has_value,
         )
+
+    def _eval_tree(self, tree: Any, *, display_last_expr: bool) -> tuple[bool, Any]:
+        if not display_last_expr or not isinstance(tree, ast.Module):
+            return False, self.interpreter.eval(tree)
+
+        body = list(tree.body)
+        if len(body) <= 1:
+            return False, self.interpreter.eval(tree)
+
+        last = body[-1]
+        if not isinstance(last, ast.Expr) or self._is_block_call_expr(last):
+            return False, self.interpreter.eval(tree)
+
+        leading = ast.Module(body=body[:-1], type_ignores=[])
+        leading = ast.fix_missing_locations(leading)
+        self.interpreter.eval(leading)
+        return True, self.interpreter.eval(last)
 
     def _parse_and_lower(
         self,
@@ -124,3 +147,11 @@ class RuntimeSession:
             oldest = next(iter(self._ast_cache))
             del self._ast_cache[oldest]
         self._ast_cache[source] = copy.deepcopy(tree)
+
+    @staticmethod
+    def _is_block_call_expr(node: ast.Expr) -> bool:
+        value = node.value
+        return (
+            isinstance(value, ast.Call)
+            and any(keyword.arg == "__block__" for keyword in value.keywords)
+        )

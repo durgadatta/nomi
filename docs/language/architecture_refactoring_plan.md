@@ -267,9 +267,11 @@ Progress:
   the web migration can preserve repeated-cell performance.
 - Done after AST caching: moved `tools/jupyter/nomi_kernel.py` to own a
   `RuntimeSession` facade while preserving its existing notebook display logic.
-- Still pending: migrate notebook execution itself through `RuntimeSession.run`
-  once expression-result display has a shared result field; migrate
-  `web/nomi_web.py`; then add cancellation/restart policy.
+- Done after kernel ownership: added optional expression-result fields to
+  `ExecutionResult` and moved notebook code execution through
+  `RuntimeSession.run(display_last_expr=True)`.
+- Still pending: migrate `web/nomi_web.py`; then add cancellation/restart
+  policy.
 
 Notes from implementation:
 
@@ -284,11 +286,14 @@ Notes from implementation:
 - Jupyter has an IPython trait named `session`, so frontend adapters should
   avoid assuming `session` is always a safe attribute name. The kernel uses
   `runtime_session`.
+- Notebook display semantics are now exposed as `ExecutionResult.value` plus
+  `has_value`. This should stay optional so CLI/web execution does not imply a
+  final-expression display policy.
 
 Next safe extension:
 
-- Add an optional expression-result field to `ExecutionResult` so notebook
-  display-last-expression behavior can move behind `RuntimeSession.run`.
+- Migrate `web/nomi_web.py` to `RuntimeSession(cache_size=64)` while preserving
+  the current worker response shape and millisecond timing names.
 
 ## Open Questions
 
