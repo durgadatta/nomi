@@ -34,3 +34,16 @@ def test_session_can_return_exception_without_raising():
     assert not result.ok
     assert result.exception is not None
     assert result.timings["total"] >= 0
+
+
+def test_session_can_reuse_cached_ast_for_repeated_source():
+    session = create_session(mode="nomi", cache_size=2)
+
+    first = session.run(source="cached_value = 4\n")
+    second = session.run(source="cached_value = 4\n")
+
+    assert first.ok
+    assert second.ok
+    assert "parse" in first.timings
+    assert "cache" in second.timings
+    assert "parse" not in second.timings

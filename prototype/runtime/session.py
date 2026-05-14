@@ -8,6 +8,7 @@ for a later migration.
 from __future__ import annotations
 
 import ast
+import copy
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
@@ -21,8 +22,10 @@ from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 class RuntimeSession:
     mode: str = "nomi"
     profile: str = "default"
+    cache_size: int = 0
     pipeline: PipelineSpec = field(init=False)
     interpreter: Any = field(init=False)
+    _ast_cache: dict[str, Any] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
         self.pipeline = build_pipeline_spec(mode=self.mode, profile=self.profile)
@@ -48,16 +51,18 @@ class RuntimeSession:
         timings: dict[str, float] = {}
         try:
             if tree is None:
-                parse_started = perf_counter()
-                parser = self.pipeline.mode_spec.load_parser()
-                tree = parser(filename=filename, code=source, dump=False)
-                timings["parse"] = perf_counter() - parse_started
-
-                lowerer = self.pipeline.mode_spec.load_session_lowerer()
-                if lowerer is not None:
-                    lower_started = perf_counter()
-                    tree = lowerer(tree)
-                    timings["lower"] = perf_counter() - lower_started
+                cached_tree = self._get_cached_tree(source)
+                if cached_tree is not None:
+                    cache_started = perf_counter()
+                    tree = copy.deepcopy(cached_tree)
+                    timings["cache"] = perf_counter() - cache_started
+                else:
+                    tree = self._parse_and_lower(
+                        source=source,
+                        filename=filename,
+                        timings=timings,
+                    )
+                    self._cache_tree(source, tree)
 
             tree = ast.fix_missing_locations(tree)
             eval_started = perf_counter()
@@ -84,3 +89,38 @@ class RuntimeSession:
             bindings=self.bindings,
             timings=timings,
         )
+
+    def _parse_and_lower(
+        self,
+        *,
+        source: str | None,
+        filename: str | Path | None,
+        timings: dict[str, float],
+    ) -> Any:
+        parse_started = perf_counter()
+        parser = self.pipeline.mode_spec.load_parser()
+        tree = parser(filename=filename, code=source, dump=False)
+        timings["parse"] = perf_counter() - parse_started
+
+        lowerer = self.pipeline.mode_spec.load_session_lowerer()
+        if lowerer is not None:
+            lower_started = perf_counter()
+            tree = lowerer(tree)
+            timings["lower"] = perf_counter() - lower_started
+        return tree
+
+    def _get_cached_tree(self, source: str | None) -> Any | None:
+        if self.cache_size <= 0 or source is None:
+            return None
+        return self._ast_cache.get(source)
+
+    def _cache_tree(self, source: str | None, tree: Any) -> None:
+        if self.cache_size <= 0 or source is None:
+            return
+        if source in self._ast_cache:
+            self._ast_cache[source] = copy.deepcopy(tree)
+            return
+        if len(self._ast_cache) >= self.cache_size:
+            oldest = next(iter(self._ast_cache))
+            del self._ast_cache[oldest]
+        self._ast_cache[source] = copy.deepcopy(tree)

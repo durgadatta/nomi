@@ -123,10 +123,11 @@ def create_session(
     *,
     mode: str = "nomi",
     profile: str = "default",
+    cache_size: int = 0,
 ):
     """Create a persistent runtime session for cells, notebooks, and REPLs."""
 
     # Local import avoids a module cycle: RuntimeSession returns ExecutionResult.
     from prototype.runtime.session import RuntimeSession
 
-    return RuntimeSession(mode=mode, profile=profile)
+    return RuntimeSession(mode=mode, profile=profile, cache_size=cache_size)
