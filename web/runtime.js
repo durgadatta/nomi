@@ -1,5 +1,19 @@
 // Nomi Web Playground — cell execution, run all, restart
 
+function formatTiming(timing, elapsed) {
+  if (!timing) return `last run ${elapsed} ms`;
+  const total = Math.max(1, Math.round(timing.total_ms || elapsed));
+  if (timing.cache_hit) {
+    const cache = Math.max(1, Math.round(timing.cache_ms || 0));
+    const evalMs = Math.max(1, Math.round(timing.eval_ms || 0));
+    return `last run ${total} ms · cached ${cache} · eval ${evalMs}`;
+  }
+  const parse = Math.max(1, Math.round(timing.parse_ms || 0));
+  const desugar = Math.max(1, Math.round(timing.desugar_ms || 0));
+  const evalMs = Math.max(1, Math.round(timing.eval_ms || 0));
+  return `last run ${total} ms · parse ${parse} · desugar ${desugar} · eval ${evalMs}`;
+}
+
 async function runCell(idx, advance, options) {
   if (!_ready || !_runFn) return;
   const manageControls = !(options && options.batch);
@@ -38,7 +52,7 @@ async function runCell(idx, advance, options) {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.session) {
-      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · last run ${elapsed} ms`;
+      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
     }
   } catch (e) {
     const elapsed = Math.max(1, Math.round(performance.now() - start));
@@ -120,7 +134,7 @@ async function runPlainCode() {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.session) {
-      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · last run ${elapsed} ms`;
+      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
     }
   } catch (e) {
     outPre.textContent = String(e);

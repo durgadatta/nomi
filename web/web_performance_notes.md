@@ -79,6 +79,32 @@ messages to `web/worker.js`. The worker loads Pyodide, installs Lark, loads
 **Expected win:** The editor and controls stay more responsive while Nomi code
 runs. Raw execution may not be faster, but UI hitches should be reduced.
 
+#### 6. Add per-run timing and AST cache
+
+**Files:** `web/nomi_web.py`, `web/runtime.js`
+
+**Before:** browser runs reported only total wall time from JavaScript, so parse,
+desugar, and eval costs were not visible. Re-running unchanged cells always
+parsed and desugared again.
+
+**After:** `run_nomi()` returns a `timing` object with parse/desugar/eval/total
+or cache/eval/total timings. The runtime keeps a small source-text cache of
+desugared ASTs and deep-copies cached trees before evaluation.
+
+**Expected win:** Faster repeated runs of unchanged cells and visible evidence
+for the next bottleneck.
+
+#### 7. Initialize editor and worker in parallel
+
+**File:** `web/app.js`
+
+**Before:** the page initialized Pyodide/Nomi first, then loaded Monaco.
+
+**After:** worker startup and Monaco initialization run concurrently.
+
+**Expected win:** Lower startup wall time on cold loads, especially when CDN
+assets are not already warm.
+
 ### 2026-05-13
 
 ### 1. Cache Lark parser instance
@@ -136,7 +162,7 @@ No changes needed here — the manifest is always current when the server starts
 | Bottleneck | Severity | Approach |
 |-----------|----------|----------|
 | AST-walk evaluation (no JIT/compilation) | High | Consider bytecode compilation or tracing JIT |
-| Lark parse for every cell | Medium | AST cache keyed by code hash |
+| Lark parse for changed cells | Medium | AST cache now handles exact reruns; measure grammar/parser options next |
 | Lark is large (~1 MB) | Medium | Vendor a minimal Lark subset, or pre-compile grammar to LALR table |
 | Pyodide/WASM execution overhead | Medium | Measure stage timing; reduce parse/desugar/eval work |
 
@@ -368,13 +394,15 @@ worker questions are measured.
 
 The next practical slice should be:
 
-1. Add timing breakdown from `run_nomi()`.
-2. Display last-run timing detail in the footer.
-3. Add source-hash cache for parsed/desugared cells.
-4. Add hard worker restart/cancel controls for hung cells.
+1. Add hard worker restart/cancel controls for hung cells.
+2. Prebundle runtime files to reduce many small startup fetches.
+3. Use timing data to decide whether parser, desugar, or eval deserves the next
+   optimization.
+4. If parse/desugar dominates changed cells, investigate browser-target parser
+   options or precompiled grammar artifacts.
 
-That order gives evidence first, a quick repeated-run win second, and a
-stronger long-running-cell story third.
+That order improves reliability first, then startup, then deeper runtime speed
+based on measured evidence.
 
 ## How to measure
 

@@ -101,10 +101,10 @@ async function init() {
   buildFileList();
 
   log("Starting runtime worker...");
-  await startRuntimeWorker();
-
+  const runtimeReady = startRuntimeWorker();
   log("Loading editor...");
-  await initMonaco();
+  const editorReady = initMonaco();
+  await Promise.all([runtimeReady, editorReady]);
 
   _ready = true;
   byId("loading").style.display = "none";

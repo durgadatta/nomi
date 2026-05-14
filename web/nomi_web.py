@@ -4,11 +4,13 @@ and provides run_nomi(code) and reset_session() entry points.
 """
 
 import asyncio
+import copy
 import contextlib
 import io
 import json
 import os
 import sys
+import time
 
 PYODIDE = False
 try:
@@ -40,6 +42,8 @@ _session_store = _Store()
 _generate_ast = None
 _nomi_desugar_fn = None
 _Interpreter = None
+_AST_CACHE = {}
+_AST_CACHE_LIMIT = 64
 
 
 def _get_interpreter():
@@ -163,7 +167,17 @@ def reset_session() -> dict:
     return {"ok": True, "session": sid}
 
 
-def _eval_in_session(code: str) -> None:
+def _cache_ast(code, tree):
+    if code in _AST_CACHE:
+        _AST_CACHE[code] = tree
+        return
+    if len(_AST_CACHE) >= _AST_CACHE_LIMIT:
+        oldest = next(iter(_AST_CACHE))
+        del _AST_CACHE[oldest]
+    _AST_CACHE[code] = tree
+
+
+def _parse_and_desugar(code: str) -> tuple[object, dict]:
     global _generate_ast, _nomi_desugar_fn
     if _generate_ast is None or _nomi_desugar_fn is None:
         from prototype.interpreter.nomi.usage import _nomi_desugar
@@ -171,27 +185,54 @@ def _eval_in_session(code: str) -> None:
         _generate_ast = generate_ast
         _nomi_desugar_fn = _nomi_desugar
 
+    timings = {}
+    cached = _AST_CACHE.get(code)
+    if cached is not None:
+        t0 = time.perf_counter()
+        tree = copy.deepcopy(cached)
+        timings["cache_ms"] = (time.perf_counter() - t0) * 1000
+        timings["cache_hit"] = True
+        return tree, timings
+
+    parse_start = time.perf_counter()
+    tree = _generate_ast(code=code, dump=False)
+    timings["parse_ms"] = (time.perf_counter() - parse_start) * 1000
+
+    desugar_start = time.perf_counter()
+    tree = _nomi_desugar_fn(tree)
+    timings["desugar_ms"] = (time.perf_counter() - desugar_start) * 1000
+    timings["cache_hit"] = False
+
+    _cache_ast(code, copy.deepcopy(tree))
+    return tree, timings
+
+
+def _eval_in_session(code: str) -> dict:
     interp = _get_interpreter()
     if interp is None:
         reset_session()
         interp = _get_interpreter()
 
-    tree = _generate_ast(code=code, dump=False)
-    tree = _nomi_desugar_fn(tree)
+    tree, timings = _parse_and_desugar(code)
     # _nomi_desugar already calls ast.fix_missing_locations internally —
     # no need to call it again here.
+    eval_start = time.perf_counter()
     interp.eval(tree)
+    timings["eval_ms"] = (time.perf_counter() - eval_start) * 1000
+    return timings
 
 
 async def run_nomi(code: str) -> dict:
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()
+    total_start = time.perf_counter()
     try:
         with contextlib.redirect_stdout(stdout):
-            _eval_in_session(code)
+            timings = _eval_in_session(code)
         raw = stdout.getvalue()
-        return {"output": raw, "session": _get_counter()}
+        timings["total_ms"] = (time.perf_counter() - total_start) * 1000
+        return {"output": raw, "session": _get_counter(), "timing": timings}
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -199,4 +240,9 @@ async def run_nomi(code: str) -> dict:
         # Show last 5 traceback lines to pinpoint the source file
         lines = tb.strip().split("\n")
         short_tb = "\n".join(lines[-6:]) if len(lines) > 5 else tb
-        return {"error": short_tb, "output": stdout.getvalue(), "session": _get_counter()}
+        return {
+            "error": short_tb,
+            "output": stdout.getvalue(),
+            "session": _get_counter(),
+            "timing": {"total_ms": (time.perf_counter() - total_start) * 1000},
+        }
