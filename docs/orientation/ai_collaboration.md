@@ -36,6 +36,7 @@ clear semantics, tests, examples, and documentation.
   | `nomi-interp` | Modify interpreter runtime behavior |
   | `nomi-test` | Write tests with multi-interpreter patterns |
   | `nomi-web` | Work with the web playground and Monaco editor |
+  | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
   Use the `skill` tool to load a skill. The `caveman` skill is recommended
   for deepseek models to keep output minimal.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
