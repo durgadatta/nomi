@@ -26,8 +26,9 @@ clear semantics, tests, examples, and documentation.
 - `opencode.json`: project-level OpenCode config (model, LSP, formatter,
   permissions, instructions, watcher, compaction, and commented-out templates
   for providers, agents, commands, plugins, and MCP servers).
-- `.opencode/skills/`: AI-assistant skill definitions. Each subdirectory
-  contains a `SKILL.md` with YAML frontmatter. Available skills:
+- `.agents/skills/`: generic AI-assistant skill definitions shared by Codex,
+  OpenCode, deepseek-tui, Claude Code, and other agents that can read a
+  `SKILL.md`. Available skills:
   | Skill | Purpose |
   |---|---|
   | `caveman` | Ultra-concise output — no explanations, just code |
@@ -37,8 +38,9 @@ clear semantics, tests, examples, and documentation.
   | `nomi-test` | Write tests with multi-interpreter patterns |
   | `nomi-web` | Work with the web playground and Monaco editor |
   | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
-  Use the `skill` tool to load a skill. The `caveman` skill is recommended
-  for deepseek models to keep output minimal.
+  If an agent has a skill loader, load the matching skill from this directory.
+  If it does not, read the relevant `SKILL.md` directly before working. The
+  `caveman` skill is recommended for deepseek models to keep output minimal.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
