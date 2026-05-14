@@ -146,6 +146,17 @@ class BindingMixin:
             target=ast.Name(id=name, ctx=ast.Store()),
             value=value
         )
+
+    def constraint_tuple(self, items):
+        return ast.Tuple(elts=list(items), ctx=ast.Load())
+
+    def constraint_message(self, items):
+        constraint, message = items
+        return ast.Call(
+            func=ast.Name(id="__constraint_message__", ctx=ast.Load()),
+            args=[constraint, message],
+            keywords=[],
+        )
     
 
     def annassign(self, items):

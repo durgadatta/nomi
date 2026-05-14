@@ -34,6 +34,19 @@ def test_annotated_assignment_allows_constraint_list():
     assert ast.literal_eval(stmt.value) == 42
 
 
+def test_constraint_message_lowers_to_metadata_marker():
+    stmt = parse_stmt(generate_ast, 'age: int, age >= 13 else "Too young" = 12\n')
+
+    assert isinstance(stmt, ast.AnnAssign)
+    assert isinstance(stmt.annotation, ast.Tuple)
+    message_constraint = stmt.annotation.elts[1]
+    assert isinstance(message_constraint, ast.Call)
+    assert isinstance(message_constraint.func, ast.Name)
+    assert message_constraint.func.id == "__constraint_message__"
+    assert ast.unparse(message_constraint.args[0]) == "age >= 13"
+    assert message_constraint.args[1].value == "Too young"
+
+
 def test_block_call_attaches_block_keyword():
     stmt = parse_stmt(generate_ast, "retry(3):\n    value = 1\n")
 

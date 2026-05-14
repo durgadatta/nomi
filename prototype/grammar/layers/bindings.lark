@@ -2,11 +2,17 @@
 
 assign_stmt: annassign | augassign | assign
 
-// Nomi: annotation accepts a testlist for multi-constraint lists
-annassign: testlist_star_expr ":" testlist_star_expr  ["=" test]
+// Nomi: annotation accepts a constraint list. Individual constraints may carry
+// user-facing messages with: constraint else "message".
+annassign: testlist_star_expr ":" constraint_list  ["=" test]
 assign: testlist_star_expr ("=" (yield_expr|testlist_star_expr))+
 augassign: testlist_star_expr augassign_op (yield_expr|testlist)
 !augassign_op: "+=" | "-=" | "*=" | "@=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=" | "**=" | "//="
+
+?constraint_list: constraint_item
+                | constraint_item ("," constraint_item)+ ","? -> constraint_tuple
+?constraint_item: test
+                | test "else" string_concat -> constraint_message
 
 ?testlist_star_expr: test_or_star_expr
                    | test_or_star_expr ("," test_or_star_expr)+ ","?  -> tuple
