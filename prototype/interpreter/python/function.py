@@ -154,10 +154,12 @@ class FunctionMixin(FunctionCallMixin):
             elif param.arg in kwargs:
                 env.set(param.arg, kwargs[param.arg])
 
-    def _bind_keyword_values(self, env, params, posargs, kwargs):
+    def _bind_keyword_values(self, env, params, kwonlyargs, posargs, kwargs):
         bound_by_position = {param.arg for param in params[:len(posargs)]}
+        declared_names = {param.arg for param in params}
+        declared_names.update(param.arg for param in kwonlyargs)
         for key, value in kwargs.items():
-            if key not in bound_by_position:
+            if key in declared_names and key not in bound_by_position:
                 env.set(key, value)
 
     def _apply_param_defaults(self, env, params, defaults):
@@ -171,6 +173,11 @@ class FunctionMixin(FunctionCallMixin):
                 default_idx = i - default_start
                 if default_idx < len(defaults):
                     env.set(param.arg, self.eval(defaults[default_idx]))
+
+    def _apply_kwonly_defaults(self, env, params, defaults):
+        for param, default in zip(params, defaults or []):
+            if param.arg not in env.bindings and default is not None:
+                env.set(param.arg, self.eval(default))
 
     def _bind_varargs(self, func_node, env, params, posargs):
         if not func_node.args.vararg:
@@ -204,14 +211,16 @@ class FunctionMixin(FunctionCallMixin):
         # TODO: route this through the shared binding/constraint engine once the parser and runtime agree on one path.
         
         params = list(func_node.args.args)
+        kwonlyargs = list(func_node.args.kwonlyargs)
         defaults = func_node.args.defaults or []
         
         params = self._bind_self_obj(env, params, self_obj)
         self._bind_declared_params(env, params, posargs, kwargs)
-        self._bind_keyword_values(env, params, posargs, kwargs)
+        self._bind_keyword_values(env, params, kwonlyargs, posargs, kwargs)
         self._apply_param_defaults(env, params, defaults)
+        self._apply_kwonly_defaults(env, kwonlyargs, func_node.args.kw_defaults)
         self._bind_varargs(func_node, env, params, posargs)
-        self._bind_kwargs(func_node, env, params, kwargs)
+        self._bind_kwargs(func_node, env, params + kwonlyargs, kwargs)
     
     def eval_Return(self, node: ast.Return) -> None:
         value = self.eval(node.value) if node.value else None

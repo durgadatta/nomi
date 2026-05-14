@@ -48,3 +48,23 @@ def test_kwarg_constraint_validates_collected_mapping(nomi_mode):
                 "result = configure()\n"
             )
         )
+
+
+def test_keyword_only_parameter_constraint_validates_default(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="func gate(*, age:(int, age >= 13)=14):\n    return age\nresult = gate()\n")
+
+    assert bindings["result"] == 14
+
+
+def test_keyword_only_parameter_constraint_rejects_invalid_keyword(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+
+    with pytest.raises(RuntimeError, match="Too young"):
+        run(
+            code=(
+                'func gate(*, age:(int, age >= 13 else "Too young")=14):\n'
+                "    return age\n"
+                "result = gate(age=12)\n"
+            )
+        )

@@ -152,9 +152,8 @@ class FunctionDefMixin:
             # *args
             if isinstance(item, tuple) and item[0] == "vararg":
                 vararg = item[1]
-                if vararg is not None:
-                    seen_star = True
-                    current_list = kwonlyargs
+                seen_star = True
+                current_list = kwonlyargs
                 continue
 
             # **kwargs
