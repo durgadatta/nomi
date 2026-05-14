@@ -74,7 +74,9 @@
     "prototype/parser/python/others.py",
     "prototype/parser/python/patterns.py",
     "prototype/parser/python/statements.py",
-    "prototype/parser/python/utils.py"
+    "prototype/parser/python/utils.py",
+    "prototype/runtime/__init__.py",
+    "prototype/runtime/api.py"
   ],
   "samples": [
     "samples/block.nomi",

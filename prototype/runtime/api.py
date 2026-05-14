@@ -1,0 +1,70 @@
+"""Small public facade over today's interpreter runners.
+
+This module is the first top-down architecture step from
+``docs/language/architecture_refactoring_plan.md``.  It intentionally wraps the
+existing runners instead of moving parser or interpreter internals yet.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+
+from prototype.interpreter.helpers import get_run_eval_loop
+
+
+@dataclass(frozen=True)
+class ExecutionResult:
+    """Structured result for callers that want an API instead of raw bindings."""
+
+    mode: str
+    profile: str
+    bindings: dict[str, Any] = field(default_factory=dict)
+    exception: Exception | None = None
+
+    @property
+    def ok(self) -> bool:
+        return self.exception is None
+
+
+def execute(
+    *,
+    source: str | None = None,
+    filename: str | Path | None = None,
+    tree: Any | None = None,
+    mode: str = "nomi",
+    profile: str = "default",
+    raise_on_error: bool = True,
+) -> ExecutionResult:
+    """Run source through the selected current interpreter mode.
+
+    This is deliberately a facade over ``run_eval_loop``.  Later architecture
+    slices can attach pipeline artifacts, diagnostics, events, timings, and
+    sessions here without forcing every frontend to know parser internals.
+    """
+
+    if profile != "default":
+        # TODO(NOMI-ARCH-002): Route named feature profiles through mode
+        # metadata once the parser supports feature-selected pipelines.
+        raise ValueError(f"Unsupported runtime profile: {profile!r}")
+
+    runner = get_run_eval_loop(mode)
+    try:
+        bindings = runner(code=source, file_name=filename, tree=tree)
+    except Exception as exc:
+        if raise_on_error:
+            raise
+        return ExecutionResult(
+            mode=mode,
+            profile=profile,
+            exception=exc,
+        )
+
+    # TODO(NOMI-ARCH-004): Add stdout/stderr, diagnostics, events, and stage
+    # timings once frontends migrate to this structured result.
+    return ExecutionResult(
+        mode=mode,
+        profile=profile,
+        bindings=bindings,
+    )
