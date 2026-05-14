@@ -16,6 +16,7 @@ Nomi now has a richer design spine:
 - [Target Program Fixtures](target_program_fixtures.md)
 - [Target Language Tour](target_language_tour.md)
 - [Design Proposal Template](design_proposal_template.md)
+- [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md)
 - [Language Feature Todos](implementation_todos.md)
 
 This plan answers a narrower question:

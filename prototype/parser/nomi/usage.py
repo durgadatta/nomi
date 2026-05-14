@@ -12,9 +12,9 @@ from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 # ── parser cache ────────────────────────────────────────────────────
 # Lark Earley parser construction is O(n³) in grammar size — easily
 # 100+ ms even in CPython and much worse in Pyodide/WebAssembly.
-# Creating a fresh parser on every cell execution was the #1 source
-# of latency in the web playground.
-_PARSER_CACHE = None
+# Cache by the active extra-layer tuple so syntax experiments do not
+# accidentally reuse the default parser.
+_PARSER_CACHE = {}
 
 
 def prefer_name_for_underscore_terminal(terminal):
@@ -23,9 +23,9 @@ def prefer_name_for_underscore_terminal(terminal):
 
 
 def get_parser(extra_layers=None):
-    global _PARSER_CACHE
-    if _PARSER_CACHE is not None:
-        return _PARSER_CACHE
+    cache_key = tuple(extra_layers or ())
+    if cache_key in _PARSER_CACHE:
+        return _PARSER_CACHE[cache_key]
     grammar = assemble_grammar(extra_layers=extra_layers)
     parser = Lark(
             grammar,
@@ -34,7 +34,7 @@ def get_parser(extra_layers=None):
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
     )
-    _PARSER_CACHE = parser
+    _PARSER_CACHE[cache_key] = parser
     return parser
 
 

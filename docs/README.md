@@ -60,6 +60,9 @@ for the next implementation pass.
   repeatable process for moving research ideas toward coherent Nomi decisions.
 - [Forward Implementation Plan](language/forward_implementation_plan.md):
   staged implementation sequence, gates, caveats, risks, and open questions.
+- [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md):
+  parser, grammar, lowering, and interpreter architecture changes needed to
+  make new syntax easy to add, inspect, and revise.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes

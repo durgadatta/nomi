@@ -1,5 +1,7 @@
 import ast
 
+import pytest
+
 from prototype.parser.nomi.usage import get_parser
 from prototype.parser.nomi.usage import generate_ast
 
@@ -41,3 +43,10 @@ def test_nomi_parser_loads_grammar_independent_of_cwd(monkeypatch, tmp_path):
     node = generate_ast(code='print("still works")\n')
 
     assert isinstance(node.body[0], ast.Expr)
+
+
+def test_nomi_parser_cache_is_keyed_by_extra_layers():
+    get_parser()
+
+    with pytest.raises(FileNotFoundError):
+        get_parser(extra_layers=["__missing_experimental_layer__.lark"])
