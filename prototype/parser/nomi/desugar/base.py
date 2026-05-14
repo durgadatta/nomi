@@ -26,6 +26,9 @@ class NomiDesugarer(BaseDesugarer):
     def visit_keyword(self, node):
         self.generic_visit(node)
         if isinstance(node.value, Block):
+            # TODO(NOMI-SUBSTRATE-010): Replace this custom Python-AST keyword
+            # payload with a Nomi-owned BlockCall surface/core node, then lower
+            # to today's Block representation only in the Python backend.
             node.value.body = [self.visit(stmt) for stmt in node.value.body]
             if isinstance(node.value.params, ast.AST):
                 node.value.params = self.visit(node.value.params)

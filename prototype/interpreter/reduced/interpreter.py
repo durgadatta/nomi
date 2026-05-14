@@ -25,6 +25,9 @@ class Interpreter(NomiInterpreter):
 
 # --- Auto-generated NotImplementedError overrides ---
 # These match the removed_node_types declared by the desugar pipeline.
+# TODO(NOMI-SUBSTRATE-019): When Nomi-owned surface/core nodes exist, extend
+# this guardrail beyond Python AST node types so the reduced interpreter can
+# fail fast on any unlowered syntax normal form.
 
 for _node_type in sorted(get_removed_node_types(), key=lambda t: t.__name__):
     _method_name = f'eval_{_node_type.__name__}'

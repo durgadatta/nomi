@@ -45,6 +45,9 @@ NULLISH: "??"
 AWAIT: "await"
 
 // -- atoms ------------------------------------------------------------
+// TODO(NOMI-SUBSTRATE-013): Future fenced forms such as quote: and use units:
+// should enter as syntax-island nodes with raw text and spans before the
+// ordinary expression grammar tries to understand their domain notation.
 ?atom: "(" yield_expr ")"
      | "(" section ")" -> section
      | "(" _tuple_inner? ")" -> tuple

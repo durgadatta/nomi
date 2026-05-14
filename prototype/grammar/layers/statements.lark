@@ -69,6 +69,9 @@ dotted_as_names: dotted_as_name ("," dotted_as_name)*
 dotted_name: name ("." name)*
 
 // -- compound statements ----------------------------------------------
+// TODO(NOMI-SUBSTRATE-012): New language words should remain soft keywords
+// unless a feature manifest proves they must be reserved globally. Add
+// ambiguity tests whenever this list grows.
 ?compound_stmt: if_stmt | guard_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
               | with_stmt | funcdef | classdef | decorated | async_stmt
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
@@ -91,6 +94,9 @@ with_items: with_item ("," with_item)*
 with_item: test ["as" name]
 
 // -- block call (Nomi) ------------------------------------------------
+// TODO(NOMI-SUBSTRATE-010): Keep this surface, but lower it through a
+// Nomi-owned BlockCall node instead of encoding the block as a Python AST
+// keyword payload.
 block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
 
 // -- yield ------------------------------------------------------------

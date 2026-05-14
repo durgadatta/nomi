@@ -25,6 +25,10 @@ _LAYER_TRANSFORMS = None
 
 _LAYERS_DIR = Path(__file__).resolve().parent / "layers"
 
+# TODO(NOMI-SUBSTRATE-001): Replace this hardcoded layer order with a small
+# feature-manifest registry. Each syntax feature should eventually declare its
+# grammar fragments, parse-tree transforms, lowering passes, docs, and tests in
+# one place; this list can remain the built-in core layer order until then.
 _LAYER_ORDER = [
     "terminals.lark",
     "expressions.lark",
@@ -66,6 +70,9 @@ def get_layer_pipeline():
     global _LAYER_TRANSFORMS
     if _LAYER_TRANSFORMS is None:
         from ..parser.nomi.desugar.parse_tree_precedence import ExpressionLayer
+        # TODO(NOMI-SUBSTRATE-001): Feature manifests should also contribute
+        # parse-tree transforms so adding syntax does not require editing this
+        # central assembly file by hand.
         _LAYER_TRANSFORMS = [ExpressionLayer()]
     return LayerPipeline(list(_LAYER_TRANSFORMS))
 

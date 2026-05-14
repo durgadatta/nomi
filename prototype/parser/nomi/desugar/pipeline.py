@@ -16,6 +16,10 @@ from .with_ import With
 from .fstring import FString
 
 
+# TODO(NOMI-SUBSTRATE-008): Replace this plain ordered list with pass metadata:
+# name, dependencies, removed nodes, produced nodes, and Nomi normal forms.
+# Manual order is fine for now, but each pass should eventually state its
+# contract so syntax additions are easier to review.
 DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
     PiecewiseFunction,
     WhereClause,
@@ -34,6 +38,8 @@ def desugar_module(tree: ast.Module) -> ast.Module:
     for pass_cls in DESUGAR_PASSES:
         tree = pass_cls().visit(tree)
     ast.fix_missing_locations(tree)
+    # TODO(NOMI-SUBSTRATE-009): After pass metadata exists, assert that no
+    # declared removed surface/core nodes remain before execution.
     return tree
 
 

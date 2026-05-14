@@ -15,6 +15,9 @@ explanation, scoped notation, and symbolic structure. To reach that surface,
 Nomi needs a grammar and parsing substrate where adding syntax is routine,
 inspectable, and reversible.
 
+For the detailed critique and stable TODO list that points into code, see
+[Syntax Substrate TODO Audit](syntax_substrate_todo_audit.md).
+
 The current pipeline is already a useful laboratory:
 
 ```text

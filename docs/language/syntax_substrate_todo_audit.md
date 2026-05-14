@@ -1,0 +1,336 @@
+# Syntax Substrate TODO Audit
+
+> Status: active critique and TODO index.
+>
+> Scope: parser, grammar, lowering, desugaring, interpreter boundaries,
+> diagnostics, and syntax experimentation. This document collects the concrete
+> changes that would make Nomi easier to evolve toward the target language
+> tour.
+
+## Purpose
+
+Nomi's design ambition now reaches beyond small syntax conveniences. The
+language wants data boundaries, constraints, result handling, table flow,
+block policies, tests, explanation, scoped notation, and symbolic structure to
+feel like one language. That requires a substrate where new syntax can be
+added, inspected, revised, and removed without a tense cross-repo hunt.
+
+This audit is deliberately critical. It is not saying the current prototype is
+bad; it is naming where the prototype still makes language growth harder than
+it needs to be.
+
+Use this document together with:
+
+- [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md)
+- [Forward Implementation Plan](forward_implementation_plan.md)
+- [Target Language Tour](target_language_tour.md)
+- [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md)
+
+Inline code comments use stable IDs such as `NOMI-SUBSTRATE-001`. Keep those
+IDs in sync with the table below.
+
+## Summary Critique
+
+The current pipeline is powerful enough to keep experimenting:
+
+```text
+Lark grammar layers
+-> parse-tree transforms
+-> NomiToPythonAST
+-> Python AST desugars
+-> layered interpreters
+```
+
+The main risk is not grammar expressiveness. The main risk is **diffusion of
+responsibility**. A feature does not yet have one home. Adding syntax can
+scatter into:
+
+- `.lark` fragments;
+- parse-tree transforms;
+- transformer mixins;
+- custom Python AST metadata;
+- desugar passes;
+- interpreter methods;
+- reduced-interpreter guards;
+- tests and snapshots;
+- docs and target fixtures.
+
+That scatter is survivable for isolated conveniences. It becomes dangerous for
+the target language, where many features need to compose.
+
+The desired shift:
+
+```text
+from "find every place this syntax must be wired"
+to   "open one feature package and follow its declared lowering path"
+```
+
+## Central TODO Index
+
+| ID | Theme | Current pain | Desired change | Suggested first patch |
+| --- | --- | --- | --- | --- |
+| NOMI-SUBSTRATE-001 | Feature manifest registry | Core layers and transforms are hardcoded in `assemble.py`. | Each syntax feature declares grammar, transforms, lowering, docs, tests, and status. | Add a tiny `SyntaxFeature` dataclass and build `_LAYER_ORDER` from built-in feature manifests. |
+| NOMI-SUBSTRATE-002 | Feature-set parser API | `extra_layers` is useful but stringly and grammar-only. | `get_parser(features=[...])` should select feature manifests, not just raw layer files. | Keep current `extra_layers` cache key, then add `features` as a named higher-level API. |
+| NOMI-SUBSTRATE-003 | Parse/lowering inspection | Grammar changes lack a standard visible artifact. | A CLI prints raw tree, transformed tree, surface AST, core AST, and Python AST. | Add `python3 -m tools.syntax.inspect --stage raw-tree FILE`. |
+| NOMI-SUBSTRATE-004 | Source spans | Tokens know positions, but lowered nodes usually forget them. | Every surface/core node carries `SourceSpan`; Python AST backend keeps a side table if needed. | Attach spans to top-level statements and expression nodes in `NomiToPythonAST` helpers. |
+| NOMI-SUBSTRATE-005 | Surface AST | Nomi syntax lowers directly into Python AST or custom attributes. | Add Nomi-owned surface nodes for syntax that Python AST cannot represent naturally. | Start with `BlockCall`, `PipeExpr`, `MatchExpr`, `BindingTarget`, and `DataDecl`. |
+| NOMI-SUBSTRATE-006 | Core AST | "Normal form" exists mostly in docs. | Add a small core AST matching binding, function, pattern, flow, block, result, boundary, explanation. | Define `prototype/syntax/core.py` with dataclasses before migrating behavior. |
+| NOMI-SUBSTRATE-007 | Python AST backend boundary | Python AST is both IR and backend. | Keep Python AST as one backend while building a direct Nomi core interpreter over time. | Create `prototype/syntax/backends/python_ast.py` and move one lowering there. |
+| NOMI-SUBSTRATE-008 | Declarative lowering passes | `DESUGAR_PASSES` is ordered manually. | Passes declare name, dependencies, removed nodes, produced nodes, and normal forms. | Wrap existing passes in metadata without changing behavior. |
+| NOMI-SUBSTRATE-009 | Lowering invariant checks | Reduced interpreter guards only Python AST node types removed by desugars. | Check that no forbidden surface/core nodes survive each lowering phase. | Add `assert_no_nodes(module, removed_nodes)` to the pass manager. |
+| NOMI-SUBSTRATE-010 | Block call representation | Block bodies live inside `ast.keyword.value` as custom `Block` objects. | Give block calls a Nomi-owned node, then lower to Python-compatible encoding. | Add a `BlockCall` surface node and a lowering pass to today's keyword representation. |
+| NOMI-SUBSTRATE-011 | Binding target model | Assignment, parameters, patterns, fields, and block params do not yet share one node model. | Create one `BindingTarget` and `Constraint` representation reused across all name-introduction sites. | Prototype for annotated assignment first, then parameters and patterns. |
+| NOMI-SUBSTRATE-012 | Soft keyword policy | Soft keyword behavior exists in places, but the policy is not encoded. | Feature manifests declare soft keywords and ambiguity tests. | Add tests that future keywords still parse as names outside feature positions. |
+| NOMI-SUBSTRATE-013 | Syntax islands | Future fenced notation must either fail parse or be implemented early. | Parse `quote:`, `use units:`, and future DSL regions as island nodes with raw text and spans. | Add one disabled/experimental island feature that parses but cannot run. |
+| NOMI-SUBSTRATE-014 | Grammar conflict review | Lark can accept grammar growth that later becomes hard to reason about. | Feature tests include ambiguity/conflict fixtures and parse snapshots. | Add a `prototype/tests/unit/parser/snapshots/` harness for selected source snippets. |
+| NOMI-SUBSTRATE-015 | Diagnostics contract | Parse/lowering errors often fall through as generic Python/Lark errors. | Each feature declares common mistakes and Nomi-worded diagnostic messages. | Start with pipeline stage errors, block-call body errors, and placeholder-scope errors. |
+| NOMI-SUBSTRATE-016 | Target tour parsing mode | Aspirational examples cannot be partially parsed or inspected yet. | Syntax labs can parse target-tour subsets in explicit experimental modes. | Add `nomi --features data,block,trace --parse-only target.nomi`. |
+| NOMI-SUBSTRATE-017 | Feature lifecycle statuses | Docs have statuses, code does not. | Code-level feature manifests use `implemented`, `prototype-ready`, `design-needed`, `research-only`, `rejected-for-now`. | Make default parser refuse `research-only` features unless explicitly requested. |
+| NOMI-SUBSTRATE-018 | Grammar reference regeneration | `nomi.ref.lark` is documented as generated but lacks a first-class command. | One command regenerates/checks the reference grammar. | Add `python3 -m tools.syntax.grammar_ref --check`. |
+| NOMI-SUBSTRATE-019 | Normal-form expansion view | Users and agents cannot ask "what did this syntax become?" | Tooling shows feature-by-feature expansion from surface to core. | Extend the inspection CLI with `--explain-lowering`. |
+| NOMI-SUBSTRATE-020 | Test template for syntax features | New syntax tests are easy to place inconsistently. | A feature template names parse, lower, diagnostic, runtime, docs, and fixture tests. | Add `prototype/syntax/features/_template/README.md`. |
+
+## Inline TODO Locations
+
+Current inline comments have been placed at these high-leverage seams:
+
+| ID | File | Why this location matters |
+| --- | --- | --- |
+| NOMI-SUBSTRATE-001 | `prototype/grammar/assemble.py` | Hardcoded layer order and transform list should become the feature registry. |
+| NOMI-SUBSTRATE-002 | `prototype/parser/nomi/usage.py` | Parser cache and parser entry point should grow from `extra_layers` to feature sets. |
+| NOMI-SUBSTRATE-003 | `prototype/parser/nomi/usage.py` | Raw/transformed tree and AST inspection should happen near parse generation. |
+| NOMI-SUBSTRATE-004 | `prototype/parser/nomi/usage.py`, `prototype/parser/nomi/ast_.py` | Source span capture begins at parse/lower time. |
+| NOMI-SUBSTRATE-005 | `prototype/parser/nomi/ast_.py` | `NomiToPythonAST` is the current point where a surface AST layer should be inserted. |
+| NOMI-SUBSTRATE-008 | `prototype/parser/nomi/desugar/pipeline.py` | Pass ordering and metadata belong where desugars are chained. |
+| NOMI-SUBSTRATE-010 | `prototype/parser/nomi/desugar/base.py`, `prototype/grammar/layers/statements.lark` | Block call syntax currently has no Nomi-owned node. |
+| NOMI-SUBSTRATE-012 | `prototype/grammar/layers/statements.lark` | New keywords should remain soft until proven otherwise. |
+| NOMI-SUBSTRATE-013 | `prototype/grammar/layers/expressions.lark` | Future fenced expressions need a safe parser holding zone. |
+| NOMI-SUBSTRATE-019 | `prototype/interpreter/reduced/interpreter.py` | Reduced interpreter guardrails should evolve into full normal-form checks. |
+
+Add new inline TODOs only when they point to a real architectural seam. Avoid
+sprinkling IDs everywhere.
+
+## Detailed Critique
+
+### 1. Grammar Layers Are Useful But Not Yet Feature-Owned
+
+The layer files are a good start because they group terminals, expressions,
+statements, patterns, bindings, and calls. But source-language features do not
+map perfectly to those layers. For example, `data` will need statement grammar,
+field binding grammar, constraints, decode behavior, diagnostics, samples, and
+docs. Splitting that across current layers is fine internally, but the feature
+needs one owner.
+
+Caveat: do not overbuild a plugin system. Start with static manifests for
+built-in features. Dynamic loading can wait.
+
+### 2. Python AST Is A Great Bootstrap And A Poor Long-Term Center
+
+Python AST gives Nomi quick parity and a working interpreter path. But syntax
+like block policies, match expressions, constrained binding, data fields, and
+trace/explain do not naturally fit Python AST. The current workaround pattern
+is either IIFEs or metadata/custom objects attached to Python nodes.
+
+That is acceptable during bootstrap, but it is a warning sign. Nomi should not
+ask every future feature to pretend it is Python syntax before it can be
+reasoned about.
+
+Caveat: do not rip Python AST out wholesale. Create Nomi surface/core nodes for
+new or awkward features first, then keep lowering to Python AST as a backend.
+
+### 3. Diagnostics Need Source Spans Before They Need Fancy Formatting
+
+The target language depends on excellent diagnostics. That does not begin with
+beautiful error messages; it begins with source spans surviving every parse and
+lowering step.
+
+The first win is modest:
+
+```text
+node.span -> file, start line/column, end line/column
+```
+
+Even if only a few node types get spans at first, it changes the architecture
+from "diagnostics someday" to "diagnostics have a place to attach."
+
+Caveat: Python AST has `lineno`/`col_offset`, but those are not enough for
+multi-token Nomi constructs such as block calls, where clauses, and future
+fenced syntax.
+
+### 4. Desugar Passes Should Become Contracts
+
+The current `DESUGAR_PASSES` list is readable, but it does not state why the
+order is correct, which nodes each pass expects, or which normal forms it
+produces. As features grow, pass ordering becomes hidden language semantics.
+
+The pass manager should eventually be able to answer:
+
+```text
+What nodes can enter this pass?
+What nodes can leave it?
+Which normal form does it produce?
+Which later passes depend on it?
+What should never reach runtime?
+```
+
+Caveat: do this by wrapping existing passes in metadata first. Do not rewrite
+all desugars at the same time.
+
+### 5. Syntax Experiments Need Parse-Only Lifecycles
+
+The target language tour intentionally contains future forms. The project
+needs a way to parse and inspect these without pretending runtime support
+exists. Feature lifecycle should be explicit:
+
+```text
+research-only: docs and maybe syntax island
+design-needed: parse-only experiment, no runtime
+prototype-ready: parse + lower + diagnostics, maybe partial runtime
+implemented: default parser and tests
+```
+
+Caveat: parse-only syntax can be dangerous if users mistake it for supported
+behavior. Keep it behind explicit feature flags and clear diagnostics.
+
+### 6. Normal Forms Should Become Executable
+
+The docs say every convenience should reduce to binding, function, pattern,
+flow, block, absence/result, data boundary, or explanation. That is the right
+doctrine. The implementation should make it concrete.
+
+Eventually, adding syntax should require declaring:
+
+```text
+normal_forms = ["flow", "function"]
+```
+
+and supplying a lowering that proves it.
+
+Caveat: the normal-form set may evolve. Feature manifests should allow a
+feature to propose a new primitive, but make that rare and review-heavy.
+
+## Suggested Work Packages
+
+### Package 1: Inspection And Snapshots
+
+Goal: make parser changes visible.
+
+Tasks:
+
+- Add `tools.syntax.inspect`.
+- Print raw Lark tree and transformed Lark tree.
+- Print current Python AST.
+- Add one snapshot fixture for pipeline, match, where, block call, and
+  underscore lambda.
+- Add `--check` mode later.
+
+Risks:
+
+- Snapshots can become noisy. Keep them small and representative.
+
+### Package 2: Feature Manifest Skeleton
+
+Goal: give syntax features one home before moving behavior.
+
+Tasks:
+
+- Add `prototype/syntax/feature.py`.
+- Define feature status enum.
+- Define grammar fragment, transforms, lower passes, docs, and test pointers.
+- Register current core grammar as one built-in feature group.
+- Keep existing layer files where they are until migration is useful.
+
+Risks:
+
+- Too much abstraction too early. Keep the manifest passive at first.
+
+### Package 3: Source Span Prototype
+
+Goal: prove diagnostics can point to Nomi source.
+
+Tasks:
+
+- Add `SourceSpan`.
+- Preserve spans for function definitions, assignments, calls, match cases,
+  and block calls.
+- Add tests for span shape, not exact formatting.
+- Show spans in inspection CLI.
+
+Risks:
+
+- Lark tree/token span handling may be uneven around indentation and synthetic
+  nodes. Accept partial coverage first.
+
+### Package 4: BlockCall Surface Node
+
+Goal: stop making the most Nomi-specific control form hide inside Python AST
+keywords.
+
+Tasks:
+
+- Add `BlockCall` surface node.
+- Change block-call lowering to produce `BlockCall`.
+- Add a backend lowering pass from `BlockCall` to today's `Block` keyword
+  representation.
+- Keep interpreter behavior unchanged.
+- Add snapshot tests for the surface node and backend lowering.
+
+Risks:
+
+- Resumable control is delicate. Do not change runtime semantics in the first
+  patch.
+
+### Package 5: Declarative Desugar Metadata
+
+Goal: make pass ordering and guarantees explicit.
+
+Tasks:
+
+- Add `PassInfo` metadata.
+- Wrap existing `DESUGAR_PASSES`.
+- Print pass list from inspection CLI.
+- Check `removed_node_types` after passes.
+- Later add dependencies and topological sorting.
+
+Risks:
+
+- Topological sorting is unnecessary at first. Manual order plus metadata is
+  enough for the first iteration.
+
+### Package 6: Syntax Labs
+
+Goal: safely parse future ideas.
+
+Tasks:
+
+- Add feature-set parser API.
+- Add `--features` to CLI parse/inspect commands.
+- Add parse-only diagnostics for unsupported features.
+- Parse one future feature as a syntax island.
+
+Risks:
+
+- Feature flags can fragment expectations. Keep labs out of default examples.
+
+## Caveats
+
+- A flexible substrate is not a license to add incoherent syntax. It makes
+  coherence easier to test.
+- The grammar should remain readable. Feature manifests should organize it,
+  not hide it behind generated complexity.
+- The target is not "plugins everywhere." The target is local ownership,
+  inspectable lowering, and reversible experiments.
+- Python parity still matters. A Nomi-owned AST should preserve Python-like
+  behavior where Nomi intentionally follows Python.
+- Some syntax work should remain docs-only until diagnostics and normal-form
+  reductions are clear.
+
+## Maintenance Rules
+
+- When adding an inline `NOMI-SUBSTRATE-*` comment, add or update its row here.
+- When completing a TODO, keep the row but mark it as done in a short note
+  until a later cleanup pass removes or archives it.
+- When a new syntax feature is proposed, list which TODOs it depends on.
+- When target-tour syntax changes, ask whether the substrate needs a new TODO.
+- When implementation diverges from this audit, update the audit rather than
+  letting it become stale.

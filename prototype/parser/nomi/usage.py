@@ -14,6 +14,9 @@ from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 # 100+ ms even in CPython and much worse in Pyodide/WebAssembly.
 # Cache by the active extra-layer tuple so syntax experiments do not
 # accidentally reuse the default parser.
+# TODO(NOMI-SUBSTRATE-002): Grow this into get_parser(features=[...]) once
+# syntax feature manifests exist. The cache key should become the resolved
+# feature set, not raw layer filenames.
 _PARSER_CACHE = {}
 
 
@@ -47,6 +50,11 @@ def generate_ast(filename=None, code=None, dump=False):
     pipeline = get_layer_pipeline()
     tree = pipeline.run(tree)
 
+    # TODO(NOMI-SUBSTRATE-003): Expose raw tree, transformed tree, and lowered
+    # AST through a tools.syntax.inspect command so grammar changes have stable
+    # review artifacts before runtime behavior changes.
+    # TODO(NOMI-SUBSTRATE-004): Preserve Lark token/tree positions here as
+    # SourceSpan metadata before lowering erases Nomi surface structure.
     node = NomiToPythonAST().transform(tree)
     if dump:
         return ast.dump(node, include_attributes=False, indent=2)

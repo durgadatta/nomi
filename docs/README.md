@@ -63,6 +63,9 @@ for the next implementation pass.
 - [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md):
   parser, grammar, lowering, and interpreter architecture changes needed to
   make new syntax easy to add, inspect, and revise.
+- [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md):
+  detailed critique, central TODO index, and inline-code TODO map for making
+  future syntax changes easier.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes

@@ -50,6 +50,8 @@ Read the smallest relevant set before changing docs or making recommendations:
   with gates, caveats, risks, and open questions.
 - `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
   lowering, and interpreter architecture for making new syntax easy to add.
+- `docs/language/syntax_substrate_todo_audit.md` — central critique and
+  TODO index for parser/grammar/lowering changes.
 - `docs/language/language_spec.md` — draft concrete language specification.
 - `docs/convenience/review_and_roadmap.md` — normal forms and feature status labels.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature families and recommendations.
