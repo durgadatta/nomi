@@ -20,7 +20,14 @@ class BlockFunctionMixin:
     
     def _setup_function_parameters(self, func_node, env):
         """Set up parameter constraints in the given environment."""
-        for param in func_node.args.args:
+        params = list(func_node.args.args)
+        params.extend(func_node.args.kwonlyargs)
+        if func_node.args.vararg:
+            params.append(func_node.args.vararg)
+        if func_node.args.kwarg:
+            params.append(func_node.args.kwarg)
+
+        for param in params:
             if param.annotation:
                 ann_assign = ast.AnnAssign(
                     target=ast.Name(id=param.arg, ctx=ast.Store()),
