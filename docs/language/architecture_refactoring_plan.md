@@ -258,10 +258,28 @@ Why third:
 
 The most user-visible surfaces are where ad hoc state management hurts most.
 
+Progress:
+
+- Done after coarse timings: added `RuntimeSession` and `create_session()` as
+  a persistent interpreter facade with reset/run methods and parse/lower/eval
+  timings.
+- Still pending: migrate `web/nomi_web.py` and `tools/jupyter/nomi_kernel.py`
+  to use the shared session facade, then add cancellation/restart policy.
+
+Notes from implementation:
+
+- The first session facade intentionally mirrors current Nomi behavior:
+  parse with the selected mode parser, apply a mode-declared session lowerer
+  when needed, then evaluate against one persistent interpreter.
+- Mode metadata now needs to distinguish human-readable lowering descriptions
+  from callable lowerers used by sessions.
+- Web currently adds AST caching and millisecond timing locally; keep that
+  optimization in place until the shared session facade grows an optional cache.
+
 Next safe extension:
 
-- Add `RuntimeSession` as a facade over current persistent web/notebook
-  execution before changing frontend execution paths.
+- Add optional AST caching to `RuntimeSession` before migrating
+  `web/nomi_web.py`, so the web performance work does not regress.
 
 ## Open Questions
 

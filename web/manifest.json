@@ -78,7 +78,8 @@
     "prototype/runtime/__init__.py",
     "prototype/runtime/api.py",
     "prototype/runtime/modes.py",
-    "prototype/runtime/pipeline.py"
+    "prototype/runtime/pipeline.py",
+    "prototype/runtime/session.py"
   ],
   "samples": [
     "samples/block.nomi",

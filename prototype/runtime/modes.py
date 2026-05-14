@@ -27,12 +27,21 @@ class ModeSpec:
     parser: str
     lowering: str
     interpreter: str
+    session_lowerer: str | None = None
 
     def load_runner(self) -> Callable:
         return _load_dotted(f"{self.runner_module}.run_eval_loop")
 
     def load_parser(self) -> Callable:
         return _load_dotted(self.parser)
+
+    def load_interpreter_class(self) -> Callable:
+        return _load_dotted(self.interpreter)
+
+    def load_session_lowerer(self) -> Callable | None:
+        if self.session_lowerer is None:
+            return None
+        return _load_dotted(self.session_lowerer)
 
 
 MODE_SPECS: dict[str, ModeSpec] = {
@@ -51,6 +60,7 @@ MODE_SPECS: dict[str, ModeSpec] = {
         parser="prototype.parser.nomi.usage.generate_ast",
         lowering="nomi-selected-desugar-passes",
         interpreter="prototype.interpreter.nomi.interpreter.Interpreter",
+        session_lowerer="prototype.interpreter.nomi.usage._nomi_desugar",
     ),
     "reduced": ModeSpec(
         name="reduced",
@@ -59,6 +69,7 @@ MODE_SPECS: dict[str, ModeSpec] = {
         parser="prototype.parser.nomi.usage.generate_ast",
         lowering="prototype.parser.nomi.desugar.pipeline.desugar_module",
         interpreter="prototype.interpreter.reduced.interpreter.Interpreter",
+        session_lowerer="prototype.parser.nomi.desugar.pipeline.desugar_module",
     ),
 }
 

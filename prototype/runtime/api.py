@@ -117,3 +117,16 @@ def inspect(
         output=output,
         timings=timings,
     )
+
+
+def create_session(
+    *,
+    mode: str = "nomi",
+    profile: str = "default",
+):
+    """Create a persistent runtime session for cells, notebooks, and REPLs."""
+
+    # Local import avoids a module cycle: RuntimeSession returns ExecutionResult.
+    from prototype.runtime.session import RuntimeSession
+
+    return RuntimeSession(mode=mode, profile=profile)
