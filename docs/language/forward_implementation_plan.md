@@ -276,7 +276,9 @@ Goal: reuse the binding engine everywhere names enter scope.
 
 Design decisions before coding:
 
-- Grouped parameter constraint syntax: `x:(int, x > 0)`.
+- Grouped parameter constraint syntax: `x:(int, x > 0)` is now implemented
+  for function parameters. The next pass should connect it to structured
+  binding diagnostics and broader argument-kind coverage.
 - Arrow function constraint support or clear rejection.
 - Block parameter mapping: one value, many values, tuple/list expansion,
   defaults, wrong arity.
@@ -286,7 +288,9 @@ Design decisions before coding:
 Implementation slices:
 
 1. Route function call argument binding through `BindingTarget`.
-2. Add grouped parameter constraint parsing/lowering.
+2. Add grouped parameter constraint parsing/lowering. Basic support is done;
+   continue with default, keyword-only, `*args`, and `**kwargs` coverage before
+   calling the phase complete.
 3. Use binding engine for block parameters.
 4. Use binding engine for destructuring targets.
 5. Use tentative binding for match captures.

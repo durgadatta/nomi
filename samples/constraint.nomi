@@ -38,6 +38,11 @@ func double_limited(x: (int, x > 0, x < 100)):
 
 print("double_limited(5) = " + str(double_limited(5)))
 
+# Uncomment to see a parameter constraint message:
+# func signup(age:(int, age >= 13 else "Signup requires age 13+")):
+#     return age
+# signup(12)
+
 # -- Rebinding keeps the constraint until replaced --------------------
 age: int, age >= 0 = 30
 age = 35                       # still checked: age >= 0

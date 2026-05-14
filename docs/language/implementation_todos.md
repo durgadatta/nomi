@@ -154,7 +154,7 @@ boundaries, and package ownership. Keep the detailed plan in
   `x:int, x > 0 = value`.
 - [ ] Decide whether bare declaration syntax is accepted now:
   `x:int, x > 0`.
-- [ ] Parse grouped parameter constraints:
+- [x] Parse grouped parameter constraints:
   `func f(x:(int, x > 0)): ...`.
 - [ ] Parse constrained block parameters:
   `each(xs) -> x:int: ...` and `pairs(xs) -> k:str, v:int: ...`.
@@ -168,6 +168,8 @@ boundaries, and package ownership. Keep the detailed plan in
 
 - [ ] Route function call argument mapping through the same binding-validation
   path used by assignment.
+- [x] Validate basic grouped parameter constraints in the current function
+  setup path.
 - [ ] Validate defaulted parameters after defaults are applied.
 - [ ] Define how constraints apply to `*args` and `**kwargs`.
 - [ ] Add tests for positional-only, keyword-only, defaults, varargs, and
@@ -198,6 +200,7 @@ boundaries, and package ownership. Keep the detailed plan in
 ### Human Diagnostics
 
 - [x] Add `else "message"` syntax for individual assignment constraints.
+- [x] Add `else "message"` syntax inside grouped parameter constraints.
 - [ ] Carry messages through the future structured `Constraint` model.
 - [ ] Produce diagnostics that name the binding kind: assignment, parameter,
   block parameter, destructuring target, or match capture.

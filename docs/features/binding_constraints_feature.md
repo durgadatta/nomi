@@ -61,8 +61,8 @@ score:int, is_positive = 72
 
 Relevant implementation points:
 
-- `prototype/grammar/layers/bindings.lark` handles annotated assignment with constraint lists (the `annassign` rule accepts a `testlist_star_expr` annotation for compound constraints).
-  list.
+- `prototype/grammar/layers/bindings.lark` handles annotated assignment
+  constraint lists and grouped parameter constraints.
 - `prototype/parser/python/binding.py` lowers annotated assignment to
   `ast.AnnAssign`.
 - `prototype/interpreter/nomi/binding.py` turns annotations into predicates.
@@ -142,6 +142,14 @@ look like another parameter:
 
 ```python
 func f(a:int, b:(int, b > 20)):
+    ...
+```
+
+Individual parameter constraints may carry the same user-facing message form as
+assignment constraints:
+
+```python
+func signup(age:(int, age >= 13 else "Signup requires age 13+")):
     ...
 ```
 
