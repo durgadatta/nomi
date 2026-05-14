@@ -197,8 +197,8 @@ boundaries, and package ownership. Keep the detailed plan in
 
 ### Human Diagnostics
 
-- [ ] Add `else "message"` syntax for individual constraints.
-- [ ] Carry messages through `Constraint`.
+- [x] Add `else "message"` syntax for individual assignment constraints.
+- [ ] Carry messages through the future structured `Constraint` model.
 - [ ] Produce diagnostics that name the binding kind: assignment, parameter,
   block parameter, destructuring target, or match capture.
 - [ ] Include the failing source expression when available.

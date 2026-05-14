@@ -293,6 +293,15 @@ age:int, age >= 13 else "Must be at least 13" = payload.age
 This should lower to structured diagnostic metadata, not merely string
 concatenation.
 
+Prototype status:
+
+- Implemented for assignment constraints as executable syntax.
+- The parser lowers the message-bearing constraint to a temporary metadata
+  marker, and the current runtime includes the message in the raised
+  `TypeError` text.
+- The target remains a structured `BindingError` with explicit `message`
+  metadata once the shared binding engine lands.
+
 ## Failure Model
 
 Introduce a Nomi-level `BindingError`.

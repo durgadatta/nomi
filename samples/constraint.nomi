@@ -46,6 +46,10 @@ print("age = " + str(age))
 # Uncomment to see a constraint violation on rebind:
 # age = -1
 
+# -- Human-facing constraint messages --------------------------------
+# Uncomment to see the custom note in the constraint failure:
+# signup_age: int, signup_age >= 13 else "Signup requires age 13+" = 12
+
 # -- Match with guard ------------------------------------------------
 value = 42
 match value:
