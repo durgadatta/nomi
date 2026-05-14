@@ -263,10 +263,13 @@ Progress:
 - Done after coarse timings: added `RuntimeSession` and `create_session()` as
   a persistent interpreter facade with reset/run methods and parse/lower/eval
   timings.
-- Still pending: migrate `web/nomi_web.py` and `tools/jupyter/nomi_kernel.py`
-  to use the shared session facade, then add cancellation/restart policy.
 - Done after session facade: added opt-in AST caching to `RuntimeSession` so
   the web migration can preserve repeated-cell performance.
+- Done after AST caching: moved `tools/jupyter/nomi_kernel.py` to own a
+  `RuntimeSession` facade while preserving its existing notebook display logic.
+- Still pending: migrate notebook execution itself through `RuntimeSession.run`
+  once expression-result display has a shared result field; migrate
+  `web/nomi_web.py`; then add cancellation/restart policy.
 
 Notes from implementation:
 
@@ -278,11 +281,14 @@ Notes from implementation:
 - Web currently adds AST caching and millisecond timing locally. The shared
   session now has optional AST caching, but web migration should preserve the
   existing millisecond timing shape until the UI consumes structured results.
+- Jupyter has an IPython trait named `session`, so frontend adapters should
+  avoid assuming `session` is always a safe attribute name. The kernel uses
+  `runtime_session`.
 
 Next safe extension:
 
-- Migrate notebook execution to `RuntimeSession` first; it has simpler state
-  than the web worker path and can prove the session facade in a frontend.
+- Add an optional expression-result field to `ExecutionResult` so notebook
+  display-last-expression behavior can move behind `RuntimeSession.run`.
 
 ## Open Questions
 

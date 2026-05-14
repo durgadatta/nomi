@@ -30,8 +30,8 @@ def _ensure_project_root_on_path() -> None:
 
 _ensure_project_root_on_path()
 
-from prototype.interpreter.nomi.interpreter import Interpreter
 from prototype.parser.nomi.usage import generate_ast
+from prototype.runtime import RuntimeSession
 
 
 class KernelStream(io.TextIOBase):
@@ -73,8 +73,12 @@ class NomiKernel(Kernel):
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
-        self.interpreter = Interpreter()
+        self.runtime_session = RuntimeSession(mode="nomi")
         self.project_root = Path(os.environ.get("NOMI_PROJECT_ROOT", Path.cwd())).resolve()
+
+    @property
+    def interpreter(self):
+        return self.runtime_session.interpreter
 
     def do_execute(
         self,
@@ -123,7 +127,7 @@ class NomiKernel(Kernel):
         return {"status": "complete"}
 
     def do_shutdown(self, restart: bool) -> dict:
-        self.interpreter = Interpreter()
+        self.runtime_session.reset()
         return {"status": "ok", "restart": restart}
 
     def _execute_with_output(self, code: str, *, silent: bool) -> Any:
@@ -148,7 +152,7 @@ class NomiKernel(Kernel):
             return None
 
         if name == "%reset":
-            self.interpreter = Interpreter()
+            self.runtime_session.reset()
             if not silent:
                 self._write_stdout("Nomi interpreter reset.\n")
             return None

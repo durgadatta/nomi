@@ -5,9 +5,11 @@ from pathlib import Path
 
 from prototype.interpreter.nomi.interpreter import Interpreter
 from prototype.parser.nomi.usage import generate_ast
+from prototype.runtime import RuntimeSession
 from tools.jupyter.check_nomi_kernel import run_smoke
 from tools.jupyter.create_demo_notebooks import minimal_notebook, syntax_tour_notebook
 from tools.jupyter.install_nomi_kernel import kernel_json
+from tools.jupyter.nomi_kernel import NomiKernel
 from tools.jupyter.launch_nomi_notebook import main as launch_main
 
 
@@ -83,6 +85,13 @@ def test_kernel_json_points_to_local_nomi_kernel():
     assert spec["argv"][1:3] == ["-m", "tools.jupyter.nomi_kernel"]
     assert spec["env"]["NOMI_PROJECT_ROOT"] == str(ROOT)
     assert str(ROOT) in spec["env"]["PYTHONPATH"]
+
+
+def test_kernel_owns_runtime_session_facade():
+    kernel = NomiKernel()
+
+    assert isinstance(kernel.runtime_session, RuntimeSession)
+    assert kernel.interpreter is kernel.runtime_session.interpreter
 
 
 def test_kernel_smoke_runner_reports_expected_output(monkeypatch):
