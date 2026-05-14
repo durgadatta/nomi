@@ -37,13 +37,21 @@ class FunctionDefMixin:
     
     def typedparam(self, items):
         """
-        ?typedparam: name (":" test)?
+        ?typedparam: name (":" param_constraint)?
         This method is called → typedparam was proper rule → has BOTH children: [name, annotation]
 
         NOTE: ?x means x is conditionally inline (when >1 children)
         """
         name, annotation = items
         return ast.arg(arg=name, annotation=annotation)
+
+    def grouped_constraint(self, items):
+        """
+        grouped_constraint: "(" constraint_list ")"
+        Function parameters use parentheses for multi-constraint annotations so
+        parameter commas remain unambiguous.
+        """
+        return items[0]
     
     def paramvalue(self, items):
         """

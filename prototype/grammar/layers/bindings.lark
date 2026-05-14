@@ -29,7 +29,9 @@ starguard: "*"
 poststarparams: ("," paramvalue)* ["," kwparams]
 kwparams: "**" typedparam ","?
 ?paramvalue: typedparam ("=" test)?
-?typedparam: name (":" test)?
+?typedparam: name (":" param_constraint)?
+?param_constraint: constraint_item
+                 | "(" constraint_list ")" -> grouped_constraint
 
 // -- call arguments ---------------------------------------------------
 arguments: argvalue ("," argvalue)*  ("," [ starargs | kwargs])?
