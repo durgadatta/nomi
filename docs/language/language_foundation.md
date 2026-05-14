@@ -28,6 +28,11 @@ principles -> primitives -> surface forms -> reductions -> diagnostics -> tests
 If an idea cannot move along that path, it remains research material rather
 than becoming part of the language.
 
+For the adoption-oriented gap map that sits above individual feature design,
+see [Language Direction And Gap Map](language_direction_and_gap_map.md). It
+names the documentation and design gaps Nomi must fill if it wants Python-like
+everyday usefulness without becoming a syntax collage.
+
 ## Product Promise
 
 Nomi should let a programmer learn a small set of operations and see them recur
@@ -869,3 +874,8 @@ I know why the program failed.
 
 That is the foundation from which sophistication can emerge. The language can
 grow only when new power preserves that clarity.
+
+The wider adoption test is described in
+[Language Direction And Gap Map](language_direction_and_gap_map.md): Nomi
+should make ordinary work easier as it becomes more precise, not merely more
+theoretically expressive.

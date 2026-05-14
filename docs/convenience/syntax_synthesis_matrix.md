@@ -246,6 +246,10 @@ Use this ladder when deciding whether research becomes syntax.
 
 Focused follow-up passes should be small and comparative:
 
+- **Adoption gap synthesis**: use
+  [Language Direction And Gap Map](../language/language_direction_and_gap_map.md)
+  to decide which syntax research supports first-hour learning, everyday data
+  work, diagnostics, standard-library shape, and Python interop.
 - **ML-family diagnostics**: compare OCaml/F#/Rust/Python match exhaustiveness,
   redundancy, guards, and error messages; extract diagnostics for Nomi match.
 - **Structured pipeline vocabulary**: compare Nushell, dplyr, Polars, SQL,

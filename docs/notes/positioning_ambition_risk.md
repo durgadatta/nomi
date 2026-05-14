@@ -88,6 +88,11 @@ Nomi is a living synthesis of:
 * The pragmatic humility of Python  
 * A long trail of personal mistakes and recoveries  
 
+The practical steering layer for this ambition now lives in
+[Language Direction And Gap Map](../language/language_direction_and_gap_map.md),
+which names the adoption, coherence, caveat, and documentation gaps that must
+be filled before the language can plausibly become broadly useful.
+
 I am a pragmatist with a formalist conscience and industry scars.
 
 Some inconsistencies are features, not bugs: tolerance for iterative refinement learned from real-world production systems. Many brilliant minds recoil from such messiness and go build cleaner systems elsewhere; both temperaments are necessary.

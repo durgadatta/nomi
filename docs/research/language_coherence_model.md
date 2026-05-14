@@ -41,6 +41,10 @@ program
 This is the conceptual grammar. Every feature should occupy one of these roles
 or explain why the core needs a new role.
 
+For the companion question of what Nomi must make easy, teachable, and
+trustworthy for broad everyday use, see
+[Language Direction And Gap Map](../language/language_direction_and_gap_map.md).
+
 ## Translation, Not Collection
 
 Borrowed features must be translated into Nomi's semantic vocabulary. The order

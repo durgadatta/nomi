@@ -1719,6 +1719,10 @@ Rejected for the first core:
 This spec learned document shape and design pressure from these references. The
 references are not Nomi's authority; they are comparison points.
 
+For adoption-facing gaps, caveats, and future design artifacts that sit above
+this concrete spec, see
+[Language Direction And Gap Map](language_direction_and_gap_map.md).
+
 - Scheme R7RS: https://r7rs.org/
 - Haskell 2010 Language Report: https://www.haskell.org/onlinereport/haskell2010/
 - ALGOL 60 Revised Report: https://archive.computerhistory.org/resources/text/algol/algol_bulletin/EX/RR60/INDEX.HTM

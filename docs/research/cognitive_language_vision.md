@@ -40,6 +40,10 @@ other languages are translated into one first-principles semantic grammar. The
 active coherence rules are defined in
 [Language Coherence Model](language_coherence_model.md).
 
+For the adoption-oriented gap map that turns this aspiration into concrete
+documentation and design targets, see
+[Language Direction And Gap Map](../language/language_direction_and_gap_map.md).
+
 ## Not A Syntax Collage
 
 Nomi should not collect language features because they are famous, elegant, or

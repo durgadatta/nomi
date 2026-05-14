@@ -12,10 +12,11 @@
 Start here for most design or implementation work:
 
 1. [Language Foundation](language/language_foundation.md)
-2. [Language Specification](language/language_spec.md)
-3. [Implementation Todos](language/implementation_todos.md)
-4. [Artifacts And Usage](orientation/artifacts_and_usage.md)
-5. [AI Collaboration](orientation/ai_collaboration.md)
+2. [Language Direction And Gap Map](language/language_direction_and_gap_map.md)
+3. [Language Specification](language/language_spec.md)
+4. [Implementation Todos](language/implementation_todos.md)
+5. [Artifacts And Usage](orientation/artifacts_and_usage.md)
+6. [AI Collaboration](orientation/ai_collaboration.md)
 
 For feature work, read the relevant focused design under
 [features](features/) after the foundation.
@@ -42,6 +43,9 @@ for the next implementation pass.
 
 - [Language Foundation](language/language_foundation.md): current design
   foundation and operational core.
+- [Language Direction And Gap Map](language/language_direction_and_gap_map.md):
+  adoption-oriented steering note, coherence gaps, caveats, and next design
+  artifacts.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes

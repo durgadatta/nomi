@@ -10,6 +10,11 @@ This backlog turns
 implementation-sized work. The current prototype is a bootstrap path, not a
 limit on what should be designed.
 
+For the design-only steering layer above this backlog, see
+[Language Direction And Gap Map](language_direction_and_gap_map.md). That
+document names adoption, documentation, teaching, standard library, and
+coherence gaps before they become implementation tasks.
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the
