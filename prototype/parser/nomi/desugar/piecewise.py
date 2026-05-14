@@ -22,7 +22,7 @@ from .base import BaseDesugarer
 
 
 class PiecewiseFunction(BaseDesugarer):
-    """Merge adjacent ``func_equation`` ``FunctionDef``\s into one match-dispatch function."""
+    """Merge adjacent func_equation FunctionDefs into one match-dispatch function."""
 
     def visit_Module(self, node):
         self.generic_visit(node)
