@@ -38,6 +38,8 @@ Read the smallest relevant set before changing docs or making recommendations:
 - `docs/language/language_foundation.md` — canonical design foundation.
 - `docs/language/language_direction_and_gap_map.md` — adoption-oriented gaps,
   caveats, and next design artifacts.
+- `docs/language/language_degrees_of_freedom.md` — strict core vs sugar,
+  library-first, scoped extension, future layer, and rejection framework.
 - `docs/language/language_spec.md` — draft concrete language specification.
 - `docs/convenience/review_and_roadmap.md` — normal forms and feature status labels.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature families and recommendations.

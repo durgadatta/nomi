@@ -16,6 +16,8 @@ Nomi's docs already contain a strong semantic spine:
   against feature collection.
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) groups
   cross-language syntax ideas by normal form.
+- [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how
+  strict, flexible, library-led, or fenced each design area should be.
 - [Cognitive Language Vision](../research/cognitive_language_vision.md) names
   the larger aspiration.
 
