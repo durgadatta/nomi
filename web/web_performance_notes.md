@@ -6,7 +6,7 @@
 User types code → run_nomi(code)
   → _eval_in_session(code)
     → generate_ast(code)          # Lark parse + AST lift
-    → _nomi_desugar(tree)          # 4 desugar passes + fix_missing_locations
+    → desugar_module(tree)         # full desugar pipeline + fix_missing_locations
     → interp.eval(tree)            # AST-walk evaluation
 ```
 
@@ -129,7 +129,7 @@ saves disk I/O (which in Pyodide is in-memory but still has overhead).
 ### 3. Remove redundant `ast.fix_missing_locations`
 **File:** `web/nomi_web.py`
 **Before:** `_eval_in_session()` called `ast.fix_missing_locations(tree)`
-after `_nomi_desugar(tree)`, which already calls it internally.  Double
+after `desugar_module(tree)`, which already calls it internally.  Double
 traversal of the AST.
 **After:** Removed the redundant call.
 **Expected win:** Small (~5-10%) — `fix_missing_locations` is a single
@@ -215,7 +215,7 @@ Implementation sketch:
 t0 = time.perf_counter()
 tree = _generate_ast(...)
 t1 = time.perf_counter()
-tree = _nomi_desugar_fn(tree)
+tree = _desugar_fn(tree)
 t2 = time.perf_counter()
 interp.eval(tree)
 t3 = time.perf_counter()

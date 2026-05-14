@@ -60,7 +60,7 @@ MODE_SPECS: dict[str, ModeSpec] = {
         parser="prototype.parser.nomi.usage.generate_ast",
         lowering="nomi-selected-desugar-passes",
         interpreter="prototype.interpreter.nomi.interpreter.Interpreter",
-        session_lowerer="prototype.interpreter.nomi.usage._nomi_desugar",
+        session_lowerer="prototype.parser.nomi.desugar.pipeline.desugar_module",
     ),
     "reduced": ModeSpec(
         name="reduced",

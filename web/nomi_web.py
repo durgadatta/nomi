@@ -137,9 +137,9 @@ async def init_nomi():
     # Pyodide).  Force parser creation and key module imports now
     # so the first user cell runs at full speed.
     from prototype.parser.nomi.usage import generate_ast
-    from prototype.interpreter.nomi.usage import _nomi_desugar
+    from prototype.parser.nomi.desugar import desugar_module
     tree = generate_ast(code="x = 1\n")
-    tree = _nomi_desugar(tree)
+    tree = desugar_module(tree)
     reset_session()
     _log("Parser pre-warmed")
 

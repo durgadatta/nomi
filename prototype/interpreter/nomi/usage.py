@@ -1,26 +1,12 @@
 from .interpreter import Interpreter
 from ...parser.nomi.usage import generate_ast
-from ...parser.nomi.desugar.underscore_lambda import UnderscoreLambda
-from ...parser.nomi.desugar.piecewise import PiecewiseFunction
-from ...parser.nomi.desugar.where_clause import WhereClause
-from ...parser.nomi.desugar.positional_hole import PositionalHole
+from ...parser.nomi.desugar import desugar_module
 from ..runner import make_runner
-
-
-def _nomi_desugar(tree):
-    """Nomi-only desugar passes (run before interpreter eval)."""
-    tree = PiecewiseFunction().visit(tree)
-    tree = WhereClause().visit(tree)
-    tree = UnderscoreLambda().visit(tree)
-    tree = PositionalHole().visit(tree)
-    import ast
-    ast.fix_missing_locations(tree)
-    return tree
 
 
 run_eval_loop = make_runner(
     generate_ast=generate_ast,
     interpreter_cls=Interpreter,
-    desugar=_nomi_desugar,
+    desugar=desugar_module,
     wrap_errors=True,
 )
