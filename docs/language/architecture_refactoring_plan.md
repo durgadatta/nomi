@@ -214,8 +214,10 @@ Progress:
 
 - Done in `e251351`: added `prototype.runtime.execute()` and
   `ExecutionResult` as an opt-in facade over current runners.
-- Still pending: stdout/stderr capture, diagnostics, events, timings,
-  inspection API, and frontend migration.
+- Done after `e27c03c`: added read-only `prototype.runtime.inspect()` for the
+  current `python_ast` artifact.
+- Still pending: stdout/stderr capture, diagnostics, events, timings, richer
+  inspection stages, and frontend migration.
 
 ### Package B: Mode Registry Metadata
 
@@ -254,8 +256,8 @@ The most user-visible surfaces are where ad hoc state management hurts most.
 
 Next safe extension:
 
-- Add `InspectionResult` and a read-only `inspect(..., stage="python_ast")`
-  facade before changing frontend execution paths.
+- Add `PipelineSpec`/`PipelineResult` names around the existing `execute()` and
+  `inspect()` implementations before changing frontend execution paths.
 
 ## Open Questions
 

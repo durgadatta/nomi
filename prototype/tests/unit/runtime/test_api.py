@@ -1,6 +1,6 @@
 import pytest
 
-from prototype.runtime import ExecutionResult, execute
+from prototype.runtime import ExecutionResult, InspectionResult, execute, inspect
 
 
 def test_execute_returns_structured_result_for_nomi_mode():
@@ -28,3 +28,17 @@ def test_execute_can_return_exception_without_raising():
 def test_execute_rejects_unknown_profile_until_feature_profiles_exist():
     with pytest.raises(ValueError, match="Unsupported runtime profile"):
         execute(source="x = 1\n", profile="lab")
+
+
+def test_inspect_returns_python_ast_dump_for_mode():
+    result = inspect(source="x = 1 + 2\n", mode="nomi")
+
+    assert isinstance(result, InspectionResult)
+    assert result.stage == "python_ast"
+    assert "Module(" in result.output
+    assert "Assign(" in result.output
+
+
+def test_inspect_rejects_unknown_stage_until_pipeline_stages_exist():
+    with pytest.raises(ValueError, match="Unsupported inspection stage"):
+        inspect(source="x = 1\n", stage="surface")

@@ -13,6 +13,12 @@ from importlib import import_module
 from typing import Callable
 
 
+def _load_dotted(path: str) -> Callable:
+    module_name, attr_name = path.rsplit(".", 1)
+    module = import_module(module_name)
+    return getattr(module, attr_name)
+
+
 @dataclass(frozen=True)
 class ModeSpec:
     name: str
@@ -23,8 +29,10 @@ class ModeSpec:
     interpreter: str
 
     def load_runner(self) -> Callable:
-        module = import_module(self.runner_module)
-        return module.run_eval_loop
+        return _load_dotted(f"{self.runner_module}.run_eval_loop")
+
+    def load_parser(self) -> Callable:
+        return _load_dotted(self.parser)
 
 
 MODE_SPECS: dict[str, ModeSpec] = {
