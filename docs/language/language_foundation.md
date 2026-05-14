@@ -33,6 +33,9 @@ see [Language Direction And Gap Map](language_direction_and_gap_map.md). It
 names the documentation and design gaps Nomi must fill if it wants Python-like
 everyday usefulness without becoming a syntax collage.
 
+For aspirational examples that keep the design grounded in ordinary work, see
+[Target Program Fixtures](target_program_fixtures.md).
+
 ## Product Promise
 
 Nomi should let a programmer learn a small set of operations and see them recur

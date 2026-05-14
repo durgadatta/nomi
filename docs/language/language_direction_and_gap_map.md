@@ -21,6 +21,8 @@ Nomi's docs already contain a strong semantic spine:
   cross-language syntax ideas by normal form.
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how
   strict, flexible, library-led, or fenced each design area should be.
+- [Target Program Fixtures](target_program_fixtures.md) keeps design pressure
+  grounded in ordinary tasks before implementation.
 - [Cognitive Language Vision](../research/cognitive_language_vision.md) names
   the larger aspiration.
 

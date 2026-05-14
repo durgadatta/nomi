@@ -34,6 +34,8 @@ coherence gaps before they become implementation tasks.
 - [ ] Add target Nomi programs that intentionally use not-yet-implemented
   features: explicit data decoding, algebraic data, pipelines, block policies,
   symbolic rewrite, table queries, and examples.
+- [ ] Keep `target_program_fixtures.md` current as the docs-only home for
+  aspirational programs before runnable samples exist.
 - [ ] Add executable examples for accepted surface forms only after focused
   tests pass. Update `samples/demo.nomi` with the full teaching example and
   `samples/demo_terse.nomi` with the compressed memory-refresh example. When a

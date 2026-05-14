@@ -49,6 +49,9 @@ for the next implementation pass.
 - [Language Degrees Of Freedom](language/language_degrees_of_freedom.md):
   framework for deciding what belongs in the strict core, surface sugar,
   libraries, scoped extensions, future layers, or rejection.
+- [Target Program Fixtures](language/target_program_fixtures.md):
+  aspirational everyday programs used to keep design grounded before
+  implementation.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes
