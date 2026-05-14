@@ -9,6 +9,7 @@ let _cellEditors = [];
 let _executionCounter = 0;
 let _activeCellIndex = 0;
 let _notebookMode = false;
+let _bootStart = performance.now();
 
 function byId(id) { return document.getElementById(id); }
 function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
@@ -25,6 +26,7 @@ function lineCount(text) { return text ? text.split(/\r\n|\r|\n/).length : 0; }
 
 function setControlsDisabled(disabled) {
   ["restart-btn","run-all-btn"].forEach(id => byId(id).disabled = disabled || !_ready);
+  document.querySelectorAll(".nb-cell-run").forEach(btn => { btn.disabled = disabled || !_ready; });
 }
 
 function setupResize(handle, left) {
@@ -68,7 +70,7 @@ async function init() {
   _ready = true;
   byId("loading").style.display = "none";
   setStatus("ready", "ready");
-  byId("runtime-detail").textContent = "Pyodide runtime ready";
+  byId("runtime-detail").textContent = `Pyodide ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
   setControlsDisabled(false);
 
   // Defer by two frames so the browser lays out editor containers

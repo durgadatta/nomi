@@ -1,14 +1,17 @@
 // Nomi Web Playground — cell execution, run all, restart
 
-async function runCell(idx, advance) {
+async function runCell(idx, advance, options) {
   if (!_ready || !_runFn) return;
+  const manageControls = !(options && options.batch);
   const editor = _cellEditors[idx];
   if (!editor) return;
   const code = editor.getValue().trim();
   if (!code) return;
 
-  setControlsDisabled(true);
-  setStatus("running", "running");
+  if (manageControls) {
+    setControlsDisabled(true);
+    setStatus("running", "running");
+  }
 
   const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   const runBtn = outer.querySelector(".nb-cell-run");
@@ -36,7 +39,7 @@ async function runCell(idx, advance) {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.has("session")) {
-      byId("runtime-detail").textContent = "Pyodide · session " + r.get("session");
+      byId("runtime-detail").textContent = `Pyodide · session ${r.get("session")} · last run ${elapsed} ms`;
     }
   } catch (e) {
     const elapsed = Math.max(1, Math.round(performance.now() - start));
@@ -51,8 +54,10 @@ async function runCell(idx, advance) {
 
   runBtn.classList.remove("running");
   runBtn.innerHTML = "&#9654; Run";
-  setControlsDisabled(false);
-  setStatus("ready", "ready");
+  if (manageControls) {
+    setControlsDisabled(false);
+    setStatus("ready", "ready");
+  }
 
   if (advance) {
     const nextIdx = idx + 1;
@@ -79,7 +84,7 @@ async function runAllCells() {
   await _resetFn();
 
   for (let i = 0; i < _cellEditors.length; i++) {
-    await runCell(i, false);
+    await runCell(i, false, { batch: true });
     const outDiv = document.querySelector(`.nb-cell-output[data-idx="${i}"]`);
     if (outDiv && outDiv.classList.contains("error")) {
       setStatus("error", "error");
@@ -116,7 +121,7 @@ async function runPlainCode() {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.has("session")) {
-      byId("runtime-detail").textContent = "Pyodide · session " + r.get("session");
+      byId("runtime-detail").textContent = `Pyodide · session ${r.get("session")} · last run ${elapsed} ms`;
     }
   } catch (e) {
     outPre.textContent = String(e);

@@ -3,7 +3,7 @@ Nomi browser runtime — loads the prototype source tree into Pyodide
 and provides run_nomi(code) and reset_session() entry points.
 """
 
-import ast
+import asyncio
 import contextlib
 import io
 import json
@@ -37,6 +37,9 @@ class _Store:
 
 
 _session_store = _Store()
+_generate_ast = None
+_nomi_desugar_fn = None
+_Interpreter = None
 
 
 def _get_interpreter():
@@ -68,30 +71,41 @@ def _base_url():
     return location.origin + location.pathname[:idx] + "/"
 
 
+async def _fetch_manifest_file(base_url, path):
+    dir_path = os.path.dirname(path)
+    if dir_path:
+        try:
+            os.makedirs(dir_path)
+        except OSError:
+            pass
+
+    try:
+        resp = await pyfetch(base_url + path)
+        if resp.status == 200:
+            with open(path, "wb") as f:
+                f.write(await resp.bytes())
+            return (path, None)
+        return (path, f"{path} ({resp.status})")
+    except Exception as e:
+        return (path, f"{path}: {e}")
+
+
 async def _load_from_manifest(base_url, manifest):
     """Load prototype files individually from the manifest."""
     files = manifest["files"]
-    _log(f"Loading {len(files)} files individually...")
+    _log(f"Loading {len(files)} files in batches...")
 
     missing = []
     ok = 0
-    for path in files:
-        dir_path = os.path.dirname(path)
-        if dir_path:
-            try:
-                os.makedirs(dir_path)
-            except OSError:
-                pass
-        try:
-            resp = await pyfetch(base_url + path)
-            if resp.status == 200:
-                with open(path, "wb") as f:
-                    f.write(await resp.bytes())
-                ok += 1
+    batch_size = 24
+    for i in range(0, len(files), batch_size):
+        batch = files[i:i + batch_size]
+        results = await asyncio.gather(*(_fetch_manifest_file(base_url, path) for path in batch))
+        for _, error in results:
+            if error:
+                missing.append(error)
             else:
-                missing.append(f"{path} ({resp.status})")
-        except Exception as e:
-            missing.append(f"{path}: {e}")
+                ok += 1
 
     _log(f"Loaded {ok}/{len(files)} files")
     if missing:
@@ -117,6 +131,7 @@ async def _ensure_prototype_loaded():
 
 
 async def init_nomi():
+    global _generate_ast, _nomi_desugar_fn, _Interpreter
     await _ensure_prototype_loaded()
     # ── pre-warm parser & modules ────────────────────────────────
     # Lark Earley parser construction is expensive (~100+ ms in
@@ -125,57 +140,47 @@ async def init_nomi():
     from prototype.parser.nomi.usage import generate_ast
     from prototype.interpreter.nomi.interpreter import Interpreter
     from prototype.interpreter.nomi.usage import _nomi_desugar
-    import ast as _ast
+    _generate_ast = generate_ast
+    _nomi_desugar_fn = _nomi_desugar
+    _Interpreter = Interpreter
     tree = generate_ast(code="x = 1\n")
     tree = _nomi_desugar(tree)
+    reset_session()
     _log("Parser pre-warmed")
 
 
 
 def reset_session() -> dict:
-    # Clear cached prototype modules so Restart picks up code changes
-    # without a full page reload.  Pyodide's sys.modules persists across
-    # interpreter resets within the same page session.
-    for mod in list(sys.modules.keys()):
-        if mod.startswith("prototype"):
-            del sys.modules[mod]
+    global _Interpreter
+    if _Interpreter is None:
+        from prototype.interpreter.nomi.interpreter import Interpreter
+        _Interpreter = Interpreter
 
-    from prototype.interpreter.nomi.interpreter import Interpreter
-
-    interp = Interpreter()
+    interp = _Interpreter()
     _set_interpreter(interp)
     sid = _inc_counter()
     _log(f"Session #{sid} created")
     return {"ok": True, "session": sid}
 
 
-def _clean_bindings(bindings: dict) -> dict:
-    clean = {}
-    for k, v in bindings.items():
-        if k.startswith("_"):
-            continue
-        try:
-            clean[k] = repr(v)
-        except Exception:
-            clean[k] = str(type(v).__name__)
-    return clean
-
-
-def _eval_in_session(code: str) -> dict:
-    from prototype.interpreter.nomi.usage import _nomi_desugar
-    from prototype.parser.nomi.usage import generate_ast
+def _eval_in_session(code: str) -> None:
+    global _generate_ast, _nomi_desugar_fn
+    if _generate_ast is None or _nomi_desugar_fn is None:
+        from prototype.interpreter.nomi.usage import _nomi_desugar
+        from prototype.parser.nomi.usage import generate_ast
+        _generate_ast = generate_ast
+        _nomi_desugar_fn = _nomi_desugar
 
     interp = _get_interpreter()
     if interp is None:
         reset_session()
         interp = _get_interpreter()
 
-    tree = generate_ast(code=code, dump=False)
-    tree = _nomi_desugar(tree)
+    tree = _generate_ast(code=code, dump=False)
+    tree = _nomi_desugar_fn(tree)
     # _nomi_desugar already calls ast.fix_missing_locations internally —
     # no need to call it again here.
     interp.eval(tree)
-    return interp.global_env.bindings
 
 
 async def run_nomi(code: str) -> dict:
@@ -184,9 +189,9 @@ async def run_nomi(code: str) -> dict:
     stdout = io.StringIO()
     try:
         with contextlib.redirect_stdout(stdout):
-            bindings = _eval_in_session(code)
+            _eval_in_session(code)
         raw = stdout.getvalue()
-        return {"output": raw, "bindings": _clean_bindings(bindings), "session": _get_counter()}
+        return {"output": raw, "session": _get_counter()}
     except Exception as e:
         import traceback
         tb = traceback.format_exc()

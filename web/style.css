@@ -32,8 +32,10 @@ button, textarea, input { font: inherit; }
 button {
   min-height: 32px; border: 1px solid var(--line); border-radius: 7px;
   color: var(--text); background: var(--panel-2); cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
 }
 button:hover { background: var(--panel-3); border-color: #56625a; }
+button:active { transform: translateY(1px); }
 button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 button:disabled { cursor: not-allowed; color: var(--dim); background: var(--panel); }
 
@@ -42,7 +44,8 @@ button:disabled { cursor: not-allowed; color: var(--dim); background: var(--pane
 .topbar {
   display: grid; grid-template-columns: minmax(180px,auto) 1fr auto;
   align-items: center; gap: 16px; padding: 0 16px;
-  background: var(--panel); border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #242925 0%, var(--panel) 100%);
+  border-bottom: 1px solid var(--line);
 }
 
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -97,6 +100,7 @@ button:disabled { cursor: not-allowed; color: var(--dim); background: var(--pane
   column-gap: 10px; row-gap: 3px; align-items: center;
   padding: 10px; margin: 0 0 8px; border: 1px solid transparent;
   border-radius: 8px; color: var(--muted); background: transparent; text-align: left;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 .sample:hover { color: var(--text); background: var(--panel-2); border-color: var(--line); }
 .sample.active { color: var(--text); background: #263128; border-color: #587149; }
@@ -128,13 +132,19 @@ button:disabled { cursor: not-allowed; color: var(--dim); background: var(--pane
 .nb-cell {
   margin-bottom: 16px; border: 1px solid var(--line-soft);
   border-radius: 8px; overflow: hidden; background: #1a1e1b;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
-.nb-cell.active { border-color: #587149; }
+.nb-cell.active {
+  border-color: #6f8d5b;
+  box-shadow: 0 0 0 1px rgba(167,214,122,0.12), 0 12px 28px rgba(0,0,0,0.18);
+}
 
 .nb-cell-header {
   display: flex; align-items: center; gap: 8px;
   min-height: 32px; padding: 4px 10px;
-  background: #1f2421; border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, #222823 0%, #1f2421 100%);
+  border-bottom: 1px solid var(--line-soft);
 }
 
 .nb-cell-index {

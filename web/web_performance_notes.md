@@ -10,7 +10,61 @@ User types code → run_nomi(code)
     → interp.eval(tree)            # AST-walk evaluation
 ```
 
-## Implemented improvements (2026-05-13)
+## Implemented improvements
+
+### 2026-05-14
+
+#### 1. Stop returning full bindings to JavaScript
+
+**File:** `web/nomi_web.py`
+
+**Before:** every `run_nomi()` call returned a cleaned copy of the interpreter's
+global bindings. The current UI only reads `output`, `error`, and `session`, so
+Pyodide still had to stringify and marshal data the browser discarded.
+
+**After:** `run_nomi()` returns only the execution output/error and session id.
+
+**Expected win:** Lower per-cell latency, especially after running larger
+programs that leave many values in the environment.
+
+#### 2. Cache runtime entry points and keep modules warm on restart
+
+**File:** `web/nomi_web.py`
+
+**Before:** runtime helpers were imported inside hot execution paths, and
+`reset_session()` deleted `prototype.*` modules from `sys.modules`, throwing
+away parser/module caches on restart.
+
+**After:** `init_nomi()` stores the parser, desugarer, and interpreter class in
+module globals. `reset_session()` creates a fresh interpreter without evicting
+loaded modules.
+
+**Expected win:** Faster restart and less import/cache churn during browser
+sessions.
+
+#### 3. Load manifest files in batches
+
+**File:** `web/nomi_web.py`
+
+**Before:** prototype files listed in `manifest.json` were fetched one at a
+time.
+
+**After:** file loading uses bounded async batches.
+
+**Expected win:** Faster Pyodide initialization once the Pyodide runtime and
+packages are available.
+
+#### 4. Reduce Run All UI churn
+
+**File:** `web/runtime.js`
+
+**Before:** every cell in Run All toggled global controls and status.
+
+**After:** Run All holds global controls/status stable while each cell runs.
+
+**Expected win:** Smoother notebook execution and less layout/UI work.
+
+### 2026-05-13
 
 ### 1. Cache Lark parser instance
 **File:** `prototype/parser/nomi/usage.py`
@@ -69,7 +123,6 @@ No changes needed here — the manifest is always current when the server starts
 | AST-walk evaluation (no JIT/compilation) | High | Consider bytecode compilation or tracing JIT |
 | Lark parse for every cell | Medium | AST cache keyed by code hash |
 | Lark is large (~1 MB) | Medium | Vendor a minimal Lark subset, or pre-compile grammar to LALR table |
-| Module reload on reset_session | Low | Keep modules in sys.modules, just re-instantiate interpreter |
 | Pyodide single-threaded | Medium | Move execution to a Web Worker |
 
 ### Loading
