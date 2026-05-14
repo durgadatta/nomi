@@ -1,8 +1,7 @@
 """Generate web/manifest.json for the browser playground.
 
-The browser runtime loads the prototype source tree into Pyodide from this
-manifest. Run this after adding, removing, or renaming runtime `.py` or `.lark`
-files under prototype/.
+Run this after adding, removing, or renaming runtime `.py` or `.lark` files
+under prototype/.
 """
 
 import argparse
@@ -13,10 +12,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PROTOTYPE_DIR = ROOT / "prototype"
 SAMPLES_DIR = ROOT / "samples"
-MANIFEST_PATH = ROOT / "web" / "manifest.json"
+WEB_DIR = ROOT / "web"
+MANIFEST_PATH = WEB_DIR / "manifest.json"
 RUNTIME_SUFFIXES = {".py", ".lark"}
 SAMPLE_SUFFIXES = {".nomi", ".nomi.nb"}
-IGNORED_PARTS = {"__pycache__", "tests"}
+IGNORED_PARTS = {"__pycache__", "tests", "archive"}
 
 
 def should_include(path: Path) -> bool:
@@ -27,12 +27,14 @@ def should_include(path: Path) -> bool:
     return "backup" not in str(path)
 
 
+def _runtime_files():
+    return sorted(
+        path for path in PROTOTYPE_DIR.rglob("*") if should_include(path)
+    )
+
+
 def build_manifest() -> dict:
-    files = [
-        str(path.relative_to(ROOT))
-        for path in sorted(PROTOTYPE_DIR.rglob("*"))
-        if should_include(path)
-    ]
+    files = [str(path.relative_to(ROOT)) for path in _runtime_files()]
     samples = [
         str(path.relative_to(ROOT))
         for path in sorted(SAMPLES_DIR.rglob("*"))

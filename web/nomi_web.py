@@ -68,16 +68,10 @@ def _base_url():
     return location.origin + location.pathname[:idx] + "/"
 
 
-async def _ensure_prototype_loaded():
-    if not PYODIDE:
-        return
-
-    _log("Loading manifest...")
-    base = _base_url()
-    resp = await pyfetch(base + "web/manifest.json")
-    manifest = json.loads(await resp.string())
+async def _load_from_manifest(base_url, manifest):
+    """Load prototype files individually from the manifest."""
     files = manifest["files"]
-    _log(f"Manifest: {len(files)} files")
+    _log(f"Loading {len(files)} files individually...")
 
     missing = []
     ok = 0
@@ -89,7 +83,7 @@ async def _ensure_prototype_loaded():
             except OSError:
                 pass
         try:
-            resp = await pyfetch(base + path)
+            resp = await pyfetch(base_url + path)
             if resp.status == 200:
                 with open(path, "wb") as f:
                     f.write(await resp.bytes())
@@ -107,8 +101,34 @@ async def _ensure_prototype_loaded():
             _log(f"  ... and {len(missing) - 5} more")
 
 
+async def _ensure_prototype_loaded():
+    if not PYODIDE:
+        return
+
+    base = _base_url()
+
+    # Fetch manifest first (small, needed for samples list anyway)
+    _log("Loading manifest...")
+    resp = await pyfetch(base + "web/manifest.json")
+    manifest = json.loads(await resp.string())
+    _log(f"Manifest: {len(manifest['files'])} files")
+
+    await _load_from_manifest(base, manifest)
+
+
 async def init_nomi():
     await _ensure_prototype_loaded()
+    # ── pre-warm parser & modules ────────────────────────────────
+    # Lark Earley parser construction is expensive (~100+ ms in
+    # Pyodide).  Force parser creation and key module imports now
+    # so the first user cell runs at full speed.
+    from prototype.parser.nomi.usage import generate_ast
+    from prototype.interpreter.nomi.interpreter import Interpreter
+    from prototype.interpreter.nomi.usage import _nomi_desugar
+    import ast as _ast
+    tree = generate_ast(code="x = 1\n")
+    tree = _nomi_desugar(tree)
+    _log("Parser pre-warmed")
 
 
 
@@ -152,7 +172,8 @@ def _eval_in_session(code: str) -> dict:
 
     tree = generate_ast(code=code, dump=False)
     tree = _nomi_desugar(tree)
-    tree = ast.fix_missing_locations(tree)
+    # _nomi_desugar already calls ast.fix_missing_locations internally —
+    # no need to call it again here.
     interp.eval(tree)
     return interp.global_env.bindings
 

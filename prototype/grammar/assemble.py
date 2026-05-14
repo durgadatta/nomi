@@ -35,8 +35,17 @@ _LAYER_ORDER = [
 ]
 
 
+# ── grammar cache ───────────────────────────────────────────────────
+# Avoid re-reading six .lark files from Pyodide's virtual filesystem
+# on every parse.  The grammar is static at runtime; cache it.
+_GRAMMAR_CACHE = None
+
+
 def assemble_grammar(extra_layers=None):
     """Concatenate layer grammar files into a single Lark grammar string."""
+    global _GRAMMAR_CACHE
+    if extra_layers is None and _GRAMMAR_CACHE is not None:
+        return _GRAMMAR_CACHE
     parts = []
     all_layers = list(_LAYER_ORDER)
     if extra_layers:
@@ -46,7 +55,10 @@ def assemble_grammar(extra_layers=None):
         if not path.exists():
             raise FileNotFoundError(f"Grammar layer not found: {path}")
         parts.append(path.read_text(encoding="utf-8"))
-    return "\n\n".join(parts)
+    grammar = "\n\n".join(parts)
+    if extra_layers is None:
+        _GRAMMAR_CACHE = grammar
+    return grammar
 
 
 def get_layer_pipeline():
