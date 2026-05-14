@@ -24,11 +24,10 @@ async function runCell(idx, advance, options) {
 
   const start = performance.now();
   try {
-    const result = await _runFn(code);
-    const r = result.toJs();
+    const r = await _runFn(code);
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    const error = r.has("error") ? r.get("error") : "";
-    const output = error || r.get("output") || "(no output)";
+    const error = r.error || "";
+    const output = error || r.output || "(no output)";
 
     _executionCounter++;
     outer.dataset.execCount = _executionCounter;
@@ -38,8 +37,8 @@ async function runCell(idx, advance, options) {
     outPre.textContent = output;
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
-    if (r.has("session")) {
-      byId("runtime-detail").textContent = `Pyodide · session ${r.get("session")} · last run ${elapsed} ms`;
+    if (r.session) {
+      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · last run ${elapsed} ms`;
     }
   } catch (e) {
     const elapsed = Math.max(1, Math.round(performance.now() - start));
@@ -88,6 +87,7 @@ async function runAllCells() {
     const outDiv = document.querySelector(`.nb-cell-output[data-idx="${i}"]`);
     if (outDiv && outDiv.classList.contains("error")) {
       setStatus("error", "error");
+      setControlsDisabled(false);
       gotoCell(i);
       return;
     }
@@ -111,17 +111,16 @@ async function runPlainCode() {
 
   const start = performance.now();
   try {
-    const result = await _runFn(code);
-    const r = result.toJs();
+    const r = await _runFn(code);
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    const error = r.has("error") ? r.get("error") : "";
-    const output = error || r.get("output") || "(no output)";
+    const error = r.error || "";
+    const output = error || r.output || "(no output)";
 
     outPre.textContent = output;
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
-    if (r.has("session")) {
-      byId("runtime-detail").textContent = `Pyodide · session ${r.get("session")} · last run ${elapsed} ms`;
+    if (r.session) {
+      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · last run ${elapsed} ms`;
     }
   } catch (e) {
     outPre.textContent = String(e);
@@ -139,14 +138,23 @@ function gotoCell(idx) {
 
 window.restartRuntime = async function() {
   if (!_ready || !_resetFn) return;
-  await _resetFn();
-  _executionCounter = 0;
-  document.querySelectorAll(".nb-cell").forEach(el => {
-    el.dataset.execCount = "";
-    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
-  });
-  document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
-  document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
-  byId("runtime-detail").textContent = "Pyodide · restarted";
-  setStatus("ready", "ready");
+  setControlsDisabled(true);
+  setStatus("running", "running");
+  try {
+    const result = await _resetFn();
+    _executionCounter = 0;
+    document.querySelectorAll(".nb-cell").forEach(el => {
+      el.dataset.execCount = "";
+      el.querySelector(".nb-cell-index").textContent = "In[ ]:";
+    });
+    document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
+    document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
+    byId("runtime-detail").textContent = result && result.session ? `Pyodide worker · restarted session ${result.session}` : "Pyodide worker · restarted";
+    setStatus("ready", "ready");
+  } catch (error) {
+    byId("runtime-detail").textContent = String(error);
+    setStatus("error", "error");
+  } finally {
+    setControlsDisabled(false);
+  }
 };

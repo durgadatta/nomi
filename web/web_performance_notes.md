@@ -64,6 +64,21 @@ packages are available.
 
 **Expected win:** Smoother notebook execution and less layout/UI work.
 
+#### 5. Move Pyodide execution into a Web Worker
+
+**Files:** `web/worker.js`, `web/app.js`, `web/runtime.js`,
+`web/index.html`
+
+**Before:** the main browser thread owned Monaco, layout, buttons, Pyodide,
+Nomi parsing, desugaring, and evaluation.
+
+**After:** the main thread owns the UI and sends `init`, `run`, and `reset`
+messages to `web/worker.js`. The worker loads Pyodide, installs Lark, loads
+`nomi_web.py`, runs Nomi code, and returns plain JavaScript result objects.
+
+**Expected win:** The editor and controls stay more responsive while Nomi code
+runs. Raw execution may not be faster, but UI hitches should be reduced.
+
 ### 2026-05-13
 
 ### 1. Cache Lark parser instance
@@ -123,7 +138,7 @@ No changes needed here — the manifest is always current when the server starts
 | AST-walk evaluation (no JIT/compilation) | High | Consider bytecode compilation or tracing JIT |
 | Lark parse for every cell | Medium | AST cache keyed by code hash |
 | Lark is large (~1 MB) | Medium | Vendor a minimal Lark subset, or pre-compile grammar to LALR table |
-| Pyodide single-threaded | Medium | Move execution to a Web Worker |
+| Pyodide/WASM execution overhead | Medium | Measure stage timing; reduce parse/desugar/eval work |
 
 ### Loading
 
@@ -138,6 +153,228 @@ No changes needed here — the manifest is always current when the server starts
 |-----------|----------|----------|
 | Monaco ~3 MB JS download | Low | CDN-cached; deferred until init |
 | Multiple editor instances | Low | 1-6 editors; Monaco handles this well |
+
+## Enhancement Roadmap
+
+The noticeable pause after clicking Run is not solely Pyodide. Pyodide adds a
+large baseline because Python runs through WebAssembly in the browser, but each
+cell also pays for Nomi's current prototype pipeline:
+
+```text
+source text -> Lark parse -> AST lift -> Nomi desugar passes -> AST-walk eval
+```
+
+The highest-value improvements are below, in recommended order.
+
+### 1. Add Timing Breakdown Per Run
+
+Before changing the runtime again, measure the stages separately inside
+`web/nomi_web.py`:
+
+```text
+parse_ms
+desugar_ms
+eval_ms
+stdout_ms
+total_ms
+```
+
+Return an optional `timing` object from `run_nomi()` and show it in the footer
+or behind a small "details" affordance. This will tell us whether the slow part
+is parsing, desugaring, interpretation, output transfer, or browser/UI work.
+
+Implementation sketch:
+
+```python
+t0 = time.perf_counter()
+tree = _generate_ast(...)
+t1 = time.perf_counter()
+tree = _nomi_desugar_fn(tree)
+t2 = time.perf_counter()
+interp.eval(tree)
+t3 = time.perf_counter()
+```
+
+Then return:
+
+```python
+{
+    "output": raw,
+    "session": _get_counter(),
+    "timing": {
+        "parse_ms": ...,
+        "desugar_ms": ...,
+        "eval_ms": ...,
+        "total_ms": ...,
+    },
+}
+```
+
+### 2. Cache Parsed/Desugared Cells
+
+Most notebook work reruns the same cell repeatedly, sometimes after editing a
+different cell. Cache the desugared AST by source hash:
+
+```text
+code hash -> desugared AST
+```
+
+When code has not changed, skip parsing and desugaring and go straight to
+`interp.eval(tree)`.
+
+Important caveats:
+
+- Python AST nodes should not be mutated during evaluation. If the interpreter
+  mutates AST nodes, cache a deep copy or cache a serializable/lowered form
+  instead.
+- Cache invalidation can be simple at first: exact code string hash only.
+- Keep the cache per browser session and clear it on hard runtime reload, not
+  necessarily on `reset_session()`.
+
+Expected win: high for repeated execution of unchanged cells, especially when
+parse/desugar dominate.
+
+### 3. Keep Worker Execution Responsive
+
+A Web Worker is a separate browser thread for JavaScript. In this playground,
+Pyodide and the Nomi runtime now live in `web/worker.js` outside the main UI
+thread.
+
+Current shape:
+
+```text
+main thread:
+  Monaco editor
+  buttons/layout
+  Pyodide
+  Nomi parse/desugar/eval
+```
+
+Current worker shape:
+
+```text
+main thread:
+  Monaco editor
+  buttons/layout
+  postMessage({ type: "run", code, requestId })
+
+worker thread:
+  load Pyodide
+  load prototype files
+  run init_nomi()
+  run code
+  postMessage({ type: "result", requestId, output, error, timing })
+```
+
+What this improves:
+
+- The UI stays responsive while Python/WASM is parsing and evaluating.
+- Buttons, cursor movement, scrolling, and progress UI do not hitch.
+- Long-running cells can later support cancellation/restart boundaries.
+
+What this does not automatically improve:
+
+- Raw Python execution may not become faster. The worker mainly prevents the
+  execution pause from blocking the interface.
+- Startup may still take time because the worker still downloads Pyodide,
+  installs/loads Lark, and loads prototype files.
+
+Current files:
+
+```text
+web/worker.js       # owns Pyodide and request/response loop
+web/runtime.js      # sends run/reset/init messages instead of calling _runFn
+web/nomi_web.py     # stays mostly unchanged as the Python bridge
+```
+
+Minimal message protocol:
+
+```javascript
+// main -> worker
+{ id, type: "init" }
+{ id, type: "run", code }
+{ id, type: "reset" }
+
+// worker -> main
+{ id, type: "ready" }
+{ id, type: "result", output, error, session, timing }
+{ id, type: "reset-done", session }
+{ id, type: "log", message }
+{ id, type: "error", error }
+```
+
+Follow-up work:
+
+- Add a hard "Restart worker" path that terminates and recreates the worker
+  when a cell hangs.
+- Add cancellation policy for long-running cells. JavaScript cannot interrupt
+  arbitrary Python in a worker cleanly without killing the worker.
+- Forward structured timing details from the worker to the footer.
+- Consider separate progress messages for parse/desugar/eval once timing is
+  instrumented.
+
+Risks:
+
+- Pyodide in a worker needs correct asset paths and CORS-friendly CDN loading.
+- Python stdout redirection already happens in `nomi_web.py`, which is good.
+- The worker cannot directly touch DOM or Monaco; all UI updates must happen
+  through messages.
+- Some browsers may require careful handling for `SharedArrayBuffer` only if
+  future threaded WASM is used. Basic Pyodide-in-worker does not require that
+  design at first.
+
+### 4. Prebundle Runtime Files
+
+The current manifest path fetches many small Python and grammar files. Batching
+helps, but many small requests still have overhead. A future build step could
+generate one bundle:
+
+```text
+web/nomi_runtime_files.json
+```
+
+or a compressed archive that contains all prototype files. The Pyodide bridge
+would fetch one file and write each entry into the virtual filesystem.
+
+Expected win: faster startup, especially on high-latency networks.
+
+Tradeoff: a generated bundle must stay fresh, similar to `manifest.json`.
+
+### 5. Reduce Parser Cost
+
+If timing shows parse/desugar is the main per-cell cost:
+
+- try a LALR-compatible grammar path for browser execution;
+- precompile grammar artifacts if Lark supports a usable standalone path for
+  this grammar;
+- cache AST/desugar outputs aggressively;
+- consider a small browser-target parser for the implemented syntax subset.
+
+This is more invasive than worker/caching work, so measure first.
+
+### 6. Compile Or Lower The Interpreter Hot Path
+
+If timing shows `interp.eval(tree)` dominates:
+
+- compile repeated cells to a lower internal instruction form;
+- reduce Python AST walking overhead;
+- cache name lookups or dispatch tables;
+- eventually consider a bytecode-like reduced interpreter for browser use.
+
+This is the deepest runtime change. It should wait until the parser/desugar and
+worker questions are measured.
+
+## Recommended Next Slice
+
+The next practical slice should be:
+
+1. Add timing breakdown from `run_nomi()`.
+2. Display last-run timing detail in the footer.
+3. Add source-hash cache for parsed/desugared cells.
+4. Add hard worker restart/cancel controls for hung cells.
+
+That order gives evidence first, a quick repeated-run win second, and a
+stronger long-running-cell story third.
 
 ## How to measure
 
