@@ -52,6 +52,10 @@ for the next implementation pass.
 - [Target Program Fixtures](language/target_program_fixtures.md):
   aspirational everyday programs used to keep design grounded before
   implementation.
+- [Target Language Tour](language/target_language_tour.md):
+  large aspirational Nomi program showing how the preferred syntax should feel
+  when modules, data, decode, flow, blocks, tests, explanation, and future
+  fenced notation work together.
 - [Design Proposal Template](language/design_proposal_template.md):
   repeatable process for moving research ideas toward coherent Nomi decisions.
 - [Forward Implementation Plan](language/forward_implementation_plan.md):

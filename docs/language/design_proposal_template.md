@@ -183,6 +183,8 @@ Include at least:
       [Language Direction And Gap Map](language_direction_and_gap_map.md).
 - [ ] Fits at least one fixture in
       [Target Program Fixtures](target_program_fixtures.md).
+- [ ] Does not make the larger
+      [Target Language Tour](target_language_tour.md) less coherent.
 
 ## 11. Documentation Changes
 
@@ -193,6 +195,7 @@ List docs that would need updates:
 - relevant `docs/features/...`
 - relevant `docs/convenience/...`
 - `docs/language/target_program_fixtures.md`
+- `docs/language/target_language_tour.md`
 - examples or samples, only after implementation
 
 ## 12. Acceptance Bar

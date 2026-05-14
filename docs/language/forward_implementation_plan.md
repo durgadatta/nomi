@@ -14,6 +14,7 @@ Nomi now has a richer design spine:
 - [Language Direction And Gap Map](language_direction_and_gap_map.md)
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md)
 - [Target Program Fixtures](target_program_fixtures.md)
+- [Target Language Tour](target_language_tour.md)
 - [Design Proposal Template](design_proposal_template.md)
 - [Language Feature Todos](implementation_todos.md)
 
@@ -589,5 +590,6 @@ For design work:
 - use [Design Proposal Template](design_proposal_template.md);
 - link source-language research to [Language Family Coverage Map](../research/language_family_coverage_map.md);
 - classify freedom level with [Language Degrees Of Freedom](language_degrees_of_freedom.md);
-- test examples against [Target Program Fixtures](target_program_fixtures.md);
+- test examples against [Target Program Fixtures](target_program_fixtures.md)
+  and [Target Language Tour](target_language_tour.md);
 - promote decisions into `docs/language/` or `docs/features/`.

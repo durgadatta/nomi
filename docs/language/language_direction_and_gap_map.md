@@ -23,6 +23,8 @@ Nomi's docs already contain a strong semantic spine:
   strict, flexible, library-led, or fenced each design area should be.
 - [Target Program Fixtures](target_program_fixtures.md) keeps design pressure
   grounded in ordinary tasks before implementation.
+- [Target Language Tour](target_language_tour.md) gives a larger aspirational
+  program for testing whether Nomi syntax composes into one memorable whole.
 - [Forward Implementation Plan](forward_implementation_plan.md) turns the
   design spine into staged work packages, gates, caveats, and open questions.
 - [Cognitive Language Vision](../research/cognitive_language_vision.md) names
@@ -125,7 +127,7 @@ design-decision gaps.
 | Concurrency posture | Async, tasks, cancellation, and streams can distort a first language. | `concurrency.md`, `block_calls_feature.md` | A staged concurrency note: keep first core synchronous, then add structured concurrency through block policies. |
 | Syntax taste guide | Pleasant syntax requires consistent taste, not just local cleverness. | `syntax_synthesis_matrix.md` | A short style/taste guide for keyword choice, punctuation, placeholders, block shape, and examples. |
 | Proposal process | Future ideas need a disciplined path from research to spec. | `ai_collaboration.md`, `implementation_todos.md` | `design_proposal_template.md`: need, precedents, normal form, rejected alternatives, examples, diagnostics. |
-| Design fixtures | Future syntax needs examples before implementation pressure distorts it. | `implementation_todos.md` | A docs-only fixture of target programs grouped by everyday task. |
+| Design fixtures | Future syntax needs examples before implementation pressure distorts it. | `target_program_fixtures.md`, `target_language_tour.md` | Keep expanding fixture coverage, then use the tour as the coherence check for syntax proposals. |
 
 ## Caveats
 
@@ -206,8 +208,8 @@ doc explicitly replaces them:
 
 For a design-only pass, the most valuable next sequence is:
 
-1. **Everyday tasks**: write target programs for files, JSON, CSV, CLI, HTTP,
-   config, notebook transforms, and small APIs.
+1. **Everyday tasks**: keep refining target programs for files, JSON, CSV,
+   CLI, HTTP, config, notebook transforms, and small APIs.
 2. **Boundary confidence**: specify decode, constraints, provenance, defaults,
    redaction, and failure messages.
 3. **Failure clarity**: specify absence, result, exceptions, pattern failure,

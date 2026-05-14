@@ -23,6 +23,11 @@ Nomi should be judged against programs people actually write:
 These fixtures are not demos. Demos show what works today. Fixtures show what
 the language should make coherent tomorrow.
 
+For a larger single-file north-star program, read
+[Target Language Tour](target_language_tour.md). This fixture file stays short
+and task-focused; the tour shows how the same decisions compose across a
+larger program.
+
 Each fixture should answer:
 
 ```text

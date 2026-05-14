@@ -42,6 +42,8 @@ Read the smallest relevant set before changing docs or making recommendations:
   library-first, scoped extension, future layer, and rejection framework.
 - `docs/language/target_program_fixtures.md` — aspirational everyday programs
   for testing design coherence before implementation.
+- `docs/language/target_language_tour.md` — large aspirational Nomi program
+  showing how preferred syntax should compose into one memorable whole.
 - `docs/language/design_proposal_template.md` — proposal structure for moving
   research ideas toward accepted Nomi decisions.
 - `docs/language/forward_implementation_plan.md` — staged implementation plan
