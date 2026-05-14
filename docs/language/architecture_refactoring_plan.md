@@ -210,6 +210,13 @@ Why first:
 
 It gives every tool a stable target without disturbing internals.
 
+Progress:
+
+- Done in `e251351`: added `prototype.runtime.execute()` and
+  `ExecutionResult` as an opt-in facade over current runners.
+- Still pending: stdout/stderr capture, diagnostics, events, timings,
+  inspection API, and frontend migration.
+
 ### Package B: Mode Registry Metadata
 
 Deliver:
@@ -224,6 +231,13 @@ Why second:
 It turns "which language am I running?" into data, which later feature profiles
 and inspection tools can share.
 
+Progress:
+
+- Done in `e27c03c`: added `prototype.runtime.modes.ModeSpec` and backed the
+  legacy `get_run_eval_loop()` helper with mode metadata.
+- Still pending: feature profiles, host support metadata, pipeline stage
+  objects, and mode/profile selection from CLI, web, and notebook.
+
 ### Package C: Session Facade For Web And Notebook
 
 Deliver:
@@ -237,6 +251,11 @@ Deliver:
 Why third:
 
 The most user-visible surfaces are where ad hoc state management hurts most.
+
+Next safe extension:
+
+- Add `InspectionResult` and a read-only `inspect(..., stage="python_ast")`
+  facade before changing frontend execution paths.
 
 ## Open Questions
 
