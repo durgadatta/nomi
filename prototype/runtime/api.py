@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from prototype.runtime.modes import get_mode_spec, get_runner
+from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 
 
 @dataclass(frozen=True)
@@ -20,6 +20,7 @@ class ExecutionResult:
 
     mode: str
     profile: str
+    pipeline: PipelineSpec
     bindings: dict[str, Any] = field(default_factory=dict)
     exception: Exception | None = None
 
@@ -34,15 +35,9 @@ class InspectionResult:
 
     mode: str
     profile: str
+    pipeline: PipelineSpec
     stage: str
     output: str
-
-
-def _ensure_default_profile(profile: str) -> None:
-    if profile != "default":
-        # TODO(NOMI-ARCH-002): Route named feature profiles through mode
-        # metadata once the parser supports feature-selected pipelines.
-        raise ValueError(f"Unsupported runtime profile: {profile!r}")
 
 
 def execute(
@@ -61,9 +56,9 @@ def execute(
     sessions here without forcing every frontend to know parser internals.
     """
 
-    _ensure_default_profile(profile)
+    pipeline = build_pipeline_spec(mode=mode, profile=profile)
 
-    runner = get_runner(mode)
+    runner = pipeline.mode_spec.load_runner()
     try:
         bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:
@@ -72,6 +67,7 @@ def execute(
         return ExecutionResult(
             mode=mode,
             profile=profile,
+            pipeline=pipeline,
             exception=exc,
         )
 
@@ -80,6 +76,7 @@ def execute(
     return ExecutionResult(
         mode=mode,
         profile=profile,
+        pipeline=pipeline,
         bindings=bindings,
     )
 
@@ -94,17 +91,18 @@ def inspect(
 ) -> InspectionResult:
     """Inspect one read-only pipeline artifact for the selected mode."""
 
-    _ensure_default_profile(profile)
+    pipeline = build_pipeline_spec(mode=mode, profile=profile)
     if stage != "python_ast":
         # TODO(NOMI-ARCH-001): Add raw tree, transformed tree, surface AST,
         # core AST, and backend-lowered stages as PipelineSpec grows.
         raise ValueError(f"Unsupported inspection stage: {stage!r}")
 
-    parser = get_mode_spec(mode).load_parser()
+    parser = pipeline.mode_spec.load_parser()
     output = parser(filename=filename, code=source, dump=True)
     return InspectionResult(
         mode=mode,
         profile=profile,
+        pipeline=pipeline,
         stage=stage,
         output=output,
     )

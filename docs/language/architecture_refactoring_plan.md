@@ -216,6 +216,8 @@ Progress:
   `ExecutionResult` as an opt-in facade over current runners.
 - Done after `e27c03c`: added read-only `prototype.runtime.inspect()` for the
   current `python_ast` artifact.
+- Done after inspection facade: added `PipelineSpec` metadata shared by
+  execution and inspection.
 - Still pending: stdout/stderr capture, diagnostics, events, timings, richer
   inspection stages, and frontend migration.
 
@@ -256,8 +258,8 @@ The most user-visible surfaces are where ad hoc state management hurts most.
 
 Next safe extension:
 
-- Add `PipelineSpec`/`PipelineResult` names around the existing `execute()` and
-  `inspect()` implementations before changing frontend execution paths.
+- Add timing fields to `ExecutionResult`/`InspectionResult` before changing
+  frontend execution paths.
 
 ## Open Questions
 

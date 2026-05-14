@@ -10,6 +10,7 @@ def test_execute_returns_structured_result_for_nomi_mode():
     assert result.ok
     assert result.mode == "nomi"
     assert result.profile == "default"
+    assert result.pipeline.parser == "prototype.parser.nomi.usage.generate_ast"
     assert result.bindings["x"] == 3
 
 
@@ -35,6 +36,7 @@ def test_inspect_returns_python_ast_dump_for_mode():
 
     assert isinstance(result, InspectionResult)
     assert result.stage == "python_ast"
+    assert result.pipeline.mode == "nomi"
     assert "Module(" in result.output
     assert "Assign(" in result.output
 
