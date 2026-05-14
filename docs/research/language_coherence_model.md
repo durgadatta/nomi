@@ -1,6 +1,12 @@
 # Language Coherence Model
 
-> Status: active design constraint.
+> Status: source design-constraint note; canonical admission rules live in
+> `../language/language_foundation.md`,
+> `../language/language_direction_and_gap_map.md`, and
+> `../convenience/review_and_roadmap.md`.
+>
+> Consolidation note: use this file for rationale. Fold concrete decisions into
+> syntax-facing docs.
 >
 > Nomi must not become a collection of admired syntax from other languages.
 > Every feature must first be justified from the

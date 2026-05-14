@@ -1,10 +1,14 @@
 # Docs Eagle Eye Review
 
-> Status: active planning review.
+> Status: source planning review; do not treat as an active spec.
 >
 > Scope: repository documentation as a whole. This document records a
 > high-altitude scan of `docs/` to find hidden gaps, duplicated pressure, and
 > planning notes that were not obvious from any one feature file.
+>
+> Consolidation note: stable decisions from this review should be folded into
+> `language_direction_and_gap_map.md`, `implementation_todos.md`, or focused
+> syntax docs rather than expanded here.
 
 ## Purpose
 

@@ -2,24 +2,52 @@
 
 > Status: documentation entry point.
 >
-> This directory is organized by conceptual category and rough concreteness:
-> orientation and project-process docs first, current language direction next,
-> focused feature designs after that, then broader research notes, essays,
-> archive material, and drafts.
+> This directory is moving toward a smaller syntax-centered spine: a few
+> foundation and process docs, then concrete language syntax docs with
+> examples, status, reductions, diagnostics, and implementation notes. Research,
+> notes, drafts, and older planning scans are source material, not competing
+> specs.
 
 ## Reading Order
 
-Start here for most design or implementation work:
+Start here for most language design or implementation work:
 
 1. [Language Foundation](language/language_foundation.md)
-2. [Language Direction And Gap Map](language/language_direction_and_gap_map.md)
-3. [Language Specification](language/language_spec.md)
-4. [Implementation Todos](language/implementation_todos.md)
-5. [Artifacts And Usage](orientation/artifacts_and_usage.md)
-6. [AI Collaboration](orientation/ai_collaboration.md)
+2. [Language Specification](language/language_spec.md)
+3. [Language Direction And Gap Map](language/language_direction_and_gap_map.md)
+4. [Convenience Review And Roadmap](convenience/review_and_roadmap.md)
+5. The focused syntax doc for the feature being changed.
+6. [Artifacts And Usage](orientation/artifacts_and_usage.md), when runtime
+   behavior or tooling is involved.
 
-For feature work, read the relevant focused design under
-[features](features/) after the foundation.
+The default improvement path is to make an existing syntax doc clearer, not to
+add another design note.
+
+## Consolidation Direction
+
+Most durable docs should be syntax-facing. A syntax-facing doc answers:
+
+```text
+What does the code look like?
+What does it reduce to?
+What is implemented now?
+What diagnostics should users see?
+What alternatives were rejected?
+```
+
+Keep only a few non-syntax foundations:
+
+| Kind | Role |
+| --- | --- |
+| Foundation | Semantic anchors and normal forms. |
+| Specification | Concrete syntax and behavior. |
+| Direction map | Priorities, deduplication decisions, and docs cleanup policy. |
+| Implementation plan | Ordered work and current TODOs. |
+| Orientation | Runtime/tooling/process maps. |
+
+When a research or planning doc produces a stable decision, fold that decision
+into a foundation, spec, feature, or convenience syntax doc, then leave the
+research file as a citation source.
 
 ## Orientation
 
@@ -47,7 +75,7 @@ general reading order.
 | Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Yield To Block](features/yield_to_block.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Collections](convenience/collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
-| Improve design docs | [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
+| Improve design docs | [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
 | Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
 
 ## Language
@@ -76,7 +104,7 @@ Target programs:
 Planning and process:
 
 - [Language Direction And Gap Map](language/language_direction_and_gap_map.md):
-  adoption-oriented steering note and core gap map.
+  adoption-oriented steering note, core gap map, and docs consolidation policy.
 - [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
   for hidden bridge gaps and next synthesis moves.
 - [Forward Implementation Plan](language/forward_implementation_plan.md):
@@ -94,19 +122,17 @@ Parser and syntax substrate:
 
 ## Features
 
-Focused feature designs. These are more concrete than research notes but may
-still contain open design questions.
+Focused feature designs. Active feature docs should be syntax-facing. Source
+feature notes should be mined for decisions, then folded into the active syntax
+spine.
 
-- [Binding Constraints Feature](features/binding_constraints_feature.md):
-  constrained binding syntax, semantics, and diagnostics.
-- [Block Calls As Control Values](features/block_calls_feature.md): caller-side
-  blocks, `yield`, and policy blocks.
-- [Yield To Block](features/yield_to_block.md): historical and delicate
-  resumable-control notes.
-- [Structured Collections And Query Language](features/structured_collections_query_language.md):
-  collection/table/query API and syntax design.
-- [Symbolic And Structural Computation](features/symbolic_structural_computation.md):
-  computation descriptions, plans, rewrites, and backend lowering.
+| Doc | Role |
+| --- | --- |
+| [Binding Constraints Feature](features/binding_constraints_feature.md) | Active syntax/semantics for constrained bindings. |
+| [Block Calls As Control Values](features/block_calls_feature.md) | Active syntax/semantics for caller-side blocks, `yield`, and policy blocks. |
+| [Structured Collections And Query Language](features/structured_collections_query_language.md) | Source feature note until collection/query syntax is reduced into the spec and `collections.md`. |
+| [Symbolic And Structural Computation](features/symbolic_structural_computation.md) | Source feature note for future `quote`, rewrite, and plan work. |
+| [Yield To Block](features/yield_to_block.md) | Historical source note; canonical block design lives in `block_calls_feature.md`. |
 
 ## Convenience
 
@@ -136,19 +162,17 @@ normal forms so Nomi grows by reduction instead of feature collection.
 
 ## Research
 
-Source notes and speculative synthesis. Use these to recover rationale, compare
-language traditions, or seed future focused specs.
+Research docs are source material for future syntax work, not active
+specification. Use them to recover rationale, compare language traditions, or
+seed focused syntax sections. When a research idea becomes stable, fold it into
+`language_spec.md`, a feature doc, or a convenience syntax doc.
 
-- [Cognitive Language Vision](research/cognitive_language_vision.md)
-- [First-Principles Programming Model](research/first_principles_programming_model.md)
-- [Hierarchical Language Research Plan](research/hierarchical_language_research_plan.md)
-- [Research Notes Synthesis](research/research_notes_synthesis.md)
-- [Language Coherence Model](research/language_coherence_model.md)
-- [Language Family Coverage Map](research/language_family_coverage_map.md)
-- [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md)
-- [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md)
-- [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md)
-- [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md)
+| Source area | Use for | Fold stable decisions into |
+| --- | --- | --- |
+| [Cognitive Language Vision](research/cognitive_language_vision.md), [First-Principles Programming Model](research/first_principles_programming_model.md), [Language Coherence Model](research/language_coherence_model.md) | Philosophy and admission pressure. | [Language Foundation](language/language_foundation.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
+| [Hierarchical Language Research Plan](research/hierarchical_language_research_plan.md), [Research Notes Synthesis](research/research_notes_synthesis.md) | Layering and promotion history. | [Implementation Todos](language/implementation_todos.md), focused feature docs |
+| [Language Family Coverage Map](research/language_family_coverage_map.md), [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md), [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md) | Cross-language comparison. | [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md), focused convenience docs |
+| [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md), [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md) | Rejected/deferred pressure and simplification ideas. | [Convenience Review And Roadmap](convenience/review_and_roadmap.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
 
 ## Notes
 
@@ -168,8 +192,10 @@ specification.
 
 ## Drafts
 
-Raw draft material and large combined synthesis artifacts. Treat these as
-scratch/reference input unless a task points to them directly.
+Raw draft material. Treat these as scratch/reference input unless a task points
+to them directly. Generated combined bundles should not be treated as canonical
+docs; they duplicate the active spine and should be removed when no longer
+needed.
 
 - [Drafts](drafts/)
 

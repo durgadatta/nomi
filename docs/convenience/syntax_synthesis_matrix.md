@@ -1,10 +1,14 @@
 # Syntax Synthesis Matrix
 
-> Status: active research synthesis.
+> Status: source research synthesis; concrete decisions belong in syntax docs.
 >
 > Scope: documentation-only. This document broadens the language sample, groups
 > near-equivalent syntax features by user need, and recommends how Nomi should
 > combine them without becoming a feature collage.
+>
+> Consolidation note: keep this as comparison evidence. Fold stable decisions
+> into `review_and_roadmap.md` and the focused convenience docs such as
+> `functions.md`, `patterns.md`, `collections.md`, and `error_handling.md`.
 
 ## Purpose
 

@@ -1,187 +1,122 @@
-# Collections & Iteration Convenience
+# Collections And Iteration Convenience
 
-## Map, Filter, Reduce Chain
+> Status: syntax-facing convenience doc.
+>
+> Source research for tables, grouping, joins, windows, query plans, and
+> backend lowering lives in
+> [Structured Collections And Query Language](../features/structured_collections_query_language.md).
 
-Method-chaining on collections is the dominant pattern in modern languages.
+## Normal Form
 
-**Ruby / JavaScript / Kotlin / Scala / Rust**:
+Collection conveniences should reduce to ordinary values, calls, functions,
+patterns, and flow:
 
-```ruby
-[1,2,3].map { |x| x * 2 }
-       .filter { |x| x > 3 }
-       .reduce(0) { |a,b| a + b }
+```text
+collection value -> transform call -> collection value or result
 ```
 
-```javascript
-[1,2,3].map(x => x * 2).filter(x => x > 3).reduce((a,b) => a + b, 0)
-```
+The first everyday surface should stay close to Python where Python is already
+clear, and add syntax only where it makes common transforms easier to read.
 
-```kotlin
-listOf(1,2,3).map { it * 2 }.filter { it > 3 }.reduce { a,b -> a + b }
-```
+## Pipeline
 
-```rust
-vec![1,2,3].iter().map(|x| x * 2).filter(|x| *x > 3).sum()
-```
-
-**Nomi** — works via block calls + hole lambdas:
+Pipeline is the main value-flow syntax:
 
 ```nomi
-result = [1,2,3].map(_ * 2).filter(_ > 3).reduce(_ + _, 0)
+active_names =
+    users
+    |> where(_.active)
+    |> select(_.name)
+    |> sort
 ```
 
----
+Reduction:
 
-## Pipeline Operator
-
-Threads a value through a sequence of transformations.  The value becomes
-the first argument (Elixir/OCaml) or fills a placeholder (R).
-
-**Elixir / F# / OCaml / Roc**:
-
-```elixir
-[1,2,3,4,5]
-|> Enum.map(&(&1 * 2))
-|> Enum.filter(&(&1 > 5))
-|> Enum.sum()
+```text
+x |> f        -> f(x)
+x |> f(_, y) -> f(x, y)
 ```
 
-```fsharp
-[1..5]
-|> List.map ((*) 2)
-|> List.filter (fun x -> x > 5)
-|> List.sum
-```
+Pipeline applies a value now. Function composition builds a function for later;
+keep those separate.
 
-**Nomi proposal**:
+## Transform Verbs
 
-```nomi
-[1,2,3,4,5]
-|> map(_ * 2)
-|> filter(_ > 5)
-|> sum
-```
+Basic collection verbs should begin as library functions:
 
-Implementation: `x |> f` desugars to `f(x)`.  With placeholder: `x |> f(_, y)` → `f(x, y)`.
+| Verb | Meaning |
+| --- | --- |
+| `map` / `select` | Transform each item or project fields. |
+| `where` / `filter` | Keep items that satisfy a predicate. |
+| `fold` / `reduce` | Combine many items into one value. |
+| `sort` | Order values by default or key. |
+| `count`, `sum`, `min`, `max` | Common reductions. |
 
----
+Table-specific verbs such as `derive`, `group_by`, `join`, `window`, `pivot`,
+and plan `explain` belong to the structured collection source note until the
+query vocabulary is stable.
 
 ## Ranges
 
-**Python / Ruby / Kotlin / Swift / Rust**:
-
-```python
-range(10)           # 0..9
-range(1, 10, 2)     # 1,3,5,7,9
-```
-
-```kotlin
-1..10               // inclusive
-1 until 10          // exclusive
-1..10 step 2        // with step
-(10 downTo 1)       // descending
-```
-
-```swift
-1...10              // inclusive
-1..<10              // exclusive
-stride(from: 1, to: 10, by: 2)
-```
-
-**Nomi**:
+Nomi keeps readable range syntax:
 
 ```nomi
-1..10               // desugars to range(1, 11)
-1..<10              // desugars to range(1, 10)
-1..10 by 2          // desugars to range(1, 11, 2)
-1..<10 by 2         // desugars to range(1, 10, 2)
+1..10        # inclusive end; lowers to range(1, 11)
+1..<10       # exclusive end; lowers to range(1, 10)
+1..10 by 2   # lowers to range(1, 11, 2)
+1..<10 by 2  # lowers to range(1, 10, 2)
 ```
 
-The `by` step form is intentionally word-based instead of `//` because `//`
-already means floor division.
+The `by` step form is word-based because `//` already means floor division.
 
----
+## Spread And Destructuring
 
-## Spread / Splat
+Python-style spread and destructuring remain the preferred first layer:
 
-**JavaScript / Python / Ruby / Kotlin**:
-
-```python
+```nomi
 combined = [*a, *b]
-merged = {**a, **b}
+merged = {**defaults, **overrides}
 first, *rest = items
 ```
 
-```kotlin
-val combined = listOf(*a, *b)
-val (first, second) = pair
-```
-
-**Nomi** — Python-style already supported: `*args`, `**kwargs`, `a, *rest = seq`.
-
-For collection literals: `[*a, *b]`, `{**a, **b}` (desugar to `list`/`dict` constructors).
-
----
+These forms should reuse the same binding and pattern semantics used
+elsewhere.
 
 ## Slices
 
-**Python / Rust / Go / Kotlin**:
+Slice syntax follows Python-compatible expectations:
 
-```python
-items[1:5]       # index 1 to 4
-items[:5]        # start to 4
-items[1:]        # 1 to end
-items[::-1]      # reverse
-items[::2]       # every other
+```nomi
+items[1:5]
+items[:5]
+items[1:]
+items[::-1]
+items[::2]
 ```
 
-**Nomi** — slice syntax already parsed.
+## Comprehensions And Lazy Values
 
----
+Python-compatible list, set, dict, and generator expressions remain useful.
+Future lazy adapters should be library-first unless diagnostics or plan
+inspection require syntax.
 
-## Lazy Sequences
+## Rejected Or Deferred
 
-**Haskell / Kotlin (Sequence) / Rust (Iterator) / Python (generator)**:
-
-```haskell
-take 10 [1..]     -- infinite list
-```
-
-```kotlin
-generateSequence(1) { it + 1 }.take(10).toList()
-```
-
-```python
-(x for x in range(1000) if condition)  # generator expression
-```
-
-**Nomi** — generator expressions work via Python.  Future: lazy collection adapters.
-
----
-
-## Set / Dict Comprehensions
-
-**Python / Elixir / Haskell / Scala**:
-
-```python
-{x * 2 for x in range(5) if x % 2 == 0}
-{k: v * 2 for k, v in d.items()}
-```
-
-**Nomi** — Python syntax supported.
-
----
+| Idea | Decision |
+| --- | --- |
+| Implicit elementwise list arithmetic | Rejected for the first layer; conflicts with Python list semantics. |
+| Dense APL/J/K rank notation | Future layer; start with named shape/rank functions. |
+| SQL-like query blocks | Design-needed; must reduce to collection/query plan verbs. |
+| Multiple pipeline spellings | Avoid; keep `|>` as the main value-flow operator. |
 
 ## Implementation Priority
 
-| Feature | Effort | Impact |
-|---------|--------|--------|
-| `|>` pipeline | low | high |
-| `1..10` range syntax | done | high |
-| `1..10 by 2` range step | done | medium |
-| Spread in literals `[*a, *b]` | low | medium |
-| Slice sugar | already | — |
-| Lazy sequences | medium | medium |
-| Scalar broadcasting `.op` | medium | very high |
-| R `%>%` pipe | already via `\|>` | — |
-| R formula `~` | niche | — |
+| Feature | Status | Priority |
+| --- | --- | --- |
+| `|>` pipeline | implemented/prototype surface | high |
+| `1..10` ranges | implemented | high |
+| `1..10 by 2` range step | implemented | medium |
+| spread in literals | partial / Python-compatible paths | medium |
+| slices | Python-compatible | stable |
+| lazy collection adapters | library-first | later |
+| table/query plan verbs | design-needed | after structured collection spec |

@@ -1,11 +1,14 @@
 # Expanded Language Research For Convenience Features
 
-> Status: active source note for the convenience roadmap.
+> Status: source note for the convenience roadmap; not an active spec.
 >
 > Scope: documentation-only research pass. This document brings in ideas from
 > newer languages, configuration languages, array languages, and PL research,
 > then translates them into Nomi normal forms. It is not an implementation
 > plan by itself.
+>
+> Consolidation note: promote only stable, reduced decisions into
+> `review_and_roadmap.md` or focused convenience syntax docs.
 
 ## Purpose
 

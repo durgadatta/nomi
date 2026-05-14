@@ -43,6 +43,67 @@ This document answers that question at the design level. It does not try to
 make Nomi popular by adding more syntax. It asks what a broadly loved language
 must make easy, predictable, teachable, and trustworthy.
 
+## Documentation Consolidation Direction
+
+The docs have reached the point where adding another planning note is often
+less useful than improving one existing syntax document. The active docs should
+therefore consolidate around this shape:
+
+```text
+few foundation docs + concrete syntax docs + source research as citations
+```
+
+Most durable docs should now be syntax-facing. A syntax-facing doc answers:
+
+```text
+What does the code look like?
+What does it reduce to?
+What is implemented now?
+What diagnostics should users see?
+What alternatives were rejected?
+```
+
+Keep only a few non-syntax foundations:
+
+| Kind | Role | Examples |
+| --- | --- | --- |
+| Foundation | Semantic anchors and normal forms. | `language_foundation.md`, `language_degrees_of_freedom.md` |
+| Specification | Concrete syntax and behavior. | `language_spec.md` |
+| Direction map | Priorities, deduplication decisions, and docs cleanup policy. | this file |
+| Implementation plan | Ordered work and current TODOs. | `implementation_todos.md`, `forward_implementation_plan.md` |
+| Orientation | Runtime/tooling/process maps. | `docs/orientation/` |
+
+Research, notes, drafts, and broad reviews should not become parallel specs.
+When they produce a stable decision, fold that decision into a foundation,
+spec, feature, or convenience syntax doc, then leave the source document as
+background.
+
+### Docs To Consolidate First
+
+| Current source | Keep as | Consolidate into |
+| --- | --- | --- |
+| `docs_eagle_eye_review.md` | High-altitude review and bridge-gap discovery. | Move active next steps into this file, `implementation_todos.md`, or focused syntax docs. |
+| `review_and_roadmap.md` | Convenience normal forms and candidate status. | Keep as the convenience spine; do not duplicate its candidate tables elsewhere. |
+| `syntax_synthesis_matrix.md` | Cross-language grouping by feature family. | Use as source evidence for concrete syntax docs. |
+| `expanded_language_research.md` | Broad language-family source notes. | Promote only reduced decisions into focused syntax docs. |
+| `language_family_coverage_map.md` | Research coverage and under-covered dimensions. | Keep source-family status there; avoid copying source catalogues into specs. |
+| `target_program_fixtures.md` | Design tests for everyday programs. | Classify fixture lines through a current capability matrix. |
+
+### Syntax Coverage Still Needed
+
+There is still useful coverage to add, but it should appear as clearer syntax
+sections or focused feature specs rather than another broad synthesis doc.
+
+| Coverage area | Everyday pressure | Normal form | Best home |
+| --- | --- | --- | --- |
+| Current capability matrix | Users need to know what syntax works today. | explanation | `docs/language/current_capability_matrix.md` or `language_spec.md` appendix |
+| Decode/config/provenance | JSON, CSV, CLI, env, HTTP, and config need checked conversion. | data boundary + binding + explanation | `docs/features/data_decode_boundary_feature.md` |
+| Failure taxonomy | `none`, `Result`, exceptions, pattern failure, and constraint failure must not blur. | absence/result + pattern | `docs/features/failure_taxonomy_feature.md` |
+| Explanation/trace | Failed constraints, decode, match, pipelines, and blocks need one diagnostic contract. | explanation | `docs/features/explanation_trace_feature.md` |
+| Standard library shape | Syntax needs boring everyday tasks within reach. | flow + data boundary + result | `docs/language/prelude_and_standard_library_plan.md` or `language_spec.md` appendix |
+| State/capability | Files, network, time, subprocesses, transactions, and mutation need practical authority rules. | block + explanation | `docs/features/state_and_capability_model.md` |
+| First-hour Nomi | The first lesson should be tiny and concrete. | binding + function + call + diagnostics | `docs/language/first_hour_nomi.md` or README tutorial section |
+
 ## Product Aspiration
 
 Nomi should aim to be a language that many ordinary programmers can use for

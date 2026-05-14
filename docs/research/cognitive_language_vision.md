@@ -1,6 +1,11 @@
 # Cognitive Language Vision
 
-> Status: active long-horizon design.
+> Status: long-horizon source note; not an active syntax spec.
+>
+> Consolidation note: keep durable commitments in
+> `../language/language_foundation.md` and
+> `../language/language_direction_and_gap_map.md`. Use this file for vision and
+> rationale only.
 >
 > This document defines the forward-looking language target. It is not bounded
 > by the current Python-hosted prototype. Implementation exists to test and

@@ -1,6 +1,6 @@
 # Research Notes Synthesis
 
-> Status: active synthesis note.
+> Status: source synthesis note; not an active language spec.
 >
 > This document distills a large, informal collection of research notes into
 > coherent design pressure for Nomi. It is not a literature review. It is a map
@@ -10,6 +10,10 @@
 > The links and book/article names in the raw notes are treated as research
 > leads. They are not all validated here. The synthesis below is based on the
 > themes and observations in the notes.
+>
+> Consolidation note: stable decisions from this file should be folded into
+> `../language/language_foundation.md`, `../language/language_spec.md`, or
+> focused syntax docs. Do not add new active design commitments here.
 
 ## Central Synthesis
 

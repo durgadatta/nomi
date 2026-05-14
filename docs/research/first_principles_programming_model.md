@@ -1,6 +1,10 @@
 # First-Principles Programming Model
 
-> Status: active foundation.
+> Status: source foundation note; canonical foundation lives in
+> `../language/language_foundation.md`.
+>
+> Consolidation note: use this file to recover rationale. Fold stable language
+> decisions into the canonical foundation or syntax docs.
 >
 > This is the main spine for Nomi language design. Other languages are useful
 > references, but the language should be built upward from the nature of

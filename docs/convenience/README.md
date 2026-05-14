@@ -1,8 +1,8 @@
 # Convenience Features
 
-Per-feature research docs on syntactic sugar and semantic shortcuts found
-across languages. These are candidates for selective, progressive
-implementation in Nomi only when they reduce to a small, shared normal form.
+Per-feature syntax docs for Nomi convenience forms, backed by comparative
+research. This folder should now consolidate more than it expands: prefer
+enhancing an existing syntax doc over adding a new one.
 
 Start with
 [review_and_roadmap.md](review_and_roadmap.md). It consolidates the folder
@@ -19,8 +19,24 @@ research-only
 rejected-for-now
 ```
 
-Each doc should cover: the everyday need, examples in source languages, Nomi's
-normal-form reduction, current status, critique, and implementation notes.
+Each durable doc should be syntax-facing. It should cover: Nomi examples,
+everyday need, normal-form reduction, current implementation status,
+diagnostics, rejected alternatives, and implementation notes. Source-language
+examples belong only where they change a concrete Nomi decision.
+
+## Consolidation Rules
+
+- Do not add a new convenience doc when an existing syntax family can absorb
+  the idea.
+- Keep `functions.md`, `patterns.md`, `collections.md`, `error_handling.md`,
+  `null_handling.md`, `types.md`, `strings.md`, `scope_context.md`,
+  `modules_imports.md`, `concurrency.md`, and `meta_testing.md` as the main
+  syntax homes.
+- Keep `review_and_roadmap.md` as the normal-form and status spine.
+- Keep `syntax_synthesis_matrix.md` and `expanded_language_research.md` as
+  source research, not day-to-day specs.
+- When a focused companion note becomes stable, fold its decision back into the
+  main syntax doc and leave the companion as edge-case history.
 
 Use the overview/detail split to keep the folder from growing sideways:
 
@@ -36,9 +52,9 @@ Use the overview/detail split to keep the folder from growing sideways:
 
 | Doc | Feature | Status |
 |-----|---------|--------|
-| [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active roadmap |
-| [expanded_language_research.md](expanded_language_research.md) | Newer language and PL research pass, overlap consolidation, extra candidates | active research |
-| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | active synthesis |
+| [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active spine |
+| [expanded_language_research.md](expanded_language_research.md) | Newer language and PL research pass, overlap consolidation, extra candidates | research source |
+| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | research source / synthesis |
 | [functions.md](functions.md) | Function normal form, equations, piecewise clauses, holes, sections, composition, where | active synthesis; many surfaces implemented |
 | [implicit_functions_nuance.md](implicit_functions_nuance.md) | Scoping reference for `_`, `$1`, `$name`, `(+)`, `=>` | focused detail |
 | [implementation_learnings.md](implementation_learnings.md) | Tricky grammar interactions, AST bugs, deferred features | living reference |

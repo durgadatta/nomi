@@ -1,10 +1,14 @@
 # Language Family Coverage Map
 
-> Status: active research map.
+> Status: source research map; not an active syntax spec.
 >
 > Scope: documentation-only. This document tracks which language families Nomi
 > is learning from, what each family contributes, what it warns against, and
 > where follow-up research should go.
+>
+> Consolidation note: use this file to check source-family coverage. Fold
+> stable language decisions into `../convenience/syntax_synthesis_matrix.md`,
+> `../convenience/review_and_roadmap.md`, or focused syntax docs.
 
 ## Purpose
 

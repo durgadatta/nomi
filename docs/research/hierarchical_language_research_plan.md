@@ -1,11 +1,16 @@
 # Hierarchical Language Research Plan
 
-> Status: active research and implementation roadmap.
+> Status: source roadmap; active work belongs in language and feature docs.
 >
 > This document turns the first-principles model into a concrete design and
 > implementation ladder. The rule is: primitive ideas first, progressively more
 > sophisticated features later, and every higher layer must reduce back down to
 > the smaller core beneath it.
+>
+> Consolidation note: use this as source material for ordering and rationale.
+> Current implementation priorities live in
+> `../language/implementation_todos.md` and concrete syntax decisions belong in
+> `../language/language_spec.md` or focused feature/convenience docs.
 
 ## Purpose
 

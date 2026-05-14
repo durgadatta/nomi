@@ -1,12 +1,11 @@
 # Nomi Design Synthesis
 
-> Status: deduplicated draft.
+> Status: source draft; not an active spec.
 >
-> This file consolidates the essential ideas from the active design docs,
-> adjacent design notes, and archived design-review material. It is organized
-> by concept rather than by source file. When older notes conflict with the
-> current active foundation and draft language spec, this synthesis follows the
-> active foundation/spec and records the older idea only as background.
+> This file consolidated earlier design material. It is now source material
+> only. Current decisions should live in `../language/language_foundation.md`,
+> `../language/language_spec.md`, `../language/language_direction_and_gap_map.md`,
+> or focused syntax docs.
 
 ## Purpose
 
