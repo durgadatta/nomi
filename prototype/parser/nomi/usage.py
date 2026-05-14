@@ -41,20 +41,26 @@ def get_parser(extra_layers=None):
     return parser
 
 
+def parse_raw_tree(code=None, filename=None):
+    """Return the raw Lark parse tree (before layer transforms)."""
+    if code is None:
+        code = Path(filename).read_text(encoding="utf-8")
+    return get_parser().parse(code)
+
+
+def parse_transformed_tree(code=None, filename=None):
+    """Return the layer-transformed Lark tree (before Python AST lowering)."""
+    tree = parse_raw_tree(code=code, filename=filename)
+    pipeline = get_layer_pipeline()
+    return pipeline.run(tree)
+
+
 def generate_ast(filename=None, code=None, dump=False):
     assert filename or code
     if code is None:
         code = Path(filename).read_text()
-    tree = get_parser().parse(code)
+    tree = parse_transformed_tree(code=code)
 
-    pipeline = get_layer_pipeline()
-    tree = pipeline.run(tree)
-
-    # TODO(NOMI-SUBSTRATE-003): Expose raw tree, transformed tree, and lowered
-    # AST through a tools.syntax.inspect command so grammar changes have stable
-    # review artifacts before runtime behavior changes.
-    # TODO(NOMI-SUBSTRATE-004): Preserve Lark token/tree positions here as
-    # SourceSpan metadata before lowering erases Nomi surface structure.
     node = NomiToPythonAST().transform(tree)
     if dump:
         return ast.dump(node, include_attributes=False, indent=2)
