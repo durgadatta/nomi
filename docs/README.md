@@ -54,6 +54,8 @@ for the next implementation pass.
   implementation.
 - [Design Proposal Template](language/design_proposal_template.md):
   repeatable process for moving research ideas toward coherent Nomi decisions.
+- [Forward Implementation Plan](language/forward_implementation_plan.md):
+  staged implementation sequence, gates, caveats, risks, and open questions.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes

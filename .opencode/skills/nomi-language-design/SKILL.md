@@ -44,6 +44,8 @@ Read the smallest relevant set before changing docs or making recommendations:
   for testing design coherence before implementation.
 - `docs/language/design_proposal_template.md` — proposal structure for moving
   research ideas toward accepted Nomi decisions.
+- `docs/language/forward_implementation_plan.md` — staged implementation plan
+  with gates, caveats, risks, and open questions.
 - `docs/language/language_spec.md` — draft concrete language specification.
 - `docs/convenience/review_and_roadmap.md` — normal forms and feature status labels.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature families and recommendations.

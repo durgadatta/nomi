@@ -23,6 +23,8 @@ Nomi's docs already contain a strong semantic spine:
   strict, flexible, library-led, or fenced each design area should be.
 - [Target Program Fixtures](target_program_fixtures.md) keeps design pressure
   grounded in ordinary tasks before implementation.
+- [Forward Implementation Plan](forward_implementation_plan.md) turns the
+  design spine into staged work packages, gates, caveats, and open questions.
 - [Cognitive Language Vision](../research/cognitive_language_vision.md) names
   the larger aspiration.
 

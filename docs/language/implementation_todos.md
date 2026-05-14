@@ -15,6 +15,9 @@ For the design-only steering layer above this backlog, see
 document names adoption, documentation, teaching, standard library, and
 coherence gaps before they become implementation tasks.
 
+For a staged execution plan with gates, caveats, risks, and recommended next
+work packages, see [Forward Implementation Plan](forward_implementation_plan.md).
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the
