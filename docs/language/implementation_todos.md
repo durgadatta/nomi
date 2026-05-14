@@ -31,6 +31,8 @@ coherence gaps before they become implementation tasks.
   active feature specs only when they can share the same semantic spine.
 - [ ] For each promoted idea, document what Nomi keeps from the source language
   and what it deliberately refuses to copy.
+- [ ] Use `design_proposal_template.md` for new syntax or feature proposals
+  before promoting them into canonical docs.
 - [ ] Add target Nomi programs that intentionally use not-yet-implemented
   features: explicit data decoding, algebraic data, pipelines, block policies,
   symbolic rewrite, table queries, and examples.

@@ -52,6 +52,8 @@ for the next implementation pass.
 - [Target Program Fixtures](language/target_program_fixtures.md):
   aspirational everyday programs used to keep design grounded before
   implementation.
+- [Design Proposal Template](language/design_proposal_template.md):
+  repeatable process for moving research ideas toward coherent Nomi decisions.
 - [Language Specification](language/language_spec.md): draft concrete spec.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Delta On Python](language/delta_on_python.md): rationale for changes

@@ -122,7 +122,7 @@ design-decision gaps.
 | Effects and capabilities | File/network/time/randomness must be usable before effect theory is introduced. | `cognitive_language_vision.md`, `language_spec.md` | A practical capability note that starts with `world`, `using`, `transaction`, and traceable authority. |
 | Concurrency posture | Async, tasks, cancellation, and streams can distort a first language. | `concurrency.md`, `block_calls_feature.md` | A staged concurrency note: keep first core synchronous, then add structured concurrency through block policies. |
 | Syntax taste guide | Pleasant syntax requires consistent taste, not just local cleverness. | `syntax_synthesis_matrix.md` | A short style/taste guide for keyword choice, punctuation, placeholders, block shape, and examples. |
-| Proposal process | Future ideas need a disciplined path from research to spec. | `ai_collaboration.md`, `implementation_todos.md` | A Nomi design proposal template: need, precedents, normal form, rejected alternatives, examples, diagnostics. |
+| Proposal process | Future ideas need a disciplined path from research to spec. | `ai_collaboration.md`, `implementation_todos.md` | `design_proposal_template.md`: need, precedents, normal form, rejected alternatives, examples, diagnostics. |
 | Design fixtures | Future syntax needs examples before implementation pressure distorts it. | `implementation_todos.md` | A docs-only fixture of target programs grouped by everyday task. |
 
 ## Caveats
