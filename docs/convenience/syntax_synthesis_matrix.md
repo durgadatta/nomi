@@ -32,6 +32,11 @@ data boundary
 explanation
 ```
 
+For the large single-file stress test of these recommendations, see
+[Target Language Tour](../language/target_language_tour.md). The tour should
+change when this matrix changes, because syntax research is only useful if the
+chosen forms still compose in a memorable whole program.
+
 ## Additional Source Coverage
 
 This pass adds or sharpens pressure from:
@@ -234,6 +239,11 @@ The syntax is pleasant because the same ideas recur:
 - `match` handles expected failure;
 - `trace` is a block policy and explanation anchor.
 
+The same bundle is exercised at larger scale in
+[Target Language Tour](../language/target_language_tour.md), which should be
+used as the coherence check before promoting a research idea into the everyday
+syntax layer.
+
 ## Admission Ladder
 
 Use this ladder when deciding whether research becomes syntax.
@@ -264,6 +274,9 @@ Focused follow-up passes should be small and comparative:
 - **Block policy semantics**: compare Ruby blocks, Julia `do`, Nim block
   arguments, Swift trailing closures, Python context managers, Gleam `use`,
   and effect-handler research; specify `yield`, cancellation, and result flow.
+- **Tour regression**: after each accepted syntax decision, update
+  [Target Language Tour](../language/target_language_tour.md) and remove any
+  spelling that only works in an isolated snippet.
 - **Placeholder discipline**: compare Scala `_`, Swift `$0`, Elixir `&1`,
   Clojure `%`, Kotlin `it`, and Haskell sections; finalize Nomi's implicit
   function scoping rule.

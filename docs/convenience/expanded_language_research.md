@@ -44,6 +44,11 @@ That companion document adds OCaml, F#, Clojure, Racket, Scala 3, Nim, Crystal,
 Julia, Nushell, Nix, Terraform/HCL, and related configuration/documentation
 systems to the comparison surface.
 
+For the aspirational whole-program check, see
+[Target Language Tour](../language/target_language_tour.md). This research file
+names source pressures; the tour tests whether the recommended Nomi spelling
+still feels coherent when those pressures meet in one program.
+
 The rule remains:
 
 ```text
@@ -424,6 +429,8 @@ Coherence decision:
   examples, query plans, block policies, and decode reports.
 - Keep logs, tests, examples, and explanations connected through trace records
   rather than inventing separate reporting formats.
+- Use the target language tour to keep provenance, traces, and examples
+  connected in one program instead of optimizing each feature in isolation.
 
 Status:
 

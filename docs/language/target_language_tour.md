@@ -52,7 +52,9 @@ module examples.civic_intake
 export main, import_requests, app
 
 from nomi.cli import command, arg, flag
+from nomi.collections import chunks, last, sum
 from nomi.config import config, cli_args, toml
+from nomi.concurrent import task_group
 from nomi.csv import read_csv
 from nomi.db import Database, TransientDatabaseError
 from nomi.http import HttpApp, Request, Response, http, json, bad_request, not_found
@@ -60,9 +62,10 @@ from nomi.io import Path, Secret, open
 from nomi.option import Optional, some, none
 from nomi.time import Instant, Duration, now
 from nomi.result import Result, Ok, Err, collect_results
-from nomi.system import Env
+from nomi.system import Env, World
 from nomi.table import Table, table, where, select, derive, group, sort
 from nomi.text import contains, matches, slug, trim
+from nomi.uuid import uuid
 
 
 # ---------------------------------------------------------------------------
@@ -89,7 +92,8 @@ func load_config(argv:list[str], env:Env) -> Result[AppConfig, Error]:
         |> config.merge(env, prefix="NOMI_")
         |> config.merge(cli_args(argv))
 
-    return AppConfig.decode(config_source)
+    decoded = AppConfig.decode(config_source)
+    return decoded.map_error(error -> error.redact_secrets())
 
 
 # ---------------------------------------------------------------------------
@@ -160,6 +164,22 @@ data ImportReport:
     saved:int, saved >= 0
 
 
+data PublicIntakeRequest:
+    id:RequestId
+    name:str
+    contact:str
+    region:str
+    topic:str
+    due_at:Instant
+    assignee:str
+
+
+data ReferenceData:
+    regions:list[Region]
+    topics:list[str]
+    refreshed_at:Instant
+
+
 # ---------------------------------------------------------------------------
 # Small functions should feel familiar before they feel clever.
 # Examples double as documentation, tests, and future explanation anchors.
@@ -202,6 +222,23 @@ func public_contact(contact:Contact) -> str:
             return value.take_last(4).pad_start(len(value), "*")
         case Contact.Missing:
             return "none"
+
+
+func display_assignee(request:IntakeRequest) -> str:
+    # Optional fields may use absence operators, but not error propagation.
+    return request.assignee?.display_name ?? "Unassigned"
+
+
+func public_view(request:IntakeRequest) -> PublicIntakeRequest:
+    return PublicIntakeRequest(
+        id=request.id,
+        name=request.name,
+        contact=public_contact(request.contact),
+        region=request.region.name,
+        topic=request.topic,
+        due_at=request.submitted_at + request.sla,
+        assignee=display_assignee(request),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -252,15 +289,15 @@ func row_to_request(row:IntakeRow, default_sla:Duration) -> Result[IntakeRequest
 
 func load_requests(path:Path, default_sla:Duration) -> Result[list[IntakeRequest], Error]:
     rows =
-        read_csv(path)
-        |> select(IntakeRow.decode)
-        |> collect_results
+        read_csv(path, provenance=true)
+        |> select(row -> IntakeRow.decode(row).at(row.source_path))
+        |> collect_results(policy="all_errors")
 
     match rows:
         case Ok(decoded_rows):
             return decoded_rows
                 |> select(row -> row_to_request(row, default_sla))
-                |> collect_results
+                |> collect_results(policy="all_errors")
 
         case Err(error):
             return Err(error)
@@ -293,19 +330,49 @@ func summarize_requests(requests:list[IntakeRequest]) -> Table:
 
 
 # ---------------------------------------------------------------------------
+# Structured concurrency is also a block policy.
+# The callee owns cancellation, joining, and failure aggregation semantics.
+# ---------------------------------------------------------------------------
+
+func refresh_reference_data(world:World) -> Result[ReferenceData, Error]:
+    result =
+        task_group(cancel_on_error=true) -> tasks:
+            regions = tasks.spawn:
+                world.http.get_json("/reference/regions")
+                    .and_then(list[Region].decode)
+
+            topics = tasks.spawn:
+                world.http.get_json("/reference/topics")
+                    .and_then(list[str].decode)
+
+            match collect_results([regions.await, topics.await]):
+                case Ok([regions, topics]):
+                    Ok(ReferenceData(
+                        regions=regions,
+                        topics=topics,
+                        refreshed_at=now(),
+                    ))
+
+                case Err(error):
+                    Err(explain(error))
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Blocks are caller-side code attached to ordinary calls.
 # Resource, retry, transaction, trace, and concurrency policies reuse one idea.
 # ---------------------------------------------------------------------------
 
 func import_requests(db:Database, source:Path, config:AppConfig) -> Result[ImportReport, Error]:
-    trace "import requests from {source}":
+    return trace "import requests from {source}":
         loaded =
             using(open(source)) -> file:
                 load_requests(file.path, config.default_sla)
 
         match loaded:
             case Err(error):
-                return Err(explain(error))
+                Err(explain(error))
 
             case Ok(requests):
                 unique = dedupe_requests(requests)
@@ -325,7 +392,7 @@ func import_requests(db:Database, source:Path, config:AppConfig) -> Result[Impor
                         tx.imports.record(source=source, saved=saved_count, at=now())
                         saved_count
 
-                return Ok(ImportReport(
+                Ok(ImportReport(
                     source=source,
                     received=len(requests),
                     accepted=len(unique),
@@ -348,11 +415,6 @@ func find_request(db:Database, id:RequestId) -> Result[IntakeRequest, Error]:
             return IntakeRequest.decode(row)
         case none:
             return Err(NotFound("No request with id {id.value}"))
-
-
-func display_assignee(request:IntakeRequest) -> str:
-    # Optional fields may use absence operators, but not error propagation.
-    return request.assignee?.display_name ?? "Unassigned"
 
 
 # ---------------------------------------------------------------------------
@@ -384,7 +446,7 @@ func app(db:Database, config:AppConfig) -> HttpApp:
                 case Ok(request_id):
                     match find_request(db, request_id):
                         case Ok(item):
-                            return json(item)
+                            return json(public_view(item))
                         case Err(NotFound(message)):
                             return not_found({error: message})
                         case Err(error):
@@ -419,7 +481,7 @@ func app(db:Database, config:AppConfig) -> HttpApp:
                             transaction(db) -> tx:
                                 tx.requests.insert(item)
 
-                            return json(item, status=201)
+                            return json(public_view(item), status=201)
 
 
 # ---------------------------------------------------------------------------
@@ -444,7 +506,7 @@ main = command "civic-intake":
 
                 if explain_only:
                     requests = load_requests(source, config.default_sla)
-                    show(explain(requests))
+                    show(explain(requests).with_sources().redact_secrets())
                     return 0
 
                 match import_requests(db, source, config):
@@ -515,6 +577,27 @@ simple_scoring_rule =
 explain(simple_scoring_rule)
 ```
 
+## Research Crosswalk
+
+The tour is intentionally conservative about surface forms while borrowing
+strongly from many language traditions.
+
+| Source pressure | What Nomi keeps | Where the tour shows it |
+| --- | --- | --- |
+| Python | Familiar functions, modules, imports, indentation, ordinary scripts | `func`, `module`, CLI `main`, explicit `return` |
+| ML family, Rust, Swift, Gleam | Variants, pattern choice, expected failure as values | `data Contact`, `match`, `Result`, `Ok`, `Err` |
+| Ruby, Kotlin, Julia, Nim, Gleam | Callback-heavy APIs become readable blocks | `using`, `transaction`, `retry`, `task_group`, `http.app` |
+| SQL, dplyr, Polars, Nushell | Whole-data transforms read left to right | `|>`, `table`, `derive`, `group`, `sort` |
+| CUE, Nickel, Pkl, Dhall, Pydantic | External data keeps provenance and field diagnostics | `AppConfig.decode`, `IntakeRow.decode`, `.at(row.source_path)` |
+| Darklang, notebooks, doc tests | Execution should be inspectable and teachable | `examples:`, `test`, `trace`, `explain(...).with_sources()` |
+| Array and symbolic languages | Advanced notation is powerful but fenced | `use units:`, `quote:`, `rewrite` |
+
+This crosswalk should stay aligned with
+[Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) and
+[Expanded Language Research](../convenience/expanded_language_research.md).
+If those research docs accept or reject a surface form, this tour should show
+the consequence in one coherent program.
+
 ## What This Demonstrates
 
 | Area | Surface in the tour | Normal form underneath | Adoption reason |
@@ -527,10 +610,10 @@ explain(simple_scoring_rule)
 | Failure | `Result`, `Ok`, `Err`, `match` | Expected failure as data | Public failures should be handled locally. |
 | Absence | `?.`, `??`, `some`, `none` | Missing value only | Avoid mixing absence with error propagation. |
 | Flow | `|>`, `select`, `group`, `derive` | Value through calls/functions/plans | Data work should read top to bottom. |
-| Blocks | `using`, `transaction`, `retry`, `trace` | Call with attached caller code | Policy should be composable and explainable. |
+| Blocks | `using`, `transaction`, `retry`, `task_group`, `trace` | Call with attached caller code | Policy should be composable and explainable. |
 | Resources | `using(open(...)) -> file:` | Block policy with cleanup | IO should be ordinary but safe. |
 | Tests | `examples:`, `test`, `check` | Executable examples and assertions | Documentation and verification should reinforce each other. |
-| Explanation | `explain(error)`, `explain(summary)` | Semantic trace/report view | Errors and plans must teach the program. |
+| Explanation | `explain(error)`, `explain(summary).with_sources()` | Semantic trace/report view | Errors and plans must teach the program. |
 | Scoped notation | `use units:` | Local extension with expansion | Domain notation should not infect ordinary code. |
 | Symbolic work | `quote:`, `rewrite` | Code/data boundary and explicit rules | Advanced power needs visible fences. |
 
@@ -549,7 +632,8 @@ replaces it.
 - One flow story: pipeline applies a value now; composition, if later admitted,
   builds functions for later.
 - One block story: resource, retry, transaction, trace, command, route, test,
-  and future concurrency policies are all calls with attached caller code.
+  task group, and future concurrency policies are all calls with attached
+  caller code.
 - One explanation story: examples, tests, decode errors, traces, query plans,
   and symbolic rewrites are all inspectable semantic events.
 - One advanced-power story: notation and code-as-data require explicit fences
@@ -568,6 +652,7 @@ well.
 | Multiple placeholder families | `_` is enough for tiny local functions; larger transforms get names. |
 | Dense query syntax | Table verbs and plan values should prove themselves before SQL-like syntax enters. |
 | Dense array glyphs | Rank and shape ideas remain valuable, but not as the first everyday surface. |
+| Unfenced effect handlers | Structured block policies should mature before algebraic effects enter user code. |
 | Ambient effects | IO, time, randomness, network, and database authority should stay visible through values or policies. |
 
 ## Open Design Questions
@@ -581,8 +666,12 @@ focused design:
   diagnose directly in command/test contexts?
 - How much table vocabulary belongs in the standard library before any query
   syntax is considered?
+- What exact provenance object should `read_csv(..., provenance=true)` attach
+  to each row, and how should `explain(...).with_sources()` display it?
 - Should `command` and `http.app` blocks be library conventions, special
   forms, or library conventions with formatter support?
+- What should `task_group` return when multiple child tasks fail, and how does
+  cancellation appear in traces?
 - What is the precise scoping model for `examples:`, nested functions, and
   methods declared inside `data`?
 - Should `with:` updates be core data-copy syntax, library sugar, or deferred?
