@@ -31,6 +31,18 @@ compatibility: deepseek
 - `prototype/interpreter/reduced/interpreter.py` — Inherits from NomiInterpreter, overrides removed eval_* methods with NotImplementedError
 - `prototype/interpreter/runner.py` — make_runner() factory, shared by all three usage.py files
 
+## Semantic substrate direction
+- Prefer a shared semantic representation before adding another one-off
+  `eval_*` path. Binding, function call, block call, pattern match, decode,
+  pipeline, and rewrite should eventually emit consistent semantic events.
+- New Nomi runtime behavior should name its feature owner, normal form,
+  diagnostics, trace/explain fields, and reduced-interpreter invariant.
+- Keep Python-compatible behavior in `prototype/interpreter/python/`; place
+  deliberate Nomi departures in `prototype/interpreter/nomi/`.
+- If a runtime change depends on new syntax, make sure the parser/lowering path
+  is visible in `docs/language/syntax_substrate_todo_audit.md` or a feature
+  spec before implementing.
+
 ## Interpreter dispatch (eval method)
 ```
 eval(node, state, generator_state):
@@ -54,3 +66,7 @@ pytest                                  # all three (python, nomi, reduced)
 pytest --interpreter-modes reduced      # only reduced
 NOMI_INTERPRETER_MODE=reduced pytest   # env var alternative
 ```
+
+For feature experiments, add focused runtime tests only after parse and
+lowering behavior are inspectable. Keep reduced-interpreter tests aligned with
+declared desugar or core-lowering invariants.

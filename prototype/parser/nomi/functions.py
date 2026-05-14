@@ -2,6 +2,10 @@ import ast
 from ...interpreter.constants import BLOCK_KWARG, Block
 
 class FunctionsMixin:
+    # TODO(NOMI-SUBSTRATE-023): Gradually move these direct Python AST factory
+    # methods behind feature-owned lowering declarations. Each non-Python
+    # surface form should declare its surface node, core normal form, diagnostics,
+    # and backend lowering instead of living only as an ad hoc transformer method.
 
     # ── implicit multiplication ─────────────────────────────────────
 

@@ -11,6 +11,19 @@ compatibility: deepseek
 - `prototype/tests/e2e/` — Full pipeline, CLI, scenarios
 - `prototype/tests/unit/parser/desugar/` — Desugar pass tests (shared conftest.py)
 
+## Feature coverage direction
+Future syntax work should be feature-driven rather than only file-driven. For
+each non-trivial feature, plan coverage for:
+
+- parse snapshots;
+- lowering/normal-form snapshots;
+- diagnostics for common mistakes;
+- runtime behavior in `nomi` and `reduced` modes;
+- reduced-interpreter invariants;
+- sample regression coverage when the syntax becomes user-facing;
+- web playground and notebook checks when the feature is exposed there;
+- docs/spec references.
+
 ## Test data
 - `prototype/tests/data/sample_sources/interpreter/` — .py and .nomi source files
 - `prototype/tests/regression/test_interpreter/` — Snapshot .txt files
@@ -56,3 +69,5 @@ pytest prototype/tests/ -o "addopts="                     # serial (override -n 
 - Add new tests for new functionality
 - One test class per desugar pass
 - `conftest.py` has shared helpers: `find_node`, `is_store`, `is_load`
+- When adding a feature-profile or manifest test path, update
+  `docs/language/syntax_substrate_todo_audit.md` so the matrix stays visible.

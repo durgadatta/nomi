@@ -89,6 +89,14 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-018 | Grammar reference regeneration | `nomi.ref.lark` is documented as generated but lacks a first-class command. | One command regenerates/checks the reference grammar. | Add `python3 -m tools.syntax.grammar_ref --check`. |
 | NOMI-SUBSTRATE-019 | Normal-form expansion view | Users and agents cannot ask "what did this syntax become?" | Tooling shows feature-by-feature expansion from surface to core. | Extend the inspection CLI with `--explain-lowering`. |
 | NOMI-SUBSTRATE-020 | Test template for syntax features | New syntax tests are easy to place inconsistently. | A feature template names parse, lower, diagnostic, runtime, docs, and fixture tests. | Add `prototype/syntax/features/_template/README.md`. |
+| NOMI-SUBSTRATE-021 | Capability/spec matrix | Feature state is scattered across docs, parser support, interpreter modes, tests, samples, and web/notebook surfaces. | A single machine-readable matrix tells whether a feature is target-only, parse-only, lowerable, runnable, explainable, documented, and exposed in tools. | Start with a tracked YAML/JSON file generated into docs tables; keep it passive until the workflow proves useful. |
+| NOMI-SUBSTRATE-022 | Experiment profiles | `extra_layers` can load grammar fragments, but there is no named profile such as default, lab, target-tour, or docs-only. | Syntax experiments run under explicit profiles without mutating the default parser. | Add profile names over feature sets after `features=[...]` exists. |
+| NOMI-SUBSTRATE-023 | Declarative node and lowering schemas | Lowering logic is mostly handwritten transformer methods that directly emit Python AST. | Surface/core nodes and lowering passes declare their inputs, outputs, normal form, diagnostics, and examples. | Introduce schemas as metadata beside existing code before generating any behavior. |
+| NOMI-SUBSTRATE-024 | Interpreter semantic registry | Runtime behavior is discovered from `eval_*` method names, which is convenient but does not expose feature ownership or trace events. | Interpreter handlers declare the semantic operation they implement, feature owner, accepted node kinds, resumable policy, and trace hooks. | Wrap the existing dispatch table with metadata while preserving method-name dispatch. |
+| NOMI-SUBSTRATE-025 | Semantic event protocol | Diagnostics and future `explain` views need consistent events for binding, call, block, match, decode, pipeline, and rewrite. | Runtime and lowering can emit structured events independent of presentation. | Define event names and fields in docs first; implement as no-op hooks before feature-specific events. |
+| NOMI-SUBSTRATE-026 | Feature-driven test matrix | Current tests cover interpreters well, but syntax-feature coverage is not declared in one place. | Feature manifests list parse, lower, diagnostic, runtime, regression, web, notebook, and docs checks. | Add pytest options later; first document the matrix and add TODOs at test collection seams. |
+| NOMI-SUBSTRATE-027 | Playground feature toggles | The web playground runs the current default language, but future syntax labs need visible opt-in and lowering inspection. | Browser users can select a feature profile and inspect expansion without changing default semantics. | Reuse feature profiles once the parser API and inspection CLI exist. |
+| NOMI-SUBSTRATE-028 | Agent workflow contract | Skills know current file paths but not the desired manifest/spec-driven workflow. | Agent skills require normal-form, status, docs, tests, and inspection decisions before implementation. | Update `.agents/skills/nomi-*` to treat feature manifests and substrate TODOs as the default path. |
 
 ## Inline TODO Locations
 
@@ -106,6 +114,9 @@ Current inline comments have been placed at these high-leverage seams:
 | NOMI-SUBSTRATE-012 | `prototype/grammar/layers/statements.lark` | New keywords should remain soft until proven otherwise. |
 | NOMI-SUBSTRATE-013 | `prototype/grammar/layers/expressions.lark` | Future fenced expressions need a safe parser holding zone. |
 | NOMI-SUBSTRATE-019 | `prototype/interpreter/reduced/interpreter.py` | Reduced interpreter guardrails should evolve into full normal-form checks. |
+| NOMI-SUBSTRATE-023 | `prototype/parser/nomi/functions.py` | Transformer methods should gradually become feature-owned lowering declarations instead of direct Python AST factories. |
+| NOMI-SUBSTRATE-024 | `prototype/interpreter/python/interpreter.py` | `eval_*` dispatch should grow semantic metadata without losing its simple method dispatch. |
+| NOMI-SUBSTRATE-026 | `prototype/tests/conftest.py` | Interpreter-mode parametrization should eventually compose with feature-profile parametrization. |
 
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.

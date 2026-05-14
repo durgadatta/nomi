@@ -101,7 +101,12 @@ smallest new primitive it would require.
 5. Recommend one Nomi path. Prefer library-first and docs-first when semantics,
    diagnostics, or interactions are not yet clear.
 6. Update docs with a consolidation table, examples, status, and rationale.
-7. Avoid implementation unless the user explicitly asks for it or the task is
+7. For broad syntax/semantics planning, update
+   `docs/language/syntax_substrate_todo_audit.md`,
+   `docs/language/implementation_todos.md`, or
+   `docs/language/forward_implementation_plan.md` so the implementation path
+   remains visible.
+8. Avoid implementation unless the user explicitly asks for it or the task is
    already scoped as implementation work.
 
 ## Coherence Checks
@@ -117,6 +122,8 @@ Before accepting a new surface form, ask:
 - Does it make common code clearer at the call site?
 - Does it introduce another mini-language for validation, records, patterns,
   queries, callbacks, or testing?
+- Can it be represented as a feature-owned manifest/profile instead of a
+  scattered grammar, transformer, interpreter, and test patch?
 
 Reject or defer features that add a second validation language, a second
 placeholder family, a generic propagation operator for both absence and errors,
@@ -158,6 +165,22 @@ When editing design docs:
   large explanations.
 - Update `docs/README.md` or `docs/convenience/README.md` when adding a new
   durable design document.
+
+## Substrate Planning
+
+When the user asks for major future syntax, semantics, or faster
+experimentation:
+
+- Treat `docs/language/flexible_syntax_substrate_plan.md` and
+  `docs/language/syntax_substrate_todo_audit.md` as the bridge from language
+  design to implementation.
+- Prefer plans that make features declarative: status, normal form, feature
+  owner, grammar, surface/core node, lowering, diagnostics, tests, docs, and
+  tool exposure.
+- Add or update inline `NOMI-SUBSTRATE-*` TODOs only at real architectural
+  seams, and keep the central audit in sync.
+- Keep target-only syntax out of runnable samples until parser/lowering/tests
+  prove the intended status.
 
 ## Useful Source Families
 

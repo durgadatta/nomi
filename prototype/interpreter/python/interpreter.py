@@ -54,6 +54,9 @@ class Interpreter(
     @classmethod
     def _build_eval_dispatch(cls):
         """Auto-build {ast_type: method_name} from eval_* methods in the MRO."""
+        # TODO(NOMI-SUBSTRATE-024): Keep this convenient method-name dispatch,
+        # but layer semantic metadata on top: feature owner, operation name,
+        # accepted node kinds, resumable policy, and trace/diagnostic hooks.
         dispatch = {}
         for attr_name in dir(cls):
             if not attr_name.startswith('eval_') or attr_name == 'eval_list':

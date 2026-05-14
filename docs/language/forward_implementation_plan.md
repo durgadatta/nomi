@@ -55,6 +55,7 @@ coherent even if later phases are postponed.
 | Phase | Theme | Main deliverable | Gate |
 | --- | --- | --- | --- |
 | 0 | Baseline and inventory | implementation map and current feature matrix | Current behavior documented and tests selectable. |
+| 0A | Declarative syntax substrate | manifests, inspection, spans, profiles, and feature test matrix | New syntax can be parsed and inspected before runtime semantics. |
 | 1 | Binding engine | `BindingError`, `Constraint`, `BindingTarget`, source-aware diagnostics | Assignment constraints use shared representation. |
 | 2 | Parameter and pattern binding | function/block/pattern targets reuse binding engine | No partial bindings leak on failure. |
 | 3 | Product `data` and decode | owned values plus explicit external boundary conversion | Data fields reuse binding constraints. |
@@ -66,7 +67,9 @@ coherent even if later phases are postponed.
 | 9 | Advanced fenced layers | quote/rewrite, capabilities, scoped notation, rank/shape | Explicit boundaries and expansion display exist first. |
 
 The order is not rigid, but phases 1-3 are dependency-heavy and should not be
-skipped.
+skipped. Phase 0A is the recommended runway before broad syntax experiments:
+it does not need to finish completely, but enough of it should exist that a new
+feature has one declared home, one inspection path, and one test template.
 
 ## Phase 0: Baseline And Inventory
 
@@ -108,6 +111,65 @@ Caveats:
 Exit gate:
 
 - A reader can tell which features are real, partial, future, and rejected.
+
+## Phase 0A: Declarative Syntax Substrate
+
+Goal: make the grammar, parser, lowering, interpreter, and tests ready for
+fast syntax experiments without committing every experiment to the default
+language.
+
+Design decisions before coding:
+
+- Minimal `SyntaxFeature` manifest shape.
+- Feature statuses and which statuses enter the default parser.
+- Surface AST versus core AST naming and ownership.
+- Source-span representation and whether Python AST keeps spans by side table.
+- Inspection output format for humans and agents.
+- Named experiment profiles: `default`, `lab`, `target-tour`, `docs-only`.
+
+Implementation slices:
+
+1. Add passive feature manifests and keep current behavior unchanged.
+2. Add `tools.syntax.inspect` for raw tree, transformed tree, and current
+   Python AST.
+3. Add source spans for a few high-value nodes.
+4. Wrap existing desugar passes in metadata.
+5. Add parse/lowering snapshot templates for syntax features.
+6. Add feature profiles only after the parser API can cache by feature set.
+
+Likely files:
+
+- `prototype/grammar/assemble.py`
+- `prototype/parser/nomi/usage.py`
+- `prototype/parser/nomi/ast_.py`
+- `prototype/parser/nomi/functions.py`
+- `prototype/parser/nomi/desugar/`
+- `prototype/interpreter/python/interpreter.py`
+- `prototype/interpreter/reduced/interpreter.py`
+- `prototype/tests/conftest.py`
+- `.agents/skills/nomi-*`
+
+Tests/checks:
+
+- parser cache tests for distinct feature sets;
+- inspection CLI snapshots for pipeline, block call, match, where, and holes;
+- reduced-interpreter invariant tests for removed nodes;
+- feature-template tests proving a new syntax package has required metadata.
+
+Caveats:
+
+- This is a workflow substrate, not a plugin system. Keep manifests static and
+  boring until real feature packages prove what they need.
+- Do not migrate every old syntax form at once. Put new and awkward forms on
+  the new path first.
+- Runtime semantics should not change in this phase except where needed to
+  preserve current behavior under the new inspection path.
+
+Exit gate:
+
+- A new syntax proposal can declare its status, grammar, normal form,
+  diagnostics, tests, docs, and feature profile before any runtime semantics
+  are implemented.
 
 ## Phase 1: Binding Engine
 

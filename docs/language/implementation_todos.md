@@ -65,6 +65,48 @@ For a full-docs scan that names hidden bridge gaps and planning priorities, see
   text, JSON, CSV, HTTP, time, subprocesses, tables, tests, config, secrets,
   and Python interop.
 
+## Track 0A: Declarative Syntax And Experimentation Substrate
+
+These tasks make large syntax and semantics changes faster without turning the
+prototype into a pile of one-off grammar edits. They should advance before
+major new surface forms such as `data`, decode, scoped notation, or symbolic
+layers move from docs into implementation.
+
+- [ ] Keep
+  [`syntax_substrate_todo_audit.md`](syntax_substrate_todo_audit.md) as the
+  central TODO index for parser, grammar, lowering, feature profile, and
+  inspection work.
+- [ ] Add a passive `SyntaxFeature` manifest model that can name grammar
+  fragments, parse-tree transforms, surface/core nodes, lowering passes,
+  diagnostics, docs, tests, status, and feature owner.
+- [ ] Add a current capability/spec matrix that separates target-only,
+  parse-only, lowerable, runnable, explainable, documented, sample-covered,
+  web-exposed, and notebook-exposed features.
+- [ ] Add named experiment profiles such as `default`, `lab`, `target-tour`,
+  and `docs-only` after the parser grows `features=[...]`.
+- [ ] Add `tools.syntax.inspect` so every grammar or lowering change can show
+  raw tree, transformed tree, surface AST, core AST, Python AST backend, and
+  normal-form expansion.
+- [ ] Introduce `SourceSpan` and preserve it through the earliest practical
+  parser/lowering path for bindings, functions, calls, match cases, and block
+  calls.
+- [ ] Add Nomi-owned surface nodes for new or awkward forms before lowering
+  them to Python AST. Start with `BlockCall`, `BindingTarget`, `PipeExpr`,
+  `MatchExpr`, and `DataDecl`.
+- [ ] Add declarative pass metadata for existing desugar passes: pass name,
+  feature owner, dependencies, removed nodes, produced nodes, normal form, and
+  diagnostics.
+- [ ] Add feature-driven test templates that name parse snapshots, lowering
+  snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
+  sample regression coverage, docs references, web playground checks, and
+  notebook checks.
+- [ ] Add no-op semantic event hooks before feature-specific tracing so
+  binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
+  each invent a private explanation format.
+- [ ] Update `.agents/skills/nomi-*` whenever the substrate workflow changes,
+  so agents propose feature-owned, spec-driven changes instead of scattered
+  grammar/interpreter patches.
+
 ## Track 1: Binding, Constraints, And Data Boundaries
 
 - [ ] Introduce a runtime `BindingError` type with fields for name, value,

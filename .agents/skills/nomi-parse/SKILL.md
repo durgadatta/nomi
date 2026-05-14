@@ -19,6 +19,18 @@ compatibility: deepseek
     → Interpreter.eval()
 ```
 
+Target architecture for new work:
+```
+.nomi source → feature-selected parser/profile → raw/transformed tree
+    → Nomi-owned surface AST with SourceSpan
+    → core normal forms
+    → Python AST backend or direct runtime backend
+```
+
+Before adding broad syntax, read:
+- `docs/language/flexible_syntax_substrate_plan.md`
+- `docs/language/syntax_substrate_todo_audit.md`
+
 ## Grammar rules
 - Uses Lark Earley parser with PythonIndenter postlexer
 - Nomi diffs from Python grammar: `func` keyword, `=>` arrow functions, compound annotation, `block_call_stmt`
@@ -30,7 +42,17 @@ compatibility: deepseek
 - `block_call_stmt`: `call(args) -> target: body` lowered to Expr(Call(..., keywords=[keyword('__block__', value=(body, params))]))
 
 ## Adding syntax
-1. Add grammar rule to the appropriate layer file in `prototype/grammar/layers/`
-2. Add AST lowering in `ast_.py` or create a new mixin
-3. Update parser tests: `prototype/tests/unit/parser/test_nomi_ast_nodes.py`
-4. Update interpreter tests if behavior changes
+1. Identify the Nomi normal form and feature status before editing grammar.
+2. Prefer a feature-owned manifest/profile plan when the syntax is more than a
+   tiny Python-parity extension.
+3. Add grammar rule to the appropriate layer file in `prototype/grammar/layers/`
+   only after checking soft-keyword and ambiguity implications.
+4. Add a surface/core node plan when Python AST cannot represent the syntax
+   naturally. Direct Python AST lowering is acceptable for small current
+   bootstrap forms, but not the target for major Nomi features.
+5. Add AST lowering in `ast_.py` or create a new mixin.
+6. Add parse/lowering snapshots or focused parser tests:
+   `prototype/tests/unit/parser/`.
+7. Update interpreter tests if behavior changes.
+8. Update `docs/language/syntax_substrate_todo_audit.md` and inline
+   `NOMI-SUBSTRATE-*` TODOs when the change exposes a new architectural seam.

@@ -38,6 +38,9 @@ NOMI_MODES = ("nomi", "reduced")
 
 
 def pytest_addoption(parser):
+    # TODO(NOMI-SUBSTRATE-026): Once syntax feature manifests exist, add
+    # feature-profile selection here so tests can combine interpreter modes
+    # with parse-only, lowering-only, runtime, web, and notebook feature checks.
     parser.addoption(
         "--interpreter-modes",
         nargs="+",

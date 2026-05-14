@@ -522,6 +522,28 @@ Old workflow: grammar first, semantics chased afterward.
 New workflow: normal form first, feature package carries grammar to runtime.
 ```
 
+## Experiment Contract
+
+Before a broad syntax or semantics experiment enters the codebase, it should
+answer the same small set of questions. This keeps experiments quick without
+making the default language unstable.
+
+| Question | Required answer |
+| --- | --- |
+| What is the user pressure? | One concrete task or readability problem, not a copied syntax wish. |
+| What is the normal form? | Binding, function, pattern, flow, block, absence/result, data boundary, or explanation; otherwise propose the smallest new primitive. |
+| What is the status? | `target-only`, `research-only`, `design-needed`, `prototype-ready`, `implemented`, or `rejected-for-now`. |
+| What profile enables it? | `default`, `lab`, `target-tour`, `docs-only`, or a named feature bundle. |
+| What code owns it? | Feature manifest, grammar fragments, surface/core nodes, lowering passes, runtime handlers, diagnostics, docs, and tests. |
+| How is it inspected? | Raw tree, transformed tree, surface AST, core AST, Python AST backend, and normal-form expansion where applicable. |
+| What can fail? | Parse errors, lowering errors, unsupported profile errors, runtime errors, and diagnostics in Nomi vocabulary. |
+| What proves it? | Parse/lowering snapshots first; runtime, web, notebook, and regression tests only when behavior exists. |
+
+The first implementation of this contract should be deliberately lightweight:
+metadata next to existing code, no code generation, no dynamic plugin loading,
+and no requirement to migrate stable old syntax before new experiments can
+benefit from the structure.
+
 ## What Not To Do Yet
 
 - Do not rewrite the whole parser from Lark unless Lark becomes the blocker.

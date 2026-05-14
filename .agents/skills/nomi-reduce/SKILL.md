@@ -10,6 +10,10 @@ compatibility: deepseek
 3. `prototype/interpreter/reduced/interpreter.py` — add NotImplementedError override
 4. `prototype/tests/unit/parser/desugar/test_<name>.py` — test the desugaring
 
+For larger syntax reductions, also update the planned feature manifest or
+`docs/language/syntax_substrate_todo_audit.md` with the feature owner, normal
+form, status, pass metadata, diagnostics, and inspection expectations.
+
 ## Pattern
 
 ### Step 1: Create desugarer
@@ -19,7 +23,8 @@ import ast
 from .base import NomiDesugarer
 
 class <Name>(NomiDesugarer):
-    """docstring with before/after example"""
+    """docstring with before/after example and normal form"""
+    removed_node_types = (...)
     def visit_<NodeType>(self, node):
         # Transform node to primitive AST
         return replacement_node  # or [stmt1, stmt2] for multi-node replacement
@@ -67,4 +72,6 @@ pytest --force-regen prototype/tests/regression/test_interpreter.py  # if output
 - Never change existing test files without asking
 - Add new tests to `prototype/tests/unit/parser/desugar/`
 - One reduction per commit
+- Declare what node/form the pass removes and what normal form it produces.
+- Prefer metadata beside the pass over undocumented ordering assumptions.
 - Regenerate snapshots if interpreter output changes
