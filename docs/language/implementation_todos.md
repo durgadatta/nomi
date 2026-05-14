@@ -175,7 +175,7 @@ boundaries, and package ownership. Keep the detailed plan in
   the collected tuple or mapping.
 - [x] Add tests for ordinary positional/keyword, keyword-only, defaults,
   varargs, and keyword arguments.
-- [ ] Add explicit positional-only parameter constraint tests.
+- [x] Add explicit positional-only parameter constraint tests.
 - [ ] Ensure arrow functions either support constrained parameters or reject
   them with a clear parse/runtime error.
 

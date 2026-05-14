@@ -154,10 +154,10 @@ func signup(age:(int, age >= 13 else "Signup requires age 13+")):
 ```
 
 Parameter constraints are checked after Python-compatible argument mapping:
-positional arguments, keyword arguments, keyword-only arguments, defaults,
-`*args`, and `**kwargs` are resolved first; then each resulting parameter
-binding is validated. For `*args` and `**kwargs`, the constraint applies to the
-collected tuple or mapping.
+positional-only arguments, positional-or-keyword arguments, keyword-only
+arguments, defaults, `*args`, and `**kwargs` are resolved first; then each
+resulting parameter binding is validated. For `*args` and `**kwargs`, the
+constraint applies to the collected tuple or mapping.
 
 ### Block Parameter Binding
 
