@@ -68,3 +68,29 @@ def test_keyword_only_parameter_constraint_rejects_invalid_keyword(nomi_mode):
                 "result = gate(age=12)\n"
             )
         )
+
+
+def test_positional_only_parameter_constraint_rejects_invalid_argument(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+
+    with pytest.raises(RuntimeError, match="Too young"):
+        run(
+            code=(
+                'func gate(age:(int, age >= 13 else "Too young"), /):\n'
+                "    return age\n"
+                "result = gate(12)\n"
+            )
+        )
+
+
+def test_positional_only_parameter_is_not_bound_from_keyword(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+
+    with pytest.raises(RuntimeError, match="age"):
+        run(
+            code=(
+                'func gate(age:(int, age >= 13 else "Too young"), /):\n'
+                "    return age\n"
+                "result = gate(age=14)\n"
+            )
+        )

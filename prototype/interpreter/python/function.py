@@ -147,11 +147,14 @@ class FunctionMixin(FunctionCallMixin):
             return params[1:]
         return params
 
-    def _bind_declared_params(self, env, params, posargs, kwargs):
+    def _bind_declared_params(self, env, params, posargs, kwargs, keywordable_params=None):
+        if keywordable_params is None:
+            keywordable_params = params
+        keywordable = {param.arg for param in keywordable_params}
         for i, param in enumerate(params):
             if i < len(posargs):
                 env.set(param.arg, posargs[i])
-            elif param.arg in kwargs:
+            elif param.arg in keywordable and param.arg in kwargs:
                 env.set(param.arg, kwargs[param.arg])
 
     def _bind_keyword_values(self, env, params, kwonlyargs, posargs, kwargs):
@@ -210,13 +213,15 @@ class FunctionMixin(FunctionCallMixin):
         # Note: constraints are already set up in parent env, so env.set() will check them automatically
         # TODO: route this through the shared binding/constraint engine once the parser and runtime agree on one path.
         
-        params = list(func_node.args.args)
+        posonlyargs = list(func_node.args.posonlyargs)
+        positional_or_keyword_args = list(func_node.args.args)
+        params = posonlyargs + positional_or_keyword_args
         kwonlyargs = list(func_node.args.kwonlyargs)
         defaults = func_node.args.defaults or []
         
         params = self._bind_self_obj(env, params, self_obj)
-        self._bind_declared_params(env, params, posargs, kwargs)
-        self._bind_keyword_values(env, params, kwonlyargs, posargs, kwargs)
+        self._bind_declared_params(env, params, posargs, kwargs, positional_or_keyword_args)
+        self._bind_keyword_values(env, positional_or_keyword_args, kwonlyargs, posargs, kwargs)
         self._apply_param_defaults(env, params, defaults)
         self._apply_kwonly_defaults(env, kwonlyargs, func_node.args.kw_defaults)
         self._bind_varargs(func_node, env, params, posargs)

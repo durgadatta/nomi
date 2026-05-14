@@ -20,7 +20,8 @@ class BlockFunctionMixin:
     
     def _setup_function_parameters(self, func_node, env):
         """Set up parameter constraints in the given environment."""
-        params = list(func_node.args.args)
+        params = list(func_node.args.posonlyargs)
+        params.extend(func_node.args.args)
         params.extend(func_node.args.kwonlyargs)
         if func_node.args.vararg:
             params.append(func_node.args.vararg)

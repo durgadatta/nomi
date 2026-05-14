@@ -140,7 +140,7 @@ class FunctionDefMixin:
             if item is None:
                 continue
 
-            if item == "SLASH":
+            if item == "SLASH" or (isinstance(item, Token) and item.type == "SLASH"):
                 seen_slash = True
                 current_list = args
                 continue

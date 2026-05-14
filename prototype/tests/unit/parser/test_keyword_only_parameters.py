@@ -30,3 +30,15 @@ def test_nomi_parser_preserves_constrained_keyword_only_parameters():
     assert [arg.arg for arg in stmt.args.kwonlyargs] == ["age"]
     assert isinstance(stmt.args.kwonlyargs[0].annotation, ast.Tuple)
     assert ast.literal_eval(stmt.args.kw_defaults[0]) == 14
+
+
+def test_nomi_parser_preserves_constrained_positional_only_parameters():
+    stmt = parse_stmt(
+        generate_nomi_ast,
+        "func gate(age:(int, age >= 13), /, label='ok'):\n    return label\n",
+    )
+
+    assert isinstance(stmt, ast.FunctionDef)
+    assert [arg.arg for arg in stmt.args.posonlyargs] == ["age"]
+    assert isinstance(stmt.args.posonlyargs[0].annotation, ast.Tuple)
+    assert [arg.arg for arg in stmt.args.args] == ["label"]
