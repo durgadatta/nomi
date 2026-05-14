@@ -19,16 +19,15 @@ from .layer import LayerPipeline
 
 
 # Transforms run AFTER the raw parse, in this order.
-# ExpressionLayer is lazy-imported to break circular dependency
-# (assemble → parser/nomi/__init__ → usage → assemble).
+# Derived lazily from the feature registry so adding a layer transform
+# does not require editing this file.
 _LAYER_TRANSFORMS = None
 
 _LAYERS_DIR = Path(__file__).resolve().parent / "layers"
 
-# TODO(NOMI-SUBSTRATE-001): Replace this hardcoded layer order with a small
-# feature-manifest registry. Each syntax feature should eventually declare its
-# grammar fragments, parse-tree transforms, lowering passes, docs, and tests in
-# one place; this list can remain the built-in core layer order until then.
+# Core grammar layers are always present in this order.  Syntax features
+# that add new grammar fragments declare extra_layers in their manifest
+# (prototype/syntax/features.py) and are appended after the core.
 _LAYER_ORDER = [
     "terminals.lark",
     "expressions.lark",
@@ -66,14 +65,16 @@ def assemble_grammar(extra_layers=None):
 
 
 def get_layer_pipeline():
-    """Return the LayerPipeline that transforms the raw parse tree."""
+    """Return the LayerPipeline that transforms the raw parse tree.
+
+    Layer transforms are derived from the syntax feature registry
+    (prototype/syntax/features.py) so adding a parse-tree transform
+    does not require editing this assembly file.
+    """
     global _LAYER_TRANSFORMS
     if _LAYER_TRANSFORMS is None:
-        from ..parser.nomi.desugar.parse_tree_precedence import ExpressionLayer
-        # TODO(NOMI-SUBSTRATE-001): Feature manifests should also contribute
-        # parse-tree transforms so adding syntax does not require editing this
-        # central assembly file by hand.
-        _LAYER_TRANSFORMS = [ExpressionLayer()]
+        from prototype.syntax.features import get_layer_transforms
+        _LAYER_TRANSFORMS = get_layer_transforms()
     return LayerPipeline(list(_LAYER_TRANSFORMS))
 
 

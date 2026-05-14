@@ -1,45 +1,24 @@
-"""Pipeline that chains all active desugar passes in order."""
+"""Pipeline that chains all active desugar passes in order.
+
+Passes are derived from the syntax feature registry
+(prototype/syntax/features.py) so adding a desugar pass means adding
+one entry to the feature list — not editing this file.
+"""
 
 import ast
-from typing import List, Type
 
-from .base import BaseDesugarer
-from .positional_hole import PositionalHole
-from .underscore_lambda import UnderscoreLambda
-from .piecewise import PiecewiseFunction
-from .where_clause import WhereClause
-from .augassign import AugAssign
-from .assert_ import Assert
-from .decorator import Decorator
-from .pass_ import Pass
-from .with_ import With
-from .fstring import FString
+from prototype.syntax.features import get_desugar_passes
 
 
-# TODO(NOMI-SUBSTRATE-008): Replace this plain ordered list with pass metadata:
-# name, dependencies, removed nodes, produced nodes, and Nomi normal forms.
-# Manual order is fine for now, but each pass should eventually state its
-# contract so syntax additions are easier to review.
-DESUGAR_PASSES: List[Type[BaseDesugarer]] = [
-    PiecewiseFunction,
-    WhereClause,
-    UnderscoreLambda,
-    PositionalHole,
-    AugAssign,
-    Assert,
-    Decorator,
-    Pass,
-    With,
-    FString,
-]
+# Derived from BUILTIN_FEATURES in prototype/syntax/features.py.
+# Feature order there determines pass order here.
+DESUGAR_PASSES = get_desugar_passes()
 
 
 def desugar_module(tree: ast.Module) -> ast.Module:
     for pass_cls in DESUGAR_PASSES:
         tree = pass_cls().visit(tree)
     ast.fix_missing_locations(tree)
-    # TODO(NOMI-SUBSTRATE-009): After pass metadata exists, assert that no
-    # declared removed surface/core nodes remain before execution.
     return tree
 
 
