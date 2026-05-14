@@ -150,22 +150,47 @@ function gotoCell(idx) {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-window.restartRuntime = async function() {
+function clearNotebookOutputs() {
+  _executionCounter = 0;
+  document.querySelectorAll(".nb-cell").forEach(el => {
+    el.dataset.execCount = "";
+    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
+  });
+  document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
+  document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
+}
+
+window.resetRuntime = async function() {
   if (!_ready || !_resetFn) return;
   setControlsDisabled(true);
   setStatus("running", "running");
   try {
     const result = await _resetFn();
-    _executionCounter = 0;
-    document.querySelectorAll(".nb-cell").forEach(el => {
-      el.dataset.execCount = "";
-      el.querySelector(".nb-cell-index").textContent = "In[ ]:";
-    });
-    document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
-    document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
-    byId("runtime-detail").textContent = result && result.session ? `Pyodide worker · restarted session ${result.session}` : "Pyodide worker · restarted";
+    clearNotebookOutputs();
+    byId("runtime-detail").textContent = result && result.session ? `Pyodide worker · reset session ${result.session}` : "Pyodide worker · reset";
     setStatus("ready", "ready");
   } catch (error) {
+    byId("runtime-detail").textContent = String(error);
+    setStatus("error", "error");
+  } finally {
+    setControlsDisabled(false);
+  }
+};
+
+window.restartWorker = async function() {
+  if (!_ready) return;
+  setControlsDisabled(true);
+  setStatus("running", "running");
+  byId("runtime-detail").textContent = "Restarting Pyodide worker...";
+  try {
+    _ready = false;
+    await startRuntimeWorker();
+    _ready = true;
+    clearNotebookOutputs();
+    byId("runtime-detail").textContent = "Pyodide worker · restarted";
+    setStatus("ready", "ready");
+  } catch (error) {
+    _ready = false;
     byId("runtime-detail").textContent = String(error);
     setStatus("error", "error");
   } finally {

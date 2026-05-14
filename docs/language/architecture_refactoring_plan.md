@@ -276,8 +276,10 @@ Progress:
 - Done after web migration: made session reset policy explicit with
   `RuntimeSession.reset(clear_cache=True)`, and wired the web reset path to
   clear cached lowered ASTs without restarting Pyodide.
-- Still pending: add hard cancellation/restart policy and decide whether web
-  should expose structured runtime results directly.
+- Done after reset policy: split the web toolbar into soft Reset and hard
+  Restart Worker actions.
+- Still pending: add in-flight cancellation UX and decide whether web should
+  expose structured runtime results directly.
 
 Notes from implementation:
 
@@ -300,10 +302,14 @@ Notes from implementation:
   until the frontend is ready to consume structured results.
 - Web reset now means "fresh interpreter and cleared AST cache in the same
   worker." Hard cancellation should remain a separate worker-level operation.
+- Web Restart Worker now terminates and recreates the worker/Pyodide runtime.
+  That is heavier than reset, but it is the right recovery path for stuck or
+  poisoned worker state.
 
 Next safe extension:
 
-- Add a hard worker restart/cancel path separately from soft session reset.
+- Add cancellation UX for in-flight runs, using worker termination as the hard
+  stop mechanism.
 
 ## Open Questions
 

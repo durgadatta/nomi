@@ -27,7 +27,7 @@ function setStatus(text, mode) {
 function lineCount(text) { return text ? text.split(/\r\n|\r|\n/).length : 0; }
 
 function setControlsDisabled(disabled) {
-  ["restart-btn","run-all-btn"].forEach(id => byId(id).disabled = disabled || !_ready);
+  ["reset-btn","restart-btn","run-all-btn"].forEach(id => byId(id).disabled = disabled || !_ready);
   document.querySelectorAll(".nb-cell-run").forEach(btn => { btn.disabled = disabled || !_ready; });
 }
 
