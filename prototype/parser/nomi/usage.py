@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .ast_ import NomiToPythonAST
 from ...grammar.assemble import assemble_grammar, get_layer_pipeline
+from ...syntax.surface import lower_surface_to_python
 
 
 # ── parser cache ────────────────────────────────────────────────────
@@ -55,13 +56,21 @@ def parse_transformed_tree(code=None, filename=None):
     return pipeline.run(tree)
 
 
-def generate_ast(filename=None, code=None, dump=False):
+def generate_ast(filename=None, code=None, dump=False, keep_surface=False):
+    """Parse *filename* or *code*, lower to Python AST, and return it.
+
+    Intermediate surface nodes (Nomi-owned constructs that Python AST
+    cannot represent naturally) are lowered in-place before returning,
+    unless *keep_surface* is True (for inspection/debugging).
+    """
     assert filename or code
     if code is None:
         code = Path(filename).read_text()
     tree = parse_transformed_tree(code=code)
 
     node = NomiToPythonAST().transform(tree)
+    if not keep_surface:
+        lower_surface_to_python(node)
     if dump:
         return ast.dump(node, include_attributes=False, indent=2)
     return node

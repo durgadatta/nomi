@@ -1,13 +1,19 @@
-"""Block-call lowering: ``f(x) do: ... end`` → call with block body keyword."""
+"""Block-call lowering: ``f(x) do: ... end`` → ``BlockCall`` surface node.
 
-import ast
+The ``BlockCall`` surface node preserves the call structure in a Nomi-owned
+node before ``lower_surface_to_python`` converts it to Python AST encoding.
+"""
 
-from ....interpreter.constants import BLOCK_KWARG, Block
+from prototype.syntax.surface import BlockCall
 
 
 class BlockCallMixin:
     def block_call_stmt(self, items):
         call, params, block = items
-        block = ast.keyword(arg=BLOCK_KWARG, value=Block(body=block, params=params))
-        call.keywords.append(block)
-        return ast.Expr(value=call)
+        return BlockCall(
+            func=call.func,
+            args=call.args,
+            keywords=list(call.keywords),
+            block_params=params,
+            block_body=block,
+        )

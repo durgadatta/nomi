@@ -1,5 +1,7 @@
-import ast 
+import ast
 from lark import Transformer
+
+from prototype.syntax.surface import _is_stmt_or_surface
 
 from . import (
     BindingMixin, ExpressionMixin, StatementMixin, FunctionMixin, ControlMixin,
@@ -8,23 +10,25 @@ from . import (
 
 class ModuleMixin(
     BindingMixin,
-    ExpressionMixin, 
+    ExpressionMixin,
     StatementMixin,
     ControlMixin,
     FunctionMixin,
-    ExceptionMixin, 
+    ExceptionMixin,
     PatternMixin,
     ClassMixin,
     ModuleMixin,
-    OthersMixin  
+    OthersMixin
 ):
     def file_input(self, items):
         body = []
         for it in items:
             if isinstance(it, list):
                 for s in it:
-                    if isinstance(s, ast.stmt): body.append(s)
-            elif isinstance(it, ast.stmt): body.append(it)
+                    if _is_stmt_or_surface(s):
+                        body.append(s)
+            elif _is_stmt_or_surface(it):
+                body.append(it)
         return ast.Module(body=body, type_ignores=[])
 
     def single_input(self, items): return self.file_input(items)

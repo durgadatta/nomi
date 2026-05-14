@@ -1,27 +1,33 @@
 import ast
 from lark import Token
 
+from prototype.syntax.surface import _is_stmt_or_surface
+
 from . import ensure_store
 
 class StatementMixin():
     def nonlocal_stmt(self, items):
         return ast.Nonlocal(names=items)
-    
+
     def global_stmt(self, items):
         return ast.Global(names=items)
-    
+
     def suite(self, items):
         out = []
         for it in items:
-            if isinstance(it, list): out.extend(it)
-            elif isinstance(it, ast.stmt): out.append(it)
+            if isinstance(it, list):
+                out.extend(it)
+            elif _is_stmt_or_surface(it):
+                out.append(it)
         return out
 
     def simple_stmt(self, items):
         out = []
         for it in items:
-            if isinstance(it, list): out.extend(it)
-            elif isinstance(it, ast.stmt): out.append(it)
+            if isinstance(it, list):
+                out.extend(it)
+            elif _is_stmt_or_surface(it):
+                out.append(it)
         return out
 
     def expr_stmt(self, items):

@@ -5,6 +5,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE          # python-ast (default)
     python3 -m tools.syntax.inspect FILE --stage raw-tree
     python3 -m tools.syntax.inspect FILE --stage transformed-tree
+    python3 -m tools.syntax.inspect FILE --stage surface-ast
     python3 -m tools.syntax.inspect FILE --stage python-ast
 """
 
@@ -38,10 +39,13 @@ def main():
     elif stage == "transformed-tree":
         tree = parse_transformed_tree(code=code)
         print(tree.pretty())
+    elif stage == "surface-ast":
+        print(generate_ast(code=code, dump=True, keep_surface=True))
     elif stage == "python-ast":
         print(generate_ast(code=code, dump=True))
     else:
-        print(f"Unknown stage: {stage!r}. Valid: raw-tree, transformed-tree, python-ast")
+        print(f"Unknown stage: {stage!r}. "
+              f"Valid: raw-tree, transformed-tree, surface-ast, python-ast")
         sys.exit(1)
 
 
