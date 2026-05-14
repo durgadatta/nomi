@@ -270,8 +270,11 @@ Progress:
 - Done after kernel ownership: added optional expression-result fields to
   `ExecutionResult` and moved notebook code execution through
   `RuntimeSession.run(display_last_expr=True)`.
-- Still pending: migrate `web/nomi_web.py`; then add cancellation/restart
-  policy.
+- Done after notebook execution: migrated `web/nomi_web.py` to
+  `RuntimeSession(cache_size=64)` while preserving its worker response shape
+  and millisecond timing names.
+- Still pending: add cancellation/restart policy and decide whether web should
+  expose structured runtime results directly.
 
 Notes from implementation:
 
@@ -289,11 +292,14 @@ Notes from implementation:
 - Notebook display semantics are now exposed as `ExecutionResult.value` plus
   `has_value`. This should stay optional so CLI/web execution does not imply a
   final-expression display policy.
+- Web still returns its historic plain dict with `output`, `session`, and
+  `timing`. The bridge maps runtime timing names to the UI's millisecond names
+  until the frontend is ready to consume structured results.
 
 Next safe extension:
 
-- Migrate `web/nomi_web.py` to `RuntimeSession(cache_size=64)` while preserving
-  the current worker response shape and millisecond timing names.
+- Add cancellation/restart policy around `RuntimeSession` in the web worker,
+  likely by terminating/recreating the worker for hard cancellation.
 
 ## Open Questions
 

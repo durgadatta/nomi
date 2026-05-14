@@ -4,7 +4,6 @@ and provides run_nomi(code) and reset_session() entry points.
 """
 
 import asyncio
-import copy
 import contextlib
 import io
 import json
@@ -39,11 +38,8 @@ class _Store:
 
 
 _session_store = _Store()
-_generate_ast = None
-_nomi_desugar_fn = None
-_Interpreter = None
-_AST_CACHE = {}
-_AST_CACHE_LIMIT = 64
+_runtime_session = None
+_SESSION_AST_CACHE_LIMIT = 64
 
 
 def _get_interpreter():
@@ -135,18 +131,13 @@ async def _ensure_prototype_loaded():
 
 
 async def init_nomi():
-    global _generate_ast, _nomi_desugar_fn, _Interpreter
     await _ensure_prototype_loaded()
     # ── pre-warm parser & modules ────────────────────────────────
     # Lark Earley parser construction is expensive (~100+ ms in
     # Pyodide).  Force parser creation and key module imports now
     # so the first user cell runs at full speed.
     from prototype.parser.nomi.usage import generate_ast
-    from prototype.interpreter.nomi.interpreter import Interpreter
     from prototype.interpreter.nomi.usage import _nomi_desugar
-    _generate_ast = generate_ast
-    _nomi_desugar_fn = _nomi_desugar
-    _Interpreter = Interpreter
     tree = generate_ast(code="x = 1\n")
     tree = _nomi_desugar(tree)
     reset_session()
@@ -155,71 +146,43 @@ async def init_nomi():
 
 
 def reset_session() -> dict:
-    global _Interpreter
-    if _Interpreter is None:
-        from prototype.interpreter.nomi.interpreter import Interpreter
-        _Interpreter = Interpreter
+    global _runtime_session
 
-    interp = _Interpreter()
-    _set_interpreter(interp)
+    from prototype.runtime import RuntimeSession
+
+    _runtime_session = RuntimeSession(
+        mode="nomi",
+        cache_size=_SESSION_AST_CACHE_LIMIT,
+    )
+    _set_interpreter(_runtime_session.interpreter)
     sid = _inc_counter()
     _log(f"Session #{sid} created")
     return {"ok": True, "session": sid}
 
 
-def _cache_ast(code, tree):
-    if code in _AST_CACHE:
-        _AST_CACHE[code] = tree
-        return
-    if len(_AST_CACHE) >= _AST_CACHE_LIMIT:
-        oldest = next(iter(_AST_CACHE))
-        del _AST_CACHE[oldest]
-    _AST_CACHE[code] = tree
-
-
-def _parse_and_desugar(code: str) -> tuple[object, dict]:
-    global _generate_ast, _nomi_desugar_fn
-    if _generate_ast is None or _nomi_desugar_fn is None:
-        from prototype.interpreter.nomi.usage import _nomi_desugar
-        from prototype.parser.nomi.usage import generate_ast
-        _generate_ast = generate_ast
-        _nomi_desugar_fn = _nomi_desugar
-
+def _web_timing(runtime_timings: dict) -> dict:
     timings = {}
-    cached = _AST_CACHE.get(code)
-    if cached is not None:
-        t0 = time.perf_counter()
-        tree = copy.deepcopy(cached)
-        timings["cache_ms"] = (time.perf_counter() - t0) * 1000
+    if "cache" in runtime_timings:
+        timings["cache_ms"] = runtime_timings["cache"] * 1000
         timings["cache_hit"] = True
-        return tree, timings
-
-    parse_start = time.perf_counter()
-    tree = _generate_ast(code=code, dump=False)
-    timings["parse_ms"] = (time.perf_counter() - parse_start) * 1000
-
-    desugar_start = time.perf_counter()
-    tree = _nomi_desugar_fn(tree)
-    timings["desugar_ms"] = (time.perf_counter() - desugar_start) * 1000
-    timings["cache_hit"] = False
-
-    _cache_ast(code, copy.deepcopy(tree))
-    return tree, timings
+    else:
+        timings["cache_hit"] = False
+    if "parse" in runtime_timings:
+        timings["parse_ms"] = runtime_timings["parse"] * 1000
+    if "lower" in runtime_timings:
+        timings["desugar_ms"] = runtime_timings["lower"] * 1000
+    if "eval" in runtime_timings:
+        timings["eval_ms"] = runtime_timings["eval"] * 1000
+    return timings
 
 
 def _eval_in_session(code: str) -> dict:
-    interp = _get_interpreter()
-    if interp is None:
+    global _runtime_session
+    if _runtime_session is None:
         reset_session()
-        interp = _get_interpreter()
 
-    tree, timings = _parse_and_desugar(code)
-    # _nomi_desugar already calls ast.fix_missing_locations internally —
-    # no need to call it again here.
-    eval_start = time.perf_counter()
-    interp.eval(tree)
-    timings["eval_ms"] = (time.perf_counter() - eval_start) * 1000
-    return timings
+    result = _runtime_session.run(source=code)
+    return _web_timing(result.timings)
 
 
 async def run_nomi(code: str) -> dict:
