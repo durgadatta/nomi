@@ -2,6 +2,9 @@
 
 > Status: **implemented**.  `if pattern = expr: body` desugars to
 > `match expr: case pattern: body; case _: pass`.
+>
+> Focused detail note. For the overall pattern family and admission decisions,
+> start with [patterns.md](patterns.md).
 
 ## What It Is
 

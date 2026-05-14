@@ -55,37 +55,42 @@ general reading order.
 Canonical or near-canonical language direction. These are the decision surface
 for the next implementation pass.
 
-- [Language Foundation](language/language_foundation.md): current design
-  foundation and operational core.
-- [Language Direction And Gap Map](language/language_direction_and_gap_map.md):
-  adoption-oriented steering note, coherence gaps, caveats, and next design
-  artifacts.
-- [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
-  that names hidden bridge gaps, planning priorities, and next synthesis moves.
-- [Language Degrees Of Freedom](language/language_degrees_of_freedom.md):
-  framework for deciding what belongs in the strict core, surface sugar,
-  libraries, scoped extensions, future layers, or rejection.
-- [Target Program Fixtures](language/target_program_fixtures.md):
-  aspirational everyday programs used to keep design grounded before
-  implementation.
-- [Target Language Tour](language/target_language_tour.md):
-  large aspirational Nomi program showing how the preferred syntax should feel
-  when modules, data, decode, flow, blocks, tests, explanation, and future
-  fenced notation work together.
-- [Design Proposal Template](language/design_proposal_template.md):
-  repeatable process for moving research ideas toward coherent Nomi decisions.
-- [Forward Implementation Plan](language/forward_implementation_plan.md):
-  staged implementation sequence, gates, caveats, risks, and open questions.
-- [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md):
-  parser, grammar, lowering, and interpreter architecture changes needed to
-  make new syntax easy to add, inspect, and revise.
-- [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md):
-  detailed critique, central TODO index, and inline-code TODO map for making
-  future syntax changes easier.
+Core direction:
+
+- [Language Foundation](language/language_foundation.md): canonical foundation
+  and operational core.
 - [Language Specification](language/language_spec.md): draft concrete spec.
-- [Implementation Todos](language/implementation_todos.md): staged backlog.
+- [Language Degrees Of Freedom](language/language_degrees_of_freedom.md):
+  strict core, sugar, libraries, scoped extensions, future layers, and
+  rejection framework.
 - [Delta On Python](language/delta_on_python.md): rationale for changes
   relative to Python.
+
+Target programs:
+
+- [Target Program Fixtures](language/target_program_fixtures.md):
+  aspirational task-sized programs.
+- [Target Language Tour](language/target_language_tour.md): large whole-program
+  coherence target.
+
+Planning and process:
+
+- [Language Direction And Gap Map](language/language_direction_and_gap_map.md):
+  adoption-oriented steering note and core gap map.
+- [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
+  for hidden bridge gaps and next synthesis moves.
+- [Forward Implementation Plan](language/forward_implementation_plan.md):
+  staged implementation sequence and gates.
+- [Implementation Todos](language/implementation_todos.md): staged backlog.
+- [Design Proposal Template](language/design_proposal_template.md): proposal
+  process for new syntax, features, and promoted research ideas.
+
+Parser and syntax substrate:
+
+- [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md):
+  parser, grammar, lowering, and interpreter architecture.
+- [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md):
+  central TODO index and inline-code TODO map for easier syntax changes.
 
 ## Features
 

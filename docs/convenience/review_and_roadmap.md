@@ -460,9 +460,13 @@ template values, diagnostics, and explicit escaping rules.
 
 ### `functions.md`
 
-Keep, but reorganize around the function normal form. Remove stale claims that
-operator sections, holes, no-parens equations, defaults, composition, and
-guards are future-only. Add usage guidance:
+Keep as the synthesis and teaching-order document for function-shaped
+convenience. It now uses the function normal form as the spine and keeps
+source-language comparisons only where they affect a Nomi admission decision.
+The living edge-case reference for placeholders remains
+[implicit_functions_nuance.md](implicit_functions_nuance.md).
+
+Current usage guidance:
 
 ```nomi
 double = _ * 2       # tiny one-argument transform
@@ -471,8 +475,8 @@ label = $user.name   # short named relation
 full = (user) => ... # use when names or constraints matter
 ```
 
-Reject-for-now: broad currying syntax and dense tacit style as everyday
-defaults.
+Reject-for-now: broad currying syntax, duplicate placeholder aliases, and
+dense tacit style as everyday defaults.
 
 ### `implicit_functions_nuance.md`
 
@@ -482,9 +486,14 @@ effects, or constraints.
 
 ### `patterns.md` And `if_let_detail.md`
 
-Merge their teaching story around pattern normal form. Keep
-`if_let_detail.md` for edge cases and make `patterns.md` the overview.
-Document `guard-let` and `while-let` as implemented special cases of patterns.
+Keep `patterns.md` as the overview and synthesis point for the pattern normal
+form. Keep [if_let_detail.md](if_let_detail.md) for edge cases and
+[challenges_match_as_expression.md](challenges_match_as_expression.md) for the
+parser/value-block caveat around match expressions.
+
+Documented decision: `match`, if-let, while-let, guard-let, piecewise
+equations, destructuring, future constrained captures, and decoder fields are
+one pattern family.
 
 Prototype-ready next slice: constrained captures in patterns.
 

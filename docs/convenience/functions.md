@@ -1,596 +1,346 @@
-# Function Convenience Across Languages
+# Function Convenience
 
-Research notes on syntactic shortcuts for defining functions — what
-exists, what Nomi has, and what could be added long-term.  Each section
-describes the mechanism, shows examples in the source language, and
-maps to a possible Nomi form.
+> Status: active synthesis.
+>
+> Scope: function-shaped convenience syntax only. This doc keeps the source
+> language research, but the decision surface is Nomi's function normal form:
+> parameters are bindings, the body evaluates, and the result may be checked.
 
----
+## Design Pressure
 
-## 1. Lightweight Equations
+Many languages make tiny functions pleasant:
 
-**Haskell**: `f a b = expr` (no `=`, just whitespace parameters)
+- Haskell, F#, Elm, and Roc use equations, sections, currying, and composition.
+- Scala, Swift, Elixir, Clojure, and Kotlin use placeholder or implicit
+  parameters.
+- Ruby, Kotlin, Julia, Nim, and Gleam make callback-heavy APIs read like
+  ordinary blocks.
+- Python keeps functions familiar and explicit, but `lambda` is too cramped
+  for everyday higher-order code.
 
-```haskell
-add a b = a + b
-const x _ = x
+The lesson is not "adopt every spelling." The durable need is smaller:
+
+```text
+make a function value where the reader can still see its inputs, body, and role
 ```
 
-**Nomi** (implemented): `f(a, b) = expr`
+Nomi should therefore keep one coherent ladder of function forms. A form lower
+on the ladder is acceptable only while it remains obvious.
+
+| Need | Preferred Nomi form | Why |
+| --- | --- | --- |
+| Named, block-bodied behavior | `func name(params): ...` | Most explicit; best for effects, control flow, examples, and constraints. |
+| Named, expression-bodied behavior | `name(params) = expr` | Compact declaration; still names parameters. |
+| Piecewise dispatch | contiguous equations with patterns and `when` guards | Function clauses reduce to pattern dispatch over parameters. |
+| Anonymous expression | `(x, y) => expr` | Clear function value with explicit parameters. |
+| Tiny one-argument transform | `_` or operator section | Pleasant when the argument is visually obvious. |
+| Tiny multi-argument relation | `$1 + $2` or `$name` | Useful when explicit order or names improve a short expression. |
+| Reusable transform pipeline | `f >>> g` / `f <<< g` today, future teaching may converge on `>>` | Composition builds a function for later; pipeline applies a value now. |
+| Local helper derivation | `expr where: ...` | Keeps the main expression first while helper bindings remain local. |
+
+## Normal Form
+
+All accepted function conveniences reduce to this shape:
+
+```text
+receive arguments -> bind parameters -> check constraints/patterns/guards ->
+evaluate body -> check result if declared -> return value
+```
+
+This is the same binding story used by assignment, block parameters, data
+fields, and pattern captures. That is the important synthesis: functions are
+not a separate mini-language.
+
+```nomi
+func normalize(email:(str, contains(email, "@"))) -> str:
+    return email.strip().lower()
+
+normalize(email) = email.strip().lower()
+
+normalize = email => email.strip().lower()
+```
+
+The three forms differ in ergonomics and teaching order, not in meaning.
+
+## The Coherence Ladder
+
+### 1. Use `func` For Real Behavior
+
+Use `func` when a function has multiple statements, side effects, control flow,
+examples, return constraints, or enough logic that a future reader will want a
+stable landmark.
+
+```nomi
+func import_people(path:Path, min_age:int = 13) -> Result[list[Person], Error]:
+    rows = read_csv(path)
+    return collect_results(rows |> where(_.age >= min_age) |> map(Person.decode))
+```
+
+Do not force expression sugar to carry policy-heavy code. A pleasant language
+needs a calm long form.
+
+### 2. Use Equations For Named Expressions
+
+Equation definitions are the compact named-function form.
 
 ```nomi
 add(a, b) = a + b
-pi() = 3.14
+double x = x * 2
+greet(name, greeting="Hello") = greeting + ", " + name
 ```
 
-**Future**: allow single-argument equations without parens: `double x = x * 2`
+Implemented surface:
 
----
+- parenthesized equations: `add(a, b) = a + b`;
+- no-argument equations: `pi() = 3.14`;
+- single-argument no-parens equations: `double x = x * 2`;
+- defaults in equation parameters;
+- `where` on equations.
 
-## 2. Pattern-Matching / Piecewise Definitions
-
-**Haskell**: multiple equations with patterns, tried top-to-bottom
-
-```haskell
-fact 0 = 1
-fact n = n * fact (n - 1)
-
-fib 0 = 0
-fib 1 = 1
-fib n = fib (n - 1) + fib (n - 2)
-
--- multi-arg
-and True  True  = True
-and _     _     = False
-
--- guards
-sign n | n > 0     = 1
-       | n < 0     = -1
-       | otherwise = 0
-```
-
-**Elixir**: multiple clauses with pattern matching
-
-```elixir
-def fact(0), do: 1
-def fact(n), do: n * fact(n - 1)
-```
-
-**Nomi** (implemented): contiguous equations merged into match dispatch
+Use no-parens equations sparingly. They are lovely for mathematical or
+functional definitions, but calls should still use ordinary call syntax:
 
 ```nomi
-fact(1) = 1
-fact(n) = fact(n - 1) * n
+double x = x * 2
+result = double(5)
 ```
 
-**Future**: guard clauses (`|` syntax), multi-arg patterns, wildcards in patterns
+This keeps declaration brevity without introducing Haskell-style whitespace
+application everywhere.
 
----
+### 3. Use Piecewise Equations For Pattern Dispatch
 
-## 3. Lambda / Anonymous Function Shortcuts
-
-### 3a. Arrow Functions
-
-**JavaScript / TypeScript / Kotlin**:
-
-```javascript
-const add = (a, b) => a + b
-```
-
-**Nomi** (implemented):
+Piecewise functions are function clauses. They reduce to ordered pattern
+matching over parameters.
 
 ```nomi
-add = (a, b) => a + b
+fact(0) = 1
+fact(n) when n > 0 = n * fact(n - 1)
+
+sign(n) when n > 0 = 1
+sign(n) when n < 0 = -1
+sign(n) = 0
 ```
 
-### 3b. Underscore / Hole-Filling
+Source-language relatives:
 
-**Scala**: `_` as placeholder, scope extends to smallest enclosing expression
+| Source | Form | Nomi lesson |
+| --- | --- | --- |
+| Haskell | multiple equations and guards | Ordered clauses are readable when compact. |
+| Elixir | multi-clause `def` | Function dispatch and pattern matching are the same family. |
+| OCaml/F#/Rust | `match` inside functions | The long form remains `match`; equations are sugar. |
 
-```scala
-list.map(_.name)           // (x) => x.name
-list.filter(_.age > 18)    // (x) => x.age > 18
-list.reduce(_ + _)         // (x, y) => x + y
-"hello".map(_.toUpper)     // (x) => x.toUpper
-```
+Critique:
 
-**Kotlin**: `it` as implicit single-parameter name
+- Good: removes boilerplate from simple classifiers, recursion, and domain
+  rules.
+- Risk: users may hide complex branching in many tiny clauses.
+- Nomi rule: promote to `func` plus `match` once branches need statements,
+  tracing, non-trivial diagnostics, or shared setup.
 
-```kotlin
-list.map { it.name }
-list.filter { it.age > 18 }
-list.reduce { acc, it -> acc + it }
-```
+Open design work:
 
-**Swift**: `$0`, `$1`, ... as positional shorthand
+- constrained captures in equation patterns should reuse the shared binding
+  engine;
+- diagnostics should say which clause failed by pattern, constraint, or guard;
+- non-contiguous clauses currently do not merge and should remain a diagnostic
+  target.
 
-```swift
-list.map { $0.name }
-list.reduce(0) { $0 + $1 }
-list.sorted { $0.age < $1.age }
-```
+### 4. Use `=>` For Explicit Anonymous Functions
 
-**Nomi** (implemented): `_` as hole
+Arrow functions are expression-level function values.
 
 ```nomi
-_.upper()           // (x) => x.upper()
-_ + 1               // (x) => x + 1
-_ + _               // (x, y) => x + y
-list.map(_.name)    // list.map((x) => x.name)
+adult = age => age >= 18
+full_name = (first, last) => first + " " + last
+valid = (user:User) => user.active and user.email != none
 ```
 
-**Future**: Swift-style positional `$1`, Kotlin-style `it` as alternative
+Use `=>` when a placeholder would make the reader reconstruct parameter names
+or order. This is especially true for effects, constraints, nested calls, and
+anything longer than one visual phrase.
 
-### 3c. Operator Sections (Partial Application)
+### 5. Use Holes For Tiny Functions Only
 
-**Haskell**: binary operator with one operand missing
+Implicit functions are a convenience family, not a second function language.
+For the full scoping reference, see
+[implicit_functions_nuance.md](implicit_functions_nuance.md).
 
-```haskell
-(+2)        -- \x -> x + 2
-(2*)        -- \x -> 2 * x
-(/)         -- \x y -> x / y  (operator as function)
-map (*2) [1,2,3]  -- [2,4,6]
-filter (>5) [1..10]  -- [6,7,8,9,10]
-```
+Implemented forms:
 
-**Scala**: same via underscore holes
-
-```scala
-_ + 2          // (x) => x + 2
-2 * _          // (x) => 2 * x
-```
-
-**F#**: same
-
-```fsharp
-(+) 2 3       // 5
-List.map ((*) 2) [1;2;3]  // [2;4;6]
-```
-
-**Nomi** (not yet implemented):
-
-Proposed syntax:
 ```nomi
-(+2)        // (x) => x + 2
-(2*)        // (x) => 2 * x
-(+)         // (x, y) => x + y  (operator as value)
+double = _ * 2
+upcase = _.upper()
+add = _ + _
+
+scale = $1 * 2
+combine = $1 + $2
+full = $first + " " + $last
+
+plus_two = (+2)
+times_two = (2*)
+plus = (+)
 ```
 
----
+Guidance:
 
-## 4. Where Clauses (Local Bindings)
+| Situation | Use | Avoid |
+| --- | --- | --- |
+| One obvious receiver | `_.name`, `_.upper()` | adding `it` as another spelling |
+| Two obvious operands | `$1 + $2`, `_ + _` | hiding argument order in a long expression |
+| Reused named parameter | `$x + $x` | inventing a local name only visible through magic |
+| Operator-only transform | `(+2)`, `(2*)`, `(+)` | dense tacit chains as everyday style |
+| Anything with business meaning | `(user) => ...` or `func` | placeholder puzzles |
 
-**Haskell**: `where` introduces local bindings after an expression
+Do not add Kotlin `it`, Elixir `&1`, Clojure `%`, Swift `$0`, and Scala `_`
+as parallel everyday spellings. Nomi already has enough placeholder power:
+`_` for the obvious value and `$...` when position or name matters.
 
-```haskell
-area = pi * r * r
-  where
+### 6. Keep Pipeline And Composition Separate
+
+Pipeline applies a value now:
+
+```nomi
+names =
+    users
+    |> where(_.active)
+    |> select(_.name)
+    |> sort
+```
+
+Composition builds a function for later:
+
+```nomi
+clean = strip >>> lower >>> normalize_space
+result = clean("  ADA  ")
+```
+
+Current prototype tests cover `>>>` and `<<<`. The broader language spec notes
+that teaching may later converge on a simpler reference operator such as `>>`.
+The design rule is stable either way: do not teach pipeline and composition as
+interchangeable syntax. One has data in hand; the other returns a function.
+
+### 7. Use `where` For Local Function Support
+
+`where` is not only function syntax, but it is crucial for pleasant function
+definitions because it keeps helper bindings near the expression they explain.
+
+```nomi
+area(r) = pi * r * r where:
     pi = 3.14159
-    r = 5
 
-roots a b c = ( (-b + sqrt disc) / (2*a),
-               (-b - sqrt disc) / (2*a) )
-  where
-    disc = b*b - 4*a*c
+score(user) = normalized * weight where:
+    normalized = clamp(user.points / max_points, 0, 1)
+    weight = plan_weight(user.plan)
 ```
 
-**Elixir / F#**: `let ... in` (before, not after)
+`where` should reuse ordinary binding semantics. It should not become a
+separate declaration island with different scoping, validation, or diagnostics.
 
-```fsharp
-let pi = 3.14159
-let r = 5
-area = pi * r * r
-```
+## Related But Separate Features
 
-**Nomi** (implemented):
+### Block Calls Are Not Just Functions
+
+Ruby blocks, Kotlin trailing lambdas, Julia `do`, Nim block arguments, and
+Gleam `use` all flatten callbacks. Nomi's accepted direction is the block-call
+normal form, not another lambda punctuation:
 
 ```nomi
-area = pi * r * r where:
-    pi = 3.14159
-    r = 5
+using(open(path)) -> file:
+    text = file.read()
 
-# mixed with other forms
-scaled = double(x) + 1 where:
-    double = _ * 2
-    x = 5
+retry(3, on=NetworkError):
+    fetch(url)
 ```
 
-**Future**: multi-line where for compound statements, `where` on any expression
+These are ordinary calls with attached caller-side blocks. They belong with
+control policy, resources, fixtures, tracing, and future concurrency. Do not
+copy brace-based trailing lambda syntax as a second block story.
 
----
+### Currying And Partial Application Stay Library-First
 
-## 5. Function Composition
+Haskell and F# make every multi-argument function curried. That is elegant in a
+language designed around it, but it would surprise users coming from Python,
+JavaScript, Ruby, Swift, or Kotlin.
 
-**Haskell**: `.` operator for composition
-
-```haskell
-process = sort . filter (>0) . map (*2)
--- process xs = sort (filter (>0) (map (*2) xs))
-```
-
-**F#**: `>>` and `<<` operators
-
-```fsharp
-let process = (List.map ((*) 2)) >> (List.filter (fun x -> x > 0)) >> List.sort
-```
-
-**Elm / Roc**: `>>` and `<<`
-
-```elm
-process = List.sort << List.filter (\x -> x > 0) << List.map ((*) 2)
-```
-
-**Nomi** (not yet implemented):
-
-Proposed syntax:
-```nomi
-process = sort << filter(_ > 0) << map(_ * 2)
-# or
-process = data |> map(_ * 2) |> filter(_ > 0) |> sort
-```
-
----
-
-## 6. Method / Extension Function Syntax
-
-**Kotlin**: extension functions and receiver lambdas
-
-```kotlin
-fun String.greet() = "Hello, $this"
-
-// receiver lambda
-html {
-    head { title("Page") }
-    body { p("content") }
-}
-```
-
-**Swift**: same
-
-```swift
-extension String {
-    func greet() -> String { "Hello, \(self)" }
-}
-```
-
-**Nomi** (not yet implemented):
-
-Proposed syntax using `_` hole + method chain:
-```nomi
-greet = "Hello, " + _  // already works
-
-// extension-style (future)
-func String.greet():
-    return "Hello, " + this
-```
-
----
-
-## 7. Named / Labeled Arguments
-
-**Swift / Kotlin / C#**: labeled parameters at call site
-
-```swift
-func move(from start: Point, to end: Point) { ... }
-move(from: a, to: b)
-```
-
-**OCaml**: labeled arguments
-
-```ocaml
-let move ~from ~to = ...
-move ~from:a ~to:b
-```
-
-**Nomi** (partially supported): named arguments at call site
+Nomi should prefer explicit partial functions:
 
 ```nomi
-func move(from, to):
-    ...
-move(from=a, to=b)  # works via keyword arguments
+add3 = x => add(3, x)
+add3 = add(3, _)          # possible future explicit partial form
 ```
 
----
+Do not make `add(3)` silently return a function in the everyday layer. It
+creates arity ambiguity and weakens call diagnostics.
 
-## 8. Default / Optional Parameters
+### Point-Free Style Is A Specialist Tool
 
-**Most languages**: `=` to provide default
+Tacit styles from Haskell, J, APL, BQN, Uiua, Joy, and Factor are powerful, but
+they can turn ordinary programs into notation puzzles. Nomi can support small
+operator sections and composition while rejecting dense point-free style as the
+default teaching path.
 
-```python
-def greet(name="world"):
-    return f"Hello, {name}"
-```
-
-**Kotlin**: same, with named-arg calls
-
-```kotlin
-fun greet(name: String = "world") = "Hello, $name"
-greet(name = "alice")
-```
-
-**Nomi** (partially supported): `func` supports defaults; `f(a, b)=expr` does not yet
+Readable:
 
 ```nomi
-func greet(name="world"):
-    return "Hello, " + name
+mean = values => sum(values) / len(values)
 ```
 
----
+Too compressed for everyday Nomi:
 
-## 9. Variadic Functions
-
-**Python**: `*args` and `**kwargs`
-
-```python
-def sum_all(*args):
-    return sum(args)
+```text
+mean = +/ % #
 ```
 
-**Nomi** (supported): same via `*args`
-
-```nomi
-func sum_all(*args):
-    return sum(args)
-```
-
----
-
-## 10. Currying / Partial Application
-
-**Haskell**: automatic currying (every function is curried)
-
-```haskell
-add :: Int -> Int -> Int
-add x y = x + y
-add3 = add 3   -- Int -> Int
-add3 5         -- 8
-```
-
-**F#**: same
-
-```fsharp
-let add x y = x + y
-let add3 = add 3
-add3 5  // 8
-```
-
-**Nomi** (not yet implemented):
-
-Proposed:
-```nomi
-add = (x, y) => x + y
-add3 = add(3, _)    // partial application
-add3(5)             // 8
-```
-
----
-
-## 11. Block / Trailing Lambda Syntax
-
-**Ruby**: block attached to method calls
-
-```ruby
-[1,2,3].map { |x| x * 2 }
-[1,2,3].each { |x| puts x }
-
-# with do..end
-file.open do |f|
-    f.write("hello")
-end
-```
-
-**Kotlin**: trailing lambda convention
-
-```kotlin
-list.map { it * 2 }
-list.filter { it > 0 }
-```
-
-**Nomi** (implemented): `block_call_stmt` for yield-to-block
-
-```nomi
-times(3) -> counter:
-    print(f"Count: {counter}")
-
-each(items) -> item:
-    print(f"Item: {item}")
-```
-
----
-
-## 12. Point-Free / Tacit Programming
-
-**Haskell**: point-free style omits parameters entirely
-
-```haskell
-sum = foldr (+) 0          -- no explicit parameter
-length = foldr (\_ n -> n + 1) 0
-compose = (.)
-
--- combinators
-apply f x = f x
-flip f x y = f y x
-```
-
-**J / APL**: extreme point-free (tacit) via forks and hooks
-
-```j
-mean =: +/ % #              NB. sum divided by count
-```
-
-**Nomi** (not yet implemented):
-
-Point-free can be approximated with `_` holes:
-```nomi
-sum = foldr(_ + _, 0)
-```
-
-But true point-free would require richer combinators.
-
----
-
-## 13. Match / Case as Function Body
-
-**Haskell / Rust / OCaml**: `function` keyword for immediate pattern match
-
-```haskell
--- Haskell
-describe = \case
-    0 -> "zero"
-    1 -> "one"
-    n -> "many"
-```
-
-```rust
-// Rust
-let describe = |n| match n {
-    0 => "zero",
-    1 => "one",
-    _ => "many",
-};
-```
-
-**Nomi** (not yet implemented):
-
-Proposed:
-```nomi
-describe = match:
-    case 0: return "zero"
-    case 1: return "one"
-    case n: return "many"
-```
-
----
-
-## 14. Do-Notation / Comprehension Sugar
-
-**Haskell**: `do` notation for monadic chains
-
-```haskell
-result = do
-    x <- action1
-    y <- action2 x
-    return (x + y)
-```
-
-**Scala**: `for` comprehensions
-
-```scala
-for {
-    x <- action1
-    y <- action2(x)
-} yield x + y
-```
-
-**Nomi** (not yet implemented):
-
-Could desugar to yield-to-block or flatMap chains.
-
----
-
-## 15. Implicit / Context Parameters
-
-**Scala**: `given` / `using` for implicit context
-
-```scala
-def sort[T](list: List[T])(using ord: Ordering[T]) = ...
-
-given Ordering[Int] = Ordering.Int
-sort(List(3, 1, 2))  // ord passed implicitly
-```
-
-**Kotlin**: context receivers
-
-**Nomi** (Track 7): capability scopes, `world` values
-
----
-
-## 16. Other Languages — Function Shortcuts Survey
-
-A research catalogue of how different language traditions create functions
-concisely.  Source material for future convenience features.
-
-### Implicit Parameters
-
-| Language | Form | Mechanism |
-|----------|------|-----------|
-| Scala | `_.name`, `_ + _` | Underscore holes (Nomi adopted) |
-| Swift | `$0`, `$1`, ... | Positional dollar holes (Nomi adopted) |
-| Kotlin | `it` | Implicit single-param name in trailing lambda |
-| Elixir | `&(&1 + &2)` | `&` capture operator, `&1`, `&2` positional |
-| F# | `fun x y -> x + y` | Lightweight lambda keyword |
-
-### Explicit Lambdas
-
-| Language | Form | Expression body? |
-|----------|------|------------------|
-| Nomi | `x => expr`, `(x,y) => expr` | Yes |
-| JS/TS | `(x, y) => expr` | Yes |
-| Rust | `\|x\| x + 1`, `\|x, y\| { ... }` | Single-expression or block |
-| Ruby | `{ \|x\| x + 1 }`, `-> (x) { x + 1 }` | Block or stabby lambda |
-| C++ | `[](int x) { return x + 1; }` | Block only |
-| Java | `(x) -> x + 1`, `String::length` | Expression or method ref |
-| Python | `lambda x: x + 1` | Expression only |
-
-### Operator / Expression Shorthands
-
-| Language | Form | What it does |
-|----------|------|-------------|
-| Haskell | `(+2)`, `(2*)`, `(+)` | Operator sections (Nomi adopted) |
-| Haskell | `f . g` | Function composition |
-| F# / Elm / Roc | `f >> g`, `f << g` | Forward/backward composition |
-| Java | `String::length` | Method reference → function |
-| Swift | `\Type.method` | Key-path as function reference |
-| Python | `functools.partial(f, x)` | Partial application |
-| J / APL | `+/ % #` | Point-free (tacit) via forks & hooks |
-
-### Blocks as Functions
-
-| Language | Form | Yield points |
-|----------|------|-------------|
-| Ruby | `method { \|x\| x + 1 }` | Block attached to call |
-| Kotlin | `method { it + 1 }` | Trailing lambda convention |
-| Nomi | `method() -> x: body` | Explicit yield-to-block (implemented) |
-| Groovy | `method { x -> x + 1 }` | Closure blocks |
-
-### Tacit / Point-Free
-
-| Language | Form | Mechanism |
-|----------|------|-----------|
-| J / APL | `mean =: +/ % #` | Forks (pair) and hooks |
-| Haskell | `sum = foldr (+) 0` | Currying + sections |
-| Joy / Factor | `[dup *]` | Concatenative (stack-based) |
-
-### Candidates for Future Nomi
-
-| Idea | Source | Viability |
-|------|--------|-----------|
-| `it` as implicit lambda param (top-level) | Kotlin | Simple, conflicts with var name |
-| `&` capture operator | Elixir | High effort, overlaps with `$N` |
-| `String::length` method refs | Java/Swift | Medium, needs type info |
-| `>>` / `<<` composition | F#/Elm | Conflicts with bit-shift operators |
-| `.` composition | Haskell | High effort syntax change |
-| `partial(f, x)` built-in | Python | Simple, library-level |
-
----
-
-## Priority Order for Nomi
-
-What to add next, roughly in order of impact:
-
-| # | Feature | Effort | Impact | Status |
-|---|---------|--------|--------|--------|
-| 1 | Operator sections `(+2)`, `(2*)`, `(+)` | low | high | **done** |
-| 2 | `$1`, `$2` positional hole (Swift-style) | low | medium | **done** |
-| 3 | `$name` named hole | low | medium | **done** |
-| 4 | Guards in piecewise `when n > 0` | medium | high | **done** |
-| 5 | Function composition `>>>`, `<<<` | low | high | **done** |
-| 6 | Single-arg equation without parens `double x = x*2` | low | medium | **done** |
-| 7 | `match` as expression (return value) | medium | high | not started |
-| 8 | Defaults in equation args `f(a, b=2) = a+b` | medium | medium | **done** |
-| 9 | Currying / partial application `f(_, b)` | medium | medium | not started |
-| 10 | Multi-line `where` for compound stmts | medium | medium | not started |
-| 11 | `function` / `\case` keyword | low | medium | not started |
-| 12 | Point-free combinators | high | low | not started |
-| 13 | Do-notation / monad sugar | high | low | not started |
-| 14 | Implicit parameters | high | low | not started |
+Keep advanced tacit or array notation in a future fenced layer, if it arrives
+at all.
+
+### Context Parameters Are A Future Capability Story
+
+Scala `given/using`, Kotlin context receivers, implicit reader environments,
+and effect systems all point at a real need: functions often require context
+such as locale, database handles, permissions, clocks, or loggers.
+
+For Nomi, this should grow from explicit values, block policies, and future
+capability scopes. Do not add implicit parameters as function sugar before the
+capability and explanation model exists.
+
+## Synthesis Decisions
+
+| Candidate | Status | Decision |
+| --- | --- | --- |
+| `func` declarations | implemented | Canonical long form. |
+| Arrow functions | implemented | Canonical anonymous expression form. |
+| Equation functions | implemented | Good compact named form. |
+| Single-arg no-parens equations | implemented | Accept for declarations only; do not add whitespace calls. |
+| Piecewise equations | implemented | Treat as ordered pattern-dispatch clauses. |
+| Guards on equations | implemented | Same guard model as `match`. |
+| Defaults in equation args | implemented | Reuse parameter binding defaults. |
+| `_`, `$1`, `$name` holes | implemented | Keep; require style discipline. |
+| Operator sections | implemented | Keep as tiny function sugar. |
+| `where` | implemented | Keep as local binding/explanation form. |
+| Composition | implemented as `>>>`/`<<<` | Keep concept; settle final teaching spelling with language spec. |
+| Method references | design-needed | Prefer holes and explicit lambdas until type/member model is stable. |
+| Extension functions | design-needed | Belongs with data/module/dispatch design, not convenience syntax alone. |
+| Automatic currying | rejected-for-now | Too surprising for Python-compatible calls and diagnostics. |
+| Broad partial application | design-needed | Consider only explicit holes or library helpers. |
+| `it`, `%`, `&1`, `$0` aliases | rejected-for-now | Duplicate placeholder family. |
+| Do-notation / monad sugar | research-only | Wait for Result/block/effect story. |
+| Implicit/context parameters | research-only | Wait for capability scopes and explanation. |
+| Dense point-free notation | rejected-for-now for everyday layer | Future fenced advanced layer at most. |
+
+## Quality Bar For New Function Sugar
+
+Add a new function convenience only if all answers are yes:
+
+- Can it be shown as a normal `func`, equation, or `=>` expansion?
+- Does it reuse the same parameter binding and constraint semantics?
+- Does it improve a common call site without hiding effects or control flow?
+- Can diagnostics name the generated parameters, selected clause, or failed
+  guard in user language?
+- Does it avoid duplicating `_`, `$...`, equations, `where`, pipeline, or
+  block calls?
+
+If a candidate only looks nicer in one isolated snippet, keep it in research.
+The target is a language whose function syntax becomes easier to remember as
+programs grow.

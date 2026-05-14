@@ -1,5 +1,8 @@
 # Implicit Functions in Nomi — Nuance & Comparison
 
+> Focused detail note. For the synthesis, admission decisions, and teaching
+> order for function syntax, start with [functions.md](functions.md).
+
 Nomi offers five shorthands for building anonymous functions without
 writing explicit parameter lists.  They look similar but differ in how
 parameters are named and scoped.  This note makes the distinctions

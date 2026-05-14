@@ -404,10 +404,11 @@ Why it matters:
 
 This prevents old broad proposals from re-entering as polished duplication.
 
-### Gap 10: Docs Need A Read-By-Task Map
+### Gap 10: Read-By-Task Paths Need Maintenance
 
-`docs/README.md` gives categories and a reading order, but a contributor often
-starts with a task:
+`docs/README.md` now includes a `Read By Task` section. Keep that section
+current whenever a new canonical planning or feature doc is added, because a
+contributor often starts with a task:
 
 - add syntax;
 - change interpreter semantics;
@@ -416,12 +417,6 @@ starts with a task:
 - write research synthesis;
 - make a user-facing sample;
 - implement parser feature.
-
-Recommended artifact or README section:
-
-```text
-Read By Task
-```
 
 Why it matters:
 
@@ -548,8 +543,8 @@ This is lighter than a formal spec but strong enough for implementation.
 
 ### 3. Refresh Stale Per-Feature Convenience Docs
 
-`convenience/README.md` already marks some docs as partly stale. Do not rewrite
-them all at once. Instead:
+`convenience/README.md` now separates synthesis docs from focused detail notes.
+Do not rewrite every per-feature file at once. Instead:
 
 - keep `review_and_roadmap.md`, `syntax_synthesis_matrix.md`, and
   `expanded_language_research.md` as the active convenience spine;
@@ -572,18 +567,10 @@ Later:
 - parse future fixtures only in explicit syntax-lab mode;
 - keep the target tour as the whole-program coherence test.
 
-### 5. Add A Read-By-Task Section To Docs README
+### 5. Keep Read-By-Task As The Glue Layer
 
-Suggested paths:
-
-| Task | Read first |
-| --- | --- |
-| Add syntax | `flexible_syntax_substrate_plan`, `syntax_substrate_todo_audit`, relevant convenience doc, `design_proposal_template` |
-| Implement binding/decode | `binding_constraints_feature`, future `data_decode_boundary_feature`, `language_foundation` |
-| Work on blocks/control | `block_calls_feature`, `yield_to_block`, `concurrency`, `syntax_substrate_todo_audit` |
-| Work on tables/query | `structured_collections_query_language`, `collections`, `syntax_synthesis_matrix` |
-| Improve docs/research | `docs_eagle_eye_review`, `language_direction_and_gap_map`, `language_family_coverage_map` |
-| Make samples | `target_program_fixtures`, `target_language_tour`, `current_capability_matrix` |
+The read-by-task table now lives in [docs/README.md](../README.md). Update that
+table instead of duplicating task-entry paths in individual docs.
 
 ## Risks If We Do Not Add These Bridges
 
@@ -612,8 +599,7 @@ The most useful next docs-only pass is:
 
 1. Create `current_capability_matrix.md`.
 2. Classify target fixtures against current/parser/runtime status.
-3. Add a "Read By Task" section to `docs/README.md`.
-4. Start `data_decode_boundary_feature.md` using the construction/elimination
+3. Start `data_decode_boundary_feature.md` using the construction/elimination
    lens.
 
 The most useful next code-adjacent pass is:

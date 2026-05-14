@@ -22,18 +22,30 @@ rejected-for-now
 Each doc should cover: the everyday need, examples in source languages, Nomi's
 normal-form reduction, current status, critique, and implementation notes.
 
+Use the overview/detail split to keep the folder from growing sideways:
+
+- put synthesis, admission decisions, and teaching order in the main feature
+  docs such as `functions.md`, `patterns.md`, `collections.md`, and
+  `error_handling.md`;
+- keep parser caveats, scoping edge cases, and implementation scars in focused
+  companion notes such as `implicit_functions_nuance.md`,
+  `if_let_detail.md`, and `challenges_match_as_expression.md`;
+- move broad source-language catalogues into `expanded_language_research.md`,
+  `syntax_synthesis_matrix.md`, or `others.md` unless they change a concrete
+  Nomi recommendation.
+
 | Doc | Feature | Status |
 |-----|---------|--------|
 | [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active roadmap |
 | [expanded_language_research.md](expanded_language_research.md) | Newer language and PL research pass, overlap consolidation, extra candidates | active research |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | active synthesis |
-| [functions.md](functions.md) | Equation, piecewise, hole lambda, where, operator sections | **mostly implemented; doc partly stale** |
-| [implicit_functions_nuance.md](implicit_functions_nuance.md) | Nuance comparison of `_`, `$1`, `$name`, `(+)`, `=>` | living reference |
+| [functions.md](functions.md) | Function normal form, equations, piecewise clauses, holes, sections, composition, where | active synthesis; many surfaces implemented |
+| [implicit_functions_nuance.md](implicit_functions_nuance.md) | Scoping reference for `_`, `$1`, `$name`, `(+)`, `=>` | focused detail |
 | [implementation_learnings.md](implementation_learnings.md) | Tricky grammar interactions, AST bugs, deferred features | living reference |
-| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression: implemented forms and remaining full-suite challenge | partial |
-| [if_let_detail.md](if_let_detail.md) | If-let: difference from `if`, patterns, edge cases, cross-lang ref | implemented |
+| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression parser caveats and remaining full-suite challenge | focused detail |
+| [if_let_detail.md](if_let_detail.md) | If-let difference from `if`, pattern edge cases, desugaring | focused detail |
 | [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial; pipeline/ranges/range-step/spread done |
-| [patterns.md](patterns.md) | match/destructuring, if-let, guards, match-as-expression | partial; match expressions now work in expression-valued forms |
+| [patterns.md](patterns.md) | Pattern normal form, match, if-let, while-let, guard-let, piecewise dispatch, future captures | active synthesis; partial prototype |
 | [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | partial; `??` and safe attr/call/subscript done |
 | [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | partial; try-expr, guard-let, defer done |
 | [strings.md](strings.md) | interpolation, multi-line, heredocs, regex literals | partial; simple f-strings+triple-quote done |
