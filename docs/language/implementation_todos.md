@@ -170,10 +170,12 @@ boundaries, and package ownership. Keep the detailed plan in
   path used by assignment.
 - [x] Validate basic grouped parameter constraints in the current function
   setup path.
-- [ ] Validate defaulted parameters after defaults are applied.
-- [ ] Define how constraints apply to `*args` and `**kwargs`.
-- [ ] Add tests for positional-only, keyword-only, defaults, varargs, and
-  keyword arguments.
+- [x] Validate defaulted parameters after defaults are applied.
+- [x] Define first-pass `*args` and `**kwargs` behavior: constraints apply to
+  the collected tuple or mapping.
+- [x] Add tests for ordinary positional/keyword, keyword-only, defaults,
+  varargs, and keyword arguments.
+- [ ] Add explicit positional-only parameter constraint tests.
 - [ ] Ensure arrow functions either support constrained parameters or reject
   them with a clear parse/runtime error.
 
