@@ -16,9 +16,26 @@ class Annotation:
     '''
     def __init__(self, var_name, ann, interpreter):
         self.var_name = var_name
-        self.ann = ann
+        self.ann, self.message = self._unwrap_message(ann)
 
         self.interpreter = interpreter
+
+    @staticmethod
+    def _unwrap_message(ann):
+        if (
+            isinstance(ann, ast.Call)
+            and isinstance(ann.func, ast.Name)
+            and ann.func.id == "__constraint_message__"
+            and len(ann.args) == 2
+            and isinstance(ann.args[1], ast.Constant)
+            and isinstance(ann.args[1].value, str)
+        ):
+            return ann.args[0], ann.args[1].value
+        return ann, None
+
+    @property
+    def source(self) -> str:
+        return ast.unparse(self.ann) if hasattr(ast, 'unparse') else str(self.ann)
 
     @property
     def predicate(self) -> Callable[[Any], bool]:
@@ -29,11 +46,22 @@ class Annotation:
         if isinstance(annotation, ast.Name):
             name_value = self.interpreter.eval(annotation)
             name = annotation.id
-            return self._predicate_from_name(name_value, name)
+            return self._with_message(self._predicate_from_name(name_value, name))
         
         # Case 2: Any other expression
         else:
-            return self._predicate_from_expression(annotation, var_name)
+            return self._with_message(self._predicate_from_expression(annotation, var_name))
+
+    def _with_message(self, predicate: Callable[[Any], bool]) -> Callable[[Any], bool]:
+        if self.message is None:
+            return predicate
+
+        def messaged_predicate(value):
+            try:
+                return predicate(value)
+            except TypeError as error:
+                raise TypeError(f"{self.message} ({error})") from error
+        return messaged_predicate
 
     def _predicate_from_name(self, name_value, name) -> Callable[[Any], bool]:
         """Create predicate from a name (class or function)."""
@@ -113,10 +141,7 @@ class Annotations:
     def predicate(self) -> Callable[[Any], bool]:
         """Combine multiple predicates into one that accumulates errors."""
         # Get string representations
-        annotation_strs = [
-            ast.unparse(ann.ann) if hasattr(ast, 'unparse') else str(ann.ann)
-            for ann in self.items
-        ]
+        annotation_strs = [ann.source for ann in self.items]
 
         predicates = [ann.predicate for ann in self.items]
         

@@ -27,6 +27,12 @@ def test_annotated_assignment_rejects_failed_constraints(nomi_mode):
         run(code="age: int, age > 0 = -1\n")
 
 
+def test_constraint_failure_can_include_user_message(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    with pytest.raises(RuntimeError, match="Must be at least 13"):
+        run(code='age: int, age >= 13 else "Must be at least 13" = 12\n')
+
+
 def test_match_statement_executes_first_matching_case(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
     bindings = run(
