@@ -19,6 +19,7 @@ Nomi now has a richer design spine:
 - [Design Proposal Template](design_proposal_template.md)
 - [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md)
 - [Syntax Substrate TODO Audit](syntax_substrate_todo_audit.md)
+- [Architecture Refactoring Plan](architecture_refactoring_plan.md)
 - [Language Feature Todos](implementation_todos.md)
 
 This plan answers a narrower question:
@@ -56,6 +57,7 @@ coherent even if later phases are postponed.
 | --- | --- | --- | --- |
 | 0 | Baseline and inventory | implementation map and current feature matrix | Current behavior documented and tests selectable. |
 | 0A | Declarative syntax substrate | manifests, inspection, spans, profiles, and feature test matrix | New syntax can be parsed and inspected before runtime semantics. |
+| 0B | Runtime architecture | public runtime API, sessions, structured results, mode registry | Tools share one execution contract. |
 | 1 | Binding engine | `BindingError`, `Constraint`, `BindingTarget`, source-aware diagnostics | Assignment constraints use shared representation. |
 | 2 | Parameter and pattern binding | function/block/pattern targets reuse binding engine | No partial bindings leak on failure. |
 | 3 | Product `data` and decode | owned values plus explicit external boundary conversion | Data fields reuse binding constraints. |
@@ -70,6 +72,8 @@ The order is not rigid, but phases 1-3 are dependency-heavy and should not be
 skipped. Phase 0A is the recommended runway before broad syntax experiments:
 it does not need to finish completely, but enough of it should exist that a new
 feature has one declared home, one inspection path, and one test template.
+Phase 0B can proceed in parallel when the work is facade-first and preserves
+today's behavior.
 
 ## Phase 0: Baseline And Inventory
 
@@ -170,6 +174,50 @@ Exit gate:
 - A new syntax proposal can declare its status, grammar, normal form,
   diagnostics, tests, docs, and feature profile before any runtime semantics
   are implemented.
+
+## Phase 0B: Runtime Architecture
+
+Goal: make CLI, tests, web, notebook, and future tools share one execution
+contract before deeper package moves or backend changes.
+
+Design decisions before coding:
+
+- Public runtime API shape: `execute`, `inspect`, and `create_session`.
+- `ExecutionResult` fields and failure behavior.
+- Mode registry metadata for `python`, `nomi`, and `reduced`.
+- Compatibility policy for existing `run_eval_loop` imports.
+- Session responsibilities for file runs, cells, reset, timings, and future
+  cancellation.
+
+Implementation slices:
+
+1. Add a facade API over current runner behavior.
+2. Add opt-in structured results while old runners still return bindings.
+3. Move mode selection into metadata.
+4. Add architecture contract tests.
+5. Migrate web and notebook through a shared `RuntimeSession`.
+
+Likely files:
+
+- `prototype/interpreter/runner.py`
+- `prototype/interpreter/helpers.py`
+- `prototype/interpreter/*/usage.py`
+- `scripts/cli.py`
+- `web/nomi_web.py`
+- `tools/jupyter/nomi_kernel.py`
+- `prototype/tests/e2e/`
+
+Caveats:
+
+- Do not move packages and change behavior in the same patch.
+- Keep old imports working until frontends have migrated.
+- Treat web and notebook as first-class consumers of the runtime API.
+
+Exit gate:
+
+- A caller can run Nomi through one public API and receive either compatibility
+  bindings or a structured result without knowing which internal parser,
+  desugar pipeline, or interpreter class was used.
 
 ## Phase 1: Binding Engine
 

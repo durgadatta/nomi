@@ -50,6 +50,8 @@ Read the smallest relevant set before changing docs or making recommendations:
   research ideas toward accepted Nomi decisions.
 - `docs/language/forward_implementation_plan.md` — staged implementation plan
   with gates, caveats, risks, and open questions.
+- `docs/language/architecture_refactoring_plan.md` — high-level runtime API,
+  pipeline, package, host, and frontend adapter refactoring plan.
 - `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
   lowering, and interpreter architecture for making new syntax easy to add.
 - `docs/language/syntax_substrate_todo_audit.md` — central critique and
@@ -173,7 +175,9 @@ experimentation:
 
 - Treat `docs/language/flexible_syntax_substrate_plan.md` and
   `docs/language/syntax_substrate_todo_audit.md` as the bridge from language
-  design to implementation.
+  design to syntax implementation.
+- Treat `docs/language/architecture_refactoring_plan.md` as the bridge from
+  language design to runtime/tool/package architecture.
 - Prefer plans that make features declarative: status, normal form, feature
   owner, grammar, surface/core node, lowering, diagnostics, tests, docs, and
   tool exposure.

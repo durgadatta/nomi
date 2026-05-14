@@ -112,6 +112,8 @@ Planning and process:
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
 - [Design Proposal Template](language/design_proposal_template.md): proposal
   process for new syntax, features, and promoted research ideas.
+- [Architecture Refactoring Plan](language/architecture_refactoring_plan.md):
+  high-level runtime API, pipeline, package, host, and frontend adapter plan.
 
 Parser and syntax substrate:
 

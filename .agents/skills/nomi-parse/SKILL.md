@@ -30,6 +30,9 @@ Target architecture for new work:
 Before adding broad syntax, read:
 - `docs/language/flexible_syntax_substrate_plan.md`
 - `docs/language/syntax_substrate_todo_audit.md`
+- `docs/language/architecture_refactoring_plan.md` when the syntax work also
+  changes public runtime APIs, inspection tools, web, notebook, or package
+  boundaries.
 
 ## Grammar rules
 - Uses Lark Earley parser with PythonIndenter postlexer

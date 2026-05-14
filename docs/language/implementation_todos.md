@@ -107,6 +107,32 @@ layers move from docs into implementation.
   so agents propose feature-owned, spec-driven changes instead of scattered
   grammar/interpreter patches.
 
+## Track 0B: Runtime And Architecture Refactoring
+
+These tasks prepare the larger architecture around syntax work: public runtime
+APIs, execution sessions, frontend adapters, structured results, host
+boundaries, and package ownership. Keep the detailed plan in
+[`architecture_refactoring_plan.md`](architecture_refactoring_plan.md).
+
+- [ ] Add a thin public runtime API facade over the current `run_eval_loop`
+  functions before moving internals.
+- [ ] Add `ExecutionResult` as an opt-in structured result with bindings,
+  diagnostics, events, timings, and exception fields.
+- [ ] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
+  lowering, interpreter class, status, and host support are declared as data.
+- [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility
+  wrappers until CLI, tests, web, and notebook migrate.
+- [ ] Add `RuntimeSession` for persistent execution in web cells, notebook
+  cells, future REPL work, and run-all workflows.
+- [ ] Define host adapter responsibilities for filesystem access, stdout,
+  timing, package loading, cancellation/restart, and artifact fetching.
+- [ ] Treat the web manifest as the first runtime artifact bundle contract and
+  evolve it toward declared files, samples, grammar, profiles, and version.
+- [ ] Add architecture contract tests for the public runtime API before
+  migrating frontend surfaces.
+- [ ] Avoid package moves until a facade exists and one feature proves the
+  migration path.
+
 ## Track 1: Binding, Constraints, And Data Boundaries
 
 - [ ] Introduce a runtime `BindingError` type with fields for name, value,

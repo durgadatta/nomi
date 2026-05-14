@@ -42,6 +42,9 @@ compatibility: deepseek
 - If a runtime change depends on new syntax, make sure the parser/lowering path
   is visible in `docs/language/syntax_substrate_todo_audit.md` or a feature
   spec before implementing.
+- For broad runtime/API/tooling refactors, read
+  `docs/language/architecture_refactoring_plan.md` and prefer facade-first
+  changes that keep existing `run_eval_loop` imports working.
 
 ## Interpreter dispatch (eval method)
 ```
