@@ -36,6 +36,20 @@ Concrete project, process, and tooling docs.
 - [RAG MCP Context](orientation/rag_mcp.md): local retrieval and MCP scaffold
   for codebase and programming-book context.
 
+## Read By Task
+
+Use these paths when entering the docs from a concrete job rather than from the
+general reading order.
+
+| Task | Read first |
+| --- | --- |
+| Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
+| Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
+| Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Yield To Block](features/yield_to_block.md), [Concurrency](convenience/concurrency.md) |
+| Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Collections](convenience/collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
+| Improve design docs | [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
+| Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
+
 ## Language
 
 Canonical or near-canonical language direction. These are the decision surface
@@ -46,6 +60,8 @@ for the next implementation pass.
 - [Language Direction And Gap Map](language/language_direction_and_gap_map.md):
   adoption-oriented steering note, coherence gaps, caveats, and next design
   artifacts.
+- [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
+  that names hidden bridge gaps, planning priorities, and next synthesis moves.
 - [Language Degrees Of Freedom](language/language_degrees_of_freedom.md):
   framework for deciding what belongs in the strict core, surface sugar,
   libraries, scoped extensions, future layers, or rejection.

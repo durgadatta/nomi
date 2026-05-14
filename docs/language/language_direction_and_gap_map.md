@@ -17,6 +17,8 @@ Nomi's docs already contain a strong semantic spine:
 - [Language Family Coverage Map](../research/language_family_coverage_map.md)
   tracks source-language traditions, under-covered dimensions, and follow-up
   research priorities.
+- [Docs Eagle Eye Review](docs_eagle_eye_review.md) scans the full docs tree
+  for hidden bridge gaps, duplicated pressure, and planning priorities.
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) groups
   cross-language syntax ideas by normal form.
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how
@@ -115,6 +117,8 @@ design-decision gaps.
 | Gap | Why it matters | Existing anchors | Needed next artifact |
 | --- | --- | --- | --- |
 | First-hour learning path | Broad adoption starts with the first useful program. | `README.md`, `language_foundation.md` | A tiny "first hour of Nomi" teaching note with only values, bindings, functions, calls, and diagnostics. |
+| Current capability map | Users and agents need to know what is implemented, partial, target-only, or rejected. | `implementation_todos.md`, `target_program_fixtures.md` | A current capability matrix with parser, lowering, runtime, tests, samples, docs, and status columns. |
+| Decision ledger | Stable choices are repeated across docs and can be accidentally reopened. | `language_foundation.md`, `syntax_synthesis_matrix.md`, `docs_eagle_eye_review.md` | A design decision ledger for accepted, rejected, deferred, and revisit-later choices. |
 | Standard library shape | Python succeeded partly because ordinary tasks are immediately available. | `language_spec.md` prelude section | A prelude/standard library design note: files, paths, text, JSON, CSV, HTTP, time, process, tables, tests. |
 | Data boundary doctrine | Scripts and services spend much of their life cleaning external input. | `binding_constraints_feature.md`, `syntax_synthesis_matrix.md` | A focused `data_decode_boundary` feature spec covering provenance, defaults, optional fields, redaction, and source paths. |
 | Failure taxonomy | `none`, `Err`, exceptions, failed constraints, and pattern failure must not blur. | `error_handling.md`, `null_handling.md`, `language_spec.md` | A focused result/failure design note with examples across parsing, IO, validation, and API boundaries. |

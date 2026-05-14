@@ -18,6 +18,9 @@ coherence gaps before they become implementation tasks.
 For a staged execution plan with gates, caveats, risks, and recommended next
 work packages, see [Forward Implementation Plan](forward_implementation_plan.md).
 
+For a full-docs scan that names hidden bridge gaps and planning priorities, see
+[Docs Eagle Eye Review](docs_eagle_eye_review.md).
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the
@@ -36,6 +39,11 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
   and what it deliberately refuses to copy.
 - [ ] Use `design_proposal_template.md` for new syntax or feature proposals
   before promoting them into canonical docs.
+- [ ] Maintain a central design decision ledger for accepted, rejected,
+  deferred, and revisit-later language choices.
+- [ ] Maintain a current capability matrix that separates parser support,
+  lowering, runtime behavior, tests, samples, docs status, and target-only
+  syntax.
 - [ ] Add target Nomi programs that intentionally use not-yet-implemented
   features: explicit data decoding, algebraic data, pipelines, block policies,
   symbolic rewrite, table queries, and examples.
@@ -50,6 +58,12 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
   before all examples parse.
 - [ ] Add a test matrix that distinguishes currently supported, planned, and
   intentionally rejected syntax.
+- [ ] Add a first-hour Nomi teaching path that excludes advanced layers and
+  proves the language can be learned from values, names, calls, functions,
+  binding constraints, and diagnostics.
+- [ ] Add a prelude and standard library plan for ordinary tasks: files, paths,
+  text, JSON, CSV, HTTP, time, subprocesses, tables, tests, config, secrets,
+  and Python interop.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 
@@ -124,6 +138,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 
 ### Data Boundary Decoding
 
+- [ ] Create a focused `data_decode_boundary_feature.md` spec covering
+  provenance, defaults, optional fields, extra fields, redaction, source paths,
+  nested decoders, and `explain`.
 - [ ] Follow `language_foundation.md`: do not add a first-layer `shape`
   keyword as a peer to `data`.
 - [ ] Specify explicit `Data.decode(value)` conversion for external mappings
@@ -161,6 +178,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 
 ## Track 4: Algebraic Data, Results, And Pattern Matching
 
+- [ ] Create a focused `failure_taxonomy_feature.md` that distinguishes
+  absence, expected failure, exceptions, pattern non-match, and constraint
+  failure.
 - [ ] Specify `data` declarations for product and sum types.
 - [ ] Define constructor, field access, equality, display, and destructuring
   behavior.
@@ -195,6 +215,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 
 ## Track 7: Effects, Worlds, Capabilities, And Policies
 
+- [ ] Create a practical `state_and_capability_model.md` focused on rebinding,
+  mutation, `with:` updates, transactions, `world`, and traceable authority
+  before any advanced effect typing.
 - [ ] Specify capability scopes for filesystem, network, time, randomness,
   subprocesses, and environment access.
 - [ ] Explore `world` values for simulation, test isolation, and replay.
@@ -206,6 +229,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 
 ## Track 8: Examples, Tests, Explanation, And Trace
 
+- [ ] Create a focused `explanation_trace_feature.md` spec with an explanation
+  contract for binding, decode, match, pipeline, block policy, examples, query
+  plans, and symbolic rewrites.
 - [ ] Specify `examples:` blocks inside functions and data declarations.
 - [ ] Let examples serve as tests, documentation, and behavioral anchors.
 - [ ] Add `explain(expr)` or equivalent runtime explanation hooks.

@@ -77,6 +77,17 @@ Compare at least three nearby precedents when possible.
 Use [Language Family Coverage Map](../research/language_family_coverage_map.md)
 to avoid missing an obvious tradition.
 
+If the proposal revives an idea from `docs/archive/`, `docs/drafts/`, or a
+large research note, answer this archive-promotion checklist:
+
+- What is the durable need after removing the old document's local rhetoric?
+- Which active normal form absorbs it?
+- Which active doc already covers part of it?
+- What is the smallest new decision or example worth promoting?
+- What source examples are kept?
+- What source examples are rejected?
+- What target fixture or tour snippet changes?
+
 ## 4. Nomi Normal Form
 
 Mark every normal form involved:

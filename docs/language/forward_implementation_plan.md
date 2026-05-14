@@ -12,6 +12,7 @@ Nomi now has a richer design spine:
 
 - [Language Foundation](language_foundation.md)
 - [Language Direction And Gap Map](language_direction_and_gap_map.md)
+- [Docs Eagle Eye Review](docs_eagle_eye_review.md)
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md)
 - [Target Program Fixtures](target_program_fixtures.md)
 - [Target Language Tour](target_language_tour.md)
