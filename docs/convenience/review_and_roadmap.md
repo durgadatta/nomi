@@ -26,6 +26,13 @@ surface spelling or be documented as obvious special cases. If they cannot be
 reduced to an existing normal form, they remain research until the core gains a
 new primitive.
 
+For the cross-language matrix behind those normal forms, see
+[syntax_synthesis_matrix.md](syntax_synthesis_matrix.md). It compares
+near-equivalent features such as pipelines, method chains, query blocks,
+trailing lambdas, context managers, `if-let`, nil narrowing, schemas, contracts,
+and dynamic configuration blocks, then recommends one Nomi combination for each
+family.
+
 ## Feature Status Labels
 
 Every convenience note should use these labels when discussing a feature:

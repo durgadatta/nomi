@@ -38,6 +38,12 @@ data boundary
 explanation
 ```
 
+For a broader cross-language grouping of similar features and their subtle
+differences, see [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md).
+That companion document adds OCaml, F#, Clojure, Racket, Scala 3, Nim, Crystal,
+Julia, Nushell, Nix, Terraform/HCL, and related configuration/documentation
+systems to the comparison surface.
+
 The rule remains:
 
 ```text

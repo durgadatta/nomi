@@ -26,6 +26,7 @@ normal-form reduction, current status, critique, and implementation notes.
 |-----|---------|--------|
 | [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active roadmap |
 | [expanded_language_research.md](expanded_language_research.md) | Newer language and PL research pass, overlap consolidation, extra candidates | active research |
+| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | active synthesis |
 | [functions.md](functions.md) | Equation, piecewise, hole lambda, where, operator sections | **mostly implemented; doc partly stale** |
 | [implicit_functions_nuance.md](implicit_functions_nuance.md) | Nuance comparison of `_`, `$1`, `$name`, `(+)`, `=>` | living reference |
 | [implementation_learnings.md](implementation_learnings.md) | Tricky grammar interactions, AST bugs, deferred features | living reference |

@@ -74,6 +74,9 @@ normal forms so Nomi grows by reduction instead of feature collection.
   forms, overlap critique, new candidates, implementation phases
 - [Expanded Language Research](convenience/expanded_language_research.md) —
   newer languages, PL research ideas, consolidation decisions
+- [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) —
+  cross-language feature families, nuanced differences, and recommendations
+  for combining syntax coherently
 - [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
 - [Collections](convenience/collections.md) — map/filter/reduce, pipelines, ranges, spread
 - [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards
