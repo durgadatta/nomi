@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from prototype.interpreter.helpers import get_run_eval_loop
+from prototype.runtime.modes import get_runner
 
 
 @dataclass(frozen=True)
@@ -49,7 +49,7 @@ def execute(
         # metadata once the parser supports feature-selected pipelines.
         raise ValueError(f"Unsupported runtime profile: {profile!r}")
 
-    runner = get_run_eval_loop(mode)
+    runner = get_runner(mode)
     try:
         bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:

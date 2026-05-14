@@ -76,7 +76,8 @@
     "prototype/parser/python/statements.py",
     "prototype/parser/python/utils.py",
     "prototype/runtime/__init__.py",
-    "prototype/runtime/api.py"
+    "prototype/runtime/api.py",
+    "prototype/runtime/modes.py"
   ],
   "samples": [
     "samples/block.nomi",

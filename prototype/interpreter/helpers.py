@@ -8,22 +8,13 @@ the --interpreter-modes CLI flag or NOMI_INTERPRETER_MODE env var.
 
 from typing import Callable, Dict, Any
 
-INTERPRETER_MODES = ("python", "nomi", "reduced")
+from prototype.runtime.modes import INTERPRETER_MODES, get_runner
+
+
 _REGISTRY: Dict[str, Callable] = {}
 
 
-def _load():
-    if _REGISTRY:
-        return
-    from prototype.interpreter.python.usage import run_eval_loop as py
-    from prototype.interpreter.nomi.usage import run_eval_loop as nomi
-    from prototype.interpreter.reduced.usage import run_eval_loop as reduced
-    _REGISTRY.update(python=py, nomi=nomi, reduced=reduced)
-
-
 def get_run_eval_loop(mode: str) -> Callable[..., Dict[str, Any]]:
-    _load()
     if mode not in _REGISTRY:
-        raise ValueError(f"Unknown interpreter mode: {mode!r}. "
-                         f"Valid modes: {tuple(_REGISTRY.keys())}")
+        _REGISTRY[mode] = get_runner(mode)
     return _REGISTRY[mode]
