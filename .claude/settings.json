@@ -9,67 +9,37 @@
   // ─────────────────────────────────────────────────────────────────
 
   // ── Permissions ──────────────────────────────────────────────────
-  // Commands Claude can run without prompting.  Use Bash() for exact
-  // commands, or prefix-matching patterns.  Patterns support * globs.
   //
-  // Granting strategies (pick one per command class):
-  //   • Exact command   → "Bash(pytest -x -q)"   (safest, most prompts)
-  //   • Prefix glob     → "Bash(pytest *)"        (balance)
-  //   • Broad glob      → "Bash(python3 *)"       (convenient, less safe)
+  // Security model: allow everything, deny dangerous patterns.
+  // Bash(*) gives full filesystem + tool access in this project.
+  // The deny list overrides allow — destructive git operations and
+  // dangerous rm patterns are blocked regardless.
   //
-  // This project uses prefix globs for test/tool commands (safe, few
-  // prompts) and broad globs for git/python (high-frequency workflows).
+  // If you need to add a temporary restriction, put it in
+  // settings.local.json (gitignored) rather than editing this file.
   "permissions": {
     "allow": [
-      // ── Python & package ────────────────────────────────────
-      "Bash(python3 -m pytest *)",
-      "Bash(python3 -m pip *)",
-      "Bash(python3 *)",
-      "Bash(pip *)",
-
-      // ── Project tooling ─────────────────────────────────────
-      "Bash(python3 scripts/cli.py *)",
-      "Bash(python3 -m tools.syntax.inspect *)",
-      "Bash(python3 scripts/test_report.py *)",
-
-      // ── Git ──────────────────────────────────────────────────
-      // Broad allow for all git commands.  Destructive operations
-      // (push --force, reset --hard, clean) are blocked by deny list.
-      "Bash(git *)",
-
-      // ── File system (safe read-only + controlled writes) ────
-      "Bash(ls *)",
-      "Bash(find *)",
-      "Bash(grep *)",
-      "Bash(wc *)",
-      "Bash(cat *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(mkdir *)",
-      "Bash(rm *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-      "Bash(which *)",
-      "Bash(echo *)",
-      "Bash(pwd *)",
-
-      // ── Project-specific build/run ──────────────────────────
-      "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(make *)"
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)"
     ],
 
-    // ── Deny list (overrides allow) ──────────────────────────────
-    // Commands that are never allowed, even if they match an allow rule.
     "deny": [
-      "Bash(git push *)",
       "Bash(git push --force *)",
+      "Bash(git push --force-with-lease *)",
+      "Bash(git push -f *)",
       "Bash(git reset --hard *)",
-      "Bash(git clean *)",
+      "Bash(git clean -f*)",
+      "Bash(git branch -D *)",
       "Bash(rm -rf /*)",
       "Bash(rm -rf ~/*)",
-      "Bash(rm -rf .git*)",
-      "Bash(:(){ :|:& };:)"
+      "Bash(rm -rf /bin*)",
+      "Bash(rm -rf /usr*)",
+      "Bash(rm -rf /etc*)",
+      "Bash(:(){ :|:& };:)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(wget * -O - | sh)"
     ]
   },
 
