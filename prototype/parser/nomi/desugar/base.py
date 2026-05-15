@@ -47,9 +47,11 @@ class NomiDesugarer(BaseDesugarer):
     def visit_keyword(self, node):
         self.generic_visit(node)
         if isinstance(node.value, Block):
-            # TODO(NOMI-SUBSTRATE-010): Replace this custom Python-AST keyword
-            # payload with a Nomi-owned BlockCall surface/core node, then lower
-            # to today's Block representation only in the Python backend.
+            # TODO(NOMI-SUBSTRATE-010): Defer BlockCall→Python-AST lowering
+            # until after desugar passes run, so desugar passes can work with
+            # the clean BlockCall surface node instead of this Block-in-keyword
+            # hack. BlockCall already exists; the remaining work is reordering
+            # the pipeline to run desugar before lower_surface_to_python.
             node.value.body = [self.visit(stmt) for stmt in node.value.body]
             if isinstance(node.value.params, ast.AST):
                 node.value.params = self.visit(node.value.params)
