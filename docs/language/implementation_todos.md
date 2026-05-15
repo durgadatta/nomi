@@ -104,13 +104,13 @@ layers move from docs into implementation.
   `MatchExpr`, and `DataDecl`.
   (`BlockCall` and `lower_surface_to_python` done; `BindingTarget`, `PipeExpr`,
   `MatchExpr`, `DataDecl` pending.)
-- [~] Add declarative pass metadata for existing desugar passes: pass name,
+- [x] Add declarative pass metadata for existing desugar passes: pass name,
   feature owner, dependencies, removed nodes, produced nodes, normal form, and
   diagnostics.
   (`Phase` enum, `depends_on`, and `removed_node_types` on `BaseDesugarer`;
-  pipeline validates dependencies at import time. All active passes declare
-  phase; most `depends_on` links are implicit in ordering. Dead
-  `precedence.py` removed.)
+  pipeline auto-derived from `BUILTIN_FEATURES`; dependencies validated at
+  import time; `_check_pass_invariants` validates `removed_node_types` after
+  each pass. Dead `precedence.py` removed.)
 - [ ] Add feature-driven test templates that name parse snapshots, lowering
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and

@@ -53,9 +53,37 @@ def _validate_pipeline(passes):
 _validate_pipeline(DESUGAR_PASSES)
 
 
+def _find_forbidden_nodes(tree: ast.AST, forbidden_types: set):
+    """Walk *tree* and yield any AST node whose type is in *forbidden_types*."""
+    for node in ast.walk(tree):
+        if type(node) in forbidden_types:
+            yield node
+
+
+def _check_pass_invariants(tree: ast.Module, pass_cls, pass_name: str):
+    """Validate that *pass_cls* truthfully declares its removed node types.
+
+    After a pass runs, no AST node of a type listed in its
+    ``removed_node_types`` should remain in the tree.  If one is found,
+    the pass is either incomplete or its ``removed_node_types`` is wrong.
+    """
+    removed = set(getattr(pass_cls, 'removed_node_types', ()))
+    if not removed:
+        return
+    survivors = list(_find_forbidden_nodes(tree, removed))
+    if survivors:
+        names = sorted({type(n).__name__ for n in survivors})
+        raise AssertionError(
+            f"Desugar invariant violation in {pass_name}: "
+            f"declares it removes {names}, but {len(survivors)} node(s) "
+            f"of those types survived the pass."
+        )
+
+
 def desugar_module(tree: ast.Module) -> ast.Module:
     for pass_cls in DESUGAR_PASSES:
         tree = pass_cls().visit(tree)
+        _check_pass_invariants(tree, pass_cls, pass_cls.__name__)
     ast.fix_missing_locations(tree)
     return tree
 
