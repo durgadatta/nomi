@@ -31,6 +31,9 @@ coverage.xml
 .codex/*
 !.codex/config.toml
 .deepseek/*
+.claude/settings.local.json
+.claude/cache/
+.claude/worktrees/
 
 #packaging and distribution
 *egg-info/
