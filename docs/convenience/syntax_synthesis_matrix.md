@@ -286,6 +286,25 @@ Focused follow-up passes should be small and comparative:
   Clojure `%`, Kotlin `it`, and Haskell sections; finalize Nomi's implicit
   function scoping rule.
 
+## Design Context
+
+This matrix is a comparison tool — it surveys the design space so Nomi can
+choose deliberately. For the rules that govern those choices and the process
+for making them:
+
+- [Syntax Design Rules](syntax_design_rules.md) — primitive budget, axis
+  coherence, elimination form, and the other 5 concrete rules with nuance
+  and conflict resolution.
+- [Design Lessons and Integration §9](design_lessons_and_integration.md) —
+  the synthesis methodology: stance → loop → worked examples → traps.
+- [Language Foundation §Feature Admission Protocol](../language/language_foundation.md) —
+  the 9 questions every syntax proposal must answer.
+- [Language Degrees Of Freedom](../language/language_degrees_of_freedom.md) —
+  the core/sugar/library/scoped/rejected ladder for classifying how much
+  freedom a feature gets.
+- [Language Design Dimensions §2 (Level 4)](../language/language_design_dimensions.md) —
+  the 8 irreducible primitives that all syntax ultimately reduces to.
+
 ## Source Links
 
 - OCaml pattern matching:
