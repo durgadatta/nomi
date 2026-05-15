@@ -726,6 +726,25 @@ These raw clusters are rich enough to deserve dedicated notes later:
   description logic, resolution, unification.
 - Array-language line: APL/J/K/Q/Shakti, rank, shape, function-level style.
 
+## Deep Dive Index (May 2026)
+
+Cross-language comparative research added in the May 2026 expansion. Each file
+focuses on synthesis across languages rather than single-language catalogues:
+
+- [array_languages_deep_dive.md](array_languages_deep_dive.md) — APL, J, K, Q, BQN, Uiua: rank polymorphism, trains, combinators, tacit programming.
+- [beam_languages_erlang_elixir_gleam.md](beam_languages_erlang_elixir_gleam.md) — Erlang/Elixir/Gleam: OTP, supervision trees, let-it-crash, pattern matching, `use` expression.
+- [csharp_java_dart_modern_features.md](csharp_java_dart_modern_features.md) — C#/Java/Dart: pattern matching, records/data classes, null safety, async models, cross-language convergence analysis.
+- [diagnostics_and_explanations_comparative.md](diagnostics_and_explanations_comparative.md) — 10-language diagnostic architecture comparison: structural invariants, design choices, tensions.
+- [error_handling_defer_resource_cleanup_notes.md](error_handling_defer_resource_cleanup_notes.md) — 12-language error/defer/resource survey: three error stories, propagation operators, cleanup mechanisms.
+- [go_design_philosophy_deep_dive.md](go_design_philosophy_deep_dive.md) — Go: simplicity thesis, structural interfaces, goroutines/CSP, `defer`, package design, adopt/refuse decisions.
+- [pattern_matching_synthesis.md](pattern_matching_synthesis.md) — 10-language pattern matching synthesis: structural invariants, genuine forks, exhaustiveness, binding style.
+- [standard_library_design_comparative.md](standard_library_design_comparative.md) — 10-language stdlib design: prelude philosophy, core-vs-contrib splits, deprecation policies, package organization.
+- [typescript_type_system_deep_dive.md](typescript_type_system_deep_dive.md) — TypeScript: type narrowing/flow typing, structural typing, conditional types, `satisfies`, erased types.
+- [cross_language_synthesis_master.md](cross_language_synthesis_master.md) — Capstone synthesis: universal convergences, genuine design forks, hidden incompatibilities, Nomi resolution framework.
+
+For the updated coverage status and remaining research gaps, see
+[language_family_coverage_map.md](language_family_coverage_map.md).
+
 ## Guardrail Against Rabbit Holes
 
 The notes contain many deep trails. A trail becomes useful for Nomi only when it

@@ -49,16 +49,35 @@ adoption-facing steering layer, see
 | Proof/research languages | Coq, Lean, Idris, Agda, Koka, Eff, Flix, Unison | Effects, proofs, algebraic handlers, abilities, totality, typed holes | future capability/effect layer, examples as checks, explanation discipline | Proof and effect machinery must not be required for ordinary scripts. |
 | Educational languages | Logo, Scratch, Racket teaching languages, BASIC, Pascal | First-hour success, visible state, simple errors, pedagogy | first-hour Nomi path and beginner diagnostics | Simplicity can become a ceiling if not layered. |
 
+## Deep Dive Index
+
+Individual-language and cross-cutting deep dives (May 2026 research expansion):
+
+| File | Coverage | Lines |
+|------|----------|-------|
+| [array_languages_deep_dive.md](array_languages_deep_dive.md) | APL, J, K, Q, BQN, Uiua — rank polymorphism, trains, combinators | ~650 |
+| [beam_languages_erlang_elixir_gleam.md](beam_languages_erlang_elixir_gleam.md) | Erlang, Elixir, Gleam — OTP, supervisors, pattern matching, pipe, `use` | ~1100 |
+| [csharp_java_dart_modern_features.md](csharp_java_dart_modern_features.md) | C#, Java, Dart — pattern matching, records, null safety, async | ~1200 |
+| [concatenative_languages.md](concatenative_languages.md) | Forth, Factor, Joy, Kitten, Cat — stack effects, combinators, quotations | ~400 |
+| [diagnostics_and_explanations_comparative.md](diagnostics_and_explanations_comparative.md) | Rust, Elm, Racket, Swift, Scala 3, Clojure, Zig, TypeScript, Gleam, Python — 10-language diagnostic architecture | ~650 |
+| [error_handling_defer_resource_cleanup_notes.md](error_handling_defer_resource_cleanup_notes.md) | Zig, Hylo, Odin, Gleam, Roc + Swift, Kotlin, Scala, Java, Python, C++, Haskell — 12-language error/defer/resource survey | ~1400 |
+| [go_design_philosophy_deep_dive.md](go_design_philosophy_deep_dive.md) | Go — simplicity thesis, structural interfaces, goroutines, defer, zero values | ~870 |
+| [modern_language_feature_survey.md](modern_language_feature_survey.md) | Mojo, Gleam, Roc, Hylo, Odin, Darklang, Verse, Koka, Unison — novel features | ~800 |
+| [pattern_matching_synthesis.md](pattern_matching_synthesis.md) | Rust, Swift, Kotlin, Scala 3, OCaml, Haskell, F#, Elixir, Gleam, Racket — 10-language pattern matching synthesis | ~665 |
+| [scientific_languages_r_matlab_julia.md](scientific_languages_r_matlab_julia.md) | R, MATLAB, Julia — formulas, tidy eval, broadcasting, array model | ~500 |
+| [standard_library_design_comparative.md](standard_library_design_comparative.md) | Go, Rust, Python, Kotlin, Swift, Elixir, Zig, C#, Haskell, Racket — 10-language stdlib design | ~940 |
+| [typescript_type_system_deep_dive.md](typescript_type_system_deep_dive.md) | TypeScript — type narrowing, structural typing, conditional types, `satisfies` | ~1040 |
+| [cross_language_synthesis_master.md](cross_language_synthesis_master.md) | Capstone synthesis across all deep dives — convergences, forks, incompatibilities, Nomi resolution | design-in-progress |
+
 ## Under-Covered Dimensions
 
 The current docs have strong coverage of syntax, constraints, blocks, patterns,
-and philosophical lineage. The following dimensions need more focused research:
+error handling, diagnostics, null safety, pattern matching, and stdlib design.
+The following dimensions still need more focused research:
 
 | Dimension | Why it matters | Suggested sources | Desired Nomi artifact |
 | --- | --- | --- | --- |
-| Standard library ergonomics | Adoption depends on doing boring tasks quickly. | Python stdlib, Go stdlib, Node/Deno, Rust crates, Ruby stdlib | Prelude and standard library shape note. |
 | Packaging and project structure | Reuse and trust require installable units. | Python packaging, Cargo, Go modules, Mix, npm, NuGet, Nix flakes | Modules/packages/interoperability note. |
-| Error message design | Helpful errors are part of syntax usability. | Elm, Rust, Racket contracts, TypeScript, Gleam | Diagnostics style guide and examples. |
 | First-hour pedagogy | A language must reward first contact. | Racket teaching languages, Python tutorial, Dart tour, Go tour | First-hour Nomi lesson and target exercises. |
 | Formatting and style | A shared visual culture reduces cognitive load. | gofmt, Black, Rustfmt, Prettier, Elm format | Nomi style and formatter doctrine. |
 | Package docs and examples | Documentation is part of the language's social surface. | Rustdoc, ExDoc, Julia docs, Python docs, Racket docs | Examples/docs/testing integration spec. |
@@ -122,6 +141,10 @@ supervision as a practical reliability model. Elixir's pattern reference
 emphasizes shapes, guards, subset map matching, and predictable guard limits.
 Gleam adds a typed result-oriented surface and `use`-style callback flattening.
 
+Deep dive: [beam_languages_erlang_elixir_gleam.md](beam_languages_erlang_elixir_gleam.md) — OTP patterns,
+let-it-crash philosophy, Erlang/Elixir/Gleam comparison tables, Nomi
+Adopt/Refuse/Adapt decisions.
+
 Nomi should extract:
 
 - pattern plus guard as a normal form;
@@ -141,6 +164,10 @@ flow analysis helps the programmer. C# shows that query syntax can coexist with
 method chains because query expressions lower to ordinary operators, but it
 also shows the complexity cost of supporting both surfaces.
 
+Deep dives:
+- [csharp_java_dart_modern_features.md](csharp_java_dart_modern_features.md) — C#/Java/Dart records, pattern matching, null safety, async models, cross-language convergence tables.
+- [typescript_type_system_deep_dive.md](typescript_type_system_deep_dive.md) — type narrowing/flow typing, structural vs nominal, conditional types, `satisfies`, erased types, Nomi adopt/refuse decisions.
+
 Nomi should extract:
 
 - visible absence;
@@ -155,6 +182,10 @@ cleanup. Go shows that a small language plus tooling, simple deployment, and a
 large standard library can matter more than elegant syntax. Go's explicit error
 returns are readable but can become repetitive; `defer` is simple and useful,
 but cleanup and error handling interact subtly.
+
+Deep dives:
+- [go_design_philosophy_deep_dive.md](go_design_philosophy_deep_dive.md) — simplicity thesis, structural interfaces, goroutines/CSP, `defer` semantics, package design, zero values, adopt/refuse table.
+- [error_handling_defer_resource_cleanup_notes.md](error_handling_defer_resource_cleanup_notes.md) — 12-language error handling survey spanning Zig/Hylo/Odin/Gleam/Roc + Swift/Kotlin/Scala/Java/Python/C++/Haskell.
 
 Nomi should extract:
 
@@ -195,19 +226,25 @@ should carry this work.
 
 ## Coverage Priorities
 
+Completed (May 2026): diagnostics (10 languages), error/defer/resource handling
+(12 languages), pattern matching synthesis (10 languages), stdlib design (10
+languages), BEAM deep dive, Go design philosophy, TypeScript type system, C#/Java/Dart
+modern features, capstone cross-language synthesis.
+
 The next research passes should prioritize:
 
 1. **First-hour pedagogy**: Python tutorial, Go tour, Dart tour, Racket
    teaching languages.
-2. **Diagnostics**: Elm/Rust/Gleam/Racket examples of actionable error
-   messages.
-3. **Standard library and package shape**: Python, Go, Rust, Elixir Mix, npm,
-   NuGet, Julia packages.
-4. **Data boundary systems**: Pydantic, CUE, Nickel, Pkl, Dhall, Terraform,
-   JSON Schema.
-5. **Table/flow systems**: SQL, LINQ, dplyr, Polars, DuckDB, Nushell.
-6. **Interactive explanation**: Jupyter, Pluto, Darklang, Smalltalk, Racket,
-   notebook testing.
+2. **Packaging and project structure**: Python packaging, Cargo, Go modules,
+   Mix, npm, NuGet, Nix flakes.
+3. **Data boundary systems**: Pydantic, CUE, Nickel, Pkl, Dhall, Terraform,
+   JSON Schema — deeper synthesis beyond the existing config coverage.
+4. **Table/flow systems**: SQL, LINQ, dplyr, Polars, DuckDB, Nushell — deeper
+   structured-collections vocabulary.
+5. **Interactive explanation**: Jupyter, Pluto, Darklang, Smalltalk, Racket,
+   notebook testing — trace/explain experience.
+6. **Formatting and style**: gofmt, Black, Rustfmt, Prettier, Elm format —
+   canonical formatter doctrine.
 7. **AI-readable semantics**: source maps, typed ASTs, expansion displays,
    traces, design fixtures.
 
