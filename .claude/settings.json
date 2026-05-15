@@ -1,0 +1,152 @@
+{
+  // ─────────────────────────────────────────────────────────────────
+  // Nomi — Claude Code project configuration
+  //
+  // This file is checked into git and applies to everyone working on
+  // the project.  Personal overrides go in settings.local.json (gitignored).
+  //
+  // Docs: https://docs.anthropic.com/en/docs/claude-code/settings
+  // ─────────────────────────────────────────────────────────────────
+
+  // ── Permissions ──────────────────────────────────────────────────
+  // Commands Claude can run without prompting.  Use Bash() for exact
+  // commands, or prefix-matching patterns.  Patterns support * globs.
+  //
+  // Granting strategies (pick one per command class):
+  //   • Exact command   → "Bash(pytest -x -q)"   (safest, most prompts)
+  //   • Prefix glob     → "Bash(pytest *)"        (balance)
+  //   • Broad glob      → "Bash(python3 *)"       (convenient, less safe)
+  //
+  // This project uses prefix globs for test/tool commands (safe, few
+  // prompts) and broad globs for git/python (high-frequency workflows).
+  "permissions": {
+    "allow": [
+      // ── Python & package ────────────────────────────────────
+      "Bash(python3 -m pytest *)",
+      "Bash(python3 -m pip *)",
+      "Bash(python3 *)",
+      "Bash(pip *)",
+
+      // ── Project tooling ─────────────────────────────────────
+      "Bash(python3 scripts/cli.py *)",
+      "Bash(python3 -m tools.syntax.inspect *)",
+      "Bash(python3 scripts/test_report.py *)",
+
+      // ── Git (read-only + standard workflow) ─────────────────
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git show *)",
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git restore *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+
+      // ── File system (safe read-only + controlled writes) ────
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(wc *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Bash(pwd *)",
+
+      // ── Project-specific build/run ──────────────────────────
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(make *)"
+    ],
+
+    // ── Deny list (overrides allow) ──────────────────────────────
+    // Commands that are never allowed, even if they match an allow rule.
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~/*)",
+      "Bash(rm -rf .git*)",
+      "Bash(:(){ :|:& };:)"
+    ]
+  },
+
+  // ── Hooks ───────────────────────────────────────────────────────
+  // Shell commands that fire on Claude Code events.  Use for
+  // pre/post-commit checks, notifications, or custom workflows.
+  //
+  // Available events:
+  //   PreToolUse      — fires before a tool executes (can block)
+  //   PostToolUse     — fires after a tool completes
+  //   Notification    — fires for user notifications
+  //   UserPromptSubmit — fires when user submits a prompt
+  //
+  // Hooks receive context via JSON on stdin.  See:
+  //   https://docs.anthropic.com/en/docs/claude-code/hooks
+  //
+  // Examples below are commented out — uncomment and tune as needed.
+
+  // "hooks": {
+  //   // Run tests before committing (exits non-zero to block commit).
+  //   // Disabled by default because the full suite takes ~10s.
+  //   "PreToolUse": [
+  //     {
+  //       "matcher": "Bash(git commit *)",
+  //       "command": "python3 -m pytest prototype/tests/ -x -q --ignore=prototype/tests/e2e"
+  //     }
+  //   ],
+  //
+  //   // Notify after long-running test suite completes.
+  //   "PostToolUse": [
+  //     {
+  //       "matcher": "Bash(python3 -m pytest prototype/tests/ *)",
+  //       "command": "echo 'Tests done' | terminal-notifier -title 'Claude Code' -subtitle 'Nomi' -message 'Test suite finished'"
+  //     }
+  //   ]
+  // },
+
+  // ── Model ───────────────────────────────────────────────────────
+  // Default model for Claude Code sessions in this project.
+  // Options: "claude-sonnet-4-20250514", "claude-opus-4-20250514",
+  //          "claude-haiku-4-5-20251001"
+  // Omit to use the user's global preference.
+  "model": "claude-opus-4-20250514",
+
+  // ── Environment variables ───────────────────────────────────────
+  // Set per-session env vars for tool execution.  Use for feature
+  // flags, debug toggles, or API keys.
+  //
+  // Examples (commented out):
+  // "env": {
+  //   "NOMI_INTERPRETER_MODE": "reduced",
+  //   "PYTHONWARNINGS": "default"
+  // },
+
+  // ── Status line ─────────────────────────────────────────────────
+  // Configure the terminal status line shown during long operations.
+  // "statusLine": {
+  //   "type": "lines"
+  // },
+
+  // ── Style ───────────────────────────────────────────────────────
+  // Output style preferences.  "default" uses standard formatting;
+  // "compact" reduces whitespace in tool output.
+  // "outputStyle": "default",
+
+  // ── Base directory ──────────────────────────────────────────────
+  // Explicitly set the project root for Claude Code (rarely needed).
+  // This directory is auto-detected from .git / .claude presence.
+  // "projectRoot": "/Users/durgakandel/Projects/nomi"
+}
