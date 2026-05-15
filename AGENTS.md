@@ -32,6 +32,10 @@ Start with these files before broad design or implementation changes:
 - `docs/language/language_foundation.md`: canonical foundation for the next
   design pass.
 - `docs/language/language_spec.md`: draft concrete language specification.
+- `docs/language/language_design_dimensions.md`: design-space analysis — the
+  irreducible axes of variation and where languages converge.
+- `docs/language/language_degrees_of_freedom.md`: core/sugar/library/scoped
+  freedom framework.
 - `docs/language/implementation_todos.md`: staged design and
   implementation tasks.
 - `docs/features/binding_constraints_feature.md`: constrained

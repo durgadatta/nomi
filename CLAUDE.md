@@ -55,9 +55,10 @@ Valid stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`
 | `prototype/interpreter/runner.py` | Shared `make_runner` for all interpreter modes |
 | `prototype/runtime/modes.py` | Mode registry (python, nomi, reduced) |
 | `tools/syntax/inspect.py` | Pipeline stage inspection CLI |
+| `docs/language/language_design_dimensions.md` | Design-space dimensions, convergence points, axis analysis |
 | `docs/convenience/design_lessons_and_integration.md` | Design synthesis: cruft patterns, interactions, designer quotes |
-| `docs/convenience/absence_and_result.md` | Absence/result normal form (merged from null_handling + error_handling) |
-| `docs/convenience/flow_and_collections.md` | Flow normal form (merged from collections + array_languages) |
+| `docs/convenience/absence_and_result.md` | Absence/result normal form |
+| `docs/convenience/flow_and_collections.md` | Flow normal form |
 | `docs/convenience/data_and_types.md` | Data boundary: types, strings, type aliases |
 | `docs/convenience/README.md` | Convenience docs index and consolidation rules |
 
