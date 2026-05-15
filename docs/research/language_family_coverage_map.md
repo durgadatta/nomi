@@ -74,6 +74,10 @@ Individual-language and cross-cutting deep dives (May 2026 research expansion):
 | [table_and_flow_systems_deep_dive.md](table_and_flow_systems_deep_dive.md) | SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q — verb vocabulary, query lowering, explain | ~2182 |
 | [interactive_explanation_deep_dive.md](interactive_explanation_deep_dive.md) | Jupyter, Pluto, Darklang, Smalltalk, Racket, Light Table, Observable, Swift Playgrounds, Bret Victor, Elm debugger | ~1470 |
 | [formatting_and_style_deep_dive.md](formatting_and_style_deep_dive.md) | gofmt, Black, Rustfmt, Prettier, elm-format, clang-format, Ormolu, dart format, zig fmt, ocamlformat | ~2033 |
+| [package_docs_and_examples_deep_dive.md](package_docs_and_examples_deep_dive.md) | Rustdoc, ExDoc, Julia, Python/Sphinx, Racket Scribble, Go, Javadoc, TypeDoc, Literate Programming, Diataxis | ~2248 |
+| [deployment_and_operations_deep_dive.md](deployment_and_operations_deep_dive.md) | Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew | ~1303 |
+| [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction | ~1934 |
+| [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing | ~1826 |
 
 ## Under-Covered Dimensions
 
@@ -81,12 +85,11 @@ The current docs have strong coverage of syntax, constraints, blocks, patterns,
 error handling, diagnostics, null safety, pattern matching, and stdlib design.
 The following dimensions still need more focused research:
 
-| Dimension | Why it matters | Suggested sources | Desired Nomi artifact |
-| --- | --- | --- | --- |
-| Package docs and examples | Documentation is part of the language's social surface. | Rustdoc, ExDoc, Julia docs, Python docs, Racket docs | Examples/docs/testing integration spec. |
-| Deployment and operations | A useful language must leave the laptop. | Go binaries, Python packaging, Node deploys, Docker, serverless | Runtime/deployment posture note. |
-| Security and trust | Package, config, secrets, and capability boundaries affect real use. | Nix, capabilities research, secrets tooling, sandboxing | Secrets/redaction/capability feature note. |
-| AI-readable semantics | AI agents will read, generate, refactor, and explain code. | LSP, typed ASTs, source maps, proof traces, notebooks | Agent-readable expansion and design-fixture conventions. |
+All eight previously under-covered dimensions are now researched (May 2026).
+The deep dive index above covers the full matrix. Remaining work is consolidation:
+folding stable decisions into `../convenience/` and `../language/` artifacts.
+
+New research themes should be driven by implementation needs, not coverage gaps.
 
 ## Family Notes
 
@@ -228,24 +231,20 @@ should carry this work.
 
 ## Coverage Priorities
 
-Completed (May 2026): diagnostics (10 languages), error/defer/resource handling
-(16 languages), pattern matching synthesis (10 languages), stdlib design (10
-languages), BEAM deep dive, Go design philosophy, TypeScript type system, C#/Java/Dart
-modern features, capstone cross-language synthesis, first-hour pedagogy (10
-systems), packaging and project structure (8 ecosystems), data boundary systems
-(10 systems), table/flow systems (8 systems), interactive explanation (10
-systems), formatting and style (10 formatters).
+Completed (May 2026): All 8 priority dimensions are now researched. The research
+corpus spans 23 deep-dive files covering language families, cross-cutting
+design dimensions, and synthesis across 60+ language/system sources.
 
-The next research passes should prioritize:
+The next phase is consolidation into design artifacts:
 
-1. **Package docs and examples**: Rustdoc, ExDoc, Julia docs, Python docs,
-   Racket docs — documentation as social surface.
-2. **Deployment and operations**: Go binaries, Python packaging, Node deploys,
-   Docker, serverless — runtime/deployment posture.
-3. **Security and trust**: Nix, capabilities research, secrets tooling,
-   sandboxing — secrets/redaction/capability boundaries.
-4. **AI-readable semantics**: source maps, typed ASTs, expansion displays,
-   traces, design fixtures — agent-readable code representation.
+1. **Fold decisions into convenience docs** — stable Adopt/Refuse/Adapt
+   conclusions should migrate to `docs/convenience/` as design specs.
+2. **Nomi feature specs** — where research identifies a clear Nomi primitive
+   (e.g., `Secret[T]`, `explain`, query verbs), create a feature doc.
+3. **Implementation priorities** — use research to sequence implementation:
+   data boundaries first, then flow/pipeline, then interactive tooling.
+4. **Revisit capstone synthesis** — update `cross_language_synthesis_master.md`
+   with insights from the new deep dives.
 
 ## Source Links
 

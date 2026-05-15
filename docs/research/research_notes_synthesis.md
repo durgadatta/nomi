@@ -747,9 +747,12 @@ focuses on synthesis across languages rather than single-language catalogues:
 - [table_and_flow_systems_deep_dive.md](table_and_flow_systems_deep_dive.md) — 8-system table/flow survey: SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q. Verb vocabulary, query lowering, explain.
 - [interactive_explanation_deep_dive.md](interactive_explanation_deep_dive.md) — 10-system interactive survey: Jupyter, Pluto, Darklang, Smalltalk, Racket, Light Table, Observable, Swift Playgrounds, Bret Victor, Elm debugger. Reactive execution, trace/explain.
 - [formatting_and_style_deep_dive.md](formatting_and_style_deep_dive.md) — 10-formatter style survey: gofmt, Black, Rustfmt, Prettier, elm-format, clang-format, Ormolu, dart format, zig fmt, ocamlformat. Canonical formatter doctrine.
+- [package_docs_and_examples_deep_dive.md](package_docs_and_examples_deep_dive.md) — 10-system docs survey: Rustdoc, ExDoc, Julia, Sphinx, Scribble, Go, Javadoc, TypeDoc, Literate Programming, Diataxis.
+- [deployment_and_operations_deep_dive.md](deployment_and_operations_deep_dive.md) — 10-system deployment survey: Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew.
+- [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) — 10-dimension security survey: Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction.
+- [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) — 10-system toolability survey: LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing.
 
-For the updated coverage status and remaining research gaps, see
-[language_family_coverage_map.md](language_family_coverage_map.md).
+For the updated coverage status, see
 
 ## Guardrail Against Rabbit Holes
 
