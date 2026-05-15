@@ -1,5 +1,7 @@
 from typing import Any, Dict, Callable, Optional
 from ..python.env import Environment as PyEnvironment
+from .binding_error import BindingError
+
 
 class Environment(PyEnvironment):
     def __init__(self, *args, **kwargs):
@@ -32,6 +34,9 @@ class Environment(PyEnvironment):
     def set(self, name: str, value: Any):
         constraint = self._assignment_constraint(name)
         if constraint is not None and not constraint(value):
-            raise TypeError(f"Constraint violation for '{name}': value {value!r} does not satisfy constraint")
-
+            raise BindingError(
+                name, value,
+                message=f"value {value!r} does not satisfy constraint",
+                binding_kind="assignment",
+            )
         super().set(name, value)

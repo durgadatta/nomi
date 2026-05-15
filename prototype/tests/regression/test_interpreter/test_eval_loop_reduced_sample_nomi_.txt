@@ -8,11 +8,11 @@
   "double_limited_pos": "double_limited_pos:class=<class 'function'>",
   "doubled_5": 10,
   "stdout": [
-    "An error occurred: Constraint violations:",
-    "  Constraint '20 < a < 30' failed for value 10",
-    "An error occurred: Constraint violations:",
-    "  Callable constraint is_positive failed for value -1",
-    "  Constraint '1 < a < 100' failed for value -1",
+    "An error occurred: BindingError for 'a' (assignment): Constraint violations:",
+    "  Constraint '20 < a < 30' failed",
+    "An error occurred: BindingError for 'a' (assignment): Constraint violations:",
+    "  Callable constraint is_positive failed",
+    "  Constraint '1 < a < 100' failed",
     "3",
     ""
   ]

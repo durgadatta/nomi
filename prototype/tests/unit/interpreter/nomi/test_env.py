@@ -28,7 +28,7 @@ class TestEnvironmentConstraints:
         env.set("x", 42)
         assert env.get("x") == 42
         
-        with pytest.raises(TypeError, match="Constraint violation"):
+        with pytest.raises(TypeError, match="does not satisfy constraint"):
             env.set("x", "not an int")
     
     def test_new_type_annotation_replaces_constraint(self, env):
