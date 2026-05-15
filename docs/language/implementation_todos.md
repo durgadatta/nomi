@@ -376,6 +376,11 @@ intentionally small, file-specific hints for the next cleanup pass.
 - [ ] Remove the stale comment about the collapsed `name` field in
   [`prototype/parser/python/expressions.py`](../../prototype/parser/python/expressions.py)
   after confirming the AST shape is stable.
+  (The "Precedence pass" reference on the bin_expr handler was fixed; the
+  "collapsed name field" comment is a separate issue.)
+- [ ] Audit `prototype/parser/nomi/desugar/` for other unregistered or dead
+  modules. `precedence.py` was an unregistered Python-AST-level duplicate of
+  `parse_tree_precedence.ExpressionLayer` — the same pattern may exist elsewhere.
 - [ ] Move the dedicated resumable examples into
   [`prototype/tests/data/sample_sources/interpreter/resumable.py`](../../prototype/tests/data/sample_sources/interpreter/resumable.py)
   and keep related examples together instead of scattering them across older
