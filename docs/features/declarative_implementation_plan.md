@@ -51,10 +51,11 @@ and `removed_node_types` fields exist on `BaseDesugarer`. Pipeline validates
 dependencies at import time. 10 of 11 passes declare their phase.
 `WhereClause` declares `depends_on=(PiecewiseFunction,)`.
 
-**Remaining:** `Precedence` needs a phase declaration. Most passes that
-could declare `depends_on` still leave it empty (dependencies are enforced
-by ordering in `BUILTIN_FEATURES`). `removed_node_types` is declared on
-~half the passes; the rest could declare it for completeness.
+**Remaining:** Most passes that could declare `depends_on` still leave it
+empty (dependencies are enforced by ordering in `BUILTIN_FEATURES`).
+`removed_node_types` is declared on ~half the passes; the rest could
+declare it for completeness. Dead `precedence.py` (Python-AST-level
+duplicate of `parse_tree_precedence.ExpressionLayer`) was removed.
 
 ## Phase B: Operation Registry for the Interpreter
 

@@ -105,9 +105,9 @@ layers move from docs into implementation.
   feature owner, dependencies, removed nodes, produced nodes, normal form, and
   diagnostics.
   (`Phase` enum, `depends_on`, and `removed_node_types` on `BaseDesugarer`;
-  pipeline validates dependencies at import time. 10/11 passes declare phase.
-  `Precedence` still needs phase; most `depends_on` links are implicit in
-  ordering.)
+  pipeline validates dependencies at import time. All active passes declare
+  phase; most `depends_on` links are implicit in ordering. Dead
+  `precedence.py` removed.)
 - [ ] Add feature-driven test templates that name parse snapshots, lowering
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and

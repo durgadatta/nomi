@@ -264,7 +264,7 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             
         return ast.Compare(left=left, ops=ops, comparators=comparators)
 
-    # -- flattened binary expression (precedence handled by Precedence pass) --
+    # -- flattened binary expression (precedence handled by ExpressionLayer) --
 
     _BINOP_MAP = {
         '*': ast.Mult, '/': ast.Div, '%': ast.Mod, '//': ast.FloorDiv, '@': ast.MatMult,
