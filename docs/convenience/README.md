@@ -50,28 +50,29 @@ Use the overview/detail split to keep the folder from growing sideways:
   `syntax_synthesis_matrix.md`, or `others.md` unless they change a concrete
   Nomi recommendation.
 
-| Doc | Feature | Status |
-|-----|---------|--------|
+| Doc | Normal form | Status |
+|-----|-------------|--------|
 | [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active spine |
-| [expanded_language_research.md](expanded_language_research.md) | Newer language and PL research pass, overlap consolidation, extra candidates | research source |
-| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | research source / synthesis |
-| [functions.md](functions.md) | Function normal form, equations, piecewise clauses, holes, sections, composition, where | active synthesis; many surfaces implemented |
-| [implicit_functions_nuance.md](implicit_functions_nuance.md) | Scoping reference for `_`, `$1`, `$name`, `(+)`, `=>` | focused detail |
-| [implementation_learnings.md](implementation_learnings.md) | Tricky grammar interactions, AST bugs, deferred features | living reference |
-| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Match-as-expression parser caveats and remaining full-suite challenge | focused detail |
-| [if_let_detail.md](if_let_detail.md) | If-let difference from `if`, pattern edge cases, desugaring | focused detail |
-| [collections.md](collections.md) | map/filter/reduce, pipelines, ranges, spread, broadcasting | partial; pipeline/ranges/range-step/spread done |
-| [patterns.md](patterns.md) | Pattern normal form, match, if-let, while-let, guard-let, piecewise dispatch, future captures | active synthesis; partial prototype |
-| [null_handling.md](null_handling.md) | optional chaining `?.`, null coalesce `??`, Option/Result | partial; `??` and safe attr/call/subscript done |
-| [error_handling.md](error_handling.md) | try-as-expression, `?` propagate, guard, let-else | partial; try-expr, guard-let, defer done |
-| [strings.md](strings.md) | interpolation, multi-line, heredocs, regex literals | partial; simple f-strings+triple-quote done |
-| [types.md](types.md) | data classes, type aliases, extension methods, operator overloading | type aliases done |
-| [scope_context.md](scope_context.md) | scope functions (let/apply/also), implicit params, builder DSL | where+defer done |
-| [concurrency.md](concurrency.md) | async/await, structured concurrency, channels, actors | async/await |
-| [modules_imports.md](modules_imports.md) | import aliases, re-exports, wildcard, multi-import | basic imports |
-| [meta_testing.md](meta_testing.md) | decorators, macros, inline tests, doctests | decorators done |
-| [array_languages.md](array_languages.md) | APL/J/K/Q: adverbs, broadcasting, qSQL, forks, til | research-only |
-| [others.md](others.md) | Go, Rust, Ruby, TS, Swift, Elixir, SQL, PS, R, Pascal, C#, academic | mixed |
+| [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interaction analysis, community praise/regret, integration rules | active synthesis |
+| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | research source |
+| [expanded_language_research.md](expanded_language_research.md) | Newer languages (Roc, Gleam, Zig, Unison, CUE, etc.) and PL research, overlap consolidation | research source |
+| [functions.md](functions.md) | Function: equations, piecewise, holes, sections, composition, where | implemented (func, =>, equations, holes, sections, compose, where) |
+| [implicit_functions_nuance.md](implicit_functions_nuance.md) | Function (companion): scoping reference for `_`, `$1`, `$name`, `(+)` | focused detail |
+| [patterns.md](patterns.md) | Pattern: match, if-let, while-let, guard-let, destructuring, future captures | implemented (match, if-let, while-let, guard-let); destructuring partial |
+| [if_let_detail.md](if_let_detail.md) | Pattern (companion): if-let vs `if`, edge cases, desugaring | focused detail |
+| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Pattern (companion): match-as-expression parser caveats, full-suite challenge | focused detail |
+| [collections.md](collections.md) | Flow: pipelines, map/filter/reduce, ranges, spread, comprehensions | implemented (pipeline, ranges, range-step, spread, comprehensions) |
+| [error_handling.md](error_handling.md) | Absence/result + Block: try-expression, `?` propagate, guard, defer | implemented (try-expr, guard-let, defer); propagate design-needed |
+| [null_handling.md](null_handling.md) | Absence/result: `?.`, `??`, Option/Result types | implemented (`?.`, `??`); Option/Result design-needed |
+| [scope_context.md](scope_context.md) | Binding + Function: where clauses, scope functions, implicit params, builder DSL | implemented (where, block-call DSL); implicit params design-needed |
+| [types.md](types.md) | Data boundary: type aliases, data classes, sum types, extension methods | type aliases implemented; data classes design-needed |
+| [strings.md](strings.md) | Data boundary: interpolation, multi-line, heredocs, regex | f-strings + triple-quote implemented; regex library-first |
+| [concurrency.md](concurrency.md) | Block + Flow: async/await, structured concurrency, channels, actors | async/await implemented; structured concurrency design-needed |
+| [modules_imports.md](modules_imports.md) | Binding: import aliases, re-exports, wildcard, multi-import | basic Python-compatible imports implemented |
+| [meta_testing.md](meta_testing.md) | Explanation + Block: decorators, inline tests, assert diagnostics, macros | decorators implemented; inline tests design-needed |
+| [array_languages.md](array_languages.md) | Flow (research): APL/J/K/Q adverbs, broadcasting, forks, array rank | research-only |
+| [others.md](others.md) | Misc catalogue: Go, Rust, Ruby, TS, Swift, Elixir, SQL, PS, R, Pascal, C#, academic | mixed; candidate for folding into per-feature docs |
+| [implementation_learnings.md](implementation_learnings.md) | Grammar interactions, AST bugs, deferred features | living reference |
 
 For philosophical / design research, see `../research/`.
 

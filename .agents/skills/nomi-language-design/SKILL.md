@@ -190,14 +190,54 @@ experimentation:
 
 - ML-family: OCaml, F#, Haskell, Elm, Roc, ReScript.
 - Pattern/result family: Rust, Swift, Gleam, Zig, Crystal, Verse.
-- Block/callback family: Ruby, Kotlin, Swift, Julia, Nim, Python context managers.
+- Block/callback family: Ruby, Kotlin, Swift, Julia, Nim, Gleam, Python context managers.
 - Flow/table family: Elixir, F#, Clojure threading macros, Nushell, SQL, dplyr,
   pandas, Polars, LINQ.
 - Boundary/config family: CUE, Nickel, Pkl, Dhall, Nix, Terraform/HCL,
   JSON Schema, Pydantic.
 - Array/symbolic family: APL, J, K, Q, BQN, Uiua, Julia, Mathematica.
+- Ownership/systems family: Rust, Zig, Odin, Hylo, Mojo, Vale, D, Lobster.
+- Concatenative family: Forth, Factor, Joy, Kitten, Cat, Uiua.
+- Scientific/notebook family: MATLAB, R, Julia, Jupyter.
 - Macro/research family: Lisp, Scheme, Racket, Nim, Scala, Koka, Eff, Flix,
-  Unison.
+  Unison, Darklang, Jai.
+
+When researching new syntax, also consult the design lessons document
+(`docs/convenience/design_lessons_and_integration.md`) for systemic
+cruft patterns, feature interaction analysis, and community
+praise/regret evidence before making a recommendation.
 
 Use web research when the user asks for more coverage, recent language details,
 official docs, or precise citations.
+
+## Syntax Substrate Extension Path
+
+When implementing new syntax in the prototype, follow the current extension
+path (documented in `CLAUDE.md`):
+
+1. **Grammar** — add a rule to the appropriate layer in
+   `prototype/grammar/layers/`.  Verify with `tools.syntax.inspect --stage raw-tree`.
+
+2. **Lowering** — create a module in `prototype/parser/nomi/lowering/`
+   with a mixin class.  Mix it into `FunctionsMixin` in
+   `prototype/parser/nomi/functions.py`.
+
+3. **Desugar** (optional) — if the syntax needs an AST-level transform,
+   create a pass in `prototype/parser/nomi/desugar/` and add an entry
+   to `BUILTIN_FEATURES` in `prototype/syntax/features.py`.
+
+4. **Surface node** (optional) — if Python AST cannot naturally represent
+   the construct, define a `SurfaceNode` subclass in
+   `prototype/syntax/surface.py` and emit it from the lowering step.
+   The `lower_surface_to_python()` walker handles the lowering.
+
+5. **Tests** — parser unit tests, functional tests, and regression
+   snapshot regeneration.
+
+Key substrate files:
+- `prototype/syntax/features.py` — feature manifest registry (single source of truth)
+- `prototype/syntax/surface.py` — surface node base + `lower_surface_to_python`
+- `prototype/parser/nomi/lowering/` — per-feature Lark→AST lowering modules
+- `prototype/parser/nomi/desugar/pipeline.py` — desugar pass chain (derived from features)
+- `prototype/grammar/assemble.py` — grammar assembly (derived from features)
+- `tools/syntax/inspect.py` — pipeline stage inspection CLI
