@@ -76,26 +76,38 @@ layers move from docs into implementation.
   [`syntax_substrate_todo_audit.md`](syntax_substrate_todo_audit.md) as the
   central TODO index for parser, grammar, lowering, feature profile, and
   inspection work.
-- [ ] Add a passive `SyntaxFeature` manifest model that can name grammar
+- [x] Add a passive `SyntaxFeature` manifest model that can name grammar
   fragments, parse-tree transforms, surface/core nodes, lowering passes,
   diagnostics, docs, tests, status, and feature owner.
+  (Done in `prototype/syntax/features.py` — `BUILTIN_FEATURES` is the single
+  source of truth; grammar layers, layer transforms, lowering mixins, and
+  desugar passes are all derived from it.)
 - [ ] Add a current capability/spec matrix that separates target-only,
   parse-only, lowerable, runnable, explainable, documented, sample-covered,
   web-exposed, and notebook-exposed features.
 - [ ] Add named experiment profiles such as `default`, `lab`, `target-tour`,
   and `docs-only` after the parser grows `features=[...]`.
-- [ ] Add `tools.syntax.inspect` so every grammar or lowering change can show
+- [x] Add `tools.syntax.inspect` so every grammar or lowering change can show
   raw tree, transformed tree, surface AST, core AST, Python AST backend, and
   normal-form expansion.
-- [ ] Introduce `SourceSpan` and preserve it through the earliest practical
+  (Done — `python3 -m tools.syntax.inspect FILE --stage <stage>`.)
+- [~] Introduce `SourceSpan` and preserve it through the earliest practical
   parser/lowering path for bindings, functions, calls, match cases, and block
   calls.
-- [ ] Add Nomi-owned surface nodes for new or awkward forms before lowering
+  (`SourceSpan` dataclass and `SurfaceNode.span` field exist in
+  `prototype/syntax/surface.py`; not yet wired through parser/lowering.)
+- [~] Add Nomi-owned surface nodes for new or awkward forms before lowering
   them to Python AST. Start with `BlockCall`, `BindingTarget`, `PipeExpr`,
   `MatchExpr`, and `DataDecl`.
-- [ ] Add declarative pass metadata for existing desugar passes: pass name,
+  (`BlockCall` and `lower_surface_to_python` done; `BindingTarget`, `PipeExpr`,
+  `MatchExpr`, `DataDecl` pending.)
+- [~] Add declarative pass metadata for existing desugar passes: pass name,
   feature owner, dependencies, removed nodes, produced nodes, normal form, and
   diagnostics.
+  (`Phase` enum, `depends_on`, and `removed_node_types` on `BaseDesugarer`;
+  pipeline validates dependencies at import time. 10/11 passes declare phase.
+  `Precedence` still needs phase; most `depends_on` links are implicit in
+  ordering.)
 - [ ] Add feature-driven test templates that name parse snapshots, lowering
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and

@@ -22,37 +22,39 @@ Make the extension path fully declarative so adding a new feature touches only
 **one file** (features.py) plus the implementation module. No editing assembly,
 lowering composition, or pipeline files.
 
-### A1: Feature-driven lowering mixin composition
+### A1: Feature-driven lowering mixin composition ✅
 
-**Current:** `prototype/parser/nomi/functions.py` manually imports 13 lowering
-mixins and lists them in the `FunctionsMixin` class definition.
+~~**Current:** `prototype/parser/nomi/functions.py` manually imports 13 lowering
+mixins and lists them in the `FunctionsMixin` class definition.~~
 
-**Target:** `FunctionsMixin` is built dynamically from the feature registry.
-Each lowering feature declares its mixin as a dotted string; the composition
-is auto-derived.
+**Done:** `FunctionsMixin` is built dynamically via `get_lowering_mixins()`
+which reads dotted-string references from `BUILTIN_FEATURES`. Adding a
+lowering mixin means adding one feature entry + the module — no editing
+`functions.py`.
 
-```
-Before: FunctionsMixin = class(ImplicitMulMixin, TypeAliasMixin, ...13 total)
-After:  FunctionsMixin = build_lowering_mixin()  # derived from BUILTIN_FEATURES
-```
+### A2: Feature-driven grammar layer assembly ✅
 
-### A2: Feature-driven grammar layer assembly
+~~**Current:** `_LAYER_ORDER` in `assemble.py` is a hardcoded list.~~
 
-**Current:** `_LAYER_ORDER` in `assemble.py` is a hardcoded list. The
-`grammar_layers` field on `SyntaxFeature` exists but is never used.
+**Done:** `assemble_grammar()` calls `get_extra_grammar_layers()` to append
+feature-declared layers after the base layers. Layer transforms are also
+derived from features via `get_layer_transforms()`. Adding a grammar layer
+means declaring `grammar_layers` on the feature — no editing `assemble.py`.
 
-**Target:** `assemble_grammar()` appends feature-declared layers after the
-base layers. No editing `assemble.py` to add a new grammar domain.
+### A3: Phase metadata for desugar passes (partial)
 
-### A3: Phase metadata for desugar passes
+~~**Current:** Desugar passes run in declaration order. Dependencies between
+passes are implicit comments. No validation that ordering is correct.~~
 
-**Current:** Desugar passes run in declaration order. Dependencies between
-passes are implicit comments. No validation that ordering is correct.
+**Done:** `Phase` enum (syntax → semantic → cleanup), `depends_on` tuple,
+and `removed_node_types` fields exist on `BaseDesugarer`. Pipeline validates
+dependencies at import time. 10 of 11 passes declare their phase.
+`WhereClause` declares `depends_on=(PiecewiseFunction,)`.
 
-**Target:** Each pass declares its phase (`syntax`, `semantic`, `cleanup`) and
-optional `depends_on`. The pipeline validates that phases group correctly and
-dependencies are satisfied. A pass running in the wrong phase is a loud error,
-not a silent bug.
+**Remaining:** `Precedence` needs a phase declaration. Most passes that
+could declare `depends_on` still leave it empty (dependencies are enforced
+by ordering in `BUILTIN_FEATURES`). `removed_node_types` is declared on
+~half the passes; the rest could declare it for completeness.
 
 ## Phase B: Operation Registry for the Interpreter
 
