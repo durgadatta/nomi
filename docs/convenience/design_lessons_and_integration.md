@@ -704,7 +704,154 @@ should be stable from 1.0.
 | Matz | Ruby | "The Perl-style global variables are a legacy. In a new language, I would not include them." |
 | Matz | Ruby | "The GIL was a pragmatic implementation choice. A language designed today should not have one." |
 
-## 9. References
+## 9. How to Synthesize: A Methodology
+
+The previous sections catalogue patterns, interactions, praise, regret, and
+integration rules.  This section describes *how to use* that catalogue — a
+repeatable methodology for evaluating new proposals that goes beyond
+checklists into genuine synthesis.
+
+### 9.1 The Synthesis Stance
+
+Synthesis is not the same as evaluation.  Evaluation asks "is this proposal
+good?"  Synthesis asks "what would this proposal become inside Nomi, and
+how would it interact with everything else?"
+
+The right stance:
+
+1. **Assume the proposal exists.**  Temporarily grant that the syntax is
+   already in the language.  What breaks?  What becomes redundant?  What
+   does a new user now have to learn before their first program compiles?
+
+2. **Write the desugaring first.**  Before debating surface syntax, write
+   the normal-form reduction.  If the reduction is awkward, the syntax is
+   fighting the primitives.  If the reduction is clean, the surface
+   spelling is mostly decoration.
+
+3. **Find the interaction surface.**  For each existing feature, ask: does
+   this proposal compose with it?  If they appear together in an expression,
+   is the meaning unambiguous?  If they nest, do scoping rules compose?
+
+4. **Write the diagnostic before the implementation.**  The hardest test:
+   can you write a clear error message for when this feature is misused?
+   If the error message must name implementation details, the abstraction
+   is wrong.
+
+### 9.2 The Synthesis Loop
+
+```
+Source proposal
+  → desugar to normal form (which primitive?)
+  → map interactions (collisions with existing features?)
+  → check cruft patterns (does it match a known failure mode?)
+  → check designer regrets (has someone already tried this and regretted it?)
+  → write diagnostic (can error messages speak in normal-form vocabulary?)
+  → decide: accept / accept with adaptation / reject with rationale
+```
+
+Each step produces concrete output:
+- Desugaring: a Python AST or core-node sketch
+- Interactions: a list of feature pairs and their combined behaviour
+- Cruft check: which systemic pattern (section 1) does it risk?
+- Designer check: which regretted feature (section 3.2) does it resemble?
+- Diagnostic: at least one error message in normal-form vocabulary
+
+### 9.3 Worked Example: `defer` Statement
+
+```
+Proposal: defer cleanup() at end of block (Go/Zig-style deferred execution)
+
+Step 1 — Desugar to normal form:
+  defer cleanup(); body
+  →
+  try: body
+  finally: cleanup()
+  Normal form: Block (try/finally is a block policy)
+
+Step 2 — Map interactions:
+  - defer inside a block call: does cleanup run when the block exits
+    or when the enclosing function exits?  Decision: when the block exits
+    (innermost block boundary).  Consistent with try/finally semantics.
+  - defer inside a where clause: where-clause bindings are local to the
+    expression.  defer in a where clause is unusual but should work —
+    cleanup runs after the expression evaluates.
+  - defer + return: cleanup runs before the return value is produced.
+    This is Zig-compatible and what users expect.
+
+Step 3 — Check cruft patterns:
+  - Not a second mini-language (uses existing block/scope primitives)
+  - Not a convenience stack-collapse (defer is orthogonal to existing
+    cleanup mechanisms — it's a different use case from `using`)
+  - Risk: implicit power escalator.  Defers accumulate invisibly.
+    Mitigation: tooling should show accumulated defers at each scope exit.
+
+Step 4 — Check designer regrets:
+  - Zig's errdefer is widely praised.  Go's defer is uncontroversial.
+  - No known language regrets about defer specifically.
+  - Caution: Python's `__del__` and `weakref` finalizers are regretted
+    (non-deterministic).  Defer is deterministic — opposite problem.
+
+Step 5 — Write diagnostic:
+  "defer in block call: cleanup will run when the block exits, not when
+   the enclosing function exits.  Use defer in the outer scope if you
+   need function-exit cleanup."
+
+Decision: Accept.  Desugars cleanly to try/finally.  No new primitive.
+Interactions are well-defined.  Go/Zig precedent is positive.
+```
+
+### 9.4 When the Loop Rejects a Proposal
+
+The loop produces rejections too.  A rejection should name *which step*
+failed and *why* — not just "we don't like it."
+
+```
+Example: unless...else
+
+Step 1 — Desugar: unless x > 10: a else: b  →  if not x > 10: a else: b
+  Clean desugaring.  But Step 2 (interactions) reveals the problem:
+  unless x > 10 and y > 20: a else: b
+  Does `else` attach to the `unless` or to the `and`?  Ambiguity.
+
+Step 5 — Diagnostic:
+  "'unless...else' is ambiguous when combined with 'and'/'or'.  Use
+   'if not...else' for the general case.  'unless' without 'else' is
+   fine."
+
+Decision: Accept `unless` without `else`.  Reject `unless...else`.
+```
+
+### 9.5 Synthesis Traps
+
+These are mistakes that happen during synthesis, not in the proposal itself.
+
+**Trap 1: Designing in a vacuum.**  Evaluating a proposal without putting
+it next to existing syntax.  Fix: always write a combined example — the
+new syntax nested inside an existing form, and vice versa.
+
+**Trap 2: Emulating the source language's semantics too closely.**  Copying
+the syntax because the source language did it well, without checking whether
+Nomi's primitives give a cleaner reduction.  Fix: write the normal-form
+reduction first.  If the source language's semantics and Nomi's reduction
+disagree, Nomi's reduction wins.
+
+**Trap 3: Adding a feature because it's "small."**  Small features
+accumulate.  Five small features that each add one syntax rule are worse
+than one medium feature that replaces three of them.  Fix: count the total
+syntax budget, not the per-feature cost.
+
+**Trap 4: Focusing on the happy path.**  Proposals naturally describe what
+the feature looks like when used correctly.  Synthesis must also describe
+what happens when it's used incorrectly, nested deeply, or combined with
+every other feature.  Fix: write the error case before the happy case.
+
+**Trap 5: Citing precedent as proof.**  "Language X has this and it works"
+is research, not synthesis.  The question is not whether it worked in
+Language X — it's whether it works *with Nomi's specific primitives and
+existing features*.  Fix: replace "X does this" with "X does this, which
+reduces to Nomi's Y normal form, and here's how it interacts with Z."
+
+## 10. References
 
 - `docs/research/error_handling_defer_resource_cleanup_notes.md` — Zig, Hylo, Odin, Gleam, Roc
 - `docs/research/modern_language_feature_survey.md` — Mojo, Jai, Darklang, Unison, CUE/Nickel/Pkl/Dhall, Wren, Janet, Lobster, D

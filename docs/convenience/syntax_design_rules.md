@@ -378,7 +378,112 @@ Decision: Reject.  Use block calls: `action1() -> x: action2(x)`.
           If the use case is iteration, use `each(items) -> item: body`.
 ```
 
-## 10. References
+## 10. Nuance: When Rules Bend
+
+The eight rules above are design defaults, not absolutes.  This section
+describes when a rule should bend, how to weigh conflicting rules, and how
+to tell the difference between a legitimate exception and rationalisation.
+
+### 10.1 Legitimate Exceptions
+
+**Primitive Budget (Rule 1):** Bends when a genuinely new capability is
+needed that cannot be expressed with existing primitives.  Example:
+`data` declarations create a new primitive (closed nominal types) that
+binding + function + pattern cannot express.  The bar: proven by
+existence of a concrete, non-synthesised program that cannot be written
+without the new primitive.
+
+**Axis Coherence (Rule 2):** Bends when the axis position itself is under
+revision.  Example: if Nomi later adopts lazy evaluation for a streaming
+layer, Haskell-family syntax becomes more relevant.  The bar: the axis
+change must be designed and documented before syntax that depends on it.
+
+**One-Elimination-Form (Rule 3):** Bends for ergonomic short forms that
+unambiguously desugar to `match`.  Example: `if-let` is a second
+elimination syntax, but it reduces to `match` and handles a common
+single-pattern case.  The bar: the short form must be a strict subset of
+`match` — no new semantics, no different scoping rules.
+
+**Context-Threading (Rule 4):** Bends when the block-call spelling is
+genuinely too verbose for a common case.  Example: `with:` as sugar for
+`using(expr) -> _: body` where the resource is unnamed.  The bar: the
+short form must be a block call, not a parallel mechanism.
+
+**Closed/Open Distinction (Rule 5):** Rarely bends.  The closed/open
+distinction is load-bearing for exhaustiveness and for the data-boundary
+story.  If a feature blurs this line, it needs a new normal form, not an
+exception.
+
+**Cognitive Priority (Rule 6):** Bends when local reasoning conflicts with
+another priority and the other priority wins.  Example: `$1` holes have
+worse local reasoning than explicit lambdas, but the keystroke savings
+justify them for one-liners.  The bar: the tradeoff must be documented,
+and the explicit form must exist as an escape hatch.
+
+**Under-Represented Normal Forms (Rule 7):** Not a rule to bend — this is
+a gap report.  It identifies where design work is needed.
+
+**Family Coherence (Rule 8):** Bends when Nomi deliberately diverges from
+ML-family practice.  Example: Nomi's block calls have no direct ML-family
+equivalent (Ruby blocks are closer).  The bar: the divergence must be
+documented as a deliberate choice, not an accident.
+
+### 10.2 When Rules Conflict
+
+Some proposals trigger opposing rules.  Resolution order:
+
+```
+1. Primitive Budget (Rule 1) overrides everything.
+   If it needs a new primitive, stop — that's a language-design event.
+
+2. Closed/Open Distinction (Rule 5) overrides Axis Coherence (Rule 2)
+   and Family Coherence (Rule 8).
+   Type system soundness > stylistic preference.
+
+3. Cognitive Priority (Rule 6) overrides Family Coherence (Rule 8).
+   Local reasoning > "this is how OCaml does it."
+
+4. Family Coherence (Rule 8) overrides keystroke-counting.
+   ML-family consistency > saving two characters.
+```
+
+**Worked conflict:** `?.` (optional chaining)
+
+```
+Rule 3 (Elimination) says: use match for structural choice.
+Rule 6 (Cognitive) says: make absence handling visible at the use site.
+
+Conflict: ?. is not match, and it's not a short form of match in the
+way if-let is.  It introduces a third choice mechanism.
+
+Resolution: Rule 6 wins.  ?. makes absence handling locally visible
+in a way that match cannot (match requires unwrapping at every level).
+The bar is met: ?. is a strict subset of match for the specific case
+of "access this chain of attributes, short-circuit on None."  It does
+not add new semantics — it is syntax sugar over:
+  tmp = x
+  if tmp is None: None else: tmp.y
+```
+
+### 10.3 Rules Are Conviction, Not Dogma
+
+These rules encode lessons from languages that made the mistakes
+catalogued in `design_lessons_and_integration.md`.  They should be
+followed unless there is a specific, documented reason not to.
+
+But they are not eternal.  If a rule consistently blocks good proposals,
+the rule is wrong.  The process for changing a rule:
+
+1. Document which proposals the rule blocked and why they were good.
+2. Propose a revised rule that admits those proposals while still
+   preventing the original failure mode.
+3. Test the revised rule against the full proposal backlog.
+4. Update both this document and the design decision ledger.
+
+This is the same process as refactoring code: find the pattern, name it,
+test it, and only then change the abstraction.
+
+## 11. References
 
 - [../language/language_design_dimensions.md](../language/language_design_dimensions.md) — full dimensions analysis
 - [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns and integration rules

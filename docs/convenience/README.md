@@ -62,6 +62,30 @@ index, or start with:
 - [deep_language_feature_survey.md](../research/deep_language_feature_survey.md)
 - [modern_language_feature_survey.md](../research/modern_language_feature_survey.md)
 
+## Navigation by Intent
+
+Start here based on what you're trying to do:
+
+| Intent | Start with |
+|--------|-----------|
+| **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
+| **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) |
+| **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
+| **Compare Nomi's approach to other languages** | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) (cross-language families) |
+| **Implement a feature** | `docs/features/binding_constraints_feature.md`, `block_calls_feature.md` → `prototype/` code |
+| **Add new syntax** | [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis loop) → `CLAUDE.md` (extension path) |
+| **Understand a specific normal form** | Per-feature docs below (functions, patterns, flow, absence, data, scope, concurrency, testing, modules) |
+| **Deep language research** | [expanded_language_research.md](expanded_language_research.md) → `docs/research/` |
+
+### The Synthesis Docs (read in order)
+
+1. [syntax_design_rules.md](syntax_design_rules.md) — concrete rules for designing surface syntax, derived from the dimensions analysis.  Includes nuance (when rules bend, how conflicts resolve).
+2. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
+3. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
+4. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
+
+These four docs form the synthesis stack: rules → lessons → comparisons → roadmap.
+
 ## Consolidation Rules
 
 - Do not add a new doc when an existing doc can absorb the idea.
@@ -69,3 +93,5 @@ index, or start with:
 - Source-language catalogues belong in `docs/research/`, not here.
 - Implemented features should have runnable examples in `samples/demo.nomi`
   and `samples/demo_terse.nomi` after tests pass.
+- When adding a synthesis insight, check whether it fits in the rules, lessons,
+  matrix, or roadmap before creating a new doc.
