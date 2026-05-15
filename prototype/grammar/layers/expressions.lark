@@ -72,8 +72,8 @@ AWAIT: "await"
 ?string_concat: string+
 
 // -- func_expr --------------------------------------------------------
-func_expr: "(" [parameters] ")" "=>" test
-         | NAME "=>" test
+func_expr: "(" [parameters] ")" "=>" test ["->" test]
+         | NAME "=>" test ["->" test]
 assign_expr: name ":=" test
 
 // -- tuple / list expression helpers ----------------------------------

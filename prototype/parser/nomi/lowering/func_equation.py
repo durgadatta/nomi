@@ -7,32 +7,39 @@ import ast
 
 
 class FuncEquationMixin:
-    def func_equation_no_parens(self, items):
+    def func_equation_no_parens_plain(self, items):
         if len(items) == 3:
             name, param_name, body = items
-            guard = None
+            returns = None
         else:
-            name, param_name, guard, body = items
-        args_list = [ast.arg(arg=param_name)]
-        params = ast.arguments(
-            posonlyargs=[], args=args_list, kwonlyargs=[], kw_defaults=[],
-            defaults=[], vararg=None, kwarg=None,
-        )
-        fn = ast.FunctionDef(
-            name=name, args=params, body=[ast.Return(value=body)],
-            decorator_list=[], returns=None,
-        )
-        fn._nomi_eq_args = [param_name]
-        if guard:
-            fn._nomi_eq_guard = guard
-        return fn
+            name, param_name, body, returns = items
+        return self._build_equation_function(name, [param_name], body, guard=None, returns=returns)
 
-    def func_equation(self, items):
+    def func_equation_no_parens_guarded(self, items):
+        if len(items) == 4:
+            name, param_name, guard, body = items
+            returns = None
+        else:
+            name, param_name, guard, body, returns = items
+        return self._build_equation_function(name, [param_name], body, guard=guard, returns=returns)
+
+    def func_equation_plain(self, items):
         if len(items) == 3:
             name, eq_args, body = items
-            guard = None
+            returns = None
         else:
+            name, eq_args, body, returns = items
+        return self._build_equation_function(name, eq_args, body, guard=None, returns=returns)
+
+    def func_equation_guarded(self, items):
+        if len(items) == 4:
             name, eq_args, guard, body = items
+            returns = None
+        else:
+            name, eq_args, guard, body, returns = items
+        return self._build_equation_function(name, eq_args, body, guard=guard, returns=returns)
+
+    def _build_equation_function(self, name, eq_args, body, guard, returns):
         if eq_args is None:
             eq_args = []
         elif not isinstance(eq_args, list):
@@ -57,7 +64,7 @@ class FuncEquationMixin:
         )
         fn = ast.FunctionDef(
             name=name, args=params, body=[ast.Return(value=body)],
-            decorator_list=[], returns=None,
+            decorator_list=[], returns=returns,
         )
         fn._nomi_eq_args = eq_args
         if guard:

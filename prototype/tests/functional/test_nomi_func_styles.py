@@ -583,3 +583,79 @@ def test_defer_with_return(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
     bindings = run(code="func test():\n    defer x = 1\n    return 99\nresult = test()\n")
     assert bindings["result"] == 99
+
+
+# ── return type annotations on equations ──────────────────────────────
+
+def test_eq_returns_plain(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="double(x) = x * 2 -> int\nresult = double(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_eq_returns_no_parens(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="double x = x * 2 -> int\nresult = double(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_eq_returns_guarded(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "classify(n) when n > 0 = 'positive' -> str",
+        "classify(n) = 'non-positive' -> str",
+        "result = classify(5)",
+        "",
+    ]))
+    assert bindings["result"] == "positive"
+
+
+def test_eq_returns_no_parens_guarded(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "classify n when n > 0 = 'positive' -> str",
+        "classify n = 'non-positive' -> str",
+        "r1 = classify(5)",
+        "r2 = classify(-3)",
+        "",
+    ]))
+    assert bindings["r1"] == "positive"
+    assert bindings["r2"] == "non-positive"
+
+
+def test_eq_returns_mixed_styles(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "sq x = x * x -> int",
+        "dbl(x) = x + x -> int",
+        "r1 = sq(4)",
+        "r2 = dbl(4)",
+        "",
+    ]))
+    assert bindings["r1"] == 16
+    assert bindings["r2"] == 8
+
+
+# ── return type annotations on arrows ─────────────────────────────────
+
+def test_arrow_returns_single_param(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="f = x => x * 2 -> int\nresult = f(5)\n")
+    assert bindings["result"] == 10
+
+
+def test_arrow_returns_multi_param(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="f = (x, y) => x + y -> int\nresult = f(3, 4)\n")
+    assert bindings["result"] == 7
+
+
+def test_arrow_mixed_with_without_returns(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "f = x => x + 1 -> int",
+        "g = x => x + 1",
+        "result = f(3) + g(3)",
+        "",
+    ]))
+    assert bindings["result"] == 8
