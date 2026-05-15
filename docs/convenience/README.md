@@ -1,86 +1,70 @@
 # Convenience Features
 
 Per-feature syntax docs for Nomi convenience forms, backed by comparative
-research. This folder should now consolidate more than it expands: prefer
-enhancing an existing syntax doc over adding a new one.
+research.  This folder consolidates more than it expands — prefer enhancing
+an existing doc over adding a new one.
 
-Start with
-[review_and_roadmap.md](review_and_roadmap.md). It consolidates the folder
-around Nomi normal forms: binding, function, pattern, flow, block,
-absence/result, data boundary, and explanation. Individual docs should use the
-status labels from that review:
+Start with [design_lessons_and_integration.md](design_lessons_and_integration.md)
+for the critical synthesis.  Then use the per-feature docs below.
 
-```text
-implemented
-prototype-ready
-design-needed
-library-first
-research-only
-rejected-for-now
-```
+## Normal Forms
 
-Each durable doc should be syntax-facing. It should cover: Nomi examples,
-everyday need, normal-form reduction, current implementation status,
-diagnostics, rejected alternatives, and implementation notes. Source-language
-examples belong only where they change a concrete Nomi decision.
+Every accepted convenience reduces to one of eight normal forms:
 
-## Consolidation Rules
+- **Binding** — receive value, tentatively bind, check constraints, commit or diagnose
+- **Function** — parameters are bindings, body evaluates, result may be checked
+- **Pattern** — test structure, bind captures, check constraints, choose body
+- **Flow** — pass a value through calls, functions, collection transforms, or plans
+- **Block** — ordinary call plus attached caller-side code invoked by `yield`
+- **Absence/result** — distinguish missing value, expected failure, and unexpected error
+- **Data boundary** — external value explicitly decoded into owned data with diagnostics
+- **Explanation** — semantic events become traces, examples, diagnostics, or `explain` views
 
-- Do not add a new convenience doc when an existing syntax family can absorb
-  the idea.
-- Keep `functions.md`, `patterns.md`, `collections.md`, `error_handling.md`,
-  `null_handling.md`, `types.md`, `strings.md`, `scope_context.md`,
-  `modules_imports.md`, `concurrency.md`, and `meta_testing.md` as the main
-  syntax homes.
-- Keep `review_and_roadmap.md` as the normal-form and status spine.
-- Keep `syntax_synthesis_matrix.md` and `expanded_language_research.md` as
-  source research, not day-to-day specs.
-- When a focused companion note becomes stable, fold its decision back into the
-  main syntax doc and leave the companion as edge-case history.
+## Documents
 
-Use the overview/detail split to keep the folder from growing sideways:
+### Synthesis & Planning
 
-- put synthesis, admission decisions, and teaching order in the main feature
-  docs such as `functions.md`, `patterns.md`, `collections.md`, and
-  `error_handling.md`;
-- keep parser caveats, scoping edge cases, and implementation scars in focused
-  companion notes such as `implicit_functions_nuance.md`,
-  `if_let_detail.md`, and `challenges_match_as_expression.md`;
-- move broad source-language catalogues into `expanded_language_research.md`,
-  `syntax_synthesis_matrix.md`, or `others.md` unless they change a concrete
-  Nomi recommendation.
+| Doc | Purpose |
+|-----|---------|
+| [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
+| [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
+| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
+| [expanded_language_research.md](expanded_language_research.md) | Index to detailed research notes in `docs/research/` |
+
+### Per-Feature Docs
 
 | Doc | Normal form | Status |
 |-----|-------------|--------|
-| [review_and_roadmap.md](review_and_roadmap.md) | Cross-doc critique, normal forms, new feature candidates, roadmap | active spine |
-| [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interaction analysis, community praise/regret, integration rules | active synthesis |
-| [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families, nuanced differences, and Nomi combination recommendations | research source |
-| [expanded_language_research.md](expanded_language_research.md) | Newer languages (Roc, Gleam, Zig, Unison, CUE, etc.) and PL research, overlap consolidation | research source |
-| [functions.md](functions.md) | Function: equations, piecewise, holes, sections, composition, where | implemented (func, =>, equations, holes, sections, compose, where) |
-| [implicit_functions_nuance.md](implicit_functions_nuance.md) | Function (companion): scoping reference for `_`, `$1`, `$name`, `(+)` | focused detail |
-| [patterns.md](patterns.md) | Pattern: match, if-let, while-let, guard-let, destructuring, future captures | implemented (match, if-let, while-let, guard-let); destructuring partial |
-| [if_let_detail.md](if_let_detail.md) | Pattern (companion): if-let vs `if`, edge cases, desugaring | focused detail |
-| [challenges_match_as_expression.md](challenges_match_as_expression.md) | Pattern (companion): match-as-expression parser caveats, full-suite challenge | focused detail |
-| [collections.md](collections.md) | Flow: pipelines, map/filter/reduce, ranges, spread, comprehensions | implemented (pipeline, ranges, range-step, spread, comprehensions) |
-| [error_handling.md](error_handling.md) | Absence/result + Block: try-expression, `?` propagate, guard, defer | implemented (try-expr, guard-let, defer); propagate design-needed |
-| [null_handling.md](null_handling.md) | Absence/result: `?.`, `??`, Option/Result types | implemented (`?.`, `??`); Option/Result design-needed |
-| [scope_context.md](scope_context.md) | Binding + Function: where clauses, scope functions, implicit params, builder DSL | implemented (where, block-call DSL); implicit params design-needed |
-| [types.md](types.md) | Data boundary: type aliases, data classes, sum types, extension methods | type aliases implemented; data classes design-needed |
-| [strings.md](strings.md) | Data boundary: interpolation, multi-line, heredocs, regex | f-strings + triple-quote implemented; regex library-first |
-| [concurrency.md](concurrency.md) | Block + Flow: async/await, structured concurrency, channels, actors | async/await implemented; structured concurrency design-needed |
-| [modules_imports.md](modules_imports.md) | Binding: import aliases, re-exports, wildcard, multi-import | basic Python-compatible imports implemented |
-| [meta_testing.md](meta_testing.md) | Explanation + Block: decorators, inline tests, assert diagnostics, macros | decorators implemented; inline tests design-needed |
-| [array_languages.md](array_languages.md) | Flow (research): APL/J/K/Q adverbs, broadcasting, forks, array rank | research-only |
-| [others.md](others.md) | Misc catalogue: Go, Rust, Ruby, TS, Swift, Elixir, SQL, PS, R, Pascal, C#, academic | mixed; candidate for folding into per-feature docs |
-| [implementation_learnings.md](implementation_learnings.md) | Grammar interactions, AST bugs, deferred features | living reference |
+| [functions.md](functions.md) | Function | implemented (func, `=>`, equations, holes, sections, compose, where) |
+| [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); includes companion detail appendices |
+| [flow_and_collections.md](flow_and_collections.md) | Flow | implemented (pipeline, ranges, range-step, spread) |
+| [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-needed |
+| [data_and_types.md](data_and_types.md) | Data boundary | type aliases + strings implemented; data classes design-needed |
+| [scope_context.md](scope_context.md) | Binding + Function | where + block-call DSL implemented; implicit params design-needed |
+| [concurrency.md](concurrency.md) | Block + Flow | async/await implemented; structured concurrency design-needed |
+| [modules_imports.md](modules_imports.md) | Binding | Python-compatible imports implemented |
+| [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; inline tests design-needed |
 
-For philosophical / design research, see `../research/`.
+### Reference
 
-## Sample Discipline
+| Doc | Purpose |
+|-----|---------|
+| [implementation_learnings.md](implementation_learnings.md) | Grammar interactions, AST bugs, deferred features — living reference |
 
-When a convenience feature is later implemented, add runnable examples only
-after focused tests pass. The full guided example belongs in
-`samples/demo.nomi`; the compressed memory-refresh version belongs in
-`samples/demo_terse.nomi`. If the feature is also part of interpreter
-regression coverage, update the relevant file under
-`prototype/tests/data/sample_sources/`.
+## Research Sources
+
+Deep language surveys live in `../research/`.  See
+[expanded_language_research.md](expanded_language_research.md) for the
+index, or start with:
+
+- [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md)
+- [deep_language_feature_survey.md](../research/deep_language_feature_survey.md)
+- [modern_language_feature_survey.md](../research/modern_language_feature_survey.md)
+
+## Consolidation Rules
+
+- Do not add a new doc when an existing doc can absorb the idea.
+- Keep companion notes as appendices in the parent doc once stable.
+- Source-language catalogues belong in `docs/research/`, not here.
+- Implemented features should have runnable examples in `samples/demo.nomi`
+  and `samples/demo_terse.nomi` after tests pass.

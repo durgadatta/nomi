@@ -40,7 +40,9 @@ Start with these files before broad design or implementation changes:
   block-call control design.
 - `docs/language/delta_on_python.md`: rationale for Nomi changes relative to
   Python.
-- `docs/features/yield_to_block.md`: delicate resumable-control notes.
+- `docs/features/block_calls_feature.md`: resumable-control and block-call design.
+- `docs/convenience/design_lessons_and_integration.md`: design synthesis, systemic patterns, and integration critique.
+- `docs/convenience/absence_and_result.md`: absence, result, and error handling design.
 - `docs/orientation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
   surfaces.
 
