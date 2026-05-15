@@ -30,6 +30,43 @@ class SourceSpan:
     end_line: int = 0
     end_col: int = 0
 
+    @classmethod
+    def from_lark_meta(cls, meta, file: str = "") -> SourceSpan | None:
+        """Build a SourceSpan from a Lark ``Meta`` object.
+
+        Returns ``None`` when *meta* is empty (no position information).
+        """
+        if meta.empty:
+            return None
+        return cls(
+            file=file,
+            line=meta.line,
+            col=meta.column,
+            end_line=meta.end_line,
+            end_col=meta.end_column,
+        )
+
+
+# ── captures_span decorator ───────────────────────────────────────────
+
+def captures_span(method):
+    """Decorator for Lark transformer methods that create SurfaceNodes.
+
+    Uses Lark's ``visit_wrapper`` mechanism to receive the tree ``meta``
+    so SourceSpan can be extracted and attached to any SurfaceNode result.
+    Apply with ``@captures_span`` on the transformer method.
+    """
+    def wrapper(bound_method, _data, children, meta):
+        result = bound_method(children)
+        if isinstance(result, SurfaceNode) and meta is not None:
+            span = SourceSpan.from_lark_meta(meta)
+            if span is not None:
+                result.span = span
+        return result
+
+    method.visit_wrapper = wrapper
+    return method
+
 
 # ── SurfaceNode ───────────────────────────────────────────────────────
 

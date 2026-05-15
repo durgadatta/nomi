@@ -36,6 +36,7 @@ def get_parser(extra_layers=None):
             postlex=PythonIndenter(),
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
+            propagate_positions=True,
     )
     _PARSER_CACHE[resolved] = parser
     return parser
