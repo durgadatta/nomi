@@ -4,6 +4,10 @@ description: Work with the Nomi web playground — Pyodide bridge, Monaco editor
 compatibility: deepseek
 ---
 
+For the interactive experience design rationale, see
+`docs/research/interactive_explanation_deep_dive.md` and
+`docs/research/ai_readable_semantics_deep_dive.md`.
+
 ## Files
 - `web/index.html` — Monaco Editor with Nomi language definition, Pyodide init, run button
 - `web/nomi_web.py` — Pyodide bridge: loads prototype from manifest, provides run_nomi()

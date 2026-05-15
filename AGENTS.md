@@ -47,12 +47,26 @@ Start with these files before broad design or implementation changes:
 - `docs/features/block_calls_feature.md`: resumable-control and block-call design.
 - `docs/convenience/design_lessons_and_integration.md`: design synthesis, systemic patterns, and integration critique.
 - `docs/convenience/absence_and_result.md`: absence, result, and error handling design.
+- `docs/research/language_family_coverage_map.md`: index of the full research
+  corpus — 23 deep dives across 16 language families and 8 cross-cutting
+  dimensions. Start here before doing new cross-language research.
+- `docs/research/cross_language_synthesis_master.md`: capstone synthesis —
+  8 convergences, 8 design forks, 7 hidden incompatibilities, Nomi resolution
+  per normal form.
+- `docs/research/research_notes_synthesis.md`: earlier synthesis with
+  progressive-reification spine and design tensions.
 - `docs/orientation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
   surfaces.
 
 Archived design notes under `docs/archive/design_review/` are source
 material, not active specification. Use them to recover history, then reconcile
 work with the active docs in `docs/language/` and `docs/features/`.
+
+The research corpus under `docs/research/` is design evidence, not active
+specification. Stable decisions from deep dives should migrate to
+`docs/convenience/` and `docs/language/`. The `.agents/skills/` directory
+contains agent skill definitions — read the relevant skill before working
+in a domain.
 
 ## Setup Commands
 

@@ -4,6 +4,9 @@ description: Write tests for the Nomi language — unit, functional, regression,
 compatibility: deepseek
 ---
 
+For the semantic rationale behind tested behavior, see the
+`nomi-language-design` skill and the research corpus.
+
 ## Test directories
 - `prototype/tests/unit/` — Single module/class tests
 - `prototype/tests/functional/` — Multi-module integration

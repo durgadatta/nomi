@@ -4,6 +4,10 @@ description: Add a syntactic reduction to the Nomi language. Create a desugarer,
 compatibility: deepseek
 ---
 
+Before adding a reduction, check the `nomi-language-design` skill. Each
+reduction should target a specific Nomi normal form and be grounded in the
+cross-language research corpus (`docs/research/language_family_coverage_map.md`).
+
 ## Files you will touch
 1. `prototype/parser/nomi/desugar/<name>.py` — new desugarer class
 2. `prototype/parser/nomi/desugar/pipeline.py` — add to chain

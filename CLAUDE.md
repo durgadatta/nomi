@@ -11,6 +11,14 @@ The current focus is making syntax experimentation fast: the extension
 path for new syntax is now 3-4 isolated steps instead of editing 5-7
 files across the codebase.
 
+For language design decisions, start with the research corpus:
+`docs/research/language_family_coverage_map.md` (index of 23 deep dives
+covering 60+ languages across 16 families). Each deep dive has a
+cross-language synthesis and a Nomi Adopt/Refuse/Adapt table. The
+capstone synthesis is at `docs/research/cross_language_synthesis_master.md`.
+The `.agents/skills/nomi-language-design/SKILL.md` skill has the full
+research workflow.
+
 ## Adding new syntax (the current extension path)
 
 1. **Grammar** — add a rule to the appropriate layer in

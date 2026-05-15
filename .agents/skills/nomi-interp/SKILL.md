@@ -4,6 +4,12 @@ description: Modify the Nomi interpreter — add/change runtime behavior, evalua
 compatibility: deepseek
 ---
 
+For semantic design rationale behind interpreter behavior, see the
+`nomi-language-design` skill and the research corpus
+(`docs/research/language_family_coverage_map.md`). Each Nomi runtime
+departure from Python should trace to a normal form and a design
+decision grounded in cross-language research.
+
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
 - `prototype/interpreter/python/binding.py` — Assignment, augmented assignment, annotated assignment
@@ -45,6 +51,10 @@ compatibility: deepseek
 - For broad runtime/API/tooling refactors, read
   `docs/language/architecture_refactoring_plan.md` and prefer facade-first
   changes that keep existing `run_eval_loop` imports working.
+- For semantic design decisions (e.g., how pattern matching exhaustiveness
+  should work, how absence should propagate, how data boundaries should handle
+  errors), consult the relevant deep dive in `docs/research/` — the
+  cross-language synthesis already compares 10-16 languages on these topics.
 
 ## Interpreter dispatch (eval method)
 ```
