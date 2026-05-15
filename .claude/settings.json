@@ -82,7 +82,7 @@
   // Options: "claude-sonnet-4-20250514", "claude-opus-4-20250514",
   //          "claude-haiku-4-5-20251001"
   // Omit to use the user's global preference.
-  "model": "claude-opus-4-20250514",
+  //"model": "claude-opus-4-20250514",
 
   // ── Environment variables ───────────────────────────────────────
   // Set per-session env vars for tool execution.  Use for feature
