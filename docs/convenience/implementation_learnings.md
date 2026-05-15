@@ -159,3 +159,69 @@ statement-level transformation (multiple output stmts from one expression).
 (missing `else`) before the statement-level postfix rule.  Solution
 options: use different keyword (`when`), or change expression grammar
 to not greedily consume `if` without `else`.
+
+## Desugar: Invariant Checks for `removed_node_types`
+
+After each desugar pass runs, the pipeline validates that any AST node
+types listed in the pass's `removed_node_types` are genuinely absent from
+the tree.  A pass that claims to remove `ast.Break` but misses a case is
+caught immediately.  See `_check_pass_invariants` in `pipeline.py`.
+
+**Lesson:** Declare `removed_node_types` on every pass that removes a node
+type.  The invariant check catches incomplete passes and incorrect metadata.
+Passes that transform without removing any type should leave it empty.
+
+## Source Spans: Lark's `visit_wrapper` Mechanism
+
+Lark's `Transformer._call_userfunc` dispatches to named methods with just
+`children` — the tree `meta` (source location) is lost.  However, if a
+method has a `visit_wrapper` attribute, Lark calls it as
+`wrapper(method, data, children, meta)` — meta IS available.
+
+The `captures_span` decorator in `prototype/syntax/surface.py` uses this
+mechanism: it sets `method.visit_wrapper` to a function that extracts
+`SourceSpan` from `meta` and attaches it to any `SurfaceNode` result.
+
+**Key constraint:** Lark's `meta` only carries line/column when the parser
+is created with `propagate_positions=True`.  Without it, `meta.empty` is
+always `True` and no position data is available.
+
+**Lesson:** Use `@captures_span` on any lowering method that produces a
+`SurfaceNode`.  The decorator is a one-line addition that wires source
+location through the pipeline.
+
+## Dead Code: Duplicate Parse-Tree and AST-Level Passes
+
+`prototype/parser/nomi/desugar/precedence.py` contained a `Precedence` class
+that restructured flat `BinOp` chains at the Python AST level.  It was never
+registered in `BUILTIN_FEATURES` and never imported.  The actual precedence
+restructuring runs at the Lark parse-tree level via `ExpressionLayer` in
+`parse_tree_precedence.py`.
+
+**Pattern to watch for:** When a transform exists at both the parse-tree
+level (Lark `LayerTransform`) and the AST level (`BaseDesugarer`), only one
+should be active.  The parse-tree version is preferred for precedence because
+it runs before AST lowering, keeping the AST transformer simpler.
+
+**Lesson:** Audit `prototype/parser/nomi/desugar/` for other unregistered
+classes that duplicate parse-tree-level transforms.  A scan for classes
+extending `BaseDesugarer` or `NomiDesugarer` that are not in `BUILTIN_FEATURES`
+would catch this pattern.
+
+## Desugar: Feature Registry as Single Source of Truth
+
+The `BUILTIN_FEATURES` list in `prototype/syntax/features.py` now drives
+four registries that were previously hardcoded:
+
+1. Layer transforms (`get_layer_transforms()`)
+2. Lowering mixin composition (`get_lowering_mixins()`)
+3. Extra grammar layers (`get_extra_grammar_layers()`)
+4. Desugar passes (`get_desugar_passes()`)
+
+Adding a new syntax feature means adding one entry to `BUILTIN_FEATURES`
+plus the implementation module.  No editing `assemble.py`, `functions.py`,
+or `pipeline.py`.
+
+**Lesson:** When adding infrastructure that derives configuration from
+feature declarations, validate at import time (like `_validate_pipeline` does
+for `depends_on`).  Silent misconfiguration is worse than a loud error.
