@@ -1,8 +1,13 @@
 # Concurrency & Async Convenience
 
 > Normal forms: Block + Flow. The block/yield model is the one control
-> abstraction — async, iteration, resource management are all block policies,
-> not separate function colors.
+> abstraction — async, iteration, resource management, and structured
+> concurrency are all block policies, not separate function colors.
+>
+> Deep research: [cross_language_synthesis_master.md §4.5](../research/cross_language_synthesis_master.md)
+> (capstone block normal form),
+> [beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md)
+> (OTP, supervision trees, let-it-crash, Gleam `use`).
 >
 > Companion: [design_lessons_and_integration.md §7.1](design_lessons_and_integration.md)
 > for the function-color systemic pattern and why Nomi avoids it.
@@ -41,7 +46,7 @@ model.
 
 ## 2. Structured Concurrency (Future)
 
-Scoped coroutines that ensure cleanup and prevent leaks. Should grow from block
+Scoped coroutines that ensure cleanup and prevent leaks. Grow from block
 calls, cancellation, result values, and capability boundaries.
 
 ```nomi
@@ -52,15 +57,65 @@ parallel:
 result = (a, b)
 ```
 
+### Design (from cross-language synthesis)
+
 The block-policy approach means the concurrency scope is an ordinary call with
 an attached block. Cancellation, timeout, and cleanup are policies the callee
-applies, not keywords in the language.
+applies, not keywords in the language. This design follows from the capstone
+synthesis ([cross_language_synthesis_master.md §4.5](../research/cross_language_synthesis_master.md))
+and BEAM platform analysis ([beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md)).
 
-**Source reference:** Kotlin `coroutineScope`, Swift task groups, Python
-`asyncio.TaskGroup`, Trio nurseries.
+**Core principles (design-settled):**
 
-**Status:** design-needed. Wait for block calls, cancellation semantics,
-diagnostics, and result values to settle.
+- **No function coloring.** `yield` is the single control-transfer mechanism.
+  Concurrency is not a separate function family — it's a block policy.
+- **Supervision as block policy.** The callee manages child task lifecycle,
+  restart, and cleanup (Erlang/OTP supervision tree model, adapted to block
+  calls).
+- **Cancellation is a block concern.** Cancelling a block cancels all child
+  blocks it spawned. The cancellation propagates through the yield mechanism.
+- **Error handling in concurrent contexts uses `Result` + `match`.** When a
+  child task fails, the parent receives `Err(...)` via the block mechanism.
+  Exceptions are for unexpected errors only.
+- **`defer` runs on block exit**, including cancellation exit — cleanup is
+  guaranteed regardless of how the block terminates.
+
+**Prerequisites (must be settled first):**
+- Block-call semantics (implemented — see [block_calls_feature.md](../features/block_calls_feature.md))
+- `Result[T, E]` type (design-settled — see [absence_and_result.md](absence_and_result.md))
+- Cancellation semantics (design-needed — sketched below)
+- Diagnostics for concurrent failures (design-needed)
+
+### Cancellation Semantics (Sketch)
+
+Cancellation is cooperative (not preemptive). A block polls for cancellation
+at yield points:
+
+```nomi
+# The callee checks for cancellation; the block yields control
+func fetch_with_timeout(url, timeout):
+    timer = start_timer(timeout)
+    defer timer.cancel()
+    yield  # check for cancellation
+    result = http.get(url)
+    yield  # check again
+    return result
+```
+
+The key invariant: cancellation only happens at `yield` points, so all cleanup
+(`defer` blocks) runs deterministically.
+
+**Status:** design-settled for the approach (block policies, no function
+coloring, supervision). Implementation waits for block calls, cancellation,
+and `Result` to be settled.
+
+### Channels / Actors
+
+Deferred to library/advanced layer. The block-call model can express
+message-passing patterns (Go goroutines/channels, Elixir actors), but the
+design space is large. The first everyday language does not need these.
+
+**Status:** research-only.
 
 ## 3. Parallel Collections (Future)
 
@@ -93,7 +148,7 @@ everyday language.
 | Candidate | Status | Decision |
 |-----------|--------|----------|
 | Python async/await | available (interop) | Use for Python ecosystem compatibility; not the Nomi design target. |
-| Structured concurrency | design-needed | Grow from block calls, cancellation, and result values. |
+| Structured concurrency | design-settled (approach) | Block policies, no function coloring, supervision model. Implementation waits for prerequisites. |
 | Parallel collections | library-first | Build on structured concurrency; `par_map` as a block policy. |
 | Channels / actors | research-only | Block-call patterns can express this; defer to future layer. |
 | Reactive streams | research-only | Pipeline over async sequences; library-first if needed. |

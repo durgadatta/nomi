@@ -3,7 +3,9 @@
 > Normal form: Flow.  Values passed through calls, functions, collection
 > transforms, or query plans.  Pipeline is the canonical spelling.
 >
-> Deep research: [array_languages_deep_dive.md](../research/array_languages_deep_dive.md),
+> Deep research: [table_and_flow_systems_deep_dive.md](../research/table_and_flow_systems_deep_dive.md)
+> (8-system survey: SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q),
+> [array_languages_deep_dive.md](../research/array_languages_deep_dive.md),
 > [scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md),
 > [structured_collections_query_language.md](../features/structured_collections_query_language.md).
 
@@ -31,19 +33,108 @@ R `%>%`, Nushell `|`.
 
 ## 2. Collection Verbs
 
-Basic transforms are library functions, not syntax:
+Collection transforms are library functions over typed values. The verb
+vocabulary is drawn from cross-language synthesis (SQL, LINQ, dplyr, Polars,
+DuckDB, Nushell, pandas, K/Q) — the full synthesis is in
+[table_and_flow_systems_deep_dive.md](../research/table_and_flow_systems_deep_dive.md).
 
-| Verb | Meaning |
-|------|---------|
-| `map` / `select` | Transform each item or project fields |
-| `where` / `filter` | Keep items matching a predicate |
-| `fold` / `reduce` | Combine items into one value |
-| `sort` | Order by default or key |
-| `count`, `sum`, `min`, `max` | Common reductions |
+### Core Verbs
 
-Table-specific verbs (`derive`, `group_by`, `join`, `window`, `pivot`)
-and plan `explain` remain in the structured-collections source note
-until the query vocabulary stabilises.
+| Verb | Meaning | Source precedent |
+|------|---------|-----------------|
+| `where` | Keep rows matching a predicate | SQL WHERE, dplyr `filter()`, Polars `.filter()` |
+| `select` | Project or rename columns | SQL SELECT, dplyr `select()`, Polars `.select()` |
+| `derive` | Add computed columns | dplyr `mutate()`, Polars `.with_columns()`, SQL SELECT |
+| `group` / `group_by` | Add grouping metadata for subsequent verbs | dplyr `group_by()`, SQL GROUP BY, Polars `.group_by()` |
+| `summarize` | Aggregate groups into one row each | dplyr `summarize()`, SQL aggregate functions |
+| `join` | Combine two tables on key columns | SQL JOIN, dplyr `*_join()`, Polars `.join()` |
+| `sort` | Order rows by key | SQL ORDER BY, dplyr `arrange()` |
+| `window` | Apply window functions over partitions | SQL OVER, Polars `.over()` |
+| `fold` / `reduce` | Combine values into one | FP fold/reduce, Polars `.fold()` |
+| `take` | Limit rows | SQL LIMIT, dplyr `slice()` |
+| `distinct` | Remove duplicate rows | SQL DISTINCT, dplyr `distinct()` |
+| `explain` | Show the query plan without executing | SQL EXPLAIN, Polars `.explain()`, DuckDB EXPLAIN |
+
+### Design Principles
+
+These are settled design decisions (from cross-language synthesis):
+
+**One verb, one way.** One canonical verb per operation. Convenience aliases
+(e.g., `filter` for `where`, `mutate` for `derive`) must desugar to the
+canonical verb. No `inplace=True` — verbs always return new values.
+
+**Tables are ordinary values.** Table literals, query results, and file loads
+all produce the same `Table` type. Every verb takes a table and returns a
+table. No separate index axis — keys are column metadata.
+
+**`group_by()` is context, not a separate verb set.** Grouping adds metadata
+to a table; subsequent verbs (`summarize`, `window`, `derive`) automatically
+respect grouping context. No separate "grouped verbs" vocabulary.
+
+**Expressions are structural, not opaque callbacks.** Verb arguments are
+composable expression values, not anonymous functions:
+
+```nomi
+# Expression captures structure for explain/optimize
+active = users |> where(.active) |> select(.name, .email)
+
+# Equivalent to: filter by column, project named columns
+```
+
+The `.field` syntax provides column-name scoping within verb expressions.
+Explicit lambdas (`x => x.field`) are available when needed but are opaque
+to the query planner.
+
+**Lazy/eager with identical API.** A lazy data source (CSV file, database
+table) builds a query plan; an eager data source (in-memory table) executes
+immediately. Both use the same verb API:
+
+```nomi
+# Eager: executes immediately
+in_memory_table |> where(.score > 50)
+
+# Lazy: builds plan, executes on materialization
+csv_file |> where(.score > 50) |> collect()
+```
+
+Materialization triggers: `collect()`, iteration, `explain()`, writing to disk.
+
+**`explain()` is first-class.** Every verb plan supports `explain()` for
+inspection without execution:
+
+```nomi
+plan = csv_file |> where(.score > 50) |> group_by(.region) |> summarize(avg_score = .score.mean())
+plan.explain()
+# Shows: estimated rows, column schema, operations, optimization opportunities
+```
+
+**Schema maintained across all operations.** Every verb preserves and augments
+column-level schema (name, type, constraints). Schema errors are caught at plan
+construction time for lazy sources.
+
+**Columnar layout.** Nomi tables use struct-of-arrays (columnar) memory layout,
+compatible with Apache Arrow. This enables zero-copy interop with Polars,
+DuckDB, and other columnar systems.
+
+### Query Syntax (Future)
+
+SQL-like query blocks are deferred. The architectural invariant is:
+
+> Query syntax, if added later, MUST lower to the same verb vocabulary as
+> pipeline expressions.
+
+This is the LINQ lesson: query expressions and method chains are two surfaces
+over the same operators (`IQueryable`). Nomi preserves this option by building
+the verb vocabulary first and treating query syntax as syntactic sugar over it.
+
+**Status:** library-first for core verbs; table/query plan verbs are
+design-settled (vocabulary and semantics decided, implementation deferred).
+
+### Explicit Broadcasting (Future)
+
+Julia-style explicit broadcasting (`f.(x)`) is a future concern. Start with
+named shape/rank functions. Implicit broadcasting is rejected for the first
+layer (conflicts with Python scalar semantics).
 
 ## 3. Ranges
 
@@ -101,7 +192,7 @@ selectively adopt:
 | Explicit broadcasting (Julia `.`) | Design-needed; opt-in with visible marker |
 | Function trains (J forks/hooks) | Partial; `_` holes cover the 80% case |
 | Rank polymorphism | Research-only; future layer |
-| K/Q table operations | Design-needed; subsumed by structured-collections work |
+| K/Q table operations | Design-settled; see §2 Collection Verbs above |
 | Each/over/scan adverbs | Partial; `map`/`reduce` exist; `scan` is library-first |
 
 For deep analysis, see [array_languages_deep_dive.md](../research/array_languages_deep_dive.md).
@@ -112,7 +203,7 @@ For deep analysis, see [array_languages_deep_dive.md](../research/array_language
 |------|----------|
 | Implicit elementwise list arithmetic | Rejected; conflicts with Python list semantics |
 | Dense APL/J/K rank notation | Future layer; start with named shape/rank functions |
-| SQL-like query blocks | Design-needed; must reduce to collection/query plan verbs |
+| SQL-like query blocks | Design-settled; must lower to same verb vocabulary as `|>` pipelines |
 | Multiple pipeline spellings | Rejected; keep `|>` as the single flow operator |
 | Implicit broadcasting | Rejected for first layer |
 
@@ -127,8 +218,10 @@ For deep analysis, see [array_languages_deep_dive.md](../research/array_language
 | Spread in literals | partial |
 | Slices | Python-compatible |
 | Collection verbs (map/filter/reduce) | implemented as library functions |
+| Core verb vocabulary (where/select/derive/group/join/sort/window/fold/take/distinct) | design-settled |
+| `explain()` for query plans | design-settled |
+| Lazy/eager with identical API | design-settled |
 | Lazy collection adapters | library-first |
-| Table/query plan verbs | design-needed |
 | Explicit broadcasting | design-needed |
 
 ## 10. Design Context

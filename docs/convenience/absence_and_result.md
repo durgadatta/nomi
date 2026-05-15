@@ -1,9 +1,18 @@
 # Absence & Result Handling
 
-> Normal forms: Absence/result + Block.  Two distinct stories that do not
-> collapse into each other: absence (`?.`, `??`, `Option`) handles "no
-> value"; expected failure (`Result`, `try`, `?`) handles "operation
-> failed"; exceptions handle "unexpected error."
+> Normal forms: Absence/result + Block.
+>
+> Three distinct stories that do not collapse into each other:
+> - **Absence** (`none`, `?.`, `??`, `Option[T]`) — "no value"
+> - **Expected failure** (`Result[T, E]`, `match`, `try`-as-expression) — "operation failed"
+> - **Unexpected error** (exceptions) — "unexpected, unrecoverable at this call site"
+>
+> Deep research: [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md)
+> (16-language error/defer/resource survey),
+> [cross_language_synthesis_master.md §4.7](../research/cross_language_synthesis_master.md)
+> (capstone absence/result synthesis),
+> [security_and_trust_deep_dive.md](../research/security_and_trust_deep_dive.md)
+> (secret redaction in diagnostics).
 >
 > Companion: [design_lessons_and_integration.md §4.6](design_lessons_and_integration.md)
 > for the integration critique and systemic lessons.
@@ -46,21 +55,28 @@ Desugars to `user.name if user.name is not None else "anonymous"`.
 
 ### Option Type
 
-Algebraic type for presence or absence. Safer than null because the
-compiler or runtime enforces handling.
+`Option[T]` is the absence-bearing type. It is structural (not nominal):
+`Some(42)` matches the `Option` pattern regardless of origin. This lets
+Nomi code use `Option` without mandatory imports and allows Python `None`
+to interoperate naturally.
 
 ```nomi
 data Option[T]:
     Some(value: T)
     None
 
+# `none` is the canonical spelling (Python None interop)
 name = find(42).unwrap_or("default")
 upper = find(42).map(_.upper())
 ```
 
+The spelling `none` (not `None`, `nil`, `null`) is the canonical absence
+value. Python `None` is accepted at the boundary but `none` is the
+preferred Nomi spelling.
+
 **Source reference:** Rust `Option<T>`, Swift `Optional<T>`, Scala `Option[T]`,
 Haskell `Maybe`, OCaml `option`.
-**Status:** design-needed (Track 4).
+**Status:** design-settled (implementation deferred to Track 4).
 
 ---
 
@@ -68,8 +84,9 @@ Haskell `Maybe`, OCaml `option`.
 
 ### Result Type
 
-Algebraic type for success or failure. Enables monadic error handling
-without exceptions.
+`Result[T, E]` is the expected-failure type. It is nominal (`data`),
+not structural — `Ok(42)` from different modules are the same `Result`
+type, but `Result` is not confused with other two-variant data types.
 
 ```nomi
 data Result[T, E]:
@@ -77,9 +94,21 @@ data Result[T, E]:
     Err(error: E)
 ```
 
+The primary consumption story is `match`:
+
+```nomi
+match parse(input):
+    case Ok(value): process(value)
+    case Err(error): log(error); recover
+```
+
+Result is distinct from `Option`. `?.` and `??` operate on `Option`
+(absence) only — they do NOT short-circuit on `Err`. This prevents the
+Python mistake of silently mixing `None` with error states.
+
 **Source reference:** Rust `Result<T,E>`, Swift `Result<T,E>`,
 Kotlin `Result<T>`, Scala `Either[E,T]`.
-**Status:** design-needed (Track 4).
+**Status:** design-settled (implementation deferred to Track 4).
 
 ### Try as Expression
 
@@ -117,11 +146,31 @@ match expr:
 ```
 
 **Source reference:** Rust `?`, Swift `try`, Zig `try`.
-**Status:** design-needed (requires `Result` type).
+**Status:** deferred. `match` is the primary `Result` consumption story.
+`?` will be considered only after `Result` is widely used and return-type
+rules are explicit.
 
-**Design note:** Deferred until `Result` is widely used. The risk: `?` for
-Result next to `?.` for absence creates two visually similar operators with
-different semantics. See [design_lessons_and_integration.md §4.6](design_lessons_and_integration.md).
+**Deferral rationale:** `?` for Result next to `?.` for absence are visually
+similar operators with different semantics: `?.` short-circuits on `none`;
+`?` propagates `Err`. Early Nomi code will use explicit `match` for Result
+handling. If this proves verbose in the same way Go's `if err != nil` does,
+`?` can be added as a surface sugar — it lower to the same `match` form
+users already write. See [design_lessons_and_integration.md §4.6](design_lessons_and_integration.md)
+for the full analysis.
+
+### Error Conversion
+
+When `?` or other propagation operators are added, they will need explicit
+error conversion rules:
+
+```nomi
+# Sketch: error conversion trait
+trait IntoError[E]:
+    func into_error(self) -> E
+```
+
+This is Rust's `From`/`Into` pattern for error types. The design is deferred
+with `?` — the conversion story should be settled before propagation syntax.
 
 ---
 
@@ -182,18 +231,21 @@ For Zig's `errdefer` (defer only on error), see
 | `try` as expression | implemented | IIFE wrapping |
 | `guard` pattern | implemented | exit diagnostic future |
 | `defer` | implemented | |
-| `Option[T]` type | design-needed | Track 4 |
-| `Result[T, E]` type | design-needed | Track 4 |
-| `?` error propagation | design-needed | requires `Result` |
-| Elvis `?? return/raise` | design-needed | would reduce to guard or `?` |
+| `Option[T]` type | design-settled | structural; `none`/`Some`; implementation deferred to Track 4 |
+| `Result[T, E]` type | design-settled | nominal data type; `Ok`/`Err`; implementation deferred to Track 4 |
+| `?` error propagation | deferred | `match` primary; reconsider after Result usage data |
+| Elvis `?? return/raise` | rejected-for-now | would reduce to guard or `?`; adds no new semantic capability |
+| `Secret[T]` / `PII[T]` in error messages | design-settled | auto-redact in diagnostics; see [data_and_types.md](data_and_types.md) |
 
 ---
 
 ## 6. Research Sources
 
-- [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md) — Zig, Hylo, Odin, Gleam, Roc
+- [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md) — 16-language survey: Zig, Hylo, Odin, Gleam, Roc, Swift, Kotlin, Scala, Java, Python, C++, Haskell
+- [cross_language_synthesis_master.md §4.7](../research/cross_language_synthesis_master.md) — capstone absence/result synthesis with Nomi Adopt/Refuse decisions
 - [design_lessons_and_integration.md §4.6](design_lessons_and_integration.md) — integration critique
 - [design_lessons_and_integration.md §7.6](design_lessons_and_integration.md) — three-distinct-stories systemic pattern
+- [security_and_trust_deep_dive.md](../research/security_and_trust_deep_dive.md) — `Secret[T]` redaction in diagnostics and error messages
 
 ## 7. Design Context
 

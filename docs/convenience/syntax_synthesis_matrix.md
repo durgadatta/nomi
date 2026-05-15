@@ -1,15 +1,17 @@
 # Syntax Synthesis Matrix
 
-> Status: source research synthesis; concrete decisions belong in syntax docs.
+> Status: comparison evidence with design decisions folded into per-feature docs
+> (May 2026). Many "Nomi recommendation" items are now design-settled in their
+> respective convenience docs. This matrix remains the cross-language evidence
+> for those decisions.
 >
 > Scope: documentation-only. This document broadens the language sample, groups
 > near-equivalent syntax features by user need, and recommends how Nomi should
 > combine them without becoming a feature collage.
 >
-> Consolidation note: keep this as comparison evidence. Fold stable decisions
-> into `review_and_roadmap.md` and the focused convenience docs such as
-> `functions.md`, `patterns.md`, `flow_and_collections.md`, `absence_and_result.md`,
-> `data_and_types.md`, and `scope_context.md`.
+> Consolidation note: keep this as comparison evidence. Stable decisions are
+> folded into `review_and_roadmap.md` and the focused convenience docs. The
+> 23-file deep dive research corpus backs the recommendations.
 
 ## Purpose
 
@@ -64,6 +66,20 @@ This pass adds or sharpens pressure from:
   dynamic blocks, splats, and the cost of too much generated structure.
 - Racket contracts, CUE, Nickel, Pkl, Dhall, JSON Schema, and Pydantic-style
   systems: boundary validation, defaults, documentation, and error paths.
+- Go, Cargo, Mix, npm, NuGet, Nix flakes, Maven: package management, module
+  visibility, import paths, and supply-chain integrity models.
+- Erlang/Elixir/Gleam (BEAM): supervision trees, let-it-crash, OTP patterns,
+  and Gleam's `use` as a control-flow abstraction.
+- Rustdoc, ExDoc, Python doctest, Sphinx, Go doc, Javadoc, TypeDoc: doc-as-test
+  execution models, examples as assertions, diagnostic formats.
+- gofmt, rustfmt, Prettier, Black, dart format, elm-format, Fourmolu: formatter
+  design doctrines — config vs. no-config, output stability, shipping timeline.
+- In-toto, Sigstore, SLSA, TUF, Go checksum DB, Dhall integrity checks:
+  supply-chain attestation, content-addressed imports, and verifiable build
+  provenance.
+- Tree-sitter, Roslyn, rust-analyzer, tsserver, Dart LSP, ElixirLS:
+  semantic token design, error recovery strategies, LSP architecture, and
+  AI-readable representation choices.
 
 For a broader map of source-language families, adoption lessons, and
 under-covered research dimensions, see
@@ -89,6 +105,10 @@ under-covered research dimensions, see
 | Local derivations | Haskell `where`, ML `let/in`, Nix `let/in`, Python assignment expressions, SQL CTEs | Some put definitions before use; some keep the main expression first; CTEs name intermediate query plans. | Keep `where` as expression-local explanation and reuse normal binding constraints inside it. Use pipeline stage names or plan values for complex data flows. |
 | Metaprogramming | Lisp/Racket macros, Nim templates/macros, Scala inline, Terraform dynamic blocks, Julia macros | Macros can make elegant domain languages or create uninspectable private syntax. | Postpone global macros. Let normal forms, source spans, and desugaring explanations mature first. Prefer library functions, block policies, and explicit plan values. |
 | Documentation as execution | Rust doc tests, Python doctest, Julia docstrings, Racket contracts, Darklang traces, examples in specs | Some test snippets; some enforce boundaries; some keep live values for debugging. | Make examples, trace records, and diagnostics one explanation story. Examples should be docs, tests, and anchors for `explain`. |
+| Code formatting | gofmt (no config), rustfmt (minimal config), Black (limited knobs), Prettier (opinionated), dart format (no config), elm-format (no config) | Configurable formatters create ecosystem forks; no-config formatters eliminate style debates. Every language that shipped a formatter late spent years on stylistic churn. | Ship `nomi fmt` from day 1. No configuration. Tabs. Canonical output on every save. The formatter is the style guide. |
+| Supply-chain security | Go checksum DB, Nix fixed-output derivations, Dhall integrity checks, npm integrity hashes, Sigstore/SLSA attestation, TUF update framework | Some verify content at download; some attest build provenance; some sign packages. Each addresses a different link in the supply chain. | Content-addressed imports (`sha256:...`), domain-name import paths, no code execution during import, `nomi.lock` with transitive hashes. Attestation deferred to ecosystem layer. |
+| Structured concurrency | Erlang/OTP supervision trees, Gleam `use`, Kotlin structured concurrency, Swift async/await with task groups, Python trio nurseries | Some are language keywords; some are library patterns; some couple concurrency to a function color. The key design fork is whether concurrency is a separate function family or a block policy. | Concurrency as block policies over `yield` — no second function color. Supervision, cancellation, and cleanup are callee-side policies. Defer channels/actors to library layer. |
+| AI-readable semantics | Tree-sitter grammars, Roslyn green/red trees, rust-analyzer semantic tokens, tsserver program model, Dart LSP labels, ElixirLS semantic analysis | Some expose concrete syntax trees; some expose resolved semantics; some are lossy over whitespace. AI tools need different representations than human-facing diagnostics. | Ship Tree-sitter grammar and LSP from day 1. Semantic tokens layer over CST (not AST). Preserve source spans through all lowering passes. `explain` output is machine-readable by default. |
 
 ## Similar But Not Same
 
@@ -105,6 +125,8 @@ These features look interchangeable until the failure mode matters.
 | Comprehensions, query `select`, splat, map/filter | They transform collections, but they expose different binding scopes. | Prefer pipeline verbs until a query form proves it improves row/group binding and explanation. |
 | `_`, `$0`, `%`, `it`, operator sections | Shorthand is pleasant only while the reader can infer parameters instantly. | Use at most one primary placeholder family; require explicit `=>` once the transform is not tiny. |
 | Macros, templates, decorators, annotations | Some transform syntax; some attach metadata; some wrap runtime behavior. | Decorators/annotations may remain ordinary metadata. Syntax-transforming macros are future layer. |
+| gofmt, Black, Prettier, rustfmt, dart format | Some allow config; some forbid it. Configurable formatters create ecosystem forks and endless style debates. | No configuration. One canonical output. The formatter is the style guide — ship it day 1. |
+| Checksum DB, TUF, npm integrity, Sigstore, SLSA | Some verify content at fetch; some attest build provenance; some sign packages at publish time. | Content-addressed imports for integrity at fetch. Build attestation deferred to ecosystem. No code execution during import. |
 
 ## Pleasant Syntax Principles
 
@@ -203,14 +225,23 @@ preserve the same explanation model.
 The coherent bundle for the next design pass is:
 
 1. Binding constraints everywhere a name is introduced.
-2. `data` for owned values and `Data.decode(...)` for external boundaries.
+2. `data` for owned values, `Data.decode(...)` for external boundaries,
+   `@secret`/`@pii` annotations for sensitive fields.
 3. Pattern matching as the shared basis for `match`, if-let, guard-let, and
    destructuring.
 4. One pipeline operator plus one placeholder family.
-5. One block-call form for caller-side policy code.
-6. `Result` as data before result propagation sugar.
+5. One block-call form for caller-side policy code — concurrency, resources,
+   retries, and tracing are all block policies, not separate function colors.
+6. `Result` as data before result propagation sugar. Three-story error taxonomy:
+   absence (`?.`/`??`), expected failure (`Result` + `match`), unexpected error
+   (exceptions).
 7. Trace records as the substrate for diagnostics, examples, query plans, and
    boundary errors.
+8. `nomi fmt` shipped day 1 — no config, tabs, canonical output on save.
+9. Content-addressed imports with hash verification, domain-name import paths,
+   no code execution during import.
+10. Tree-sitter grammar + LSP from day 1, semantic tokens over CST,
+    machine-readable `explain` output.
 
 Together, those choices allow pleasant code without adding isolated syntax:
 
@@ -256,14 +287,16 @@ Use this ladder when deciding whether research becomes syntax.
 | Tier | Meaning | Examples |
 | --- | --- | --- |
 | Tier 0: core normal form | User-facing concept Nomi should teach directly. | binding, function, call, data, pattern, match, block, diagnostic |
-| Tier 1: surface sugar | Common, readable form with obvious desugaring and diagnostics. | `|>`, `_`, `??`, if-let, guard-let, `where`, equations |
-| Tier 2: library-first | Useful pattern that should prove itself as functions/data/block policy. | query plans, config merge, result pipelines, trace blocks, rank helpers |
-| Tier 3: future layer | Powerful but likely to distort the first everyday language. | effect handlers, macros, ownership/regions, dense array notation |
-| Tier 4: reject for now | Competing syntax for a need already served more coherently. | second placeholder family, separate `schema` peer to `data`, generic propagation for absence and errors |
+| Tier 1: surface sugar | Common, readable form with obvious desugaring and diagnostics. | `|>`, `_`, `??`, if-let, guard-let, `where`, equations, `nomi fmt` |
+| Tier 2: library-first | Useful pattern that should prove itself as functions/data/block policy. | query plans, config merge, result pipelines, trace blocks, rank helpers, parallel collections |
+| Tier 3: future layer | Powerful but likely to distort the first everyday language. | effect handlers, macros, ownership/regions, dense array notation, channels/actors |
+| Tier 4: reject for now | Competing syntax for a need already served more coherently. | second placeholder family, separate `schema` peer to `data`, generic propagation for absence and errors, configurable formatter |
 
 ## Research Backlog
 
-Focused follow-up passes should be small and comparative:
+Focused follow-up passes should be small and comparative. Items marked ✓ have
+deep-dive research completed; the decisions now live in per-feature convenience
+docs and this matrix.
 
 - **Adoption gap synthesis**: use
   [Language Direction And Gap Map](../language/language_direction_and_gap_map.md)
@@ -271,20 +304,39 @@ Focused follow-up passes should be small and comparative:
   work, diagnostics, standard-library shape, and Python interop.
 - **ML-family diagnostics**: compare OCaml/F#/Rust/Python match exhaustiveness,
   redundancy, guards, and error messages; extract diagnostics for Nomi match.
-- **Structured pipeline vocabulary**: compare Nushell, dplyr, Polars, SQL,
-  LINQ, and Clojure transducers; define Nomi verbs and plan/explain behavior.
-- **Boundary provenance**: compare CUE, Nickel, Pkl, Dhall, Terraform, Nix,
-  JSON Schema, and Pydantic; specify field source paths, defaults, redaction,
-  and merge diagnostics.
-- **Block policy semantics**: compare Ruby blocks, Julia `do`, Nim block
-  arguments, Swift trailing closures, Python context managers, Gleam `use`,
-  and effect-handler research; specify `yield`, cancellation, and result flow.
+- **Structured pipeline vocabulary** ✓ — resolved in
+  [table_and_flow_systems_deep_dive.md](../research/table_and_flow_systems_deep_dive.md)
+  and folded into [flow_and_collections.md](flow_and_collections.md).
+- **Boundary provenance** ✓ — resolved in
+  [data_boundary_systems_deep_dive.md](../research/data_boundary_systems_deep_dive.md)
+  and folded into [data_and_types.md](data_and_types.md).
+- **Block policy semantics** ✓ — resolved in
+  [cross_language_synthesis_master.md §4.5](../research/cross_language_synthesis_master.md)
+  and [beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md);
+  folded into [concurrency.md](concurrency.md).
 - **Tour regression**: after each accepted syntax decision, update
   [Target Language Tour](../language/target_language_tour.md) and remove any
   spelling that only works in an isolated snippet.
 - **Placeholder discipline**: compare Scala `_`, Swift `$0`, Elixir `&1`,
   Clojure `%`, Kotlin `it`, and Haskell sections; finalize Nomi's implicit
   function scoping rule.
+- **Formatter stability and CLI** — resolved in
+  [formatting_and_style_deep_dive.md](../research/formatting_and_style_deep_dive.md).
+  Spec-level decisions: no config, tabs, 100-char lines, shipped day 1.
+- **Supply-chain integrity design** — resolved in
+  [security_and_trust_deep_dive.md](../research/security_and_trust_deep_dive.md).
+  Spec-level decisions: content-addressed imports, domain-name paths, `nomi.lock`,
+  no code execution during import.
+- **AI/tooling architecture** — resolved in
+  [ai_readable_semantics_deep_dive.md](../research/ai_readable_semantics_deep_dive.md).
+  Spec-level decisions: Tree-sitter + LSP from day 1, semantic tokens over CST,
+  machine-readable `explain` output.
+- **First-hour pedagogy design** — resolved in
+  [first_hour_pedagogy_deep_dive.md](../research/first_hour_pedagogy_deep_dive.md).
+  Awaiting implementation surface for validation.
+- **Package management architecture** — resolved in
+  [packaging_and_project_structure_deep_dive.md](../research/packaging_and_project_structure_deep_dive.md).
+  Spec-level decisions: files-as-modules, `pub` visibility, optional `package.nomi`.
 
 ## Design Context
 
@@ -304,6 +356,24 @@ for making them:
   freedom a feature gets.
 - [Language Design Dimensions §2 (Level 4)](../language/language_design_dimensions.md) —
   the 8 irreducible primitives that all syntax ultimately reduces to.
+
+### Deep Dive Research (May 2026)
+
+23 cross-language deep dives back the decisions in this matrix. Key dimensions:
+
+- [Table and Flow Systems](../research/table_and_flow_systems_deep_dive.md) — collection verb vocabulary, query plans
+- [Data Boundary Systems](../research/data_boundary_systems_deep_dive.md) — decode/validate/merge architecture
+- [Security and Trust](../research/security_and_trust_deep_dive.md) — content-addressed imports, @secret/@pii, supply-chain integrity
+- [Formatting and Style](../research/formatting_and_style_deep_dive.md) — no-config formatter doctrine, output stability
+- [AI-Readable Semantics](../research/ai_readable_semantics_deep_dive.md) — Tree-sitter, LSP, semantic tokens
+- [BEAM Languages](../research/beam_languages_erlang_elixir_gleam.md) — supervision, let-it-crash, structured concurrency
+- [Packaging and Project Structure](../research/packaging_and_project_structure_deep_dive.md) — module visibility, import paths
+- [Package Docs and Examples](../research/package_docs_and_examples_deep_dive.md) — doc-test execution models
+- [Interactive Explanation](../research/interactive_explanation_deep_dive.md) — trace records, explain views
+- [First-Hour Pedagogy](../research/first_hour_pedagogy_deep_dive.md) — onboarding, error message design
+
+Full index: [Language Family Coverage Map](../research/language_family_coverage_map.md).
+Capstone synthesis: [Cross-Language Synthesis Master](../research/cross_language_synthesis_master.md).
 
 ## Source Links
 
@@ -341,3 +411,35 @@ for making them:
   <https://developer.hashicorp.com/terraform/language/expressions>
 - Terraform dynamic blocks:
   <https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks>
+- gofmt design philosophy:
+  <https://go.dev/blog/gofmt>
+- Rustfmt configuration:
+  <https://rust-lang.github.io/rustfmt/>
+- Prettier philosophy:
+  <https://prettier.io/docs/en/option-philosophy.html>
+- Elm format (no config):
+  <https://github.com/avh4/elm-format>
+- Dart format:
+  <https://dart.dev/tools/dart-format>
+- Go checksum database:
+  <https://go.dev/doc/modules/gomodref#checksum-database>
+- Nix fixed-output derivations:
+  <https://nix.dev/manual/nix/2.23/language/advanced-attributes>
+- Dhall integrity checks:
+  <https://docs.dhall-lang.org/tutorials/Language-Tour.html#sha256-integrity-checks>
+- Sigstore:
+  <https://www.sigstore.dev/>
+- in-toto attestations:
+  <https://in-toto.io/>
+- Gleam `use` expressions:
+  <https://gleam.run/language-reference/use-expressions/>
+- Erlang/OTP supervision:
+  <https://www.erlang.org/doc/design_principles/sup_princ>
+- Tree-sitter:
+  <https://tree-sitter.github.io/tree-sitter/>
+- Semantic Tokens (LSP spec):
+  <https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens>
+- Elixir doctest:
+  <https://hexdocs.pm/ex_unit/ExUnit.DocTest.html>
+- Rust doc tests:
+  <https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html>

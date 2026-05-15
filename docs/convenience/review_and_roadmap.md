@@ -48,6 +48,8 @@ Every convenience note should use these labels when discussing a feature:
 
 - **implemented**: behavior exists in the prototype and is covered by tests or
   runnable examples.
+- **design-settled**: semantics, diagnostics, and interaction are decided in
+  design docs; cross-language research backs the decision. Not yet implemented.
 - **prototype-ready**: syntax and reduction are clear enough for an
   implementation slice.
 - **design-needed**: the user model is promising, but semantics, diagnostics,
@@ -212,8 +214,8 @@ Consolidation decisions:
 - Collection verbs such as `where`, `select`, `derive`, `group`, `join`,
   `sort`, `fold`, and `window` should begin as functions over ordinary
   collections or query plans.
-- SQL-like query blocks are design-needed until they reduce cleanly to the
-  same transform vocabulary.
+- SQL-like query blocks are deferred; must lower to the same verb vocabulary
+  as pipeline expressions (LINQ model). Verb vocabulary is design-settled.
 - APL/J/K-style array ideas should enter as readable shape/rank functions
   before any dense notation.
 
@@ -245,8 +247,9 @@ Consolidation decisions:
 - Treat Swift `guard`, Ruby blocks, Kotlin trailing lambdas, Python context
   managers, pytest fixtures, and Gleam `use` as reference pressure for the same
   block/call idea.
-- Structured concurrency should wait until block calls, cancellation,
-  diagnostics, and result semantics are settled.
+- Structured concurrency approach is design-settled (block policies, no
+  function coloring, supervision model). Implementation waits for block
+  calls, cancellation, diagnostics, and Result to be implemented.
 
 ### Absence And Result Normal Form
 
@@ -274,8 +277,9 @@ Consolidation decisions:
 - `?.` and `??` are convenience syntax for absence-aware expressions, not a
   complete error-handling model.
 - `Result[T, E]` belongs with data variants and pattern matching.
-- A Rust-like `?` operator is design-needed until `Result`, return constraints,
-  and conversion rules are specified.
+- A Rust-like `?` operator is deferred. `match` is the primary `Result`
+  consumption story; `?` will be reconsidered after `Result` usage data
+  and error conversion rules are clear.
 - Elvis forms such as `value ?? return` remain rejected-for-now because they
   blur expression flow with statement-level exit before the result model exists.
 
@@ -351,26 +355,32 @@ same normal forms.
 
 | Candidate | Status | Normal form | Rationale | Critique |
 | --- | --- | --- | --- | --- |
-| Unified decode protocol for `data` | prototype-ready | data boundary + binding | Makes JSON/config/CLI/CSV one workflow. | Needs missing/extra field policy and source spans. |
-| Result values with `Ok`/`Err` | design-needed | data + pattern | Gives expected failure a readable model. | Must coexist with Python exceptions during bootstrap. |
+| Unified decode protocol for `data` | prototype-ready | data boundary + binding | Makes JSON/config/CLI/CSV one workflow. | Missing/extra field policy and source spans now design-settled. |
+| Result values with `Ok`/`Err` | design-settled | data + pattern | Gives expected failure a readable model. | Must coexist with Python exceptions during bootstrap. |
 | Command functions | library-first | data boundary + call | Turns function/data constraints into CLIs. | `command` keyword may be unnecessary at first. |
 | Config layering | library-first | decode + diagnostic | Defaults/file/env/args are common and repetitive. | Source precedence must be explicit and explainable. |
 | Structured logs and trace blocks | library-first | block + trace | Makes logging data-shaped and inspectable. | Avoid hidden global logger semantics. |
 | Path values and safe file helpers | library-first | data + constraint + block | Paths are not strings in everyday programs. | Must avoid bloating the core with OS policy. |
 | Duration/date/time literals | design-needed | value + constraint | Timeouts, schedules, and cache TTLs need readable values. | Time zones and ambiguous local times require careful diagnostics. |
-| Secret values | library-first | data + display policy | Prevents accidental leak in logs/diagnostics. | Must remain explicit at unwrap/use boundaries. |
+| Secret values / `@secret` / `@pii` | design-settled | data + display policy | `Secret[T]`, `PII[T]`, `@secret`/`@pii` annotations prevent accidental leak. | `explain --unsafe` as explicit escalation. |
 | Typed templates | research-only for domains; prototype-ready for plain text | value + data boundary | Plain messages are common; SQL/HTML need escaping discipline. | Domain templates need typed output and escaping policy first. |
 | Safe command execution | library-first | process result + diagnostics | Shell scripts need structured argv, status, stdout, stderr. | String shell mode must be explicit and visibly unsafe. |
 | Small task definitions | design-needed | module + function + process | Project automation is everyday work. | Risk of becoming a build system too early. |
 | Regex/string capture patterns | design-needed | pattern + binding | Useful for logs and text extraction. | Regex syntax must not become a second pattern language. |
-| Query plans with `explain` | design-needed | flow + trace | Lets collection/table transforms scale to backends. | Needs plan/value boundary before syntax. |
+| Query plans with `explain` | design-settled | flow + trace | Verb vocabulary (where/select/derive/group/join/sort/window/fold/take/distinct/explain) settled. | Query syntax deferred; must lower to same verbs. |
 | Shape/rank collection functions | research-only, library-first later | flow + collection | Learns from APL/J/Julia without glyph density. | Must not conflict with Python-compatible list arithmetic. |
-| Field provenance for decoded values | prototype-ready after decode | data boundary + diagnostic | Makes CLI/config/JSON/CSV errors name source and raw value. | Requires source spans/provenance to survive decode. |
+| Field provenance for decoded values | design-settled | data boundary + diagnostic | Source spans on decoded values; field paths in errors. | Implementation waits for decode protocol. |
 | Merge policies for layered config | library-first | data boundary + flow | Defaults/file/env/args need one predictable layering story. | Merge order and conflict policy must be explicit. |
-| Result pipelines | design-needed | flow + result | Chaining expected failures should not force nested matches. | Must not hide error conversion or early exits. |
+| Result pipelines | design-settled | flow + result | Collection verbs over Result-bearing values; `|>` as surface. | Must not hide error conversion or early exits. |
 | Failure-only cleanup | library-first | block policy | Zig-style `errdefer` solves real cleanup friction. | Should integrate with transactions, not become a separate exit system. |
 | Pure/read-only blocks | research-only | effect/capability boundary | Supports local reasoning without systems ownership syntax. | Too early before capabilities and mutation policy. |
 | Projection bindings | research-only | binding target + data policy | Hylo-style projections could make focused updates expressive. | Aliasing and mutation semantics are not settled. |
+| Collection verb vocabulary | design-settled | flow | 12-verb core (where/select/derive/group/summarize/join/sort/window/fold/take/distinct/explain). | Lazy/eager with identical API. |
+| Module visibility (`pub`) | design-settled | binding | `pub` keyword; private by default; explicit re-exports. | No code execution during import. |
+| `examples:` / `check:` blocks | design-settled | explanation | Rustdoc/Elixir doctest + power-assert model. | Trace records feed `explain`. |
+| Structured concurrency (approach) | design-settled | block | Block policies; no function coloring; supervision model. | Implementation waits for cancellation and Result. |
+| Content-addressed imports | design-settled | data boundary | `import "...pkg.nomi" sha256:...` for integrity. | Requires packaging infrastructure. |
+| Canonical formatter (`nomi fmt`) | design-settled | tooling | No configuration; tabs; 100-char lines; shipped from day 1. | Escape hatch: `# nomi: fmt: off/on`. |
 
 ## Cross-Feature Overlap And Decisions
 
@@ -521,9 +531,11 @@ explicit result model.
 ### `data_and_types.md`
 
 Covers type aliases, data declarations, strings (interpolation, multi-line,
-raw), extension methods, and operator overloading. Data classes and sum types
-are design-needed. Regex literals remain library-first. Typed templates are
-future boundary values, not ordinary string sugar.
+raw), extension methods, operator overloading, the `Data.decode()` protocol,
+`@secret`/`@pii` annotations, and content-addressed imports. Data classes,
+sum types, decode protocol, decoders, error accumulation, field provenance,
+and security annotations are design-settled. Regex literals remain
+library-first. Typed templates are future boundary values.
 
 ### `scope_context.md`
 
@@ -534,25 +546,25 @@ until capability scopes and explanation exist.
 
 ### `modules_imports.md`
 
-Reframe imports as binding. Avoid many import spellings until module semantics
-and export policy are stable.
-
-Prototype-ready next slice: import diagnostics and explicit re-export policy,
-not more syntax.
+Reframe imports as binding. Module visibility (`pub`), re-exports
+(`pub import`/`pub use`), domain-name import paths, content-addressed imports,
+and "no code execution during import" are design-settled. The Python-compatible
+surface is adequate for the current prototype.
 
 ### `concurrency.md`
 
-Demote broad concurrency to design-needed/research-only. Structured
-concurrency should grow from block calls, cancellation, result values, and
-capability boundaries, not from copied async syntax alone. Nomi's block/yield
-model is the one control abstraction — async, iteration, resource management
-are all block policies, not separate function colors.
+Structured concurrency approach is design-settled: block policies, no function
+coloring, supervision model. Implementation waits for block calls, cancellation,
+and Result to be implemented. Channels/actors deferred to library layer. Nomi's
+block/yield model is the one control abstraction.
 
 ### `meta_testing.md`
 
-Keep decorators as implemented Python-compatible surface. Treat examples,
-checks, traces, and diffs as the near-term testing story. Keep macros
-research-only until `quote:` and scoped expansion are specified.
+Keep decorators as implemented Python-compatible surface. `examples:` and
+`check:` blocks are design-settled (Rustdoc/Elixir doctest + power-assert
+model). Both produce explanation-normal-form trace records feedable to
+`explain`. Keep macros research-only until `quote:` and scoped expansion
+are specified.
 
 ### `implementation_learnings.md`
 
@@ -577,8 +589,10 @@ small, tested, documented, and reflected in samples.
 - [x] Create design synthesis and cross-language critique (design_lessons_and_integration.md).
 - [x] Create systematic dimensions analysis (language_design_dimensions.md).
 - [x] Create operational syntax-design rules (syntax_design_rules.md).
-- [ ] Bring scope_context.md, concurrency.md, meta_testing.md, modules_imports.md
-  up to the same synthesis format as the main per-feature docs.
+- [x] Bring scope_context.md, concurrency.md, meta_testing.md, modules_imports.md
+  up to the same synthesis format as the main per-feature docs (May 2026
+  consolidation pass — all four now have research cross-references, concrete
+  design detail, and updated status labels).
 - [ ] Remove stale "not implemented" claims for features already covered by
   tests or samples.
 - [ ] Add status-label summaries to the README so users can see feature readiness

@@ -1,7 +1,13 @@
 # Modules & Imports Convenience
 
 > Normal form: Binding. Imports are name bindings; modules are containers of
-> bindings. Python-compatible import syntax is implemented.
+> bindings. Python-compatible import syntax is implemented; module visibility
+> and re-exports are design-settled.
+>
+> Deep research: [packaging_and_project_structure_deep_dive.md](../research/packaging_and_project_structure_deep_dive.md)
+> (8-ecosystem survey: Python, Cargo, Go modules, Mix, npm, NuGet, Nix flakes, Maven),
+> [security_and_trust_deep_dive.md](../research/security_and_trust_deep_dive.md)
+> (content-addressed imports, supply-chain integrity).
 >
 > Companion: [design_lessons_and_integration.md §7.8](design_lessons_and_integration.md)
 > for the package-management systemic pattern.
@@ -32,15 +38,66 @@ from ..parent import something
 
 **Status:** implemented (Python-compatible).
 
-## 2. Re-Exports
+## 2. Module Visibility and Re-Exports
 
-Export a name imported from another module. Enables module facade patterns and
-controlled public surfaces.
+### Module Visibility (`pub`)
 
-**Source reference:** Rust `pub use`, JavaScript `export { x } from './mod'`.
+By default, module-level names are private to the module. The `pub` keyword
+makes a name visible to importing modules:
 
-**Status:** design-needed. Depends on module visibility and export policy being
-stable.
+```nomi
+# Private (default)
+func helper(): ...
+
+# Public
+pub func api_function(): ...
+
+pub data Config:
+    host: str
+    port: int
+```
+
+This follows Rust's `pub` / Go's exported-name convention (capitalized = public
+in Go; `pub` keyword in Nomi). The `pub` keyword is explicit rather than
+convention-based because it makes visibility visible at the definition site.
+
+### Re-Exports
+
+A module can re-export a name imported from another module, enabling facade
+patterns and controlled public surfaces:
+
+```nomi
+# Re-export for public API surface
+pub import some_internal_module.some_function
+```
+
+Or, with explicit naming:
+
+```nomi
+from .internal.impl import process
+pub use process  # re-export
+```
+
+This is Rust's `pub use` model: re-exports are explicit, visible at the module
+surface, and participate in documentation generation.
+
+**Design principles (from cross-language synthesis):**
+
+- **Files are modules.** Each `.nomi` file is one module. The file path IS the
+  module path (Python/Go model, not Rust's `mod` declaration model).
+- **No separate package manifest is required for simple modules.** A directory
+  with `.nomi` files is a package. A `package.nomi` file can add metadata
+  (edition, version, dependencies) but is optional for single-file packages.
+- **No code execution during import.** Fetching a dependency is download +
+  hash verification only (Nix model). Import resolution and compilation
+  happen before any user code runs.
+- **Domain-name import paths** for external dependencies:
+  `import "example.com/user/pkg"` (Go/Deno model). No bare-name global
+  namespace.
+
+**Source reference:** Rust `pub use`, JavaScript `export { x } from './mod'`,
+Go modules, Deno URL imports, Nix fixed-output derivations.
+**Status:** design-settled; implementation requires packaging infrastructure.
 
 ## 3. Wildcard / Star Imports
 
@@ -80,10 +137,14 @@ provides qualified access.
 | Import aliases (`import x as y`) | implemented | Python-compatible. |
 | Relative imports (`from . import x`) | implemented | Python-compatible. |
 | Wildcard imports (`from x import *`) | implemented | Python-compatible; discourage as style. |
-| Re-exports | design-needed | Wait for module visibility and export policy. |
+| Re-exports (`pub import` / `pub use`) | design-settled | Rust `pub use` model; explicit re-exports at module surface. |
+| Module visibility (`pub`) | design-settled | `pub` keyword at definition site; private by default. |
 | Grouped imports | library-first | Python multi-line imports are sufficient. |
 | Conditional / optional imports | library-first | Use `try/except ImportError`; no syntax needed. |
-| Module-level visibility (`pub`) | design-needed | Part of broader module semantics design. |
+| Domain-name import paths | design-settled | `import "example.com/user/pkg"` for external deps. |
+| No code execution during import | design-settled | Nix model: download + hash verify only. |
+| Content-addressed imports | design-settled | `import ".../pkg.nomi" sha256:abc...` for integrity. |
+| Files as modules | design-settled | One `.nomi` file = one module; path = module path. |
 
 ## 7. Architecture Rule
 

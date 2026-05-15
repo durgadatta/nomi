@@ -54,13 +54,19 @@ Every accepted convenience reduces to one of eight normal forms:
 
 ## Research Sources
 
-Deep language surveys live in `../research/`.  See
-[expanded_language_research.md](expanded_language_research.md) for the
-index, or start with:
+The cross-language research corpus lives in `../research/` — 23 deep-dive files
+surveying 60+ languages/systems across 16 language families and 8 cross-cutting
+dimensions. Each deep dive includes a cross-language synthesis and a Nomi
+Adopt/Refuse/Adapt table.
 
-- [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md)
-- [deep_language_feature_survey.md](../research/deep_language_feature_survey.md)
-- [modern_language_feature_survey.md](../research/modern_language_feature_survey.md)
+Start with the index: [../research/language_family_coverage_map.md](../research/language_family_coverage_map.md)
+
+Capstone synthesis: [../research/cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md)
+(8 universal convergences, 8 design forks, 7 hidden incompatibilities, Nomi
+resolution per normal form)
+
+For the full deep dive index with line counts and coverage, see the
+[Deep Dive Index](../research/language_family_coverage_map.md#deep-dive-index).
 
 ## Navigation by Intent
 
@@ -69,13 +75,13 @@ Start here based on what you're trying to do:
 | Intent | Start with |
 |--------|-----------|
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
-| **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) |
+| **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
 | **Compare Nomi's approach to other languages** | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) (cross-language families) |
 | **Implement a feature** | `docs/features/binding_constraints_feature.md`, `block_calls_feature.md` → `prototype/` code |
 | **Add new syntax** | [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis loop) → `CLAUDE.md` (extension path) |
 | **Understand a specific normal form** | Per-feature docs below (functions, patterns, flow, absence, data, scope, concurrency, testing, modules) |
-| **Deep language research** | [expanded_language_research.md](expanded_language_research.md) → `docs/research/` |
+| **Find cross-language research on a topic** | [../research/language_family_coverage_map.md](../research/language_family_coverage_map.md) → deep dive for that domain |
 
 ### The Synthesis Docs (read in order)
 
