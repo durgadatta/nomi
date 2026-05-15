@@ -5,6 +5,14 @@
 > Scope: function-shaped convenience syntax only. This doc keeps the source
 > language research, but the decision surface is Nomi's function normal form:
 > parameters are bindings, the body evaluates, and the result may be checked.
+>
+> Deep research: [cross_language_synthesis_master.md §4.2](../research/cross_language_synthesis_master.md)
+> (function normal form),
+> [scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md)
+> (multiple dispatch, broadcasting, dot-call conventions).
+>
+> Companion: [design_lessons_and_integration.md §4.2](design_lessons_and_integration.md)
+> for the function normal form integration critique.
 
 ## Design Pressure
 

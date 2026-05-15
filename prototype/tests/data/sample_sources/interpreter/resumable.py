@@ -1,4 +1,5 @@
-#TODO: collect other resumable examples here as well - now in samples.py, special_cases.py etc.
+# Other resumable examples are in sample.py, special_cases.py.
+# See implementation_todos.md Scan Backlog for consolidation plan.
 
 from contextlib import contextmanager
 

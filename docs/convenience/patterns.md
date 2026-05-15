@@ -5,6 +5,13 @@
 > Scope: `match`, destructuring, if-let, while-let, guard-let, piecewise
 > dispatch, and future pattern captures. Detailed if-let edge cases and
 > match-expression parser caveats are appendices at the end of this document.
+>
+> Deep research: [pattern_matching_synthesis.md](../research/pattern_matching_synthesis.md)
+> (OCaml/F#/Rust/Scala/Racket match comparison),
+> [cross_language_synthesis_master.md §4.3](../research/cross_language_synthesis_master.md)
+> (pattern normal form),
+> [csharp_java_dart_modern_features.md](../research/csharp_java_dart_modern_features.md)
+> (C#/Java switch evolution, Dart patterns).
 
 ## Design Pressure
 

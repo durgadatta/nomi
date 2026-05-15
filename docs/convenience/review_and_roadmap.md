@@ -593,10 +593,11 @@ small, tested, documented, and reflected in samples.
   up to the same synthesis format as the main per-feature docs (May 2026
   consolidation pass — all four now have research cross-references, concrete
   design detail, and updated status labels).
-- [ ] Remove stale "not implemented" claims for features already covered by
-  tests or samples.
-- [ ] Add status-label summaries to the README so users can see feature readiness
-  without opening each doc.
+- [x] Remove stale "not implemented" claims for features already covered by
+  tests or samples. (May 2026: stale statuses in README per-doc table fixed;
+  per-feature doc status labels reviewed against actual implementation.)
+- [x] Add status-label summaries to the README so users can see feature readiness
+  without opening each doc. (Feature Readiness Summary table added to README.)
 
 ### Phase 1: Binding, Patterns, And Diagnostics
 

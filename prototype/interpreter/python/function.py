@@ -103,9 +103,10 @@ class FunctionMixin(FunctionCallMixin):
                 with self.this_env(local_env):
                     return self._execute_function_body(node.body)
    
-        func.func_env = func_env 
-        # this is used in eval_Call to determine user-defined function
-        #TODO: there maybe a better way to handle this
+        func.func_env = func_env
+        # ast_node is attached so eval_Call can distinguish user-defined
+        # functions from builtins.  If call resolution moves to a registry,
+        # this tag can be dropped.
         func.ast_node = node
 
         return func
@@ -115,9 +116,10 @@ class FunctionMixin(FunctionCallMixin):
         func = self.eval_Function(node)
         name = node.name 
         if not name:
-            # function expr; also no decorator processing
-            # TODO: rethink this hook-up
-            return func 
+            # function expression — no name to bind, return as-is.
+            # Decorator processing is skipped because expression functions
+            # have no declaration-site name to wrap.
+            return func
         
         func.__name__ = name
         decorated_func = self.apply_decorators(func, node.decorator_list)        

@@ -39,12 +39,23 @@ Every accepted convenience reduces to one of eight normal forms:
 | [functions.md](functions.md) | Function | implemented (func, `=>`, equations, holes, sections, compose, where); implicit scoping appendix |
 | [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); if-let detail + match-expr challenges appendices |
 | [flow_and_collections.md](flow_and_collections.md) | Flow | implemented (pipeline, ranges, range-step, spread) |
-| [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-needed |
-| [data_and_types.md](data_and_types.md) | Data boundary | type aliases + strings implemented; data classes design-needed |
+| [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-settled |
+| [data_and_types.md](data_and_types.md) | Data boundary | type aliases + strings implemented; data classes + decode + @secret/@pii design-settled |
 | [scope_context.md](scope_context.md) | Binding + Block | where + block-call DSL implemented; implicit params research-only |
-| [concurrency.md](concurrency.md) | Block + Flow | Python async interop available; structured concurrency design-needed |
-| [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; inline tests + checks design-needed |
-| [modules_imports.md](modules_imports.md) | Binding | Python-compatible imports implemented; re-exports design-needed |
+| [concurrency.md](concurrency.md) | Block + Flow | Python async interop available; structured concurrency design-settled |
+| [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; examples + checks design-settled |
+| [modules_imports.md](modules_imports.md) | Binding | Python-compatible imports implemented; visibility + re-exports design-settled |
+
+### Feature Readiness Summary
+
+| Status | Count | Features |
+|--------|-------|----------|
+| **implemented** | 10+ | `func`, `=>`, equations, piecewise, holes, sections, compose, `where`, `\|>`, ranges, spread, `unless`, if-let, while-let, guard-let, match, or-patterns, `?.`, `??`, try-expr, `defer`, decorators, f-strings, type aliases, imports (Python-compatible) |
+| **design-settled** | 15 | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), collection verb vocabulary (12 verbs), query plans, `nomi fmt`, Tree-sitter + LSP, domain-name import paths |
+| **prototype-ready** | 3 | binding error diagnostics, `BindingTarget`, constrained captures |
+| **design-needed** | 5 | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, regex capture patterns |
+| **library-first** | 5+ | command functions, config layering, path values, safe commands, parallel collections |
+| **research-only** | 3+ | macros, channels/actors, pure/read-only blocks |
 
 ### Reference
 

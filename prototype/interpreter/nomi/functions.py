@@ -3,8 +3,10 @@ from ..constants import Block
 
 class BlockFunctionMixin:
     def eval_arg(self, node:ast.arg):
-        #TODO: this is currently not reached
-        # we can later use this when the function parameters are bound at definition site
+        # This handler exists so parameter binding can route through the
+        # Nomi constraint path when constraints are attached to function
+        # parameters at definition time.  Currently the base interpreter
+        # handles arg nodes before this is reached.
         name, annotation = node.name, node.annotation
         
         # eval AnnAssign so that the constraints are set properly
@@ -49,7 +51,10 @@ class BlockFunctionMixin:
     
 
     def eval_generator_obj(self, body, local_env, block=None):
-        # TODO: make block invocation explicit here instead of threading it through generator creation.
+        # The block parameter piggybacks on generator creation — the
+        # generator is consumed to exhaustion when a block is attached.
+        # A cleaner split would create the generator, then attach the
+        # block policy as a separate step.
         gen = self.gen_state(self, body, local_env, block=block)
         if block is not None:
             if block:

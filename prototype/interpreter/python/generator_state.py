@@ -150,11 +150,12 @@ class CoroutineState:
             self.index += 1
 
     def _handle_other_exception(self, e: Exception):
-        """Handle other exceptions by inserting a raise statement."""
-        #TODO: this is not currently in effect; 
-        # see the interaction between this and throw()
-        # contextlib relies on throw() to pass exception generated inside
-        # context block; it's also used by yield-to-block
+        """Handle other exceptions by inserting a raise statement.
+
+        Currently unused — the throw() path and contextlib integration
+        handle exception propagation through a different mechanism.
+        Kept as a hook point for future resumable-frame error handling.
+        """
         raise_node = ast.Raise(exc=e, cause=None)
         self.body.insert(self.index, raise_node)
 

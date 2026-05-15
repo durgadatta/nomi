@@ -1,8 +1,15 @@
 # Scope & Context Convenience
 
-> Normal forms: Binding + Function. Where clauses and block-call DSLs are
+> Normal forms: Binding + Block. Where clauses and block-call DSLs are
 > implemented; implicit parameters, scope functions, and capability scopes
 > remain design-needed or research.
+>
+> Deep research: [cross_language_synthesis_master.md §4.1, §4.5](../research/cross_language_synthesis_master.md)
+> (binding and block normal forms),
+> [beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md)
+> (Gleam `use` as control-flow abstraction),
+> [modern_language_feature_survey.md](../research/modern_language_feature_survey.md)
+> (Kotlin scope functions, Swift trailing closures).
 >
 > Companion: [design_lessons_and_integration.md §4.1](design_lessons_and_integration.md)
 > for the binding normal form integration critique.
