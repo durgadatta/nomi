@@ -7,7 +7,7 @@ precedence tree using the standard shunting-yard algorithm.
 
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 # (lbp, rbp, is_left_associative)
@@ -31,6 +31,8 @@ _BINARY_TABLE = {
 
 class Precedence(NomiDesugarer):
     """Restructure flat BinOp chains into correct precedence trees."""
+
+    phase = Phase.syntax
 
     @staticmethod
     def _precedence(op):
