@@ -130,3 +130,18 @@ For deep analysis, see [array_languages_deep_dive.md](../research/array_language
 | Lazy collection adapters | library-first |
 | Table/query plan verbs | design-needed |
 | Explicit broadcasting | design-needed |
+
+## 10. Design Context
+
+This doc covers Nomi's **Flow** normal form. For the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Function And Call Story, and the rule that pipelines and collection
+  transforms must reduce to ordinary calls.
+- [Language Specification §8.1, §12](../language/language_spec.md) — operators,
+  pipeline reduction, collection transforms, comprehensions, and future
+  table/query plans.
+- [Language Degrees Of Freedom §Library-First Freedom](../language/language_degrees_of_freedom.md) —
+  why collection verbs start as library conventions before becoming syntax.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  `eval_List`/`eval_Tuple` `Starred` spreading fix.

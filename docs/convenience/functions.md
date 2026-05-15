@@ -491,3 +491,19 @@ result = f(5)                      # 6 (uses the param, not outer x=10)
 ```nomi
 just_third = $3                   # (__1, __2, __3) => __3
 ```
+
+## Design Context
+
+This doc covers Nomi's **Function** normal form. For the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Function And Call Story, and how pipelines, composition, and
+  collection transforms reduce to ordinary calls.
+- [Language Specification §8-9](../language/language_spec.md) — expressions,
+  functions, calls, arrow functions, holes, operator sections, and equation
+  surface.
+- [Language Degrees Of Freedom §Flexible Surface](../language/language_degrees_of_freedom.md) —
+  why holes, sections, and pipelines are surface sugar rather than separate
+  execution models.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  rule ordering in `small_stmt`, name shadowing in equation loops.

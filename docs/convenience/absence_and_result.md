@@ -194,3 +194,22 @@ For Zig's `errdefer` (defer only on error), see
 - [error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md) — Zig, Hylo, Odin, Gleam, Roc
 - [design_lessons_and_integration.md §4.6](design_lessons_and_integration.md) — integration critique
 - [design_lessons_and_integration.md §7.6](design_lessons_and_integration.md) — three-distinct-stories systemic pattern
+
+## 7. Design Context
+
+This doc covers Nomi's **Absence/result** and **Block** normal forms.
+For the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Explanation Story (diagnostics from semantic events) and the One Block
+  Story (caller-side code attached to a call).
+- [Language Specification §8.5-8.6, §13-14](../language/language_spec.md) —
+  absence-aware expressions, try expressions, blocks and yield, errors and
+  Result values.
+- [Design Lessons and Integration §4.6](design_lessons_and_integration.md) —
+  integration critique of absence/result/error handling.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  `_nomi_defer` attribute stripping before re-evaluation, `"try"` in
+  expression position, `match_case` guard handling.
+- [Block Calls Feature](../features/block_calls_feature.md) — detailed block
+  design, yield semantics, control boundaries, and policy blocks.

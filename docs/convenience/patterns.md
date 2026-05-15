@@ -820,3 +820,21 @@ limitation.
 | Python 3.10+ | statement only (`match v: case ...`) | No |
 | Kotlin | `val x = when(v) { 1 -> "one"; else -> "many" }` | Yes |
 | Swift | `let x = switch v { case 1: "one"; default: "many" }` | No (stmt) |
+
+## Design Context
+
+This doc covers Nomi's **Pattern** normal form. For the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Pattern Story: patterns test structure and bind names; pattern failure
+  and constraint failure are related but distinct.
+- [Language Specification §11](../language/language_spec.md) — pattern forms,
+  match, destructuring, pattern vs constraint failure, and pattern conveniences
+  (if-let, guard-let, while-let).
+- [Language Design Dimensions §2 (Level 4)](../language/language_design_dimensions.md) —
+  how Choose + Contain + Bind compose into pattern matching.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  `match_expr` INDENT/DEDENT limitations, single-line `=>` workaround,
+  `match_block_expr` for nested indented match, and `match_case` guard handling.
+- [Binding Constraints Feature](../features/binding_constraints_feature.md) —
+  how constraints compose with pattern captures.
