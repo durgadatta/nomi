@@ -10,6 +10,7 @@ class MatchExprMixin:
         else:
             pattern, value = items
             guard = None
+        guard = self._combine_constraints_with_guard(pattern, guard)
         return ast.match_case(
             pattern=pattern, guard=guard, body=[ast.Return(value=value)],
         )

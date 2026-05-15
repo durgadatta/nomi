@@ -9,6 +9,7 @@ case: "case" pattern ["if" test] ":" suite
 ?or_pattern: closed_pattern ("|" closed_pattern)*
 ?closed_pattern: literal_pattern
                | NAME -> capture_pattern
+               | NAME ":" test -> constrained_capture
                | "_" -> any_pattern
                | attr_pattern
                | "(" as_pattern ")"

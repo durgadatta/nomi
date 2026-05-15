@@ -23,6 +23,12 @@ class PatternMixin:
             return ast.MatchAs(name=None, pattern=None)
         return ast.MatchAs(name=items[0], pattern=None)
 
+    def constrained_capture(self, items):
+        name, constraint = items
+        node = ast.MatchAs(name=name, pattern=None)
+        node._nomi_constraint = constraint
+        return node
+
     def any_pattern(self, items):
         return ast.MatchAs(name=None, pattern=None)
 
@@ -132,10 +138,57 @@ class PatternMixin:
     def case(self, items):
         pattern, body = items[0], items[-1]
         guard = items[1] if len(items) > 2 else None
+        guard = self._combine_constraints_with_guard(pattern, guard)
         return ast.match_case(pattern=pattern, guard=guard, body=body)
+
+    @staticmethod
+    def _collect_constraints(pattern):
+        """Walk pattern tree and collect _nomi_constraint expressions."""
+        constraints = []
+        if hasattr(pattern, '_nomi_constraint') and pattern._nomi_constraint is not None:
+            constraints.append(pattern._nomi_constraint)
+            pattern._nomi_constraint = None  # clean up
+        # Recurse into sub-patterns
+        if isinstance(pattern, ast.MatchAs):
+            if pattern.pattern:
+                constraints.extend(PatternMixin._collect_constraints(pattern.pattern))
+        elif isinstance(pattern, ast.MatchOr):
+            for p in pattern.patterns:
+                constraints.extend(PatternMixin._collect_constraints(p))
+        elif isinstance(pattern, ast.MatchSequence):
+            for p in pattern.patterns:
+                constraints.extend(PatternMixin._collect_constraints(p))
+        elif isinstance(pattern, ast.MatchMapping):
+            for p in pattern.patterns:
+                constraints.extend(PatternMixin._collect_constraints(p))
+        elif isinstance(pattern, ast.MatchClass):
+            for p in pattern.patterns:
+                constraints.extend(PatternMixin._collect_constraints(p))
+            for p in pattern.kwd_patterns:
+                constraints.extend(PatternMixin._collect_constraints(p))
+        elif isinstance(pattern, ast.MatchStar):
+            if hasattr(pattern, '_nomi_constraint') and pattern._nomi_constraint is not None:
+                constraints.append(pattern._nomi_constraint)
+                pattern._nomi_constraint = None
+        return constraints
+
+    @staticmethod
+    def _combine_constraints_with_guard(pattern, guard):
+        """Combine constraints collected from pattern tree with existing guard."""
+        constraints = PatternMixin._collect_constraints(pattern)
+        if not constraints:
+            return guard
+        import functools, ast as ast_m
+        # Combine all constraints with 'and'
+        combined = constraints[0]
+        for c in constraints[1:]:
+            combined = ast_m.BoolOp(op=ast_m.And(), values=[combined, c])
+        if guard:
+            return ast_m.BoolOp(op=ast_m.And(), values=[guard, combined])
+        return combined
 
     def match_stmt(self, items):
         subject, *cases = items
-        case_nodes = [case if isinstance(case, ast.match_case) else self.case(case) 
+        case_nodes = [case if isinstance(case, ast.match_case) else self.case(case)
                      for case in cases]
         return ast.Match(subject=subject, cases=case_nodes)

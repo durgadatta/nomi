@@ -232,3 +232,106 @@ def test_indented_match_expr_nested_indented_match_value(nomi_mode):
         )
     )
     assert bindings["result"] == "ok"
+
+
+# ── constrained captures in patterns ──────────────────────────────────
+
+def test_constrained_capture_match(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "x = 25",
+        "match x:",
+        "    case n: n >= 18:",
+        "        result = 'adult'",
+        "    case _:",
+        "        result = 'minor'",
+        "",
+    ]))
+    assert bindings["result"] == "adult"
+    assert bindings["n"] == 25
+
+
+def test_constrained_capture_falls_through(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "x = 15",
+        "match x:",
+        "    case n: n >= 18:",
+        "        result = 'adult'",
+        "    case _:",
+        "        result = 'minor'",
+        "",
+    ]))
+    assert bindings["result"] == "minor"
+
+
+def test_constrained_capture_with_guard(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "x = 25",
+        "match x:",
+        "    case n: n >= 18 if n < 100:",
+        "        result = 'young adult'",
+        "    case _:",
+        "        result = 'other'",
+        "",
+    ]))
+    assert bindings["result"] == "young adult"
+
+
+def test_constrained_capture_mapping(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        'data = {"age": 25, "name": "alice"}',
+        "match data:",
+        '    case {"age": age: age >= 18}:',
+        "        result = 'adult'",
+        "    case _:",
+        "        result = 'minor'",
+        "",
+    ]))
+    assert bindings["result"] == "adult"
+    assert bindings["age"] == 25
+
+
+def test_constrained_capture_mapping_fails(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        'data = {"age": 12, "name": "bob"}',
+        "match data:",
+        '    case {"age": age: age >= 18}:',
+        "        result = 'adult'",
+        "    case _:",
+        "        result = 'minor'",
+        "",
+    ]))
+    assert bindings["result"] == "minor"
+
+
+def test_if_let_constrained(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "x = 42",
+        'result = "none"',
+        "if n: n > 10 = x:",
+        '    result = "big"',
+        "else:",
+        '    result = "small"',
+        "",
+    ]))
+    assert bindings["result"] == "big"
+    assert bindings["n"] == 42
+
+
+def test_if_let_constrained_fails(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="\n".join([
+        "x = 5",
+        'result = "none"',
+        "if n: n > 10 = x:",
+        '    result = "big"',
+        "else:",
+        '    result = "small"',
+        "",
+    ]))
+    assert bindings["result"] == "small"

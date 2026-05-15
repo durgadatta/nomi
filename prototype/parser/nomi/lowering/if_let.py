@@ -12,7 +12,8 @@ class IfLetMixin:
             pattern, expr, body = items
             else_body = []
 
-        match_case = ast.match_case(pattern=pattern, body=body)
+        guard = self._combine_constraints_with_guard(pattern, None)
+        match_case = ast.match_case(pattern=pattern, guard=guard, body=body)
         wildcard = ast.match_case(
             pattern=ast.MatchAs(pattern=None),
             body=else_body if else_body else [],
@@ -22,7 +23,8 @@ class IfLetMixin:
     def while_let_stmt(self, items):
         """while_let_stmt: 'while' pattern '=' test ':' suite"""
         pattern, expr, body = items
-        match_case = ast.match_case(pattern=pattern, guard=None, body=body)
+        guard = self._combine_constraints_with_guard(pattern, None)
+        match_case = ast.match_case(pattern=pattern, guard=guard, body=body)
         wildcard = ast.match_case(
             pattern=ast.MatchAs(pattern=None),
             guard=None,
@@ -37,8 +39,9 @@ class IfLetMixin:
     def guard_stmt(self, items):
         """guard_stmt: 'guard' pattern '=' test ':' suite"""
         pattern, expr, failure_body = items
+        guard = self._combine_constraints_with_guard(pattern, None)
         match_case = ast.match_case(
-            pattern=pattern, guard=None, body=[ast.Pass()],
+            pattern=pattern, guard=guard, body=[ast.Pass()],
         )
         wildcard = ast.match_case(
             pattern=ast.MatchAs(pattern=None),
