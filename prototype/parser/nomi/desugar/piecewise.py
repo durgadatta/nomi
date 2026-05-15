@@ -18,11 +18,12 @@ The order is preserved (first match wins, like Haskell).
 
 import ast
 
-from .base import BaseDesugarer
+from .base import BaseDesugarer, Phase
 
 
 class PiecewiseFunction(BaseDesugarer):
     """Merge adjacent func_equation FunctionDefs into one match-dispatch function."""
+    phase = Phase.syntax
 
     def visit_Module(self, node):
         self.generic_visit(node)

@@ -1,10 +1,11 @@
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 class Assert(NomiDesugarer):
     """assert cond [, msg]  →  if not cond: raise AssertionError([msg])"""
+    phase = Phase.semantic
 
     removed_node_types = (ast.Assert,)
 

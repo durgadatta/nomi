@@ -9,10 +9,11 @@ Multiple ``_`` in the same scope become parameters ``__1``, ``__2``.
 
 import ast
 
-from .base import BaseDesugarer
+from .base import BaseDesugarer, Phase
 
 
 class UnderscoreLambda(BaseDesugarer):
+    phase = Phase.syntax
     """Replace ``_`` holes in expression position with arrow functions.
 
     A ``_`` in ``Load`` context is a hole **unless** ``_`` was previously

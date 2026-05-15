@@ -27,9 +27,9 @@ class SyntaxFeature:
     """A named language capability with its implementation pieces.
 
     Each feature can contribute grammar fragments, parse-tree transforms,
-    and/or AST-level desugar passes.  Every contribution is optional — a
-    feature that only needs a desugar pass (like ``assert`` desugaring)
-    does not need to declare grammar layers.
+    lowering mixins, and/or AST-level desugar passes.  Every contribution is
+    optional — a feature that only needs a desugar pass (like ``assert``
+    desugaring) does not need to declare grammar layers.
     """
 
     name: str
@@ -37,6 +37,7 @@ class SyntaxFeature:
     status: str = "implemented"
     grammar_layers: tuple[str, ...] = ()
     layer_transforms: tuple = ()
+    lowering_mixins: tuple[str, ...] = ()
     desugar_passes: tuple = ()
 
     # Lifecycle statuses:
@@ -152,6 +153,90 @@ _fstring = SyntaxFeature(
 )
 
 
+# ── lowering mixins ───────────────────────────────────────────────────
+# Each Lark grammar rule that needs AST lowering declares its mixin here.
+# Order: mixins are composed left-to-right into FunctionsMixin, so later
+# mixins can override earlier ones if needed.
+
+_implicit_mul = SyntaxFeature(
+    name="implicit-multiplication",
+    description="Lower implicit multiplication (2x → 2 * x) in the Lark tree",
+    lowering_mixins=("prototype.parser.nomi.lowering.implicit_multiplication.ImplicitMulMixin",),
+)
+
+_type_alias = SyntaxFeature(
+    name="type-alias-lowering",
+    description="Lower type X = Y to an AST assignment",
+    lowering_mixins=("prototype.parser.nomi.lowering.type_alias.TypeAliasMixin",),
+)
+
+_if_let = SyntaxFeature(
+    name="if-let-lowering",
+    description="Lower if pat = expr: body into a match statement",
+    lowering_mixins=("prototype.parser.nomi.lowering.if_let.IfLetMixin",),
+)
+
+_try_expr = SyntaxFeature(
+    name="try-expr-lowering",
+    description="Lower try body except E: handler into an IIFE",
+    lowering_mixins=("prototype.parser.nomi.lowering.try_expr.TryExprMixin",),
+)
+
+_match_expr = SyntaxFeature(
+    name="match-expr-lowering",
+    description="Lower match value: case pat => expr into an IIFE",
+    lowering_mixins=("prototype.parser.nomi.lowering.match_expr.MatchExprMixin",),
+)
+
+_where_clause_lowering = SyntaxFeature(
+    name="where-clause-lowering",
+    description="Lower where: blocks by tagging _nomi_where_body for the desugar pass",
+    lowering_mixins=("prototype.parser.nomi.lowering.where_clause.WhereClauseMixin",),
+)
+
+_positional_hole_lowering = SyntaxFeature(
+    name="positional-hole-lowering",
+    description="Lower $1, $name hole syntax in expressions",
+    lowering_mixins=("prototype.parser.nomi.lowering.positional_hole.PositionalHoleMixin",),
+)
+
+_compose_lowering = SyntaxFeature(
+    name="compose-lowering",
+    description="Lower >>> and <<< composition operators",
+    lowering_mixins=("prototype.parser.nomi.lowering.compose.ComposeMixin",),
+)
+
+_defer_lowering = SyntaxFeature(
+    name="defer-lowering",
+    description="Lower defer stmt to _nomi_defer attribute on statements",
+    lowering_mixins=("prototype.parser.nomi.lowering.defer.DeferMixin",),
+)
+
+_func_equation_lowering = SyntaxFeature(
+    name="func-equation-lowering",
+    description="Lower f(p)=e equation definitions to FunctionDef",
+    lowering_mixins=("prototype.parser.nomi.lowering.func_equation.FuncEquationMixin",),
+)
+
+_section_lowering = SyntaxFeature(
+    name="sections-lowering",
+    description="Lower (+2), (2*), (+) operator sections to lambdas",
+    lowering_mixins=("prototype.parser.nomi.lowering.sections.SectionMixin",),
+)
+
+_func_expr_lowering = SyntaxFeature(
+    name="func-expr-lowering",
+    description="Lower (x, y) => expr arrow functions to FunctionDef",
+    lowering_mixins=("prototype.parser.nomi.lowering.func_expr.FuncExprMixin",),
+)
+
+_block_call_lowering = SyntaxFeature(
+    name="block-call-lowering",
+    description="Lower f(x): body block-call syntax to BlockCall surface node",
+    lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
+)
+
+
 # ── registry ─────────────────────────────────────────────────────────
 
 BUILTIN_FEATURES: list[SyntaxFeature] = [
@@ -166,6 +251,20 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     _pass,
     _with,
     _fstring,
+    # ── lowering mixins (order: grammar rule order in statements.lark / expressions.lark) ──
+    _implicit_mul,
+    _type_alias,
+    _if_let,
+    _try_expr,
+    _match_expr,
+    _where_clause_lowering,
+    _positional_hole_lowering,
+    _compose_lowering,
+    _defer_lowering,
+    _func_equation_lowering,
+    _section_lowering,
+    _func_expr_lowering,
+    _block_call_lowering,
 ]
 
 
@@ -183,6 +282,34 @@ def get_layer_transforms() -> list:
             transform_cls = resolve_dotted(ref)
             transforms.append(transform_cls())
     return transforms
+
+
+def get_lowering_mixins() -> list[type]:
+    """Return ordered lowering mixin classes derived from builtin features.
+
+    These are composed into ``FunctionsMixin`` so the Lark→AST transformer
+    finds the right lowering method for each grammar rule.
+    """
+    from prototype.utils import resolve_dotted
+
+    mixins = []
+    for feature in BUILTIN_FEATURES:
+        for ref in feature.lowering_mixins:
+            mixins.append(resolve_dotted(ref))
+    return mixins
+
+
+def get_extra_grammar_layers() -> list[str]:
+    """Return extra grammar layer filenames derived from builtin features.
+
+    Base layers (terminals, expressions, etc.) are always included.
+    Features that declare ``grammar_layers`` add their fragments after
+    the base, in feature-registry order.
+    """
+    extra = []
+    for feature in BUILTIN_FEATURES:
+        extra.extend(feature.grammar_layers)
+    return extra
 
 
 def get_desugar_passes() -> list[Type[BaseDesugarer]]:

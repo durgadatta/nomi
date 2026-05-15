@@ -1,10 +1,11 @@
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 class AugAssign(NomiDesugarer):
     """x += y  →  x = x + y"""
+    phase = Phase.syntax
 
     removed_node_types = (ast.AugAssign,)
 

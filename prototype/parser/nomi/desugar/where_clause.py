@@ -19,10 +19,13 @@ The where-body bindings are local to the expression.
 
 import ast
 
-from .base import BaseDesugarer
+from .base import BaseDesugarer, Phase
+from .piecewise import PiecewiseFunction
 
 
 class WhereClause(BaseDesugarer):
+    phase = Phase.semantic
+    depends_on = (PiecewiseFunction,)
     """Desugar ``_nomi_where_body`` on statements into wrapper functions."""
 
     _counter = 0

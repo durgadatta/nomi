@@ -1,9 +1,10 @@
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 class With(NomiDesugarer):
+    phase = Phase.semantic
     """Desugar with-statement into enter/assign/try/except/else blocks.
 
     with ctx as x:

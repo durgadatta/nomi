@@ -45,12 +45,18 @@ _GRAMMAR_CACHE = None
 
 
 def assemble_grammar(extra_layers=None):
-    """Concatenate layer grammar files into a single Lark grammar string."""
+    """Concatenate layer grammar files into a single Lark grammar string.
+
+    Extra grammar layers declared by features in the syntax registry
+    are appended after the base layers.  The *extra_layers* parameter
+    allows ad-hoc experimental layers on top (for syntax prototyping).
+    """
     global _GRAMMAR_CACHE
     if extra_layers is None and _GRAMMAR_CACHE is not None:
         return _GRAMMAR_CACHE
+    from prototype.syntax.features import get_extra_grammar_layers
     parts = []
-    all_layers = list(_LAYER_ORDER)
+    all_layers = list(_LAYER_ORDER) + get_extra_grammar_layers()
     if extra_layers:
         all_layers.extend(extra_layers)
     for name in all_layers:

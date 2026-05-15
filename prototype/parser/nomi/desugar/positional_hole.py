@@ -24,13 +24,14 @@ Examples::
 import ast
 import re
 
-from .base import BaseDesugarer
+from .base import BaseDesugarer, Phase
 
 _DOLLAR_POS_RE = re.compile(r'^\$(\d+)$')
 _DOLLAR_NAME_RE = re.compile(r'^\$[^0-9\W]\w*$')
 
 
 class PositionalHole(BaseDesugarer):
+    phase = Phase.syntax
     """Replace ``$N`` and ``$name`` holes with anonymous functions."""
 
     def _make_lambda(self, body, param_names):

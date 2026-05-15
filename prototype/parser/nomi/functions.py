@@ -1,40 +1,22 @@
 """Nomi-specific AST-lowering mixin.
 
-Each syntax feature's Lark-Transformer methods live in a dedicated module
-under ``prototype/parser/nomi/lowering/``.  This mixin composes them so
-``NomiToPythonAST`` still sees a single flat namespace.
+Composed dynamically from the syntax feature registry
+(prototype/syntax/features.py).  Each lowering module lives under
+``prototype/parser/nomi/lowering/`` and declares its mixin in the
+feature manifest.
+
+To add a new lowering: create the module, then add one entry to
+BUILTIN_FEATURES in prototype/syntax/features.py.  No need to edit
+this file.
 """
 
-from .lowering import (
-    ImplicitMulMixin,
-    TypeAliasMixin,
-    IfLetMixin,
-    TryExprMixin,
-    MatchExprMixin,
-    WhereClauseMixin,
-    PositionalHoleMixin,
-    ComposeMixin,
-    DeferMixin,
-    FuncEquationMixin,
-    SectionMixin,
-    FuncExprMixin,
-    BlockCallMixin,
-)
+from prototype.syntax.features import get_lowering_mixins
 
+# Build the mixin from all lowering features in the registry.
+# Mixins are ordered left-to-right, matching their declaration order
+# in BUILTIN_FEATURES.  Later mixins can override methods from earlier ones.
+_lowering_bases = tuple(get_lowering_mixins())
 
-class FunctionsMixin(
-    ImplicitMulMixin,
-    TypeAliasMixin,
-    IfLetMixin,
-    TryExprMixin,
-    MatchExprMixin,
-    WhereClauseMixin,
-    PositionalHoleMixin,
-    ComposeMixin,
-    DeferMixin,
-    FuncEquationMixin,
-    SectionMixin,
-    FuncExprMixin,
-    BlockCallMixin,
-):
-    """Composed mixin of all Nomi-specific AST-lowering methods."""
+# Build FunctionsMixin dynamically so the class attribute name is
+# meaningful for debugging and documentation.
+FunctionsMixin = type("FunctionsMixin", _lowering_bases, {})

@@ -1,10 +1,11 @@
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 class Pass(NomiDesugarer):
     """pass  →  Expr(Constant(0))"""
+    phase = Phase.syntax
 
     removed_node_types = (ast.Pass,)
 

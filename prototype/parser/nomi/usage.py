@@ -8,16 +8,14 @@ from pathlib import Path
 from .ast_ import NomiToPythonAST
 from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 from ...syntax.surface import lower_surface_to_python
+from ...syntax.features import get_extra_grammar_layers
 
 
 # ── parser cache ────────────────────────────────────────────────────
 # Lark Earley parser construction is O(n³) in grammar size — easily
 # 100+ ms even in CPython and much worse in Pyodide/WebAssembly.
-# Cache by the active extra-layer tuple so syntax experiments do not
-# accidentally reuse the default parser.
-# TODO(NOMI-SUBSTRATE-002): Grow this into get_parser(features=[...]) once
-# syntax feature manifests exist. The cache key should become the resolved
-# feature set, not raw layer filenames.
+# Cache by the resolved extra-layer tuple so syntax experiments do not
+# accidentally reuse the wrong parser.
 _PARSER_CACHE = {}
 
 
@@ -27,9 +25,10 @@ def prefer_name_for_underscore_terminal(terminal):
 
 
 def get_parser(extra_layers=None):
-    cache_key = tuple(extra_layers or ())
-    if cache_key in _PARSER_CACHE:
-        return _PARSER_CACHE[cache_key]
+    # Resolve extra layers: feature-derived layers + any experimental ad-hoc layers.
+    resolved = tuple(get_extra_grammar_layers()) + (tuple(extra_layers) if extra_layers else ())
+    if resolved in _PARSER_CACHE:
+        return _PARSER_CACHE[resolved]
     grammar = assemble_grammar(extra_layers=extra_layers)
     parser = Lark(
             grammar,
@@ -38,7 +37,7 @@ def get_parser(extra_layers=None):
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
     )
-    _PARSER_CACHE[cache_key] = parser
+    _PARSER_CACHE[resolved] = parser
     return parser
 
 

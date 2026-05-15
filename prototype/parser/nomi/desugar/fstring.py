@@ -1,9 +1,10 @@
 import ast
 
-from .base import NomiDesugarer
+from .base import NomiDesugarer, Phase
 
 
 class FString(NomiDesugarer):
+    phase = Phase.syntax
     """Desugar f-strings into string concatenation and format calls.
 
     f"hello {name}"  →  "hello " + format(name, '')
