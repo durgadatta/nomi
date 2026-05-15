@@ -170,6 +170,81 @@ When reviewing a proposal, ask:
 7. What existing freedom does it duplicate?
 8. What user mistake becomes easier if this freedom is allowed?
 
+## Worked Example: Applying The Ladder
+
+A concrete decision record showing the ladder applied to features that landed
+at different levels.
+
+### Example 1: Pipeline `|>` — classified as Surface Sugar
+
+**Proposal:** `value |> f` passes `value` into `f`.
+
+**Ladder analysis:**
+
+| Level | Question | Answer |
+|---|---|---|
+| Fixed core | Is `|>` a new execution model? | No. `a \|> f` = `f(a)`. It's ordinary call, ordinary evaluation. |
+| Surface sugar | Does it have one canonical expansion? | Yes. `a \|> f(b)` = `f(a, b)`. Tooling can show the call underneath. |
+| Library convention | Could a function do this? | `pipe(a, f)` works but is unreadable nested. Sugar wins because it's used on nearly every line. |
+| Scoped extension | Does it need a fence? | No — it doesn't change meanings outside itself. |
+| Advanced layer | Does it require advanced knowledge? | No — beginners can read `\|>` as "then" without understanding desugaring. |
+| Rejected freedom | Would rejection fragment the language? | No, but it would force ugly nesting or temporary variables for simple left-to-right chains. |
+
+**Decision:** Surface sugar. The expansion is boring and inspectable. The syntax
+is lightweight because it's used constantly.
+
+### Example 2: Collection Verbs (where, select, map, fold) — classified as Library Convention
+
+**Proposal:** `users |> where(_.active) |> select(_.name)`
+
+**Ladder analysis:**
+
+| Level | Question | Answer |
+|---|---|---|
+| Fixed core | Are these new semantics? | No. Each verb is a function that takes a collection and a predicate/transform. |
+| Surface sugar | Should they have dedicated syntax? | Not yet. They compose with `\|>` already. Dedicated syntax would add keywords without new semantics. |
+| Library convention | Can they start as functions? | Yes. A standard prelude module provides them. Users import what they need. |
+| Scoped extension | — | Not needed. |
+| Advanced layer | — | Not needed. |
+| Rejected freedom | — | Not relevant; function vocab is the right freedom level. |
+
+**Decision:** Library convention. If several programs use the same ten verbs
+repeatedly, and diagnostics are clearly better with syntax, revisit. Until then,
+library functions are the right vehicle.
+
+### Example 3: Symbolic Rewrite / `quote` — classified as Scoped Extension
+
+**Proposal:** `quote: x + 0` rewrites to `x` (symbolic algebra).
+
+**Ladder analysis:**
+
+| Level | Question | Answer |
+|---|---|---|
+| Fixed core | Is symbolic rewrite part of the everyday computational model? | No. Ordinary programs don't need term rewriting. |
+| Surface sugar | Can it desugar to ordinary Nomi? | No — the semantics are genuinely different (manipulating unevaluated terms). |
+| Library convention | Can a library do this without syntax? | Partially. A library can provide rewrite functions, but readable term notation needs a fence. |
+| Scoped extension | Does it need a visible fence? | Yes. `quote:` or `use symbolic:` keeps the notation contained. Outside the fence, ordinary Nomi. |
+| Advanced layer | Should it wait? | Yes. Not needed for the first everyday language. |
+| Rejected freedom | Would global term rewriting be rejected? | Yes — ambient rewriting would break local reasoning. |
+
+**Decision:** Scoped extension, deferred to advanced layer. The fence (`quote:`
+or `use`) is required, and the feature is not part of the first language users
+learn.
+
+### What The Examples Show
+
+- The ladder catches feature creep before it becomes syntax. "Collection verbs
+  are useful" does not automatically mean "they need keywords."
+- The ladder distinguishes *new semantics* (needs scoped extension or advanced
+  layer) from *new sugar* (surface, if the expansion is boring).
+- A feature can move up the ladder later: if collection verbs prove themselves in
+  libraries, they can graduate to sugar. Moving *down* is harder — once syntax
+  exists, removing it breaks programs.
+- The hardest call is between library convention and surface sugar. The tiebreaker
+  is: would the library spelling make common code worse to read? For `|>`, yes
+  (nested calls are unreadable). For collection verbs, not yet (pipeline + function
+  names are clear enough).
+
 ## Current Recommendations
 
 - Keep binding, data, pattern, flow, block, and explanation as strict memory

@@ -861,6 +861,85 @@ The next design pass should make these decisions explicit:
 10. Move advanced symbolic rewrite, effects, async, memory, and concurrency out
     of the first-language path.
 
+## Document Map: How This Relates To Other Docs
+
+This document is the single design entry point. When you need more detail on a
+specific concern, follow these pointers rather than reading the full docs tree.
+
+### If you need concrete syntax and semantics
+
+→ [Language Specification](language_spec.md) — the draft spec with grammar,
+lexical rules, and per-feature semantics. This foundation names the ambition;
+the spec writes the contract.
+
+### If you need to understand the coherence model
+
+The "One X Story" contracts in this document (binding, function, data, pattern,
+block, explanation) are the same normal forms used across the convenience docs:
+
+| This document | Convenience docs normal form | Detail doc |
+|---|---|---|
+| One Binding Story | Binding | [scope_context.md](../convenience/scope_context.md) |
+| One Function And Call Story | Function | [functions.md](../convenience/functions.md) |
+| One Pattern Story | Pattern | [patterns.md](../convenience/patterns.md) |
+| One Block Story | Block | [absence_and_result.md](../convenience/absence_and_result.md) (block section) |
+| One Explanation Story | Explanation | [meta_testing.md](../convenience/meta_testing.md) |
+| One Data Story | Data boundary | [data_and_types.md](../convenience/data_and_types.md) |
+| (collections, transform) | Flow | [flow_and_collections.md](../convenience/flow_and_collections.md) |
+| (absence, expected failure) | Absence/result | [absence_and_result.md](../convenience/absence_and_result.md) |
+
+The [convenience README](../convenience/README.md) maps all eight normal forms
+and their per-feature docs.
+
+### If you need design rules for adding syntax
+
+→ [Syntax Design Rules](../convenience/syntax_design_rules.md) — concrete rules
+derived from the dimensions analysis, with nuance (when rules bend) and conflict
+resolution.
+
+→ [Design Lessons and Integration](../convenience/design_lessons_and_integration.md)
+§9 — the synthesis methodology: stance → loop → worked examples → traps.
+
+The Feature Admission Protocol in this document (9 questions) is the entrance
+exam. The syntax design rules are the style guide. The synthesis methodology is
+the process for applying both.
+
+### If you need to decide how much freedom a feature gets
+
+→ [Language Degrees Of Freedom](language_degrees_of_freedom.md) — the
+core/sugar/library/scoped/rejected ladder. The Operational Core section of this
+document names the concepts; the degrees-of-freedom doc says how strictly each
+is controlled.
+
+### If you need implementation status
+
+→ [Implementation TODOs](implementation_todos.md) — current checked-off, in-progress,
+and backlog items.
+
+→ [Forward Implementation Plan](forward_implementation_plan.md) — phased work
+packages with gates and caveats.
+
+→ [Implementation Learnings](../convenience/implementation_learnings.md) —
+grammar interactions, AST bugs, deferred features, and source-span wiring notes.
+
+### If you need the design-space analysis behind the decisions
+
+→ [Language Design Dimensions](language_design_dimensions.md) — the irreducible
+axes of variation, convergence points, and Nomi's position on each axis.
+
+### If you need adoption and gap analysis
+
+→ [Language Direction And Gap Map](language_direction_and_gap_map.md) — what
+Nomi must fill to reach Python-like everyday usefulness.
+
+### Reading order for new contributors
+
+```
+this document (foundation) → spec → degrees_of_freedom → design_dimensions
+                           → convenience/README → per-feature convenience docs
+                           → implementation_todos → implementation_learnings
+```
+
 ## The Standard Of Success
 
 Nomi succeeds when a user can read a medium-sized program and say:

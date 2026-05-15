@@ -63,6 +63,15 @@ features below are implemented, some are partially implemented, and some are
 forward-looking. The spec should name the intended semantics without pretending
 that all of them already exist.
 
+For implementation details — grammar interactions, AST quirks, desugar pass
+invariants, source-span wiring, and features that failed or were deferred — see
+[Implementation Learnings](../convenience/implementation_learnings.md).
+
+For the extension path (how to add new syntax in the current prototype), see
+the [CLAUDE.md](../../CLAUDE.md) section "Adding new syntax" and the
+[Feature Manifest Registry](../../prototype/syntax/features.py)
+(`BUILTIN_FEATURES`).
+
 Feature status terms:
 
 - **core**: part of the intended first complete language.
@@ -1716,12 +1725,24 @@ Rejected for the first core:
 
 ## 22. Design Reference Documents
 
-This spec learned document shape and design pressure from these references. The
-references are not Nomi's authority; they are comparison points.
+### Internal design docs (Nomi's own design spine)
 
-For adoption-facing gaps, caveats, and future design artifacts that sit above
-this concrete spec, see
-[Language Direction And Gap Map](language_direction_and_gap_map.md).
+These are the active documents that feed this spec. When this spec is silent on
+a design question, these are where the rationale lives:
+
+- [Language Foundation](language_foundation.md) — canonical design entry point, coherence contracts, milestones
+- [Language Design Dimensions](language_design_dimensions.md) — irreducible axes of variation, convergence points
+- [Language Degrees Of Freedom](language_degrees_of_freedom.md) — core/sugar/library/scoped/rejected ladder
+- [Design Lessons and Integration](../convenience/design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, designer quotes, synthesis methodology
+- [Syntax Design Rules](../convenience/syntax_design_rules.md) — concrete syntax-design rules with nuance and conflict resolution
+- [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) — cross-language feature families and Nomi recommendations
+- [Implementation Learnings](../convenience/implementation_learnings.md) — grammar interactions, AST bugs, deferred features
+- [Language Direction And Gap Map](language_direction_and_gap_map.md) — adoption-facing gaps and docs consolidation policy
+
+### External language references
+
+This spec learned document shape and design pressure from these references. They
+are not Nomi's authority; they are comparison points.
 
 - Scheme R7RS: https://r7rs.org/
 - Haskell 2010 Language Report: https://www.haskell.org/onlinereport/haskell2010/

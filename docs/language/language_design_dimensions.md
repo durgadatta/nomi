@@ -96,6 +96,25 @@ The design rule: **every language feature should be analysable as a
 combination of these primitives**.  If a feature requires a genuinely
 new primitive, that is a significant language-design event.
 
+These eight primitives are the foundation for Nomi's eight normal forms (see
+[convenience README](../convenience/README.md)). Each normal form is a Nomi-specific
+packaging of one or two primitives into a user-visible pattern:
+
+| Primitive | Nomi normal form | How Nomi packages it |
+|-----------|-----------------|---------------------|
+| Bind | Binding | names + constraints + commit or diagnose |
+| Abstract + Apply | Function | parameters as bindings, body evaluates, result may be checked |
+| Choose + Contain + Bind | Pattern | structural test + captures + constraints + body selection |
+| Compose + Apply | Flow | value through calls, pipelines, collection transforms |
+| Contain + Signal | Block | call + attached caller-side code invoked by `yield` |
+| Bind + Contain | Data boundary | explicit decode, field bindings, owned program values |
+| Signal (value-encoded) | Absence/result | `none`, `?.`, `??`, `Result[T, E]` with pattern matching |
+| Explain | Explanation | source-spanned events, traces, diagnostics, `explain` |
+
+This mapping is the coherence check: every Nomi normal form should be traceable
+to one or two core primitives. A normal form that requires three or more
+primitives is probably two normal forms in a trench coat.
+
 ### Level 3 — Semantic Mechanisms (~15-20)
 
 These are the concrete mechanisms that languages build from the core
@@ -804,6 +823,14 @@ Nomi's design thesis, restated in terms of this framework:
 > axis positions conservative, preferring library-first exploration
 > and future compile-time upgrades over early commitment to advanced
 > semantic mechanisms.
+
+This thesis translates into concrete design rules and a synthesis process.
+For the rules (primitive budget, axis coherence, elimination form, etc.), see
+[Syntax Design Rules](../convenience/syntax_design_rules.md). For the process
+(stance → loop → worked examples → traps), see
+[Design Lessons and Integration §9](../convenience/design_lessons_and_integration.md).
+For how strictly each design area is controlled, see
+[Language Degrees Of Freedom](language_degrees_of_freedom.md).
 
 ## 8. The Cognitive Dimension
 
