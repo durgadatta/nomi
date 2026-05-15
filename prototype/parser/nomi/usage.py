@@ -1,11 +1,11 @@
 import ast
 from lark import Lark
-from lark.indenter import PythonIndenter
 from lark.lexer import PatternRE
 
 from pathlib import Path
 
 from .ast_ import NomiToPythonAST
+from .postlexer import NomiPostLexer
 from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 from ...syntax.surface import lower_surface_to_python
 from ...syntax.features import get_extra_grammar_layers
@@ -17,6 +17,12 @@ from ...syntax.features import get_extra_grammar_layers
 # Cache by the resolved extra-layer tuple so syntax experiments do not
 # accidentally reuse the wrong parser.
 _PARSER_CACHE = {}
+
+# ── parse result cache ──────────────────────────────────────────────
+# Earley parsing is ~96% of end-to-end pipeline time.  Cache raw parse
+# trees by source-content hash so repeated parses of unchanged source
+# (REPL, test suite, incremental editing) are instant.
+_RAW_TREE_CACHE: dict[int, object] = {}
 
 
 def prefer_name_for_underscore_terminal(terminal):
@@ -33,10 +39,11 @@ def get_parser(extra_layers=None):
     parser = Lark(
             grammar,
             parser="earley",
-            postlex=PythonIndenter(),
+            postlex=NomiPostLexer(),
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
             propagate_positions=True,
+            ambiguity="resolve",
     )
     _PARSER_CACHE[resolved] = parser
     return parser
@@ -46,7 +53,13 @@ def parse_raw_tree(code=None, filename=None):
     """Return the raw Lark parse tree (before layer transforms)."""
     if code is None:
         code = Path(filename).read_text(encoding="utf-8")
-    return get_parser().parse(code)
+    key = hash(code)
+    cached = _RAW_TREE_CACHE.get(key)
+    if cached is not None:
+        return cached
+    tree = get_parser().parse(code)
+    _RAW_TREE_CACHE[key] = tree
+    return tree
 
 
 def parse_transformed_tree(code=None, filename=None):
