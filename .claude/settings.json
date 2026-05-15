@@ -32,20 +32,10 @@
       "Bash(python3 -m tools.syntax.inspect *)",
       "Bash(python3 scripts/test_report.py *)",
 
-      // ── Git (read-only + standard workflow) ─────────────────
-      "Bash(git status *)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
-      "Bash(git branch *)",
-      "Bash(git add *)",
-      "Bash(git commit *)",
-      "Bash(git show *)",
-      "Bash(git stash *)",
-      "Bash(git checkout *)",
-      "Bash(git switch *)",
-      "Bash(git restore *)",
-      "Bash(git merge *)",
-      "Bash(git rebase *)",
+      // ── Git ──────────────────────────────────────────────────
+      // Broad allow for all git commands.  Destructive operations
+      // (push --force, reset --hard, clean) are blocked by deny list.
+      "Bash(git *)",
 
       // ── File system (safe read-only + controlled writes) ────
       "Bash(ls *)",
