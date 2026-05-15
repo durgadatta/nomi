@@ -618,3 +618,22 @@ The block-call syntax is admitted because it:
 
 These questions should be answered by preserving one block story, not by adding
 special cases for each policy.
+
+## Design Context
+
+This feature is the reference implementation for Nomi's Block normal form.
+See these docs for the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Block Story: caller-side code attached to a call, invoked by `yield`.
+- [Language Specification §13](../language/language_spec.md) — blocks, yield,
+  block parameters as binding targets, policy blocks, and control boundaries.
+- [Convenience: Absence and Result](../convenience/absence_and_result.md) — how
+  block calls compose with `defer` and the block normal form.
+- [Convenience: Scope and Context](../convenience/scope_context.md) — block-call
+  DSL, `where` clauses, and implicit parameter research.
+- [Syntax Design Rules §3-4](../convenience/syntax_design_rules.md) (Axis
+  Coherence, Budget) — why blocks are one story, not one keyword per policy.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  `BlockCall` surface node, `@captures_span` for source locations, and
+  `SurfaceNode` lowering.

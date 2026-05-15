@@ -473,3 +473,22 @@ match payload:
 
 If any of these needs a separate validation mechanism, the implementation is
 drifting away from the feature.
+
+## Design Context
+
+This feature is the reference implementation for Nomi's Binding normal form.
+See these docs for the broader picture:
+
+- [Language Foundation §Coherence Contract](../language/language_foundation.md) —
+  the One Binding Story: receive, tentatively bind, check constraints, commit or
+  diagnose.
+- [Language Specification §6-7](../language/language_spec.md) — bindings, scope,
+  constraint forms, and BindingError diagnostics.
+- [Convenience: Scope and Context](../convenience/scope_context.md) — how binding
+  composes with `where` clauses, block-call DSLs, and implicit parameters.
+- [Convenience: Absence and Result](../convenience/absence_and_result.md) — how
+  binding interacts with `?.`, `??`, `try` expressions, and `defer`.
+- [Syntax Design Rules §6](../convenience/syntax_design_rules.md) (Elimination
+  Form) — pattern and constraint sharing across binding sites.
+- [Implementation Learnings](../convenience/implementation_learnings.md) —
+  variable-name shadowing in loops, `_nomi_*` custom attributes on AST nodes.
