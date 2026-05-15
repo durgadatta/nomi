@@ -364,10 +364,10 @@ intentionally small, file-specific hints for the next cleanup pass.
 - [ ] Split the macOS-specific Docker/Colima bootstrap out of
   [`scripts/run_nomi_docker.py`](../../scripts/run_nomi_docker.py) so the
   cross-platform path stays small and the Apple-specific setup is isolated.
-- [ ] Finish the return-annotation TODO in
-  [`prototype/parser/nomi/functions.py`](../../prototype/parser/nomi/functions.py)
-  so equation-style function lowering does not depend on ad hoc placeholder
-  rewrites.
+- [ ] Add return-annotation support to equation-style (`f(x) = expr`) and
+  arrow (`(x) => expr`) function forms. Both hardcode `returns=None` in
+  `func_equation.py` and `func_expr.py`; the grammar rules lack `-> type`
+  syntax. Standard `funcdef` already supports it.
 - [ ] Clean up the generator-state comments and frame queueing in
   [`prototype/interpreter/python/generator_state.py`](../../prototype/interpreter/python/generator_state.py)
   so resumable execution has one named policy instead of several tentative
@@ -391,9 +391,13 @@ intentionally small, file-specific hints for the next cleanup pass.
 - [ ] Rewrite the block-parameter handling note in
   [`prototype/tests/data/sample_sources/interpreter/blocks.nomi`](../../prototype/tests/data/sample_sources/interpreter/blocks.nomi)
   once the shared binding engine is the only supported path.
-- [ ] Replace the provisional `#TODO` comments in runtime code with tracked
-  backlog items or tests so implementation comments do not become the only
-  record of remaining work.
+- [ ] Replace the provisional `#TODO:` comments in runtime code with tracked
+  backlog items or tests. Remaining (2026-05-15 scan):
+  - `interpreter/python/function.py:108` — "there maybe a better way to
+    handle this" (generator/resumable hook-up)
+  - `interpreter/nomi/functions.py:6` — "this is currently not reached"
+  - `interpreter/python/generator_state.py:154` — "this is not currently in
+    effect"
 - [ ] Fix side-by-side editor/output scrolling in the web playground
   ([`web/index.html`](../../web/index.html)); known constraints and approaches
   documented in
