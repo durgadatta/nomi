@@ -741,6 +741,12 @@ focuses on synthesis across languages rather than single-language catalogues:
 - [standard_library_design_comparative.md](standard_library_design_comparative.md) — 10-language stdlib design: prelude philosophy, core-vs-contrib splits, deprecation policies, package organization.
 - [typescript_type_system_deep_dive.md](typescript_type_system_deep_dive.md) — TypeScript: type narrowing/flow typing, structural typing, conditional types, `satisfies`, erased types.
 - [cross_language_synthesis_master.md](cross_language_synthesis_master.md) — Capstone synthesis: universal convergences, genuine design forks, hidden incompatibilities, Nomi resolution framework.
+- [first_hour_pedagogy_deep_dive.md](first_hour_pedagogy_deep_dive.md) — 10-system pedagogy survey: Python, Go, Dart, Racket, Scratch, Logo, BASIC, Elm, Khan Academy, Swift Playgrounds. First-hour success design, beginner error messages.
+- [packaging_and_project_structure_deep_dive.md](packaging_and_project_structure_deep_dive.md) — 8-ecosystem packaging survey: Python, Cargo, Go modules, Mix, npm, NuGet, Nix flakes, Maven. Manifest design, dependency resolution, workspaces.
+- [data_boundary_systems_deep_dive.md](data_boundary_systems_deep_dive.md) — 10-system data boundary survey: Pydantic, CUE, Nickel, Pkl, Dhall, Terraform, JSON Schema, TypeScript, serde, Elm decoders. Decode pipeline, merge/override, provenance.
+- [table_and_flow_systems_deep_dive.md](table_and_flow_systems_deep_dive.md) — 8-system table/flow survey: SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q. Verb vocabulary, query lowering, explain.
+- [interactive_explanation_deep_dive.md](interactive_explanation_deep_dive.md) — 10-system interactive survey: Jupyter, Pluto, Darklang, Smalltalk, Racket, Light Table, Observable, Swift Playgrounds, Bret Victor, Elm debugger. Reactive execution, trace/explain.
+- [formatting_and_style_deep_dive.md](formatting_and_style_deep_dive.md) — 10-formatter style survey: gofmt, Black, Rustfmt, Prettier, elm-format, clang-format, Ormolu, dart format, zig fmt, ocamlformat. Canonical formatter doctrine.
 
 For the updated coverage status and remaining research gaps, see
 [language_family_coverage_map.md](language_family_coverage_map.md).

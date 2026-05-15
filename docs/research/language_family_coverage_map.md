@@ -67,7 +67,13 @@ Individual-language and cross-cutting deep dives (May 2026 research expansion):
 | [scientific_languages_r_matlab_julia.md](scientific_languages_r_matlab_julia.md) | R, MATLAB, Julia — formulas, tidy eval, broadcasting, array model | ~500 |
 | [standard_library_design_comparative.md](standard_library_design_comparative.md) | Go, Rust, Python, Kotlin, Swift, Elixir, Zig, C#, Haskell, Racket — 10-language stdlib design | ~940 |
 | [typescript_type_system_deep_dive.md](typescript_type_system_deep_dive.md) | TypeScript — type narrowing, structural typing, conditional types, `satisfies` | ~1040 |
-| [cross_language_synthesis_master.md](cross_language_synthesis_master.md) | Capstone synthesis across all deep dives — convergences, forks, incompatibilities, Nomi resolution | design-in-progress |
+| [cross_language_synthesis_master.md](cross_language_synthesis_master.md) | Capstone synthesis across all deep dives — convergences, forks, incompatibilities, Nomi resolution | ~1317 |
+| [first_hour_pedagogy_deep_dive.md](first_hour_pedagogy_deep_dive.md) | Python, Go, Dart, Racket, Scratch, Logo, BASIC, Elm, Khan Academy, Swift Playgrounds — first-hour success design | ~1735 |
+| [packaging_and_project_structure_deep_dive.md](packaging_and_project_structure_deep_dive.md) | Python, Cargo, Go modules, Mix, npm, NuGet, Nix flakes, Maven — manifest design, resolution, workspaces | ~1369 |
+| [data_boundary_systems_deep_dive.md](data_boundary_systems_deep_dive.md) | Pydantic, CUE, Nickel, Pkl, Dhall, Terraform, JSON Schema, TypeScript, serde, Elm decoders — decode/validate/merge | ~1891 |
+| [table_and_flow_systems_deep_dive.md](table_and_flow_systems_deep_dive.md) | SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q — verb vocabulary, query lowering, explain | ~2182 |
+| [interactive_explanation_deep_dive.md](interactive_explanation_deep_dive.md) | Jupyter, Pluto, Darklang, Smalltalk, Racket, Light Table, Observable, Swift Playgrounds, Bret Victor, Elm debugger | ~1470 |
+| [formatting_and_style_deep_dive.md](formatting_and_style_deep_dive.md) | gofmt, Black, Rustfmt, Prettier, elm-format, clang-format, Ormolu, dart format, zig fmt, ocamlformat | ~2033 |
 
 ## Under-Covered Dimensions
 
@@ -77,14 +83,10 @@ The following dimensions still need more focused research:
 
 | Dimension | Why it matters | Suggested sources | Desired Nomi artifact |
 | --- | --- | --- | --- |
-| Packaging and project structure | Reuse and trust require installable units. | Python packaging, Cargo, Go modules, Mix, npm, NuGet, Nix flakes | Modules/packages/interoperability note. |
-| First-hour pedagogy | A language must reward first contact. | Racket teaching languages, Python tutorial, Dart tour, Go tour | First-hour Nomi lesson and target exercises. |
-| Formatting and style | A shared visual culture reduces cognitive load. | gofmt, Black, Rustfmt, Prettier, Elm format | Nomi style and formatter doctrine. |
 | Package docs and examples | Documentation is part of the language's social surface. | Rustdoc, ExDoc, Julia docs, Python docs, Racket docs | Examples/docs/testing integration spec. |
-| Interactive workflow | Notebooks, REPLs, traces, and AI tools shape adoption. | Jupyter, Pluto, Light Table, Darklang, Smalltalk images | Notebook/trace/explain design note. |
 | Deployment and operations | A useful language must leave the laptop. | Go binaries, Python packaging, Node deploys, Docker, serverless | Runtime/deployment posture note. |
 | Security and trust | Package, config, secrets, and capability boundaries affect real use. | Nix, capabilities research, secrets tooling, sandboxing | Secrets/redaction/capability feature note. |
-| AI collaboration | AI agents will read, generate, refactor, and explain code. | LSP, typed ASTs, source maps, proof traces, notebooks | Agent-readable expansion and design-fixture conventions. |
+| AI-readable semantics | AI agents will read, generate, refactor, and explain code. | LSP, typed ASTs, source maps, proof traces, notebooks | Agent-readable expansion and design-fixture conventions. |
 
 ## Family Notes
 
@@ -227,26 +229,23 @@ should carry this work.
 ## Coverage Priorities
 
 Completed (May 2026): diagnostics (10 languages), error/defer/resource handling
-(12 languages), pattern matching synthesis (10 languages), stdlib design (10
+(16 languages), pattern matching synthesis (10 languages), stdlib design (10
 languages), BEAM deep dive, Go design philosophy, TypeScript type system, C#/Java/Dart
-modern features, capstone cross-language synthesis.
+modern features, capstone cross-language synthesis, first-hour pedagogy (10
+systems), packaging and project structure (8 ecosystems), data boundary systems
+(10 systems), table/flow systems (8 systems), interactive explanation (10
+systems), formatting and style (10 formatters).
 
 The next research passes should prioritize:
 
-1. **First-hour pedagogy**: Python tutorial, Go tour, Dart tour, Racket
-   teaching languages.
-2. **Packaging and project structure**: Python packaging, Cargo, Go modules,
-   Mix, npm, NuGet, Nix flakes.
-3. **Data boundary systems**: Pydantic, CUE, Nickel, Pkl, Dhall, Terraform,
-   JSON Schema — deeper synthesis beyond the existing config coverage.
-4. **Table/flow systems**: SQL, LINQ, dplyr, Polars, DuckDB, Nushell — deeper
-   structured-collections vocabulary.
-5. **Interactive explanation**: Jupyter, Pluto, Darklang, Smalltalk, Racket,
-   notebook testing — trace/explain experience.
-6. **Formatting and style**: gofmt, Black, Rustfmt, Prettier, Elm format —
-   canonical formatter doctrine.
-7. **AI-readable semantics**: source maps, typed ASTs, expansion displays,
-   traces, design fixtures.
+1. **Package docs and examples**: Rustdoc, ExDoc, Julia docs, Python docs,
+   Racket docs — documentation as social surface.
+2. **Deployment and operations**: Go binaries, Python packaging, Node deploys,
+   Docker, serverless — runtime/deployment posture.
+3. **Security and trust**: Nix, capabilities research, secrets tooling,
+   sandboxing — secrets/redaction/capability boundaries.
+4. **AI-readable semantics**: source maps, typed ASTs, expansion displays,
+   traces, design fixtures — agent-readable code representation.
 
 ## Source Links
 
