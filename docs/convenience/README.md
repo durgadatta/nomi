@@ -27,6 +27,7 @@ Every accepted convenience reduces to one of eight normal forms:
 | Doc | Purpose |
 |-----|---------|
 | [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
+| [syntax_design_rules.md](syntax_design_rules.md) | Concrete syntax-design rules derived from the dimensions analysis (primitive budget, axis coherence, elimination form, etc.) |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
 | [expanded_language_research.md](expanded_language_research.md) | Index to detailed research notes in `docs/research/` |
