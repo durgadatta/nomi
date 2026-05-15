@@ -163,8 +163,8 @@ anything longer than one visual phrase.
 ### 5. Use Holes For Tiny Functions Only
 
 Implicit functions are a convenience family, not a second function language.
-For the full scoping reference, see
-[implicit_functions_nuance.md](implicit_functions_nuance.md).
+For the full scoping reference, see the implicit function appendix
+at the end of this document.
 
 Implemented forms:
 

@@ -43,8 +43,8 @@ The `suite` production requires INDENT/DEDENT tokens from the postlexer.
 When `match_expr` is inside `test` (expression context), the postlexer
 doesn't emit INDENT tokens for the `:` → suite transition.  Root cause:
 Lark's `PythonIndenter` only emits INDENT when the parser is in a
-compound-statement state.  See `docs/convenience/challenges_match_as_expression.md`
-for alternatives.
+compound-statement state.  See the match-expression appendix in
+`docs/convenience/patterns.md` for alternatives.
 
 ### Single-line workaround
 
@@ -142,7 +142,7 @@ mixing hole types in one expression.
 
 | Feature | Blocker | Doc |
 |---------|---------|-----|
-| Full-suite match as expression | Lark INDENT/suite in `test` context | `challenges_match_as_expression.md` |
+| Full-suite match as expression | Lark INDENT/suite in `test` context | see match-expression appendix in `patterns.md` |
 | Elvis `?? return/raise` | `ast.IfExp` can't hold statements | Below |
 | Postfix `if` on expr | Conflicts with ternary `if` | Below |
 | Postfix `unless` on expr | Conflicts with expression grammar | Below |

@@ -262,8 +262,8 @@ more syntax-facing design work:
 ### Explanation
 
 The dimensions analysis identifies Explanation as a genuine primitive,
-not an afterthought.  Yet `meta_testing.md` is the thinnest convenience
-doc and `language_spec.md §18` is only 30 lines.
+not an afterthought.  Yet `meta_testing.md` is one of the thinner convenience
+docs and `language_spec.md §19` (Diagnostics, Trace, And Explain) is ~50 lines.
 
 **Syntax design needed for:**
 - `examples:` blocks — inline executable tests that live with the code

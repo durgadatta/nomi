@@ -3,9 +3,8 @@
 > Status: active synthesis; prototype surface is partial but useful.
 >
 > Scope: `match`, destructuring, if-let, while-let, guard-let, piecewise
-> dispatch, and future pattern captures. Detailed if-let edge cases live in
-> [if_let_detail.md](if_let_detail.md). Match-expression parser caveats live in
-> [challenges_match_as_expression.md](challenges_match_as_expression.md).
+> dispatch, and future pattern captures. Detailed if-let edge cases and
+> match-expression parser caveats are appendices at the end of this document.
 
 ## Design Pressure
 
@@ -112,7 +111,7 @@ return match status:
 ```
 
 That future form depends on Nomi's general value-producing block semantics.
-See [challenges_match_as_expression.md](challenges_match_as_expression.md).
+See the match-expression appendix at the end of this document.
 
 ### If-Let
 
@@ -130,7 +129,7 @@ names on the left are captures, not reads from outer scope.
 
 Use `if-let` for one local shape check. Use `match` when there are several
 cases. Use the detailed reference when the distinction from normal `if` is the
-point: [if_let_detail.md](if_let_detail.md).
+point: see the if-let appendix at the end of this document.
 
 ### While-Let
 

@@ -8,7 +8,8 @@
 >
 > Consolidation note: keep this as comparison evidence. Fold stable decisions
 > into `review_and_roadmap.md` and the focused convenience docs such as
-> `functions.md`, `patterns.md`, `collections.md`, and `error_handling.md`.
+> `functions.md`, `patterns.md`, `flow_and_collections.md`, `absence_and_result.md`,
+> `data_and_types.md`, and `scope_context.md`.
 
 ## Purpose
 

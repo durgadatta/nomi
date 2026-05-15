@@ -461,10 +461,9 @@ template values, diagnostics, and explicit escaping rules.
 ### `functions.md`
 
 Keep as the synthesis and teaching-order document for function-shaped
-convenience. It now uses the function normal form as the spine and keeps
+convenience. It uses the function normal form as the spine and keeps
 source-language comparisons only where they affect a Nomi admission decision.
-The living edge-case reference for placeholders remains
-[implicit_functions_nuance.md](implicit_functions_nuance.md).
+The implicit-function scoping reference lives as an appendix in the same file.
 
 Current usage guidance:
 
@@ -478,18 +477,11 @@ full = (user) => ... # use when names or constraints matter
 Reject-for-now: broad currying syntax, duplicate placeholder aliases, and
 dense tacit style as everyday defaults.
 
-### `implicit_functions_nuance.md`
+### `patterns.md`
 
-Keep as the living reference for `_`, `$1`, `$name`, operator sections, and
-`=>`. Add a warning that implicit forms should not hide non-trivial control,
-effects, or constraints.
-
-### `patterns.md` And `if_let_detail.md`
-
-Keep `patterns.md` as the overview and synthesis point for the pattern normal
-form. Keep [if_let_detail.md](if_let_detail.md) for edge cases and
-[challenges_match_as_expression.md](challenges_match_as_expression.md) for the
-parser/value-block caveat around match expressions.
+Keep as the overview and synthesis point for the pattern normal form. The
+if-let edge cases and match-expression parser caveats are appendices within
+the same file (not separate docs).
 
 Documented decision: `match`, if-let, while-let, guard-let, piecewise
 equations, destructuring, future constrained captures, and decoder fields are
@@ -497,40 +489,39 @@ one pattern family.
 
 Prototype-ready next slice: constrained captures in patterns.
 
-### `collections.md` And `array_languages.md`
+### `flow_and_collections.md`
 
-`collections.md` should teach pipelines, ranges, spread, and transform verbs.
-`array_languages.md` should remain research-only until readable library
-functions for shape/rank/axis exist.
+Covers pipelines, ranges, spread, transform verbs, slices, comprehensions,
+and array-language patterns. Pipeline is the canonical flow spelling.
+Array-language research is deferred to the research notes; only the
+Nomi assessment table lives here.
 
 Reject-for-now: implicit elementwise list arithmetic. It conflicts with
 Python-compatible list behavior and is too easy to misread.
 
-### `null_handling.md` And `error_handling.md`
+### `absence_and_result.md`
 
-Present absence and expected failure as related but distinct. `?.` and `??`
+Presents absence and expected failure as related but distinct. `?.` and `??`
 handle absence. `Result`, `Ok`, `Err`, `match`, and future `?` handle expected
-failure. Exceptions remain for unexpected failure and Python interop.
+failure. Exceptions remain for unexpected failure and Python interop. Covers
+guard-let, try-expression, and defer.
 
 Reject-for-now: `?? return` and mixed absence/error propagation without an
 explicit result model.
+
+### `data_and_types.md`
+
+Covers type aliases, data declarations, strings (interpolation, multi-line,
+raw), extension methods, and operator overloading. Data classes and sum types
+are design-needed. Regex literals remain library-first. Typed templates are
+future boundary values, not ordinary string sugar.
 
 ### `scope_context.md`
 
 Keep `where` as the primary local-binding feature. Treat Kotlin-style scope
 functions as library-first helpers, not syntax. Point trailing-lambda and
-builder-DSL ideas to block calls.
-
-### `types.md`
-
-Move `data`, variants, and decode discussion closer to `docs/language/`.
-Type aliases remain a convenience feature. Extension methods and operator
-overloading are design-needed; they touch dispatch, modules, and readability.
-
-### `strings.md`
-
-Update status for triple strings and simple f-strings. Add typed templates as
-future boundary values, not as ordinary string sugar.
+builder-DSL ideas to block calls. Implicit/context parameters are research
+until capability scopes and explanation exist.
 
 ### `modules_imports.md`
 
@@ -544,7 +535,9 @@ not more syntax.
 
 Demote broad concurrency to design-needed/research-only. Structured
 concurrency should grow from block calls, cancellation, result values, and
-capability boundaries, not from copied async syntax alone.
+capability boundaries, not from copied async syntax alone. Nomi's block/yield
+model is the one control abstraction — async, iteration, resource management
+are all block policies, not separate function colors.
 
 ### `meta_testing.md`
 
@@ -552,10 +545,11 @@ Keep decorators as implemented Python-compatible surface. Treat examples,
 checks, traces, and diffs as the near-term testing story. Keep macros
 research-only until `quote:` and scoped expansion are specified.
 
-### `others.md`
+### `implementation_learnings.md`
 
-Keep as the broad survey, but do not let it drive the roadmap directly. Every
-promoted idea should be copied into this review under a normal form and status.
+Living reference for grammar interactions, AST bugs, and deferred features.
+Not a design document — keep it as a troubleshooting log for future
+implementation sessions.
 
 ## Roadmap
 
@@ -564,16 +558,22 @@ small, tested, documented, and reflected in samples.
 
 ### Phase 0: Documentation Cleanup
 
-- [ ] Update each convenience doc with the status labels from this review.
-- [ ] Use `expanded_language_research.md` as source material when updating
-  feature docs with newer-language and PL-research comparisons.
+- [x] Consolidate convenience/ from scattered single-topic files to per-normal-form
+  synthesis docs (functions, patterns, flow_and_collections, absence_and_result,
+  data_and_types).
+- [x] Archive or delete obsolete files (5 archived, 10 deleted).
+- [x] Merge companion detail docs as appendices (implicit functions → functions.md;
+  if-let detail + match-expression challenges → patterns.md).
+- [x] Deduplicate information across docs/convenience/ and docs/language/.
+- [x] Create design synthesis and cross-language critique (design_lessons_and_integration.md).
+- [x] Create systematic dimensions analysis (language_design_dimensions.md).
+- [x] Create operational syntax-design rules (syntax_design_rules.md).
+- [ ] Bring scope_context.md, concurrency.md, meta_testing.md, modules_imports.md
+  up to the same synthesis format as the main per-feature docs.
 - [ ] Remove stale "not implemented" claims for features already covered by
   tests or samples.
-- [ ] Add a "Normal form" subsection to each feature doc.
-- [ ] Move speculative material from convenience docs into research notes when
-  it cannot reduce to a current primitive.
-- [ ] Keep `docs/language/language_foundation.md` as the authority when it
-  conflicts with older convenience notes.
+- [ ] Add status-label summaries to the README so users can see feature readiness
+  without opening each doc.
 
 ### Phase 1: Binding, Patterns, And Diagnostics
 

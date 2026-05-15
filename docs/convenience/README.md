@@ -36,15 +36,15 @@ Every accepted convenience reduces to one of eight normal forms:
 
 | Doc | Normal form | Status |
 |-----|-------------|--------|
-| [functions.md](functions.md) | Function | implemented (func, `=>`, equations, holes, sections, compose, where) |
-| [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); includes companion detail appendices |
+| [functions.md](functions.md) | Function | implemented (func, `=>`, equations, holes, sections, compose, where); implicit scoping appendix |
+| [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); if-let detail + match-expr challenges appendices |
 | [flow_and_collections.md](flow_and_collections.md) | Flow | implemented (pipeline, ranges, range-step, spread) |
 | [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-needed |
 | [data_and_types.md](data_and_types.md) | Data boundary | type aliases + strings implemented; data classes design-needed |
-| [scope_context.md](scope_context.md) | Binding + Function | where + block-call DSL implemented; implicit params design-needed |
-| [concurrency.md](concurrency.md) | Block + Flow | async/await implemented; structured concurrency design-needed |
-| [modules_imports.md](modules_imports.md) | Binding | Python-compatible imports implemented |
-| [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; inline tests design-needed |
+| [scope_context.md](scope_context.md) | Binding + Block | where + block-call DSL implemented; implicit params research-only |
+| [concurrency.md](concurrency.md) | Block + Flow | Python async interop available; structured concurrency design-needed |
+| [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; inline tests + checks design-needed |
+| [modules_imports.md](modules_imports.md) | Binding | Python-compatible imports implemented; re-exports design-needed |
 
 ### Reference
 

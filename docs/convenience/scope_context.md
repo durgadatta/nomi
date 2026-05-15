@@ -1,157 +1,49 @@
 # Scope & Context Convenience
 
-## Where Clause (Local Bindings)
+> Normal forms: Binding + Function. Where clauses and block-call DSLs are
+> implemented; implicit parameters, scope functions, and capability scopes
+> remain design-needed or research.
+>
+> Companion: [design_lessons_and_integration.md §4.1](design_lessons_and_integration.md)
+> for the binding normal form integration critique.
 
-Define bindings local to an expression.  Already implemented in Nomi.
+## Normal Form
 
-**Haskell**:
+Scope and context convenience reduces to the binding and function normal forms:
 
-```haskell
-area = pi * r * r
-  where
-    pi = 3.14159
-    r = 5
-
-roots a b c = ( (-b + d) / (2*a), (-b - d) / (2*a) )
-  where d = sqrt (b*b - 4*a*c)
+```text
+bind names local to an expression (binding)
+attach caller-side code to a call (block)
+thread context through a call chain (future capability)
 ```
 
-**Nomi** (implemented — block + inline forms):
+Three distinct jobs, three distinct mechanisms. Do not collapse them into one
+"context" keyword.
+
+## 1. Where Clause (Local Bindings)
+
+Define bindings local to an expression. Implemented in block and inline forms.
 
 ```nomi
 area = pi * r * r where:
     pi = 3.14159
     r = 5
 
-result = x * 2 where x = 5        # inline
-ss(x,y) = s(x)+s(y) where s(n)=n*n  # inline on equation
+result = x * 2 where x = 5
+ss(x,y) = s(x)+s(y) where s(n)=n*n
 ```
 
----
+Where-clause bindings reuse ordinary binding semantics (constraints, defaults,
+diagnostics). They are not a separate declaration island with different scoping.
 
-## Scope Functions (let / apply / also / run / with)
+**Source reference:** Haskell `where`, Nix `let/in`, Python assignment
+expressions, SQL CTEs.
 
-Execute a block with a value as context, returning a result.  Kotlin's
-standard library defines five variants differing in receiver binding and
-return value.
+**Status:** implemented.
 
-**Kotlin**:
+## 2. Block Calls as DSL Context
 
-```kotlin
-// let:  value as argument, return block result
-val len = "hello".let { it.length }
-
-// run:  value as receiver, return block result
-val len = "hello".run { length }
-
-// apply: value as receiver, return value itself
-val person = Person().apply {
-    name = "Alice"
-    age = 30
-}
-
-// also: value as argument, return value itself
-val list = mutableListOf<Int>().also { it.add(42) }
-
-// with: value as receiver (not extension), return block result
-val s = with(person) { "$name is $age" }
-```
-
-**Swift** (similar patterns):
-
-```swift
-let label = UILabel().apply {
-    $0.text = "Hello"
-    $0.textColor = .red
-}
-```
-
-**Nomi** — `where` clause covers the basic use case.  For receiver-style
-(`apply`/`run`), could extend `where` or use block calls:
-
-```nomi
-person = Person() where:
-    name = "Alice"
-    age = 30
-
-result = person where:
-    name + " is " + str(age)
-```
-
----
-
-## Implicit / Context Parameters
-
-Values automatically passed through the call chain without explicit
-argument threading at every call site.
-
-**Scala (given/using)**:
-
-```scala
-def sort[T](list: List[T])(using ord: Ordering[T]): List[T] = ...
-
-given Ordering[Int] = Ordering.Int
-sort(List(3, 1, 2))  // ord passed implicitly
-
-// context function
-def render(using ctx: Context): String = ...
-```
-
-**Kotlin (context receivers — experimental)**:
-
-```kotlin
-context(Logger)
-fun process() {
-    info("processing...")   // Logger method available
-}
-```
-
-**Haskell (type classes)**:
-
-```haskell
-sort :: Ord a => [a] -> [a]
-sort = ...   -- Ord dictionary passed implicitly
-```
-
-**Nomi** (Track 7 — capability scopes, `world` values, `using` blocks):
-
-```nomi
-func sort[T](list: list[T]) using Ordering[T] -> list[T]:
-    ...
-
-using ordering = int_ordering:
-    sorted = sort([3, 1, 2])
-```
-
----
-
-## Builder DSL via Trailing Lambda
-
-Domain-specific syntax using trailing block parameters.
-
-**Kotlin**:
-
-```kotlin
-html {
-    head { title("Page") }
-    body {
-        h1 { +"Welcome" }
-        p { +"Content here" }
-    }
-}
-```
-
-**Groovy / Ruby (blocks)**:
-
-```groovy
-def xml = new MarkupBuilder()
-xml.records {
-    car(name: 'HSV', make: 'Holden', year: 2006)
-}
-```
-
-**Nomi** — `block_call_stmt` enables this pattern.  DSL builders can be
-written as library functions that yield values to blocks:
+Builder-DSL and callback patterns reduce to the block-call normal form:
 
 ```nomi
 html:
@@ -162,13 +54,76 @@ html:
         p: "Content"
 ```
 
----
+The block-call form (`block_call_stmt`) enables this without a dedicated
+builder syntax. DSL builders are library functions that yield values to blocks.
 
-## Implementation Priority
+**Source reference:** Kotlin trailing lambdas, Ruby blocks, Groovy builders,
+Swift trailing closures, Nim indented call blocks.
 
-| Feature | Effort | Impact |
-|---------|--------|--------|
-| Where clause | **done** | — |
-| Scope functions (let/apply) | low | medium |
-| Builder DSL | **done** (block_call_stmt) | — |
-| Implicit parameters | high | high |
+**Status:** implemented (block_call_stmt).
+
+## 3. Scope Functions (let/apply/also/run/with)
+
+Kotlin defines five scope functions that differ in receiver binding and return
+value. Nomi should not copy five overlapping names as syntax.
+
+| Kotlin form | What it does | Nomi equivalent |
+|-------------|--------------|-----------------|
+| `let` | Value as argument, return block result | `value |> fn` or `(x) => expr` |
+| `run` | Value as receiver, return block result | `value where: ...` |
+| `apply` | Value as receiver, return value itself | `value where: field = ...` |
+| `also` | Value as argument, return value itself | Pipeline with side-effecting stage |
+| `with` | Value as receiver (not extension) | `value where: ...` |
+
+The Nomi equivalents use `where` for local bindings, `|>` for value flow, and
+block calls for control policies. One mechanism per job.
+
+**Status:** library-first. No new syntax needed; `where` and `|>` cover the
+use cases.
+
+## 4. Implicit / Context Parameters
+
+Values automatically threaded through the call chain without explicit argument
+passing at every call site. This is a real need (locale, database handles,
+permissions, clocks, loggers) but the mechanism must stay inspectable.
+
+**Source reference:** Scala `given`/`using`, Kotlin context receivers,
+Haskell type classes, Rust trait resolution.
+
+**Nomi direction (future):** Context parameters should grow from explicit
+values, block policies, and future capability scopes — not from implicit
+parameter sugar added before the capability model exists.
+
+```nomi
+# Future direction — not implemented:
+func sort[T](list: list[T]) using Ordering[T] -> list[T]:
+    ...
+
+using ordering = int_ordering:
+    sorted = sort([3, 1, 2])
+```
+
+**Status:** research-only. Wait for capability scopes, explanation traces, and
+the block-call model to settle before adding implicit parameter machinery.
+
+## 5. Synthesis Decisions
+
+| Candidate | Status | Decision |
+|-----------|--------|----------|
+| `where` clause (block form) | implemented | Canonical local-binding form. |
+| `where` clause (inline form) | implemented | Keep for single-binding cases. |
+| Block-call DSL (builder pattern) | implemented | Reduces to block normal form; no separate builder syntax. |
+| Scope functions (let/apply/also/run/with) | library-first | Covered by `where`, `|>`, and explicit lambdas. |
+| Implicit/context parameters | research-only | Wait for capability scopes and explanation. |
+| `using` blocks | design-needed | Block-call policy for scoped capabilities. |
+| World/capability values | research-only | Future layer; needs type-level tracking design. |
+
+## 6. Quality Bar
+
+Add a new scope or context feature only if:
+
+- It reuses ordinary binding semantics (not a parallel scoping system).
+- It has a visible boundary keyword (no ambient implicit resolution).
+- Diagnostics can name the scope where a name was resolved.
+- It does not duplicate `where`, block calls, or pipeline for the same job.
+- The expansion into the binding or block normal form is inspectable.

@@ -1,25 +1,27 @@
 # Meta-Programming & Testing Convenience
 
-## Decorators / Annotations
+> Normal forms: Explanation + Block. Decorators are implemented; inline tests,
+> examples, and checks are design-needed; macros remain research-only.
+>
+> Companion: [design_lessons_and_integration.md §4.8](design_lessons_and_integration.md)
+> for the explanation normal form integration critique.
 
-Wrap or modify functions/classes at definition time.
+## Normal Form
 
-**Python / Java / Kotlin / Swift**:
+Testing and meta-programming reduce to explanation (semantic events become
+traces, examples, or diagnostics) and block (test fixtures and scoped setup
+are block policies).
 
-```python
-@cache
-@validate_input
-def process(x: int) -> str: ...
-
-# equivalent to: process = cache(validate_input(process))
+```text
+decorator → function wrapper (apply at definition time)
+example → inline test + explanation anchor
+macro → scoped syntax expansion (future layer)
 ```
 
-```kotlin
-@Deprecated("Use newMethod() instead")
-fun oldMethod() { ... }
-```
+## 1. Decorators / Annotations
 
-**Nomi** — decorators via `@` syntax already work:
+Wrap or modify functions/classes at definition time. Python-compatible `@`
+syntax works.
 
 ```nomi
 @cache
@@ -28,153 +30,84 @@ func fib(n):
     return fib(n - 1) + fib(n - 2)
 ```
 
----
+**Source reference:** Python decorators, Java annotations, Kotlin annotations,
+Swift property wrappers.
 
-## Macros
+**Status:** implemented (Python-compatible).
 
-Compile-time code generation and transformation.
+## 2. Inline Tests / Examples
 
-**Rust (declarative macros)**:
-
-```rust
-macro_rules! vec_of {
-    ($($x:expr),*) => { vec![$($x),*] }
-}
-let v = vec_of![1, 2, 3];
-```
-
-**Elixir**:
-
-```elixir
-defmacro unless(condition, do: block) do
-    quote do
-        if !unquote(condition), do: unquote(block)
-    end
-end
-```
-
-**Lisp (syntax-rules / defmacro)**:
-
-```lisp
-(defmacro when (condition &body body)
-  `(if ,condition (progn ,@body)))
-```
-
-**Julia**:
-
-```julia
-macro sayhello(name)
-    return :( println("Hello, ", $name) )
-end
-@sayhello "world"
-```
-
-**Nomi** — long-term.  `quote:` boundary for code-as-data, rewrite rules
-(`expr /. pattern -> replacement`), and macro-style expansion (Track 6).
-
----
-
-## Compile-Time Execution
-
-Run arbitrary code during compilation.
-
-**Zig (comptime) / Nim / D**:
-
-```zig
-const size = comptime computeSize();
-const table = comptime generateLookupTable();
-```
-
----
-
-## Inline Tests / Doctests / Examples
-
-Tests embedded in documentation or function definitions.
-
-**Rust (doc tests)**:
-
-```rust
-/// Adds two numbers.
-///
-/// ```
-/// assert_eq!(add(2, 3), 5);
-/// ```
-fn add(a: i32, b: i32) -> i32 { a + b }
-```
-
-**Python (doctest)**:
-
-```python
-def add(a, b):
-    """
-    >>> add(2, 3)
-    5
-    """
-    return a + b
-```
-
-**Elixir (doctest)**:
-
-```elixir
-@doc """
-Adds two numbers.
-
-    iex> add(2, 3)
-    5
-"""
-def add(a, b), do: a + b
-```
-
-**Nomi** (Track 8 — `examples:` blocks):
+Tests embedded in function or data definitions. Serve as docs, tests, and
+explanation anchors simultaneously.
 
 ```nomi
+# Future direction — design-needed:
 func add(a, b):
     examples:
-        add(2, 3) -> 5
-        add(0, 0) -> 0
+        add(2, 3) => 5
+        add(0, 0) => 0
     return a + b
 ```
 
----
+The `examples:` block should produce diagnostics in user language when a case
+fails: expected value, actual value, and source location.
 
-## Assert / Verify with Diagnostics
+**Source reference:** Rust doc tests, Python doctest, Elixir doctest, Racket
+contracts, Darklang traces.
 
-Assertions that show the actual values, not just "assertion failed".
+**Status:** design-needed.
 
-**Kotlin (power-assert — via compiler plugin) / pytest**:
+## 3. Check Statements
 
-```kotlin
-assert(person.name == "Alice")
-// AssertionError: person.name == "Alice" is false
-//   person.name = "Bob"
+Invariants verified at runtime with diff-oriented output.
+
+```nomi
+# Future direction — design-needed:
+check normalize_email(" A@B.COM ") == "a@b.com"
 ```
 
-**Python (pytest)**:
+On failure, the diagnostic shows the expression, the expected and actual values,
+and the source location — not just "assertion failed."
 
-```python
-assert person.name == "Alice"
-# E   AssertionError: assert 'Bob' == 'Alice'
-```
+**Source reference:** Kotlin power-assert, pytest assert introspection.
 
----
+**Status:** design-needed.
 
-## Code Generation / Scaffolding
+## 4. Macros
 
-Generate boilerplate from specifications.
+Compile-time code generation and transformation. Powerful but risks creating
+uninspectable private syntax.
 
-**OpenAPI / GraphQL codegen / Protocol Buffers / Thrift**:
+**Source reference:** Rust `macro_rules!`/proc macros, Elixir macros, Lisp
+`defmacro`, Julia `@macro`, Nim templates.
 
-Generate types, serializers, and clients from schema definitions.
+**Nomi direction (future layer):** `quote:` boundary for code-as-data, scoped
+rewrite rules (`expr /. pattern -> replacement`), and inspectable expansion.
+Postpone until normal forms, source spans, and desugaring explanations are
+mature.
 
----
+**Status:** research-only.
 
-## Implementation Priority
+## 5. Synthesis Decisions
 
-| Feature | Effort | Impact |
-|---------|--------|--------|
-| Decorators | **done** | — |
-| Inline tests / examples | medium | high |
-| Assert with diagnostics | medium | high |
-| Macros | very high | high (long-term) |
-| Compile-time execution | very high | medium |
-| Code generation | medium | medium |
+| Candidate | Status | Decision |
+|-----------|--------|----------|
+| Decorators (`@`) | implemented | Python-compatible; keep as metadata/transformation. |
+| `examples:` blocks | design-needed | Core explanation feature; inline docs + tests + trace. |
+| `check:` statements | design-needed | Diff-oriented runtime invariants. |
+| Macros | research-only | Defer until `quote:` boundary and scoped expansion exist. |
+| Compile-time execution | research-only | `comptime`-style requires non-Python compilation target. |
+| Code generation / scaffolding | library-first | Use data declarations and decoders; not a language feature. |
+
+## 6. Quality Bar
+
+Add a new testing or meta-programming feature only if:
+
+- Diagnostics speak in user concepts (expected value, actual value, source
+  location).
+- Examples compose with normal-form reduction (show the desugared form when
+  relevant).
+- Macros and code generation have inspectable expansion (no hidden syntax
+  transformation).
+- The feature does not duplicate decorators, `check`, or `examples:` for the
+  same job.

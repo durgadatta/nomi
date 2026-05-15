@@ -167,8 +167,8 @@ data |> f >>> g      # Is this (data |> f) >>> g or data |> (f >>> g)?
 `>>>`/`<<<`. So `data |> f >>> g` is `data |> (f >>> g)`. Holes (`_`)
 in pipeline position treat the piped value as their input: `data |> _ + 1`
 is `(_ + 1)(data)`. This is consistent but must be documented in one
-place (not scattered across functions.md, collections.md, and
-implicit_functions_nuance.md).
+place (not scattered across functions.md, flow_and_collections.md, and
+the implicit functions appendix).
 
 ### 2.3 Match Expression + Block Call + Try Expression
 
