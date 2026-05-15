@@ -75,7 +75,7 @@ dotted_name: name ("." name)*
 // unless a feature manifest proves they must be reserved globally. Add
 // ambiguity tests whenever this list grows.
 ?compound_stmt: if_stmt | guard_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
-              | with_stmt | funcdef | classdef | decorated | async_stmt
+              | with_stmt | funcdef | classdef | decorated | async_stmt | data_decl
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
 if_stmt: "if" test ":" suite elifs ["else" ":" suite]
        | "if" pattern "=" test ":" suite ["else" ":" suite] -> if_let_stmt
@@ -100,6 +100,14 @@ with_item: test ["as" name]
 // Nomi-owned BlockCall node instead of encoding the block as a Python AST
 // keyword payload.
 block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
+
+// -- data declaration (Nomi) ------------------------------------------
+data_decl: "data" NAME ":" _NEWLINE _INDENT data_field+ _DEDENT
+?data_field: data_field_constrained | data_field_typed | data_field_where | data_field_bare
+data_field_typed: NAME ":" test _NEWLINE
+data_field_constrained: NAME ":" test "where" test _NEWLINE
+data_field_where: NAME "where" test _NEWLINE
+data_field_bare: NAME _NEWLINE
 
 // -- yield ------------------------------------------------------------
 yield_expr: "yield" [testlist]

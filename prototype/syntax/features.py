@@ -236,6 +236,12 @@ _block_call_lowering = SyntaxFeature(
     lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
 )
 
+_data_decl_lowering = SyntaxFeature(
+    name="data-decl-lowering",
+    description="Lower data Name: fields... to a ClassDef with __init__, __repr__, __eq__",
+    lowering_mixins=("prototype.parser.nomi.lowering.data_decl.DataDeclMixin",),
+)
+
 
 # ── registry ─────────────────────────────────────────────────────────
 
@@ -265,6 +271,7 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     _section_lowering,
     _func_expr_lowering,
     _block_call_lowering,
+    _data_decl_lowering,
 ]
 
 
