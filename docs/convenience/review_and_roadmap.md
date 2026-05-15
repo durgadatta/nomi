@@ -33,6 +33,15 @@ trailing lambdas, context managers, `if-let`, nil narrowing, schemas, contracts,
 and dynamic configuration blocks, then recommends one Nomi combination for each
 family.
 
+**Synthesis tools:** Before evaluating a new proposal, read:
+- [syntax_design_rules.md](syntax_design_rules.md) — concrete rules with nuance
+  (when rules bend, how conflicts resolve)
+- [design_lessons_and_integration.md §9](design_lessons_and_integration.md) —
+  repeatable synthesis methodology with worked examples and traps
+
+These two documents are the synthesis stack: rules for what to do, methodology
+for how to do it, and nuance for when the rules don't apply cleanly.
+
 ## Feature Status Labels
 
 Every convenience note should use these labels when discussing a feature:
