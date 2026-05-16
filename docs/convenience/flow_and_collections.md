@@ -8,6 +8,9 @@
 > [array_languages_deep_dive.md](../research/array_languages_deep_dive.md),
 > [scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md),
 > [structured_collections_query_language.md](../features/structured_collections_query_language.md).
+>
+> Interaction map: [interaction_map.md](interaction_map.md) connects flow to
+> function holes, pattern filters, result collection, decode, and explanation.
 
 ## 1. Pipeline
 
@@ -129,6 +132,26 @@ the verb vocabulary first and treating query syntax as syntactic sugar over it.
 
 **Status:** library-first for core verbs; table/query plan verbs are
 design-settled (vocabulary and semantics decided, implementation deferred).
+
+### Verb Gaps To Research
+
+The current verb vocabulary covers the table/query core, but everyday
+collection work also needs small list/stream helpers. Start library-first:
+
+| Verb/helper | User need | Initial status |
+| --- | --- | --- |
+| `scan` | Keep intermediate fold states. | library-first |
+| `chunk` / `windowed` | Process fixed-size groups or sliding windows. | library-first |
+| `partition` | Split values by predicate. | library-first |
+| `partition_map` | Split and transform matched/result values in one pass. | library-first |
+| `zip` / `enumerate` | Combine positions or parallel collections. | library-first |
+| `flat_map` | Map each item to zero or more outputs. | library-first |
+| `collect_results` | Turn `list[Result[T,E]]` into `Result[list[T], E]`. | prototype-ready as library |
+| `tap` / `tee` | Inspect an intermediate pipeline value. | prototype-ready as library + explanation hook |
+
+These helpers should not become syntax until diagnostics, laziness, and query
+plans require a stronger surface. See [interaction_map.md](interaction_map.md)
+for the function/pattern/result interactions behind them.
 
 ### Explicit Broadcasting (Future)
 

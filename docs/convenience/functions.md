@@ -13,6 +13,9 @@
 >
 > Companion: [design_lessons_and_integration.md §4.2](design_lessons_and_integration.md)
 > for the function normal form integration critique.
+>
+> Interaction map: [interaction_map.md](interaction_map.md) connects function
+> sugar to pattern dispatch, collection flow, block calls, and result handling.
 
 ## Design Pressure
 
@@ -246,6 +249,12 @@ score(user) = normalized * weight where:
 separate declaration island with different scoping, validation, or diagnostics.
 
 ## Related But Separate Features
+
+For a cross-feature map of these boundaries, start with
+[interaction_map.md](interaction_map.md). Function sugar is safest when it
+knows which neighboring normal form owns the hard part: patterns own
+structural dispatch, flow owns left-to-right transformation, and blocks own
+callee-controlled time-shaped policy.
 
 ### Block Calls Are Not Just Functions
 

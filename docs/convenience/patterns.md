@@ -12,6 +12,10 @@
 > (pattern normal form),
 > [csharp_java_dart_modern_features.md](../research/csharp_java_dart_modern_features.md)
 > (C#/Java switch evolution, Dart patterns).
+>
+> Interaction map: [interaction_map.md](interaction_map.md) connects patterns
+> to piecewise functions, collection filters, data decoding, and absence/result
+> handling.
 
 ## Design Pressure
 
@@ -215,6 +219,21 @@ story.
 
 The syntax should make the question visible. `if user:` asks about truthiness;
 `if Some(user) = maybe_user:` asks about shape.
+
+## Pattern Intersections
+
+Patterns often sit inside another convenience:
+
+| Neighbor | Pattern role | Design rule |
+| --- | --- | --- |
+| Functions | Piecewise equations dispatch on parameter shapes. | Clauses should explain pattern failure, guard failure, and selected body. |
+| Collections | Filters and projections often test row or item shape. | Keep library verbs first; add row/group syntax only if binding scopes need it. |
+| Data decode | External maps and rows become owned data through structural checks. | Boundary failures diagnose with paths; ordinary match can skip. |
+| Absence/result | `Some`, `Ok`, and `Err` are just variants. | Do not add optional-only pattern syntax. |
+| Explanation | Pattern attempts are semantic events. | `explain` should show why a case did or did not match. |
+
+See [interaction_map.md](interaction_map.md) for candidate ideas such as
+pattern functions, view patterns, and pattern-aware `where`.
 
 ## Cross-Language Synthesis
 

@@ -234,6 +234,40 @@ material, or make the language easier to turn into a specification.
 9. Do not leave broken active links. If a doc is purged or demoted to drafts,
    update the active index or add an active distilled replacement.
 
+## Iterative Convenience Refinement
+
+Use this when the user asks for high-quality convenience syntax across
+languages, especially functions, patterns, and collections.
+
+Work in checkpointed passes:
+
+1. **Checkpoint first.** If there is already finished work, commit it before
+   starting a new research pass.
+2. **Local consolidation pass.** Read `docs/convenience/README.md`,
+   `functions.md`, `patterns.md`, `flow_and_collections.md`,
+   `interaction_map.md`, `syntax_synthesis_matrix.md`, and
+   `review_and_roadmap.md`. Tighten interactions, stale statuses, caveats, and
+   next-pass notes.
+3. **External research pass.** Search current official language references,
+   standard library docs, or mature ecosystem docs for uncovered ideas. Prefer
+   primary sources. Fold only durable user needs back into Nomi normal forms.
+4. **Intersection pass.** For each candidate, decide whether it belongs to
+   function, pattern, flow, block, result, data boundary, or explanation.
+   Record caveats where the candidate crosses boundaries.
+5. **Spec-shaping pass.** Convert accepted ideas into feature packets:
+   everyday pressure, syntax, normal form, reduction, diagnostics,
+   interactions, rejected alternatives, implementation slice, status.
+6. **Commit after each pass.** Leave the repo in a coherent state with notes
+   for the next exact pass.
+
+For function/pattern/collection work, always check:
+
+- Does piecewise function syntax remain just pattern dispatch?
+- Does collection flow use ordinary function values or named verbs first?
+- Does row/group syntax introduce new binding rules?
+- Does a pattern candidate diagnose shape failure versus constraint failure?
+- Does a pipeline candidate explain intermediate values and source paths?
+
 ## Coherence Checks
 
 Before accepting a new surface form, ask:
