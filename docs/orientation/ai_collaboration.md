@@ -47,9 +47,6 @@ clear semantics, tests, examples, and documentation.
 - `implementation_guideline.md`: records the early use of
   ChatGPT, Grok, DeepSeek, Gemini, and Claude for parser/evaluator
   infrastructure and syntax-layer exploration.
-- `../archive/design_review/ai-codex_project_overview_vision.md`:
-  Codex-generated project overview preserved as an AI-assisted summary, not a
-  canonical specification.
 - `../language/`, `../features/`, and `../research/`: active synthesis layers
   where AI-generated and human-written ideas must be reconciled into one
   coherent direction.
@@ -137,7 +134,7 @@ than making it runtime behavior.
   formatter) and uncomment sections as the project adopts new tooling.
 - Put broader AI process notes here.
 - Put canonical language direction in `../language/`.
-- Put historical or superseded AI synthesis in
-  `../archive/design_review/`.
+- Put temporary or superseded AI synthesis in `../drafts/` only when it is
+  still useful as source material; promote durable decisions into active docs.
 - Mention AI provenance when a document is primarily AI-generated or
   AI-synthesized.

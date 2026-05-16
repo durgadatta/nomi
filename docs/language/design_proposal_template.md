@@ -77,8 +77,8 @@ Compare at least three nearby precedents when possible.
 Use [Language Family Coverage Map](../research/language_family_coverage_map.md)
 to avoid missing an obvious tradition.
 
-If the proposal revives an idea from `docs/archive/`, `docs/drafts/`, or a
-large research note, answer this archive-promotion checklist:
+If the proposal revives an idea from `docs/drafts/` or a large research note,
+answer this promotion checklist:
 
 - What is the durable need after removing the old document's local rhetoric?
 - Which active normal form absorbs it?

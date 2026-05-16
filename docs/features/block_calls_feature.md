@@ -450,6 +450,15 @@ return it.
 This keeps control ownership with the callee and makes `yield` the explicit
 boundary.
 
+Implementation caveat:
+
+The prototype has historically explored `yield` through Python AST and
+generator-like behavior. Python generator cleanup and `finally` behavior are
+useful implementation evidence, but they must not silently define Nomi
+semantics. Nomi's language contract is the block-call model here: caller-side
+block, explicit callee `yield`, block parameters through binding targets, and
+diagnostics that show both policy and caller frames.
+
 ## Error And Cancellation Semantics
 
 Block calls must define failure clearly:

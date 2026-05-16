@@ -1731,6 +1731,7 @@ These are the active documents that feed this spec. When this spec is silent on
 a design question, these are where the rationale lives:
 
 - [Language Foundation](language_foundation.md) — canonical design entry point, coherence contracts, milestones
+- [Spec Readiness Map](spec_readiness_map.md) — promotion map from research and feature docs into spec-ready sections
 - [Language Design Dimensions](language_design_dimensions.md) — irreducible axes of variation, convergence points
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) — core/sugar/library/scoped/rejected ladder
 - [Design Lessons and Integration](../convenience/design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, designer quotes, synthesis methodology
@@ -1738,6 +1739,7 @@ a design question, these are where the rationale lives:
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) — cross-language feature families and Nomi recommendations
 - [Implementation Learnings](../convenience/implementation_learnings.md) — grammar interactions, AST bugs, deferred features
 - [Language Direction And Gap Map](language_direction_and_gap_map.md) — adoption-facing gaps and docs consolidation policy
+- [Docs Eagle Eye Review](docs_eagle_eye_review.md) — active bridge-gap review for future spec quality
 
 ### External language references
 

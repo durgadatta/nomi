@@ -58,10 +58,6 @@ Start with these files before broad design or implementation changes:
 - `docs/orientation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
   surfaces.
 
-Archived design notes under `docs/archive/design_review/` are source
-material, not active specification. Use them to recover history, then reconcile
-work with the active docs in `docs/language/` and `docs/features/`.
-
 The research corpus under `docs/research/` is design evidence, not active
 specification. Stable decisions from deep dives should migrate to
 `docs/convenience/` and `docs/language/`. The `.agents/skills/` directory
@@ -169,8 +165,6 @@ then the broader relevant suite.
   usage.
 - `docs/language/`, `docs/features/`, and `docs/research/`: active language
   design workspace grouped by concreteness.
-- `docs/archive/design_review/`: preserved AI-assisted and exploratory
-  design material.
 - `docs/orientation/ai_collaboration.md`: process note for AI-assisted design,
   implementation, critique, and checkpointing.
 - `local/` and `PLAY/`: scratch/reference material; do not treat as canonical

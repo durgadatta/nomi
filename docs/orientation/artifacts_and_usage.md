@@ -72,8 +72,7 @@ source of truth.
 
 These artifacts follow the public AGENTS.md convention and reflect the existing
 Nomi AI collaboration history documented in `implementation_guideline.md`, the
-tracked `.codex/config.toml`, and the AI-assisted design notes under
-`../archive/design_review/`.
+tracked `.codex/config.toml`, and the active language-design docs.
 
 Use `AGENTS.md` as the first stop for agent work, then follow its links into
 the active design documents before changing parser, interpreter,

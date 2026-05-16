@@ -104,5 +104,6 @@ Good next additions:
 
 - a PDF/EPUB extraction adapter for the programming-books source;
 - embeddings and a vector-store backend beside the lexical backend;
-- source priority rules, so active language docs outrank archived notes;
+- source priority rules, so active language docs outrank drafts and broad
+  research notes;
 - a prompt wrapper that always asks the model to cite `rag_search` results.

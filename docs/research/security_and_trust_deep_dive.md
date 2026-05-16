@@ -1928,7 +1928,7 @@ delegate namespace ownership to domain ownership.
 - [../convenience/syntax_synthesis_matrix.md](../convenience/syntax_synthesis_matrix.md) — config wants redaction
 - [../language/language_design_dimensions.md](../language/language_design_dimensions.md) — axes of variation
 - [../language/language_foundation.md](../language/language_foundation.md) — canonical design foundation
-- [convenience/design_lessons_and_integration.md](./design_lessons_and_integration.md) — systemic cruft patterns (the second-mini-language anti-pattern applies to config/secret DSLs)
+- [convenience/design_lessons_and_integration.md](../convenience/design_lessons_and_integration.md) — systemic cruft patterns (the second-mini-language anti-pattern applies to config/secret DSLs)
 - [research/everyday_fallback_simplification_ideas.md](./everyday_fallback_simplification_ideas.md) §23 — early secret-value design sketches
 - [research/data_boundary_systems_deep_dive.md](./data_boundary_systems_deep_dive.md) — data boundary architecture (decode, validation, constraints)
 - [research/packaging_and_project_structure_deep_dive.md](./packaging_and_project_structure_deep_dive.md) — dependency management and project structure

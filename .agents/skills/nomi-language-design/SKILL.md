@@ -98,10 +98,13 @@ Read the smallest relevant set before changing docs or making recommendations.
 
 **Foundation and direction:**
 - `docs/language/language_foundation.md` — canonical design foundation.
+- `docs/language/spec_readiness_map.md` — promotion workflow for turning
+  research, convenience notes, feature docs, target fixtures, and
+  implementation plans into spec-ready language sections.
 - `docs/language/language_direction_and_gap_map.md` — adoption-oriented gaps
   and next design artifacts.
-- `docs/language/docs_eagle_eye_review.md` — full-docs scan for hidden bridge
-  gaps and planning priorities.
+- `docs/language/docs_eagle_eye_review.md` — active distilled scan for hidden
+  bridge gaps, obsolete/source-only lanes, and planning priorities.
 - `docs/language/language_degrees_of_freedom.md` — strict core vs sugar,
   library-first, scoped extension, future layer, rejection framework.
 - `docs/language/language_design_dimensions.md` — irreducible axes of
@@ -202,6 +205,35 @@ smallest new primitive it would require.
 10. Avoid implementation unless the user explicitly asks for it or the task is
     already scoped as implementation work.
 
+## Spec-Editor Workflow
+
+Use this when the user asks to consolidate docs, improve coherence, mark stale
+material, or make the language easier to turn into a specification.
+
+1. Read `language_foundation.md`, `language_spec.md`,
+   `spec_readiness_map.md`, and `docs_eagle_eye_review.md` before editing.
+2. Identify whether each touched doc is `active`, `source`, `historical`,
+   `obsolete`, or `scratch`. Add or sharpen the status block when unclear.
+3. Promote decisions, not essays. Move stable conclusions into the spec,
+   feature docs, or convenience docs; leave research or draft files as
+   evidence.
+4. For each promoted feature, require the feature packet from
+   `spec_readiness_map.md`: everyday pressure, user syntax, normal form,
+   reduction, diagnostics, interactions, rejected alternatives, implementation
+   slice, current status.
+5. Separate doc modes: tutorial, how-to, reference/spec, explanation,
+   planning, source research. Do not let one page pretend to be all of them.
+6. Make comments operational: name the next file to edit, the status to assign,
+   the decision to preserve, the test/sample gate, or the reason to reject.
+7. If the user asks for new research or "search", use current external sources
+   and prefer official language references, specs, tours, or framework docs.
+   Reconcile external lessons into Nomi normal forms instead of copying
+   catalogues.
+8. Update `docs/README.md`, `docs/convenience/README.md`, relevant feature
+   docs, and this skill when the workflow itself changes.
+9. Do not leave broken active links. If a doc is purged or demoted to drafts,
+   update the active index or add an active distilled replacement.
+
 ## Coherence Checks
 
 Before accepting a new surface form, ask:
@@ -265,9 +297,16 @@ When editing design docs:
 - Distinguish implemented behavior, prototype-ready syntax, design-needed
   questions, library-first ideas, research-only notes, and rejected-for-now
   ideas.
+- Prefer `active`, `source`, `historical`, `obsolete`, and `scratch` labels for
+  document status. If a doc is obsolete, say exactly what replaced it.
 - Prefer comparative tables for overlapping features.
+- Prefer spec-shaped sections over essays: syntax, reduction, diagnostics,
+  status, rejected alternatives, tests/samples, open questions.
 - Include small Nomi examples only when they clarify the recommended normal
   form.
+- Keep target-only examples in `target_program_fixtures.md` or
+  `target_language_tour.md`; do not move them into runnable samples until
+  parser, lowering, runtime, tests, and snapshots agree.
 - Point to source-language docs or existing Nomi docs (especially the research
   deep dives) instead of duplicating large explanations.
 - Update `docs/README.md`, `docs/convenience/README.md`, and both research

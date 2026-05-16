@@ -22,7 +22,7 @@ trust it, explain it, and compose it with other ideas.
 Nomi should feel locally readable like Python, but it should not be "Python plus
 features." More importantly, it should not begin by collecting features from
 other languages. The main design spine is the
-[First-Principles Programming Model](first_principles_programming_model.md):
+[Language Foundation](../language/language_foundation.md):
 build upward from primitive cognitive acts, then use existing languages as
 reference experiments.
 
@@ -43,7 +43,8 @@ Several language families illuminate the design:
 The goal is not eclectic syntax. The goal is a language where references from
 other languages are translated into one first-principles semantic grammar. The
 active coherence rules are defined in
-[Language Coherence Model](language_coherence_model.md).
+[Spec Readiness Map](../language/spec_readiness_map.md) and
+[Language Direction And Gap Map](../language/language_direction_and_gap_map.md).
 
 For the adoption-oriented gap map that turns this aspiration into concrete
 documentation and design targets, see
@@ -322,6 +323,6 @@ New features should pass these questions:
 5. How will diagnostics explain it when it fails?
 6. Can this feature compose with binding, blocks, patterns, and examples?
 
-If a feature is powerful but not explainable, it stays in the archive. If it is
-explainable and cognitively useful, implementation difficulty is not a reason to
-drop it.
+If a feature is powerful but not explainable, it stays in research or drafts.
+If it is explainable and cognitively useful, implementation difficulty is not a
+reason to drop it.

@@ -2,9 +2,8 @@
 
 > Status: staged backlog for the forward-looking language design.
 
-This backlog turns
-[First-Principles Programming Model](../research/first_principles_programming_model.md),
-[Hierarchical Language Research Plan](../research/hierarchical_language_research_plan.md),
+This backlog turns [Language Foundation](language_foundation.md),
+[Spec Readiness Map](spec_readiness_map.md),
 [Cognitive Language Vision](../research/cognitive_language_vision.md), and
 [Binding Constraints Feature](../features/binding_constraints_feature.md) into
 implementation-sized work. The current prototype is a bootstrap path, not a
@@ -21,6 +20,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 For a full-docs scan that names hidden bridge gaps and planning priorities, see
 [Docs Eagle Eye Review](docs_eagle_eye_review.md).
 
+For the promotion workflow from design material to spec-ready language sections,
+see [Spec Readiness Map](spec_readiness_map.md).
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the
@@ -33,17 +35,19 @@ For a full-docs scan that names hidden bridge gaps and planning priorities, see
   ahead of the implementation.
 - [ ] Maintain the language coherence model as a blocking design review for new
   features.
-- [ ] Extract promising ideas from `../archive/design_review/` into
-  active feature specs only when they can share the same semantic spine.
+- [x] Purge `docs/archive/` after promoting its durable ideas into active docs.
+  Future source-only ideas should live in `docs/research/` or `docs/drafts/`
+  until promoted.
 - [ ] For each promoted idea, document what Nomi keeps from the source language
   and what it deliberately refuses to copy.
 - [ ] Use `design_proposal_template.md` for new syntax or feature proposals
   before promoting them into canonical docs.
 - [ ] Maintain a central design decision ledger for accepted, rejected,
   deferred, and revisit-later language choices.
-- [ ] Maintain a current capability matrix that separates parser support,
-  lowering, runtime behavior, tests, samples, docs status, and target-only
-  syntax.
+- [ ] Maintain a current capability/spec matrix, using
+  `spec_readiness_map.md` as the consolidation home until the table needs its
+  own file. It should separate parser support, lowering, runtime behavior,
+  tests, samples, docs status, and target-only syntax.
 - [ ] Add target Nomi programs that intentionally use not-yet-implemented
   features: explicit data decoding, algebraic data, pipelines, block policies,
   symbolic rewrite, table queries, and examples.
@@ -64,6 +68,9 @@ For a full-docs scan that names hidden bridge gaps and planning priorities, see
 - [ ] Add a prelude and standard library plan for ordinary tasks: files, paths,
   text, JSON, CSV, HTTP, time, subprocesses, tables, tests, config, secrets,
   and Python interop.
+- [ ] For each major feature spec, include the explanation contract from
+  `spec_readiness_map.md`: what happened, where, what value, what rule, what
+  the user can do next, and what is redacted.
 
 ## Track 0A: Declarative Syntax And Experimentation Substrate
 
@@ -339,7 +346,8 @@ boundaries, and package ownership. Keep the detailed plan in
 ## Track 10: Cleanups And Coherence Checks
 
 - [ ] Before implementing a feature, answer the coherence questions from
-  `../research/language_coherence_model.md`.
+  `language_foundation.md`, `spec_readiness_map.md`, and
+  `language_direction_and_gap_map.md`.
 - [ ] Reject or redesign any feature that adds a second unrelated story for
   binding, blocks, patterns, expression flow, symbolic code, effects, or
   diagnostics.
@@ -347,13 +355,15 @@ boundaries, and package ownership. Keep the detailed plan in
   covers assignment, parameters, blocks, and patterns.
 - [ ] Update `delta_on_python.md` to point to the canonical
   constrained-binding spec.
-- [ ] Update `../features/yield_to_block.md` with the block-parameter binding
-  decision once implemented.
+- [ ] Keep `../features/block_calls_feature.md` as the only active home for
+  block-call/yield decisions, including block-parameter binding once
+  implemented.
 - [ ] Add a conformance-style test file containing the design tests from the
   feature spec.
 - [ ] For every implemented convenience feature, update `samples/demo.nomi` and
   `samples/demo_terse.nomi` in the same commit after tests pass.
-- [ ] Mark archived design-review docs as background source material only.
+- [x] Remove archived design-review docs after promoting durable material into
+  the active spine.
 
 ## Codebase Scan Backlog
 

@@ -88,6 +88,7 @@ Start here based on what you're trying to do:
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
+| **Promote a design into the spec** | [../language/spec_readiness_map.md](../language/spec_readiness_map.md) (feature packet + spec conversion matrix) |
 | **Compare Nomi's approach to other languages** | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) (cross-language families) |
 | **Implement a feature** | `docs/features/binding_constraints_feature.md`, `block_calls_feature.md` → `prototype/` code |
 | **Add new syntax** | [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis loop) → `CLAUDE.md` (extension path) |

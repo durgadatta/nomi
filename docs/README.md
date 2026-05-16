@@ -14,10 +14,11 @@ Start here for most language design or implementation work:
 
 1. [Language Foundation](language/language_foundation.md)
 2. [Language Specification](language/language_spec.md)
-3. [Language Direction And Gap Map](language/language_direction_and_gap_map.md)
-4. [Convenience Review And Roadmap](convenience/review_and_roadmap.md)
-5. The focused syntax doc for the feature being changed.
-6. [Artifacts And Usage](orientation/artifacts_and_usage.md), when runtime
+3. [Spec Readiness Map](language/spec_readiness_map.md)
+4. [Language Direction And Gap Map](language/language_direction_and_gap_map.md)
+5. [Convenience Review And Roadmap](convenience/review_and_roadmap.md)
+6. The focused syntax doc for the feature being changed.
+7. [Artifacts And Usage](orientation/artifacts_and_usage.md), when runtime
    behavior or tooling is involved.
 
 The default improvement path is to make an existing syntax doc clearer, not to
@@ -75,9 +76,9 @@ general reading order.
 | --- | --- |
 | Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
 | Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
-| Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Yield To Block](features/yield_to_block.md), [Concurrency](convenience/concurrency.md) |
-| Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Collections](convenience/collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
-| Improve design docs | [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
+| Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
+| Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
+| Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
 | Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
 
 ## Language
@@ -109,6 +110,9 @@ Planning and process:
   adoption-oriented steering note, core gap map, and docs consolidation policy.
 - [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
   for hidden bridge gaps and next synthesis moves.
+- [Spec Readiness Map](language/spec_readiness_map.md): promotion workflow and
+  coverage map for converting research, convenience notes, feature docs, and
+  implementation plans into a future language specification.
 - [Forward Implementation Plan](language/forward_implementation_plan.md):
   staged implementation sequence and gates.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
@@ -136,7 +140,6 @@ spine.
 | [Block Calls As Control Values](features/block_calls_feature.md) | Active syntax/semantics for caller-side blocks, `yield`, and policy blocks. |
 | [Structured Collections And Query Language](features/structured_collections_query_language.md) | Source feature note until collection/query syntax is reduced into the spec and `collections.md`. |
 | [Symbolic And Structural Computation](features/symbolic_structural_computation.md) | Source feature note for future `quote`, rewrite, and plan work. |
-| [Yield To Block](features/yield_to_block.md) | Historical source note; canonical block design lives in `block_calls_feature.md`. |
 
 ## Convenience
 
@@ -153,12 +156,10 @@ normal forms so Nomi grows by reduction instead of feature collection.
   cross-language feature families, nuanced differences, and recommendations
   for combining syntax coherently
 - [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
-- [Collections](convenience/collections.md) — map/filter/reduce, pipelines, ranges, spread
+- [Flow And Collections](convenience/flow_and_collections.md) — map/filter/reduce, pipelines, ranges, spread
 - [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards
-- [Null Handling](convenience/null_handling.md) — `?.`, `??`, Option/Result types
-- [Error Handling](convenience/error_handling.md) — `?`, try-as-expression, guard
-- [Strings](convenience/strings.md) — interpolation, multi-line, regex
-- [Types](convenience/types.md) — data classes, type aliases, extension methods
+- [Absence And Result](convenience/absence_and_result.md) — `?.`, `??`, Result, try-as-expression, guard
+- [Data And Types](convenience/data_and_types.md) — data classes, type aliases, strings, extension-method questions
 - [Scope & Context](convenience/scope_context.md) — where clause, scope functions, builder DSL
 - [Concurrency](convenience/concurrency.md) — async/await, channels, structured concurrency
 - [Modules & Imports](convenience/modules_imports.md) — aliases, re-exports
@@ -173,8 +174,8 @@ seed focused syntax sections. When a research idea becomes stable, fold it into
 
 | Source area | Use for | Fold stable decisions into |
 | --- | --- | --- |
-| [Cognitive Language Vision](research/cognitive_language_vision.md), [First-Principles Programming Model](research/first_principles_programming_model.md), [Language Coherence Model](research/language_coherence_model.md) | Philosophy and admission pressure. | [Language Foundation](language/language_foundation.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
-| [Hierarchical Language Research Plan](research/hierarchical_language_research_plan.md), [Research Notes Synthesis](research/research_notes_synthesis.md) | Layering and promotion history. | [Implementation Todos](language/implementation_todos.md), focused feature docs |
+| [Cognitive Language Vision](research/cognitive_language_vision.md), [Language Foundation](language/language_foundation.md), [Spec Readiness Map](language/spec_readiness_map.md) | Philosophy and admission pressure. | [Language Foundation](language/language_foundation.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
+| [Research Notes Synthesis](research/research_notes_synthesis.md), [Spec Readiness Map](language/spec_readiness_map.md) | Layering and promotion history. | [Implementation Todos](language/implementation_todos.md), focused feature docs |
 | [Language Family Coverage Map](research/language_family_coverage_map.md), [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md), [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md) | Cross-language comparison. | [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md), focused convenience docs |
 | [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md), [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md) | Rejected/deferred pressure and simplification ideas. | [Convenience Review And Roadmap](convenience/review_and_roadmap.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
 
@@ -186,13 +187,6 @@ Essays and detours that frame Nomi's philosophy, risk, or design context.
 - [Tractable Sophistication](notes/tractable_sophistication.md)
 - [Category Theory Detour](notes/category_theory_detour.md)
 - [Notes Meta](notes/meta.md)
-
-## Archive
-
-Historical design material. These files are source material, not active
-specification.
-
-- [Archived Design Review](archive/design_review/README.md)
 
 ## Drafts
 

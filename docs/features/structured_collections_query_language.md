@@ -8,13 +8,13 @@
 >
 > Related notes:
 >
-> - [Collections And Iteration Convenience](../convenience/collections.md)
+> - [Flow And Collections](../convenience/flow_and_collections.md)
 > - [Symbolic And Structural Computation](symbolic_structural_computation.md)
 > - [High-Level Language Usability Syntax Notes](../research/high_level_language_usability_syntax_notes.md)
 > - [Python Syntax Stretch Feature Atlas](../research/python_syntax_stretch_feature_atlas.md)
 
 > Consolidation note: basic collection syntax, ranges, spread, slices, and
-> first-layer pipelines belong in `../convenience/collections.md`. This file is
+> first-layer pipelines belong in `../convenience/flow_and_collections.md`. This file is
 > source material for table/query/plan design until those decisions are folded
 > into the spec and syntax-facing docs.
 

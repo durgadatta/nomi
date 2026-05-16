@@ -12,8 +12,8 @@ Nomi's docs already contain a strong semantic spine:
 
 - [Language Foundation](language_foundation.md) defines the current core.
 - [Language Specification](language_spec.md) gives a concrete draft.
-- [Language Coherence Model](../research/language_coherence_model.md) protects
-  against feature collection.
+- [Spec Readiness Map](spec_readiness_map.md) defines how decisions move from
+  research, convenience notes, feature docs, and fixtures into the future spec.
 - [Language Family Coverage Map](../research/language_family_coverage_map.md)
   tracks source-language traditions, under-covered dimensions, and follow-up
   research priorities.
@@ -83,6 +83,7 @@ background.
 | Current source | Keep as | Consolidate into |
 | --- | --- | --- |
 | `docs_eagle_eye_review.md` | High-altitude review and bridge-gap discovery. | Move active next steps into this file, `implementation_todos.md`, or focused syntax docs. |
+| `spec_readiness_map.md` | Promotion workflow and spec coverage control. | Keep active; use it to avoid broad duplicate planning docs. |
 | `review_and_roadmap.md` | Convenience normal forms and candidate status. | Keep as the convenience spine; do not duplicate its candidate tables elsewhere. |
 | `syntax_synthesis_matrix.md` | Cross-language grouping by feature family. | Use as source evidence for concrete syntax docs. |
 | `expanded_language_research.md` | Broad language-family source notes. | Promote only reduced decisions into focused syntax docs. |
@@ -96,7 +97,7 @@ sections or focused feature specs rather than another broad synthesis doc.
 
 | Coverage area | Everyday pressure | Normal form | Best home |
 | --- | --- | --- | --- |
-| Current capability matrix | Users need to know what syntax works today. | explanation | `docs/language/current_capability_matrix.md` or `language_spec.md` appendix |
+| Current capability matrix | Users need to know what syntax works today. | explanation | Start in `docs/language/spec_readiness_map.md`; split to `current_capability_matrix.md` only if it grows too large. |
 | Decode/config/provenance | JSON, CSV, CLI, env, HTTP, and config need checked conversion. | data boundary + binding + explanation | `docs/features/data_decode_boundary_feature.md` |
 | Failure taxonomy | `none`, `Result`, exceptions, pattern failure, and constraint failure must not blur. | absence/result + pattern | `docs/features/failure_taxonomy_feature.md` |
 | Explanation/trace | Failed constraints, decode, match, pipelines, and blocks need one diagnostic contract. | explanation | `docs/features/explanation_trace_feature.md` |
@@ -179,7 +180,7 @@ design-decision gaps.
 | --- | --- | --- | --- |
 | First-hour learning path | Broad adoption starts with the first useful program. | `README.md`, `language_foundation.md` | A tiny "first hour of Nomi" teaching note with only values, bindings, functions, calls, and diagnostics. |
 | Current capability map | Users and agents need to know what is implemented, partial, target-only, or rejected. | `implementation_todos.md`, `target_program_fixtures.md` | A current capability matrix with parser, lowering, runtime, tests, samples, docs, and status columns. |
-| Decision ledger | Stable choices are repeated across docs and can be accidentally reopened. | `language_foundation.md`, `syntax_synthesis_matrix.md`, `docs_eagle_eye_review.md` | A design decision ledger for accepted, rejected, deferred, and revisit-later choices. |
+| Decision ledger | Stable choices are repeated across docs and can be accidentally reopened. | `language_foundation.md`, `syntax_synthesis_matrix.md`, `docs_eagle_eye_review.md`, `spec_readiness_map.md` | A design decision ledger for accepted, rejected, deferred, and revisit-later choices. |
 | Standard library shape | Python succeeded partly because ordinary tasks are immediately available. | `language_spec.md` prelude section | A prelude/standard library design note: files, paths, text, JSON, CSV, HTTP, time, process, tables, tests. |
 | Data boundary doctrine | Scripts and services spend much of their life cleaning external input. | `binding_constraints_feature.md`, `syntax_synthesis_matrix.md` | A focused `data_decode_boundary` feature spec covering provenance, defaults, optional fields, redaction, and source paths. |
 | Failure taxonomy | `none`, `Err`, exceptions, failed constraints, and pattern failure must not blur. | `error_handling.md`, `null_handling.md`, `language_spec.md` | A focused result/failure design note with examples across parsing, IO, validation, and API boundaries. |
@@ -187,7 +188,7 @@ design-decision gaps.
 | Collection/table vocabulary | Most real programs transform collections, records, rows, and tables. | `structured_collections_query_language.md`, `collections.md` | A vocabulary spec for `where`, `select`, `derive`, `group`, `join`, `sort`, `window`, `fold`, and plan values. |
 | Module/package story | A language cannot scale if names, files, exports, and packages are vague. | `modules_imports.md`, `language_spec.md` | A modules/packages note focused on simple imports, explicit exports, package layout, and Python interop. |
 | Interop and migration | Nomi's first ecosystem advantage is the Python world. | `delta_on_python.md`, `artifacts_and_usage.md` | A migration/interop note: what stays Python-like, where Nomi departs, how libraries are called, and where boundaries are visible. |
-| Mutability and state | Everyday code mutates files, objects, caches, and collections. | `tractable_sophistication.md`, `language_coherence_model.md` | A state model note: rebinding, mutable containers, data updates, transactions, and future lenses/projections. |
+| Mutability and state | Everyday code mutates files, objects, caches, and collections. | `tractable_sophistication.md`, `spec_readiness_map.md` | A state model note: rebinding, mutable containers, data updates, transactions, and future lenses/projections. |
 | Effects and capabilities | File/network/time/randomness must be usable before effect theory is introduced. | `cognitive_language_vision.md`, `language_spec.md` | A practical capability note that starts with `world`, `using`, `transaction`, and traceable authority. |
 | Concurrency posture | Async, tasks, cancellation, and streams can distort a first language. | `concurrency.md`, `block_calls_feature.md` | A staged concurrency note: keep first core synchronous, then add structured concurrency through block policies. |
 | Syntax taste guide | Pleasant syntax requires consistent taste, not just local cleverness. | `syntax_synthesis_matrix.md` | A short style/taste guide for keyword choice, punctuation, placeholders, block shape, and examples. |

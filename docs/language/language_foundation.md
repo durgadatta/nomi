@@ -63,6 +63,27 @@ small script -> clearer script -> reusable functions -> named data -> checked
 boundaries -> readable transformations -> explainable failures
 ```
 
+## Primitive Cognitive Acts
+
+Nomi's normal forms should remain tied to ordinary programming acts:
+
+| Act | Nomi surface | Design pressure |
+| --- | --- | --- |
+| Distinguish | values, literals, variants | Know what kind of thing exists. |
+| Name | bindings, scopes, imports, captures | Give values stable local meaning. |
+| Judge | constraints, predicates, examples | Accept, reject, refine, or explain values. |
+| Transform | functions, calls, pipelines | Relate values to values. |
+| Choose | conditionals, patterns, guards | Select behavior by structure or situation. |
+| Group | data, collections, modules | Make concepts larger than one value. |
+| Repeat | loops, collection verbs, tables | Apply a transformation across many values. |
+| Sequence | blocks, yield, policies | Model time-shaped control. |
+| Touch the world | files, network, clocks, capabilities | Make external authority visible. |
+| Explain | diagnostics, traces, examples | Show why behavior happened. |
+| Reflect | quote, rewrite, scoped notation | Treat program-shaped structure as data only behind a fence. |
+
+The active normal forms are the operational version of this map. If a feature
+cannot name the act it improves, it remains research material.
+
 ## Design Thesis
 
 Programming is the act of turning intention into executable structure. A
@@ -806,12 +827,12 @@ here. Feature-specific detail belongs in focused specs.
 Recommended next focused specs:
 
 ```text
-bindings_constraints_and_diagnostics.md
-data_and_boundary_conversion.md
-patterns_and_match.md
-pipelines_and_collections.md
-block_calls.md
-examples_and_traces.md
+data_decode_boundary_feature.md
+failure_taxonomy_feature.md
+explanation_trace_feature.md
+state_and_capability_model.md
+prelude_and_standard_library_plan.md
+first_hour_nomi.md
 ```
 
 Each focused spec should use this shape:
@@ -872,6 +893,10 @@ specific concern, follow these pointers rather than reading the full docs tree.
 lexical rules, and per-feature semantics. This foundation names the ambition;
 the spec writes the contract.
 
+→ [Spec Readiness Map](spec_readiness_map.md) — the promotion map for turning
+research, convenience notes, feature specs, fixtures, and implementation plans
+into spec-ready sections.
+
 ### If you need to understand the coherence model
 
 The "One X Story" contracts in this document (binding, function, data, pattern,
@@ -922,6 +947,9 @@ packages with gates and caveats.
 → [Implementation Learnings](../convenience/implementation_learnings.md) —
 grammar interactions, AST bugs, deferred features, and source-span wiring notes.
 
+→ [Docs Eagle Eye Review](docs_eagle_eye_review.md) — active distilled review
+of the bridge gaps that still block spec quality.
+
 ### If you need the design-space analysis behind the decisions
 
 → [Language Design Dimensions](language_design_dimensions.md) — the irreducible
@@ -935,7 +963,7 @@ Nomi must fill to reach Python-like everyday usefulness.
 ### Reading order for new contributors
 
 ```
-this document (foundation) → spec → degrees_of_freedom → design_dimensions
+this document (foundation) → spec → spec_readiness_map → degrees_of_freedom → design_dimensions
                            → convenience/README → per-feature convenience docs
                            → implementation_todos → implementation_learnings
 ```
