@@ -46,26 +46,35 @@ AWAIT: "await"
 // TODO(NOMI-SUBSTRATE-013): Future fenced forms such as quote: and use units:
 // should enter as syntax-island nodes with raw text and spans before the
 // ordinary expression grammar tries to understand their domain notation.
-?atom: "(" yield_expr ")"
-     | "(" section ")" -> section
-     | "(" _tuple_inner? ")" -> tuple
-     | "(" comprehension{test_or_star_expr} ")" -> tuple_comprehension
-     | "[" _exprlist? "]"  -> list
-     | "[" comprehension{test_or_star_expr} "]"  -> list_comprehension
-     | "{" _dict_exprlist? "}" -> dict
-     | "{" comprehension{key_value} "}" -> dict_comprehension
-     | "{" _exprlist "}" -> set
-     | "{" comprehension{test} "}" -> set_comprehension
+?atom: "(" paren_expr ")" -> paren_expr
+     | "[" brack_expr "]" -> brack_expr
+     | "{" brace_expr "}" -> brace_expr
      | name -> var
      | number
      | string_concat
-     | "(" test ")"
-      | DOLLAR_HOLE -> dollar_hole
-      | DOLLAR_NAME -> dollar_hole
-      | "..." -> ellipsis
-      | "None"    -> const_none
-      | "True"    -> const_true
-      | "False"   -> const_false
+     | DOLLAR_HOLE -> dollar_hole
+     | DOLLAR_NAME -> dollar_hole
+     | "..." -> ellipsis
+     | "None"    -> const_none
+     | "True"    -> const_true
+     | "False"   -> const_false
+
+// -- parenthesized / bracketed / braced content (split from atom to
+//    reduce Earley items — these are predicted only when the delimiter
+//    is scanned, not at every position where atom is predicted.)
+paren_expr: yield_expr
+          | section -> section
+          | _tuple_inner? -> tuple
+          | comprehension{test_or_star_expr} -> tuple_comprehension
+          | test
+
+brack_expr: _exprlist? -> list
+          | comprehension{test_or_star_expr} -> list_comprehension
+
+brace_expr: _dict_exprlist? -> dict
+          | comprehension{key_value} -> dict_comprehension
+          | _exprlist -> set
+          | comprehension{test} -> set_comprehension
 
 ?string_concat: string+
 

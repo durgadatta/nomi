@@ -89,7 +89,16 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
     def atom_expr(self, items):
         # Lark routes to funccall/getitem/getattr first; otherwise child
         return items[0] if items else ast.Constant(value=None)
-    
+
+    def paren_expr(self, items):
+        return items[0] if items else ast.Constant(value=None)
+
+    def brack_expr(self, items):
+        return items[0] if items else ast.Constant(value=None)
+
+    def brace_expr(self, items):
+        return items[0] if items else ast.Constant(value=None)
+
     def star_expr(self, items):
         return ast.Starred(value=items[0])
 
