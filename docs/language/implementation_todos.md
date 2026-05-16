@@ -96,9 +96,10 @@ layers move from docs into implementation.
   calls.
   (`SourceSpan` dataclass, `captures_span` decorator, and `SurfaceNode.span`
   field in `prototype/syntax/surface.py`. Wired through `BlockCall` via
-  Lark's `visit_wrapper` mechanism. `propagate_positions=True` enabled on
-  parser. Remaining: apply `@captures_span` to other surface-node-producing
-  lowering methods.)
+  Lark's `visit_wrapper` mechanism. Source-position propagation is available
+  with `NOMI_PARSER_SPANS=1` or `preserve_positions=True`; the default
+  execution parser disables it for speed. Remaining: apply `@captures_span` to
+  other surface-node-producing lowering methods.)
 - [~] Add Nomi-owned surface nodes for new or awkward forms before lowering
   them to Python AST. Start with `BlockCall`, `BindingTarget`, `PipeExpr`,
   `MatchExpr`, and `DataDecl`.

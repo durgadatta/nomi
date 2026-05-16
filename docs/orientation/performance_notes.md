@@ -8,9 +8,17 @@ is negligible for typical source files.
 
 - **Profiler**: `tools/perf/profiler.py` — self-contained HTML report generator.
   Run with `python3 -O tools/perf/profiler.py --file samples/demo.nomi`.
+  It does not open a browser unless passed `--open`.
 - **Convenience script**: `scripts/profile.py` — defaults to `samples/demo.nomi`,
   opens browser.  Uses subprocess to avoid stdlib `profile` module name conflict.
 - **Output**: `reports/profile/profile_{stem}.html` (gitignored).
+- **Repeatable timing**: use `--iterations N` for min/median/average/max timing
+  samples.  Use `--cprofile` only when you need function-level attribution;
+  it adds substantial overhead.
+- **Source spans**: default parser runs with Lark position propagation off for
+  speed.  Set `NOMI_PARSER_SPANS=1` or pass `preserve_positions=True` to
+  `get_parser()` / `generate_ast()` when testing diagnostics, inspection, or
+  source-span plumbing.
 - **cProfile caveat**: cProfile adds ~4x overhead for Earley parsing
   (function-call-heavy).  The profiler separates accurate `time.perf_counter()`
   wall-clock timing from cProfile stats.
@@ -74,6 +82,22 @@ where Earley previously relied on ambiguity resolution:
 post-wrapper Earley parse baseline (~974ms), this is roughly a 100x raw parse
 speedup.
 
+### 5. Fast parser profile: source spans opt-in
+
+**What**: Parser construction and raw-tree caching now key on
+`preserve_positions`.  The default execution profile disables Lark
+`propagate_positions`; diagnostics and tooling can opt in with
+`NOMI_PARSER_SPANS=1` or an explicit `preserve_positions=True` call.
+
+**Why it works**: Source position propagation attaches `meta` data throughout
+the Lark tree.  That is essential for source-spanned diagnostics, but routine
+execution does not currently consume those spans.
+
+**Impact**: On `samples/demo.nomi`, direct raw-parse timing dropped from roughly
+~10ms with spans to ~7.5-8.7ms without spans depending on run noise.  This is
+not as dramatic as the LALR migration, but it is a cheap default-path win and
+keeps the diagnostic path available.
+
 ## Attempted But Reverted
 
 ### Removing `?` prefix from `atom` and `atom_expr`
@@ -120,7 +144,7 @@ keywords conditionally match as `NAME`.  Deferred.
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | Earley items | 1,670,000 | 0 | LALR does not create Earley items |
-| Raw parse time (demo.nomi) | ~1129ms | ~9.9ms | ~99.1% faster |
+| Raw parse time (demo.nomi) | ~1129ms | ~7.5-9.9ms | ~99.1%+ faster |
 | Full `generate_ast()` (demo.nomi, uncached) | ~998.8ms | ~12.2ms | ~98.8% faster |
 | Test suite | 626 pass | 626 pass | — |
 
@@ -193,3 +217,26 @@ Merging the rules gives the parser no way to distinguish the contexts.
 Parse remains the largest stage, but it is no longer a second-scale bottleneck.
 The profiler's cProfile totals can still be noisy; prefer direct
 `time.perf_counter()` measurements for parser work.
+
+## Next Max-Gain Directions
+
+1. **Separate execution, diagnostics, and tooling parser profiles**.  Keep the
+   execution parser span-free and benchmark whether inspection commands should
+   use a span-preserving parser only at the last responsible moment.
+2. **Inline parse-time transformation**.  Evaluate Lark's transformer-at-parse
+   path or a smaller custom tree builder to reduce intermediate tree churn.
+   Now that parsing is fast, allocation and lowering overhead will matter more.
+3. **Lark standalone parser**.  Generate and benchmark a standalone LALR parser
+   for CLI/web startup.  This may help Pyodide and short-lived CLI processes by
+   reducing grammar analysis and parser construction work.
+4. **Long-lived parser service for editor/web sessions**.  Treat parser reuse as
+   a process architecture concern: keep the parser hot, cache per-buffer raw
+   trees, and invalidate by content/version rather than rebuilding pipeline
+   state per request.
+5. **Nomi-owned surface/core AST**.  Python AST is convenient but not cheap or
+   semantically native.  If lowering becomes dominant, a compact Nomi surface
+   tree with explicit source-span side tables may be a larger win than shaving
+   grammar rules.
+6. **Tree-sitter or Rust parser later**.  Worth considering only after grammar
+   semantics stabilize.  The current LALR result removes the urgent need, but a
+   native parser could eventually give IDE-grade incremental parsing.

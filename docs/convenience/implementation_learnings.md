@@ -183,8 +183,10 @@ mechanism: it sets `method.visit_wrapper` to a function that extracts
 `SourceSpan` from `meta` and attaches it to any `SurfaceNode` result.
 
 **Key constraint:** Lark's `meta` only carries line/column when the parser
-is created with `propagate_positions=True`.  Without it, `meta.empty` is
-always `True` and no position data is available.
+is created with `propagate_positions=True`.  The default execution parser keeps
+that off for speed; use `NOMI_PARSER_SPANS=1` or `preserve_positions=True` when
+testing source-span behavior.  Without it, `meta.empty` is always `True` and no
+position data is available.
 
 **Lesson:** Use `@captures_span` on any lowering method that produces a
 `SurfaceNode`.  The decorator is a one-line addition that wires source

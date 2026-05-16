@@ -2,7 +2,7 @@
 
 Usage::
 
-    python3 tools/perf/profile.py [--file samples/demo.nomi] [--iterations N]
+    python3 tools/perf/profiler.py [--file samples/demo.nomi] [--iterations N]
 
 Output is written to ``reports/profile/`` (untracked).  Open the HTML file in
 any browser — no external dependencies.
@@ -15,6 +15,7 @@ import io
 import json
 import os
 import pstats
+import statistics
 import sys
 import time
 import webbrowser
@@ -25,10 +26,12 @@ _REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(_REPO))
 
 from prototype.parser.nomi.usage import (
+    get_parser,
     parse_raw_tree,
     parse_transformed_tree,
     generate_ast,
     _RAW_TREE_CACHE,
+    _preserve_positions_default,
 )
 from prototype.grammar.assemble import assemble_grammar, get_layer_pipeline
 from lark import Lark
@@ -76,9 +79,35 @@ def _stats_to_records(stats, top_n=30):
     return records[:top_n]
 
 
+def _summarize_ms(samples):
+    ordered = sorted(samples)
+    count = len(ordered)
+    return {
+        "count": count,
+        "min": ordered[0],
+        "median": statistics.median(ordered),
+        "avg": sum(ordered) / count,
+        "max": ordered[-1],
+    }
+
+
+def _time_samples(label, func, iterations):
+    samples = []
+    for _ in range(iterations):
+        t0 = time.perf_counter()
+        func()
+        samples.append((time.perf_counter() - t0) * 1000)
+    stats = _summarize_ms(samples)
+    return {"name": label, "samples": samples, **stats}
+
+
+def _parser_kind():
+    return type(get_parser().parser.parser).__name__.replace("_Parser", "")
+
+
 # ── stage definitions ──────────────────────────────────────────────────
 
-def profile_stages(code):
+def profile_stages(code, include_cprofile=True):
     """Profile each pipeline stage independently. Returns list of stage dicts."""
     stages = []
 
@@ -91,20 +120,24 @@ def profile_stages(code):
     elapsed = time.perf_counter() - t0
     stages.append({"name": "Grammar assembly", "elapsed": elapsed, "records": []})
 
-    # 2. Raw parse (covers lex + Earley).  Time accurately first,
-    # then collect cProfile stats separately (cProfile adds ~4x overhead
-    # for Earley's function-call-heavy inner loop).
+    parser_kind = _parser_kind()
+
+    # 2. Raw parse (covers lex + parser).  Time accurately first,
+    # then optionally collect cProfile stats separately.
     _RAW_TREE_CACHE.clear()
     t0 = time.perf_counter()
     raw_tree = parse_raw_tree(code=code)
     parse_elapsed = time.perf_counter() - t0
 
-    _RAW_TREE_CACHE.clear()
-    _parse_stats_elapsed, parse_stats, _ = _profile_func(parse_raw_tree, code=code)
+    parse_records = []
+    if include_cprofile:
+        _RAW_TREE_CACHE.clear()
+        _parse_stats_elapsed, parse_stats, _ = _profile_func(parse_raw_tree, code=code)
+        parse_records = _stats_to_records(parse_stats)
     stages.append({
-        "name": "Raw parse (lex + Earley)",
+        "name": f"Raw parse (lex + {parser_kind})",
         "elapsed": parse_elapsed,  # accurate wall-clock time
-        "records": _stats_to_records(parse_stats),
+        "records": parse_records,
     })
 
     # 3. Layer transforms
@@ -131,11 +164,14 @@ def profile_stages(code):
     desugared = desugar_module(surface_ast)
     desugar_elapsed = time.perf_counter() - t0
 
-    elapsed_cp, stats, _ = _profile_func(desugar_module, surface_ast)
+    records = []
+    if include_cprofile:
+        elapsed_cp, stats, _ = _profile_func(desugar_module, surface_ast)
+        records = _stats_to_records(stats)
     stages.append({
         "name": "Desugar (10 passes)",
         "elapsed": desugar_elapsed,
-        "records": _stats_to_records(stats),
+        "records": records,
     })
 
     # 7. Full end-to-end (cold cache for parse, then everything)
@@ -168,6 +204,9 @@ def profile_stages(code):
 
 def profile_earley_items(code):
     """Count Earley items created per grammar rule during a parse."""
+    if _parser_kind() != "Earley":
+        return []
+
     import lark.parsers.earley_common as ec
 
     rule_counts = {}
@@ -192,10 +231,11 @@ def profile_earley_items(code):
 
 # ── HTML report ────────────────────────────────────────────────────────
 
-def _html_report(stages, earley_items, source_file, source_lines_list, total_time):
+def _html_report(stages, earley_items, source_file, source_lines_list, total_time, timing_runs, parser_kind):
     """Render a self-contained HTML report."""
     stages_json = json.dumps(stages, indent=2)
     items_json = json.dumps(earley_items, indent=2)
+    timing_json = json.dumps(timing_runs, indent=2)
 
     # Build source display
     source_html = ""
@@ -281,6 +321,7 @@ def _html_report(stages, earley_items, source_file, source_lines_list, total_tim
 <p class="meta">
   Source: <strong>{source_file}</strong> &mdash;
   {len(source_lines_list)} lines &mdash;
+  Parser: <strong>{parser_kind}</strong> &mdash;
   {total_time:.1f}ms total pipeline (first-parse, cold cache) &mdash;
   {time.strftime('%Y-%m-%d %H:%M:%S')}
 </p>
@@ -292,12 +333,15 @@ def _html_report(stages, earley_items, source_file, source_lines_list, total_tim
 <h2>Stage Breakdown</h2>
 <div class="stages" id="stage-bars"></div>
 
+<!-- ── Repeatable timing ── -->
+<h2>Repeatable Timings</h2>
+<div id="timing-table"></div>
+
 <!-- ── Earley item analysis ── -->
-<h2>Earley Items per Grammar Rule</h2>
+<h2>Parser Item Analysis</h2>
 <p style="color:var(--muted);font-size:0.8rem;margin-bottom:8px;">
-  Each Earley item is a (rule, position, origin) triple created during
-  <code>predict_and_complete</code>.  More items → slower parse.
-  Top rules by item count shown below.
+  Earley item counts are only available when the active parser is Earley.
+  LALR reports zero here; use repeatable wall-clock timings for current Nomi.
 </p>
 <div id="earley-chart"></div>
 
@@ -314,7 +358,8 @@ def _html_report(stages, earley_items, source_file, source_lines_list, total_tim
 <script>
 const stages = {stages_json};
 const earleyItems = {items_json};
-const totalTime = stages.reduce((s, st) => s + st.elapsed, 0) * 1000;
+const timingRuns = {timing_json};
+const totalTime = {total_time:.6f};
 
 // ---- summary cards ----
 (function() {{
@@ -344,6 +389,23 @@ const totalTime = stages.reduce((s, st) => s + st.elapsed, 0) * 1000;
     html += '</div>';
   }});
   document.getElementById('stage-bars').innerHTML = html;
+}})();
+
+// ---- repeatable timings ----
+(function() {{
+  let html = '<table><thead><tr><th>Run</th><th class="num">Samples</th><th class="num">Min</th><th class="num">Median</th><th class="num">Average</th><th class="num">Max</th></tr></thead><tbody>';
+  timingRuns.forEach(r => {{
+    html += '<tr>';
+    html += '<td>' + r.name + '</td>';
+    html += '<td class="num">' + r.count + '</td>';
+    html += '<td class="num">' + r.min.toFixed(2) + 'ms</td>';
+    html += '<td class="num"><strong>' + r.median.toFixed(2) + 'ms</strong></td>';
+    html += '<td class="num">' + r.avg.toFixed(2) + 'ms</td>';
+    html += '<td class="num">' + r.max.toFixed(2) + 'ms</td>';
+    html += '</tr>';
+  }});
+  html += '</tbody></table>';
+  document.getElementById('timing-table').innerHTML = html;
 }})();
 
 // ---- earley items ----
@@ -404,10 +466,13 @@ const totalTime = stages.reduce((s, st) => s + st.elapsed, 0) * 1000;
 def main():
     parser = argparse.ArgumentParser(description="Profile the Nomi pipeline")
     parser.add_argument("--file", default="samples/demo.nomi", help="Source file to profile")
-    parser.add_argument("--iterations", type=int, default=1, help="Number of iterations (best time reported)")
-    parser.add_argument("--open", action="store_true", default=True, help="Open report in browser (default)")
+    parser.add_argument("--iterations", type=int, default=20, help="Number of timing samples")
+    parser.add_argument("--cprofile", action="store_true", help="Include cProfile details for parse/desugar")
+    parser.add_argument("--open", action="store_true", default=False, help="Open report in browser")
     parser.add_argument("--no-open", dest="open", action="store_false", help="Don't open browser")
     args = parser.parse_args()
+    if args.iterations < 1:
+        parser.error("--iterations must be at least 1")
 
     source_path = _REPO / args.file
     if not source_path.exists():
@@ -417,36 +482,54 @@ def main():
     code = source_path.read_text(encoding="utf-8")
     source_lines = len(code.splitlines())
 
-    print(f"Profiling: {args.file} ({source_lines} lines)")
+    parser_kind = _parser_kind()
+    spans_enabled = _preserve_positions_default()
+    print(
+        f"Profiling: {args.file} ({source_lines} lines, parser={parser_kind}, "
+        f"spans={'on' if spans_enabled else 'off'})"
+    )
 
-    # Profile pipeline stages (best of N iterations).
-    all_runs = []
-    for i in range(args.iterations):
-        if args.iterations > 1:
-            print(f"  iteration {i + 1}/{args.iterations}...")
-        stages = profile_stages(code)
-        total = sum(s["elapsed"] for s in stages)
-        all_runs.append((total, stages))
+    stages = profile_stages(code, include_cprofile=args.cprofile)
+    total_stage = next((s for s in stages if s["name"].startswith("Full pipeline")), stages[-1])
+    total_time = total_stage["elapsed"]
 
-    if args.iterations > 1:
-        # Use the run with minimum parse stage time (the bottleneck).
-        all_runs.sort(key=lambda r: r[1][1]["elapsed"])  # sort by raw parse stage
-        total_time, stages = all_runs[0]
+    parser_obj = get_parser()
+    parser_obj.parse(code)
+    timing_runs = [
+        _time_samples("Raw parse, warm parser", lambda: parser_obj.parse(code), args.iterations),
+    ]
+    compare_parser = get_parser(preserve_positions=not spans_enabled)
+    compare_label = "Raw parse, source spans on" if not spans_enabled else "Raw parse, source spans off"
+    compare_parser.parse(code)
+    timing_runs.append(_time_samples(compare_label, lambda: compare_parser.parse(code), args.iterations))
+
+    def cold_generate_ast():
+        _RAW_TREE_CACHE.clear()
+        generate_ast(code=code)
+
+    timing_runs.append(_time_samples("generate_ast, cold raw-tree cache", cold_generate_ast, args.iterations))
+    timing_runs.append(_time_samples("generate_ast, warm raw-tree cache", lambda: generate_ast(code=code), args.iterations))
+
+    # Profile Earley items separately when applicable.
+    if parser_kind == "Earley":
+        print("  counting Earley items...")
     else:
-        total_time, stages = all_runs[0]
-
-    # Profile Earley items separately.
-    print("  counting Earley items...")
+        print("  skipping Earley item count for non-Earley parser")
     earley_items = profile_earley_items(code)
 
     total_items = sum(ei["items"] for ei in earley_items)
     print(f"  total Earley items: {total_items:,}")
     print(f"  total pipeline: {total_time * 1000:.1f}ms")
+    for run in timing_runs:
+        print(f"  {run['name']}: median {run['median']:.2f}ms, min {run['min']:.2f}ms")
 
     # Render HTML.
     source_name = source_path.name
     source_lines_list = code.splitlines()
-    html = _html_report(stages, earley_items, source_name, source_lines_list, total_time * 1000)
+    html = _html_report(
+        stages, earley_items, source_name, source_lines_list,
+        total_time * 1000, timing_runs, parser_kind,
+    )
 
     out_path = OUT_DIR / f"profile_{source_path.stem}.html"
     out_path.write_text(html, encoding="utf-8")

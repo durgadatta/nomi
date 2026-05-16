@@ -23,7 +23,7 @@ def main():
 
     profiler = _REPO / "tools" / "perf" / "profiler.py"
     subprocess.run(
-        [sys.executable, str(profiler), "--file", str(file_path)],
+        [sys.executable, str(profiler), "--file", str(file_path), "--open"],
         cwd=str(_REPO),
     )
 

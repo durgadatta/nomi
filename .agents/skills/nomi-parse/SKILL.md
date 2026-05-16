@@ -47,6 +47,9 @@ Before adding broad syntax, read:
 
 ## Grammar rules
 - Uses Lark LALR parser with `NomiPostLexer`
+- Default execution parsing disables Lark source-position propagation for speed.
+  Use `NOMI_PARSER_SPANS=1` or `preserve_positions=True` when working on
+  diagnostics, inspection, or source-span propagation.
 - Nomi diffs from Python grammar: `func` keyword, `=>` arrow functions, compound annotation, `block_call_stmt`
 - Reserved words in spec but not grammar: data, const, module, export, effect, shape, trait
 - Before broad grammar rewrites, read `docs/orientation/performance_notes.md`.
