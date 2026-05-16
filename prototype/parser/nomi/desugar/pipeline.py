@@ -83,7 +83,8 @@ def _check_pass_invariants(tree: ast.Module, pass_cls, pass_name: str):
 def desugar_module(tree: ast.Module) -> ast.Module:
     for pass_cls in DESUGAR_PASSES:
         tree = pass_cls().visit(tree)
-        _check_pass_invariants(tree, pass_cls, pass_cls.__name__)
+        if __debug__:
+            _check_pass_invariants(tree, pass_cls, pass_cls.__name__)
     ast.fix_missing_locations(tree)
     return tree
 
