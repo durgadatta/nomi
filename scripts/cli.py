@@ -6,9 +6,6 @@ Nomi CLI - Run Nomi or Python files
 import sys
 from pathlib import Path
 
-from prototype.interpreter.python.usage import run_eval_loop as run_python
-from prototype.interpreter.nomi.usage import run_eval_loop as run_nomi
-
 def main():
     # Get filename from args or use default
     if len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help"]:
@@ -23,11 +20,10 @@ def main():
         print(f"Error: File '{filename}' not found.")
         sys.exit(1)
     
-    # Choose interpreter based on file extension
     if file_path.suffix == '.nomi' or file_path.name.endswith('.nomi.nb'):
-        run_eval_loop = run_nomi
-    else:  # .py or any other extension
-        run_eval_loop = run_python
+        from prototype.interpreter.nomi.usage import run_eval_loop
+    else:
+        from prototype.interpreter.python.usage import run_eval_loop
     
     print(f"Running: {filename}")
     print("-" * 40)

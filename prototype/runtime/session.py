@@ -8,7 +8,6 @@ for a later migration.
 from __future__ import annotations
 
 import ast
-import copy
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
@@ -52,22 +51,29 @@ class RuntimeSession:
     ) -> ExecutionResult:
         started = perf_counter()
         timings: dict[str, float] = {}
+        tree_locations_fixed = False
         try:
             if tree is None:
+                if source is None and filename is not None and self.cache_size > 0:
+                    source = Path(filename).read_text(encoding="utf-8")
                 cached_tree = self._get_cached_tree(source)
                 if cached_tree is not None:
                     cache_started = perf_counter()
-                    tree = copy.deepcopy(cached_tree)
+                    tree = cached_tree
                     timings["cache"] = perf_counter() - cache_started
+                    tree_locations_fixed = True
                 else:
                     tree = self._parse_and_lower(
                         source=source,
                         filename=filename,
                         timings=timings,
                     )
+                    tree = ast.fix_missing_locations(tree)
+                    tree_locations_fixed = True
                     self._cache_tree(source, tree)
 
-            tree = ast.fix_missing_locations(tree)
+            if not tree_locations_fixed:
+                tree = ast.fix_missing_locations(tree)
             eval_started = perf_counter()
             has_value, value = self._eval_tree(
                 tree,
@@ -143,12 +149,12 @@ class RuntimeSession:
         if self.cache_size <= 0 or source is None:
             return
         if source in self._ast_cache:
-            self._ast_cache[source] = copy.deepcopy(tree)
+            self._ast_cache[source] = tree
             return
         if len(self._ast_cache) >= self.cache_size:
             oldest = next(iter(self._ast_cache))
             del self._ast_cache[oldest]
-        self._ast_cache[source] = copy.deepcopy(tree)
+        self._ast_cache[source] = tree
 
     @staticmethod
     def _is_block_call_expr(node: ast.Expr) -> bool:

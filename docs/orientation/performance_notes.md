@@ -133,6 +133,20 @@ those normal-form passes in default mode was pure tree-walk churn for
 This is a modest but clean default-path win while preserving reduced-mode
 checks.
 
+### 8. RuntimeSession filename caching and direct AST reuse
+
+**What**: `RuntimeSession` now reads filename sources into its source-keyed AST
+cache, so repeated file runs in one long-lived session hit the cache.  Cache
+hits reuse the fixed lowered AST directly instead of deep-copying it.
+
+**Why it works**: In the current interpreter, evaluation does not mutate AST
+nodes.  Deep-copying the cached Python AST was the dominant cost on repeated
+session runs after parser/lowering were removed from the path.
+
+**Impact**: Repeated `samples/demo.nomi` runs in one `RuntimeSession` dropped
+from ~4-5ms to roughly ~0.9-1.3ms after the first run.  This is the best path
+for web, notebook, REPL, and editor integrations where a process can stay hot.
+
 ## Attempted But Reverted
 
 ### Removing `?` prefix from `atom` and `atom_expr`
@@ -173,6 +187,18 @@ keyword tokens that can't match `NAME`.
 
 **Root cause**: Requires ContextualLexer or lexer priority changes to make
 keywords conditionally match as `NAME`.  Deferred.
+
+### Lark standalone parser for current transformer stack
+
+**Hypothesis**: A generated Lark standalone parser could avoid the remaining
+parser cache load and installed-Lark import cost in short-lived CLI runs.
+
+**Result**: Deferred.  A generated standalone parser can parse `demo.nomi`, but
+it returns the standalone module's own `Tree` class.  The current lowering stack
+uses installed-Lark `Transformer` classes, so those transformers do not consume
+standalone trees without an adapter.  A simple adapter works but largely turns
+the change into a larger generated-parser/generated-transformer architecture
+slice rather than a low-risk bottleneck fix.
 
 ## Current State
 

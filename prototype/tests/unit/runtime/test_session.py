@@ -61,6 +61,22 @@ def test_session_can_reuse_cached_ast_for_repeated_source():
     assert "parse" not in second.timings
 
 
+def test_session_can_reuse_cached_ast_for_repeated_file(tmp_path):
+    source = tmp_path / "program.nomi"
+    source.write_text("cached_value = 4\n", encoding="utf-8")
+    session = create_session(mode="nomi", cache_size=2)
+
+    first = session.run(filename=source)
+    second = session.run(filename=source)
+
+    assert first.ok
+    assert second.ok
+    assert "parse" in first.timings
+    assert "cache" in second.timings
+    assert "parse" not in second.timings
+    assert second.bindings["cached_value"] == 4
+
+
 def test_session_can_capture_display_last_expression_value():
     session = create_session(mode="nomi")
 
