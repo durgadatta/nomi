@@ -2,6 +2,10 @@
 //
 // Binary operators produce flat left-to-right BinOp chains.
 // Precedence is restructured by the Precedence desugar pass.
+// NOTE: _unary_op and _binary_op share + and - terminals.  Merging
+// them into a single _op rule eliminates LALR reduce/reduce conflicts
+// but creates Earley ambiguity with star_expr (*expr).  See
+// docs/orientation/performance_notes.md for details.
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*

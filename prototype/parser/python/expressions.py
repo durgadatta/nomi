@@ -328,7 +328,7 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
         """
         if len(items) == 1:
             return ensure_expr(items[0])
-        
+
         op_str = items[0]  # Lark handles token conversion
         operand = ensure_expr(items[1])
         

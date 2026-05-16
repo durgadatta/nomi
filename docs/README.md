@@ -63,6 +63,8 @@ Concrete project, process, and tooling docs.
   surface and roadmap.
 - [RAG MCP Context](orientation/rag_mcp.md): local retrieval and MCP scaffold
   for codebase and programming-book context.
+- [Performance Notes](orientation/performance_notes.md): parsing pipeline
+  optimization log — attempts, findings, LALR status, and stage timings.
 
 ## Read By Task
 
