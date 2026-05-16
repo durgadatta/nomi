@@ -14,6 +14,9 @@ is negligible for typical source files.
 - **cProfile caveat**: cProfile adds ~4x overhead for Earley parsing
   (function-call-heavy).  The profiler separates accurate `time.perf_counter()`
   wall-clock timing from cProfile stats.
+- **LALR caveat**: the profiler still contains an Earley item-count panel.
+  After the LALR migration this count is expected to be zero; use wall-clock
+  parse and pipeline timings instead.
 
 ## Baseline (before optimization)
 
@@ -41,6 +44,35 @@ unchanged source is instant.
 
 **What**: Skip `_check_pass_invariants()` when running with `python -O`.
 Saves ~4.5ms per desugar pass.
+
+### 4. LALR parser migration
+
+**What**: Switched the Nomi parser in `prototype/parser/nomi/usage.py` from
+Earley to LALR with the basic lexer and `NomiPostLexer`.
+
+**Why it works**: The grammar now gives LALR distinct tokens at the places
+where Earley previously relied on ambiguity resolution:
+
+- explicit operator terminals replace `_unary_op` / `_binary_op` reductions;
+- `SECTION_OP` is emitted only for operators inside standalone section
+  parentheses, so `(+2)`, `(2*)`, and `(+)` do not collide with unary,
+  binary, call-argument, or spread syntax;
+- `_ARROW_LPAR` / `_ARROW_RPAR` are emitted only when a parenthesized parameter
+  list is followed by `=>`, so arrow functions no longer steal ordinary
+  parenthesized expressions or grouped constraints;
+- `_CASE_COLON` separates match case separators from pattern-internal colons;
+- `_CASE_IF` separates match guards from conditional expressions inside
+  constrained captures;
+- `_BLOCK_COLON` separates suite-introducing colons from expression colons;
+- `_POSTFIX_IF` / `_POSTFIX_UNLESS` separate postfix flow guards from ternary
+  `if ... else ...` expressions;
+- function equations and block calls now use call-specific heads, preventing
+  ordinary calls and annotations from being parsed as those statement forms.
+
+**Impact**: On `samples/demo.nomi` under `python3 -O`, raw parse averages
+~9.9ms and uncached `generate_ast()` averages ~12.2ms.  Compared with the
+post-wrapper Earley parse baseline (~974ms), this is roughly a 100x raw parse
+speedup.
 
 ## Attempted But Reverted
 
@@ -87,27 +119,15 @@ keywords conditionally match as `NAME`.  Deferred.
 
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| Earley items | 1,670,000 | 1,464,202 | -12.6% |
-| Parse time (demo.nomi) | ~1129ms | ~974ms | -13.7% |
+| Earley items | 1,670,000 | 0 | LALR does not create Earley items |
+| Raw parse time (demo.nomi) | ~1129ms | ~9.9ms | ~99.1% faster |
+| Full `generate_ast()` (demo.nomi, uncached) | ~998.8ms | ~12.2ms | ~98.8% faster |
 | Test suite | 626 pass | 626 pass | — |
 
-## Remaining Earley Item Breakdown (demo.nomi)
+## LALR Migration Notes
 
-| Items | % | Rule | Notes |
-|-------:|--:|------|-------|
-| 231,760 | 15.8% | atom | 12 alternatives remaining |
-| 174,509 | 11.9% | atom_expr | 7 alternatives (6 recursive + atom) |
-| 155,706 | 10.6% | name | 7 keyword alternatives — needs lexer work |
-| 119,198 | 8.1% | number | — |
-| 56,843 | 3.9% | range_expr | — |
-| 42,140 | 2.9% | string | — |
-| 41,588 | 2.8% | _unary_op | — |
-| 40,774 | 2.8% | test | — |
-
-## Active Investigation: LALR Migration
-
-Switching from Earley to LALR would be ~50x faster but currently blocked on
-**103 reduce/reduce conflicts**.  Main conflict categories:
+The migration initially failed on **103 reduce/reduce conflicts**.  Main
+conflict categories:
 
 1. **`_unary_op` vs `_binary_op`** (most frequent): Both rules match `+`/`-`/`~`
    terminals.  LALR can't distinguish unary from binary context.
@@ -132,33 +152,44 @@ spread breaks.
 **Root cause**: `*` is valid as a binary operator but invalid as unary.
 Merging the rules gives the parser no way to distinguish the contexts.
 
-### Potential LALR resolution paths (not yet attempted)
+### Resolution paths that worked
 
-1. **Lexer-level distinction**: Use context-aware lexing (ContextualLexer or
-   postlexer) to emit different tokens for unary vs binary `+`/`-`.
+1. **Postlexer-level distinction**: `NomiPostLexer` now emits virtual tokens
+   for section operators, arrow-function parentheses, case colons, case guard
+   `if`, postfix flow guards, and block colons.
 
-2. **Grammar restructuring**: Separate expression and pattern grammars more
-   aggressively so shared terminals resolve unambiguously.
+2. **Grammar restructuring**: `func_equation` and `block_call_stmt` now use
+   call-specific heads.  This avoids committing to those statement forms when
+   parsing ordinary calls or annotations.
 
-3. **Lark ambiguity resolution**: Use `priority` or custom ambiguity handlers
-   if available in the Lark version.
+3. **Rule priorities**: Pattern, constraint, typed-parameter, and match-block
+   rules use targeted priorities where LALR still had reduce/reduce overlap.
 
-4. **Separate `+`/`-` from `*`/`/` etc. in `_binary_op`**: Keep `+`/`-` only
-   in `_unary_op`, define `_binary_op` without them, and handle binary `+`/`-`
-   through a higher-level rule that references the same terminals without
-   creating a separate reduce target.
+### Additional failed paths during migration
+
+- **Direct operator terminals without section tokens**: built under LALR, but
+  parsed `(+2)` as unary plus and failed on `(2*)`.
+- **Contextual lexer with postlex implicit multiplication**: failed on `2x`
+  because the contextual lexer rejected `NAME` before the postlexer could
+  insert `STAR`.  The migration uses `lexer="basic"` so the postlexer sees the
+  raw adjacent tokens.
+- **Call-specific function equations without call-specific block calls**:
+  fixed ordinary call parsing, but broad `block_call_stmt: atom_expr ":" suite`
+  stole annotated assignments like `x: int = 1`.
 
 ## Pipeline Stage Timings (demo.nomi, post-optimization)
 
 | Stage | Wall time | % |
 |-------|----------:|--:|
 | Grammar assembly | 0.2ms | 0.0% |
-| Raw parse (lex + Earley) | 1013.9ms | 49.9% |
+| Raw parse (lex + LALR) | ~9.9ms | dominant but small |
 | Layer transforms | 1.0ms | 0.0% |
 | NomiToPythonAST | 6.9ms | 0.3% |
 | Surface lowering | 0.4ms | 0.0% |
 | Desugar (10 passes) | 5.4ms | 0.3% |
-| Full pipeline | 998.8ms | 49.2% |
+| Full `generate_ast()` | ~12.2ms | — |
 | Python compile + exec | 4.1ms | 0.2% |
 
-Parse is 99.3% of total pipeline time.  Post-parse stages are negligible.
+Parse remains the largest stage, but it is no longer a second-scale bottleneck.
+The profiler's cProfile totals can still be noisy; prefer direct
+`time.perf_counter()` measurements for parser work.

@@ -15,10 +15,12 @@ design decisions, not the other way around.
 - `prototype/parser/nomi/functions.py` — FunctionsMixin (func_expr, block_call_stmt)
 - `prototype/parser/nomi/usage.py` — generate_ast() entry point
 - `prototype/parser/nomi/desugar/` — AST reduction passes
+- `docs/orientation/performance_notes.md` — parser performance history,
+  LALR migration notes, and known ambiguity traps
 
 ## Architecture
 ```
-.nomi source → Lark parser (Earley) → Lark parse tree
+.nomi source → Lark parser (LALR + NomiPostLexer) → Lark parse tree
     → NomiToPythonAST.transform() → Python ast.Module
     → desugar_module() [reduced only] → simplified ast.Module
     → Interpreter.eval()
@@ -44,9 +46,13 @@ Before adding broad syntax, read:
   research already covers the syntax domain.
 
 ## Grammar rules
-- Uses Lark Earley parser with PythonIndenter postlexer
+- Uses Lark LALR parser with `NomiPostLexer`
 - Nomi diffs from Python grammar: `func` keyword, `=>` arrow functions, compound annotation, `block_call_stmt`
 - Reserved words in spec but not grammar: data, const, module, export, effect, shape, trait
+- Before broad grammar rewrites, read `docs/orientation/performance_notes.md`.
+  The LALR migration depends on postlexed virtual tokens for operator sections,
+  arrow-function parens, match case colons/guards, postfix flow guards, and
+  block colons.
 
 ## AST lowering
 - NomiToPythonAST extends PythonASTTransformer + FunctionsMixin

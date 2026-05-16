@@ -12,16 +12,14 @@ from ...syntax.features import get_extra_grammar_layers
 
 
 # ── parser cache ────────────────────────────────────────────────────
-# Lark Earley parser construction is O(n³) in grammar size — easily
-# 100+ ms even in CPython and much worse in Pyodide/WebAssembly.
-# Cache by the resolved extra-layer tuple so syntax experiments do not
-# accidentally reuse the wrong parser.
+# Lark parser construction is noticeably more expensive than reusing a parser,
+# especially in Pyodide/WebAssembly. Cache by the resolved extra-layer tuple so
+# syntax experiments do not accidentally reuse the wrong parser.
 _PARSER_CACHE = {}
 
 # ── parse result cache ──────────────────────────────────────────────
-# Earley parsing is ~96% of end-to-end pipeline time.  Cache raw parse
-# trees by source-content hash so repeated parses of unchanged source
-# (REPL, test suite, incremental editing) are instant.
+# Cache raw parse trees by source-content hash so repeated parses of unchanged
+# source (REPL, test suite, incremental editing) are instant.
 _RAW_TREE_CACHE: dict[int, object] = {}
 
 
@@ -38,12 +36,12 @@ def get_parser(extra_layers=None):
     grammar = assemble_grammar(extra_layers=extra_layers)
     parser = Lark(
             grammar,
-            parser="earley",
+            parser="lalr",
+            lexer="basic",
             postlex=NomiPostLexer(),
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
             propagate_positions=True,
-            ambiguity="resolve",
     )
     _PARSER_CACHE[resolved] = parser
     return parser

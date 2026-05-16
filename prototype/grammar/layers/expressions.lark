@@ -2,10 +2,9 @@
 //
 // Binary operators produce flat left-to-right BinOp chains.
 // Precedence is restructured by the Precedence desugar pass.
-// NOTE: _unary_op and _binary_op share + and - terminals.  Merging
-// them into a single _op rule eliminates LALR reduce/reduce conflicts
-// but creates Earley ambiguity with star_expr (*expr).  See
-// docs/orientation/performance_notes.md for details.
+// LALR note: operator tokens are referenced directly instead of reduced
+// through _unary_op/_binary_op wrapper rules.  The wrapper split created
+// reduce/reduce conflicts where +, -, and * are legal in several contexts.
 
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 file_input: (_NEWLINE | stmt)*
@@ -36,13 +35,11 @@ NULLISH: "??"
 
 // -- flat binary ops (restructured by Precedence pass) ----------------
 ?expr: bin_expr
-?bin_expr: factor ((_binary_op) factor)*
-!_binary_op: "|" | "^" | "&" | "<<" | ">>" | "+" | "-" | "*" | "@" | "/" | "%" | "//"
+?bin_expr: factor ((VBAR | CIRCUMFLEX | AMPER | LSHIFT | RSHIFT | PLUS | MINUS | STAR | AT | SLASH | PERCENT | DOUBLESLASH) factor)*
 
 // -- unary, power, await ----------------------------------------------
-?factor: _unary_op factor | power
-!_unary_op: "+"|"-"|"~"
-?power: await_expr ("**" factor)?
+?factor.3: (PLUS | MINUS | TILDE) factor | power
+?power: await_expr (DOUBLESTAR factor)?
 ?await_expr: AWAIT? atom_expr
 AWAIT: "await"
 
@@ -83,8 +80,8 @@ brace_expr: _dict_exprlist? -> dict
 ?string_concat: string+
 
 // -- func_expr --------------------------------------------------------
-func_expr: "(" [parameters] ")" "=>" test ["->" test]
-         | NAME "=>" test ["->" test]
+func_expr: _ARROW_LPAR [parameters] _ARROW_RPAR _FAT_ARROW test ["->" test]
+         | NAME _FAT_ARROW test ["->" test]
 assign_expr: name ":=" test
 
 // -- tuple / list expression helpers ----------------------------------
@@ -99,9 +96,9 @@ _dict_exprlist: (key_value | "**" expr) ("," (key_value | "**" expr))* [","]
 key_value: test ":"  test
 
 // -- operator sections: (+2), (2*), (+)  (Haskell-style) --------------
-?section: _binary_op test  -> left_section
-        | test _binary_op  -> right_section
-        | _binary_op       -> operator_value
+?section: SECTION_OP test  -> left_section
+        | test SECTION_OP  -> right_section
+        | SECTION_OP       -> operator_value
 
 // -- subscript --------------------------------------------------------
 ?subscriptlist: subscript | subscript (("," subscript)+ [","] | ",") -> subscript_tuple
@@ -116,9 +113,9 @@ try_expr: "try" test try_except_clause+
 // -- inline match expression (Nomi) -----------------------------------
 // Single-line form: match value: case 1 => "one"; case _ => "many"
 match_inline: "match" test ":" case_expr (";" case_expr)* [";"]
-case_expr: "case" pattern ["if" test] "=>" test
+case_expr: "case" pattern [_case_if test] _FAT_ARROW test
 
 // Indented expression form: match value:\n    case 1: "one"
-match_block_expr: "match" test ":" _NEWLINE _INDENT case_block_expr+ _DEDENT
-case_block_expr: "case" pattern ["if" test] ":" match_block_expr
-               | "case" pattern ["if" test] ":" test _NEWLINE
+match_block_expr: "match" test _suite_colon _NEWLINE _INDENT case_block_expr+ _DEDENT
+case_block_expr: "case" pattern [_case_if test] _case_colon match_block_expr
+               | "case" pattern [_case_if test] _case_colon test _NEWLINE

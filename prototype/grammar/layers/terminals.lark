@@ -15,6 +15,7 @@ COMMENT: /#[^\n]*/
 %ignore /\\[\t \f]*\r?\n/
 %ignore COMMENT
 %declare _INDENT _DEDENT
+%declare SECTION_OP _BLOCK_COLON _CASE_COLON _CASE_IF _POSTFIX_IF _POSTFIX_UNLESS _ARROW_LPAR _ARROW_RPAR
 
 !name: NAME | "match" | "case" | "type" | "by" | "guard" | "data"
 NAME: /[^\W\d]\w*/
@@ -27,6 +28,24 @@ DOLLAR_NAME: /\$[^\W\d]\w*/
 RANGE_INCL: /\.\./
 RANGE_EXCL: /\.\.</
 SAFE_DOT: "?."
+_FAT_ARROW: "=>"
+
+// Explicit operator tokens keep LALR parse trees lossless without wrapper
+// rules that collide with unary, binary, spread, and bare-star contexts.
+PLUS: "+"
+MINUS: "-"
+TILDE: "~"
+VBAR: "|"
+CIRCUMFLEX: "^"
+AMPER: "&"
+LSHIFT: "<<"
+RSHIFT: ">>"
+STAR: "*"
+AT: "@"
+SLASH: "/"
+PERCENT: "%"
+DOUBLESLASH: "//"
+DOUBLESTAR: "**"
 
 // Function composition
 COMP_FWD: ">>>"

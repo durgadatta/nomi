@@ -11,8 +11,8 @@ augassign: testlist_star_expr augassign_op (yield_expr|testlist)
 
 ?constraint_list: constraint_item
                 | constraint_item ("," constraint_item)+ ","? -> constraint_tuple
-?constraint_item: test
-                | test "else" string_concat -> constraint_message
+?constraint_item.2: test
+                  | test "else" string_concat -> constraint_message
 
 ?testlist_star_expr: test_or_star_expr
                    | test_or_star_expr ("," test_or_star_expr)+ ","?  -> tuple
@@ -22,14 +22,13 @@ augassign: testlist_star_expr augassign_op (yield_expr|testlist)
 parameters: paramvalue ("," paramvalue)* ["," SLASH ("," paramvalue)*] ["," [starparams | kwparams]]
           | starparams
           | kwparams
-SLASH: "/"
 starparams: (starparam | starguard) poststarparams
 starparam: "*" typedparam
 starguard: "*"
 poststarparams: ("," paramvalue)* ["," kwparams]
 kwparams: "**" typedparam ","?
 ?paramvalue: typedparam ("=" test)?
-?typedparam: name (":" param_constraint)?
+?typedparam.2: name (":" param_constraint)?
 ?param_constraint: constraint_item
                  | "(" constraint_list ")" -> grouped_constraint
 

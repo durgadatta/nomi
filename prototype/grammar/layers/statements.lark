@@ -1,21 +1,23 @@
 // Layer: statements — stmt, compound_stmt, funcdef, classdef,
 // block_call_stmt, imports, control flow.
 
+_suite_colon: ":" | _BLOCK_COLON
+
 ?stmt: simple_stmt | compound_stmt | block_call_stmt
 ?simple_stmt: match_block_simple_stmt
             | small_stmt (";" small_stmt)* [";"] _NEWLINE
-            | flow_stmt "if" test _NEWLINE -> postfix_if
-            | flow_stmt "unless" test _NEWLINE -> postfix_unless
-            | small_stmt "where" ":" suite  -> assign_where
+            | flow_stmt _POSTFIX_IF test _NEWLINE -> postfix_if
+            | flow_stmt _POSTFIX_UNLESS test _NEWLINE -> postfix_unless
+            | small_stmt "where" _suite_colon suite  -> assign_where
             | small_stmt "where" small_stmt _NEWLINE  -> assign_where_inline
 ?small_stmt: (type_alias | func_equation | defer_stmt | expr_stmt | assign_stmt | del_stmt | pass_stmt
              | flow_stmt | import_stmt | global_stmt | nonlocal_stmt
              | assert_stmt)
-?match_block_simple_stmt: testlist_star_expr "=" match_block_expr -> assign_match_block
-                        | "return" match_block_expr -> return_match_block
+?match_block_simple_stmt.2: testlist_star_expr "=" match_block_expr -> assign_match_block
+                          | "return" match_block_expr -> return_match_block
 
 // -- funcdef (Nomi: "func" replaces "def") ----------------------------
-funcdef: "func" name "(" [parameters] ")" ["->" test] ":" suite
+funcdef: "func" name "(" [parameters] ")" ["->" test] _suite_colon suite
 async_funcdef: "async" funcdef
 
 // -- lightweight function equation: f(a, b) = expr  (Nomi) ------------
@@ -23,10 +25,11 @@ async_funcdef: "async" funcdef
 // No-parens:    double x = x * 2  (single-arg only)
 // Guarded:      sign(n) when n > 0 = 1
 // Piecewise:    fact(1) = 1; fact(n) = fact(n-1) * n  (contiguous merge)
-func_equation: name "(" [func_eq_args] ")" "=" test ["->" test] -> func_equation_plain
-             | name "(" [func_eq_args] ")" "when" test "=" test ["->" test] -> func_equation_guarded
+func_equation: call_equation_head "=" test ["->" test] -> func_equation_plain_call
+             | call_equation_head "when" test "=" test ["->" test] -> func_equation_guarded_call
              | name NAME "=" test ["->" test] -> func_equation_no_parens_plain
              | name NAME "when" test "=" test ["->" test] -> func_equation_no_parens_guarded
+call_equation_head.2: atom_expr "(" [arguments] ")" -> funccall
 func_eq_args: func_eq_arg ("," func_eq_arg)*
 ?func_eq_arg: NAME ["=" test] -> name_arg
             | test -> value_arg
@@ -43,7 +46,7 @@ decorators: decorator+
 decorated: decorators (classdef | funcdef | async_funcdef)
 
 // -- classdef ---------------------------------------------------------
-classdef: "class" name ["(" [arguments] ")"] ":" suite
+classdef: "class" name ["(" [arguments] ")"] _suite_colon suite
 
 // -- simple statements ------------------------------------------------
 expr_stmt: testlist_star_expr
@@ -77,21 +80,21 @@ dotted_name: name ("." name)*
 ?compound_stmt: if_stmt | guard_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
               | with_stmt | funcdef | classdef | decorated | async_stmt | data_decl
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
-if_stmt: "if" test ":" suite elifs ["else" ":" suite]
-       | "if" pattern "=" test ":" suite ["else" ":" suite] -> if_let_stmt
-guard_stmt: "guard" pattern "=" test ":" suite
+if_stmt: "if" test _suite_colon suite elifs ["else" _suite_colon suite]
+       | "if" pattern "=" test _suite_colon suite ["else" _suite_colon suite] -> if_let_stmt
+guard_stmt: "guard" pattern "=" test _suite_colon suite
 elifs: elif_*
-elif_: "elif" test ":" suite
-unless_stmt: "unless" test ":" suite
-while_stmt: "while" pattern "=" test ":" suite -> while_let_stmt
-          | "while" test ":" suite ["else" ":" suite]
-for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
-try_stmt: "try" ":" suite except_clauses ["else" ":" suite] [finally]
-        | "try" ":" suite finally   -> try_finally
-finally: "finally" ":" suite
+elif_: "elif" test _suite_colon suite
+unless_stmt: "unless" test _suite_colon suite
+while_stmt: "while" pattern "=" test _suite_colon suite -> while_let_stmt
+          | "while" test _suite_colon suite ["else" _suite_colon suite]
+for_stmt: "for" exprlist "in" testlist _suite_colon suite ["else" _suite_colon suite]
+try_stmt: "try" _suite_colon suite except_clauses ["else" _suite_colon suite] [finally]
+        | "try" _suite_colon suite finally   -> try_finally
+finally: "finally" _suite_colon suite
 except_clauses: except_clause+
-except_clause: "except" [test ["as" name]] ":" suite
-with_stmt: "with" with_items ":" suite
+except_clause: "except" [test ["as" name]] _suite_colon suite
+with_stmt: "with" with_items _suite_colon suite
 with_items: with_item ("," with_item)*
 with_item: test ["as" name]
 
@@ -99,10 +102,12 @@ with_item: test ["as" name]
 // TODO(NOMI-SUBSTRATE-010): Keep this surface, but lower it through a
 // Nomi-owned BlockCall node instead of encoding the block as a Python AST
 // keyword payload.
-block_call_stmt: atom_expr [ "->" testlist_star_expr ] ":" suite
+block_call_stmt: block_call_head [ "->" testlist_star_expr ] _suite_colon block_suite
+block_call_head.2: atom_expr "(" [arguments] ")" -> funccall
+block_suite: _NEWLINE _INDENT stmt+ _DEDENT -> suite
 
 // -- data declaration (Nomi) ------------------------------------------
-data_decl: "data" NAME ":" _NEWLINE _INDENT data_field+ _DEDENT
+data_decl: "data" NAME _suite_colon _NEWLINE _INDENT data_field+ _DEDENT
 ?data_field: data_field_constrained | data_field_typed | data_field_where | data_field_bare
 data_field_typed: NAME ":" test _NEWLINE
 data_field_constrained: NAME ":" test "where" test _NEWLINE

@@ -1,36 +1,38 @@
 // Layer: patterns — match/case pattern matching.
 
-match_stmt: "match" test ":" _NEWLINE _INDENT case+ _DEDENT
-case: "case" pattern ["if" test] ":" suite
+match_stmt: "match" test _suite_colon _NEWLINE _INDENT case+ _DEDENT
+case: "case" pattern [_case_if test] _case_colon suite
+_case_colon: _CASE_COLON | _suite_colon
+_case_if: "if" | _CASE_IF
 
 ?pattern: sequence_item_pattern "," _sequence_pattern -> sequence_pattern
         | as_pattern
 ?as_pattern: or_pattern ("as" NAME)?
 ?or_pattern: closed_pattern ("|" closed_pattern)*
-?closed_pattern: literal_pattern
-               | NAME -> capture_pattern
-               | NAME ":" test -> constrained_capture
-               | "_" -> any_pattern
-               | attr_pattern
-               | "(" as_pattern ")"
-               | "[" _sequence_pattern "]" -> sequence_pattern
-               | "(" (sequence_item_pattern "," _sequence_pattern)? ")" -> sequence_pattern
-               | "{" (mapping_item_pattern ("," mapping_item_pattern)* ","?)? "}" -> mapping_pattern
-               | "{" (mapping_item_pattern ("," mapping_item_pattern)* ",")? "**" NAME ","? "}" -> mapping_star_pattern
-               | class_pattern
+?closed_pattern.2: literal_pattern
+                 | NAME -> capture_pattern
+                 | NAME ":" test -> constrained_capture
+                 | "_" -> any_pattern
+                 | attr_pattern
+                 | "(" as_pattern ")"
+                 | "[" _sequence_pattern "]" -> sequence_pattern
+                 | "(" (sequence_item_pattern "," _sequence_pattern)? ")" -> sequence_pattern
+                 | "{" (mapping_item_pattern ("," mapping_item_pattern)* ","?)? "}" -> mapping_pattern
+                 | "{" (mapping_item_pattern ("," mapping_item_pattern)* ",")? "**" NAME ","? "}" -> mapping_star_pattern
+                 | class_pattern
 
 literal_pattern: inner_literal_pattern
-?inner_literal_pattern: "None" -> const_none
-                      | "True" -> const_true
-                      | "False" -> const_false
-                      | STRING -> string
-                      | number
+?inner_literal_pattern.2: "None" -> const_none
+                        | "True" -> const_true
+                        | "False" -> const_false
+                        | STRING -> string
+                        | number
 
 attr_pattern: NAME ("." NAME)+ -> value
-name_or_attr_pattern: NAME ("." NAME)* -> value
+name_or_attr_pattern.2: NAME ("." NAME)* -> value
 mapping_item_pattern: (literal_pattern|attr_pattern) ":" as_pattern
-_sequence_pattern: (sequence_item_pattern ("," sequence_item_pattern)* ","?)?
-?sequence_item_pattern: as_pattern | "*" NAME -> star_pattern
+_sequence_pattern.2: (sequence_item_pattern ("," sequence_item_pattern)* ","?)?
+?sequence_item_pattern.2: as_pattern | "*" NAME -> star_pattern
 
 class_pattern: name_or_attr_pattern "(" [arguments_pattern ","?] ")"
 arguments_pattern: pos_arg_pattern ["," keyws_arg_pattern]

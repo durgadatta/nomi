@@ -7,6 +7,22 @@ import ast
 
 
 class FuncEquationMixin:
+    def func_equation_plain_call(self, items):
+        if len(items) == 3:
+            call, body, returns = items
+        else:
+            call, body = items
+            returns = None
+        return self._build_equation_from_call(call, body, guard=None, returns=returns)
+
+    def func_equation_guarded_call(self, items):
+        if len(items) == 4:
+            call, guard, body, returns = items
+        else:
+            call, guard, body = items
+            returns = None
+        return self._build_equation_from_call(call, body, guard=guard, returns=returns)
+
     def func_equation_no_parens_plain(self, items):
         if len(items) == 3:
             name, param_name, body = items
@@ -38,6 +54,27 @@ class FuncEquationMixin:
         else:
             name, eq_args, guard, body, returns = items
         return self._build_equation_function(name, eq_args, body, guard=guard, returns=returns)
+
+    def _build_equation_from_call(self, call, body, guard, returns):
+        if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Name):
+            raise SyntaxError("Function equation target must be a direct function call")
+        eq_args = self._equation_args_from_call(call)
+        return self._build_equation_function(call.func.id, eq_args, body, guard=guard, returns=returns)
+
+    @staticmethod
+    def _equation_args_from_call(call):
+        eq_args = []
+        for arg in call.args:
+            if isinstance(arg, ast.Name):
+                eq_args.append((arg.id, None))
+            else:
+                eq_args.append(arg)
+        for keyword in call.keywords:
+            if keyword.arg is None:
+                eq_args.append(keyword.value)
+            else:
+                eq_args.append((keyword.arg, keyword.value))
+        return eq_args
 
     def _build_equation_function(self, name, eq_args, body, guard, returns):
         if eq_args is None:

@@ -351,7 +351,7 @@ class ExpressionMixin(IdentifierMixin, LiteralMixin):
             return items[0]
         
         base = items[0]
-        exponent = items[1] if len(items) > 1 else None
+        exponent = items[-1] if len(items) > 1 else None
         
         return ast.BinOp(left=base, op=ast.Pow(), right=exponent)
 
