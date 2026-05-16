@@ -20,6 +20,21 @@ from .base import Phase
 # Feature order there determines pass order here.
 DESUGAR_PASSES = get_desugar_passes()
 
+# The full pipeline is required by the reduced interpreter because it checks
+# that Python-compatible surface nodes have become normal forms.  The default
+# Nomi interpreter can already execute Python-parity nodes such as AugAssign,
+# Assert, Pass, With, decorators, and f-strings, so it only needs the passes
+# that lower Nomi-only convenience syntax.
+NOMI_INTERPRETER_DESUGAR_PASSES = tuple(
+    pass_cls for pass_cls in DESUGAR_PASSES
+    if pass_cls.__name__ in {
+        "PiecewiseFunction",
+        "WhereClause",
+        "UnderscoreLambda",
+        "PositionalHole",
+    }
+)
+
 
 def _validate_pipeline(passes):
     """Validate dependencies for *passes*.
@@ -80,13 +95,21 @@ def _check_pass_invariants(tree: ast.Module, pass_cls, pass_name: str):
         )
 
 
-def desugar_module(tree: ast.Module) -> ast.Module:
-    for pass_cls in DESUGAR_PASSES:
+def _run_desugar_passes(tree: ast.Module, passes) -> ast.Module:
+    for pass_cls in passes:
         tree = pass_cls().visit(tree)
         if __debug__:
             _check_pass_invariants(tree, pass_cls, pass_cls.__name__)
     ast.fix_missing_locations(tree)
     return tree
+
+
+def desugar_module(tree: ast.Module) -> ast.Module:
+    return _run_desugar_passes(tree, DESUGAR_PASSES)
+
+
+def desugar_module_for_nomi_interpreter(tree: ast.Module) -> ast.Module:
+    return _run_desugar_passes(tree, NOMI_INTERPRETER_DESUGAR_PASSES)
 
 
 def get_removed_node_types():

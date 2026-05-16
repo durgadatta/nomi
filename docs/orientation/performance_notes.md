@@ -116,6 +116,23 @@ cost and writes the cache.  Subsequent fresh-process CLI runs dropped from
 ~83-92ms.  `get_parser()` fell from ~1.27s to ~29ms under cProfile, with
 `Lark._load()` replacing `compute_lalr()` as the parser-construction cost.
 
+### 7. Selected desugar passes for default Nomi execution
+
+**What**: Default Nomi mode now runs only the desugar passes needed for
+Nomi-only convenience syntax: piecewise equations, where clauses, underscore
+holes, and positional/named dollar holes.  Reduced mode still runs the full
+pipeline because its job is to enforce normal forms.
+
+**Why it works**: The Nomi interpreter inherits Python-compatible evaluation
+for `AugAssign`, `Assert`, `Pass`, `With`, decorators, and f-strings.  Running
+those normal-form passes in default mode was pure tree-walk churn for
+`demo.nomi`.
+
+**Impact**: On `samples/demo.nomi` under `python3 -O`, full desugar median was
+~5.97ms and selected default-Nomi desugar median was ~4.33ms in direct timing.
+This is a modest but clean default-path win while preserving reduced-mode
+checks.
+
 ## Attempted But Reverted
 
 ### Removing `?` prefix from `atom` and `atom_expr`

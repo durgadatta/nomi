@@ -15,7 +15,10 @@ def test_mode_spec_describes_current_nomi_pipeline():
     assert spec.runner_module == "prototype.interpreter.nomi.usage"
     assert spec.parser == "prototype.parser.nomi.usage.generate_ast"
     assert spec.interpreter == "prototype.interpreter.nomi.interpreter.Interpreter"
-    assert spec.session_lowerer == "prototype.parser.nomi.desugar.pipeline.desugar_module"
+    assert (
+        spec.session_lowerer
+        == "prototype.parser.nomi.desugar.pipeline.desugar_module_for_nomi_interpreter"
+    )
 
 
 def test_legacy_helper_uses_mode_registry():

@@ -53,9 +53,9 @@ MODE_SPECS: dict[str, ModeSpec] = {
         runner_module="prototype.interpreter.nomi.usage",
         status="current-default",
         parser="prototype.parser.nomi.usage.generate_ast",
-        lowering="nomi-selected-desugar-passes",
+        lowering="prototype.parser.nomi.desugar.pipeline.desugar_module_for_nomi_interpreter",
         interpreter="prototype.interpreter.nomi.interpreter.Interpreter",
-        session_lowerer="prototype.parser.nomi.desugar.pipeline.desugar_module",
+        session_lowerer="prototype.parser.nomi.desugar.pipeline.desugar_module_for_nomi_interpreter",
     ),
     "reduced": ModeSpec(
         name="reduced",
