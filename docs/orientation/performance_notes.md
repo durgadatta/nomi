@@ -98,6 +98,24 @@ execution does not currently consume those spans.
 not as dramatic as the LALR migration, but it is a cheap default-path win and
 keeps the diagnostic path available.
 
+### 6. Persistent LALR analysis cache
+
+**What**: `get_parser()` passes `cache=True` to Lark.  `_PARSER_CACHE` already
+keeps parsers hot inside one Python process; Lark's own cache persists the
+expensive LALR grammar analysis for short-lived CLI processes.
+
+**Why it works**: A full `python3 -O -m cProfile scripts/cli.py samples/demo.nomi`
+run showed the next bottleneck had moved from parsing source to constructing
+the LALR parser.  Fresh-process execution spent ~1.27s in `get_parser()` /
+`Lark.__init__()`, almost entirely in LALR analysis, while interpreter
+evaluation itself was only a few milliseconds.
+
+**Impact**: First run after a grammar/options change still pays the analysis
+cost and writes the cache.  Subsequent fresh-process CLI runs dropped from
+~1.41s under cProfile to ~0.12s; direct suppressed-output CLI timing was
+~83-92ms.  `get_parser()` fell from ~1.27s to ~29ms under cProfile, with
+`Lark._load()` replacing `compute_lalr()` as the parser-construction cost.
+
 ## Attempted But Reverted
 
 ### Removing `?` prefix from `atom` and `atom_expr`
@@ -146,6 +164,7 @@ keywords conditionally match as `NAME`.  Deferred.
 | Earley items | 1,670,000 | 0 | LALR does not create Earley items |
 | Raw parse time (demo.nomi) | ~1129ms | ~7.5-9.9ms | ~99.1%+ faster |
 | Full `generate_ast()` (demo.nomi, uncached) | ~998.8ms | ~12.2ms | ~98.8% faster |
+| Fresh CLI run, cProfile | ~1.41s | ~0.12s | persistent LALR cache |
 | Test suite | 626 pass | 626 pass | — |
 
 ## LALR Migration Notes

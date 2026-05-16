@@ -54,6 +54,10 @@ def get_parser(extra_layers=None, preserve_positions=None):
             start="file_input",
             edit_terminals=prefer_name_for_underscore_terminal,
             propagate_positions=preserve_positions,
+            # Persist LALR analysis across short-lived CLI processes. In-process
+            # reuse is handled by _PARSER_CACHE; this removes the next cold-run
+            # bottleneck after switching from Earley to LALR.
+            cache=True,
     )
     _PARSER_CACHE[key] = parser
     return parser
