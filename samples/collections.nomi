@@ -1,15 +1,56 @@
-# Nomi by Example — Collections & Data
+# Nomi by Example — Collections, Ranges & Data Flow
 
-# -- Range syntax: 1..5 (inclusive), 1..<5 (exclusive) ------------
-inclusive = list(1..5)         # [1, 2, 3, 4, 5]
-exclusive = list(1..<5)        # [1, 2, 3, 4]
+# -- Ranges: 1..5 inclusive, 1..<5 exclusive, by N stepped -------------
+inclusive = list(1..5)           # [1, 2, 3, 4, 5]
+exclusive = list(1..<5)          # [1, 2, 3, 4]
+stepped   = list(1..20 by 3)     # [1, 4, 7, 10, 13, 16, 19]
 
-# -- Pipeline: x |> f |> g  ==  g(f(x)) ----------------------------
+print("1..5       = " + str(inclusive))
+print("1..<5      = " + str(exclusive))
+print("1..20 by 3 = " + str(stepped))
+
+# -- Pipeline — thread a value left-to-right through functions -------
 double = x => x * 2
-doubled = 5 |> double                  # 10
-range_sum = 1..10 |> list |> sum       # 55
+is_odd = x => x % 2 != 0
 
-print("1..5 = " + str(inclusive))
-print("1..<5 = " + str(exclusive))
-print("5 |> double = " + str(doubled))
-print("1..10 |> list |> sum = " + str(range_sum))
+nums = list(1..10)
+odds = list(filter(is_odd, nums))
+doubled = list(map(double, odds))
+print("odd doubled = " + str(doubled))
+
+# Simpler: pipe through list then sum
+total = 1..100 |> list |> sum
+print("sum 1..100 = " + str(total))
+
+# -- Function composition — f >>> g means: apply f, then g ----------
+inc(x) = x + 1
+times_two(x) = x * 2
+
+composed = inc >>> times_two     # (inc >>> times_two)(3) == times_two(inc(3))
+print("(inc >>> *2)(3) = " + str(composed(3)))
+
+# -- Spread — unpack iterables inline --------------------------------
+first = [1, 2]
+rest  = [3, 4, 5]
+merged = [*first, *rest]
+print("spread merge = " + str(merged))
+
+# Prefix or suffix with spread
+with_default = [0, *first, 99]
+print("with_default = " + str(with_default))
+
+# -- Null coalescing — use a default when value is None -------------
+config   = {"theme": "dark"}
+fallback = config?.get("scale") ?? 1.0
+print("scale ?? 1.0 = " + str(fallback))
+
+# -- Optional chaining — safe navigation through nullable structures -
+data = {"user": {"name": "Ada", "roles": ["admin"]}}
+name    = data?.get("user")?.get("name")
+missing = data?.get("user")?.get("age") ?? "unknown"
+print("name          = " + str(name))
+print("missing       = " + str(missing))
+
+# Safe subscript chaining
+first_role = data?.get("user")?.get("roles")?.[0]
+print("first_role    = " + str(first_role))

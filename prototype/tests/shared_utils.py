@@ -7,6 +7,7 @@ helpers.
 """
 
 import ast
+from collections.abc import Iterator
 from typing import Mapping, Sequence, Set, Generator, Dict, Any
 import types
 
@@ -26,6 +27,8 @@ def stabilize_value(value):
     if callable(value) or isinstance(value, (Generator, types.ModuleType)):
         name = getattr(value, '__name__', 'un-named')
         return f'{name}:class={type(value)}'
+    if isinstance(value, Iterator):
+        return stabilize_value(list(value))
     if hasattr(value, '__dict__'):
         return f'instance of:{stabilize_value(type(value))}'
     return value

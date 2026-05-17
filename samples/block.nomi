@@ -1,53 +1,62 @@
 # Nomi by Example — Block Calls & Yield
 #
 # A block call attaches caller-side code to a function.
-# The callee invokes it with `yield` — no new control syntax needed.
+# The callee invokes it with `yield` — no new control syntax.
+# The block is written at the call site, inverting control.
 
-# -- Basic: callee yields zero values ---------------------------------
+# -- Basic: callee yields, block body executes once per yield ----------
 func times(n):
     for i in range(n):
         yield
 
-a = 1
-times(2):
-    a = a + 1
-    print("tick " + str(a))
+count = 0
+times(3):
+    count = count + 1
+    print("tick " + str(count))
 
-print("a = " + str(a))
+print("final count = " + str(count))
 
-# -- Policy: retry with error handling --------------------------------
-func retry(max_times, exc=None):
-    if exc is None:
-        exc = Exception
-    for i in range(max_times):
-        try:
-            yield
-            print("succeeded after " + str(i + 1) + " attempt(s)")
-            return
-        except exc as e:
-            print("attempt " + str(i + 1) + " failed: " + str(e))
-
-retry(3):
-    print("trying…")
-
-# -- Yielding values to the block -------------------------------------
+# -- Yielding values to the block --------------------------------------
 func each(items):
     for item in items:
         yield item
 
-each([1, 2, 3]) -> item:
-    print("each: " + str(item))
+each([10, 20, 30]) -> val:
+    print("  item: " + str(val))
 
-# -- Multiple yielded values ------------------------------------------
-# The block parameter behaves like assignment — no special unpacking needed.
+# -- Multiple yielded values — block params use standard assignment ---
+each({"x": 1, "y": 2}.items()) -> key, val:
+    print("  " + key + " = " + str(val))
 
-each({"one": 1, "two": 2}.items()) -> key, val:
-    print("pair: " + key + " = " + str(val))
-
-# -- Running total with a filter --------------------------------------
+# -- Filtering in the block — block body acts as a filter -------------
 total = 0
-each([1, -2, 3, 8]) -> n:
+each([3, -1, 7, -4, 2]) -> n:
     if n > 0:
-        total += n
+        total = total + n
 
 print("sum of positives = " + str(total))
+
+# -- Error handling in the callee — retry with recovery ---------------
+func retry(max_attempts):
+    for i in range(max_attempts):
+        try:
+            yield
+            print("  succeeded on attempt " + str(i + 1))
+            return
+        except Exception as e:
+            print("  attempt " + str(i + 1) + " failed: " + str(e))
+    print("  all " + str(max_attempts) + " attempts failed")
+
+retry(3):
+    print("  trying operation…")
+    # The block can fail; callee catches and retries
+
+# -- Ensuring cleanup after a block -----------------------------------
+func with_cleanup():
+    try:
+        yield
+    finally:
+        print("  (cleanup done)")
+
+with_cleanup():
+    print("  doing work inside block")

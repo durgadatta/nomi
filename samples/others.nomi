@@ -1,0 +1,68 @@
+# Nomi by Example — Other Syntactic Forms
+#
+# Small but useful forms that round out the language: defer, try-expr,
+# unless, where clauses, function shortcuts, and composition.
+
+# -- defer — schedule cleanup right next to acquisition ---------------
+# Blocks execute LIFO at function exit (Go / Zig style).
+func tracked_calc(x):
+    defer print("  done: x was " + str(x))
+    defer print("  starting…")
+    return x * x
+
+print("defer example:")
+result = tracked_calc(7)
+print("  result = " + str(result))
+
+# -- try as expression — produce a value, fall back on error ----------
+parsed = try int("not-a-number") except ValueError: 0
+parsed_ok = try int("42") except ValueError: 0
+print("try int('nan') = " + str(parsed))
+print("try int('42')  = " + str(parsed_ok))
+
+# -- unless — reads better than `if not` for guard clauses ------------
+token = "valid"
+status = "ok"
+unless token == "valid":
+    status = "rejected"
+print("unless status = " + status)
+
+# -- where clause — main expression first, definitions follow ---------
+# Feels natural in formula-heavy code.
+volume = pi * r * r * h where:
+    pi = 3.14159
+    r  = 2.5
+    h  = 10.0
+
+print("volume = " + str(volume))
+
+# -- Underscore lambdas — each _ becomes a positional parameter -------
+# Best when naming adds nothing.
+is_even = _ % 2 == 0
+concat3 = _ + _ + _
+increment = _ + 1
+
+print("is_even(7)       = " + str(is_even(7)))
+print("concat3(a,b,c)   = " + concat3("a", "b", "c"))
+print("increment(5)     = " + str(increment(5)))
+
+# -- Named-hole lambdas — $name creates a parameter called `name` -----
+sort_key = $1["name"]
+greeting = "Hello, " + $name
+
+print("sort_key(n:Kim)  = " + sort_key({"name": "Kim"}))
+print("greeting(world)  = " + greeting("world"))
+
+# -- Operator sections — (+1) is "add one", (2*) is "multiply by 2" --
+next_num = (+1)
+double = (2*)
+
+print("next(5)          = " + str(next_num(5)))
+print("double(5)        = " + str(double(5)))
+
+# -- Function composition — f >>> g means apply f, then g -------------
+inc(x) = x + 1
+times_two(x) = x * 2
+
+composed = inc >>> times_two         # (inc >>> *2)(3) == times_two(inc(3))
+print("(inc >>> *2)(3) = " + str(composed(3)))
