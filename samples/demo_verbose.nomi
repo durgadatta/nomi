@@ -1,0 +1,355 @@
+# ════════════════════════════════════════════════════════════════
+#   Nomi — Verbose Tour (Canonical + Alternatives)
+#
+#   Each section shows the canonical form from demo.nomi
+#   alongside alternative Nomi forms that produce the same
+#   result.  The aim is contrast, not accumulation.
+#   Run with:
+#       nomi samples/demo_verbose.nomi
+# ════════════════════════════════════════════════════════════════
+
+
+# ── Functions: three ways to define the same operation ───────────
+# Equation — body is the expression, no `return`
+add1(a, b) = a + b
+
+# Arrow — binds a lambda to a name
+add2 = (a, b) => a + b
+
+# func block — explicit return, Python-familiar
+func add3(a, b):
+    return a + b
+
+print("add1(3, 4) = " + str(add1(3, 4)))
+print("add2(3, 4) = " + str(add2(3, 4)))
+print("add3(3, 4) = " + str(add3(3, 4)))
+
+
+# ── Lambdas: four shortcuts for the same doubling ─────────────────
+# Arrow — explicit parameter
+double1 = x => x * 2
+
+# Underscore — each _ becomes a positional parameter
+double2 = _ * 2
+
+# Operator section — (2*) means "multiply by 2"
+double3 = (2*)
+
+# Named hole — $x creates a parameter called x
+double4 = 2 * $x
+
+print("double1(7) = " + str(double1(7)))
+print("double2(7) = " + str(double2(7)))
+print("double3(7) = " + str(double3(7)))
+print("double4(7) = " + str(double4(7)))
+
+# Multi-param: underscore vs named hole vs arrow
+concat_u = _ + _ + _          # three positional params
+concat_h = $a + $b + $c       # three named params
+concat_a = (a, b, c) => a + b + c
+
+print("concat_u(a,b,c) = " + concat_u("a", "b", "c"))
+print("concat_h(a,b,c) = " + concat_h("a", "b", "c"))
+print("concat_a(a,b,c) = " + concat_a("a", "b", "c"))
+
+
+# ── Piecewise vs match for branching ─────────────────────────────
+# Piecewise — equations with guards merge into one function
+grade1(score) when score >= 90 = "A"
+grade1(score) when score >= 80 = "B"
+grade1(score) when score >= 70 = "C"
+grade1(score) when score >= 60 = "D"
+grade1(_) = "F"
+
+# func with match block — same logic, different form
+func grade2(s):
+    return match s:
+        case s if s >= 90: "A"
+        case s if s >= 80: "B"
+        case s if s >= 70: "C"
+        case s if s >= 60: "D"
+        case _:            "F"
+
+# Match inline — compact single-expression dispatch
+x = 85
+grade3 = match x: case x if x >= 90 => "A"; case x if x >= 80 => "B"; case x if x >= 70 => "C"; case x if x >= 60 => "D"; case _ => "F"
+
+print("grade1(85) = " + grade1(85))
+print("grade2(85) = " + grade2(85))
+print("grade3      = " + grade3)
+
+# Recursive piecewise — the canonical Nomi way to write recursion
+fib1(0) = 0
+fib1(1) = 1
+fib1(n) = fib1(n - 1) + fib1(n - 2)
+
+# func with match block — same logic, different form
+func fib2(n):
+    return match n:
+        case 0: 0
+        case 1: 1
+        case _: fib2(n - 1) + fib2(n - 2)
+
+print("fib1(10) = " + str(fib1(10)))
+print("fib2(10) = " + str(fib2(10)))
+
+
+# ── Where clause vs inline bindings ──────────────────────────────
+# Where — main expression first, supporting definitions follow
+v1 = pi * r * r * h where:
+    pi = 3.14159
+    r  = 2.5
+    h  = 10.0
+
+# Inline — define then use (same result, different reading order)
+pi = 3.14159
+r  = 2.5
+h  = 10.0
+v2 = pi * r * r * h
+
+print("v1 (where) = " + str(v1))
+print("v2 (inline) = " + str(v2))
+
+
+# ── Pipeline vs composition vs direct call ────────────────────────
+# Pipeline — left-to-right threading
+pipeline_sum = 1..5 |> list |> sum
+
+# Composition — f >>> g means apply f, then g
+composed = list >>> sum
+composed_sum = composed(1..5)
+
+# Direct — inside-out (traditional)
+direct_sum = sum(list(1..5))
+
+print("pipeline  = " + str(pipeline_sum))
+print("composed  = " + str(composed_sum))
+print("direct    = " + str(direct_sum))
+
+# Composition for building new functions
+abs_then_neg = abs >>> (x => -x)
+print("abs_then_neg(-5) = " + str(abs_then_neg(-5)))
+print("  = -(abs(-5))    = " + str(-abs(-5)))
+
+
+# ── Ranges: inclusive vs exclusive ────────────────────────────────
+# Inclusive — 1..5  means 1 through 5
+a = list(1..5)
+
+# Exclusive — 1..<6 means 1 through 5 (same list, different bound)
+b = list(1..<6)
+
+# Stepped — every Nth element
+c = list(1..20 by 3)
+
+print("1..5       = " + str(a))
+print("1..<6      = " + str(b))
+print("1..20 by 3 = " + str(c))
+
+
+# ── Null coalescing vs explicit check ─────────────────────────────
+user = None
+# ?? — right-hand side when left is None
+display1 = user ?? "guest"
+
+# Explicit — same result, more ceremony
+display2 = user
+if display2 is None:
+    display2 = "guest"
+
+print("display1 (??)  = " + display1)
+print("display2 (if)  = " + display2)
+
+# Optional chaining — ?. short-circuits to None
+config = {"theme": "dark"}
+name1 = config?.get("theme")              # "dark"
+name2 = None?.get("theme")                # None
+
+# Alternative: conditional expression
+name3 = config.get("theme") if config is not None else None
+
+print("name1 (?.)  = " + str(name1))
+print("name2 (?.)  = " + str(name2))
+print("name3 (if)  = " + str(name3))
+
+
+# ── Pattern matching bindings: sugar vs explicit ──────────────────
+# if-let — conditionally destructure and bind
+data = {"name": "Ada", "age": 30}
+if {"name": n, "age": a} = data:
+    entry1 = n + " is " + str(a)
+
+# Explicit — same check, manual field access
+if "name" in data and "age" in data:
+    entry2 = data["name"] + " is " + str(data["age"])
+
+print("if-let   = " + entry1)
+print("explicit = " + entry2)
+
+# guard-let — require a pattern; exit early if it fails
+func head1(sequence):
+    guard [h, *rest] = sequence:
+        return None
+    return h
+
+# func with explicit check
+func head2(sequence):
+    if not sequence:
+        return None
+    return sequence[0]
+
+print("head1([1,2,3]) = " + str(head1([1, 2, 3])))
+print("head1([])      = " + str(head1([])))
+print("head2([1,2,3]) = " + str(head2([1, 2, 3])))
+print("head2([])      = " + str(head2([])))
+
+# while-let — loop while a destructuring pattern holds
+items1 = [1, 2, 3]
+total1 = 0
+while [h, *rest] = items1:
+    total1 = total1 + h
+    items1 = rest
+
+# Traditional while loop
+items2 = [1, 2, 3]
+total2 = 0
+while items2:
+    h = items2[0]
+    rest = items2[1:]
+    total2 = total2 + h
+    items2 = rest
+
+print("while-let sum = " + str(total1))
+print("explicit sum  = " + str(total2))
+
+
+# ── unless vs if not ──────────────────────────────────────────────
+token = "valid"
+
+# unless — reads better for guard clauses
+status1 = "ok"
+unless token == "valid":
+    status1 = "rejected"
+
+# if not — equivalent, more conventional
+status2 = "ok"
+if not (token == "valid"):
+    status2 = "rejected"
+
+print("unless = " + status1)
+print("if not = " + status2)
+
+
+# ── try as expression vs try block ────────────────────────────────
+# try-expr — single line, produces a value
+parsed1 = try int("not-a-number") except ValueError: 0
+
+# try block — same logic, more ceremony
+parsed2 = 0
+try:
+    parsed2 = int("not-a-number")
+except ValueError:
+    parsed2 = 0
+
+print("try-expr = " + str(parsed1))
+print("try block = " + str(parsed2))
+
+
+# ── Data declaration vs manual class ──────────────────────────────
+# data — generates __init__, __repr__, __eq__
+data Point1:
+    x: float
+    y: float
+
+p1 = Point1(3.0, 5.0)
+q1 = Point1(3.0, 5.0)
+print("data struct = " + str(p1))
+print("  p1 == q1  = " + str(p1 == q1))
+
+# The manual equivalent would be a full class definition — the data
+# keyword saves ~15 lines of boilerplate for every struct.
+
+
+# ── Constraints — three styles for the same check ─────────────────
+# Type constraint — checks isinstance
+age1: int = 35
+
+# Callable constraint — checks predicate returns truthy
+is_positive = (x) => x > 0
+age2: int, is_positive = 35
+
+# Inline expression constraint — checks expression with variable
+age3: int, age3 > 0, age3 <= 150 = 35
+
+# Custom message — constraint else "message"
+age4: int, age4 > 0 else "age must be positive" = 35
+
+print("age1 (type)     = " + str(age1))
+print("age2 (callable) = " + str(age2))
+print("age3 (inline)   = " + str(age3))
+print("age4 (message)  = " + str(age4))
+
+# Parameter constraints — same three styles on params
+func double1p(x: (int, x > 0)):
+    return x * 2
+
+func double2p(x: (int, x > 0 else "must be positive")):
+    return x * 2
+
+print("double1p(5) = " + str(double1p(5)))
+print("double2p(5) = " + str(double2p(5)))
+
+
+# ── Block calls — inversion of control patterns ───────────────────
+# Simple yield — callee hands control to the block
+func twice():
+    yield
+    yield
+
+count = 0
+twice():
+    count = count + 1
+print("twice count = " + str(count))
+
+# Yield with value — callee passes data to the block
+func each(items):
+    for item in items:
+        yield item
+
+collected = []
+each([1, 2, 3]) -> n:
+    collected = collected + [n * 2]
+print("collected = " + str(collected))
+
+# Yield multiple values — block params use standard assignment
+each({"a": 1, "b": 2}.items()) -> k, v:
+    print("  " + k + " = " + str(v))
+
+# Filtering in the block — block body acts as filter
+sum_pos = 0
+each([3, -1, 7, -4, 2]) -> n:
+    if n > 0:
+        sum_pos = sum_pos + n
+print("sum of positives = " + str(sum_pos))
+
+# Error handling in the callee — retry with recovery
+func retry(max_attempts):
+    for i in range(max_attempts):
+        try:
+            yield
+            return
+        except Exception as e:
+            pass
+
+retry(3):
+    print("  operation succeeded on first try")
+
+# Cleanup — try/finally in the callee
+func with_cleanup():
+    try:
+        yield
+    finally:
+        print("  (cleanup done)")
+
+with_cleanup():
+    print("  doing work inside block")
