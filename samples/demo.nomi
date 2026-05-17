@@ -1,190 +1,269 @@
-# ══════════════════════════════════════════════════════════════════════
-#   Nomi by Example — A Guided Tour
+# ════════════════════════════════════════════════════════════════
+#   Nomi — A Guided Tour
 #
-#   Each section introduces one language feature with simple examples.
-#   Run with:  nomi samples/demo.nomi
-# ══════════════════════════════════════════════════════════════════════
+#   Each section introduces Nomi's syntax through examples that
+#   aim to feel natural, not contrived.  Run with:
+#       nomi samples/demo.nomi
+# ════════════════════════════════════════════════════════════════
 
-# ── 1. Functions ───────────────────────────────────────────────────
-# Traditional function definition
-func greet(name):
-    return "Hello, " + name
 
-# Arrow function — single-param (no parens) or multi-param
-square = x => x * x
-add = (a, b) => a + b
+# ── Functions ───────────────────────────────────────────────────
+# Lightweight equation —  f(a, b) = expr
+# No `return` needed; the expression is the body.
+add(a, b) = a + b
 
-# Lightweight equation — f(a, b) = expr
-pi() = 3.14
+# Arrow expression — (params) => body, fits inline callbacks.
+double = x => x * 2
+distance = (x1, y1, x2, y2) => ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
 
-# Equations with default arguments
-add_default(a, b=10) = a + b
+# Piecewise definition — adjacent equations with the same name
+# merge into a single function.  The canonical way to write
+# recursive functions with base cases.
+fib(0) = 0
+fib(1) = 1
+fib(n) = fib(n - 1) + fib(n - 2)
 
-# Underscore hole-filling lambdas (Scala-style)
-double = _ * 2
-upcase = _.upper()
-
-# Piecewise definitions (Haskell-style)
-# Contiguous equations with the same name merge into one function.
-fact(1) = 1
-fact(n) = fact(n - 1) * n
-
-# Piecewise with guards — add "when" conditions to equation clauses
-sign(n) when n > 0 = 1
+# Guarded equations — a `when` condition restricts a clause.
+# Reads like a mathematical case split.
+sign(n) when n > 0 =  1
 sign(n) when n < 0 = -1
-sign(n) = 0
+sign(n)            =  0
 
-# Single-arg equation without parens — omit () for a single variable param
+# Single-arg without parens — clean for unary functions.
 sq x = x * x
 
-# Positional hole lambdas — $1, $2 refer to positional params (Swift-style)
-inc = $1 + 1
-fmt = $1 + $2 + $3
+# Default arguments on equations.
+greet(name, greeting="Hi") = greeting + ", " + name
 
-# Named hole lambdas — $name uses the identifier as the parameter name
-greet = "Hello, " + $name
-fullname = $first + " " + $last
-
-# Where clause — local bindings
-area = pi * r * r where:
+# Where clause — the main expression comes first, supporting
+# definitions follow.  Feels natural in formula-heavy code.
+volume = pi * r * r * h where:
     pi = 3.14159
-    r = 5
+    r  = 2.5
+    h  = 10.0
 
-twice = x * 2 where x = 5    # inline form
+# Underscore lambdas — each _ becomes a positional parameter.
+# Best in filter / map chains where naming adds nothing.
+is_even = _ % 2 == 0
+concat3 = _ + _ + _
+increment = _ + 1
 
+# Named-hole lambdas — $name creates a parameter called `name`.
+# Feels like string interpolation that produces a function.
+sort_key = $1["name"]           # one-arg: (x) => x["name"]
+greeting = "Hello, " + $name    # (name) => "Hello, " + name
 
-# ── 2. Control Flow ─────────────────────────────────────────────────
-# unless — Ruby-style inverted if
-x = 5
-unless x > 10:
-    label = "not big"         # executes when condition is False
-
-# Implicit multiplication — 2x means 2*x, 2(x+y) means 2*(x+y)
-n = 5
-twice_n = 2n                   # 10
-poly = 2(n + 1)                # 12
-
-# Type aliases — give short names to types
-type UserId = str
-type Age = int
-
-# Triple-quoted strings — multi-line with """ or '''
-doc = """line one
-line two"""
-
-# Try as expression — single-line form
-safe = try int("not a number") except ValueError: 0
-
-# Inline match as expression — single-line, value-producing form
-size_label = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"
-
-# Indented match as expression — expression-valued cases
-size_label_block = match 3:
-    case 1: "one"
-    case 2: "two"
-    case _: "many"
-
-# If-let — conditional pattern matching
-x = 42
-matched = "no"
-if 42 = x:
-    matched = "yes"             # executes when pattern matches
-
-# While-let — repeat while a pattern matches
-numbers = [1, 2, 3]
-while_sum = 0
-while [head, *tail] = numbers:
-    while_sum += head
-    numbers = tail
-
-# Guard-let — require a pattern before continuing
-func first_or_empty(items):
-    guard [first, *rest] = items:
-        return "empty"
-    return str(first)
-
-first_value = first_or_empty([9, 8])
-empty_value = first_or_empty([])
-
-# Spread in literals — * unpacks iterables
-parts = [2, 3]
-merged = [1, *parts, 4]         # [1, 2, 3, 4]
+# Operator sections — (+1) is an "add one" function, (2*) is
+# "multiply by 2".  Haskell-style shorthand for simple mappings.
+next = (+1)
 
 
-# ── 3. Null Handling ────────────────────────────────────────────────
-# Null coalescing: use a default when value is None
-name = None ?? "anonymous"
+# ── Ranges, Pipeline & Composition ──────────────────────────────
+# Ranges: 1..10 inclusive, 1..<10 exclusive, by N stepped.
+ten = list(1..10)
+nine = list(1..<10)
+odds = list(1..20 by 2)
 
-# Optional chaining: safe navigation
-d1 = {"key": "found"}
-d2 = None
-v1 = d1?.get("key")     # "found"
-v2 = d2?.get("key")     # None
-v3 = [10, 20]?.[1]      # 20
-v4 = d2?.[0] ?? "none"  # "none"
+# Pipeline — thread a value through functions left-to-right.
+# Each `|>` feeds the result into the next function.
+squares_sum = 1..5 |> list |> sum
 
-
-# ── 4. Collections & Data ───────────────────────────────────────────
-# Ranges: 1..5 (inclusive), 1..<5 (exclusive)
-one_to_five = list(1..5)
-one_to_four = list(1..<5)
-odd_numbers = list(1..10 by 2)
-
-# Pipeline: thread a value through functions
-total = 1..10 |> list |> sum    # 55
-
-# Function composition — >>> (forward) and <<< (backward)
-dbl(x) = x * 2
-inc(x) = x + 1
-composed = dbl >>> inc          # apply dbl, then inc
-pipe_result = 3 |> (dbl >>> inc)  # (dbl >>> inc)(3) = 7
-
-# Defer — schedule code to run when function exits (LIFO)
-func defer_demo():
-    defer print("deferred: third")
-    defer print("deferred: second")
-    print("immediate: first")
+# Function composition — build a new function from two.
+# f >>> g  means  apply f, then g:  (f >>> g)(x) == g(f(x))
+neg_abs = abs >>> (x => -x)
 
 
-# ── Results ─────────────────────────────────────────────────────────
-print("1. greet(Alice) = " + greet("Alice"))
-print("1. square(5) = " + str(square(5)))
-print("1. add(3,4) = " + str(add(3, 4)))
-print("1. pi() = " + str(pi()))
-print("1. double(21) = " + str(double(21)))
-print("1. upcase(hi) = " + upcase("hi"))
-print("1. fact(5) = " + str(fact(5)))
-print("1. sign(10) = " + str(sign(10)))
-print("1. sign(-5) = " + str(sign(-5)))
-print("1. sign(0)  = " + str(sign(0)))
-print("1. sq(5) = " + str(sq(5)))
-print("1. inc(7) = " + str(inc(7)))
-print("1. fmt(a,b,c) = " + fmt("a", "b", "c"))
-print("1. greet(world) = " + greet("world"))
-print("1. fullname(Ada, Lovelace) = " + fullname("Ada", "Lovelace"))
-print("1. area = " + str(area))
+# ── Null Handling ───────────────────────────────────────────────
+# ?? returns the right-hand side when the left is None.
+user = None
+display = user ?? "guest"
 
-print("2. label = " + label)
-print("2. if-let matched = " + matched)
-print("2. 2n where n=5 = " + str(twice_n))
-print("2. 2(n+1) where n=5 = " + str(poly))
-print("2. inline match 2 = " + size_label)
-print("2. indented match 3 = " + size_label_block)
-print("2. while-let sum = " + str(while_sum))
-print("2. guard-let first = " + first_value + ", empty = " + empty_value)
+# ?. short-circuits to None when the receiver is None.
+# Avoids nested `if x is not None` checks.
+data = {"name": "Ada"}
+first_char = data?.get("name")?.[0]  # "A"
+missing    = data?.get("age")        # None
 
-print("3. None ?? anonymous = " + name)
-print("3. d1?.get(key) = " + v1)
-print("3. d2?.get(key) = " + str(v2))
-print("3. [10,20]?.[1] = " + str(v3))
-print("3. None?.[0] ?? none = " + v4)
 
-print("4. 1..5 = " + str(one_to_five))
-print("4. 1..<5 = " + str(one_to_four))
-print("4. 1..10 by 2 = " + str(odd_numbers))
-print("4. 1..10 |> sum = " + str(total))
-print("4. spread [1, *[2,3], 4] = " + str(merged))
+# ── Pattern Matching ────────────────────────────────────────────
+# Piecewise with guards — a natural case split.  Each clause
+# is an independent equation that merges into one function.
+grade(score) when score >= 90 = "A"
+grade(score) when score >= 80 = "B"
+grade(score) when score >= 70 = "C"
+grade(score) when score >= 60 = "D"
+grade(_) = "F"
 
-print("5. add_default(3) = " + str(add_default(3)))
-print("5. safe = try int('abc') except: 0 = " + str(safe))
-print("5. doc triple-quoted = " + doc)
+# Match as expression (inline) — single-line, => arrows.
+# Good for quick value dispatch where a function feels heavy.
+label = match 3: case 1 => "one"; case 2 => "two"; case _ => "many"
+
+# Match as statement with suite bodies — full blocks per case.
+signal = ""
+match 15:
+    case n if n < 0:
+        signal = "negative"
+    case 0:
+        signal = "zero"
+    case _:
+        signal = "positive"
+
+
+# ── Control Flow ────────────────────────────────────────────────
+# unless — reads better than `if not` for guard clauses.
+token = "valid"
+status = "ok"
+unless token == "valid":
+    status = "rejected"
+
+# if-let — conditionally destructure and bind a pattern.
+config = {"theme": "dark"}
+if {"theme": t} = config:
+    theme = t                   # "dark"
+
+# guard-let — require a pattern; exit early if it fails.
+func first(sequence):
+    guard [head, *tail] = sequence:
+        return None
+    return head
+
+first_val = first([10, 20, 30])
+empty_val = first([])
+
+# while-let — loop while a destructuring pattern holds.
+items = [1, 2, 3]
+total = 0
+while [h, *rest] = items:
+    total = total + h
+    items = rest
+
+# try as expression — produce a value, fall back on error.
+parsed = try int("not-a-number") except ValueError: 0
+
+# defer — schedule cleanup right next to acquisition.
+# Blocks execute LIFO at function exit (Go / Zig style).
+func tracked_calc(x):
+    defer print("  done: x was " + str(x))
+    defer print("  starting…")
+    return x * x
+
+result = tracked_calc(7)
+
+
+# ── Collections ─────────────────────────────────────────────────
+# Spread — unpack an iterable inline.
+middle = [2, 3]
+all_nums = [1, *middle, 4, 5]
+
+# Filter / map with underscore lambdas — concise.
+nums = [3, -2, 8, -5, 1]
+positive_nums = filter(x => x > 0, nums)
+doubled_nums = map(x => x * 2, nums)
+
+# Operator section as a mapping function.
+incremented = map((+1), nums)
+
+
+# ── Types & Data ────────────────────────────────────────────────
+# Type alias — give semantic names to domain types.
+type UserId = int
+type JsonStr = str
+
+# Data declaration — a struct with a generated constructor.
+data Point:
+    x: float
+    y: float
+
+p = Point(3.0, 5.0)
+origin = Point(0.0, 0.0)
+
+# Constraint annotation — checked at binding time.
+age: int, age >= 0, age <= 150 = 35
+positive: int, positive > 0 = 95
+
+# Parameter constraint — enforced on every call.
+func sqrt(x: (x >= 0)):
+    return x ** 0.5
+
+# Constraint with a user-facing message.
+#   x: constraint else "message"
+v: int, v > 0 else "must be positive" = 42
+
+
+# ── Block Calls ─────────────────────────────────────────────────
+# A callee yields control to a caller-attached block.
+# The block is written at the call site — inversion of control.
+
+func twice():
+    yield
+    yield
+
+count = 0
+twice():
+    count = count + 1
+
+# Block with a parameter — the callee yields values to the block.
+func each(sequence):
+    for item in sequence:
+        yield item
+
+collected = []
+each([1, 2, 3]) -> n:
+    collected = collected + [n * 2]
+
+
+# ── Results ─────────────────────────────────────────────────────
+print("add(3, 4)         = " + str(add(3, 4)))
+print("double(7)         = " + str(double(7)))
+print("distance(3,4,0,0)  = " + str(distance(3, 4, 0, 0)))
+print("fib(10)           = " + str(fib(10)))
+print("sign(-12)         = " + str(sign(-12)))
+print("sign(0)           = " + str(sign(0)))
+print("sq(5)             = " + str(sq(5)))
+print("greet(Bob, Hey)   = " + greet("Bob", "Hey"))
+print("volume            = " + str(volume))
+print("is_even(7)        = " + str(is_even(7)))
+print("concat3(a,b,c)    = " + concat3("a", "b", "c"))
+print("increment(5)      = " + str(increment(5)))
+print("sort_key(name:K)  = " + sort_key({"name": "Kim"}))
+print("greeting(world)   = " + greeting("world"))
+print("next(5)           = " + str(next(5)))
+print()
+print("1..10             = " + str(ten))
+print("1..<10            = " + str(nine))
+print("1..20 by 2        = " + str(odds))
+print("squares_sum 1..5  = " + str(squares_sum))
+print("neg_abs(-5)       = " + str(neg_abs(-5)))
+print()
+print("user ?? 'guest'    = " + display)
+print("data?.name?.[0]   = " + str(first_char))
+print("data?.age         = " + str(missing))
+print()
+print("grade(85)         = " + grade(85))
+print("grade(72)         = " + grade(72))
+print("inline match 3    = " + label)
+print("match stmt signal  = " + signal)
+print()
+print("unless status     = " + status)
+print("if-let theme      = " + theme)
+print("guard-let first   = " + str(first_val))
+print("guard-let empty   = " + str(empty_val))
+print("while-let total   = " + str(total))
+print("try int('nan')    = " + str(parsed))
+print()
+print("spread            = " + str(all_nums))
+print("positive(nums)    = " + str(list(positive_nums)))
+print("doubled(nums)     = " + str(list(doubled_nums)))
+print("incremented(nums) = " + str(list(incremented)))
+print()
+print("Point(3,5)        = " + str(p))
+print("origin            = " + str(origin))
+print("age constraint    = " + str(age))
+print("positive val      = " + str(positive))
+print("sqrt(144)         = " + str(sqrt(144)))
+print("positive_val      = " + str(v))
+print()
+print("block: count      = " + str(count))
+print("block: collected  = " + str(collected))
+print("defer example:")
+print("  " + str(result))
