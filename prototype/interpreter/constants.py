@@ -10,7 +10,7 @@ import ast
 BLOCK_KWARG = "__block__"
 
 
-@dataclass
+@dataclass(slots=True)
 class Block:
     """Represents a caller-side block attached to a function call.
 

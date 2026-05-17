@@ -127,12 +127,11 @@ class BlockCall(SurfaceNode):
         resulting ``Block`` contains only pure Python AST.
         """
         from prototype.interpreter.constants import BLOCK_KWARG, Block
-        from copy import deepcopy
 
         call = ast.Call(
-            func=deepcopy(self.func),
-            args=deepcopy(self.args),
-            keywords=deepcopy(self.keywords),
+            func=self.func,
+            args=self.args,
+            keywords=self.keywords,
         )
 
         # Lower any nested surface nodes in the block body
@@ -141,7 +140,7 @@ class BlockCall(SurfaceNode):
             if isinstance(stmt, SurfaceNode):
                 lowered_body.append(lower_surface_to_python(stmt.lower()))
             else:
-                lowered_body.append(deepcopy(stmt))
+                lowered_body.append(stmt)
 
         block = Block(body=lowered_body, params=self.block_params)
         call.keywords.append(ast.keyword(arg=BLOCK_KWARG, value=block))

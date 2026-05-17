@@ -53,7 +53,7 @@ class Interpreter(
 
     @classmethod
     def _build_eval_dispatch(cls):
-        """Auto-build {ast_type: method_name} from eval_* methods in the MRO."""
+        """Auto-build {ast_type: unbound_method} from eval_* methods in the MRO."""
         # TODO(NOMI-SUBSTRATE-024): Keep this convenient method-name dispatch,
         # but layer semantic metadata on top: feature owner, operation name,
         # accepted node kinds, resumable policy, and trace/diagnostic hooks.
@@ -64,7 +64,7 @@ class Interpreter(
             node_name = attr_name[5:]
             node_type = getattr(ast, node_name, None)
             if node_type is not None:
-                dispatch[node_type] = attr_name
+                dispatch[node_type] = getattr(cls, attr_name)
         return dispatch
 
     def __init__(self):
@@ -100,18 +100,16 @@ class Interpreter(
         if node is None:
             return None
 
-        node_name = node.__class__.__name__
-        eval_name = self.__eval_dispatch.get(type(node))
-        if eval_name is None:
+        func = self.__eval_dispatch.get(type(node))
+        if func is None:
             lineno = self.get_lineno(node)
             raise NotImplementedError(
-                f"Node type {node_name} not supported at line {lineno}"
+                f"Node type {node.__class__.__name__} not supported at line {lineno}"
             )
-        method = getattr(self, eval_name)
         try:
             if self.is_resumable(node):
-                return method(node, state=state, generator_state=generator_state)
-            return method(node)
+                return func(self, node, state=state, generator_state=generator_state)
+            return func(self, node)
         except self.pass_through_exceptions:
             raise
         except Exception as e:

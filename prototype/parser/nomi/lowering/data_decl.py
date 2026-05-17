@@ -63,7 +63,7 @@ class DataDeclMixin:
                 checks.append((field_name, constraint))
 
         for field_name, constraint in checks:
-            constraint_src = ast.unparse(constraint) if hasattr(ast, 'unparse') else str(constraint)
+            constraint_src = ast.unparse(constraint)
             body.append(
                 ast.If(
                     test=ast.UnaryOp(op=ast.Not(), operand=constraint),

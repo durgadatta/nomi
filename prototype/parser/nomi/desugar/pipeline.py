@@ -10,10 +10,15 @@ silent ordering bug.
 """
 
 import ast
+import os
 import sys
 
 from prototype.syntax.features import get_desugar_passes
 from .base import Phase
+
+_SHOULD_CHECK_INVARIANTS = os.environ.get(
+    'NOMI_DESUGAR_CHECK_INVARIANTS', ''
+).lower() in ('1', 'true', 'yes')
 
 
 # Derived from BUILTIN_FEATURES in prototype/syntax/features.py.
@@ -98,7 +103,7 @@ def _check_pass_invariants(tree: ast.Module, pass_cls, pass_name: str):
 def _run_desugar_passes(tree: ast.Module, passes) -> ast.Module:
     for pass_cls in passes:
         tree = pass_cls().visit(tree)
-        if __debug__:
+        if _SHOULD_CHECK_INVARIANTS:
             _check_pass_invariants(tree, pass_cls, pass_cls.__name__)
     ast.fix_missing_locations(tree)
     return tree

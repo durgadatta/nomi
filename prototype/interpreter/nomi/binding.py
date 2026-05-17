@@ -6,6 +6,7 @@ See ``binding_error.py`` for the diagnostic type raised on failure.
 """
 
 import ast
+from functools import cached_property
 from typing import Any, List, Callable
 from .binding_error import BindingError
 
@@ -18,8 +19,8 @@ class Annotation:
     def __init__(self, var_name, ann, interpreter):
         self.var_name = var_name
         self.ann, self.message = self._unwrap_message(ann)
-
         self.interpreter = interpreter
+        self._source = ast.unparse(self.ann)
 
     @staticmethod
     def _unwrap_message(ann):
@@ -36,9 +37,9 @@ class Annotation:
 
     @property
     def source(self) -> str:
-        return ast.unparse(self.ann) if hasattr(ast, 'unparse') else str(self.ann)
+        return self._source
 
-    @property
+    @cached_property
     def predicate(self) -> Callable[[Any], bool]:
         """Normalize a single constraint to a predicate function."""
         annotation, var_name = self.ann, self.var_name
@@ -126,7 +127,7 @@ class Annotation:
         # Clean up
         del self.interpreter.current_env.bindings['_constraint_predicate']
 
-        expr_str = ast.unparse(expr_node) if hasattr(ast, 'unparse') else str(expr_node)
+        expr_str = ast.unparse(expr_node)
 
         # Wrap with error handling
         def expr_predicate(value):
