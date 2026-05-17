@@ -4,6 +4,8 @@ from .binding_error import BindingError
 
 
 class Environment(PyEnvironment):
+    __slots__ = ('constraints',)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.constraints: Dict[str, Callable[[Any], bool]] = {}

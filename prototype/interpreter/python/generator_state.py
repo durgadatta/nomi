@@ -6,7 +6,7 @@ from .signals import YieldException, ReturnException
 class CoroutineState:
     """
     Manages state for generator functions.
-    
+
     Handles resumable execution of compound statements (For, While, Try)
     and supports exception injection via throw() for context managers.
 
@@ -20,7 +20,13 @@ class CoroutineState:
     https://stackoverflow.com/questions/11485591/what-is-generator-throw-good-for
 
     """
-    
+
+    __slots__ = (
+        'interpreter', 'body', 'env', 'index', 'return_value',
+        'injected_exception', 'paused_frames', '_processing_frame',
+        'sent_value', 'is_first_iteration',
+    )
+
     def __init__(self, interpreter: 'Interpreter', body: List[ast.stmt], env: 'Environment'):
         self.interpreter = interpreter
         self.body = body

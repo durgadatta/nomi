@@ -35,7 +35,13 @@ class FunctionMixin(FunctionCallMixin):
         return obj
     
     def _is_generator_function(self, node: ast.FunctionDef) -> bool:
-        """Check for yield/yield-from in the function body, skipping nested definitions."""
+        """Check for yield/yield-from in the function body, skipping nested definitions.
+
+        Result is cached on the node so repeated calls (one per invocation) are free.
+        """
+        cached = getattr(node, '_nomi_is_generator', None)
+        if cached is not None:
+            return cached
 
         class _YieldFinder(ast.NodeVisitor):
             def __init__(self):
@@ -56,6 +62,7 @@ class FunctionMixin(FunctionCallMixin):
         finder = _YieldFinder()
         for stmt in node.body:
             finder.visit(stmt)
+        node._nomi_is_generator = finder.found
         return finder.found
     
 

@@ -103,7 +103,7 @@ class SurfaceNode:
 
 # ── BlockCall ─────────────────────────────────────────────────────────
 
-@dataclass
+@dataclass(slots=True)
 class BlockCall(SurfaceNode):
     """A function call with a caller-side block body.
 

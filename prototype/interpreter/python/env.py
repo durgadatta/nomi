@@ -2,6 +2,9 @@ from typing import Dict, Any, Optional, Set
 
 class Environment:
     """Manages variable scopes and bindings."""
+
+    __slots__ = ('interpreter', 'parent', 'bindings', 'declared_globals', 'declared_nonlocals')
+
     def __init__(self, interpreter: 'Interpreter', parent: Optional['Environment'] = None):
         self.interpreter = interpreter
         self.parent = parent

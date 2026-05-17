@@ -17,7 +17,7 @@ from prototype.runtime.api import ExecutionResult
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 
 
-@dataclass
+@dataclass(slots=True)
 class RuntimeSession:
     mode: str = "nomi"
     profile: str = "default"

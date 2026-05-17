@@ -4,6 +4,8 @@ import ast
 
 
 class CoroutineState(PythonCoroutineState):
+    __slots__ = ('block',)
+
     def __init__(self, *args, block=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.block: Block = block
