@@ -362,6 +362,9 @@ Status:
   return-annotation runtime tests moved from
   `functional/test_nomi_func_styles.py` to
   `features/functions/test_equations_runtime.py`.
+- Done: operator-section and function-composition runtime tests moved from
+  `functional/test_nomi_func_styles.py` to
+  `features/functions/test_composition_runtime.py`.
 
 ### Phase 3: Introduce Feature Packets For New Work
 
