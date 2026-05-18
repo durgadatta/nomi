@@ -10,6 +10,14 @@ Use this skill when the task is about Nomi's language direction, syntax
 research, convenience features, design philosophy, or translating ideas from
 other languages into a coherent Nomi surface.
 
+For core/sugar/backend separation work, use
+`docs/language/core_layer_separation_plan.md` as the operational layer map:
+L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
+canonical surface, L4 sugar reductions, L5 library conventions, L6 scoped
+extensions, and L7 backend targets. The most important implementation rule is:
+L4 sugar should reduce before eval; do not grant sugar permanent evaluator
+semantics.
+
 ## Research Corpus (May 2026)
 
 The project has a substantial cross-language research corpus — 23 deep-dive
@@ -98,6 +106,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 
 **Foundation and direction:**
 - `docs/language/language_foundation.md` — canonical design foundation.
+- `docs/language/core_layer_separation_plan.md` — operational hierarchy for
+  implementation core, semantic core, canonical surface, sugar, libraries,
+  scoped extensions, eval separation, and backend targets.
 - `docs/language/spec_readiness_map.md` — promotion workflow for turning
   research, convenience notes, feature docs, target fixtures, and
   implementation plans into spec-ready language sections.
@@ -142,6 +153,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/features/structured_collections_query_language.md` — query/table verbs.
 
 **Architecture and substrate:**
+- `docs/language/core_layer_separation_plan.md` — read first when the task
+  touches core-vs-sugar boundaries, eval dispatch, Core IR, reduced mode,
+  feature layer metadata, or backend portability.
 - `docs/language/architecture_refactoring_plan.md` — runtime API, pipeline,
   package, host, and frontend adapter refactoring.
 - `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
@@ -181,6 +195,27 @@ into concrete Nomi design decisions.
 
 If a candidate cannot reduce to this set, keep it research-only or propose the
 smallest new primitive it would require.
+
+## Core/Sugar Layer Workflow
+
+Use this when the task mentions core, sugar, special forms, eval, backend
+portability, Core IR, scoped extension, or Python independence.
+
+1. Read `docs/language/core_layer_separation_plan.md` before proposing code.
+2. Classify the feature or syntax:
+   `L0 runtime substrate`, `L1 implementation core IR`, `L2 semantic core`,
+   `L3 canonical surface`, `L4 sugar`, `L5 library convention`,
+   `L6 scoped extension`, or `L7 backend`.
+3. State the normal form and the reduction target. If it is L4 sugar, name the
+   L2/L3 concept it expands to and avoid adding eval semantics.
+4. If it is L2/L3 semantic core, plan both the user concept and the eventual
+   L1 operations it lowers to.
+5. If it is L6, require an explicit fence, inspectable expansion, and no
+   meaning changes outside the scope.
+6. If it is L7, require backend capability flags and avoid making backend
+   limitations part of the language definition.
+7. Update feature docs, `core_layer_separation_plan.md`, or
+   `implementation_todos.md` when the classification changes.
 
 ## Research Workflow
 

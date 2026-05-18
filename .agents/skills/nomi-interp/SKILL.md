@@ -10,6 +10,12 @@ For semantic design rationale behind interpreter behavior, see the
 departure from Python should trace to a normal form and a design
 decision grounded in cross-language research.
 
+For core/sugar/eval separation, read
+`docs/language/core_layer_separation_plan.md` before adding evaluator behavior.
+Classify the form as L0-L7. L4 sugar must reduce before eval; L2/L3 semantic
+core belongs in the future core evaluator; L7 backend special cases belong in
+backend code, not language semantics.
+
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
 - `prototype/interpreter/python/binding.py` — Assignment, augmented assignment, annotated assignment
@@ -38,6 +44,10 @@ decision grounded in cross-language research.
 - `prototype/interpreter/runner.py` — make_runner() factory, shared by all three usage.py files
 
 ## Semantic substrate direction
+- Treat eval as the last place a surface feature should appear. Before adding
+  an `eval_*` method, ask whether the construct is L4 sugar that should lower
+  away, L2/L3 semantic core that needs a core operation, or an L7 backend
+  workaround.
 - Prefer a shared semantic representation before adding another one-off
   `eval_*` path. Binding, function call, block call, pattern match, decode,
   pipeline, and rewrite should eventually emit consistent semantic events.
@@ -51,6 +61,9 @@ decision grounded in cross-language research.
 - For broad runtime/API/tooling refactors, read
   `docs/language/architecture_refactoring_plan.md` and prefer facade-first
   changes that keep existing `run_eval_loop` imports working.
+- For the layer hierarchy and preparatory Core IR work, read
+  `docs/language/core_layer_separation_plan.md`. Keep reduced-mode guardrails
+  aligned with declared L4 reductions and future L1 verifier behavior.
 - For Python-independence, native backend, MLIR, LLVM, Wasm, or ABI questions,
   read `docs/language/python_independence_and_compiler_backend_plan.md`.
   Treat Python as the bootstrap/backend path while Core IR and direct runtime

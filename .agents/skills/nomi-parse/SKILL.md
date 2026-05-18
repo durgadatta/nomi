@@ -9,6 +9,12 @@ research corpus (`docs/research/language_family_coverage_map.md`) for design
 rationale and cross-language precedent. Syntax changes should be driven by
 design decisions, not the other way around.
 
+For core/sugar separation, read
+`docs/language/core_layer_separation_plan.md`. Every syntax feature should
+declare whether it is L2/L3 semantic core, L4 sugar, L5 library convention,
+L6 scoped extension, or L7 backend-facing. L4 syntax must have an inspectable
+reduction target and should not require a final evaluator hook.
+
 ## Key files
 - `prototype/grammar/layers/*.lark` — layered Lark grammar (assembled at runtime)
 - `prototype/parser/nomi/ast_.py` — NomiToPythonAST transformer
@@ -36,6 +42,8 @@ Target architecture for new work:
 
 Before adding broad syntax, read:
 - `docs/language/language_foundation.md` — the design target.
+- `docs/language/core_layer_separation_plan.md` — layer vocabulary and eval
+  separation rules.
 - `docs/language/language_degrees_of_freedom.md` — core/sugar/library/scoped/rejected framework.
 - `docs/language/flexible_syntax_substrate_plan.md`
 - `docs/language/python_independence_and_compiler_backend_plan.md` when syntax
@@ -77,7 +85,10 @@ Follow the current extension path (5 steps, documented in `CLAUDE.md`):
    and add to `BUILTIN_FEATURES` in `prototype/syntax/features.py`.
 4. **Surface node** (optional) — define a `SurfaceNode` subclass in
    `prototype/syntax/surface.py` when Python AST cannot represent it.
-5. **Tests** — parser unit tests, functional tests, regression snapshots.
+5. **Layer metadata** — record the feature layer and reduction/core target in
+   `SyntaxFeature` as soon as that metadata exists.
+6. **Tests** — parser unit tests, feature tests, reduced/core invariant tests,
+   and regression snapshots as appropriate.
 
 Before starting any syntax addition:
 - Identify the Nomi normal form and confirm the feature status in

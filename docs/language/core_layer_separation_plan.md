@@ -366,6 +366,80 @@ Decision rules:
 Do not rewrite the interpreter wholesale. Build the boundary first, then move
 one form at a time.
 
+## Operational Orientation Notes
+
+Before touching parser, grammar, lowering, or eval for this effort, do a small
+orientation pass:
+
+1. Identify the feature's layer: L0-L7.
+2. Identify whether the change is:
+   - metadata only;
+   - inspection only;
+   - reduction/lowering only;
+   - evaluator semantics;
+   - backend compatibility;
+   - frontend/tool presentation.
+3. Name the current artifact path and the target artifact path:
+
+```text
+current: Lark tree -> Python AST -> interpreter eval_*
+target: surface -> semantic core -> implementation core -> backend/eval
+```
+
+4. Pick one guardrail test before editing:
+   - feature metadata contract;
+   - reduction target test;
+   - verifier rejection test;
+   - `inspect()` stage test;
+   - reduced-mode invariant;
+   - backend parity test.
+5. Keep the Python AST backend green while adding the new artifact.
+
+### Current Code Anchors
+
+Use these files as the starting map:
+
+| Area | Current file | Near-term role |
+| --- | --- | --- |
+| Feature registry | `prototype/syntax/features.py` | Add layer metadata and reduction targets. |
+| Surface nodes | `prototype/syntax/surface.py` | Keep user-spelled shape and spans before backend lowering. |
+| Core IR | `prototype/syntax/core.py` or `prototype/core/ir.py` | New passive L1 dataclasses and verifier. |
+| Parser API | `prototype/parser/nomi/usage.py` | Expose more inspection stages without changing default execution. |
+| Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and future opt-in core execution. |
+| Pipeline metadata | `prototype/runtime/pipeline.py` | Record stages, profiles, layers, and backend target. |
+| Mode metadata | `prototype/runtime/modes.py` | Keep current mode behavior visible as data. |
+| Reduced guard | `prototype/interpreter/reduced/interpreter.py` | Continue catching unreduced forms; later delegate to Core IR verifier. |
+| Syntax inspector | `tools/syntax/inspect.py` | Make artifact boundaries visible from the command line. |
+
+### Preparatory Commit Shape
+
+Prefer this order:
+
+```text
+commit 1: docs/skills/orientation updates
+commit 2: passive feature metadata fields + tests
+commit 3: fill metadata for builtin features
+commit 4: passive CoreNode skeleton + verifier tests
+commit 5: inspection stage for feature/layer table or core stub
+commit 6: first sugar reduction invariant
+commit 7: first semantic-core subset
+```
+
+If a commit needs both metadata and behavior changes, split it unless the
+behavior is impossible to test without the metadata.
+
+### Do Not Start With
+
+- package-wide moves;
+- deleting Python AST backend paths;
+- adding MLIR/LLVM/Wasm code;
+- rewriting the interpreter dispatch loop;
+- moving all grammar files into new directories;
+- converting multiple features at once.
+
+Those become safer after feature metadata, passive Core IR, verifier, and
+inspection stages exist.
+
 ### Phase 0: Name The Layers
 
 Deliver:

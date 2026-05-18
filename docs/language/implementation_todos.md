@@ -26,6 +26,10 @@ For the implementation scan that ties code seams to stable TODO IDs, see
 For the staged path away from Python as the semantic center, see
 [Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
 
+For the implementation/core/sugar/backend layer vocabulary, eval separation
+rules, and preparatory Core IR sequence, see
+[Core Layer Separation Plan](core_layer_separation_plan.md).
+
 For test-suite organization before moving files or adding markers, see
 [Test Suite Restructure Plan](test_suite_restructure_plan.md).
 
@@ -135,10 +139,12 @@ layers move from docs into implementation.
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and
   notebook checks.
-- [ ] Restructure tests according to
+- [x] Restructure tests according to
   [`test_suite_restructure_plan.md`](test_suite_restructure_plan.md): document
   run tiers first, add markers without changing behavior second, then split
   large functional feature clusters one migration commit at a time.
+  (Done: `functional/` is drained; feature, contract, regression, smoke, and
+  e2e buckets are documented in `prototype/tests/README.md`.)
 - [ ] Add no-op semantic event hooks before feature-specific tracing so
   binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
   each invent a private explanation format.
@@ -158,15 +164,17 @@ APIs, execution sessions, frontend adapters, structured results, host
 boundaries, and package ownership. Keep the detailed plan in
 [`architecture_refactoring_plan.md`](architecture_refactoring_plan.md).
 
-- [ ] Add a thin public runtime API facade over the current `run_eval_loop`
+- [x] Add a thin public runtime API facade over the current `run_eval_loop`
   functions before moving internals.
-- [ ] Add `ExecutionResult` as an opt-in structured result with bindings,
+- [~] Add `ExecutionResult` as an opt-in structured result with bindings,
   diagnostics, events, timings, and exception fields.
-- [ ] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
+  (`ExecutionResult` exists with bindings, timings, exception, and optional
+  value fields. Diagnostics/events are still pending.)
+- [x] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
   lowering, interpreter class, status, and host support are declared as data.
 - [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility
   wrappers until CLI, tests, web, and notebook migrate.
-- [ ] Add `RuntimeSession` for persistent execution in web cells, notebook
+- [x] Add `RuntimeSession` for persistent execution in web cells, notebook
   cells, future REPL work, and run-all workflows.
 - [ ] Define host adapter responsibilities for filesystem access, stdout,
   timing, package loading, cancellation/restart, and artifact fetching.
@@ -187,6 +195,43 @@ boundaries, and package ownership. Keep the detailed plan in
 - [ ] Add `NOMI-ARCH-022`: define runtime values, ABI, memory, host
   capabilities, and Python interop boundaries before compiling dynamic
   features.
+
+## Track 0C: Core Layer Separation Preparation
+
+These tasks operationalize
+[`core_layer_separation_plan.md`](core_layer_separation_plan.md). They should
+come before any attempt to rewrite eval, add native backends, or move grammar
+directories wholesale.
+
+- [x] Add the core-layer plan and link it from the docs entry point.
+- [x] Update orientation docs and agent skills with the L0-L7 vocabulary and
+  eval-separation guardrail.
+- [ ] Extend `prototype/syntax/features.py` so `SyntaxFeature` can declare:
+  layer, semantic forms, reduction target, runtime-hook policy, backend
+  requirements, docs, and tests.
+- [ ] Add contract tests that every builtin feature declares a layer.
+- [ ] Add contract tests that every L4 sugar feature declares a reduction
+  target and no permanent eval requirement.
+- [ ] Classify existing builtin features using the first draft in
+  `core_layer_separation_plan.md`.
+- [ ] Add a passive `prototype/syntax/core.py` or `prototype/core/ir.py`
+  skeleton with L1 dataclasses for Module, Literal, Load, Bind, Function,
+  Call, Return, Branch, and Diagnostic.
+- [ ] Add a Core IR verifier that rejects surface/sugar nodes and unknown node
+  shapes before any evaluator depends on the IR.
+- [ ] Add a text/debug dump for Core IR so snapshots and inspection output are
+  readable.
+- [ ] Add `inspect(stage="features")` or an equivalent tool stage that prints
+  active feature/layer metadata.
+- [ ] Add `inspect(stage="core")` only after the passive Core IR skeleton can
+  represent a tiny subset.
+- [ ] Keep `prototype/interpreter/reduced/interpreter.py` aligned with feature
+  metadata, so reduced mode catches unreduced L4 forms by declared reduction
+  target, not just Python AST node type.
+- [ ] Use constrained binding as the first L2/L3 semantic-core migration
+  candidate after metadata and passive Core IR exist.
+- [ ] Use `unless` or postfix conditional return as the first L4 sugar
+  migration candidate after reduction-target tests exist.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 
