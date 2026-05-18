@@ -502,6 +502,15 @@ Exit gate:
 - snapshot churn is easier to review and no longer feels like "the tests are
   too many"; it is an explicit broad-output gate.
 
+Status:
+
+- Done: direct Python AST parity checks moved from
+  `functional/test_python_ast.py` to
+  `regression/test_python_ast_parity.py`.
+- Done: direct Python interpreter stdout parity checks moved from
+  `functional/test_python_interpreter_functional.py` to
+  `regression/test_python_interpreter_parity.py`.
+
 ### Phase 6: Retire Or Formalize `smoke/`
 
 The `smoke/` tests were originally ignored by collection. Choose one:
