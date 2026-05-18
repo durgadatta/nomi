@@ -473,3 +473,10 @@ def render_feature_layer_table(features: list[SyntaxFeature] | None = None) -> s
             )
         )
     return "\n".join(rows)
+
+
+def get_features_by_layer(layer: str) -> list[SyntaxFeature]:
+    """Return builtin features that belong to a core-layer bucket."""
+    if layer not in ALLOWED_LAYERS:
+        raise ValueError(f"Unknown feature layer: {layer!r}")
+    return [feature for feature in BUILTIN_FEATURES if feature.layer == layer]

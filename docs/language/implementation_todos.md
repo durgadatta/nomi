@@ -225,7 +225,7 @@ directories wholesale.
   active feature/layer metadata.
 - [x] Add `inspect(stage="core")` only after the passive Core IR skeleton can
   represent a tiny subset.
-- [ ] Keep `prototype/interpreter/reduced/interpreter.py` aligned with feature
+- [x] Keep `prototype/interpreter/reduced/interpreter.py` aligned with feature
   metadata, so reduced mode catches unreduced L4 forms by declared reduction
   target, not just Python AST node type.
 - [ ] Use constrained binding as the first L2/L3 semantic-core migration

@@ -19,6 +19,8 @@ from prototype.parser.nomi.desugar.pipeline import (
     get_removed_node_types,
 )
 from prototype.interpreter.reduced import Interpreter
+from prototype.syntax.features import BUILTIN_FEATURES, SUGAR_LAYER
+from prototype.utils import resolve_dotted
 
 
 def _reduced_override_names():
@@ -92,3 +94,25 @@ def test_all_desugar_passes_are_registered():
         assert issubclass(pass_cls, BaseDesugarer), (
             f"{pass_cls} is not a BaseDesugarer subclass"
         )
+
+
+def test_desugar_pass_features_are_declared_as_sugar_reductions():
+    """Every active desugar pass should be owned by an L4 feature.
+
+    Reduced mode is the current guard that syntax reductions happened before
+    evaluation.  This keeps that guard aligned with the newer feature-layer
+    metadata until Core IR verification takes over.
+    """
+    feature_passes = {}
+    for feature in BUILTIN_FEATURES:
+        for ref in feature.desugar_passes:
+            feature_passes[resolve_dotted(ref)] = feature
+
+    missing = set(DESUGAR_PASSES) - set(feature_passes)
+    assert not missing, f"Desugar passes missing SyntaxFeature owner: {missing}"
+
+    for pass_cls in DESUGAR_PASSES:
+        feature = feature_passes[pass_cls]
+        assert feature.layer == SUGAR_LAYER
+        assert feature.reduces_to
+        assert feature.runtime_hooks_allowed in {"none", "temporary"}

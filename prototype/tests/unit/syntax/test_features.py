@@ -2,6 +2,7 @@ from prototype.syntax.features import (
     ALLOWED_LAYERS,
     BUILTIN_FEATURES,
     SUGAR_LAYER,
+    get_features_by_layer,
     render_feature_layer_table,
 )
 
@@ -38,3 +39,10 @@ def test_feature_layer_table_is_stable_and_human_readable():
     assert table.startswith("| feature | layer | semantic forms |")
     assert "| piecewise-functions | L4 | function, pattern, match |" in table
     assert "| block-call-lowering | L3 | block, call |" in table
+
+
+def test_get_features_by_layer_returns_layer_subset():
+    sugar = get_features_by_layer(SUGAR_LAYER)
+
+    assert sugar
+    assert all(feature.layer == SUGAR_LAYER for feature in sugar)
