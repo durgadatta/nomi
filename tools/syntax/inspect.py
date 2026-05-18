@@ -7,6 +7,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage transformed-tree
     python3 -m tools.syntax.inspect FILE --stage surface-ast
     python3 -m tools.syntax.inspect FILE --stage python-ast
+    python3 -m tools.syntax.inspect --stage features
 """
 
 import sys
@@ -17,19 +18,36 @@ from prototype.parser.nomi.usage import (
     parse_raw_tree,
     parse_transformed_tree,
 )
+from prototype.syntax.features import render_feature_layer_table
 
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+    if "-h" in sys.argv or "--help" in sys.argv:
         print(__doc__)
         return
 
-    filename = sys.argv[1]
+    filename = None
     stage = "python-ast"
+    args = sys.argv[1:]
 
-    for i, arg in enumerate(sys.argv[2:], start=2):
-        if arg == "--stage" and i + 1 < len(sys.argv):
-            stage = sys.argv[i + 1]
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--stage" and i + 1 < len(args):
+            stage = args[i + 1]
+            i += 2
+            continue
+        if filename is None:
+            filename = arg
+        i += 1
+
+    if stage == "features":
+        print(render_feature_layer_table())
+        return
+
+    if filename is None:
+        print(__doc__)
+        sys.exit(1)
 
     code = Path(filename).read_text(encoding="utf-8")
 
@@ -45,7 +63,7 @@ def main():
         print(generate_ast(code=code, dump=True))
     else:
         print(f"Unknown stage: {stage!r}. "
-              f"Valid: raw-tree, transformed-tree, surface-ast, python-ast")
+              f"Valid: raw-tree, transformed-tree, surface-ast, python-ast, features")
         sys.exit(1)
 
 

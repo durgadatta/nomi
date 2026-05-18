@@ -1,4 +1,9 @@
-from prototype.syntax.features import ALLOWED_LAYERS, BUILTIN_FEATURES, SUGAR_LAYER
+from prototype.syntax.features import (
+    ALLOWED_LAYERS,
+    BUILTIN_FEATURES,
+    SUGAR_LAYER,
+    render_feature_layer_table,
+)
 
 
 def test_builtin_features_declare_core_layer_metadata():
@@ -25,3 +30,11 @@ def test_semantic_surface_features_declare_semantic_forms():
             assert feature.semantic_forms, (
                 f"{feature.name} must declare the semantic core concepts it exposes"
             )
+
+
+def test_feature_layer_table_is_stable_and_human_readable():
+    table = render_feature_layer_table()
+
+    assert table.startswith("| feature | layer | semantic forms |")
+    assert "| piecewise-functions | L4 | function, pattern, match |" in table
+    assert "| block-call-lowering | L3 | block, call |" in table

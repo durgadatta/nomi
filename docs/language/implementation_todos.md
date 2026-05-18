@@ -221,7 +221,7 @@ directories wholesale.
   shapes before any evaluator depends on the IR.
 - [ ] Add a text/debug dump for Core IR so snapshots and inspection output are
   readable.
-- [ ] Add `inspect(stage="features")` or an equivalent tool stage that prints
+- [x] Add `inspect(stage="features")` or an equivalent tool stage that prints
   active feature/layer metadata.
 - [ ] Add `inspect(stage="core")` only after the passive Core IR skeleton can
   represent a tiny subset.

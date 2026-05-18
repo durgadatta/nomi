@@ -44,6 +44,16 @@ def test_inspect_returns_python_ast_dump_for_mode():
     assert result.timings["total"] >= 0
 
 
+def test_inspect_returns_feature_layer_table():
+    result = inspect(stage="features")
+
+    assert isinstance(result, InspectionResult)
+    assert result.stage == "features"
+    assert "| feature | layer | semantic forms |" in result.output
+    assert "piecewise-functions" in result.output
+    assert result.timings["total"] >= 0
+
+
 def test_inspect_rejects_unknown_stage_until_pipeline_stages_exist():
     with pytest.raises(ValueError, match="Unsupported inspection stage"):
         inspect(source="x = 1\n", stage="surface")

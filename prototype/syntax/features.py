@@ -454,3 +454,22 @@ def get_desugar_passes() -> list[Type[BaseDesugarer]]:
         for ref in feature.desugar_passes:
             passes.append(resolve_dotted(ref))
     return passes
+
+
+def render_feature_layer_table(features: list[SyntaxFeature] | None = None) -> str:
+    """Return a compact, deterministic feature/layer inspection table."""
+    rows = [
+        "| feature | layer | semantic forms | reduces to | runtime hooks |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for feature in features or BUILTIN_FEATURES:
+        rows.append(
+            "| {name} | {layer} | {semantic} | {reduces} | {hooks} |".format(
+                name=feature.name,
+                layer=feature.layer,
+                semantic=", ".join(feature.semantic_forms) or "-",
+                reduces=", ".join(feature.reduces_to) or "-",
+                hooks=feature.runtime_hooks_allowed,
+            )
+        )
+    return "\n".join(rows)

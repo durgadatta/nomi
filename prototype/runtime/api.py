@@ -13,6 +13,7 @@ from time import perf_counter
 from typing import Any
 
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
+from prototype.syntax.features import render_feature_layer_table
 
 
 @dataclass(frozen=True)
@@ -104,13 +105,25 @@ def inspect(
     """Inspect one read-only pipeline artifact for the selected mode."""
 
     pipeline = build_pipeline_spec(mode=mode, profile=profile)
+    started = perf_counter()
+    if stage == "features":
+        output = render_feature_layer_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage != "python_ast":
         # TODO(NOMI-ARCH-001): Add raw tree, transformed tree, surface AST,
         # core AST, and backend-lowered stages as PipelineSpec grows.
         raise ValueError(f"Unsupported inspection stage: {stage!r}")
 
     parser = pipeline.mode_spec.load_parser()
-    started = perf_counter()
     output = parser(filename=filename, code=source, dump=True)
     timings = {"total": perf_counter() - started}
     return InspectionResult(
