@@ -1,6 +1,8 @@
 # Test Suite Restructure Plan
 
-> Status: active migration plan.
+> Status: active migration plan; initial setup, smoke promotion, and the
+> largest function-style split are complete. Contract and regression
+> rationalization are still pending.
 >
 > Scope: organize the growing test suite in small, reviewable phases. This plan
 > names target structure, run tiers, ownership rules, migration phases, and
@@ -32,6 +34,22 @@ The restructure goal is:
 many tests -> clear responsibility -> fast local loop -> explicit full gates
 ```
 
+## Progress Summary
+
+Completed:
+
+- Phase 0/1: rules, marker declarations, and `prototype/tests/README.md`.
+- Phase 6: `smoke/` is now a real `pytest -m smoke` tier.
+- Phase 2, first target: `functional/test_nomi_func_styles.py` has been fully
+  drained into feature packets and removed.
+
+Still pending:
+
+- Split or bless the remaining `functional/` files.
+- Move cheap public API and adapter checks from `e2e/` into `contracts/`.
+- Make regression snapshot scope more explicit.
+- Decide whether `functional/` remains as a compatibility bucket.
+
 ## Current Snapshot
 
 Current tracked test files by top-level bucket:
@@ -39,16 +57,21 @@ Current tracked test files by top-level bucket:
 | Bucket | Test files | Current role |
 | --- | ---: | --- |
 | `unit/` | 30 | Parser, desugar, interpreter, runtime, tool internals. |
-| `functional/` | 11 | Feature behavior across parser/runtime, often multi-interpreter. |
+| `features/` | 9 | Feature-owned language runtime packets introduced during migration. |
+| `functional/` | 10 | Compatibility bucket for behavior tests not yet moved or blessed. |
 | `regression/` | 3 | Snapshot regression for interpreter/sample files and Python AST. |
 | `e2e/` | 7 | CLI, web bridge, notebook, report scripts, scenario tests. |
-| `smoke/` | 4 | Ignored by collection today through `collect_ignore = ["smoke"]`. |
+| `smoke/` | 4 | Tiny checkout-alive checks collected by default and selectable with `pytest -m smoke`. |
 
-The largest pressure points:
+Resolved pressure points:
 
-- `functional/test_nomi_func_styles.py` is a kitchen-sink feature file covering
-  holes, equations, where clauses, sections, implicit multiplication, aliases,
-  try-expr, spread, compose, defer, and return-style forms.
+- `functional/test_nomi_func_styles.py` was the largest kitchen-sink file. It
+  has been split into feature packets for holes, equations, where clauses,
+  composition, implicit multiplication, type aliases, try-expr, spread, and
+  defer.
+
+Remaining pressure points:
+
 - `regression/test_interpreter.py` multiplies samples by interpreter mode and
   also pulls every user-facing file from `samples/`.
 - Unit tests are mostly layer-owned, while functional tests are mostly
@@ -387,6 +410,14 @@ Exit gate:
 - Complete for `functional/test_nomi_func_styles.py`: all listed clusters have
   feature-packet homes and focused old/new migration checks preserved behavior.
 
+Next candidates:
+
+- `functional/test_data_declarations.py` -> `features/data/`.
+- `functional/test_nomi_collection_convenience.py` -> `features/flow/`.
+- `functional/test_nomi_pattern_convenience.py` and
+  `functional/test_nomi_unless.py` -> `features/patterns/` or
+  `features/flow/` depending on ownership.
+
 ### Phase 3: Introduce Feature Packets For New Work
 
 For every new accepted feature, create the packet upfront:
@@ -448,7 +479,7 @@ Exit gate:
 
 ### Phase 6: Retire Or Formalize `smoke/`
 
-Current `smoke/` tests are ignored by collection. Choose one:
+The `smoke/` tests were originally ignored by collection. Choose one:
 
 1. Promote them to `pytest -m smoke` and include marker declarations.
 2. Keep them as manual scripts and document that clearly.
@@ -556,24 +587,22 @@ Until the restructure happens, keep using the current commands in `AGENTS.md`.
 
 1. Should `functional/` disappear eventually, or remain as "multi-module but
    not feature-owned"?
-2. Should smoke tests be included in default `pytest`, or stay explicitly
-   selected?
+2. Answered: smoke tests are included in default `pytest` and selectable with
+   `pytest -m smoke`.
 3. Should sample snapshots run in every full local suite, or only in CI and
    explicit regression gates?
-4. Should feature packets live under `prototype/tests/features/`, or should the
-   existing `functional/` bucket be reorganized by feature?
+4. Answered for new/migrated feature packets: they live under
+   `prototype/tests/features/`.
 5. Should markers or path conventions be the primary user interface?
 6. Should generated feature coverage matrices be checked in, generated in CI,
    or kept as docs-only for now?
 
-## Recommended Next Setup Commit
+## Recommended Next Migration
 
-Before moving any tests:
+After the completed `test_nomi_func_styles.py` split:
 
-1. Add `prototype/tests/README.md` documenting current buckets and target
-   command tiers.
-2. Add marker declarations without using them to change collection.
-3. Stop adding broad new tests to `functional/test_nomi_func_styles.py`; create
-   a feature packet for the next new function-style feature instead.
-4. Then move one small cluster from `functional/test_nomi_func_styles.py` as a
-   proving migration.
+1. Move `functional/test_data_declarations.py` into `features/data/` in one
+   behavior-preserving commit.
+2. Move cheap runtime/session/web/notebook ownership assertions from `e2e/`
+   into `contracts/`.
+3. Add a regression snapshot index or checklist before moving snapshot files.
