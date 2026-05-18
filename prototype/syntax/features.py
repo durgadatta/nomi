@@ -24,6 +24,9 @@ if TYPE_CHECKING:
 
 ALLOWED_LAYERS = ("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7")
 SUGAR_LAYER = "L4"
+DEFAULT_DESUGAR_PROFILE = "default"
+REDUCED_DESUGAR_PROFILE = "reduced"
+ALLOWED_DESUGAR_PROFILES = (DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE)
 
 
 @dataclass(frozen=True)
@@ -50,6 +53,7 @@ class SyntaxFeature:
     layer_transforms: tuple = ()
     lowering_mixins: tuple[str, ...] = ()
     desugar_passes: tuple = ()
+    desugar_profiles: tuple[str, ...] = ()
 
     # Lifecycle statuses:
     #   implemented      — runs by default, tested
@@ -89,6 +93,7 @@ _piecewise_functions = SyntaxFeature(
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
+    desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
 
 
@@ -103,6 +108,7 @@ _where_clauses = SyntaxFeature(
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_where_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.where_clause.WhereClause",),
+    desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
 
 
@@ -117,6 +123,7 @@ _underscore_lambdas = SyntaxFeature(
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.underscore_lambda.UnderscoreLambda",),
+    desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
 
 
@@ -131,6 +138,7 @@ _positional_holes = SyntaxFeature(
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.positional_hole.PositionalHole",),
+    desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
 
 
@@ -143,6 +151,7 @@ _augassign = SyntaxFeature(
     semantic_forms=("binding",),
     reduces_to=("assignment", "binary-operation"),
     desugar_passes=("prototype.parser.nomi.desugar.augassign.AugAssign",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
 )
 
 
@@ -155,6 +164,7 @@ _assert = SyntaxFeature(
     semantic_forms=("diagnostic", "branch"),
     reduces_to=("branch", "raise"),
     desugar_passes=("prototype.parser.nomi.desugar.assert_.Assert",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
 )
 
 
@@ -167,6 +177,7 @@ _decorator = SyntaxFeature(
     semantic_forms=("function", "call", "binding"),
     reduces_to=("function-definition", "call", "binding"),
     desugar_passes=("prototype.parser.nomi.desugar.decorator.Decorator",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
 )
 
 
@@ -179,6 +190,7 @@ _pass = SyntaxFeature(
     semantic_forms=("statement",),
     reduces_to=("no-op-expression",),
     desugar_passes=("prototype.parser.nomi.desugar.pass_.Pass",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
 )
 
 
@@ -191,6 +203,7 @@ _with = SyntaxFeature(
     semantic_forms=("resource-policy", "branch", "exception"),
     reduces_to=("try-finally-resource-protocol",),
     desugar_passes=("prototype.parser.nomi.desugar.with_.With",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
 )
 
 
@@ -203,6 +216,30 @@ _fstring = SyntaxFeature(
     semantic_forms=("string", "call"),
     reduces_to=("string-concatenation", "format-call"),
     desugar_passes=("prototype.parser.nomi.desugar.fstring.FString",),
+    desugar_profiles=(REDUCED_DESUGAR_PROFILE,),
+)
+
+
+# ── conditional-flow lowering ────────────────────────────────────────
+
+_unless_lowering = SyntaxFeature(
+    name="unless-lowering",
+    description="Lower unless cond: body to if not cond: body",
+    layer=SUGAR_LAYER,
+    semantic_forms=("branch",),
+    reduces_to=("branch", "boolean-negation"),
+    docs=("docs/convenience/syntax_design_rules.md",),
+    tests=("prototype/tests/features/flow/test_conditionals_runtime.py",),
+)
+
+_postfix_conditionals = SyntaxFeature(
+    name="postfix-conditionals-lowering",
+    description="Lower flow statements with postfix if/unless guards to branches",
+    layer=SUGAR_LAYER,
+    semantic_forms=("branch", "flow"),
+    reduces_to=("branch",),
+    docs=("docs/convenience/review_and_roadmap.md",),
+    tests=("prototype/tests/features/flow/test_conditionals_runtime.py",),
 )
 
 
@@ -379,6 +416,8 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     _pass,
     _with,
     _fstring,
+    _unless_lowering,
+    _postfix_conditionals,
     # ── lowering mixins (order: grammar rule order in statements.lark / expressions.lark) ──
     _implicit_mul,
     _type_alias,
@@ -441,16 +480,24 @@ def get_extra_grammar_layers() -> list[str]:
     return extra
 
 
-def get_desugar_passes() -> list[Type[BaseDesugarer]]:
+def get_desugar_passes(
+    profile: str | None = None,
+) -> list[Type[BaseDesugarer]]:
     """Return ordered desugar-pass classes derived from builtin features.
 
     Classes (not instances) are returned because desugar_module
-    instantiates them fresh for each module.
+    instantiates them fresh for each module.  When *profile* is provided,
+    only passes declared for that desugar profile are returned.
     """
     from prototype.utils import resolve_dotted
 
+    if profile is not None and profile not in ALLOWED_DESUGAR_PROFILES:
+        raise ValueError(f"Unknown desugar profile: {profile!r}")
+
     passes = []
     for feature in BUILTIN_FEATURES:
+        if profile is not None and profile not in feature.desugar_profiles:
+            continue
         for ref in feature.desugar_passes:
             passes.append(resolve_dotted(ref))
     return passes

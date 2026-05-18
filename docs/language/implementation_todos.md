@@ -228,10 +228,14 @@ directories wholesale.
 - [x] Keep `prototype/interpreter/reduced/interpreter.py` aligned with feature
   metadata, so reduced mode catches unreduced L4 forms by declared reduction
   target, not just Python AST node type.
+- [x] Move default/reduced desugar pass selection into `SyntaxFeature`
+  metadata instead of class-name filtering in the pipeline.
 - [ ] Use constrained binding as the first L2/L3 semantic-core migration
   candidate after metadata and passive Core IR exist.
 - [ ] Use `unless` or postfix conditional return as the first L4 sugar
-  migration candidate after reduction-target tests exist.
+  migration candidate after reduction-target tests exist. Started: both
+  conditional-flow sugars now have L4 feature metadata and reduction targets;
+  remaining work is surface/core expansion inspection and provenance.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 

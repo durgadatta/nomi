@@ -13,7 +13,7 @@ import ast
 import os
 import sys
 
-from prototype.syntax.features import get_desugar_passes
+from prototype.syntax.features import DEFAULT_DESUGAR_PROFILE, get_desugar_passes
 from .base import Phase
 
 _SHOULD_CHECK_INVARIANTS = os.environ.get(
@@ -28,18 +28,10 @@ DESUGAR_PASSES = get_desugar_passes()
 # The full pipeline is required by the reduced interpreter because it checks
 # that Python-compatible surface nodes have become normal forms.  The default
 # Nomi interpreter can already execute Python-parity nodes such as AugAssign,
-# Assert, Pass, With, decorators, and f-strings, so it only needs the passes
-# that lower Nomi-only convenience syntax.
+# Assert, Pass, With, decorators, and f-strings, so feature metadata declares
+# the smaller pass set it needs.
 NOMI_INTERPRETER_DESUGAR_PASSES = tuple(
-    # TODO(NOMI-SUBSTRATE-033): Move default/reduced/lab pass inclusion into
-    # SyntaxFeature metadata instead of filtering by pass class name.
-    pass_cls for pass_cls in DESUGAR_PASSES
-    if pass_cls.__name__ in {
-        "PiecewiseFunction",
-        "WhereClause",
-        "UnderscoreLambda",
-        "PositionalHole",
-    }
+    get_desugar_passes(profile=DEFAULT_DESUGAR_PROFILE)
 )
 
 
