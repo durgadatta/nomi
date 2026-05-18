@@ -54,6 +54,19 @@ def test_inspect_returns_feature_layer_table():
     assert result.timings["total"] >= 0
 
 
-def test_inspect_rejects_unknown_stage_until_pipeline_stages_exist():
+def test_inspect_returns_core_dump_for_tiny_subset():
+    result = inspect(source="x = 1\n", stage="core")
+
+    assert result.stage == "core"
+    assert result.output == "\n".join(
+        [
+            "Module",
+            "  Bind('x')",
+            "    Literal(1)",
+        ]
+    )
+
+
+def test_inspect_rejects_unknown_stage_until_more_pipeline_stages_exist():
     with pytest.raises(ValueError, match="Unsupported inspection stage"):
         inspect(source="x = 1\n", stage="surface")

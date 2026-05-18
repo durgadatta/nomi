@@ -13,6 +13,7 @@ from time import perf_counter
 from typing import Any
 
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
+from prototype.syntax.core import dump_core, lower_python_ast_to_core
 from prototype.syntax.features import render_feature_layer_table
 
 
@@ -108,6 +109,21 @@ def inspect(
     started = perf_counter()
     if stage == "features":
         output = render_feature_layer_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"core", "implementation_core"}:
+        parser = pipeline.mode_spec.load_parser()
+        tree = parser(filename=filename, code=source)
+        core = lower_python_ast_to_core(tree)
+        output = dump_core(core)
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,

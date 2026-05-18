@@ -6,6 +6,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage raw-tree
     python3 -m tools.syntax.inspect FILE --stage transformed-tree
     python3 -m tools.syntax.inspect FILE --stage surface-ast
+    python3 -m tools.syntax.inspect FILE --stage core
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
 """
@@ -18,6 +19,7 @@ from prototype.parser.nomi.usage import (
     parse_raw_tree,
     parse_transformed_tree,
 )
+from prototype.syntax.core import dump_core, lower_python_ast_to_core
 from prototype.syntax.features import render_feature_layer_table
 
 
@@ -59,11 +61,13 @@ def main():
         print(tree.pretty())
     elif stage == "surface-ast":
         print(generate_ast(code=code, dump=True, keep_surface=True))
+    elif stage == "core":
+        print(dump_core(lower_python_ast_to_core(generate_ast(code=code))))
     elif stage == "python-ast":
         print(generate_ast(code=code, dump=True))
     else:
         print(f"Unknown stage: {stage!r}. "
-              f"Valid: raw-tree, transformed-tree, surface-ast, python-ast, features")
+              f"Valid: raw-tree, transformed-tree, surface-ast, core, python-ast, features")
         sys.exit(1)
 
 

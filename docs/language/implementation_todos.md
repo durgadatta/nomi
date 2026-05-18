@@ -223,7 +223,7 @@ directories wholesale.
   readable.
 - [x] Add `inspect(stage="features")` or an equivalent tool stage that prints
   active feature/layer metadata.
-- [ ] Add `inspect(stage="core")` only after the passive Core IR skeleton can
+- [x] Add `inspect(stage="core")` only after the passive Core IR skeleton can
   represent a tiny subset.
 - [ ] Keep `prototype/interpreter/reduced/interpreter.py` aligned with feature
   metadata, so reduced mode catches unreduced L4 forms by declared reduction

@@ -1,4 +1,5 @@
 import pytest
+import ast
 
 from prototype.syntax.core import (
     Bind,
@@ -9,6 +10,7 @@ from prototype.syntax.core import (
     Load,
     Module,
     dump_core,
+    lower_python_ast_to_core,
     verify_core,
 )
 from prototype.syntax.surface import SurfaceNode
@@ -59,4 +61,29 @@ def test_dump_core_is_stable_and_readable():
             "    Module",
             "      Diagnostic('ok')",
         ]
+    )
+
+
+def test_lower_python_ast_to_core_supports_tiny_inspection_subset():
+    python_tree = ast.parse("x = 1\nfunc_result = f(x)\n")
+    core = lower_python_ast_to_core(python_tree)
+
+    assert dump_core(core) == "\n".join(
+        [
+            "Module",
+            "  Bind('x')",
+            "    Literal(1)",
+            "  Bind('func_result')",
+            "    Call",
+            "      Load('f')",
+            "      Load('x')",
+        ]
+    )
+
+
+def test_lower_python_ast_to_core_marks_unsupported_shapes_as_diagnostics():
+    python_tree = ast.parse("x = 1 + 2\n")
+
+    assert "Diagnostic('unsupported Python AST: BinOp')" in dump_core(
+        lower_python_ast_to_core(python_tree)
     )
