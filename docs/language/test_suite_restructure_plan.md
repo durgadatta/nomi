@@ -404,6 +404,9 @@ Status:
   to `features/block_calls/test_defer_runtime.py`.
 - Done: `functional/test_nomi_func_styles.py` was removed after all semantic
   clusters were moved into feature packets.
+- Done: data-declaration runtime tests moved from
+  `functional/test_data_declarations.py` to
+  `features/data/test_declarations_runtime.py`.
 
 Exit gate:
 
@@ -412,7 +415,6 @@ Exit gate:
 
 Next candidates:
 
-- `functional/test_data_declarations.py` -> `features/data/`.
 - `functional/test_nomi_collection_convenience.py` -> `features/flow/`.
 - `functional/test_nomi_pattern_convenience.py` and
   `functional/test_nomi_unless.py` -> `features/patterns/` or
