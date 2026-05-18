@@ -118,6 +118,9 @@ Read the smallest relevant set before changing docs or making recommendations.
   tasks.
 - `docs/language/target_program_fixtures.md` — aspirational everyday programs
   for testing design coherence.
+- `docs/language/demo_target.nomi` — compact target-only script showing the
+  desired future language across ordinary cases. It is not expected to parse
+  today and must stay outside `samples/` until implemented and tested.
 - `docs/language/target_language_tour.md` — aspirational Nomi program showing
   preferred syntax composing into one memorable whole.
 
@@ -217,21 +220,28 @@ material, or make the language easier to turn into a specification.
 3. Promote decisions, not essays. Move stable conclusions into the spec,
    feature docs, or convenience docs; leave research or draft files as
    evidence.
-4. For each promoted feature, require the feature packet from
+4. Keep the operational spec convergence loop explicit:
+   research evidence -> interaction map -> focused feature packet -> target
+   demo or fixture -> `language_spec.md` -> implementation slice -> runnable
+   sample and tests.
+5. For each promoted feature, require the feature packet from
    `spec_readiness_map.md`: everyday pressure, user syntax, normal form,
    reduction, diagnostics, interactions, rejected alternatives, implementation
    slice, current status.
-5. Separate doc modes: tutorial, how-to, reference/spec, explanation,
+6. Separate doc modes: tutorial, how-to, reference/spec, explanation,
    planning, source research. Do not let one page pretend to be all of them.
-6. Make comments operational: name the next file to edit, the status to assign,
+7. Make comments operational: name the next file to edit, the status to assign,
    the decision to preserve, the test/sample gate, or the reason to reject.
-7. If the user asks for new research or "search", use current external sources
+8. If the user asks for new research or "search", use current external sources
    and prefer official language references, specs, tours, or framework docs.
    Reconcile external lessons into Nomi normal forms instead of copying
    catalogues.
-8. Update `docs/README.md`, `docs/convenience/README.md`, relevant feature
+9. Update `docs/language/demo_target.nomi` when a global syntax decision
+   changes the intended whole-language feel. Keep target-only syntax out of
+   `samples/*.nomi` until parser, runtime, tests, and snapshots agree.
+10. Update `docs/README.md`, `docs/convenience/README.md`, relevant feature
    docs, and this skill when the workflow itself changes.
-9. Do not leave broken active links. If a doc is purged or demoted to drafts,
+11. Do not leave broken active links. If a doc is purged or demoted to drafts,
    update the active index or add an active distilled replacement.
 
 ## Iterative Convenience Refinement
@@ -257,7 +267,10 @@ Work in checkpointed passes:
 5. **Spec-shaping pass.** Convert accepted ideas into feature packets:
    everyday pressure, syntax, normal form, reduction, diagnostics,
    interactions, rejected alternatives, implementation slice, status.
-6. **Commit after each pass.** Leave the repo in a coherent state with notes
+6. **Target coherence pass.** If the decision affects more than one normal
+   form, update `docs/convenience/interaction_map.md` and
+   `docs/language/demo_target.nomi` before touching runnable samples.
+7. **Commit after each pass.** Leave the repo in a coherent state with notes
    for the next exact pass.
 
 For function/pattern/collection work, always check:
