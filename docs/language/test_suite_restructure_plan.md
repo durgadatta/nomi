@@ -479,6 +479,9 @@ Status:
 - Done: parser-output/interpreter compatibility checks moved from
   `e2e/test_parser_interpreter_contract.py` to
   `contracts/test_parser_interpreter_contract.py`.
+- Done: web runtime bridge session/cache checks moved from
+  `e2e/test_web_runtime_bridge.py` to
+  `contracts/test_web_runtime_bridge_contract.py`.
 
 ### Phase 5: Rationalize Regression Snapshots
 
