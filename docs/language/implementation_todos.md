@@ -26,6 +26,9 @@ For the implementation scan that ties code seams to stable TODO IDs, see
 For the staged path away from Python as the semantic center, see
 [Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
 
+For test-suite organization before moving files or adding markers, see
+[Test Suite Restructure Plan](test_suite_restructure_plan.md).
+
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 
@@ -132,6 +135,10 @@ layers move from docs into implementation.
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and
   notebook checks.
+- [ ] Restructure tests according to
+  [`test_suite_restructure_plan.md`](test_suite_restructure_plan.md): document
+  run tiers first, add markers without changing behavior second, then split
+  large functional feature clusters one migration commit at a time.
 - [ ] Add no-op semantic event hooks before feature-specific tracing so
   binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
   each invent a private explanation format.

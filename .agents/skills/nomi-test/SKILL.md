@@ -14,6 +14,11 @@ For the semantic rationale behind tested behavior, see the
 - `prototype/tests/e2e/` — Full pipeline, CLI, scenarios
 - `prototype/tests/unit/parser/desugar/` — Desugar pass tests (shared conftest.py)
 
+Before reorganizing existing tests, read
+`docs/language/test_suite_restructure_plan.md`. That plan is the current
+planning-only target for feature packets, contract tests, smoke tests,
+regression snapshots, and e2e tiers.
+
 ## Feature coverage direction
 Future syntax work should be feature-driven rather than only file-driven. For
 each non-trivial feature, plan coverage for:

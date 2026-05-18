@@ -78,6 +78,7 @@ general reading order.
 | Audit implementation gaps | [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
 | Critique implementation flexibility/performance | [Adversarial Implementation Critique](language/adversarial_implementation_critique.md), [Performance Notes](orientation/performance_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md) |
 | Plan Python-independent backends | [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
+| Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
 | Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
@@ -132,6 +133,9 @@ Planning and process:
 - [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md):
   staged path from Python-hosted prototype to Nomi Core IR, direct runtime,
   MLIR, LLVM/native, and Wasm/WASI backends.
+- [Test Suite Restructure Plan](language/test_suite_restructure_plan.md):
+  planning note for organizing unit, feature, contract, regression, smoke, and
+  e2e tests into clearer run tiers.
 - [Implementation Codebase Audit](language/implementation_codebase_audit.md):
   codebase scan tying implementation seams to stable TODO IDs.
 - [Adversarial Implementation Critique](language/adversarial_implementation_critique.md):
