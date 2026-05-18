@@ -410,6 +410,9 @@ Status:
 - Done: range/collection-convenience runtime tests moved from
   `functional/test_nomi_collection_convenience.py` to
   `features/flow/test_range_runtime.py`.
+- Done: null/safe-navigation runtime tests moved from
+  `functional/test_nomi_null_convenience.py` to
+  `features/absence_result/test_null_convenience_runtime.py`.
 
 Exit gate:
 
