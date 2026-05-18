@@ -377,6 +377,15 @@ Status:
 - Done: spread-literal runtime tests moved from
   `functional/test_nomi_func_styles.py` to
   `features/flow/test_spread_runtime.py`.
+- Done: defer runtime tests moved from `functional/test_nomi_func_styles.py`
+  to `features/block_calls/test_defer_runtime.py`.
+- Done: `functional/test_nomi_func_styles.py` was removed after all semantic
+  clusters were moved into feature packets.
+
+Exit gate:
+
+- Complete for `functional/test_nomi_func_styles.py`: all listed clusters have
+  feature-packet homes and focused old/new migration checks preserved behavior.
 
 ### Phase 3: Introduce Feature Packets For New Work
 

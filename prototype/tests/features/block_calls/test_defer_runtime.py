@@ -1,13 +1,7 @@
-"""End-to-end tests for all function definition styles."""
+"""Runtime tests for defer."""
 
 from prototype.interpreter.helpers import get_run_eval_loop
 
-
-# ═══════════════════════════════════════════════════════════════════
-# New features
-# ═══════════════════════════════════════════════════════════════════
-
-# ── defer ────────────────────────────────────────────────────────────
 
 def test_defer_basic(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
