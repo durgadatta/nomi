@@ -422,6 +422,9 @@ Status:
 - Done: constrained-parameter runtime tests moved from
   `functional/test_parameter_constraints.py` to
   `features/binding_constraints/test_parameter_constraints_runtime.py`.
+- Done: underscore name/wildcard/capture semantics moved from
+  `functional/test_nomi_underscore_semantics.py` to
+  `features/patterns/test_underscore_semantics.py`.
 
 Exit gate:
 
