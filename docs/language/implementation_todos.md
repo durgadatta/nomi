@@ -214,12 +214,12 @@ directories wholesale.
   target and no permanent eval requirement.
 - [x] Classify existing builtin features using the first draft in
   `core_layer_separation_plan.md`.
-- [ ] Add a passive `prototype/syntax/core.py` or `prototype/core/ir.py`
+- [x] Add a passive `prototype/syntax/core.py` or `prototype/core/ir.py`
   skeleton with L1 dataclasses for Module, Literal, Load, Bind, Function,
   Call, Return, Branch, and Diagnostic.
-- [ ] Add a Core IR verifier that rejects surface/sugar nodes and unknown node
+- [x] Add a Core IR verifier that rejects surface/sugar nodes and unknown node
   shapes before any evaluator depends on the IR.
-- [ ] Add a text/debug dump for Core IR so snapshots and inspection output are
+- [x] Add a text/debug dump for Core IR so snapshots and inspection output are
   readable.
 - [x] Add `inspect(stage="features")` or an equivalent tool stage that prints
   active feature/layer metadata.
