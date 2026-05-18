@@ -102,6 +102,7 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-031 | Match expression surface node | ⬜ pending | Match expressions lower to IIFE-style Python AST, hiding return/scope/failure semantics. | `MatchExpr` records subject, cases, guards, pattern failures, and expression value semantics before backend lowering. | Emit `MatchExpr` as a surface node and keep existing IIFE lowering as the backend path. |
 | NOMI-SUBSTRATE-032 | Postlexer contract and snapshots | ⬜ pending | LALR disambiguation relies on Python postlexer scans and virtual tokens that are not declared as feature-owned artifacts. | Every virtual token rewrite has fixture snapshots, owner metadata, and performance notes. | Add postlexer token-stream snapshots for arrow params, sections, match cases, block colons, postfix guards, and implicit multiplication. |
 | NOMI-SUBSTRATE-033 | Desugar pass profiles | ⬜ pending | Default Nomi mode selects desugar passes by class-name allowlist. | Feature manifests declare which passes run in default, reduced, lab, and docs-only profiles. | Add pass profile metadata to `SyntaxFeature` and derive `NOMI_INTERPRETER_DESUGAR_PASSES` from it. |
+| NOMI-SUBSTRATE-034 | Core IR text/debug format | ⬜ pending | Future Core IR is named in docs but has no inspectable artifact contract. | Core IR has a stable textual/debug dump and verifier output before native backends exist. | Add a passive `prototype/syntax/core.py` schema plus `tools.syntax.inspect --stage core-ir` output for a tiny subset. |
 
 ## Inline TODO Locations
 
@@ -128,6 +129,7 @@ Current inline comments have been placed at these high-leverage seams:
 | NOMI-SUBSTRATE-031 | `prototype/parser/nomi/lowering/match_expr.py` | Match expressions need surface/core representation before richer diagnostics and control semantics. |
 | NOMI-SUBSTRATE-032 | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
 | NOMI-SUBSTRATE-033 | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/syntax/features.py` | Default/reduced/lab pass selection should be manifest metadata, not class-name filtering. |
+| NOMI-SUBSTRATE-034 | `prototype/syntax/surface.py`, future `prototype/syntax/core.py` | Surface nodes need a Core IR destination with a text/debug format before MLIR, LLVM, or Wasm backends become meaningful. |
 
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.

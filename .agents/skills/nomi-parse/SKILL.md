@@ -38,6 +38,9 @@ Before adding broad syntax, read:
 - `docs/language/language_foundation.md` — the design target.
 - `docs/language/language_degrees_of_freedom.md` — core/sugar/library/scoped/rejected framework.
 - `docs/language/flexible_syntax_substrate_plan.md`
+- `docs/language/python_independence_and_compiler_backend_plan.md` when syntax
+  work affects the future split between Surface IR, Core IR, Python AST, MLIR,
+  LLVM, or Wasm backends.
 - `docs/language/syntax_substrate_todo_audit.md`
 - `docs/language/architecture_refactoring_plan.md` when the syntax work also
   changes public runtime APIs, inspection tools, web, notebook, or package

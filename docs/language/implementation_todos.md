@@ -23,6 +23,9 @@ For a full-docs scan that names hidden bridge gaps and planning priorities, see
 For the implementation scan that ties code seams to stable TODO IDs, see
 [Implementation Codebase Audit](implementation_codebase_audit.md).
 
+For the staged path away from Python as the semantic center, see
+[Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
+
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 
@@ -161,6 +164,17 @@ boundaries, and package ownership. Keep the detailed plan in
   migrating frontend surfaces.
 - [ ] Avoid package moves until a facade exists and one feature proves the
   migration path.
+- [ ] Keep `NOMI-ARCH-018` current: Python AST should become one backend behind
+  Nomi-owned Surface/Core IR, not the permanent language IR.
+- [ ] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
+  serious native or Wasm backend work.
+- [ ] Add `NOMI-ARCH-020`: run an MLIR spike only for a tiny pure subset after
+  Core IR inspection works.
+- [ ] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend
+  tests before LLVM/ORC/native codegen.
+- [ ] Add `NOMI-ARCH-022`: define runtime values, ABI, memory, host
+  capabilities, and Python interop boundaries before compiling dynamic
+  features.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 

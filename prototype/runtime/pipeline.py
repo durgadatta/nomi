@@ -14,6 +14,8 @@ class PipelineSpec:
     mode: str
     profile: str
     mode_spec: ModeSpec
+    # TODO(NOMI-ARCH-021): Split host from backend target once Python AST,
+    # Core IR, MLIR/LLVM, and Wasm become selectable execution artifacts.
     host: str = "python"
 
     @property

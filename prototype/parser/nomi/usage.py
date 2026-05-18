@@ -108,6 +108,8 @@ def generate_ast(
     tree = parse_transformed_tree(code=code, preserve_positions=preserve_positions)
 
     node = NomiToPythonAST().transform(tree)
+    # TODO(NOMI-ARCH-018): Keep this as the Python AST backend path while
+    # future parser APIs expose Nomi Surface/Core IR as first-class artifacts.
     if not keep_surface:
         lower_surface_to_python(node)
     if dump:

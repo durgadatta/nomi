@@ -28,6 +28,10 @@ The goal is to make the language lab faster: experiments should plug into a
 declared pipeline, tools should share one execution API, and Python-hosted
 bootstrap code should become one backend rather than the whole architecture.
 
+For the longer path from the Python-hosted prototype to Nomi-owned semantics,
+MLIR, LLVM, and Wasm backends, see
+[Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
+
 ## Architecture Target
 
 Desired long-term shape:
@@ -71,6 +75,11 @@ larger than `NOMI-SUBSTRATE-*`, which points to syntax/lowering seams.
 | NOMI-ARCH-015 | Runtime cache identity | `RuntimeSession` caches ASTs by raw source text only. | Cache keys include source identity/version, mode, profile, span mode, grammar version, and lowering profile. | Introduce a typed `RuntimeCacheKey` while keeping cache behavior unchanged. |
 | NOMI-ARCH-016 | Call-frame/environment ownership | Function calls shallow-copy environments, including future constraint/capability state. | A call-frame model makes local bindings, captured bindings, constraints, and capabilities explicit. | Wrap copied environments in a `CallFrame`/metadata object before changing lookup behavior. |
 | NOMI-ARCH-017 | Performance budget suite | Performance is documented through manual profiler runs. | CI or focused tests track loose budgets for parse, postlex, lower, desugar, eval, and session-cache paths. | Add opt-in `scripts/perf_budget.py --check` around current sample files. |
+| NOMI-ARCH-018 | Python independence roadmap | Python AST is still the executable semantic center. | Python AST becomes one backend behind Nomi-owned Surface/Core IR and public runtime APIs. | Keep `python_independence_and_compiler_backend_plan.md` linked from architecture docs and align backend-facing changes with it. |
+| NOMI-ARCH-019 | Core IR and verifier | Core normal forms mostly live in docs and Python AST encodings. | A Nomi Core IR with verifier defines reference semantics before backend lowering. | Add passive `prototype/syntax/core.py` nodes and a debug/text dump before changing execution. |
+| NOMI-ARCH-020 | MLIR feasibility spike | No compiler middle-end exists. | A tiny `nomi` MLIR dialect can represent pure functions/data/calls from Core IR. | Generate textual MLIR for a pure subset behind a lab profile. |
+| NOMI-ARCH-021 | LLVM/native backend boundary | No native backend exists. | LLVM/ORC/native codegen is an optional backend for settled subsets, not the language definition. | Define backend capability flags and cross-backend tests before emitting LLVM IR. |
+| NOMI-ARCH-022 | Runtime value and ABI model | Python object/runtime behavior is implicit. | Nomi values, closures, blocks, errors, memory, host capabilities, and Python interop have explicit representation. | Write a runtime/ABI design note before compiling dynamic features. |
 
 ## Proposed Package Direction
 
@@ -86,6 +95,9 @@ prototype/
   backends/
     python_ast/        # Python AST backend and compatibility lowering
     python_runtime/    # current Python-hosted interpreter facade
+    mlir/              # future Nomi Core IR -> MLIR dialect experiments
+    llvm/              # future native/JIT backend for settled subsets
+    wasm/              # future portable backend and host-capability boundary
   runtime/
     api.py             # public execute/inspect/session API
     pipeline.py        # PipelineSpec, PipelineResult, stage orchestration

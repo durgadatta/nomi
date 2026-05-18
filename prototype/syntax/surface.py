@@ -5,6 +5,9 @@ lowered to Python AST.  They carry source spans and a ``lower()`` method
 that produces their Python AST equivalent, so the transition from surface
 to backend is inspectable and reversible (for diagnostics).
 
+TODO(NOMI-ARCH-019): Add a sibling Core IR layer and verifier so this module
+does not need to encode every Nomi construct as a Python AST lowering method.
+
 Adding a new Nomi construct:
 1. Define a surface node subclass here (or in a feature-specific module).
 2. Have the Lark transformer emit the surface node.

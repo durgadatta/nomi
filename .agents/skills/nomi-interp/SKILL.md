@@ -51,6 +51,10 @@ decision grounded in cross-language research.
 - For broad runtime/API/tooling refactors, read
   `docs/language/architecture_refactoring_plan.md` and prefer facade-first
   changes that keep existing `run_eval_loop` imports working.
+- For Python-independence, native backend, MLIR, LLVM, Wasm, or ABI questions,
+  read `docs/language/python_independence_and_compiler_backend_plan.md`.
+  Treat Python as the bootstrap/backend path while Core IR and direct runtime
+  semantics are being introduced.
 - For semantic design decisions (e.g., how pattern matching exhaustiveness
   should work, how absence should propagate, how data boundaries should handle
   errors), consult the relevant deep dive in `docs/research/` — the
