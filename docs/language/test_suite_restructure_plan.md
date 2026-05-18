@@ -338,7 +338,7 @@ Suggested destination packets:
 | equations, piecewise, guarded equations | `features/functions/test_equations_runtime.py` |
 | `where` | `features/functions/test_where_runtime.py` or `features/scope/` if scope grows. |
 | sections and composition | `features/functions/test_composition_runtime.py` |
-| implicit multiplication | `features/flow_or_math/test_implicit_mul_runtime.py` until math notation gets a home. |
+| implicit multiplication | `features/math/test_implicit_mul_runtime.py` |
 | type aliases | `features/data/test_type_alias_runtime.py` |
 | try-expr and defer | `features/absence_result/` or `features/block_calls/` depending on ownership. |
 | spread | `features/flow/test_spread_runtime.py` |
@@ -365,6 +365,9 @@ Status:
 - Done: operator-section and function-composition runtime tests moved from
   `functional/test_nomi_func_styles.py` to
   `features/functions/test_composition_runtime.py`.
+- Done: implicit-multiplication runtime tests moved from
+  `functional/test_nomi_func_styles.py` to
+  `features/math/test_implicit_mul_runtime.py`.
 
 ### Phase 3: Introduce Feature Packets For New Work
 
