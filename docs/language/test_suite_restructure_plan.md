@@ -1,8 +1,9 @@
 # Test Suite Restructure Plan
 
-> Status: active migration plan; initial setup, smoke promotion, and the
-> largest function-style split are complete. Contract and regression
-> rationalization are still pending.
+> Status: phase implementation complete for the current scope. The old
+> `functional/` bucket has been drained, feature and contract homes are live,
+> smoke tests are collected, and regression parity checks are explicit.
+> Remaining work is optional snapshot ergonomics, not a migration blocker.
 >
 > Scope: organize the growing test suite in small, reviewable phases. This plan
 > names target structure, run tiers, ownership rules, migration phases, and
@@ -40,15 +41,19 @@ Completed:
 
 - Phase 0/1: rules, marker declarations, and `prototype/tests/README.md`.
 - Phase 6: `smoke/` is now a real `pytest -m smoke` tier.
-- Phase 2, first target: `functional/test_nomi_func_styles.py` has been fully
-  drained into feature packets and removed.
+- Phase 2: `functional/` has been fully drained into feature packets,
+  contracts, or regression parity checks.
+- Phase 4: cheap parser, web bridge, and notebook kernel/launcher checks now
+  live in `contracts/`.
+- Phase 5: Python AST and interpreter parity checks now live in `regression/`
+  beside snapshot regression gates.
 
-Still pending:
+Optional follow-up:
 
-- Split or bless the remaining `functional/` files.
-- Move cheap public API and adapter checks from `e2e/` into `contracts/`.
-- Make regression snapshot scope more explicit.
-- Decide whether `functional/` remains as a compatibility bucket.
+- Add generated snapshot indexes if snapshot churn becomes hard to review.
+- Consider moving snapshot text files under named `snapshots/` directories in a
+  separate, mechanical patch.
+- Add diagnostics snapshots once diagnostics stabilize.
 
 ## Current Snapshot
 
@@ -57,10 +62,11 @@ Current tracked test files by top-level bucket:
 | Bucket | Test files | Current role |
 | --- | ---: | --- |
 | `unit/` | 30 | Parser, desugar, interpreter, runtime, tool internals. |
-| `features/` | 9 | Feature-owned language runtime packets introduced during migration. |
-| `functional/` | 10 | Compatibility bucket for behavior tests not yet moved or blessed. |
-| `regression/` | 3 | Snapshot regression for interpreter/sample files and Python AST. |
-| `e2e/` | 7 | CLI, web bridge, notebook, report scripts, scenario tests. |
+| `features/` | 16 | Feature-owned language packets introduced during migration. |
+| `functional/` | 0 | Retired compatibility bucket; do not add new tests here. |
+| `contracts/` | 4 | Public parser/runtime/tool adapter contracts. |
+| `regression/` | 5 | Snapshot and direct parity regression for interpreter, samples, and Python AST. |
+| `e2e/` | 5 | CLI, notebook, report scripts, scenario tests, and Python parity snippets. |
 | `smoke/` | 4 | Tiny checkout-alive checks collected by default and selectable with `pytest -m smoke`. |
 
 Resolved pressure points:
@@ -69,15 +75,17 @@ Resolved pressure points:
   has been split into feature packets for holes, equations, where clauses,
   composition, implicit multiplication, type aliases, try-expr, spread, and
   defer.
+- `functional/` has no tracked test files left. New behavior tests should go
+  directly to `features/`, `contracts/`, `regression/`, `e2e/`, or `unit/`.
+- Cheap parser, web bridge, and notebook kernel/launcher checks have moved out
+  of `e2e/` into `contracts/`.
 
 Remaining pressure points:
 
 - `regression/test_interpreter.py` multiplies samples by interpreter mode and
   also pulls every user-facing file from `samples/`.
-- Unit tests are mostly layer-owned, while functional tests are mostly
-  feature-owned; this makes the intended home for new language tests fuzzy.
-- Frontend/e2e tests share the same top-level bucket even when some are cheap
-  contract checks and others exercise notebook/web surfaces.
+- Snapshot files still sit beside their regression tests rather than under
+  named `snapshots/` subdirectories.
 - There is no marker/run-tier vocabulary beyond path selection and
   `--interpreter-modes`.
 
@@ -428,11 +436,8 @@ Status:
 
 Exit gate:
 
-- Complete for `functional/test_nomi_func_styles.py`: all listed clusters have
-  feature-packet homes and focused old/new migration checks preserved behavior.
-
-Next candidates:
-
+- Complete: all tracked `functional/` tests have feature, contract, or
+  regression homes and focused old/new migration checks preserved behavior.
 
 ### Phase 3: Introduce Feature Packets For New Work
 
@@ -516,6 +521,9 @@ Status:
 - Done: direct Python interpreter stdout parity checks moved from
   `functional/test_python_interpreter_functional.py` to
   `regression/test_python_interpreter_parity.py`.
+- Done: snapshot scope is documented in this plan and regression checks are
+  grouped under the `regression/` bucket. Deeper snapshot directory reshaping is
+  deferred until review pain justifies a mechanical follow-up.
 
 ### Phase 6: Retire Or Formalize `smoke/`
 

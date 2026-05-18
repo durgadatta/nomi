@@ -1,20 +1,19 @@
 # Nomi Test Suite
 
-> Status: migration guide.
+> Status: current operating map.
 >
-> The current layout is being reorganized toward the phased plan in
-> `docs/language/test_suite_restructure_plan.md`. During migration, prefer the
-> target meaning of each bucket even when old files still live in their
-> original path.
+> The phase migration in `docs/language/test_suite_restructure_plan.md` has
+> drained the old `functional/` bucket. Add new tests directly to the bucket
+> that owns the behavior.
 
 ## Current Buckets
 
 | Path | Meaning |
 | --- | --- |
 | `unit/` | Tests for one module, class, parser pass, interpreter layer, runtime helper, or tool helper. |
-| `functional/` | Compatibility bucket for multi-module language behavior that has not yet moved into a feature packet. |
+| `functional/` | Retired compatibility bucket. Do not add new tests here. |
 | `features/` | Feature-owned language tests. Add this path only with real tests, not placeholders. |
-| `contracts/` | Target home for stable public API and adapter contracts that do not need full e2e surfaces. |
+| `contracts/` | Stable public API and adapter contracts that do not need full e2e surfaces. |
 | `regression/` | Snapshot and broad-output drift checks. These are review gates, not the main edit loop. |
 | `e2e/` | CLI, web, notebook, report, and scenario tests that exercise user-facing surfaces end to end. |
 | `smoke/` | Tiny checkout-alive checks collected by default and selectable with `pytest -m smoke`. |
@@ -44,10 +43,7 @@ def test_nomi_feature(nomi_mode):
 pytest prototype/tests/unit
 pytest prototype/tests/unit/parser/desugar
 
-# Existing feature behavior during migration
-pytest prototype/tests/functional --interpreter-modes reduced
-
-# Target feature packet shape, once a packet exists
+# Feature packet behavior
 pytest prototype/tests/features/<feature>
 
 # Function-style feature packets
@@ -77,4 +73,5 @@ assertion-based, avoid snapshots, and avoid writing local inspection artifacts.
 - Put language behavior under `features/<feature>/` when the feature has enough
   surface area to need parse, lowering, diagnostics, runtime, or reduced
   coverage.
+- Put cheap public API, bridge, and tool facade checks in `contracts/`.
 - Keep snapshot regeneration separate from pure organization work.
