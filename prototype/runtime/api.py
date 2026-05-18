@@ -27,6 +27,8 @@ class ExecutionResult:
     timings: dict[str, float] = field(default_factory=dict)
     value: Any = None
     has_value: bool = False
+    # TODO(NOMI-ARCH-013): Add passive diagnostics/events collection here before
+    # parser, lowering, runtime, web, and notebook surfaces invent separate shapes.
 
     @property
     def ok(self) -> bool:

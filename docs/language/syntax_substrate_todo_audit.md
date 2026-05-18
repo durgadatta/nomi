@@ -97,6 +97,9 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-026 | Feature-driven test matrix | ⬜ pending | Current tests cover interpreters well, but syntax-feature coverage is not declared in one place. | Feature manifests list parse, lower, diagnostic, runtime, regression, web, notebook, and docs checks. | Add pytest options later; first document the matrix and add TODOs at test collection seams. |
 | NOMI-SUBSTRATE-027 | Playground feature toggles | ⬜ pending | The web playground runs the current default language, but future syntax labs need visible opt-in and lowering inspection. | Browser users can select a feature profile and inspect expansion without changing default semantics. | Reuse feature profiles once the parser API and inspection CLI exist. |
 | NOMI-SUBSTRATE-028 | Agent workflow contract | ⬜ pending | Skills know current file paths but not the desired manifest/spec-driven workflow. | Agent skills require normal-form, status, docs, tests, and inspection decisions before implementation. | Update `.agents/skills/nomi-*` to treat feature manifests and substrate TODOs as the default path. |
+| NOMI-SUBSTRATE-029 | Parser/cache identity | ⬜ pending | Parser and raw-tree caches are not keyed by feature profile, grammar version, source path, or source version. | Cache keys represent profile, feature set, grammar assembly, source identity, and position mode. | Introduce a `ParseRequest`/`ParserCacheKey` dataclass before target-tour parse modes. |
+| NOMI-SUBSTRATE-030 | Data declaration surface node | ⬜ pending | `data` lowers directly to `ClassDef` and ad hoc `TypeError` checks. | `DataDecl` is a Nomi-owned surface/core node that reuses binding targets, constraints, decode, diagnostics, and redaction. | Emit a passive `DataDecl` surface node for inspection before changing runtime behavior. |
+| NOMI-SUBSTRATE-031 | Match expression surface node | ⬜ pending | Match expressions lower to IIFE-style Python AST, hiding return/scope/failure semantics. | `MatchExpr` records subject, cases, guards, pattern failures, and expression value semantics before backend lowering. | Emit `MatchExpr` as a surface node and keep existing IIFE lowering as the backend path. |
 
 ## Inline TODO Locations
 
@@ -111,12 +114,16 @@ Current inline comments have been placed at these high-leverage seams:
 | NOMI-SUBSTRATE-005 | `prototype/parser/nomi/ast_.py`, `prototype/syntax/surface.py` | `BlockCall` + `lower_surface_to_python` done; PipeExpr, MatchExpr, BindingTarget, DataDecl pending. |
 | NOMI-SUBSTRATE-008 | `prototype/parser/nomi/desugar/base.py`, `pipeline.py` | `Phase`, `depends_on`, `removed_node_types` on `BaseDesugarer`; pipeline auto-derived and validated. |
 | NOMI-SUBSTRATE-010 | `prototype/parser/nomi/desugar/base.py`, `prototype/parser/nomi/lowering/block_call.py` | `BlockCall` surface node exists; remaining: defer lowering until after desugar. |
+| NOMI-SUBSTRATE-011 | `prototype/interpreter/nomi/binding.py` | Constraint handling is centered on `AnnAssign`; needs shared `BindingTarget` for parameters, fields, captures, imports, and block params. |
 | NOMI-SUBSTRATE-012 | `prototype/grammar/layers/statements.lark` | New keywords should remain soft until proven otherwise. |
 | NOMI-SUBSTRATE-013 | `prototype/grammar/layers/expressions.lark` | Future fenced expressions need a safe parser holding zone. |
 | NOMI-SUBSTRATE-019 | `prototype/interpreter/reduced/interpreter.py` | Reduced interpreter guardrails should evolve into full normal-form checks. |
 | NOMI-SUBSTRATE-023 | `prototype/parser/nomi/functions.py` | Transformer methods should gradually become feature-owned lowering declarations instead of direct Python AST factories. |
 | NOMI-SUBSTRATE-024 | `prototype/interpreter/python/interpreter.py` | `eval_*` dispatch should grow semantic metadata without losing its simple method dispatch. |
 | NOMI-SUBSTRATE-026 | `prototype/tests/conftest.py` | Interpreter-mode parametrization should eventually compose with feature-profile parametrization. |
+| NOMI-SUBSTRATE-029 | `prototype/parser/nomi/usage.py` | Parser/raw-tree caches must grow full profile/source/grammar identity before docs-only or target-tour parsing. |
+| NOMI-SUBSTRATE-030 | `prototype/parser/nomi/lowering/data_decl.py` | Data declarations need a surface node and shared binding/diagnostic/decode semantics. |
+| NOMI-SUBSTRATE-031 | `prototype/parser/nomi/lowering/match_expr.py` | Match expressions need surface/core representation before richer diagnostics and control semantics. |
 
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.

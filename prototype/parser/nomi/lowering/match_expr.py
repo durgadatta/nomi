@@ -25,6 +25,9 @@ class MatchExprMixin:
         return self._match_expr_iife(items)
 
     def _match_expr_iife(self, items):
+        # TODO(NOMI-SUBSTRATE-031): Emit a MatchExpr surface node here and keep
+        # the IIFE as a backend lowering choice, so return/scope and
+        # pattern/guard/constraint failures can be explained with source spans.
         subject, *cases = items
         match_node = ast.Match(subject=subject, cases=cases)
         empty_args = ast.arguments(

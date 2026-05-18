@@ -39,6 +39,8 @@ def _preserve_positions_default():
 
 def get_parser(extra_layers=None, preserve_positions=None):
     # Resolve extra layers: feature-derived layers + any experimental ad-hoc layers.
+    # TODO(NOMI-SUBSTRATE-029): Replace this tuple with a ParseRequest/ParserCacheKey
+    # that includes feature profile, grammar version, source identity, and span mode.
     resolved = tuple(get_extra_grammar_layers()) + (tuple(extra_layers) if extra_layers else ())
     if preserve_positions is None:
         preserve_positions = _preserve_positions_default()
@@ -69,6 +71,8 @@ def parse_raw_tree(code=None, filename=None, preserve_positions=None):
         code = Path(filename).read_text(encoding="utf-8")
     if preserve_positions is None:
         preserve_positions = _preserve_positions_default()
+    # TODO(NOMI-SUBSTRATE-029): Include filename/source version and active
+    # feature profile so docs-only or target-tour parsing cannot reuse a stale tree.
     key = (hash(code), preserve_positions)
     cached = _RAW_TREE_CACHE.get(key)
     if cached is not None:

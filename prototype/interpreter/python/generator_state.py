@@ -88,6 +88,8 @@ class CoroutineState:
             self.index += 1
 
     def frame_to_resume(self):
+        # TODO(NOMI-ARCH-014): Replace raw paused-frame dictionaries with a
+        # named resumable-frame/policy model before adding richer block policies.
         # TODO: make the pause/resume policy explicit instead of relying on list order here.
         if self.paused_frames:
             frame = self.paused_frames.pop(0)

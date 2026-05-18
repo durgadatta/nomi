@@ -66,6 +66,8 @@ larger than `NOMI-SUBSTRATE-*`, which points to syntax/lowering seams.
 | NOMI-ARCH-010 | Testing contract | Tests call internals directly depending on level. | Contract tests cover public runtime API, pipeline stages, feature profiles, and frontend adapters. | Add tests for the adapter while old tests continue to use internals. |
 | NOMI-ARCH-011 | Compatibility layer retirement | Old imports such as `prototype.interpreter.nomi.usage` are part of the public habit. | Compatibility shims remain temporarily and emit migration comments in docs. | Keep old modules as wrappers over the new runtime API once it exists. |
 | NOMI-ARCH-012 | Performance measurement | Web and tests measure some local hotspots, but pipeline timings are not shared. | Every stage can optionally report timings under the same result schema. | Add timing fields to future `ExecutionResult`; do not optimize before measuring. |
+| NOMI-ARCH-013 | Semantic event collection | `ExecutionResult` has room to grow, but there is no event/diagnostic collector object shared by parser, lowering, runtime, web, and notebook. | A passive event sink collects semantic events without changing presentation or control flow. | Add `diagnostics` and `events` fields to `ExecutionResult`, defaulting to empty tuples. |
+| NOMI-ARCH-014 | Resumable control frame model | Generator/block state stores paused frames and indexes directly in runtime helpers. | A named frame/policy model records yield, resume, cleanup, cancellation, and ownership. | Wrap existing paused-frame state in a dataclass before changing behavior. |
 
 ## Proposed Package Direction
 

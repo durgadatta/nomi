@@ -20,6 +20,9 @@ work packages, see [Forward Implementation Plan](forward_implementation_plan.md)
 For a full-docs scan that names hidden bridge gaps and planning priorities, see
 [Docs Eagle Eye Review](docs_eagle_eye_review.md).
 
+For the implementation scan that ties code seams to stable TODO IDs, see
+[Implementation Codebase Audit](implementation_codebase_audit.md).
+
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 

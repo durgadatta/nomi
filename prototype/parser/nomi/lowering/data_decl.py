@@ -6,6 +6,9 @@ import ast
 
 class DataDeclMixin:
     def data_decl(self, items):
+        # TODO(NOMI-SUBSTRATE-030): Emit a DataDecl surface node before
+        # backend lowering so fields can reuse BindingTarget/Constraint,
+        # decode provenance, redaction, and BindingError diagnostics.
         class_name = str(items[0])
         fields = items[1:]
 

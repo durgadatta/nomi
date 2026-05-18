@@ -196,6 +196,9 @@ class Annotations:
 class ConstraintBindingMixin:
     def eval_AnnAssign(self, node: ast.AnnAssign) -> None:
         """Add the constraints and delegate to Python's handler"""
+        # TODO(NOMI-SUBSTRATE-011): Route this through a shared BindingTarget
+        # model so assignments, parameters, data fields, pattern captures,
+        # imports, and block params use one constraint/diagnostic path.
         # Always set constraints from the annotation
         if isinstance(node.target, ast.Name):
             predicate = Annotations.from_node(node, self).predicate

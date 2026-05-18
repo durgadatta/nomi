@@ -75,6 +75,7 @@ general reading order.
 | Task | Read first |
 | --- | --- |
 | Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
+| Audit implementation gaps | [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
 | Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
@@ -125,6 +126,8 @@ Planning and process:
   process for new syntax, features, and promoted research ideas.
 - [Architecture Refactoring Plan](language/architecture_refactoring_plan.md):
   high-level runtime API, pipeline, package, host, and frontend adapter plan.
+- [Implementation Codebase Audit](language/implementation_codebase_audit.md):
+  codebase scan tying implementation seams to stable TODO IDs.
 
 Parser and syntax substrate:
 
