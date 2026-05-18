@@ -35,6 +35,25 @@ class BaseDesugarer(ast.NodeTransformer):
     depends_on: tuple = ()
     removed_node_types: tuple = ()
 
+    def generic_visit(self, node):
+        node = super().generic_visit(node)
+        where_body = getattr(node, '_nomi_where_body', None)
+        if where_body is not None:
+            node._nomi_where_body = self._visit_statement_list(where_body)
+        return node
+
+    def _visit_statement_list(self, statements):
+        visited = []
+        for stmt in statements:
+            transformed = self.visit(stmt)
+            if transformed is None:
+                continue
+            if isinstance(transformed, list):
+                visited.extend(transformed)
+            else:
+                visited.append(transformed)
+        return visited
+
 
 class NomiDesugarer(BaseDesugarer):
     """Desugarer base that handles Nomi-specific AST features.

@@ -21,9 +21,28 @@ _SHOULD_CHECK_INVARIANTS = os.environ.get(
 ).lower() in ('1', 'true', 'yes')
 
 
+_PHASE_ORDER = tuple(Phase)
+_PHASE_INDEX = {phase: index for index, phase in enumerate(_PHASE_ORDER)}
+
+
+def _order_passes_by_phase(passes):
+    """Return passes grouped by Phase while preserving manifest order inside each group."""
+    indexed = list(enumerate(passes))
+
+    def sort_key(item):
+        original_index, pass_cls = item
+        phase = getattr(pass_cls, "phase", Phase.syntax)
+        return (_PHASE_INDEX.get(phase, len(_PHASE_ORDER)), original_index)
+
+    return tuple(
+        pass_cls
+        for _index, pass_cls in sorted(indexed, key=sort_key)
+    )
+
+
 # Derived from BUILTIN_FEATURES in prototype/syntax/features.py.
-# Feature order there determines pass order here.
-DESUGAR_PASSES = get_desugar_passes()
+# Feature order there determines ordering inside each phase bucket.
+DESUGAR_PASSES = _order_passes_by_phase(get_desugar_passes())
 
 # The full pipeline is required by the reduced interpreter because it checks
 # that Python-compatible surface nodes have become normal forms.  The default
@@ -31,22 +50,26 @@ DESUGAR_PASSES = get_desugar_passes()
 # Assert, Pass, With, decorators, and f-strings, so feature metadata declares
 # the smaller pass set it needs.
 NOMI_INTERPRETER_DESUGAR_PASSES = tuple(
-    get_desugar_passes(profile=DEFAULT_DESUGAR_PROFILE)
+    _order_passes_by_phase(get_desugar_passes(profile=DEFAULT_DESUGAR_PROFILE))
 )
 
 
 def _validate_pipeline(passes):
     """Validate dependencies for *passes*.
 
-    Every class in ``depends_on`` must appear earlier in the pass list.
-    Phase annotations (syntax → semantic → cleanup) are advisory; the
-    real constraint is that a pass's dependencies have already run.
+    Every class in ``depends_on`` must appear earlier in the phase-ordered
+    pass list, and every phase must be a declared ``Phase`` value.
     """
     seen = set()
     errors = []
 
     for pass_cls in passes:
         name = pass_cls.__name__
+        phase = getattr(pass_cls, 'phase', Phase.syntax)
+        if phase not in _PHASE_INDEX:
+            errors.append(
+                f"Phase violation: {name} declares unknown phase {phase!r}."
+            )
         for dep in getattr(pass_cls, 'depends_on', ()):
             if dep not in seen:
                 errors.append(

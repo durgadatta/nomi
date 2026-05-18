@@ -230,6 +230,9 @@ directories wholesale.
   target, not just Python AST node type.
 - [x] Move default/reduced desugar pass selection into `SyntaxFeature`
   metadata instead of class-name filtering in the pipeline.
+- [x] Make desugar phases executable: pass order is now grouped by
+  `syntax`, `semantic`, and `cleanup`, with dependency validation after
+  phase ordering.
 - [ ] Use constrained binding as the first L2/L3 semantic-core migration
   candidate after metadata and passive Core IR exist.
 - [ ] Use `unless` or postfix conditional return as the first L4 sugar
