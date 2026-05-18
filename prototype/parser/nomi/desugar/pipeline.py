@@ -10,6 +10,7 @@ silent ordering bug.
 """
 
 import ast
+import copy
 import os
 import sys
 
@@ -158,6 +159,18 @@ def _run_desugar_passes(tree: ast.Module, passes) -> ast.Module:
     return tree
 
 
+def _dump_tree(tree: ast.AST) -> str:
+    return ast.dump(tree, include_attributes=False, indent=2)
+
+
+def _passes_for_profile(profile: str | None):
+    return (
+        _order_passes_by_phase(get_desugar_passes(profile=profile))
+        if profile is not None
+        else DESUGAR_PASSES
+    )
+
+
 def desugar_module(tree: ast.Module) -> ast.Module:
     return _run_desugar_passes(tree, DESUGAR_PASSES)
 
@@ -180,11 +193,7 @@ def get_removed_node_types():
 
 def render_desugar_pass_table(profile: str | None = None) -> str:
     """Return a compact table of active desugar passes and their contracts."""
-    passes = (
-        _order_passes_by_phase(get_desugar_passes(profile=profile))
-        if profile is not None
-        else DESUGAR_PASSES
-    )
+    passes = _passes_for_profile(profile)
     feature_by_pass = {}
     for feature in BUILTIN_FEATURES:
         for ref in feature.desugar_passes:
@@ -229,3 +238,48 @@ def render_desugar_pass_table(profile: str | None = None) -> str:
             )
         )
     return "\n".join(rows)
+
+
+def render_desugar_expansion(tree: ast.Module, profile: str | None = None) -> str:
+    """Return a pass-by-pass before/after expansion view for *tree*."""
+    passes = _passes_for_profile(profile)
+    active_tree = copy.deepcopy(tree)
+    profile_label = profile or "reduced"
+    rows = [
+        f"# Desugar expansion ({profile_label})",
+        "",
+    ]
+
+    for pass_cls in passes:
+        before = _dump_tree(active_tree)
+        next_tree = pass_cls().visit(copy.deepcopy(active_tree))
+        ast.fix_missing_locations(next_tree)
+        after = _dump_tree(next_tree)
+        changed = before != after
+
+        rows.extend([
+            f"## {pass_cls.__name__}",
+            "",
+            f"- phase: {pass_cls.phase.value}",
+            f"- normal forms: {', '.join(pass_cls.normal_forms)}",
+            f"- changed: {'yes' if changed else 'no'}",
+        ])
+        if changed:
+            rows.extend([
+                "",
+                "before:",
+                "",
+                "```python",
+                before,
+                "```",
+                "",
+                "after:",
+                "",
+                "```python",
+                after,
+                "```",
+            ])
+        rows.append("")
+        active_tree = next_tree
+
+    return "\n".join(rows).rstrip()

@@ -609,8 +609,9 @@ Current state:
 - `unless` and postfix conditional flow are declared as L4 features with
   branch reduction targets in `prototype/syntax/features.py`;
 - their existing parser lowering already emits ordinary `ast.If` branch shape;
-- remaining work is to make the before/after expansion inspectable through
-  surface/core stages with source provenance.
+- `--stage expansions` can show pass-by-pass AST rewrites for desugar passes;
+- remaining work is to make conditional-flow before/after expansion inspectable
+  through surface/core stages with source provenance.
 
 Gate:
 

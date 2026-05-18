@@ -236,6 +236,8 @@ directories wholesale.
   phase ordering.
 - [x] Add a `passes` inspection stage that shows desugar pass order, phase,
   feature owner, profiles, dependencies, and removed node types.
+- [x] Add an `expansions` inspection stage that shows pass-by-pass before/after
+  AST rewrites and normal forms.
 - [ ] Use constrained binding as the first L2/L3 semantic-core migration
   candidate after metadata and passive Core IR exist.
 - [ ] Use `unless` or postfix conditional return as the first L4 sugar

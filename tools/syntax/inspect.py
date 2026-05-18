@@ -10,6 +10,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage passes
+    python3 -m tools.syntax.inspect FILE --stage expansions
 """
 
 import sys
@@ -20,7 +21,10 @@ from prototype.parser.nomi.usage import (
     parse_raw_tree,
     parse_transformed_tree,
 )
-from prototype.parser.nomi.desugar.pipeline import render_desugar_pass_table
+from prototype.parser.nomi.desugar.pipeline import (
+    render_desugar_expansion,
+    render_desugar_pass_table,
+)
 from prototype.syntax.core import dump_core, lower_python_ast_to_core
 from prototype.syntax.features import render_feature_layer_table
 
@@ -70,10 +74,12 @@ def main():
         print(dump_core(lower_python_ast_to_core(generate_ast(code=code))))
     elif stage == "python-ast":
         print(generate_ast(code=code, dump=True))
+    elif stage in {"expansions", "desugar-expansions", "desugar_expansions"}:
+        print(render_desugar_expansion(generate_ast(code=code)))
     else:
         print(f"Unknown stage: {stage!r}. "
               f"Valid: raw-tree, transformed-tree, surface-ast, core, "
-              f"python-ast, features, passes")
+              f"python-ast, features, passes, expansions")
         sys.exit(1)
 
 

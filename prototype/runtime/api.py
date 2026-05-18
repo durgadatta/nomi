@@ -133,6 +133,23 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"expansions", "desugar_expansions"}:
+        from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
+
+        parser = pipeline.mode_spec.load_parser()
+        tree = parser(filename=filename, code=source)
+        desugar_profile = "default" if mode == "nomi" else None
+        output = render_desugar_expansion(tree, profile=desugar_profile)
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"core", "implementation_core"}:
         parser = pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source)
