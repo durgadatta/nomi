@@ -13,7 +13,7 @@
 | --- | --- |
 | `unit/` | Tests for one module, class, parser pass, interpreter layer, runtime helper, or tool helper. |
 | `functional/` | Compatibility bucket for multi-module language behavior that has not yet moved into a feature packet. |
-| `features/` | Target home for feature-owned language tests. Add this path only with real tests, not placeholders. |
+| `features/` | Feature-owned language tests. Add this path only with real tests, not placeholders. |
 | `contracts/` | Target home for stable public API and adapter contracts that do not need full e2e surfaces. |
 | `regression/` | Snapshot and broad-output drift checks. These are review gates, not the main edit loop. |
 | `e2e/` | CLI, web, notebook, report, and scenario tests that exercise user-facing surfaces end to end. |
@@ -49,6 +49,9 @@ pytest prototype/tests/functional --interpreter-modes reduced
 
 # Target feature packet shape, once a packet exists
 pytest prototype/tests/features/<feature>
+
+# Function-style feature packets
+pytest prototype/tests/features/functions
 
 # Public runtime/tool contracts, once promoted
 pytest prototype/tests/contracts prototype/tests/unit/runtime

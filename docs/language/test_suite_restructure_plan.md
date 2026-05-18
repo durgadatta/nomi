@@ -350,6 +350,12 @@ Rules:
 - do not alter semantics during movement;
 - run old path/new path diff through focused pytest after each move.
 
+Status:
+
+- Done: hole-lambda runtime tests moved from
+  `functional/test_nomi_func_styles.py` to
+  `features/functions/test_holes_runtime.py`.
+
 ### Phase 3: Introduce Feature Packets For New Work
 
 For every new accepted feature, create the packet upfront:
