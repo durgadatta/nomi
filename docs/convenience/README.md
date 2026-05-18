@@ -27,7 +27,7 @@ Every accepted convenience reduces to one of eight normal forms:
 | Doc | Purpose |
 |-----|---------|
 | [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
-| [interaction_map.md](interaction_map.md) | Cross-feature interaction map for functions, patterns, flow, data boundaries, results, and explanation |
+| [interaction_map.md](interaction_map.md) | Global/local feature interaction map for coherent synthesis across normal forms |
 | [syntax_design_rules.md](syntax_design_rules.md) | Concrete syntax-design rules derived from the dimensions analysis (primitive budget, axis coherence, elimination form, etc.) |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
@@ -88,7 +88,7 @@ Start here based on what you're trying to do:
 |--------|-----------|
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
-| **Check feature interactions** | [interaction_map.md](interaction_map.md) (functions, patterns, flow, data boundaries, results, explanation) |
+| **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
 | **Promote a design into the spec** | [../language/spec_readiness_map.md](../language/spec_readiness_map.md) (feature packet + spec conversion matrix) |
 | **Compare Nomi's approach to other languages** | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) (cross-language families) |
@@ -101,7 +101,7 @@ Start here based on what you're trying to do:
 
 1. [syntax_design_rules.md](syntax_design_rules.md) — concrete rules for designing surface syntax, derived from the dimensions analysis.  Includes nuance (when rules bend, how conflicts resolve).
 2. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
-3. [interaction_map.md](interaction_map.md) — cross-feature intersections and candidate ideas for the next refinement pass.
+3. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
 4. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
 5. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
 
