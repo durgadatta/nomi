@@ -482,6 +482,9 @@ Status:
 - Done: web runtime bridge session/cache checks moved from
   `e2e/test_web_runtime_bridge.py` to
   `contracts/test_web_runtime_bridge_contract.py`.
+- Done: notebook kernel JSON, runtime-session ownership, smoke-runner, and
+  launcher argument checks split from `e2e/test_nomi_notebook.py` into
+  `contracts/test_notebook_kernel_contract.py`.
 
 ### Phase 5: Rationalize Regression Snapshots
 
