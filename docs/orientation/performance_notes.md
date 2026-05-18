@@ -26,6 +26,24 @@ is negligible for typical source files.
   After the LALR migration this count is expected to be zero; use wall-clock
   parse and pipeline timings instead.
 
+## Performance Guardrail TODO
+
+`NOMI-ARCH-017`: add an opt-in performance budget check that protects the
+current fast path as syntax becomes more expressive. The first budget suite
+should measure:
+
+- parser construction/cache load;
+- raw parse with spans off and on;
+- postlexer token rewrite cost;
+- tree transform and surface lowering;
+- default Nomi desugar versus reduced full desugar;
+- runtime evaluation;
+- `RuntimeSession` cache hit.
+
+Keep budgets loose at first and run them outside the default test suite unless
+explicitly requested. The goal is to catch large regressions from grammar,
+postlexer, lowering, or cache changes, not to make normal development brittle.
+
 ## Baseline (before optimization)
 
 - **demo.nomi** (190 lines): ~1,670,000 Earley items, parse ~1129ms

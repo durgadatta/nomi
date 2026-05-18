@@ -32,6 +32,9 @@ class NomiPostLexer:
         return self._indenter.always_accept
 
     def process(self, stream):
+        # TODO(NOMI-SUBSTRATE-032): Keep this postlexer as a declared
+        # disambiguation layer with token-stream snapshots and perf budgets.
+        # New syntax should add fixture-backed rewrite rules, not ad hoc scans.
         processed = list(self._indenter.process(stream))
         paren_pairs = self._paren_pairs(processed)
         arrow_parens = self._arrow_paren_indexes(processed, paren_pairs)

@@ -31,6 +31,8 @@ DESUGAR_PASSES = get_desugar_passes()
 # Assert, Pass, With, decorators, and f-strings, so it only needs the passes
 # that lower Nomi-only convenience syntax.
 NOMI_INTERPRETER_DESUGAR_PASSES = tuple(
+    # TODO(NOMI-SUBSTRATE-033): Move default/reduced/lab pass inclusion into
+    # SyntaxFeature metadata instead of filtering by pass class name.
     pass_cls for pass_cls in DESUGAR_PASSES
     if pass_cls.__name__ in {
         "PiecewiseFunction",

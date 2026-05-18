@@ -143,11 +143,16 @@ class RuntimeSession:
     def _get_cached_tree(self, source: str | None) -> Any | None:
         if self.cache_size <= 0 or source is None:
             return None
+        # TODO(NOMI-ARCH-015): Replace raw source-text cache keys with a typed
+        # RuntimeCacheKey including mode, profile, source identity, span mode,
+        # grammar version, and lowering profile.
         return self._ast_cache.get(source)
 
     def _cache_tree(self, source: str | None, tree: Any) -> None:
         if self.cache_size <= 0 or source is None:
             return
+        # TODO(NOMI-ARCH-015): Apply the same typed key and invalidation policy
+        # here before feature profiles or docs-only parse modes reuse this cache.
         if source in self._ast_cache:
             self._ast_cache[source] = tree
             return

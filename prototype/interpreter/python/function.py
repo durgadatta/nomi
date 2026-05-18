@@ -9,6 +9,9 @@ class FunctionMixin(FunctionCallMixin):
     FUNCTION_METADATA_ATTRS = ('__name__', 'ast_node', 'func_env')
 
     def _new_closure_env(self):
+        # TODO(NOMI-ARCH-016): Introduce explicit call-frame/environment
+        # ownership before constraints, capabilities, and block policies make
+        # shallow environment copies semantically or performance-sensitive.
         return self.env_class(self, parent=self.current_env)
 
     def _preserve_function_metadata(self, obj: Any) -> dict:
@@ -95,7 +98,6 @@ class FunctionMixin(FunctionCallMixin):
         func_env = self._new_closure_env()
         
         def func(*args, **kwargs):
-            # TODO: cache generator detection on the node; this is recomputed on every call.
             is_generator = self._is_generator_function(node)
             
             #env is copied so that constraints work properly

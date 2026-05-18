@@ -37,6 +37,11 @@ May 2026 scan and points each one to an existing or new central TODO.
 | Resumable control | Generator/block execution has paused-frame TODOs and mixed resumable/non-resumable paths. | Block policies, retries, transactions, cleanup, and future concurrency can inherit unclear control semantics. | `NOMI-ARCH-014` |
 | Web/notebook exposure | Runtime facade exists, but feature profiles and inspection are not yet a shared frontend contract. | Target-language labs and current samples may drift apart. | `NOMI-ARCH-003`, `NOMI-SUBSTRATE-027` |
 | Tests and capability matrix | Tests are strong by interpreter mode, but feature status is not declared in one machine-readable matrix. | Implemented, partial, target-only, and rejected syntax remain scattered across docs and tests. | `NOMI-SUBSTRATE-021`, `NOMI-SUBSTRATE-026` |
+| Postlexer disambiguation | LALR speed depends on token rewrites for contextual syntax. | New expressive syntax can turn the postlexer into an undocumented grammar and perf hotspot. | `NOMI-SUBSTRATE-032` |
+| Desugar pass profiles | Default Nomi mode chooses passes by class-name allowlist. | Feature inclusion can drift as names change or profiles multiply. | `NOMI-SUBSTRATE-033` |
+| Runtime cache identity | `RuntimeSession` caches lowered ASTs by source text only. | Feature profiles, span modes, grammar versions, or filename changes can reuse unsafe artifacts. | `NOMI-ARCH-015` |
+| Call-frame ownership | Function calls shallow-copy environments. | Future constraints, capabilities, and block policies need explicit ownership and faster frame setup. | `NOMI-ARCH-016` |
+| Performance budgets | Manual performance notes are strong but not automated. | Flexibility work can quietly erase LALR/session-cache gains. | `NOMI-ARCH-017` |
 
 ## Inline TODO Anchors Added
 
@@ -48,6 +53,11 @@ May 2026 scan and points each one to an existing or new central TODO.
 | `NOMI-SUBSTRATE-031` | `prototype/parser/nomi/lowering/match_expr.py` | Match-expression IIFE lowering needs a surface/core representation for diagnostics and control clarity. |
 | `NOMI-ARCH-013` | `prototype/runtime/api.py` | Public execution should collect diagnostics/events as first-class result fields. |
 | `NOMI-ARCH-014` | `prototype/interpreter/python/generator_state.py` | Resumable control needs an explicit frame/policy model before richer block policies. |
+| `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
+| `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py` | Default/reduced/lab pass selection should be feature manifest metadata. |
+| `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime AST cache keys need mode/profile/source/span/grammar identity. |
+| `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Call-frame/environment ownership needs to be explicit before more semantic state is added. |
+| `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Performance budgets should protect parse/lower/desugar/eval/session paths. |
 
 ## Subsystem Notes
 

@@ -100,6 +100,8 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-029 | Parser/cache identity | ⬜ pending | Parser and raw-tree caches are not keyed by feature profile, grammar version, source path, or source version. | Cache keys represent profile, feature set, grammar assembly, source identity, and position mode. | Introduce a `ParseRequest`/`ParserCacheKey` dataclass before target-tour parse modes. |
 | NOMI-SUBSTRATE-030 | Data declaration surface node | ⬜ pending | `data` lowers directly to `ClassDef` and ad hoc `TypeError` checks. | `DataDecl` is a Nomi-owned surface/core node that reuses binding targets, constraints, decode, diagnostics, and redaction. | Emit a passive `DataDecl` surface node for inspection before changing runtime behavior. |
 | NOMI-SUBSTRATE-031 | Match expression surface node | ⬜ pending | Match expressions lower to IIFE-style Python AST, hiding return/scope/failure semantics. | `MatchExpr` records subject, cases, guards, pattern failures, and expression value semantics before backend lowering. | Emit `MatchExpr` as a surface node and keep existing IIFE lowering as the backend path. |
+| NOMI-SUBSTRATE-032 | Postlexer contract and snapshots | ⬜ pending | LALR disambiguation relies on Python postlexer scans and virtual tokens that are not declared as feature-owned artifacts. | Every virtual token rewrite has fixture snapshots, owner metadata, and performance notes. | Add postlexer token-stream snapshots for arrow params, sections, match cases, block colons, postfix guards, and implicit multiplication. |
+| NOMI-SUBSTRATE-033 | Desugar pass profiles | ⬜ pending | Default Nomi mode selects desugar passes by class-name allowlist. | Feature manifests declare which passes run in default, reduced, lab, and docs-only profiles. | Add pass profile metadata to `SyntaxFeature` and derive `NOMI_INTERPRETER_DESUGAR_PASSES` from it. |
 
 ## Inline TODO Locations
 
@@ -124,6 +126,8 @@ Current inline comments have been placed at these high-leverage seams:
 | NOMI-SUBSTRATE-029 | `prototype/parser/nomi/usage.py` | Parser/raw-tree caches must grow full profile/source/grammar identity before docs-only or target-tour parsing. |
 | NOMI-SUBSTRATE-030 | `prototype/parser/nomi/lowering/data_decl.py` | Data declarations need a surface node and shared binding/diagnostic/decode semantics. |
 | NOMI-SUBSTRATE-031 | `prototype/parser/nomi/lowering/match_expr.py` | Match expressions need surface/core representation before richer diagnostics and control semantics. |
+| NOMI-SUBSTRATE-032 | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
+| NOMI-SUBSTRATE-033 | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/syntax/features.py` | Default/reduced/lab pass selection should be manifest metadata, not class-name filtering. |
 
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.

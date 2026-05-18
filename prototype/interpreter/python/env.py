@@ -49,6 +49,9 @@ class Environment:
         
     def copy(self) -> 'Environment':
         """Create a shallow copy of this environment."""
+        # TODO(NOMI-ARCH-016): Replace broad environment copying with an
+        # explicit call-frame model so local bindings, closure bindings,
+        # constraints, and future capabilities have declared ownership.
         new_env = type(self)(self.interpreter, self.parent)
         new_env.bindings = self.bindings.copy()
         new_env.declared_globals = self.declared_globals.copy()
