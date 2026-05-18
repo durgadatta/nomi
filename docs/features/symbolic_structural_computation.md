@@ -1,10 +1,12 @@
-# Symbolic And Structural Computation
+# Symbolic, Lazy, And Structural Computation
 
-> Status: speculative source note for Nomi design review.
+> Status: active integration plan plus source note for future design review.
 >
 > Purpose: explore a Nomi layer where computations can be described,
 > inspected, transformed, optimized, and executed by pluggable backends instead
-> of being treated only as opaque runtime function calls.
+> of being treated only as opaque runtime function calls. This doc also charts
+> how symbolic manipulation and laziness can fit Nomi without making ordinary
+> code surprising.
 
 ## Core Idea
 
@@ -65,6 +67,69 @@ This mixes several traditions:
 - combinators: build computation from small composable operators;
 - point-free style: describe composition without naming every intermediate;
 - compiler IR: lower high-level structure into backend-specific form.
+
+## Integration Thesis
+
+Symbolic and lazy evaluation are powerful because they let a program talk about
+computation before, instead of only after, execution. They become confusing when
+that power is ambient.
+
+Nomi's path should be:
+
+```text
+ordinary code is eager
+structural computation is explicit
+lazy execution is explicit
+rewrites are scoped and explainable
+plans can be inspected before materialization
+```
+
+Do not make Nomi a Mathematica clone, an R clone, or a Haskell clone. Preserve
+the user need from each tradition:
+
+| Tradition | What to keep | What to refuse |
+| --- | --- | --- |
+| Wolfram/Mathematica | Symbolic expressions, rules, repeated rewrites, algebraic manipulation. | Global rule magic where ordinary values can silently transform by distant definitions. |
+| R | Deferred arguments and quoted expressions carrying environments. | Non-standard evaluation that forces function authors to learn a second scoping model. |
+| Haskell | Composable pure functions, infinite/streaming structures, demand-driven modularity. | Lazy-by-default execution order, space-leak debugging as an everyday skill. |
+| Polars/query engines | Lazy logical plans, optimizer freedom, `collect()`, `explain()`. | Planner opacity or a separate query language that drifts from ordinary functions. |
+
+The Nomi synthesis is a small family of explicit boundary values, not one
+global evaluation mode:
+
+| Boundary | User intent | Evaluates now? | Captures structure? | Primary normal forms |
+| --- | --- | --- | --- | --- |
+| ordinary expression | Compute a value now. | yes | no, except trace events | Binding, function, pattern, flow |
+| `quote:` | Capture syntax as data. | no | syntax tree with spans | Explanation, future reflection |
+| `describe` | Capture a computation description. | no for described body | Core/computation IR | Function, flow, explanation |
+| `lazy` | Delay a value computation. | when forced | maybe, as a thunk record | Binding, flow, explanation |
+| table/query plan | Build logical dataflow. | on `collect`, write, or iteration | logical plan/schema | Flow, data boundary, explanation |
+| rewrite rule | Transform a quoted/computation value. | transforms structure, not runtime values | match + replacement trace | Pattern, function, explanation |
+
+## Source Scan For This Integration
+
+- Wolfram Language exposes symbolic transformation rules over expressions and
+  supports single and repeated replacement. Source:
+  <https://reference.wolfram.com/language/tutorial/TransformationRulesAndDefinitions.html>.
+- R's `delayedAssign` documents promise creation, first-access forcing,
+  evaluation environment, and fixed value after forcing. Source:
+  <https://search.r-project.org/R/refmans/base/html/delayedAssign.html>.
+- The Haskell 2010 report describes Haskell as a purely functional language
+  with non-strict semantics. Source:
+  <https://www.haskell.org/definition/haskell2010.pdf>.
+- Polars' lazy API builds queries before execution, lets the optimizer perform
+  predicate/projection pushdown, executes with `collect`, and exposes
+  `explain` for the planned query. Source:
+  <https://docs.pola.rs/user-guide/concepts/lazy-api/>.
+
+These systems point at the same abstraction from different directions:
+
+```text
+capture structure -> transform or optimize it -> explain it -> execute it
+```
+
+They disagree on how ambient the abstraction should be. Nomi should keep the
+abstraction and make the boundary visible.
 
 ## Prior Art And Reference Systems
 
@@ -457,6 +522,108 @@ Default ordinary execution stays eager.
 Description, lazy, and backend-planned execution require explicit boundaries.
 ```
 
+### The Three Kinds Of Delayed Work
+
+Nomi should keep these distinct even though source languages often blur them:
+
+| Kind | Example spelling | Meaning | Force/materialize operation |
+| --- | --- | --- | --- |
+| Promise/thunk | `lazy total = expensive_sum(xs)` | A delayed value computation. | `force(total)` or first explicit demand. |
+| Computation description | `plan = describe average(xs)` | A structured representation of a call/body. | `plan.run(...)`, backend lowering, or interpreter execution. |
+| Query/data plan | `orders |> where(.paid) |> summarize(...)` from a lazy source | A logical dataflow with schema and backend choices. | `collect()`, write, iteration, or explicit `run`. |
+
+The difference matters:
+
+- A lazy value may close over ordinary runtime values.
+- A computation description should reject or mark effects.
+- A query plan should expose schema, column scope, optimizer rewrites, and
+  backend capability diagnostics.
+
+Do not teach all of these as "lazy." Teach them as:
+
+```text
+delay a value
+describe a computation
+plan a dataflow
+```
+
+### Force And Capture Policy
+
+R shows the sharp edge: a delayed expression can run later in an environment
+whose bindings have changed. Nomi should not make late binding the silent
+default.
+
+First-pass rule:
+
+```text
+`lazy` captures the lexical binding identities at the boundary and records the
+capture policy in `explain`.
+```
+
+For immutable values this behaves like a value snapshot from the user's point
+of view. For mutable or external values, the lazy record should name the
+captured reference and its effect risk:
+
+```text
+lazy total = expensive_sum(buffer)
+
+explain total
+  lazy value: not forced
+  captures:
+    buffer: mutable reference captured at stats.nomi:12
+  effects:
+    reads memory
+  force policy:
+    memoized once
+```
+
+If a user wants late lookup, make it explicit later, for example with a
+reference/capability form, not by accident.
+
+### Effects And Laziness
+
+Lazy-by-default languages work best when effects are sequenced by the type or
+runtime model. Nomi should instead keep ordinary effects eager and make
+effectful delayed work visible:
+
+```python
+lazy pure total = sum(xs)
+lazy io text = read(path)      # visibly delayed IO
+```
+
+Possible effect grades:
+
+| Grade | Meaning | First status |
+| --- | --- | --- |
+| `pure` | No IO, mutation, time, randomness, or host calls. | allowed first |
+| `read` | Reads stable data or captured immutable inputs. | allowed with explanation |
+| `io` | Files, network, console, clock, random, subprocess. | design-needed |
+| `mutate` | Mutates captured or external state. | reject in first slice |
+
+The first lazy feature should probably support only `pure` and a narrow
+read-only grade. That keeps debugging humane.
+
+### Debugging Contract
+
+Every delayed value or plan needs the same basic inspection contract:
+
+```text
+explain x:
+  status: pending | forced | failed | cached
+  source: file:line:col
+  captured names
+  effect grade
+  force count
+  cached value or redacted summary
+  failure, if forcing failed
+```
+
+For query/data plans, explanation should also include schema, row/group scope,
+rewrites, predicate/projection pushdown, and unsupported backend operations.
+
+For symbolic rewrites, explanation should include matched pattern, rule name,
+constraints required, before/after expression, and rewrite budget consumed.
+
 ## Backend Interface Sketch
 
 A backend receives a computation description and returns either:
@@ -518,6 +685,147 @@ Rewrite trace:
   result mean(xs)
   required xs: finite collection
 ```
+
+### Scoped Rewrite Sets
+
+Mathematica's rule language is compelling because the rewrite operation is
+small and general. The danger for a general-purpose language is that rules can
+become ambient semantic weather.
+
+Nomi rule:
+
+```text
+Rewrite rules apply only to quoted/computation values and only through an
+explicit rule set.
+```
+
+Example:
+
+```python
+rules algebra:
+    x + 0 => x
+    x * 1 => x
+    x * (y + z) => x*y + x*z
+
+expr = quote:
+    a * (b + 0)
+
+simple = expr.rewrite(with=algebra, limit=10)
+explain simple
+```
+
+Rejected for the first layer:
+
+- global rewrite tables that affect ordinary evaluation;
+- rules that silently run during every function call;
+- repeated replacement without a visible termination/budget policy;
+- rewrites over effectful expressions unless the effects are represented as
+  explicit nodes and the rule proves it preserves order.
+
+### Symbolic Values Versus Syntax Values
+
+`quote:` and `symbolic` should not mean the same thing:
+
+```python
+expr = quote:
+    x + 1
+
+x = symbolic "x": Number
+term = x + 1
+```
+
+`quote:` captures source syntax. It is useful for macros, examples, structural
+inspection, source-aware transformations, and teaching.
+
+`symbolic` creates a placeholder value in a computation domain. It is useful
+for algebra, query expressions, solver inputs, and backend plans.
+
+The two can interoperate, but the user should know which side they are on:
+
+```text
+syntax value -> parse/source tree with spans
+symbolic term -> computation node with constraints and domain meaning
+```
+
+This distinction keeps expression-oriented programming readable: most
+expressions still compute values; only explicit boundaries produce syntax or
+symbolic terms.
+
+## Fit With Expression-Oriented And Functional Programming
+
+Symbolic and lazy features fit best when they are values, not hidden control
+effects.
+
+Expression-oriented style:
+
+```python
+report =
+    orders
+    |> where(.status == "paid")
+    |> group_by(.customer)
+    |> summarize(total=sum(.amount))
+```
+
+If `orders` is eager, this computes through the pipeline. If `orders` is a lazy
+source, the same expression builds a plan. The boundary belongs to the source
+and the final materialization point:
+
+```python
+plan = scan_csv("orders.csv") |> where(.status == "paid")
+rows = plan.collect()
+```
+
+Functional style:
+
+```python
+transparent func average(xs):
+    return sum(xs) / len(xs)
+
+xs = symbolic "xs": Column[Number]
+plan = describe average(xs)
+```
+
+This works because function bodies are expressions over inputs. The boundary
+`describe` changes "call this now" into "represent this call/body." A
+transparent function is still an ordinary function when called normally.
+
+The integration rule:
+
+```text
+function application remains function application;
+only the surrounding boundary chooses value execution vs structural capture.
+```
+
+That keeps higher-order functions, pipelines, equations, `where`, and
+pattern-matching aligned with the rest of Nomi.
+
+### Where It Gets Subtle
+
+| Interaction | Failure mode | Nomi resolution |
+| --- | --- | --- |
+| Lazy + side effects | Print/file/time happens later or never. | Effectful laziness is explicit and inspectable; default ordinary effects stay eager. |
+| Lazy + exceptions | Error appears far from source. | Lazy records store source spans and report both construction and force sites. |
+| Lazy + mutation | Captured state changes before force. | Capture policy is shown; mutation-heavy laziness is rejected first. |
+| Symbolic + ordinary `if` | Branch condition is unknown. | `describe` lowers to a symbolic conditional or rejects with a diagnostic. |
+| Symbolic + function calls | User expects backend to inspect opaque code. | Only transparent or primitive functions expose bodies/meanings. |
+| Rewrite + nontermination | Rules bounce forever. | Rewrites require budget, strategy, and trace. |
+| Query plan + row scope | Column names hide local variables. | Row/column scope exists only inside table-verb argument boundaries. |
+| Backend lowering + semantics drift | SQL/Polars/Python disagree on nulls, order, strings, floats. | Backend diagnostics name unsupported or changed semantics before execution. |
+
+### User-Facing Vocabulary
+
+The words should teach the mental model:
+
+| Word | Teaching line |
+| --- | --- |
+| `quote` | "Treat this source as syntax data." |
+| `symbolic` | "Create a named placeholder term." |
+| `describe` | "Build a computation description instead of running this call." |
+| `lazy` | "Delay this value computation until forced." |
+| `force` | "Run a lazy value now and cache or report the result." |
+| `collect` | "Materialize a data/query plan." |
+| `explain` | "Show what will happen or what transformation happened." |
+| `transparent` | "This function body may be inspected in description mode." |
 
 ## What Must Be Representable
 
@@ -691,6 +999,10 @@ Schedule
    lowering story.
 8. The first version should support a small expression/dataflow subset, not the
    whole language.
+9. `quote`, `symbolic`, `describe`, `lazy`, and query plans remain distinct
+   because they answer different user questions.
+10. Any delayed or symbolic feature must have an `explain` story before it has
+    a clever syntax story.
 
 ## Candidate Syntax Summary
 
@@ -746,10 +1058,18 @@ optimize/lower/execute this plan
 - How does this interact with block calls?
 - Should symbolic inputs require explicit types, schemas, shapes, or examples?
 - Can examples automatically test that two plans are equivalent on sample data?
+- Should `lazy` be memoized by default, like call-by-need, or should one-shot
+  delayed actions be a separate type?
+- Should capture policy be value snapshot, binding-cell capture, or explicit
+  reference capture? Which policy can users predict in the presence of mutable
+  values?
+- Should effect grades be syntax (`lazy pure`) or metadata inferred from
+  transparent function bodies?
 
 ## Recommended Next Step
 
-Do not start with a general symbolic system. Start with one concrete path:
+Do not start with a general symbolic system or a global lazy mode. Start with
+one concrete path:
 
 ```text
 transparent expression function
@@ -761,5 +1081,80 @@ lower to one backend
 explain the whole path
 ```
 
+Then add a separate lazy-value prototype only for pure/read-only expressions:
+
+```text
+lazy value
+force value
+explain pending/forced value
+capture/effect metadata
+```
+
 That path would make the idea visible without requiring Nomi to solve macros,
 effects, full laziness, symbolic algebra, or compiler optimization all at once.
+
+## Staged Integration Path
+
+### Stage 0: Keep Eager Ordinary Semantics
+
+- Document that ordinary Nomi expressions evaluate eagerly.
+- Keep table/query laziness tied to lazy data sources and materialization.
+- Do not add ambient symbolic variables.
+
+Exit gate: users can predict statement order in ordinary code.
+
+### Stage 1: Computation/Plan Values For Flow
+
+- Treat flow/table pipelines as the first practical plan values.
+- Reuse `explain` for plan structure, schema, source spans, and optimizer
+  rewrites.
+- Keep query syntax deferred; pipeline verbs remain the canonical lowering.
+
+Exit gate: a lazy data source can show a logical plan before `collect()`.
+
+### Stage 2: `quote:` And Syntax Values
+
+- Add a fenced syntax value with source spans.
+- No execution, no global macro expansion, no rule application by default.
+- Use it for examples, checks, future macros, and structural inspection.
+
+Exit gate: a quoted expression can be printed, inspected, and round-tripped.
+
+### Stage 3: `describe` And Transparent Pure Functions
+
+- Add transparent expression-only functions.
+- Allow `describe f(symbolic_input)` to produce computation IR.
+- Reject mutation, uncontrolled IO, and unsupported dynamic control with
+  source-aware diagnostics.
+
+Exit gate: `average(xs)` can run normally, while `describe average(xs)` shows
+`sum(xs) / len(xs)`.
+
+### Stage 4: Scoped Rewrite Rules
+
+- Apply rules to quote/computation values only.
+- Require rule sets, constraints, source spans, strategy, budget, and trace.
+- Start with algebraic and query-plan rewrites, not arbitrary program rewrites.
+
+Exit gate: `sum(xs) / len(xs)` can rewrite to `mean(xs)` with an explanation.
+
+### Stage 5: Explicit Lazy Values
+
+- Add `lazy` for pure/read-only expressions.
+- Define force, memoization, failure caching, capture policy, and effect
+  diagnostics.
+- Keep effectful delayed actions research-only until capability/effect docs
+  mature.
+
+Exit gate: `lazy total = expensive_sum(xs)` can be explained before and after
+force.
+
+### Stage 6: Backend Lowering And Compiler IR
+
+- Lower computation descriptions into Core IR, MLIR, SQL, dataframe engines, or
+  interpreter plans as appropriate.
+- Backends must report unsupported operations instead of silently changing
+  semantics.
+
+Exit gate: one computation has matching interpreter result, optimized plan, and
+backend explanation.

@@ -56,7 +56,7 @@ Every accepted convenience reduces to one of eight normal forms:
 | **prototype-ready** | 3 | binding error diagnostics, `BindingTarget`, constrained captures |
 | **design-needed** | 5 | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, regex capture patterns |
 | **library-first** | 5+ | command functions, config layering, path values, safe commands, parallel collections |
-| **research-only** | 3+ | macros, channels/actors, pure/read-only blocks |
+| **research-only** | 4+ | macros, symbolic/lazy computation boundaries, channels/actors, pure/read-only blocks |
 
 ### Reference
 
@@ -89,6 +89,7 @@ Start here based on what you're trying to do:
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
+| **Integrate symbolic or lazy computation** | [../features/symbolic_structural_computation.md](../features/symbolic_structural_computation.md) → [flow_and_collections.md](flow_and_collections.md) → [meta_testing.md](meta_testing.md) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
 | **Promote a design into the spec** | [../language/spec_readiness_map.md](../language/spec_readiness_map.md) (feature packet + spec conversion matrix) |
 | **Compare Nomi's approach to other languages** | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) (cross-language families) |

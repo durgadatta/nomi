@@ -44,6 +44,7 @@ individually pleasant features that become contradictory once combined.
 | Express transformations | Lambdas, equations, holes, composition, methods, pipelines | Function + flow | Tiny transforms may be shorthand; nontrivial transforms get named parameters or named functions. |
 | Choose by shape | Match, if-let, guard-let, variants, destructuring, extractors | Pattern | Conditional binding is pattern attempt plus scoped binding, not a separate optional/nil feature. |
 | Move through many values | Pipelines, comprehensions, SQL/LINQ, dplyr, array/rank operations | Flow | Start with named verbs and plan values; syntax follows only when binding/explanation improve. |
+| Describe work before running it | Symbolic expressions, lazy promises, query plans, rewrite rules, compiler IR | Flow + explanation | Ordinary code stays eager; `quote`, `describe`, `lazy`, and plan values are explicit boundaries with inspectable traces. |
 | Attach caller code to policy | Ruby blocks, Kotlin/Swift trailing closures, Python context managers, Gleam `use`, fixtures | Block | One block-call form; policy comes from the callee, not from new keywords per use case. |
 | Handle non-success | Option/null, Result/either, exceptions, validation failure, pattern failure | Absence/result + pattern + explanation | Missing, expected failure, unexpected failure, and mismatch stay distinct. |
 | Trust external data | Pydantic, CUE, JSON Schema, Dhall, serde, config DSLs | Data boundary | Decode external values into owned `data`; no second schema/config language. |
@@ -110,6 +111,7 @@ prefer. Focused docs can add detail, but should not fork these decisions.
 | Schema, config, CLI/env/JSON/CSV validation | Decode boundary | Boundary diagnostics carry path, source, provenance, and redaction metadata. |
 | Doctest, inline examples, trace, explain, query plan | Explanation event stream | Examples and traces should use the same semantic vocabulary as diagnostics. |
 | Macro, template, quote, rewrite, domain notation | Future fenced reflection | No global syntax mutation in the first language. |
+| Symbolic manipulation, lazy value, query plan, delayed backend execution | Explicit structural boundary | Keep `quote`, `describe`, `lazy`, and `collect` separate; all must feed `explain`. |
 
 ## Main Intersections
 

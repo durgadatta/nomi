@@ -135,6 +135,11 @@ layers move from docs into implementation.
 - [ ] Add no-op semantic event hooks before feature-specific tracing so
   binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
   each invent a private explanation format.
+- [ ] Keep symbolic/lazy computation behind explicit boundaries from
+  [`symbolic_structural_computation.md`](../features/symbolic_structural_computation.md):
+  `quote`, `describe`, `lazy`, query plans, rewrite rules, `collect`, and
+  `explain` must remain separate until a small computation IR proves they
+  compose.
 - [ ] Update `.agents/skills/nomi-*` whenever the substrate workflow changes,
   so agents propose feature-owned, spec-driven changes instead of scattered
   grammar/interpreter patches.
