@@ -1,10 +1,10 @@
 # Test Suite Restructure Plan
 
-> Status: planning note only.
+> Status: active migration plan.
 >
-> Scope: organize the growing test suite without moving or rewriting tests yet.
-> This plan names target structure, run tiers, ownership rules, migration
-> phases, and quality gates. It is not an implementation patch list.
+> Scope: organize the growing test suite in small, reviewable phases. This plan
+> names target structure, run tiers, ownership rules, migration phases, and
+> quality gates. Track completed setup work here as the tree changes.
 
 ## Purpose
 
@@ -314,6 +314,12 @@ Low-risk setup:
 - add a short `prototype/tests/README.md`;
 - add helper docs for `interpreter_mode` vs `nomi_mode`;
 - document command tiers.
+
+Status:
+
+- Done: marker declarations live in `pyproject.toml`.
+- Done: `prototype/tests/README.md` documents current buckets, target buckets,
+  interpreter fixtures, and run tiers.
 
 Exit gate:
 

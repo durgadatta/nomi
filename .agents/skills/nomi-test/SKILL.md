@@ -73,9 +73,12 @@ pytest prototype/tests/ -o "addopts="                     # serial (override -n 
 ```
 
 ## Rules
-- Never modify existing test files without asking
+- Never modify existing test files unless the user explicitly asks for a test
+  refactor/restructure or approves the edit
 - Add new tests for new functionality
 - One test class per desugar pass
 - `conftest.py` has shared helpers: `find_node`, `is_store`, `is_load`
 - When adding a feature-profile or manifest test path, update
   `docs/language/syntax_substrate_todo_audit.md` so the matrix stays visible.
+- During test-suite restructure work, move one semantic cluster per commit and
+  preserve behavior separately from semantic changes.
