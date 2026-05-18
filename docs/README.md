@@ -76,6 +76,7 @@ general reading order.
 | --- | --- |
 | Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
 | Audit implementation gaps | [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
+| Separate core/sugar/eval layers | [Core Layer Separation Plan](language/core_layer_separation_plan.md), [Language Degrees Of Freedom](language/language_degrees_of_freedom.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Critique implementation flexibility/performance | [Adversarial Implementation Critique](language/adversarial_implementation_critique.md), [Performance Notes](orientation/performance_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md) |
 | Plan Python-independent backends | [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
@@ -130,6 +131,9 @@ Planning and process:
   process for new syntax, features, and promoted research ideas.
 - [Architecture Refactoring Plan](language/architecture_refactoring_plan.md):
   high-level runtime API, pipeline, package, host, and frontend adapter plan.
+- [Core Layer Separation Plan](language/core_layer_separation_plan.md):
+  layer map for implementation core, semantic core, canonical surface, sugar,
+  libraries, scoped extensions, eval separation, and backend targets.
 - [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md):
   staged path from Python-hosted prototype to Nomi Core IR, direct runtime,
   MLIR, LLVM/native, and Wasm/WASI backends.
