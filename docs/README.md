@@ -79,6 +79,7 @@ general reading order.
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
+| Critique design coherence | [Adversarial Design Critique](language/adversarial_design_critique.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
 | Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
 
 ## Language
@@ -112,6 +113,8 @@ Planning and process:
   adoption-oriented steering note, core gap map, and docs consolidation policy.
 - [Docs Eagle Eye Review](language/docs_eagle_eye_review.md): full-docs scan
   for hidden bridge gaps and next synthesis moves.
+- [Adversarial Design Critique](language/adversarial_design_critique.md):
+  hostile review of feature and global-language failure modes.
 - [Spec Readiness Map](language/spec_readiness_map.md): promotion workflow and
   coverage map for converting research, convenience notes, feature docs, and
   implementation plans into a future language specification.

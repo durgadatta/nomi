@@ -24,6 +24,11 @@ What should not become another parallel spec?
 For the promotion workflow from research to spec, see
 [Spec Readiness Map](spec_readiness_map.md).
 
+For the deliberately hostile version of this review, see
+[Adversarial Design Critique](adversarial_design_critique.md). The eagle-eye
+review names bridge gaps; the adversarial critique names how the language could
+fail even if the bridge gaps are addressed.
+
 ## What Is Strong
 
 | Strength | Why it matters | Active home |

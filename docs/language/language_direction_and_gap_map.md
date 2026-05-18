@@ -19,6 +19,8 @@ Nomi's docs already contain a strong semantic spine:
   research priorities.
 - [Docs Eagle Eye Review](docs_eagle_eye_review.md) scans the full docs tree
   for hidden bridge gaps, duplicated pressure, and planning priorities.
+- [Adversarial Design Critique](adversarial_design_critique.md) stress-tests
+  the global design and names feature-level failure modes.
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) groups
   cross-language syntax ideas by normal form.
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how
