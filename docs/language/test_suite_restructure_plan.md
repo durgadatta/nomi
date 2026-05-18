@@ -413,6 +413,9 @@ Status:
 - Done: null/safe-navigation runtime tests moved from
   `functional/test_nomi_null_convenience.py` to
   `features/absence_result/test_null_convenience_runtime.py`.
+- Done: pattern-convenience runtime tests moved from
+  `functional/test_nomi_pattern_convenience.py` to
+  `features/patterns/test_pattern_convenience_runtime.py`.
 
 Exit gate:
 
@@ -421,9 +424,7 @@ Exit gate:
 
 Next candidates:
 
-- `functional/test_nomi_pattern_convenience.py` and
-  `functional/test_nomi_unless.py` -> `features/patterns/` or
-  `features/flow/` depending on ownership.
+- `functional/test_nomi_unless.py` -> `features/flow/`.
 
 ### Phase 3: Introduce Feature Packets For New Work
 
