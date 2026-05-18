@@ -14,12 +14,16 @@ expressed through this order.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from prototype.grammar.layer import LayerTransform
     from prototype.parser.nomi.desugar.base import BaseDesugarer
+
+
+ALLOWED_LAYERS = ("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7")
+SUGAR_LAYER = "L4"
 
 
 @dataclass(frozen=True)
@@ -35,6 +39,13 @@ class SyntaxFeature:
     name: str
     description: str
     status: str = "implemented"
+    layer: str = ""
+    semantic_forms: tuple[str, ...] = ()
+    reduces_to: tuple[str, ...] = ()
+    runtime_hooks_allowed: str = "none"
+    backend_requirements: tuple[str, ...] = ()
+    docs: tuple[str, ...] = ()
+    tests: tuple[str, ...] = ()
     grammar_layers: tuple[str, ...] = ()
     layer_transforms: tuple = ()
     lowering_mixins: tuple[str, ...] = ()
@@ -56,6 +67,10 @@ class SyntaxFeature:
 _expression_precedence = SyntaxFeature(
     name="expression-precedence",
     description="Reorganise flat bin_expr parse tree into correct precedence/associativity",
+    layer="L3",
+    semantic_forms=("expression",),
+    reduces_to=("precedence-normalized-expression-tree",),
+    docs=("docs/language/core_layer_separation_plan.md",),
     layer_transforms=(
         # Lazy-imported in assemble.py to break circular dependency.
         "prototype.parser.nomi.desugar.parse_tree_precedence.ExpressionLayer",
@@ -68,6 +83,11 @@ _expression_precedence = SyntaxFeature(
 _piecewise_functions = SyntaxFeature(
     name="piecewise-functions",
     description="Haskell-style f(p)=e piecewise function definitions via match dispatch",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function", "pattern", "match"),
+    reduces_to=("canonical-function", "match-dispatch"),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_equations_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
 )
 
@@ -77,6 +97,11 @@ _piecewise_functions = SyntaxFeature(
 _where_clauses = SyntaxFeature(
     name="where-clauses",
     description="Postfix where: blocks that bind local definitions after an expression",
+    layer=SUGAR_LAYER,
+    semantic_forms=("binding", "function"),
+    reduces_to=("local-binding-rewrite",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_where_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.where_clause.WhereClause",),
 )
 
@@ -86,6 +111,11 @@ _where_clauses = SyntaxFeature(
 _underscore_lambdas = SyntaxFeature(
     name="underscore-lambdas",
     description="Scala-style _.attr and _ + 1 anonymous function shorthand",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function",),
+    reduces_to=("canonical-function-literal",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_holes_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.underscore_lambda.UnderscoreLambda",),
 )
 
@@ -95,6 +125,11 @@ _underscore_lambdas = SyntaxFeature(
 _positional_holes = SyntaxFeature(
     name="positional-holes",
     description="$1, $name positional hole syntax for implicit lambda parameters",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function",),
+    reduces_to=("canonical-function-literal",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_holes_runtime.py",),
     desugar_passes=("prototype.parser.nomi.desugar.positional_hole.PositionalHole",),
 )
 
@@ -104,6 +139,9 @@ _positional_holes = SyntaxFeature(
 _augassign = SyntaxFeature(
     name="aug-assign-desugar",
     description="Desugar x += 1 into x = x + 1 in the AST",
+    layer=SUGAR_LAYER,
+    semantic_forms=("binding",),
+    reduces_to=("assignment", "binary-operation"),
     desugar_passes=("prototype.parser.nomi.desugar.augassign.AugAssign",),
 )
 
@@ -113,6 +151,9 @@ _augassign = SyntaxFeature(
 _assert = SyntaxFeature(
     name="assert-desugar",
     description="Desugar assert cond into if not cond: raise AssertionError",
+    layer=SUGAR_LAYER,
+    semantic_forms=("diagnostic", "branch"),
+    reduces_to=("branch", "raise"),
     desugar_passes=("prototype.parser.nomi.desugar.assert_.Assert",),
 )
 
@@ -122,6 +163,9 @@ _assert = SyntaxFeature(
 _decorator = SyntaxFeature(
     name="decorator-desugar",
     description="Desugar @d f() into f = d(f) after the function definition",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function", "call", "binding"),
+    reduces_to=("function-definition", "call", "binding"),
     desugar_passes=("prototype.parser.nomi.desugar.decorator.Decorator",),
 )
 
@@ -131,6 +175,9 @@ _decorator = SyntaxFeature(
 _pass = SyntaxFeature(
     name="pass-desugar",
     description="Desugar pass into Expr(Constant(0))",
+    layer=SUGAR_LAYER,
+    semantic_forms=("statement",),
+    reduces_to=("no-op-expression",),
     desugar_passes=("prototype.parser.nomi.desugar.pass_.Pass",),
 )
 
@@ -140,6 +187,9 @@ _pass = SyntaxFeature(
 _with = SyntaxFeature(
     name="with-desugar",
     description="Desugar with ctx as x: B into try/except/else",
+    layer=SUGAR_LAYER,
+    semantic_forms=("resource-policy", "branch", "exception"),
+    reduces_to=("try-finally-resource-protocol",),
     desugar_passes=("prototype.parser.nomi.desugar.with_.With",),
 )
 
@@ -149,6 +199,9 @@ _with = SyntaxFeature(
 _fstring = SyntaxFeature(
     name="fstring-desugar",
     description="Desugar f'{x}' into string concatenation and format() calls",
+    layer=SUGAR_LAYER,
+    semantic_forms=("string", "call"),
+    reduces_to=("string-concatenation", "format-call"),
     desugar_passes=("prototype.parser.nomi.desugar.fstring.FString",),
 )
 
@@ -161,84 +214,153 @@ _fstring = SyntaxFeature(
 _implicit_mul = SyntaxFeature(
     name="implicit-multiplication",
     description="Lower implicit multiplication (2x → 2 * x) in the Lark tree",
+    layer=SUGAR_LAYER,
+    semantic_forms=("expression",),
+    reduces_to=("binary-multiplication",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/math/test_implicit_mul_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.implicit_multiplication.ImplicitMulMixin",),
 )
 
 _type_alias = SyntaxFeature(
     name="type-alias-lowering",
     description="Lower type X = Y to an AST assignment",
+    layer="L3",
+    semantic_forms=("type-alias", "binding"),
+    reduces_to=("binding",),
+    docs=("docs/convenience/data_and_types.md",),
+    tests=("prototype/tests/features/data/test_type_alias_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.type_alias.TypeAliasMixin",),
 )
 
 _if_let = SyntaxFeature(
     name="if-let-lowering",
     description="Lower if pat = expr: body into a match statement",
+    layer=SUGAR_LAYER,
+    semantic_forms=("pattern", "match", "branch"),
+    reduces_to=("match-statement",),
+    docs=("docs/convenience/patterns.md",),
     lowering_mixins=("prototype.parser.nomi.lowering.if_let.IfLetMixin",),
 )
 
 _try_expr = SyntaxFeature(
     name="try-expr-lowering",
     description="Lower try body except E: handler into an IIFE",
+    layer=SUGAR_LAYER,
+    semantic_forms=("absence-result", "exception"),
+    reduces_to=("try-statement", "function-call"),
+    docs=("docs/convenience/absence_and_result.md",),
+    tests=("prototype/tests/features/absence_result/test_try_expr_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.try_expr.TryExprMixin",),
 )
 
 _match_expr = SyntaxFeature(
     name="match-expr-lowering",
     description="Lower match value: case pat => expr into an IIFE",
+    layer=SUGAR_LAYER,
+    semantic_forms=("match", "pattern"),
+    reduces_to=("match-statement", "function-call"),
+    docs=("docs/convenience/patterns.md",),
     lowering_mixins=("prototype.parser.nomi.lowering.match_expr.MatchExprMixin",),
 )
 
 _where_clause_lowering = SyntaxFeature(
     name="where-clause-lowering",
     description="Lower where: blocks by tagging _nomi_where_body for the desugar pass",
+    layer=SUGAR_LAYER,
+    semantic_forms=("binding", "function"),
+    reduces_to=("local-binding-rewrite",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_where_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.where_clause.WhereClauseMixin",),
 )
 
 _positional_hole_lowering = SyntaxFeature(
     name="positional-hole-lowering",
     description="Lower $1, $name hole syntax in expressions",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function",),
+    reduces_to=("canonical-function-literal",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_holes_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.positional_hole.PositionalHoleMixin",),
 )
 
 _compose_lowering = SyntaxFeature(
     name="compose-lowering",
     description="Lower >>> and <<< composition operators",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function", "call"),
+    reduces_to=("canonical-function-literal", "nested-call"),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_composition_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.compose.ComposeMixin",),
 )
 
 _defer_lowering = SyntaxFeature(
     name="defer-lowering",
     description="Lower defer stmt to _nomi_defer attribute on statements",
+    layer=SUGAR_LAYER,
+    semantic_forms=("block", "resource-policy"),
+    reduces_to=("function-body-cleanup-policy",),
+    docs=("docs/convenience/absence_and_result.md", "docs/features/block_calls_feature.md"),
+    tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.defer.DeferMixin",),
 )
 
 _func_equation_lowering = SyntaxFeature(
     name="func-equation-lowering",
     description="Lower f(p)=e equation definitions to FunctionDef",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function", "pattern", "match"),
+    reduces_to=("canonical-function", "match-dispatch"),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_equations_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.func_equation.FuncEquationMixin",),
 )
 
 _section_lowering = SyntaxFeature(
     name="sections-lowering",
     description="Lower (+2), (2*), (+) operator sections to lambdas",
+    layer=SUGAR_LAYER,
+    semantic_forms=("function",),
+    reduces_to=("canonical-function-literal",),
+    docs=("docs/convenience/functions.md",),
+    tests=("prototype/tests/features/functions/test_composition_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.sections.SectionMixin",),
 )
 
 _func_expr_lowering = SyntaxFeature(
     name="func-expr-lowering",
     description="Lower (x, y) => expr arrow functions to FunctionDef",
+    layer="L3",
+    semantic_forms=("function",),
+    reduces_to=("canonical-function-literal",),
+    docs=("docs/convenience/functions.md",),
     lowering_mixins=("prototype.parser.nomi.lowering.func_expr.FuncExprMixin",),
 )
 
 _block_call_lowering = SyntaxFeature(
     name="block-call-lowering",
     description="Lower f(x): body block-call syntax to BlockCall surface node",
+    layer="L3",
+    semantic_forms=("block", "call"),
+    reduces_to=("block-call",),
+    runtime_hooks_allowed="semantic",
+    docs=("docs/features/block_calls_feature.md",),
+    tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
 )
 
 _data_decl_lowering = SyntaxFeature(
     name="data-decl-lowering",
     description="Lower data Name: fields... to a ClassDef with __init__, __repr__, __eq__",
+    layer="L3",
+    semantic_forms=("data", "binding"),
+    reduces_to=("data-constructor", "field-bindings"),
+    runtime_hooks_allowed="backend-compat",
+    docs=("docs/convenience/data_and_types.md",),
+    tests=("prototype/tests/features/data/test_declarations_runtime.py",),
     lowering_mixins=("prototype.parser.nomi.lowering.data_decl.DataDeclMixin",),
 )
 

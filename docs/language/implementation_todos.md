@@ -206,13 +206,13 @@ directories wholesale.
 - [x] Add the core-layer plan and link it from the docs entry point.
 - [x] Update orientation docs and agent skills with the L0-L7 vocabulary and
   eval-separation guardrail.
-- [ ] Extend `prototype/syntax/features.py` so `SyntaxFeature` can declare:
+- [x] Extend `prototype/syntax/features.py` so `SyntaxFeature` can declare:
   layer, semantic forms, reduction target, runtime-hook policy, backend
   requirements, docs, and tests.
-- [ ] Add contract tests that every builtin feature declares a layer.
-- [ ] Add contract tests that every L4 sugar feature declares a reduction
+- [x] Add contract tests that every builtin feature declares a layer.
+- [x] Add contract tests that every L4 sugar feature declares a reduction
   target and no permanent eval requirement.
-- [ ] Classify existing builtin features using the first draft in
+- [x] Classify existing builtin features using the first draft in
   `core_layer_separation_plan.md`.
 - [ ] Add a passive `prototype/syntax/core.py` or `prototype/core/ir.py`
   skeleton with L1 dataclasses for Module, Literal, Load, Bind, Function,
