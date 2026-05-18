@@ -419,6 +419,9 @@ Status:
 - Done: `unless` and postfix conditional runtime tests moved from
   `functional/test_nomi_unless.py` to
   `features/flow/test_conditionals_runtime.py`.
+- Done: constrained-parameter runtime tests moved from
+  `functional/test_parameter_constraints.py` to
+  `features/binding_constraints/test_parameter_constraints_runtime.py`.
 
 Exit gate:
 
