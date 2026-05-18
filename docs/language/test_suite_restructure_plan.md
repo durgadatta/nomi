@@ -471,6 +471,15 @@ Exit gate:
 - `e2e/` means "whole surface works," while `contracts/` means "public seam
   stayed stable."
 
+Status:
+
+- Done: parser usage/cache/grammar checks moved from
+  `functional/test_nomi_parser.py` to
+  `contracts/test_nomi_parser_contract.py`.
+- Done: parser-output/interpreter compatibility checks moved from
+  `e2e/test_parser_interpreter_contract.py` to
+  `contracts/test_parser_interpreter_contract.py`.
+
 ### Phase 5: Rationalize Regression Snapshots
 
 Keep snapshots, but make their scope visible:
