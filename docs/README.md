@@ -101,6 +101,8 @@ Target programs:
 
 - [Target Program Fixtures](language/target_program_fixtures.md):
   aspirational task-sized programs.
+- [Target Demo Script](language/demo_target.nomi): compact target-only
+  `.nomi` script for the future operational spec; not expected to parse today.
 - [Target Language Tour](language/target_language_tour.md): large whole-program
   coherence target.
 

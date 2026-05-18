@@ -31,6 +31,12 @@ reduce to one of Nomi's normal forms:
 - data boundary;
 - explanation.
 
+For a smaller script-shaped target that is easier to compare against the
+future operational spec, see [Target Demo Script](demo_target.nomi). The demo
+uses the same design choices as this tour, but keeps to ordinary language
+cases: config, data boundaries, functions, flow, result handling, block
+policies, request decoding, and explanation.
+
 The goal is not to stack syntax from many languages. The goal is to synthesize
 the useful pressures behind Python, ML-family languages, Rust/Swift/Gleam,
 Ruby/Kotlin/Julia blocks, SQL/dataframe flow, CUE/Pkl/Pydantic boundaries,

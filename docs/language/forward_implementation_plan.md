@@ -16,6 +16,7 @@ Nomi now has a richer design spine:
 - [Spec Readiness Map](spec_readiness_map.md)
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md)
 - [Target Program Fixtures](target_program_fixtures.md)
+- [Target Demo Script](demo_target.nomi)
 - [Target Language Tour](target_language_tour.md)
 - [Design Proposal Template](design_proposal_template.md)
 - [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md)
@@ -112,6 +113,8 @@ Caveats:
   semantic changes.
 - Some docs intentionally describe future behavior; do not "correct" them down
   to current implementation without preserving the design target.
+- `docs/language/demo_target.nomi` is target-only. Do not move it into
+  `samples/` until the syntax is parser/runtime/test covered.
 
 Exit gate:
 

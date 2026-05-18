@@ -48,7 +48,7 @@ see [Spec Readiness Map](spec_readiness_map.md).
   `spec_readiness_map.md` as the consolidation home until the table needs its
   own file. It should separate parser support, lowering, runtime behavior,
   tests, samples, docs status, and target-only syntax.
-- [ ] Add target Nomi programs that intentionally use not-yet-implemented
+- [~] Add target Nomi programs that intentionally use not-yet-implemented
   features: explicit data decoding, algebraic data, pipelines, block policies,
   symbolic rewrite, table queries, and examples.
 - [ ] Keep `target_program_fixtures.md` current as the docs-only home for
@@ -58,8 +58,11 @@ see [Spec Readiness Map](spec_readiness_map.md).
   `samples/demo_terse.nomi` with the compressed memory-refresh example. When a
   feature belongs in interpreter regression coverage, also update the relevant
   file under `prototype/tests/data/sample_sources/interpreter/`.
-- [ ] Add a small design-fixture file that contains desired future syntax even
+- [x] Add a small design-fixture file that contains desired future syntax even
   before all examples parse.
+  (`docs/language/demo_target.nomi` is the compact target-only script for
+  ordinary language cases. It must stay outside `samples/` until it parses and
+  runs under regression tests.)
 - [ ] Add a test matrix that distinguishes currently supported, planned, and
   intentionally rejected syntax.
 - [ ] Add a first-hour Nomi teaching path that excludes advanced layers and

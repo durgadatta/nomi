@@ -1,0 +1,255 @@
+# Target-only Nomi demo.
+# Status: aspirational design fixture, not expected to parse today.
+#
+# This file is a compact north-star script for the operational language spec.
+# Runnable samples belong in samples/*.nomi only after parser, lowering,
+# runtime, tests, and snapshots agree.
+
+module examples.people_import
+
+from nomi.cli import cli_args
+from nomi.collections import count, group, select, sort, where
+from nomi.config import config, env, toml
+from nomi.csv import read_csv
+from nomi.files import Path, exists, open
+from nomi.http import Request, Response, bad_request, json
+from nomi.option import Option, Some, none
+from nomi.result import Error, Err, Ok, Result, collect_results
+from nomi.secrets import Secret
+from nomi.system import World
+from nomi.table import Table
+from nomi.text import contains, normalize_space, trim
+from nomi.time import Duration, Instant, now
+from nomi.transactions import transaction
+
+
+# ---------------------------------------------------------------------------
+# 1. External input becomes trusted data through explicit decode boundaries.
+# ---------------------------------------------------------------------------
+
+data ImportConfig:
+    input:Path, exists(input)
+    output:Path
+    min_age:int, min_age >= 0 = 13
+    database_url:Secret[str]
+    batch_size:int, batch_size > 0 = 500
+    stale_after:Duration = 30 days
+
+    examples:
+        {input: "people.csv", output: "people.json", database_url: "local"} =>
+            ImportConfig(
+                input=Path("people.csv"),
+                output=Path("people.json"),
+                database_url=Secret("local"),
+            )
+
+
+func load_config(argv:list[str], world:World) -> Result[ImportConfig, Error]:
+    source =
+        config.defaults
+        |> config.merge(toml("people-import.toml"), optional=true)
+        |> config.merge(env(world, prefix="PEOPLE_"))
+        |> config.merge(cli_args(argv))
+
+    return ImportConfig.decode(source).map_error(_.redact_secrets())
+
+
+# ---------------------------------------------------------------------------
+# 2. Owned domain values use one binding-and-constraint story.
+# ---------------------------------------------------------------------------
+
+data Email:
+    value:str, contains(value, "@") else "Email must contain @"
+
+    func decode(raw:any) -> Result[Email, Error]:
+        text = str.decode(raw).map(normalize_email)
+
+        match text:
+            case Ok(value):
+                return Ok(Email(value))
+            case Err(error):
+                return Err(error)
+
+
+data Person:
+    name:str, len(trim(name)) > 0 else "Name is required"
+    email:Email
+    age:int, age >= 0
+    created_at:Instant
+    tags:list[str] = []
+    manager:Option[Email] = none
+
+
+data ImportRow:
+    name:str
+    email:any
+    age:any
+    created_at:Instant = now()
+    tags:list[str] = []
+    manager:any = none
+
+
+data ImportReport:
+    received:int, received >= 0
+    accepted:int, accepted >= 0
+    rejected:int, rejected >= 0
+    output:Path
+
+
+# ---------------------------------------------------------------------------
+# 3. Small functions are ordinary. Examples are docs, checks, and explanation.
+# ---------------------------------------------------------------------------
+
+func normalize_email(email:str) -> str:
+    examples:
+        " ADA@EXAMPLE.COM " => "ada@example.com"
+        "a@b.test" => "a@b.test"
+
+    return email.strip().lower()
+
+
+func parse_age(raw:any) -> Result[int, Error]:
+    match int.decode(raw):
+        case Ok(age) if age >= 0:
+            return Ok(age)
+        case Ok(age):
+            return Err(Error("Age must be non-negative", value=age))
+        case Err(error):
+            return Err(error)
+
+
+func parse_optional_email(raw:any) -> Result[Option[Email], Error]:
+    match raw:
+        case none:
+            return Ok(none)
+        case "":
+            return Ok(none)
+        case value:
+            return Email.decode(value).map(Some)
+
+
+func row_to_person(row:ImportRow) -> Result[Person, Error]:
+    match Email.decode(row.email):
+        case Err(error):
+            return Err(error.at("email"))
+        case Ok(email):
+            pass
+
+    match parse_age(row.age):
+        case Err(error):
+            return Err(error.at("age"))
+        case Ok(age):
+            pass
+
+    match parse_optional_email(row.manager):
+        case Err(error):
+            return Err(error.at("manager"))
+        case Ok(manager):
+            pass
+
+    return Ok(Person(
+        name=normalize_space(row.name),
+        email=email,
+        age=age,
+        created_at=row.created_at,
+        tags=row.tags,
+        manager=manager,
+    ))
+
+
+# ---------------------------------------------------------------------------
+# 4. Flow stays left-to-right. Failures remain Result values until matched.
+# ---------------------------------------------------------------------------
+
+func import_people(config:ImportConfig) -> Result[ImportReport, Error]:
+    trace "import people":
+        rows =
+            read_csv(config.input)
+            |> select(ImportRow.decode)
+            |> collect_results
+
+        match rows:
+            case Err(error):
+                return Err(error)
+            case Ok(decoded_rows):
+                pass
+
+        people =
+            decoded_rows
+            |> select(row_to_person)
+            |> collect_results
+
+        match people:
+            case Err(error):
+                return Err(error)
+            case Ok(all_people):
+                eligible =
+                    all_people
+                    |> where(_.age >= config.min_age)
+                    |> sort(_.name)
+
+                using(open(config.output, mode="write")) -> file:
+                    file.write_json(eligible)
+
+                return Ok(ImportReport(
+                    received=count(decoded_rows),
+                    accepted=count(eligible),
+                    rejected=count(decoded_rows) - count(eligible),
+                    output=config.output,
+                ))
+
+
+func summarize_by_tag(people:list[Person]) -> Table:
+    return people |> group(by=_.tags, count=count)
+
+
+# ---------------------------------------------------------------------------
+# 5. Request handlers are just another data boundary.
+# ---------------------------------------------------------------------------
+
+data SignupRequest:
+    name:str, len(trim(name)) > 0 else "Name is required"
+    email:Email
+    age:int, age >= 13 else "Must be at least 13"
+    manager:Option[Email] = none
+
+
+data SignupResponse:
+    name:str
+    email:str
+    manager:str
+
+
+func signup_handler(request:Request) -> Response:
+    match SignupRequest.decode(request.json):
+        case Err(error):
+            return bad_request(explain(error))
+        case Ok(input):
+            response = SignupResponse(
+                name=input.name,
+                email=input.email.value,
+                manager=input.manager?.value ?? "unassigned",
+            )
+            return json(response)
+
+
+# ---------------------------------------------------------------------------
+# 6. One operational entry point composes config, effects, results, and explain.
+# ---------------------------------------------------------------------------
+
+func main(argv:list[str], world:World) -> Result[None, Error]:
+    match load_config(argv, world):
+        case Err(error):
+            explain(error)
+            return Err(error)
+        case Ok(config):
+            pass
+
+    transaction("people import"):
+        match import_people(config):
+            case Ok(report):
+                print("Imported {report.accepted}/{report.received} people")
+                return Ok(none)
+            case Err(error):
+                explain(error)
+                return Err(error)

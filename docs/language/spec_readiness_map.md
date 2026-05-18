@@ -28,6 +28,39 @@ This map keeps that chain explicit. It answers:
 Use this file before adding broad synthesis docs. Prefer improving one existing
 artifact in the chain above.
 
+## Operational Spec Convergence Loop
+
+The long-term target is one operational language specification, not a permanent
+mesh of partially overlapping design notes. Treat each design pass as a loop:
+
+```text
+research evidence
+-> global/local interaction map
+-> focused feature packet
+-> target demo or fixture
+-> language_spec section
+-> implementation slice
+-> runnable sample and tests
+```
+
+Each artifact has a distinct job:
+
+| Artifact | Job | Promotion rule |
+| --- | --- | --- |
+| Research deep dive | Preserve source-language evidence and community lessons. | Promote only reduced decisions, not catalogues. |
+| [Global Feature Interaction Map](../convenience/interaction_map.md) | Catch cross-feature friction before local syntax hardens. | Use it when a feature touches more than one normal form. |
+| Focused feature packet | Specify syntax, reduction, diagnostics, interactions, and status. | Required before normative spec text hardens. |
+| [Target Program Fixtures](target_program_fixtures.md) | Keep ordinary tasks short and comparable. | Use for local pressure and open questions. |
+| [Target Demo Script](demo_target.nomi) | Show one compact future program across typical cases. | Update when syntax decisions change globally. |
+| [Target Language Tour](target_language_tour.md) | Stress-test whole-program coherence at larger scale. | Keep aspirational; do not treat as runnable proof. |
+| `language_spec.md` | Define the user-facing contract. | Promote only design-settled or clearly marked forward-looking behavior. |
+| `samples/*.nomi` | Demonstrate currently runnable behavior. | Add only after parser, runtime, tests, and snapshots agree. |
+
+This loop is intentionally iterative. A target demo may reveal a conflict that
+sends a feature back to the interaction map. An implementation slice may reveal
+diagnostic or parser friction that sends wording back to the feature packet.
+The goal is convergence, not one perfect pass.
+
 ## Document Roles
 
 | Role | Authority | Main files | What belongs there |

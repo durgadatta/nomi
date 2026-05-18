@@ -12,6 +12,11 @@
 > unrelated conveniences from other languages. New syntax is admitted only when
 > it reduces to a small normal form that users can recognize elsewhere in the
 > language.
+>
+> Long term, this should become the single operational language specification.
+> Research, convenience notes, feature docs, and target fixtures feed this
+> file; they should not remain parallel authorities once a decision is
+> spec-ready.
 
 ## 1. Design Target
 
@@ -66,6 +71,11 @@ that all of them already exist.
 For implementation details — grammar interactions, AST quirks, desugar pass
 invariants, source-span wiring, and features that failed or were deferred — see
 [Implementation Learnings](../convenience/implementation_learnings.md).
+
+For target-only whole-language examples, see
+[Target Demo Script](demo_target.nomi) and
+[Target Language Tour](target_language_tour.md). These artifacts test whether
+the spec composes coherently, but they are not runnable sample commitments.
 
 For the extension path (how to add new syntax in the current prototype), see
 the [CLAUDE.md](../../CLAUDE.md) section "Adding new syntax" and the

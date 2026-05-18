@@ -28,6 +28,11 @@ For a larger single-file north-star program, read
 and task-focused; the tour shows how the same decisions compose across a
 larger program.
 
+For a medium-sized script-shaped target, read
+[Target Demo Script](demo_target.nomi). It is intentionally not in `samples/`
+because it uses aspirational syntax. Move pieces into runnable samples only
+after the implementation and regression snapshots support them.
+
 Each fixture should answer:
 
 ```text
