@@ -26,6 +26,9 @@ from .piecewise import PiecewiseFunction
 class WhereClause(BaseDesugarer):
     phase = Phase.semantic
     depends_on = (PiecewiseFunction,)
+    input_node_types = (ast.Assign, ast.Expr, ast.FunctionDef)
+    produced_node_types = (ast.FunctionDef, ast.Return, ast.Call, ast.Assign, ast.Expr)
+    normal_forms = ("local-binding-rewrite", "function-call")
     """Desugar ``_nomi_where_body`` on statements into wrapper functions."""
 
     _counter = 0

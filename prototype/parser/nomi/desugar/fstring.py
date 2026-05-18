@@ -12,7 +12,10 @@ class FString(NomiDesugarer):
     f"{x!r}"         →  format(repr(x), '')
     """
 
+    input_node_types = (ast.JoinedStr, ast.FormattedValue)
     removed_node_types = (ast.JoinedStr, ast.FormattedValue,)
+    produced_node_types = (ast.BinOp, ast.Call, ast.Constant)
+    normal_forms = ("string-concatenation", "format-call")
 
     def _format_call(self, value, format_spec):
         if format_spec is not None:

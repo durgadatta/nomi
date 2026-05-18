@@ -32,6 +32,9 @@ _DOLLAR_NAME_RE = re.compile(r'^\$[^0-9\W]\w*$')
 
 class PositionalHole(BaseDesugarer):
     phase = Phase.syntax
+    input_node_types = (ast.Name,)
+    produced_node_types = (ast.FunctionDef, ast.Return)
+    normal_forms = ("canonical-function-literal",)
     """Replace ``$N`` and ``$name`` holes with anonymous functions."""
 
     def _make_lambda(self, body, param_names):

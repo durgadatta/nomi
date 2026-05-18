@@ -7,7 +7,10 @@ class AugAssign(NomiDesugarer):
     """x += y  →  x = x + y"""
     phase = Phase.syntax
 
+    input_node_types = (ast.AugAssign,)
     removed_node_types = (ast.AugAssign,)
+    produced_node_types = (ast.Assign, ast.BinOp)
+    normal_forms = ("assignment", "binary-operation")
 
     def _to_load(self, node):
         if isinstance(node, ast.Name):

@@ -7,7 +7,10 @@ class Assert(NomiDesugarer):
     """assert cond [, msg]  →  if not cond: raise AssertionError([msg])"""
     phase = Phase.semantic
 
+    input_node_types = (ast.Assert,)
     removed_node_types = (ast.Assert,)
+    produced_node_types = (ast.If, ast.Raise, ast.Call, ast.UnaryOp)
+    normal_forms = ("branch", "raise")
 
     def visit_Assert(self, node):
         exc_args = [node.msg] if node.msg else []

@@ -24,6 +24,9 @@ from .base import BaseDesugarer, Phase
 class PiecewiseFunction(BaseDesugarer):
     """Merge adjacent func_equation FunctionDefs into one match-dispatch function."""
     phase = Phase.syntax
+    input_node_types = (ast.FunctionDef,)
+    produced_node_types = (ast.FunctionDef, ast.Match, ast.match_case)
+    normal_forms = ("canonical-function", "match-dispatch")
 
     def visit_Module(self, node):
         self.generic_visit(node)

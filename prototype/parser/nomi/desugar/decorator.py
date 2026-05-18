@@ -5,6 +5,9 @@ from .base import NomiDesugarer, Phase
 
 class Decorator(NomiDesugarer):
     phase = Phase.semantic
+    input_node_types = (ast.FunctionDef, ast.ClassDef)
+    produced_node_types = (ast.Assign, ast.Call)
+    normal_forms = ("function-definition", "call", "binding")
     """"@deco\\nfunc f(): body"  →  "func f(): body\\nf = deco(f)"
 
     Decorators on class definitions are desugared the same way.

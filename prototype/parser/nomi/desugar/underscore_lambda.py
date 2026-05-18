@@ -14,6 +14,9 @@ from .base import BaseDesugarer, Phase
 
 class UnderscoreLambda(BaseDesugarer):
     phase = Phase.syntax
+    input_node_types = (ast.Name,)
+    produced_node_types = (ast.FunctionDef, ast.Return)
+    normal_forms = ("canonical-function-literal",)
     """Replace ``_`` holes in expression position with arrow functions.
 
     A ``_`` in ``Load`` context is a hole **unless** ``_`` was previously

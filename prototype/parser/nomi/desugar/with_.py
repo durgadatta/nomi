@@ -21,7 +21,17 @@ class With(NomiDesugarer):
     Multiple items nest outermost-first.
     """
 
+    input_node_types = (ast.With,)
     removed_node_types = (ast.With,)
+    produced_node_types = (
+        ast.Assign,
+        ast.Try,
+        ast.ExceptHandler,
+        ast.If,
+        ast.Raise,
+        ast.Call,
+    )
+    normal_forms = ("try-finally-resource-protocol",)
 
     _counter = 0
 

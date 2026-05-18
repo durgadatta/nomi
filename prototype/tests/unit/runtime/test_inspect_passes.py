@@ -6,7 +6,8 @@ def test_inspect_returns_desugar_pass_table():
 
     assert isinstance(result, InspectionResult)
     assert result.stage == "passes"
-    assert "| pass | phase | feature | profiles |" in result.output
+    assert "| pass | phase | feature | profiles | inputs |" in result.output
     assert "PiecewiseFunction" in result.output
+    assert "canonical-function, match-dispatch" in result.output
     assert "WhereClause" in result.output
     assert result.timings["total"] >= 0

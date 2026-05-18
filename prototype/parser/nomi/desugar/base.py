@@ -27,13 +27,21 @@ class BaseDesugarer(ast.NodeTransformer):
     - ``phase``: the Phase this pass runs in (default: syntax).
     - ``depends_on``: tuple of BaseDesugarer subclasses that must run
       before this pass.
+    - ``input_node_types``: tuple of AST node types this pass expects to
+      consume or inspect.
     - ``removed_node_types``: tuple of AST node types that become
       unreachable after this pass.
+    - ``produced_node_types``: tuple of AST node types this pass may synthesize
+      as its lowered representation.
+    - ``normal_forms``: tuple of Nomi normal-form names produced by the pass.
     """
 
     phase: Phase = Phase.syntax
     depends_on: tuple = ()
+    input_node_types: tuple = ()
     removed_node_types: tuple = ()
+    produced_node_types: tuple = ()
+    normal_forms: tuple[str, ...] = ()
 
     def generic_visit(self, node):
         node = super().generic_visit(node)

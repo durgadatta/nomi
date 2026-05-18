@@ -75,6 +75,33 @@ def _validate_pipeline(passes):
             errors.append(
                 f"Phase violation: {name} declares unknown phase {phase!r}."
             )
+        inputs = getattr(pass_cls, 'input_node_types', ())
+        if not inputs:
+            errors.append(
+                f"Metadata violation: {name} must declare input_node_types."
+            )
+        elif not all(isinstance(node_type, type) for node_type in inputs):
+            errors.append(
+                f"Metadata violation: {name} input_node_types must be types."
+            )
+        produced = getattr(pass_cls, 'produced_node_types', ())
+        if not produced:
+            errors.append(
+                f"Metadata violation: {name} must declare produced_node_types."
+            )
+        elif not all(isinstance(node_type, type) for node_type in produced):
+            errors.append(
+                f"Metadata violation: {name} produced_node_types must be types."
+            )
+        normal_forms = getattr(pass_cls, 'normal_forms', ())
+        if not normal_forms:
+            errors.append(
+                f"Metadata violation: {name} must declare normal_forms."
+            )
+        elif not all(isinstance(form, str) for form in normal_forms):
+            errors.append(
+                f"Metadata violation: {name} normal_forms must be strings."
+            )
         for dep in getattr(pass_cls, 'depends_on', ()):
             if dep not in seen:
                 errors.append(
@@ -164,30 +191,40 @@ def render_desugar_pass_table(profile: str | None = None) -> str:
             feature_by_pass[resolve_dotted(ref)] = feature
 
     rows = [
-        "| pass | phase | feature | profiles | removes | depends on |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| pass | phase | feature | profiles | inputs | removes | produces | normal forms | depends on |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for pass_cls in passes:
         feature = feature_by_pass.get(pass_cls)
+        inputs = ", ".join(
+            node_type.__name__ for node_type in pass_cls.input_node_types
+        ) or "-"
         removed = ", ".join(
             node_type.__name__ for node_type in pass_cls.removed_node_types
         ) or "-"
         depends_on = ", ".join(
             dependency.__name__ for dependency in pass_cls.depends_on
         ) or "-"
+        produces = ", ".join(
+            node_type.__name__ for node_type in pass_cls.produced_node_types
+        ) or "-"
+        normal_forms = ", ".join(pass_cls.normal_forms) or "-"
         profiles = (
             ", ".join(feature.desugar_profiles)
             if feature is not None
             else "-"
         )
         rows.append(
-            "| {pass_name} | {phase} | {feature} | {profiles} | "
-            "{removed} | {depends} |".format(
+            "| {pass_name} | {phase} | {feature} | {profiles} | {inputs} | {removed} | "
+            "{produces} | {normal_forms} | {depends} |".format(
                 pass_name=pass_cls.__name__,
                 phase=pass_cls.phase.value,
                 feature=feature.name if feature is not None else "-",
                 profiles=profiles,
+                inputs=inputs,
                 removed=removed,
+                produces=produces,
+                normal_forms=normal_forms,
                 depends=depends_on,
             )
         )

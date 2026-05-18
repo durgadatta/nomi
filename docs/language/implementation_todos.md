@@ -129,10 +129,11 @@ layers move from docs into implementation.
   (`BlockCall` and `lower_surface_to_python` done; `BindingTarget`, `PipeExpr`,
   `MatchExpr`, `DataDecl` pending.)
 - [x] Add declarative pass metadata for existing desugar passes: pass name,
-  feature owner, dependencies, removed nodes, produced nodes, normal form, and
-  diagnostics.
-  (`Phase` enum, `depends_on`, and `removed_node_types` on `BaseDesugarer`;
-  pipeline auto-derived from `BUILTIN_FEATURES`; dependencies validated at
+  feature owner, dependencies, input nodes, removed nodes, produced nodes,
+  normal forms, and inspection output.
+  (`Phase` enum, `depends_on`, `input_node_types`, `removed_node_types`,
+  `produced_node_types`, and `normal_forms` on `BaseDesugarer`; pipeline
+  auto-derived from `BUILTIN_FEATURES`; dependencies and metadata validated at
   import time; `_check_pass_invariants` validates `removed_node_types` after
   each pass. Dead `precedence.py` removed.)
 - [ ] Add feature-driven test templates that name parse snapshots, lowering
