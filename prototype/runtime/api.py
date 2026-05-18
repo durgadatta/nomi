@@ -119,6 +119,20 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"passes", "desugar_passes"}:
+        from prototype.parser.nomi.desugar.pipeline import render_desugar_pass_table
+
+        output = render_desugar_pass_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"core", "implementation_core"}:
         parser = pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source)

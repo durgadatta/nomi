@@ -76,7 +76,7 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-005 | Surface AST | 🟡 partial | Nomi syntax lowers directly into Python AST or custom attributes. | Add Nomi-owned surface nodes for syntax that Python AST cannot represent naturally. | `BlockCall` done with `lower_surface_to_python`; `PipeExpr`, `MatchExpr`, `BindingTarget`, `DataDecl` pending. |
 | NOMI-SUBSTRATE-006 | Core AST | 🔵 deferred | "Normal form" exists mostly in docs. | Add a small core AST matching binding, function, pattern, flow, block, result, boundary, explanation. | Deferred until surface nodes settle. |
 | NOMI-SUBSTRATE-007 | Python AST backend boundary | 🔵 deferred | Python AST is both IR and backend. | Keep Python AST as one backend while building a direct Nomi core interpreter over time. | Deferred until core AST exists. |
-| NOMI-SUBSTRATE-008 | Declarative lowering passes | 🟡 partial | ~~`DESUGAR_PASSES` is ordered manually.~~ | Passes declare name, dependencies, removed nodes, produced nodes, and normal forms. | `Phase` enum, `depends_on`, `removed_node_types` on `BaseDesugarer`; pipeline auto-derived from `BUILTIN_FEATURES`, phase-ordered, and validated at import time. Remaining: produced-node/normal-form metadata. |
+| NOMI-SUBSTRATE-008 | Declarative lowering passes | 🟡 partial | ~~`DESUGAR_PASSES` is ordered manually.~~ | Passes declare name, dependencies, removed nodes, produced nodes, and normal forms. | `Phase` enum, `depends_on`, `removed_node_types` on `BaseDesugarer`; pipeline auto-derived from `BUILTIN_FEATURES`, phase-ordered, validated, and inspectable with `--stage passes`. Remaining: produced-node/normal-form metadata. |
 | NOMI-SUBSTRATE-009 | Lowering invariant checks | ✅ done | ~~Reduced interpreter guards only Python AST node types removed by desugars.~~ | Check that no forbidden surface/core nodes survive each lowering phase. | `_check_pass_invariants` in `pipeline.py` validates after each pass that `removed_node_types` nodes are absent; unit-tested. |
 | NOMI-SUBSTRATE-010 | Block call representation | 🟡 partial | ~~Block bodies live inside `ast.keyword.value` as custom `Block` objects.~~ | Give block calls a Nomi-owned node, then lower to Python-compatible encoding. | `BlockCall` surface node exists with `lower()`; remaining: defer lowering until after desugar. |
 | NOMI-SUBSTRATE-011 | Binding target model | ⬜ pending | Assignment, parameters, patterns, fields, and block params do not yet share one node model. | Create one `BindingTarget` and `Constraint` representation reused across all name-introduction sites. | Prototype for annotated assignment first, then parameters and patterns. |
@@ -312,9 +312,10 @@ Tasks:
 
 - Add `PassInfo` metadata.
 - Wrap existing `DESUGAR_PASSES`.
-- Print pass list from inspection CLI.
-- Check `removed_node_types` after passes.
-- Later add dependencies and topological sorting.
+- [x] Print pass list from inspection CLI.
+- [x] Check `removed_node_types` after passes.
+- [x] Add dependencies and phase ordering.
+- Add produced-node and normal-form metadata.
 
 Risks:
 

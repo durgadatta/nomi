@@ -233,6 +233,8 @@ directories wholesale.
 - [x] Make desugar phases executable: pass order is now grouped by
   `syntax`, `semantic`, and `cleanup`, with dependency validation after
   phase ordering.
+- [x] Add a `passes` inspection stage that shows desugar pass order, phase,
+  feature owner, profiles, dependencies, and removed node types.
 - [ ] Use constrained binding as the first L2/L3 semantic-core migration
   candidate after metadata and passive Core IR exist.
 - [ ] Use `unless` or postfix conditional return as the first L4 sugar

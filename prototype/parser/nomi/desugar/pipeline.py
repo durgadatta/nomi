@@ -13,7 +13,12 @@ import ast
 import os
 import sys
 
-from prototype.syntax.features import DEFAULT_DESUGAR_PROFILE, get_desugar_passes
+from prototype.syntax.features import (
+    BUILTIN_FEATURES,
+    DEFAULT_DESUGAR_PROFILE,
+    get_desugar_passes,
+)
+from prototype.utils import resolve_dotted
 from .base import Phase
 
 _SHOULD_CHECK_INVARIANTS = os.environ.get(
@@ -144,3 +149,46 @@ def get_removed_node_types():
     for pass_cls in DESUGAR_PASSES:
         removed.update(pass_cls.removed_node_types)
     return removed
+
+
+def render_desugar_pass_table(profile: str | None = None) -> str:
+    """Return a compact table of active desugar passes and their contracts."""
+    passes = (
+        _order_passes_by_phase(get_desugar_passes(profile=profile))
+        if profile is not None
+        else DESUGAR_PASSES
+    )
+    feature_by_pass = {}
+    for feature in BUILTIN_FEATURES:
+        for ref in feature.desugar_passes:
+            feature_by_pass[resolve_dotted(ref)] = feature
+
+    rows = [
+        "| pass | phase | feature | profiles | removes | depends on |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for pass_cls in passes:
+        feature = feature_by_pass.get(pass_cls)
+        removed = ", ".join(
+            node_type.__name__ for node_type in pass_cls.removed_node_types
+        ) or "-"
+        depends_on = ", ".join(
+            dependency.__name__ for dependency in pass_cls.depends_on
+        ) or "-"
+        profiles = (
+            ", ".join(feature.desugar_profiles)
+            if feature is not None
+            else "-"
+        )
+        rows.append(
+            "| {pass_name} | {phase} | {feature} | {profiles} | "
+            "{removed} | {depends} |".format(
+                pass_name=pass_cls.__name__,
+                phase=pass_cls.phase.value,
+                feature=feature.name if feature is not None else "-",
+                profiles=profiles,
+                removed=removed,
+                depends=depends_on,
+            )
+        )
+    return "\n".join(rows)
