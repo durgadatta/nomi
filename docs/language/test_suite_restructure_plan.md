@@ -407,6 +407,9 @@ Status:
 - Done: data-declaration runtime tests moved from
   `functional/test_data_declarations.py` to
   `features/data/test_declarations_runtime.py`.
+- Done: range/collection-convenience runtime tests moved from
+  `functional/test_nomi_collection_convenience.py` to
+  `features/flow/test_range_runtime.py`.
 
 Exit gate:
 
@@ -415,7 +418,6 @@ Exit gate:
 
 Next candidates:
 
-- `functional/test_nomi_collection_convenience.py` -> `features/flow/`.
 - `functional/test_nomi_pattern_convenience.py` and
   `functional/test_nomi_unless.py` -> `features/patterns/` or
   `features/flow/` depending on ownership.
