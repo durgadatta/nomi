@@ -17,7 +17,7 @@
 | `contracts/` | Target home for stable public API and adapter contracts that do not need full e2e surfaces. |
 | `regression/` | Snapshot and broad-output drift checks. These are review gates, not the main edit loop. |
 | `e2e/` | CLI, web, notebook, report, and scenario tests that exercise user-facing surfaces end to end. |
-| `smoke/` | Tiny checkout-alive checks. This bucket is still hidden from default collection until the smoke phase promotes it. |
+| `smoke/` | Tiny checkout-alive checks collected by default and selectable with `pytest -m smoke`. |
 
 ## Interpreter Fixtures
 
@@ -63,9 +63,8 @@ pytest prototype/tests/e2e
 pytest
 ```
 
-`pytest -m smoke` is the target tiny confidence command. Until `smoke/` is
-promoted out of `collect_ignore`, run the existing smoke scripts manually or use
-the focused unit/e2e commands above.
+`pytest -m smoke` is the tiny confidence command. Smoke tests should stay
+assertion-based, avoid snapshots, and avoid writing local inspection artifacts.
 
 ## Migration Rules
 

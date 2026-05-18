@@ -1,48 +1,42 @@
-"""
-Smoke test: Exception handling (try/except/else/finally).
-
-Runs a few inline programs through the Python interpreter to quickly
-verify that exception matching, bare except, and else blocks work.
-
-Run manually::
-
-    python3 prototype/tests/smoke/test_exceptions.py
-"""
-
 import io
 import contextlib
+
+import pytest
+
 from prototype.interpreter.python.usage import run_eval_loop
 
+pytestmark = pytest.mark.smoke
 
-def _run_and_print(label, code):
-    print(f"\n=== {label} ===")
-    try:
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf):
-            run_eval_loop(code=code)
-        print(buf.getvalue(), end="")
-    except Exception as e:
-        print(f"ERROR: {e}")
+
+def _run_stdout(code):
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        run_eval_loop(code=code)
+    return buf.getvalue()
 
 
 def test_basic_matching():
-    _run_and_print("Basic exception matching", """
+    output = _run_stdout("""
 try:
     raise ValueError("test")
 except ValueError:
     print("Caught ValueError")
 """)
+    assert "Caught ValueError" in output
+
 
 def test_catch_as():
-    _run_and_print("Exception with 'as'", """
+    output = _run_stdout("""
 try:
     raise ValueError("test message")
 except ValueError as e:
     print(f"Caught with message: {e}")
 """)
+    assert "Caught with message: test message" in output
+
 
 def test_else_block():
-    _run_and_print("Try/except/else", """
+    output = _run_stdout("""
 try:
     print("No exception")
 except:
@@ -51,9 +45,12 @@ else:
     print("Else block executed")
 print("All tests passed")
 """)
+    assert "Else block executed" in output
+    assert "All tests passed" in output
+
 
 def test_if_raise():
-    _run_and_print("Conditional raise in try", """
+    output = _run_stdout("""
 total = 15
 try:
     if total > 10:
@@ -63,10 +60,4 @@ except ValueError as e:
     total = -1
 print(f"After try-except, total: {total}")
 """)
-
-
-if __name__ == "__main__":
-    test_basic_matching()
-    test_catch_as()
-    test_else_block()
-    test_if_raise()
+    assert "After try-except, total: -1" in output

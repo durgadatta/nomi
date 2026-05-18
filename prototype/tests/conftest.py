@@ -88,6 +88,3 @@ def pytest_generate_tests(metafunc):
 
 def pytest_configure(config):
     config._nomi_interpreter_modes = _resolve_modes(config, ALL_MODES)
-
-
-collect_ignore = ["smoke"]

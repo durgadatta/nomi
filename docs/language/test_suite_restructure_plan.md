@@ -421,6 +421,13 @@ Current `smoke/` tests are ignored by collection. Choose one:
 Preferred path: promote to marker-based smoke tests so there is a tiny
 first-line command.
 
+Status:
+
+- Done: `smoke/` is promoted into normal pytest collection and each smoke file
+  is marked with `pytest.mark.smoke`.
+- Done: smoke checks are assertion-based and no longer write manual inspection
+  artifacts.
+
 ## Feature Coverage Matrix
 
 The test restructure should feed the future feature/capability matrix from

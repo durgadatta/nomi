@@ -1,30 +1,10 @@
-"""
-Smoke test: Python interpreter evaluation.
+import pytest
 
-Runs a sample Python source file through the custom Python interpreter
-and prints the resulting global environment.
-
-Run manually::
-
-    python3 prototype/tests/smoke/test_python_eval.py
-"""
-
-from pathlib import Path
 from prototype.interpreter.python.usage import run_eval_loop
 
-SAMPLE_FILE = (
-    Path(__file__).resolve().parents[1]
-    / "data" / "sample_sources" / "interpreter" / "functions.py"
-)
+pytestmark = pytest.mark.smoke
 
 
-def main():
-    bindings = run_eval_loop(file_name=SAMPLE_FILE)
-    print("\nGlobal Environment:")
-    for key, value in bindings.items():
-        if key not in ("__builtins__", "builtins"):
-            print(f"  {key}: {value}")
-
-
-if __name__ == "__main__":
-    main()
+def test_python_eval_smoke_executes_tiny_program():
+    bindings = run_eval_loop(code="def add(a, b=1):\n    return a + b\nresult = add(4)\n")
+    assert bindings["result"] == 5
