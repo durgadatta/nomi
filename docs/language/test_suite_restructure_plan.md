@@ -355,6 +355,9 @@ Status:
 - Done: hole-lambda runtime tests moved from
   `functional/test_nomi_func_styles.py` to
   `features/functions/test_holes_runtime.py`.
+- Done: `where` runtime tests moved from
+  `functional/test_nomi_func_styles.py` to
+  `features/functions/test_where_runtime.py`.
 
 ### Phase 3: Introduce Feature Packets For New Work
 
