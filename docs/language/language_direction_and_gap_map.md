@@ -106,6 +106,10 @@ sections or focused feature specs rather than another broad synthesis doc.
 | Standard library shape | Syntax needs boring everyday tasks within reach. | flow + data boundary + result | `docs/language/prelude_and_standard_library_plan.md` or `language_spec.md` appendix |
 | State/capability | Files, network, time, subprocesses, transactions, and mutation need practical authority rules. | block + explanation | `docs/features/state_and_capability_model.md` |
 | First-hour Nomi | The first lesson should be tiny and concrete. | binding + function + call + diagnostics | `docs/language/first_hour_nomi.md` or README tutorial section |
+| Source text and Unicode | Identifiers, strings, diagnostics, and tooling need stable behavior across scripts and Unicode versions. | binding + pattern + explanation | `language_spec.md` lexical section, informed by `docs/research/overlooked_language_design_dimensions.md` |
+| Accessibility and localization | Explain output, playgrounds, docs, diagnostics, and examples must work beyond visual English-only UI. | explanation | explanation-event feature packet and web/tooling checks |
+| Compatibility and editions | Public syntax, diagnostics, stdlib APIs, and package metadata need migration rules before adoption. | explanation + module/package | `language_spec.md` compatibility section or focused process doc |
+| Governance and proposal process | Future ideas need owners, discussion links, maturity stages, and release/profile targets. | explanation | `design_proposal_template.md`, `spec_readiness_map.md` |
 
 ## Product Aspiration
 

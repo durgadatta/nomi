@@ -26,13 +26,27 @@ Use this template for:
 Title:
 Status: sketch | research | design-needed | library-first | prototype-ready | rejected-for-now | accepted
 Author:
+Owner/champion:
 Date:
+Target release/profile:
+Discussion:
 Related docs:
+Related target fixtures:
 Related issues/commits:
 ```
 
 Status meanings should match
 [Convenience Review And Roadmap](../convenience/review_and_roadmap.md).
+
+For proposals that may become public behavior, include compatibility and
+migration metadata:
+
+```text
+Compatibility surface: syntax | stdlib API | diagnostics | package metadata | tooling | docs
+Migration plan:
+Deprecates/replaces:
+Rejected alternatives:
+```
 
 ## 1. Everyday Need
 

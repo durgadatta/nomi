@@ -78,6 +78,7 @@ Individual-language and cross-cutting deep dives (May 2026 research expansion):
 | [deployment_and_operations_deep_dive.md](deployment_and_operations_deep_dive.md) | Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew | ~1303 |
 | [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction | ~1934 |
 | [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing | ~1826 |
+| [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, editions, migration, governance, localization | ~250 |
 
 ## Under-Covered Dimensions
 
@@ -86,10 +87,16 @@ error handling, diagnostics, null safety, pattern matching, and stdlib design.
 The following dimensions still need more focused research:
 
 All eight previously under-covered dimensions are now researched (May 2026).
-The deep dive index above covers the full matrix. Remaining work is consolidation:
-folding stable decisions into `../convenience/` and `../language/` artifacts.
+The deep dive index above covers the original matrix. A later follow-up pass
+identified surrounding process/tooling dimensions that were still under-weighted:
+Unicode/source text, accessibility, compatibility, migration, governance, and
+localization. See
+[overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md).
 
-New research themes should be driven by implementation needs, not coverage gaps.
+New research themes should be driven by implementation needs, not coverage
+gaps. Stable decisions from overlooked dimensions should fold into
+`language_spec.md`, `design_proposal_template.md`, the explanation-event spec,
+and tooling checks.
 
 ## Family Notes
 
