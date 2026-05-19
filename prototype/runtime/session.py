@@ -8,12 +8,15 @@ for a later migration.
 from __future__ import annotations
 
 import ast
+import contextlib
+import io
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
 from typing import Any
 
 from prototype.runtime.api import ExecutionResult
+from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 
 
@@ -48,42 +51,59 @@ class RuntimeSession:
         tree: Any | None = None,
         raise_on_error: bool = True,
         display_last_expr: bool = False,
+        capture_output: bool = False,
+        event_collector: RuntimeEventCollector | None = None,
     ) -> ExecutionResult:
         started = perf_counter()
         timings: dict[str, float] = {}
         tree_locations_fixed = False
+        collector = event_collector or RuntimeEventCollector()
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        stdout_context = (
+            contextlib.redirect_stdout(stdout)
+            if capture_output
+            else contextlib.nullcontext()
+        )
+        stderr_context = (
+            contextlib.redirect_stderr(stderr)
+            if capture_output
+            else contextlib.nullcontext()
+        )
         try:
-            if tree is None:
-                if source is None and filename is not None and self.cache_size > 0:
-                    source = Path(filename).read_text(encoding="utf-8")
-                cached_tree = self._get_cached_tree(source)
-                if cached_tree is not None:
-                    cache_started = perf_counter()
-                    tree = cached_tree
-                    timings["cache"] = perf_counter() - cache_started
-                    tree_locations_fixed = True
-                else:
-                    tree = self._parse_and_lower(
-                        source=source,
-                        filename=filename,
-                        timings=timings,
-                    )
-                    tree = ast.fix_missing_locations(tree)
-                    tree_locations_fixed = True
-                    self._cache_tree(source, tree)
+            with stdout_context, stderr_context:
+                if tree is None:
+                    if source is None and filename is not None and self.cache_size > 0:
+                        source = Path(filename).read_text(encoding="utf-8")
+                    cached_tree = self._get_cached_tree(source)
+                    if cached_tree is not None:
+                        cache_started = perf_counter()
+                        tree = cached_tree
+                        timings["cache"] = perf_counter() - cache_started
+                        tree_locations_fixed = True
+                    else:
+                        tree = self._parse_and_lower(
+                            source=source,
+                            filename=filename,
+                            timings=timings,
+                        )
+                        tree = ast.fix_missing_locations(tree)
+                        tree_locations_fixed = True
+                        self._cache_tree(source, tree)
 
-            if not tree_locations_fixed:
-                tree = ast.fix_missing_locations(tree)
-            eval_started = perf_counter()
-            has_value, value = self._eval_tree(
-                tree,
-                display_last_expr=display_last_expr,
-            )
-            timings["eval"] = perf_counter() - eval_started
+                if not tree_locations_fixed:
+                    tree = ast.fix_missing_locations(tree)
+                eval_started = perf_counter()
+                has_value, value = self._eval_tree(
+                    tree,
+                    display_last_expr=display_last_expr,
+                )
+                timings["eval"] = perf_counter() - eval_started
         except Exception as exc:
             timings["total"] = perf_counter() - started
             if raise_on_error:
                 raise
+            diagnostics, events = collector.snapshot()
             return ExecutionResult(
                 mode=self.mode,
                 profile=self.profile,
@@ -91,9 +111,14 @@ class RuntimeSession:
                 bindings={},
                 exception=exc,
                 timings=timings,
+                stdout=stdout.getvalue(),
+                stderr=stderr.getvalue(),
+                diagnostics=diagnostics,
+                events=events,
             )
 
         timings["total"] = perf_counter() - started
+        diagnostics, events = collector.snapshot()
         return ExecutionResult(
             mode=self.mode,
             profile=self.profile,
@@ -102,6 +127,10 @@ class RuntimeSession:
             timings=timings,
             value=value,
             has_value=has_value,
+            stdout=stdout.getvalue(),
+            stderr=stderr.getvalue(),
+            diagnostics=diagnostics,
+            events=events,
         )
 
     def _eval_tree(self, tree: Any, *, display_last_expr: bool) -> tuple[bool, Any]:

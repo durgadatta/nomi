@@ -173,8 +173,10 @@ boundaries, and package ownership. Keep the detailed plan in
   functions before moving internals.
 - [~] Add `ExecutionResult` as an opt-in structured result with bindings,
   diagnostics, events, timings, and exception fields.
-  (`ExecutionResult` exists with bindings, timings, exception, and optional
-  value fields. Diagnostics/events are still pending.)
+  (`ExecutionResult` exists with bindings, timings, exception, optional value,
+  stdout, stderr, diagnostics, and events. `execute()` captures stdout/stderr;
+  `RuntimeSession.run()` can opt into capture. Remaining: real diagnostic/event
+  producers and detailed stage artifacts.)
 - [x] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
   lowering, interpreter class, status, and host support are declared as data.
 - [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility
@@ -187,12 +189,13 @@ boundaries, and package ownership. Keep the detailed plan in
   evolve it toward declared files, samples, grammar, profiles, and version.
 - [ ] Add architecture contract tests for the public runtime API before
   migrating frontend surfaces.
-- [ ] Move the CLI onto `prototype.runtime.execute()` after `ExecutionResult`
+- [x] Move the CLI onto `prototype.runtime.execute()` after `ExecutionResult`
   owns stdout/stderr, diagnostics, structured errors, and exit behavior.
   (`NOMI-ARCH-023`)
-- [ ] Make web and notebook adapters consume the same structured runtime result
+- [~] Make web and notebook adapters consume the same structured runtime result
   contract instead of maintaining private output/error payloads.
-  (`NOMI-ARCH-024`)
+  (`NOMI-ARCH-024`; web now consumes `RuntimeSession.run(...,
+  capture_output=True)`, notebook still streams through kernel redirects.)
 - [ ] Avoid package moves until a facade exists and one feature proves the
   migration path.
 - [ ] Keep `NOMI-ARCH-018` current: Python AST should become one backend behind

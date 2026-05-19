@@ -4,8 +4,6 @@ and provides run_nomi(code) and reset_session() entry points.
 """
 
 import asyncio
-import contextlib
-import io
 import json
 import os
 import sys
@@ -184,24 +182,35 @@ def _eval_in_session(code: str) -> dict:
     if _runtime_session is None:
         reset_session()
 
-    result = _runtime_session.run(source=code)
-    return _web_timing(result.timings)
+    result = _runtime_session.run(
+        source=code,
+        raise_on_error=False,
+        capture_output=True,
+    )
+    timings = _web_timing(result.timings)
+    return {
+        "result": result,
+        "timing": timings,
+    }
 
 
 async def run_nomi(code: str) -> dict:
-    # TODO(NOMI-ARCH-024): Return the public ExecutionResult shape once it owns
-    # stdout/stderr, diagnostics, semantic events, and frontend-ready errors.
-    # The web bridge should adapt one runtime contract, not mint a private one.
     if not code.endswith("\n"):
         code += "\n"
-    stdout = io.StringIO()
     total_start = time.perf_counter()
+    execution = _eval_in_session(code)
+    result = execution["result"]
+    timings = execution["timing"]
+    timings["total_ms"] = (time.perf_counter() - total_start) * 1000
+    if result.ok:
+        return {
+            "output": result.stdout,
+            "session": _get_counter(),
+            "timing": timings,
+        }
+
     try:
-        with contextlib.redirect_stdout(stdout):
-            timings = _eval_in_session(code)
-        raw = stdout.getvalue()
-        timings["total_ms"] = (time.perf_counter() - total_start) * 1000
-        return {"output": raw, "session": _get_counter(), "timing": timings}
+        raise result.exception
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -211,7 +220,7 @@ async def run_nomi(code: str) -> dict:
         short_tb = "\n".join(lines[-6:]) if len(lines) > 5 else tb
         return {
             "error": short_tb,
-            "output": stdout.getvalue(),
+            "output": result.stdout,
             "session": _get_counter(),
-            "timing": {"total_ms": (time.perf_counter() - total_start) * 1000},
+            "timing": timings,
         }

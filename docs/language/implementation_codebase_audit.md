@@ -125,14 +125,16 @@ reuse it for parameters and data fields.
 ### Runtime API And Frontends
 
 `prototype/runtime/api.py` and `RuntimeSession` are good facade starts.
-However, the facade does not yet own stdout/stderr capture, diagnostics,
-semantic events, stage artifacts, or frontend-equivalent behavior.
+`ExecutionResult` now carries stdout/stderr plus passive diagnostics/events,
+`execute()` captures stdout/stderr, `RuntimeSession.run()` can opt into output
+capture, `RuntimeEventCollector` provides a no-op sink, and the CLI plus web
+bridge consume the shared runtime facade. Notebook execution still streams
+through kernel redirects, and real diagnostic/event producers are not wired
+yet.
 
-Next move: extend `ExecutionResult` with passive `diagnostics`, `events`,
-`stdout`, and `stderr` fields while keeping existing callers compatible.
-Then migrate `scripts/cli.py`, `web/nomi_web.py`, and
-`tools/jupyter/nomi_kernel.py` to consume that contract instead of shaping
-their own output/error payloads.
+Next move: migrate notebook output display once the result contract can
+preserve Jupyter streaming expectations, then route parser/lowering/runtime
+events through the collector one feature at a time.
 
 ### Tests
 
@@ -151,8 +153,9 @@ docs tables from it later if useful.
    subset, keeping Python AST as a backend view.
 3. Extend parser/cache APIs to accept feature profiles without changing the
    default language.
-4. Add passive diagnostic/event/stdout/stderr fields to `ExecutionResult`.
-5. Move CLI, web, and notebook onto the shared runtime result shape.
+4. Move notebook onto the shared runtime result shape.
+5. Route parser/lowering/runtime events through `RuntimeEventCollector` one
+   feature at a time.
 6. Move `DataDecl`, `MatchExpr`, and `BindingTarget` onto the surface-node path.
 7. Add feature-owned test templates and parse/lowering snapshots.
 8. Start implementing data-boundary and failure-taxonomy feature packets.

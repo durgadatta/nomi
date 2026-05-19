@@ -7,11 +7,18 @@ existing runners instead of moving parser or interpreter internals yet.
 
 from __future__ import annotations
 
+import contextlib
+import io
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
 from typing import Any
 
+from prototype.runtime.diagnostics import (
+    Diagnostic,
+    RuntimeEvent,
+    RuntimeEventCollector,
+)
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import dump_core, lower_python_ast_to_core
 from prototype.syntax.features import render_feature_layer_table
@@ -29,8 +36,10 @@ class ExecutionResult:
     timings: dict[str, float] = field(default_factory=dict)
     value: Any = None
     has_value: bool = False
-    # TODO(NOMI-ARCH-013): Add passive diagnostics/events collection here before
-    # parser, lowering, runtime, web, and notebook surfaces invent separate shapes.
+    stdout: str = ""
+    stderr: str = ""
+    diagnostics: tuple[Diagnostic, ...] = ()
+    events: tuple[RuntimeEvent, ...] = ()
 
     @property
     def ok(self) -> bool:
@@ -57,6 +66,10 @@ def execute(
     mode: str = "nomi",
     profile: str = "default",
     raise_on_error: bool = True,
+    capture_output: bool = True,
+    diagnostics: tuple[Diagnostic, ...] = (),
+    events: tuple[RuntimeEvent, ...] = (),
+    event_collector: RuntimeEventCollector | None = None,
 ) -> ExecutionResult:
     """Run source through the selected current interpreter mode.
 
@@ -68,30 +81,57 @@ def execute(
     pipeline = build_pipeline_spec(mode=mode, profile=profile)
 
     runner = pipeline.mode_spec.load_runner()
+    collector = event_collector or RuntimeEventCollector(
+        diagnostics=list(diagnostics),
+        events=list(events),
+    )
     started = perf_counter()
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    stdout_context = (
+        contextlib.redirect_stdout(stdout)
+        if capture_output
+        else contextlib.nullcontext()
+    )
+    stderr_context = (
+        contextlib.redirect_stderr(stderr)
+        if capture_output
+        else contextlib.nullcontext()
+    )
     try:
-        bindings = runner(code=source, file_name=filename, tree=tree)
+        with stdout_context, stderr_context:
+            bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:
         timings = {"total": perf_counter() - started}
         if raise_on_error:
             raise
+        result_diagnostics, result_events = collector.snapshot()
         return ExecutionResult(
             mode=mode,
             profile=profile,
             pipeline=pipeline,
             exception=exc,
             timings=timings,
+            stdout=stdout.getvalue(),
+            stderr=stderr.getvalue(),
+            diagnostics=result_diagnostics,
+            events=result_events,
         )
     timings = {"total": perf_counter() - started}
+    result_diagnostics, result_events = collector.snapshot()
 
-    # TODO(NOMI-ARCH-004): Add stdout/stderr, diagnostics, events, and detailed
-    # stage timings once frontends migrate to this structured result.
+    # TODO(NOMI-ARCH-004): Add detailed stage timings once frontends migrate to
+    # this structured result.
     return ExecutionResult(
         mode=mode,
         profile=profile,
         pipeline=pipeline,
         bindings=bindings,
         timings=timings,
+        stdout=stdout.getvalue(),
+        stderr=stderr.getvalue(),
+        diagnostics=result_diagnostics,
+        events=result_events,
     )
 
 

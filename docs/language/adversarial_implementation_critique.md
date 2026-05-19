@@ -228,8 +228,8 @@ Required response:
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Make runtime AST cache keys safe for mode/profile/source/span/grammar changes. |
 | `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Define call-frame/environment ownership before constraints/capabilities make copies expensive or wrong. |
 | `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Add automated performance budgets for flexibility work. |
-| `NOMI-ARCH-023` | `scripts/cli.py` | Put the CLI on the public runtime facade before diagnostics/events grow. |
-| `NOMI-ARCH-024` | `web/nomi_web.py`, `tools/jupyter/nomi_kernel.py` | Prevent frontend-specific result/error contracts from diverging. |
+| `NOMI-ARCH-023` | `scripts/cli.py` | CLI now uses the public runtime facade; structured diagnostic display remains future work. |
+| `NOMI-ARCH-024` | `web/nomi_web.py`, `tools/jupyter/nomi_kernel.py` | Web consumes captured runtime results; notebook still needs result-contract migration. |
 
 ## Required Next Moves
 
@@ -238,8 +238,9 @@ Required response:
 3. Make tiny Surface -> Core lowering authoritative before expanding Core IR.
 4. Add typed parse/runtime cache keys.
 5. Make runtime/profile inspection show concrete selected passes.
-6. Add passive diagnostics/events/stdout/stderr fields to `ExecutionResult`.
-7. Migrate CLI, web, and notebook onto the shared result contract.
+6. Migrate notebook onto the shared result contract.
+7. Route real parser/lowering/runtime events through `RuntimeEventCollector`
+   without letting features invent private diagnostic shapes.
 8. Create a minimal performance budget suite around `samples/demo.nomi`,
    `samples/demo_verbose.nomi`, and a synthetic feature-heavy file.
 9. Migrate `DataDecl`, `MatchExpr`, and `BindingTarget` to surface nodes before
