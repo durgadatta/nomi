@@ -189,6 +189,9 @@ def _eval_in_session(code: str) -> dict:
 
 
 async def run_nomi(code: str) -> dict:
+    # TODO(NOMI-ARCH-024): Return the public ExecutionResult shape once it owns
+    # stdout/stderr, diagnostics, semantic events, and frontend-ready errors.
+    # The web bridge should adapt one runtime contract, not mint a private one.
     if not code.endswith("\n"):
         code += "\n"
     stdout = io.StringIO()

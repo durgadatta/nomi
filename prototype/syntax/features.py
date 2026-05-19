@@ -61,6 +61,9 @@ class SyntaxFeature:
     #   design-needed    — semantics not settled, parse-only or hidden
     #   research-only    — aspirational, may not parse yet
     #   rejected-for-now — kept for reference, not active
+    # TODO(NOMI-SUBSTRATE-035): Split this single status into a capability
+    # matrix: parse, lower, run, reduce, explain, document, sample, web, and
+    # notebook exposure should be independently visible.
 
 
 # ── expression-precedence ────────────────────────────────────────────

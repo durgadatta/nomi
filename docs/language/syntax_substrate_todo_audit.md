@@ -102,7 +102,8 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-031 | Match expression surface node | ⬜ pending | Match expressions lower to IIFE-style Python AST, hiding return/scope/failure semantics. | `MatchExpr` records subject, cases, guards, pattern failures, and expression value semantics before backend lowering. | Emit `MatchExpr` as a surface node and keep existing IIFE lowering as the backend path. |
 | NOMI-SUBSTRATE-032 | Postlexer contract and snapshots | ⬜ pending | LALR disambiguation relies on Python postlexer scans and virtual tokens that are not declared as feature-owned artifacts. | Every virtual token rewrite has fixture snapshots, owner metadata, and performance notes. | Add postlexer token-stream snapshots for arrow params, sections, match cases, block colons, postfix guards, and implicit multiplication. |
 | NOMI-SUBSTRATE-033 | Desugar pass profiles | 🟡 partial | ~~Default Nomi mode selects desugar passes by class-name allowlist.~~ | Feature manifests declare which passes run in default, reduced, lab, and docs-only profiles. | Done for default/reduced: `SyntaxFeature.desugar_profiles` derives `NOMI_INTERPRETER_DESUGAR_PASSES`; remaining: lab/docs-only profile integration. |
-| NOMI-SUBSTRATE-034 | Core IR text/debug format | ⬜ pending | Future Core IR is named in docs but has no inspectable artifact contract. | Core IR has a stable textual/debug dump and verifier output before native backends exist. | Add a passive `prototype/syntax/core.py` schema plus `tools.syntax.inspect --stage core-ir` output for a tiny subset. |
+| NOMI-SUBSTRATE-034 | Core IR text/debug format | 🟡 partial | ~~Future Core IR is named in docs but has no inspectable artifact contract.~~ | Core IR has a stable textual/debug dump and verifier output before native backends exist. | `prototype/syntax/core.py`, `dump_core`, `verify_core`, and `inspect(stage="core")` exist for a tiny subset. Remaining: make Surface -> Core lowering authoritative instead of projecting backward from Python AST. |
+| NOMI-SUBSTRATE-035 | Capability status axes | ⬜ pending | `SyntaxFeature.status` is one coarse lifecycle label. | Feature support is visible across parse, lower, run, reduce, explain, docs/spec, samples, web, and notebook axes. | Split the status field or add a companion matrix before promoting target-only features. |
 
 ## Inline TODO Locations
 
@@ -129,7 +130,8 @@ Current inline comments have been placed at these high-leverage seams:
 | NOMI-SUBSTRATE-031 | `prototype/parser/nomi/lowering/match_expr.py` | Match expressions need surface/core representation before richer diagnostics and control semantics. |
 | NOMI-SUBSTRATE-032 | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
 | NOMI-SUBSTRATE-033 | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/syntax/features.py` | Default/reduced pass selection is manifest metadata; lab/docs-only profile integration remains. |
-| NOMI-SUBSTRATE-034 | `prototype/syntax/surface.py`, future `prototype/syntax/core.py` | Surface nodes need a Core IR destination with a text/debug format before MLIR, LLVM, or Wasm backends become meaningful. |
+| NOMI-SUBSTRATE-034 | `prototype/syntax/surface.py`, `prototype/syntax/core.py` | Surface nodes need an authoritative Core IR destination before MLIR, LLVM, or Wasm backends become meaningful. |
+| NOMI-SUBSTRATE-035 | `prototype/syntax/features.py` | A single lifecycle status should not overstate parse/lower/run/reduce/explain/docs/tooling coverage. |
 
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.

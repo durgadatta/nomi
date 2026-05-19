@@ -122,6 +122,9 @@ def inspect(
     if stage in {"passes", "desugar_passes"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_pass_table
 
+        # TODO(NOMI-SUBSTRATE-033): Route runtime/parser feature profiles into
+        # this inspection path so it shows the passes that this mode/profile
+        # would actually execute, not only the global or default registry view.
         output = render_desugar_pass_table()
         timings = {"total": perf_counter() - started}
         return InspectionResult(

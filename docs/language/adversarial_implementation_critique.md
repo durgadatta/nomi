@@ -14,6 +14,12 @@ manifests, selected default desugar passes, source-span opt-in, a runtime
 facade, sessions, and AST caching. The implementation is now fast enough for
 current demos.
 
+Refresh note, 2026-05-19: this document was updated after a second codebase
+scan. The earlier "class-name filtered desugar profile" critique is no longer
+accurate; desugar pass selection now comes from feature metadata. The remaining
+adversarial point is harsher: the registry can describe layers and profiles
+better than the rest of the system can enforce, inspect, or expose them.
+
 The adversarial question is different:
 
 ```text
@@ -35,7 +41,11 @@ The current implementation has three major pressure points:
 2. **Lowering still jumps too quickly to Python AST.** Direct Python AST is
    fast and executable, but it hides Nomi's normal forms and source spans,
    making future diagnostics and explain views harder.
-3. **Performance wins are not yet protected by budgets.** The performance
+3. **Public surfaces do not yet share one result contract.** CLI, web, and
+   notebook execution still package output, timings, and errors differently,
+   which will make diagnostics/events drift unless `ExecutionResult` becomes
+   the shared adapter boundary.
+4. **Performance wins are not yet protected by budgets.** The performance
    notes show excellent manual profiling, but there is no automated gate that
    catches parser construction, postlexer, desugar, session-cache, or runtime
    regressions.
@@ -49,11 +59,14 @@ paths explicit now, before expressive syntax multiplies.
 | --- | --- | --- | --- | --- |
 | Postlexer becomes a hidden grammar | High | New syntax depends on token-rewrite heuristics that are hard to reason about locally. | Full token buffering and repeated scans can grow with every disambiguation. | `NOMI-SUBSTRATE-032`: declared postlexer contract + fixtures + perf notes. |
 | Direct Python AST lowering hides Nomi nodes | High | New features cannot be inspected as Nomi normal forms. | Later diagnostics require expensive reverse mapping. | Continue `DataDecl`, `MatchExpr`, `BindingTarget`, `PipeExpr` surface-node migration. |
+| Core IR becomes decorative | High | The project can point at Core IR while real semantics still flow through Python AST. | Future backends and diagnostics inherit a misleading artifact boundary. | `NOMI-ARCH-019`: make Surface -> Core lowering authoritative for a tiny subset. |
+| Capability status lies by omission | High | A feature marked implemented may not parse, reduce, explain, document, sample, or expose consistently. | Tooling and docs can overstate maturity. | `NOMI-SUBSTRATE-035`: split status into capability axes. |
 | Cache identity is under-specified | High | Feature profiles and target parsing can reuse wrong artifacts. | Cache invalidation bugs lead to false performance wins or stale execution. | `NOMI-SUBSTRATE-029`, `NOMI-ARCH-015`: typed parse/runtime cache keys. |
-| Desugar subsets are name-filtered | Medium | Default/reduced mode behavior can drift when pass names change. | Extra passes become hidden hot-path work. | `NOMI-SUBSTRATE-033`: feature/pass profiles declare default vs reduced inclusion. |
+| Profile plumbing stops halfway | Medium | Desugar metadata exists, but parser/runtime inspection still cannot fully select or prove named profiles. | Extra passes or missing passes become hidden hot-path work. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002`: end-to-end profile selection and inspection. |
 | Runtime session cache uses source text only | Medium | Filename, profile, mode, grammar version, and span mode are not part of the key. | Good speed path can be unsafe as profiles grow. | `NOMI-ARCH-015`: typed runtime cache key and invalidation policy. |
 | Environment copy per call remains broad | Medium | Constraints and future capabilities may be copied without explicit ownership. | Function-heavy programs can pay avoidable dictionary-copy cost. | `NOMI-ARCH-016`: call-frame strategy and binding/capability ownership model. |
 | Interpreter dispatch lacks semantic metadata | Medium | Feature ownership and explain hooks stay detached from runtime behavior. | Events may be layered later with extra indirection. | `NOMI-SUBSTRATE-024`: dispatch metadata while preserving fast method lookup. |
+| Frontend result contracts fork | Medium | CLI, web, and notebook display different error/output/timing shapes. | Future diagnostics require adapter-specific code. | `NOMI-ARCH-023`, `NOMI-ARCH-024`: one `ExecutionResult` contract. |
 | Performance remains manually checked | Medium | Contributors cannot know which changes are safe. | Regressions arrive silently. | `NOMI-ARCH-017`: performance budget suite for parse/lower/desugar/session/eval. |
 
 ## Parser And Grammar Critique
@@ -113,23 +126,25 @@ Required response:
 - avoid generated Python AST tricks for any feature whose diagnostic story
   matters.
 
-## Desugar Pipeline Critique
+## Desugar Pipeline And Profile Critique
 
 The desugar pipeline is much improved: pass metadata, dependencies, and
-invariant checks exist. The weak spot is default Nomi desugar selection:
+invariant checks exist. Feature metadata now declares default and reduced
+desugar inclusion. The weak spot has moved up a layer: runtime and inspection
+profiles are still too shallow.
 
-```python
-if pass_cls.__name__ in {...}
-```
-
-This is a hidden profile. It should become manifest data.
+The hostile reading: Nomi now has a feature manifest that looks like a source
+of truth, but the parser, runtime facade, inspection API, docs matrix, web, and
+notebook do not yet prove the same feature set end to end.
 
 Required response:
 
-- feature manifests should declare default-mode inclusion, reduced-mode
-  inclusion, normal form, and performance expectations;
-- pass selection should use feature metadata rather than class-name sets;
-- inspection should show which passes ran and why.
+- keep pass selection manifest-derived;
+- route runtime profiles through parser, lowering, desugar, inspection, and
+  session caches;
+- inspection should show which passes ran and why for the selected mode/profile;
+- tests should fail when docs claim a feature is runnable but the profile
+  cannot actually parse/lower/run it.
 
 ## Runtime And Interpreter Critique
 
@@ -151,6 +166,29 @@ Required response:
 - define call-frame and constraint ownership before data/decode/capability work;
 - model resumable frames explicitly before retry/transaction/concurrency;
 - move diagnostics/events into `ExecutionResult` and runtime sessions.
+
+## Frontend And Tooling Critique
+
+The current frontends are useful, but adversarially they are three forks of the
+same truth:
+
+- `scripts/cli.py` still calls compatibility runners directly;
+- `web/nomi_web.py` captures stdout and returns a private dictionary shape;
+- `tools/jupyter/nomi_kernel.py` maps exceptions to Jupyter traceback payloads
+  without a shared diagnostic/event source.
+
+This is acceptable while output is mostly text. It will become expensive once
+binding errors, decode diagnostics, traces, examples, and redaction policies
+matter.
+
+Required response:
+
+- make `ExecutionResult` carry passive stdout/stderr, diagnostics, events, and
+  structured errors;
+- make CLI/web/notebook adapters display that shared result instead of
+  inventing local payloads;
+- add contract tests that prove the same source produces equivalent structured
+  failure information across surfaces.
 
 ## Performance Critique
 
@@ -184,21 +222,46 @@ Required response:
 | ID | File | Why it matters |
 | --- | --- | --- |
 | `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Prevent token rewrites from becoming an undocumented grammar and performance sink. |
-| `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py` | Replace class-name filtered default passes with feature/pass profile metadata. |
+| `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Keep manifest-backed pass selection and make inspection honor concrete runtime profiles. |
+| `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Prevent one coarse feature status from overstating implementation maturity. |
+| `NOMI-ARCH-019` | `prototype/syntax/core.py` | Prevent passive Core IR from becoming decorative while Python AST remains authoritative. |
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Make runtime AST cache keys safe for mode/profile/source/span/grammar changes. |
 | `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Define call-frame/environment ownership before constraints/capabilities make copies expensive or wrong. |
 | `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Add automated performance budgets for flexibility work. |
+| `NOMI-ARCH-023` | `scripts/cli.py` | Put the CLI on the public runtime facade before diagnostics/events grow. |
+| `NOMI-ARCH-024` | `web/nomi_web.py`, `tools/jupyter/nomi_kernel.py` | Prevent frontend-specific result/error contracts from diverging. |
 
 ## Required Next Moves
 
 1. Add postlexer fixture snapshots before adding more contextual syntax.
-2. Add typed parse/runtime cache keys.
-3. Move desugar pass inclusion into feature manifest metadata.
-4. Add passive diagnostics/events fields to `ExecutionResult`.
-5. Create a minimal performance budget suite around `samples/demo.nomi`,
+2. Split feature status into capability axes.
+3. Make tiny Surface -> Core lowering authoritative before expanding Core IR.
+4. Add typed parse/runtime cache keys.
+5. Make runtime/profile inspection show concrete selected passes.
+6. Add passive diagnostics/events/stdout/stderr fields to `ExecutionResult`.
+7. Migrate CLI, web, and notebook onto the shared result contract.
+8. Create a minimal performance budget suite around `samples/demo.nomi`,
    `samples/demo_verbose.nomi`, and a synthetic feature-heavy file.
-6. Migrate `DataDecl`, `MatchExpr`, and `BindingTarget` to surface nodes before
+9. Migrate `DataDecl`, `MatchExpr`, and `BindingTarget` to surface nodes before
    expanding target syntax.
+
+## Extreme Failure Scenario
+
+The worst plausible outcome is not that Nomi lacks features. It is that Nomi
+gets enough attractive syntax to demo well while the implementation cannot say
+what the syntax means except by showing generated Python AST. In that world:
+
+- the feature manifest becomes decorative metadata;
+- Core IR is an inspection toy;
+- diagnostics reverse-engineer meaning after the fact;
+- web and notebook behavior diverge;
+- target examples make the language look further along than it is;
+- performance fixes become folklore rather than tests;
+- future contributors add conveniences by finding the nearest lowering hack.
+
+The antidote is deliberately small and concrete: one capability matrix, one
+shared result contract, one real Surface -> Core path for a tiny subset, and
+no new high-level syntax without inspection, diagnostics, tests, and status.
 
 ## Decision Pressure
 

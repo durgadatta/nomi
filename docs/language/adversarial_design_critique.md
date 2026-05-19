@@ -25,12 +25,24 @@ Assume implementation debt will distort the language.
 The goal is not to slow Nomi down. The goal is to force sharper decisions
 before syntax, samples, and implementation habits harden.
 
+Refresh note, 2026-05-19: this document now takes a more hostile stance toward
+design/process failure, not only feature interaction failure. The central
+question is whether Nomi can prove its coherence operationally before the docs
+make the language feel more settled than the implementation and teaching path
+can justify.
+
 ## Executive Critique
 
 Nomi's largest risk is not lack of inspiration. It is trying to be the
 coherent synthesis of Python, ML-family data/patterns, Ruby/Gleam block
 control, SQL/dataframe flow, Pydantic/CUE boundaries, and Racket/Darklang
 explanation before the operational substrate can carry that load.
+
+The more adversarial version: Nomi could become an excellent essay about a
+language rather than a language whose smallest usable slice is undeniable.
+Every new convenience increases that risk unless it reduces to a normal form,
+has a status label that cannot mislead, and participates in one explanation
+contract.
 
 The design should therefore treat the next pass as a reduction exercise:
 
@@ -51,9 +63,12 @@ the syntax is.
 | Risk | Severity | Why it matters | Required response |
 | --- | --- | --- | --- |
 | Spec overpromises target syntax | High | `language_spec.md` can read more implemented than reality, while target fixtures use syntax the parser cannot handle. | Add a current capability matrix and mark target-only syntax aggressively. |
+| Coherence remains rhetorical | High | Normal forms can organize docs without proving that syntax, lowering, runtime, diagnostics, and teaching actually converge. | Require each promoted feature to show syntax -> normal form -> diagnostic -> test -> frontend status. |
+| Implementation substrate biases design | High | Python AST can quietly decide what is easy to specify, especially for expressions/statements, data, exceptions, and blocks. | Keep Surface/Core migration ahead of new syntax whose meaning Python AST distorts. |
 | Too many normal forms become too many concepts | High | Eight normal forms are elegant for designers, but users may experience them as eight subsystems. | First-hour docs must teach only values, bindings, calls, functions, constraints, and diagnostics before the full map. |
 | Boundary model becomes abstract before practical | High | `Data.decode`, config, provenance, redaction, `Result`, and explanation are central but not yet one concrete packet. | Write data-boundary and failure-taxonomy feature specs before adding more surface syntax. |
 | Explanation becomes a slogan | High | "Explainable" can remain aspirational if no event schema exists. | Define semantic event records before feature-specific diagnostics proliferate. |
+| Feature status becomes optimistic | High | "Implemented" can hide parse-only, lower-only, no-reduced, no-web, no-notebook, no-diagnostics, or docs-only gaps. | Split status into a capability matrix before the next round of promotion. |
 | Block calls absorb too many policies | Medium | `using`, `retry`, `transaction`, `trace`, tests, and concurrency may share syntax but have different failure and cancellation rules. | Define a block-policy prelude with explicit body/policy/cleanup failure behavior. |
 | Flow/query/table design hides binding scope | Medium | Pipelines are easy; row/group scopes are where data languages become confusing. | Keep query syntax deferred until row, group, aggregate, and plan explanation scopes are specified. |
 | Python parity becomes ambiguous | Medium | Nomi relies on Python familiarity while intentionally departing from Python statements, data, errors, and constraints. | Keep a migration/interop note that names exact parity and departure points. |
@@ -238,6 +253,66 @@ boundaries, exception behavior, object/data distinctions, and source-span loss.
 
 Recommendation: keep building Nomi-owned surface/core nodes and inspectable
 lowering before adding more syntax that Python AST represents awkwardly.
+
+### The Capability Matrix Is A Design Artifact, Not Just Project Management
+
+A current capability matrix may sound administrative. Adversarially, it is the
+thing that prevents the docs from lying by implication.
+
+Every feature row should separate at least:
+
+```text
+target-only
+parse
+lower
+run in nomi
+run in reduced
+normal-form inspection
+diagnostics/events
+tests
+samples
+web
+notebook
+docs/spec status
+```
+
+Without that split, Nomi can have many partially true claims that combine into
+one false impression of readiness.
+
+### The First Usable Slice Must Be Smaller Than The Vision
+
+If the first public teaching path includes data, match, blocks, holes,
+pipelines, result handling, examples, and explanation all at once, the design
+will look coherent to its authors and heavy to newcomers.
+
+The hostile test is:
+
+```text
+Can a new user write useful scripts with values, names, calls, func,
+constraints, lists/maps, and readable errors before learning the rest?
+```
+
+If not, Nomi's coherence story has not yet reached the user.
+
+## Extreme Failure Scenario
+
+The worst design outcome is a language that is always one consolidation pass
+away from being clear. It has beautiful target programs, broad research,
+normal forms, and many promising features, but no tiny slice that a user can
+learn, run, inspect, and trust today.
+
+Symptoms:
+
+- `language_spec.md` reads like product documentation for target-only syntax;
+- samples quietly lag behind the preferred design;
+- feature docs repeat the same promises with different status labels;
+- diagnostics are feature-specific prose rather than shared event data;
+- "library-first" becomes an indefinite parking lot;
+- every syntax proposal can be justified by one normal form, so rejection gets
+  harder rather than easier.
+
+Countermeasure: make the next design pass subtractive. Promote fewer features,
+with harder status labels and better proof.
 
 ## Near-Term Suggestions
 

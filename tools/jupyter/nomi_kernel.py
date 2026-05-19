@@ -183,6 +183,8 @@ class NomiKernel(Kernel):
         raise ValueError(f"Unknown Nomi kernel command: {name}. Try %help.")
 
     def _execute_nomi(self, code: str, *, silent: bool) -> Any:
+        # TODO(NOMI-ARCH-024): Consume the same structured diagnostics/events
+        # result contract as the web bridge once ExecutionResult grows it.
         result = self.runtime_session.run(
             source=self._normalize_source(code),
             display_last_expr=not silent,

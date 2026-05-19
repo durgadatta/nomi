@@ -108,6 +108,10 @@ layers move from docs into implementation.
 - [ ] Add a current capability/spec matrix that separates target-only,
   parse-only, lowerable, runnable, explainable, documented, sample-covered,
   web-exposed, and notebook-exposed features.
+- [ ] Split `SyntaxFeature.status` into machine-readable capability axes so
+  parser support, lowering, runtime, reduced-mode support, diagnostics,
+  docs/spec status, samples, web, and notebook exposure cannot be collapsed
+  into one optimistic lifecycle label. (`NOMI-SUBSTRATE-035`)
 - [ ] Add named experiment profiles such as `default`, `lab`, `target-tour`,
   and `docs-only` after the parser grows `features=[...]`.
 - [x] Add `tools.syntax.inspect` so every grammar or lowering change can show
@@ -183,12 +187,21 @@ boundaries, and package ownership. Keep the detailed plan in
   evolve it toward declared files, samples, grammar, profiles, and version.
 - [ ] Add architecture contract tests for the public runtime API before
   migrating frontend surfaces.
+- [ ] Move the CLI onto `prototype.runtime.execute()` after `ExecutionResult`
+  owns stdout/stderr, diagnostics, structured errors, and exit behavior.
+  (`NOMI-ARCH-023`)
+- [ ] Make web and notebook adapters consume the same structured runtime result
+  contract instead of maintaining private output/error payloads.
+  (`NOMI-ARCH-024`)
 - [ ] Avoid package moves until a facade exists and one feature proves the
   migration path.
 - [ ] Keep `NOMI-ARCH-018` current: Python AST should become one backend behind
   Nomi-owned Surface/Core IR, not the permanent language IR.
 - [ ] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
   serious native or Wasm backend work.
+- [ ] Upgrade `NOMI-ARCH-019` from passive inspection to an authoritative tiny
+  Surface -> Core lowering path before runtime diagnostics or backend work rely
+  on Core IR as a source of truth.
 - [ ] Add `NOMI-ARCH-020`: run an MLIR spike only for a tiny pure subset after
   Core IR inspection works.
 - [ ] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend

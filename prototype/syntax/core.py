@@ -188,6 +188,9 @@ def lower_python_ast_to_core(node: ast.AST) -> CoreNode:
     nodes become ``Diagnostic`` nodes instead of raising, so broad programs can
     still show where Core IR coverage stops.
     """
+    # TODO(NOMI-ARCH-019): Replace this Python-AST-backward projection with a
+    # real Surface -> Core lowering path before any runtime, diagnostic, or
+    # backend work treats Core IR as authoritative.
     if isinstance(node, ast.Module):
         return Module(body=tuple(_lower_stmt(stmt) for stmt in node.body))
     return _unsupported(node)

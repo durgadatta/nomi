@@ -20,6 +20,9 @@ def main():
         print(f"Error: File '{filename}' not found.")
         sys.exit(1)
     
+    # TODO(NOMI-ARCH-023): Move the CLI onto prototype.runtime.execute() so
+    # command-line errors, stdout/stderr, diagnostics, timings, and mode
+    # selection share the same contract as web, notebook, and future REPLs.
     if file_path.suffix == '.nomi' or file_path.name.endswith('.nomi.nb'):
         from prototype.interpreter.nomi.usage import run_eval_loop
     else:
