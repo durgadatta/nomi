@@ -327,9 +327,15 @@
   // Model Context Protocol servers for external tools & integrations.
 
   // "mcp": {
-  //   "jira": {
-  //     "type": "remote",
-  //     "url": "https://jira.example.com/mcp",
+  //   "nomi-rag": {
+  //     "type": "local",
+  //     "command": [
+  //       "python3",
+  //       "-m",
+  //       "tools.rag_mcp.mcp_server",
+  //       "--config",
+  //       "config/rag_sources.json"
+  //     ],
   //     "enabled": true
   //   }
   // }

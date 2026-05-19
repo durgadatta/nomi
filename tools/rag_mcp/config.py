@@ -18,6 +18,7 @@ class SourceConfig:
     path: Path
     include: tuple[str, ...] = field(default_factory=tuple)
     exclude: tuple[str, ...] = field(default_factory=tuple)
+    path_boosts: tuple[tuple[str, float], ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,10 @@ def load_config(path: str | Path | None = None, root: Path | None = None) -> Rag
                 path=resolve_path(source["path"], project_root),
                 include=tuple(source.get("include", ["**/*"])),
                 exclude=tuple(source.get("exclude", [])),
+                path_boosts=tuple(
+                    (boost["pattern"], float(boost["boost"]))
+                    for boost in source.get("path_boosts", [])
+                ),
             )
         )
 

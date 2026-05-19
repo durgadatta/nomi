@@ -67,6 +67,7 @@ class DocumentChunk:
     line_start: int
     line_end: int
     text: str
+    score_boost: float = 1.0
 
     @property
     def ref(self) -> str:
@@ -78,6 +79,20 @@ class SearchResult:
     score: float
     chunk: DocumentChunk
     highlights: tuple[str, ...]
+    snippet: str
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "score": round(self.score, 4),
+            "source": self.chunk.source,
+            "kind": self.chunk.kind,
+            "path": self.chunk.path,
+            "ref": self.chunk.ref,
+            "line_start": self.chunk.line_start,
+            "line_end": self.chunk.line_end,
+            "highlights": list(self.highlights),
+            "snippet": self.snippet,
+        }
 
 
 def tokenize(text: str) -> list[str]:
@@ -126,6 +141,14 @@ def relative_display_path(path: Path, root: Path) -> str:
     return str(path)
 
 
+def score_boost_for_path(source: SourceConfig, display_path: str) -> float:
+    boost = 1.0
+    for pattern, value in source.path_boosts:
+        if fnmatch(display_path, pattern):
+            boost *= value
+    return boost
+
+
 def chunk_text(
     source: SourceConfig,
     path: Path,
@@ -139,6 +162,8 @@ def chunk_text(
         return
 
     lines = text.splitlines()
+    display_path = relative_display_path(path, root)
+    score_boost = score_boost_for_path(source, display_path)
     start = 0
     chunk_id = 0
     while start < len(lines):
@@ -152,11 +177,12 @@ def chunk_text(
         yield DocumentChunk(
             source=source.name,
             kind=source.kind,
-            path=relative_display_path(path, root),
+            path=display_path,
             chunk_id=chunk_id,
             line_start=start + 1,
             line_end=end,
             text="\n".join(chunk_lines).strip(),
+            score_boost=score_boost,
         )
 
         chunk_id += 1
@@ -202,7 +228,7 @@ class RagIndex:
         for chunk, chunk_tokens in zip(self.chunks, self._tokens):
             if source and chunk.source != source:
                 continue
-            score = self._score(query_terms, chunk_tokens)
+            score = self._score(query_terms, chunk_tokens) * chunk.score_boost
             if score <= 0:
                 continue
             results.append(
@@ -210,6 +236,7 @@ class RagIndex:
                     score=score,
                     chunk=chunk,
                     highlights=find_highlights(chunk.text, query_terms),
+                    snippet=find_snippet(chunk.text, chunk.line_start, query_terms),
                 )
             )
 
@@ -250,6 +277,29 @@ def find_highlights(text: str, query_terms: list[str], *, limit: int = 3) -> tup
         if len(highlights) >= limit:
             break
     return tuple(highlights)
+
+
+def find_snippet(
+    text: str,
+    line_start: int,
+    query_terms: list[str],
+    *,
+    context_lines: int = 2,
+) -> str:
+    lines = text.splitlines()
+    lower_terms = set(query_terms)
+    match_index = 0
+    for index, line in enumerate(lines):
+        if set(tokenize(line)) & lower_terms:
+            match_index = index
+            break
+
+    start = max(match_index - context_lines, 0)
+    end = min(match_index + context_lines + 1, len(lines))
+    return "\n".join(
+        f"{line_start + index}: {lines[index].rstrip()}"
+        for index in range(start, end)
+    )
 
 
 def build_and_save(config_path: str | Path | None = None) -> RagIndex:

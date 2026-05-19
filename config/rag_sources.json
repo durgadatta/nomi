@@ -24,6 +24,32 @@
         "PLAY/**",
         "reports/**",
         "**/__pycache__/**"
+      ],
+      "path_boosts": [
+        {
+          "pattern": "AGENTS.md",
+          "boost": 1.35
+        },
+        {
+          "pattern": "README.md",
+          "boost": 1.2
+        },
+        {
+          "pattern": "docs/language/**",
+          "boost": 1.35
+        },
+        {
+          "pattern": "docs/features/**",
+          "boost": 1.3
+        },
+        {
+          "pattern": "docs/convenience/**",
+          "boost": 1.15
+        },
+        {
+          "pattern": "docs/research/**",
+          "boost": 0.75
+        }
       ]
     },
     {

@@ -37,8 +37,9 @@ def main() -> None:
 
         for result in index.search(args.query, limit=args.limit, source=args.source):
             print(f"{result.score:.2f} {result.chunk.source} {result.chunk.ref}")
-            for highlight in result.highlights:
-                print(f"  {highlight}")
+            if result.snippet:
+                for line in result.snippet.splitlines():
+                    print(f"  {line}")
 
 
 if __name__ == "__main__":
