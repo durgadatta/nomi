@@ -30,6 +30,8 @@ coverage.xml
 # ai-tools
 .codex/*
 !.codex/config.toml
+!.codex/agents/
+!.codex/agents/**
 !.codex/hooks.json
 !.codex/hooks/
 !.codex/hooks/**

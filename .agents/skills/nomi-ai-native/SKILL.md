@@ -99,8 +99,8 @@ Consider these as future improvements, not requirements for every task:
 
 - Add tool-native shims for project skills where a tool cannot discover
   `.agents/skills/` directly.
-- Add project subagents for code review, language-design critique, focused test
-  verification, and docs/RAG synthesis.
+- Extend canonical project subagents in `.codex/agents/` and keep
+  `.claude/agents/` as thin native shims.
 - Extend `python3 .codex/scripts/agent_doctor.py` as new agent infrastructure
   becomes canonical.
 - Add smoke tests for hook scripts under `prototype/tests/unit/tools/`.

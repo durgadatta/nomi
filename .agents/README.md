@@ -22,3 +22,8 @@ Current skills:
 - `nomi-reduce`: syntactic reduction/desugar work.
 - `nomi-test`: test authoring and multi-interpreter test patterns.
 - `nomi-web`: web playground and Monaco editor work.
+
+## Subagents
+
+Project subagent prompts are canonical under `.codex/agents/*.md`. Claude Code
+native shims under `.claude/agents/*.md` point back to those prompts.

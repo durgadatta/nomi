@@ -49,6 +49,7 @@ def run_checks() -> list[CheckResult]:
         check_hook_scripts_compile(),
         check_skills_frontmatter(),
         check_claude_skill_shims(),
+        check_claude_agent_shims(),
         check_rag_index_freshness(),
     ]
 
@@ -162,6 +163,33 @@ def check_claude_skill_shims() -> CheckResult:
     if failures:
         return CheckResult("claude-skill-shims", "fail", "; ".join(failures))
     return CheckResult("claude-skill-shims", "pass", f"{len(shim_skills)} Claude skill shims mirror .agents/skills.")
+
+
+def check_claude_agent_shims() -> CheckResult:
+    canonical_agents = sorted(path.stem for path in (ROOT / ".codex/agents").glob("*.md"))
+    shim_agents = sorted(path.stem for path in (ROOT / ".claude/agents").glob("*.md"))
+
+    if not canonical_agents:
+        return CheckResult("claude-agent-shims", "warn", "No canonical Codex agents found.")
+
+    failures = []
+    missing = sorted(set(canonical_agents) - set(shim_agents))
+    extra = sorted(set(shim_agents) - set(canonical_agents))
+    if missing:
+        failures.append("missing Claude agent shims: " + ", ".join(missing))
+    if extra:
+        failures.append("extra Claude agent shims: " + ", ".join(extra))
+
+    for agent in sorted(set(canonical_agents) & set(shim_agents)):
+        shim = ROOT / ".claude/agents" / f"{agent}.md"
+        text = shim.read_text(encoding="utf-8")
+        expected = f".codex/agents/{agent}.md"
+        if expected not in text:
+            failures.append(f"{agent}: shim does not reference {expected}")
+
+    if failures:
+        return CheckResult("claude-agent-shims", "fail", "; ".join(failures))
+    return CheckResult("claude-agent-shims", "pass", f"{len(shim_agents)} Claude agent shims mirror .codex/agents.")
 
 
 def check_rag_index_freshness() -> CheckResult:

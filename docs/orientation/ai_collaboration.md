@@ -45,6 +45,10 @@ clear semantics, tests, examples, and documentation.
 - `.claude/skills/`: Claude Code native skill shims. These should stay tiny and
   point back to `.agents/skills/`, which remains the canonical shared skill
   directory.
+- `.codex/agents/`: canonical project subagent prompts for review,
+  language-design critique, test verification, and docs/RAG synthesis.
+- `.claude/agents/`: Claude Code native subagent shims that point back to the
+  `.codex/agents/` prompts.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
