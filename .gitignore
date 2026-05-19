@@ -30,6 +30,9 @@ coverage.xml
 # ai-tools
 .codex/*
 !.codex/config.toml
+!.codex/hooks.json
+!.codex/hooks/
+!.codex/hooks/**
 .deepseek/*
 .claude/settings.local.json
 .claude/cache/

@@ -44,38 +44,57 @@
   },
 
   // ── Hooks ───────────────────────────────────────────────────────
-  // Shell commands that fire on Claude Code events.  Use for
-  // pre/post-commit checks, notifications, or custom workflows.
+  // Shell commands that fire on Claude Code events.
   //
-  // Available events:
-  //   PreToolUse      — fires before a tool executes (can block)
-  //   PostToolUse     — fires after a tool completes
-  //   Notification    — fires for user notifications
-  //   UserPromptSubmit — fires when user submits a prompt
+  // Nomi's project hooks are intentionally advisory:
+  //   - SessionStart injects compact repo workflow context.
+  //   - UserPromptSubmit suggests likely `.agents/skills/*/SKILL.md` files.
+  //   - PreToolUse blocks only obviously destructive Bash commands and adds
+  //     a few reminders for tests/snapshots/generated artifacts.
   //
-  // Hooks receive context via JSON on stdin.  See:
-  //   https://docs.anthropic.com/en/docs/claude-code/hooks
+  // Claude Code provides CLAUDE_PROJECT_DIR when it launches hooks, which keeps
+  // these paths stable even if Claude was started from a subdirectory.
   //
-  // Examples below are commented out — uncomment and tune as needed.
-
-  // "hooks": {
-  //   // Run tests before committing (exits non-zero to block commit).
-  //   // Disabled by default because the full suite takes ~10s.
-  //   "PreToolUse": [
-  //     {
-  //       "matcher": "Bash(git commit *)",
-  //       "command": "python3 -m pytest prototype/tests/ -x -q --ignore=prototype/tests/e2e"
-  //     }
-  //   ],
-  //
-  //   // Notify after long-running test suite completes.
-  //   "PostToolUse": [
-  //     {
-  //       "matcher": "Bash(python3 -m pytest prototype/tests/ *)",
-  //       "command": "echo 'Tests done' | terminal-notifier -title 'Claude Code' -subtitle 'Nomi' -message 'Test suite finished'"
-  //     }
-  //   ]
-  // },
+  // Hooks receive context via JSON on stdin. Review and manage them with
+  // `/hooks` in Claude Code. See:
+  //   https://code.claude.com/docs/en/hooks
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.codex/hooks/session_start.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.codex/hooks/user_prompt_submit.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.codex/hooks/pre_tool_use_policy.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 
   // ── Model ───────────────────────────────────────────────────────
   // Default model for Claude Code sessions in this project.

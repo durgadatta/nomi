@@ -44,6 +44,13 @@ clear semantics, tests, examples, and documentation.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
+- `.codex/hooks.json` and `.codex/hooks/`: repo-local Codex lifecycle hooks
+  that inject compact Nomi context, suggest relevant skills from prompt text,
+  and block a few obviously destructive shell commands. Review them with
+  `/hooks` in Codex before trusting changed hook scripts.
+- `.claude/settings.json`: tracked Claude Code defaults, permissions, and
+  project hooks. Claude calls the same hook scripts under `.codex/hooks/` so
+  Codex and Claude share Nomi's lightweight context and safety policy.
 - `implementation_guideline.md`: records the early use of
   ChatGPT, Grok, DeepSeek, Gemini, and Claude for parser/evaluator
   infrastructure and syntax-layer exploration.

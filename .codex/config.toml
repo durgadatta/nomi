@@ -44,6 +44,23 @@ verbosity = 3
 
 
 # ---------------------------------------------------------------------------
+# Hooks
+# ---------------------------------------------------------------------------
+
+# Repo-local lifecycle hooks live in `.codex/hooks.json` with scripts under
+# `.codex/hooks/`. They are intentionally advisory by default:
+#   - session-start context reminds Codex to use AGENTS.md, skills, docs, and RAG;
+#   - prompt-submit context suggests likely `.agents/skills/*/SKILL.md` files;
+#   - pre-tool shell policy blocks only obviously destructive commands.
+#
+# Hooks are enabled by default in current Codex releases. Use `/hooks` inside
+# the Codex CLI to review and trust project-local hooks after changes.
+#
+# [features]
+# hooks = false
+
+
+# ---------------------------------------------------------------------------
 # Safety and permissions
 # ---------------------------------------------------------------------------
 
@@ -130,4 +147,3 @@ base_url = "http://localhost:11434/v1/"
 [model_providers.deepseek]
 name = "DeepSeek Remote"
 base_url = "https://api.deepseek.com"
-

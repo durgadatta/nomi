@@ -193,6 +193,14 @@ Use `AGENTS.md` as the first stop for agent work, then follow its links into
 the active design documents before changing parser, interpreter,
 constraint, or yield-to-block behavior.
 
+Repo-local Codex hooks live in `.codex/hooks.json` and `.codex/hooks/`. They
+are a light reminder layer over `AGENTS.md` and `.agents/skills/`: session
+startup injects the core workflow, prompt submission suggests likely skills,
+and shell preflight blocks a few destructive commands. They are intentionally
+not a replacement for reading the relevant docs and tests. Claude Code is wired
+through `.claude/settings.json` to call the same hook scripts, keeping the
+project's agent behavior consistent across both tools.
+
 ## Web Playground
 
 The web playground under `web/` provides a browser-based Nomi editor backed by
