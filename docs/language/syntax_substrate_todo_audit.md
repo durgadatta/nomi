@@ -136,6 +136,22 @@ Current inline comments have been placed at these high-leverage seams:
 Add new inline TODOs only when they point to a real architectural seam. Avoid
 sprinkling IDs everywhere.
 
+## Surface Node Migration Markers
+
+These markers are intentionally small. They should help the next implementation
+pass start in the right file without pretending the surface nodes already
+exist.
+
+| Marker | First write location | Keep for first slice | First proof |
+| --- | --- | --- | --- |
+| `DataDecl` | `prototype/syntax/surface.py`, produced from `prototype/parser/nomi/lowering/data_decl.py` | Reuse `_data_field_spec()` and move existing `ClassDef` generation into `DataDecl.lower()` unchanged. | `tools.syntax.inspect --stage surface-ast` shows a data surface node; current data runtime tests still pass. |
+| `MatchExpr` | `prototype/syntax/surface.py`, produced from `prototype/parser/nomi/lowering/match_expr.py` | Keep `case_expr()` producing `ast.match_case` and move current IIFE wrapper into `MatchExpr.lower()`. | Surface inspection shows subject/cases before backend lowering; current match runtime tests still pass. |
+| `BindingTarget` | passive metadata near `prototype/syntax/surface.py` or a focused binding module, consumed first by `prototype/interpreter/nomi/binding.py` | Start with annotated assignment only; keep `Environment.set_constraint()` as the backend adapter. | Existing binding-constraint tests still pass and one unit test can inspect the passive target metadata. |
+
+Do not use this pass to change data constructor behavior, match failure
+semantics, or parameter constraint semantics. The first win is inspectable
+shape with unchanged backend behavior.
+
 ## Detailed Critique
 
 ### 1. Grammar Layers Are Useful But Not Yet Feature-Owned

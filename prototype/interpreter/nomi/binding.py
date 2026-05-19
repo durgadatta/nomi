@@ -199,6 +199,12 @@ class ConstraintBindingMixin:
         # TODO(NOMI-SUBSTRATE-011): Route this through a shared BindingTarget
         # model so assignments, parameters, data fields, pattern captures,
         # imports, and block params use one constraint/diagnostic path.
+        # Marker for first implementation slice:
+        #   - define BindingTarget as passive metadata before changing eval;
+        #   - start with AnnAssign(name, annotations, kind="assignment");
+        #   - keep Environment.set_constraint as the backend adapter;
+        #   - add tests that failed constraints still raise BindingError with
+        #     the same public message before broadening to params/data fields.
         # Always set constraints from the annotation
         if isinstance(node.target, ast.Name):
             predicate = Annotations.from_node(node, self).predicate

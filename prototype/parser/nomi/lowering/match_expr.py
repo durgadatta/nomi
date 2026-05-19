@@ -28,6 +28,12 @@ class MatchExprMixin:
         # TODO(NOMI-SUBSTRATE-031): Emit a MatchExpr surface node here and keep
         # the IIFE as a backend lowering choice, so return/scope and
         # pattern/guard/constraint failures can be explained with source spans.
+        # Marker for first implementation slice:
+        #   - keep case_expr() producing ast.match_case for now;
+        #   - create a passive MatchExpr(subject, cases) surface shape here;
+        #   - move the IIFE wrapper below into MatchExpr.lower();
+        #   - add a surface-ast inspection test before changing match failure
+        #     or expression-value semantics.
         subject, *cases = items
         match_node = ast.Match(subject=subject, cases=cases)
         empty_args = ast.arguments(

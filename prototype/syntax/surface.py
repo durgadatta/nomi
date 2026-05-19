@@ -12,6 +12,17 @@ Adding a new Nomi construct:
 1. Define a surface node subclass here (or in a feature-specific module).
 2. Have the Lark transformer emit the surface node.
 3. The ``lower_surface_to_python`` walker will call ``.lower()`` on it.
+
+Next migration markers:
+- ``DataDecl`` should preserve class name plus raw field specs before its
+  current ``ClassDef`` backend lowering. First producer:
+  ``prototype/parser/nomi/lowering/data_decl.py``.
+- ``MatchExpr`` should preserve subject plus cases before its current IIFE
+  backend lowering. First producer:
+  ``prototype/parser/nomi/lowering/match_expr.py``.
+- ``BindingTarget`` should start as a passive representation shared by
+  annotated assignment, parameter binding, data fields, and pattern captures
+  before changing constraint semantics.
 """
 
 from __future__ import annotations

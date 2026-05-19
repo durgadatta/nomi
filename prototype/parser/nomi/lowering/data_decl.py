@@ -9,6 +9,13 @@ class DataDeclMixin:
         # TODO(NOMI-SUBSTRATE-030): Emit a DataDecl surface node before
         # backend lowering so fields can reuse BindingTarget/Constraint,
         # decode provenance, redaction, and BindingError diagnostics.
+        # Marker for first implementation slice:
+        #   - keep _data_field_spec() as the existing field parser;
+        #   - create a passive DataField/DataDecl surface shape from these
+        #     specs;
+        #   - move the ClassDef generation below into DataDecl.lower();
+        #   - add a surface-ast inspection test before changing runtime
+        #     constructor behavior or field diagnostics.
         class_name = str(items[0])
         fields = items[1:]
 
