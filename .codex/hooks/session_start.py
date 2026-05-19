@@ -24,6 +24,8 @@ Choose relevant skills from `.agents/skills/` before editing:
 - `nomi-reduce` for syntactic reductions that need desugar + reduced-mode tests.
 - `nomi-test` for tests, snapshots, and multi-interpreter coverage.
 - `nomi-web` for the web playground, Monaco, Pyodide, and manifest work.
+- `nomi-ai-native` for improving agent setup, hooks, MCP/RAG, skills, and
+  workflow repeatability.
 
 Use local RAG/MCP only as source discovery; read returned files directly before
 editing. Keep parser, lowering, interpreter, docs, and focused tests aligned."""

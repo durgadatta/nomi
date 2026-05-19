@@ -56,6 +56,9 @@ verbosity = 3
 # Hooks are enabled by default in current Codex releases. Use `/hooks` inside
 # the Codex CLI to review and trust project-local hooks after changes.
 #
+# Check the tracked agent setup with:
+#   python3 .codex/scripts/agent_doctor.py
+#
 # [features]
 # hooks = false
 

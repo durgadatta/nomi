@@ -19,6 +19,14 @@ SKILL_HINTS = (
         "read active language docs and reduce ideas to Nomi normal forms before implementation",
     ),
     (
+        "nomi-ai-native",
+        re.compile(
+            r"\b(ai[- ]?native|agent[- ]?native|agent setup|codex|claude|opencode|hooks?|skills?|subagents?|mcp|rag|prompt templates?|context hygiene)\b",
+            re.I,
+        ),
+        "audit the agent environment and choose between docs, skills, hooks, MCP, subagents, commands, and tests",
+    ),
+    (
         "nomi-parse",
         re.compile(r"\b(parser|parse|grammar|lark|ast|lowering|desugar|surface syntax)\b", re.I),
         "keep grammar, lowering, desugar, feature metadata, and parser tests aligned",

@@ -35,6 +35,12 @@ config beside the project `.codex/` layer. Claude calls the same scripts through
 
 ## Local Smoke Checks
 
+Run the broader agent setup check:
+
+```bash
+python3 .codex/scripts/agent_doctor.py
+```
+
 ```bash
 printf '{"hook_event_name":"SessionStart","source":"startup","cwd":"%s"}\n' "$PWD" \
   | python3 .codex/hooks/session_start.py

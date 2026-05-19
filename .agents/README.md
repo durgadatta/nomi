@@ -12,6 +12,7 @@ Current skills:
 
 - `caveman`: ultra-concise output for low-context or terse models.
 - `nomi-interp`: interpreter runtime changes.
+- `nomi-ai-native`: AI-agent setup, hooks, MCP/RAG, skills, subagents, and workflow audits.
 - `nomi-language-design`: language design synthesis and syntax critique.
 - `nomi-parse`: parser, grammar, and AST lowering changes.
 - `nomi-reduce`: syntactic reduction/desugar work.

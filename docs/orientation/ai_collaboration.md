@@ -38,6 +38,7 @@ clear semantics, tests, examples, and documentation.
   | `nomi-test` | Write tests with multi-interpreter patterns |
   | `nomi-web` | Work with the web playground and Monaco editor |
   | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
+  | `nomi-ai-native` | Improve AI-agent setup: skills, hooks, MCP/RAG, subagents, commands, context hygiene, and workflow audits |
   If an agent has a skill loader, load the matching skill from this directory.
   If it does not, read the relevant `SKILL.md` directly before working. The
   `caveman` skill is recommended for deepseek models to keep output minimal.
