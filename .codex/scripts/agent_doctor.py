@@ -48,6 +48,7 @@ def run_checks() -> list[CheckResult]:
         check_claude_settings_jsonc(),
         check_hook_scripts_compile(),
         check_skills_frontmatter(),
+        check_claude_skill_shims(),
         check_rag_index_freshness(),
     ]
 
@@ -137,6 +138,30 @@ def check_skills_frontmatter() -> CheckResult:
     if failures:
         return CheckResult("skills-frontmatter", "fail", "; ".join(failures))
     return CheckResult("skills-frontmatter", "pass", f"{len(skill_paths)} skills have basic metadata.")
+
+
+def check_claude_skill_shims() -> CheckResult:
+    canonical_skills = sorted(path.parent.name for path in (ROOT / ".agents/skills").glob("*/SKILL.md"))
+    shim_skills = sorted(path.parent.name for path in (ROOT / ".claude/skills").glob("*/SKILL.md"))
+
+    missing = sorted(set(canonical_skills) - set(shim_skills))
+    extra = sorted(set(shim_skills) - set(canonical_skills))
+    failures = []
+    if missing:
+        failures.append("missing Claude shims: " + ", ".join(missing))
+    if extra:
+        failures.append("extra Claude shims: " + ", ".join(extra))
+
+    for skill in sorted(set(canonical_skills) & set(shim_skills)):
+        shim = ROOT / ".claude/skills" / skill / "SKILL.md"
+        text = shim.read_text(encoding="utf-8")
+        expected = f".agents/skills/{skill}/SKILL.md"
+        if expected not in text:
+            failures.append(f"{skill}: shim does not reference {expected}")
+
+    if failures:
+        return CheckResult("claude-skill-shims", "fail", "; ".join(failures))
+    return CheckResult("claude-skill-shims", "pass", f"{len(shim_skills)} Claude skill shims mirror .agents/skills.")
 
 
 def check_rag_index_freshness() -> CheckResult:

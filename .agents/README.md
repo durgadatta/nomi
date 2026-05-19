@@ -8,6 +8,10 @@ Shared AI-agent assets live here so they are not tied to one tool.
 native skill loading can load them directly; other agents can read the relevant
 `SKILL.md` before working.
 
+The canonical skill bodies live here. Tool-specific shims should be thin:
+Claude Code shims under `.claude/skills/*/SKILL.md` only point back to these
+files so the shared skill text does not drift.
+
 Current skills:
 
 - `caveman`: ultra-concise output for low-context or terse models.

@@ -42,6 +42,9 @@ clear semantics, tests, examples, and documentation.
   If an agent has a skill loader, load the matching skill from this directory.
   If it does not, read the relevant `SKILL.md` directly before working. The
   `caveman` skill is recommended for deepseek models to keep output minimal.
+- `.claude/skills/`: Claude Code native skill shims. These should stay tiny and
+  point back to `.agents/skills/`, which remains the canonical shared skill
+  directory.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.
