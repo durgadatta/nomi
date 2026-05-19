@@ -20,6 +20,20 @@ from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 
 
+@dataclass(frozen=True, slots=True)
+class RuntimeCacheKey:
+    """Identity for cached lowered ASTs in a runtime session."""
+
+    source_text: str
+    source_identity: str | None
+    mode: str
+    profile: str
+    parser: str
+    lowering: str
+    grammar_version: str = "builtin-features-v1"
+    span_mode: str = "default"
+
+
 @dataclass(slots=True)
 class RuntimeSession:
     mode: str = "nomi"
@@ -27,7 +41,7 @@ class RuntimeSession:
     cache_size: int = 0
     pipeline: PipelineSpec = field(init=False)
     interpreter: Any = field(init=False)
-    _ast_cache: dict[str, Any] = field(default_factory=dict, init=False)
+    _ast_cache: dict[RuntimeCacheKey, Any] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
         self.pipeline = build_pipeline_spec(mode=self.mode, profile=self.profile)
@@ -75,7 +89,8 @@ class RuntimeSession:
                 if tree is None:
                     if source is None and filename is not None and self.cache_size > 0:
                         source = Path(filename).read_text(encoding="utf-8")
-                    cached_tree = self._get_cached_tree(source)
+                    cache_key = self._cache_key(source=source, filename=filename)
+                    cached_tree = self._get_cached_tree(cache_key)
                     if cached_tree is not None:
                         cache_started = perf_counter()
                         tree = cached_tree
@@ -89,7 +104,7 @@ class RuntimeSession:
                         )
                         tree = ast.fix_missing_locations(tree)
                         tree_locations_fixed = True
-                        self._cache_tree(source, tree)
+                        self._cache_tree(cache_key, tree)
 
                 if not tree_locations_fixed:
                     tree = ast.fix_missing_locations(tree)
@@ -169,26 +184,43 @@ class RuntimeSession:
             timings["lower"] = perf_counter() - lower_started
         return tree
 
-    def _get_cached_tree(self, source: str | None) -> Any | None:
+    def _cache_key(
+        self,
+        *,
+        source: str | None,
+        filename: str | Path | None,
+    ) -> RuntimeCacheKey | None:
         if self.cache_size <= 0 or source is None:
             return None
-        # TODO(NOMI-ARCH-015): Replace raw source-text cache keys with a typed
-        # RuntimeCacheKey including mode, profile, source identity, span mode,
-        # grammar version, and lowering profile.
-        return self._ast_cache.get(source)
+        source_identity = (
+            str(Path(filename).resolve())
+            if filename is not None
+            else None
+        )
+        return RuntimeCacheKey(
+            source_text=source,
+            source_identity=source_identity,
+            mode=self.mode,
+            profile=self.profile,
+            parser=self.pipeline.parser,
+            lowering=self.pipeline.lowering,
+        )
 
-    def _cache_tree(self, source: str | None, tree: Any) -> None:
-        if self.cache_size <= 0 or source is None:
+    def _get_cached_tree(self, cache_key: RuntimeCacheKey | None) -> Any | None:
+        if cache_key is None:
+            return None
+        return self._ast_cache.get(cache_key)
+
+    def _cache_tree(self, cache_key: RuntimeCacheKey | None, tree: Any) -> None:
+        if cache_key is None:
             return
-        # TODO(NOMI-ARCH-015): Apply the same typed key and invalidation policy
-        # here before feature profiles or docs-only parse modes reuse this cache.
-        if source in self._ast_cache:
-            self._ast_cache[source] = tree
+        if cache_key in self._ast_cache:
+            self._ast_cache[cache_key] = tree
             return
         if len(self._ast_cache) >= self.cache_size:
             oldest = next(iter(self._ast_cache))
             del self._ast_cache[oldest]
-        self._ast_cache[source] = tree
+        self._ast_cache[cache_key] = tree
 
     @staticmethod
     def _is_block_call_expr(node: ast.Expr) -> bool:

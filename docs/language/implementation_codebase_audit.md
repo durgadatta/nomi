@@ -37,8 +37,8 @@ truthful enough to steer work." The current risks are:
 - Core IR inspection is currently a backward projection from Python AST, not
   the authoritative Surface -> Core path;
 - CLI, web, and notebook still shape output/errors differently;
-- parser/runtime cache keys remain too small for feature profiles and
-  docs-only/target-tour parsing;
+- parser cache keys remain too small for feature profiles and
+  docs-only/target-tour parsing; runtime session cache keys are now typed;
 - postlexer rules are fast and practical but still need token-rewrite fixtures;
 - generated Python AST is still doing too much semantic work for data, match,
   and binding.
@@ -65,7 +65,7 @@ The adversarial version of this refresh is tracked in
 | Tests and capability matrix | Tests are strong by interpreter mode, but feature status is not declared in one machine-readable matrix. | Implemented, partial, target-only, and rejected syntax remain scattered across docs and tests. | `NOMI-SUBSTRATE-021`, `NOMI-SUBSTRATE-026` |
 | Postlexer disambiguation | LALR speed depends on token rewrites for contextual syntax. | New expressive syntax can turn the postlexer into an undocumented grammar and perf hotspot. | `NOMI-SUBSTRATE-032` |
 | Desugar and feature profiles | Desugar profiles are manifest-driven now, but runtime/parser profiles are still basically `default`. | The feature manifest can say more than the parser/runtime API can actually select or prove. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002` |
-| Runtime cache identity | `RuntimeSession` caches lowered ASTs by source text only. | Feature profiles, span modes, grammar versions, or filename changes can reuse unsafe artifacts. | `NOMI-ARCH-015` |
+| Runtime cache identity | `RuntimeSession` now uses `RuntimeCacheKey`, but parser/profile versioning is still mostly placeholder data. | Future feature profiles must update the key rather than bypassing it. | `NOMI-ARCH-015` |
 | Call-frame ownership | Function calls shallow-copy environments. | Future constraints, capabilities, and block policies need explicit ownership and faster frame setup. | `NOMI-ARCH-016` |
 | Performance budgets | Manual performance notes are strong but not automated. | Flexibility work can quietly erase LALR/session-cache gains. | `NOMI-ARCH-017` |
 | Agent artifact hygiene | `.codex/hooks/**` is intentionally unignored, which can re-include generated Python caches unless explicitly blocked. | AI-tooling artifacts can leak into review noise or commits. | `NOMI-AGENT-001` |
@@ -84,7 +84,7 @@ The adversarial version of this refresh is tracked in
 | `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
 | `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Desugar pass selection is manifest-backed; runtime inspection still needs to show the concrete mode/profile pass set. |
 | `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Feature status must split into capability axes instead of one optimistic lifecycle label. |
-| `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime AST cache keys need mode/profile/source/span/grammar identity. |
+| `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime AST cache keys now carry mode/profile/source/span/grammar identity; update them as profiles become real. |
 | `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Call-frame/environment ownership needs to be explicit before more semantic state is added. |
 | `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Performance budgets should protect parse/lower/desugar/eval/session paths. |
 | `NOMI-ARCH-023` | `scripts/cli.py` | CLI should use the public runtime facade and structured result contract. |
