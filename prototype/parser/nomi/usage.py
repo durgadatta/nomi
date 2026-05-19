@@ -1,9 +1,10 @@
 import ast
 import os
+from dataclasses import dataclass
+from pathlib import Path
+
 from lark import Lark
 from lark.lexer import PatternRE
-
-from pathlib import Path
 
 from .ast_ import NomiToPythonAST
 from .postlexer import NomiPostLexer
@@ -12,16 +13,34 @@ from ...syntax.surface import lower_surface_to_python
 from ...syntax.features import get_extra_grammar_layers
 
 
-# ── parser cache ────────────────────────────────────────────────────
-# Lark parser construction is noticeably more expensive than reusing a parser,
-# especially in Pyodide/WebAssembly. Cache by the resolved extra-layer tuple so
-# syntax experiments do not accidentally reuse the wrong parser.
-_PARSER_CACHE = {}
+GRAMMAR_VERSION = "builtin-features-v1"
+
+
+@dataclass(frozen=True, slots=True)
+class ParserCacheKey:
+    """Identity for a constructed Lark parser."""
+
+    grammar_layers: tuple[str, ...]
+    preserve_positions: bool
+    grammar_version: str = GRAMMAR_VERSION
+    feature_profile: str = "default"
+
+
+@dataclass(frozen=True, slots=True)
+class RawTreeCacheKey:
+    """Identity for a raw parse tree cache entry."""
+
+    source_hash: int
+    source_identity: str | None
+    parser_key: ParserCacheKey
+
+
+_PARSER_CACHE: dict[ParserCacheKey, Lark] = {}
 
 # ── parse result cache ──────────────────────────────────────────────
 # Cache raw parse trees by source-content hash so repeated parses of unchanged
 # source (REPL, test suite, incremental editing) are instant.
-_RAW_TREE_CACHE: dict[tuple[int, bool], object] = {}
+_RAW_TREE_CACHE: dict[RawTreeCacheKey, object] = {}
 
 
 def prefer_name_for_underscore_terminal(terminal):
@@ -37,14 +56,24 @@ def _preserve_positions_default():
     return _truthy_env("NOMI_PARSER_SPANS")
 
 
-def get_parser(extra_layers=None, preserve_positions=None):
-    # Resolve extra layers: feature-derived layers + any experimental ad-hoc layers.
-    # TODO(NOMI-SUBSTRATE-029): Replace this tuple with a ParseRequest/ParserCacheKey
-    # that includes feature profile, grammar version, source identity, and span mode.
-    resolved = tuple(get_extra_grammar_layers()) + (tuple(extra_layers) if extra_layers else ())
+def _parser_cache_key(extra_layers=None, preserve_positions=None) -> ParserCacheKey:
     if preserve_positions is None:
         preserve_positions = _preserve_positions_default()
-    key = (resolved, preserve_positions)
+    resolved = tuple(get_extra_grammar_layers()) + (
+        tuple(extra_layers) if extra_layers else ()
+    )
+    return ParserCacheKey(
+        grammar_layers=resolved,
+        preserve_positions=preserve_positions,
+    )
+
+
+def get_parser(extra_layers=None, preserve_positions=None):
+    key = _parser_cache_key(
+        extra_layers=extra_layers,
+        preserve_positions=preserve_positions,
+    )
+    preserve_positions = key.preserve_positions
     if key in _PARSER_CACHE:
         return _PARSER_CACHE[key]
     grammar = assemble_grammar(extra_layers=extra_layers)
@@ -71,9 +100,13 @@ def parse_raw_tree(code=None, filename=None, preserve_positions=None):
         code = Path(filename).read_text(encoding="utf-8")
     if preserve_positions is None:
         preserve_positions = _preserve_positions_default()
-    # TODO(NOMI-SUBSTRATE-029): Include filename/source version and active
-    # feature profile so docs-only or target-tour parsing cannot reuse a stale tree.
-    key = (hash(code), preserve_positions)
+    parser_key = _parser_cache_key(preserve_positions=preserve_positions)
+    source_identity = str(Path(filename).resolve()) if filename is not None else None
+    key = RawTreeCacheKey(
+        source_hash=hash(code),
+        source_identity=source_identity,
+        parser_key=parser_key,
+    )
     cached = _RAW_TREE_CACHE.get(key)
     if cached is not None:
         return cached
@@ -105,7 +138,11 @@ def generate_ast(
     assert filename or code
     if code is None:
         code = Path(filename).read_text()
-    tree = parse_transformed_tree(code=code, preserve_positions=preserve_positions)
+    tree = parse_transformed_tree(
+        code=code,
+        filename=filename,
+        preserve_positions=preserve_positions,
+    )
 
     node = NomiToPythonAST().transform(tree)
     # TODO(NOMI-ARCH-018): Keep this as the Python AST backend path while

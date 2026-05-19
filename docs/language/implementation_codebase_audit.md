@@ -38,8 +38,8 @@ truthful enough to steer work." The current risks are:
 - Core IR inspection is currently a backward projection from Python AST, not
   the authoritative Surface -> Core path;
 - CLI, web, and notebook still shape output/errors differently;
-- parser cache keys remain too small for feature profiles and
-  docs-only/target-tour parsing; runtime session cache keys are now typed;
+- parser and runtime cache keys are now typed, but feature-profile and
+  source-version inputs are still placeholders for docs-only/target-tour parsing;
 - postlexer rules are fast and practical but still need token-rewrite fixtures;
 - generated Python AST is still doing too much semantic work for data, match,
   and binding.
@@ -51,7 +51,7 @@ The adversarial version of this refresh is tracked in
 
 | Area | Finding | Risk | Central TODO |
 | --- | --- | --- | --- |
-| Parser cache and profiles | Parser and raw-tree caches are keyed by extra layers and code hash, not full source identity, feature profile, or versioned grammar state. | Future feature profiles, docs-only parsing, and target-tour inspection can reuse stale or wrong parse artifacts. | `NOMI-SUBSTRATE-029` |
+| Parser cache and profiles | Parser/raw-tree caches now use typed keys with source identity and grammar/profile placeholders. | Future docs-only and target-tour parsing must feed real profile/source-version values into those keys. | `NOMI-SUBSTRATE-029` |
 | Surface AST coverage | `BlockCall` has a surface node, but `data`, match expressions, pipeline, and binding targets still lower directly to Python AST. | Normal-form inspection and diagnostics will be inconsistent by feature. | `NOMI-SUBSTRATE-005`, `NOMI-SUBSTRATE-030`, `NOMI-SUBSTRATE-031` |
 | Core IR authority | `prototype.syntax.core` exists, but current lowering is Python AST -> Core for inspection only. | Core IR can look like a plan while Python AST remains the real language definition. | `NOMI-ARCH-019` |
 | Capability status | `FeatureCapabilityAxes` exposes a derived matrix, but reduced-mode, samples, web, notebook, and docs/spec status are not explicit per feature yet. | A feature can still look more complete than it is if derived axes are treated as proof. | `NOMI-SUBSTRATE-035` |
@@ -76,7 +76,7 @@ The adversarial version of this refresh is tracked in
 | ID | File | Why this location matters |
 | --- | --- | --- |
 | `NOMI-SUBSTRATE-011` | `prototype/interpreter/nomi/binding.py` | Current constraint engine assumes annotated assignment names and should become a shared binding target model. |
-| `NOMI-SUBSTRATE-029` | `prototype/parser/nomi/usage.py` | Parser/raw-tree cache keys must grow feature profile and source identity before target parsing modes. |
+| `NOMI-SUBSTRATE-029` | `prototype/parser/nomi/usage.py` | Parser/raw-tree cache keys are typed; feature profiles and source-version inputs remain future work. |
 | `NOMI-SUBSTRATE-030` | `prototype/parser/nomi/lowering/data_decl.py` | `data` lowering needs an owned surface node and shared binding/diagnostic/decode semantics. |
 | `NOMI-SUBSTRATE-031` | `prototype/parser/nomi/lowering/match_expr.py` | Match-expression IIFE lowering needs a surface/core representation for diagnostics and control clarity. |
 | `NOMI-ARCH-013` | `prototype/runtime/api.py` | Public execution should collect diagnostics/events as first-class result fields. |
