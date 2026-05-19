@@ -9,6 +9,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage core
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
+    python3 -m tools.syntax.inspect --stage capabilities
     python3 -m tools.syntax.inspect --stage passes
     python3 -m tools.syntax.inspect FILE --stage expansions
 """
@@ -26,7 +27,10 @@ from prototype.parser.nomi.desugar.pipeline import (
     render_desugar_pass_table,
 )
 from prototype.syntax.core import dump_core, lower_python_ast_to_core
-from prototype.syntax.features import render_feature_layer_table
+from prototype.syntax.features import (
+    render_feature_capability_table,
+    render_feature_layer_table,
+)
 
 
 def main():
@@ -51,6 +55,9 @@ def main():
 
     if stage == "features":
         print(render_feature_layer_table())
+        return
+    if stage in {"capabilities", "capability-matrix", "capability_matrix"}:
+        print(render_feature_capability_table())
         return
     if stage in {"passes", "desugar-passes", "desugar_passes"}:
         print(render_desugar_pass_table())
@@ -77,9 +84,11 @@ def main():
     elif stage in {"expansions", "desugar-expansions", "desugar_expansions"}:
         print(render_desugar_expansion(generate_ast(code=code)))
     else:
-        print(f"Unknown stage: {stage!r}. "
-              f"Valid: raw-tree, transformed-tree, surface-ast, core, "
-              f"python-ast, features, passes, expansions")
+        print(
+            f"Unknown stage: {stage!r}. "
+            f"Valid: raw-tree, transformed-tree, surface-ast, core, "
+            f"python-ast, features, capabilities, passes, expansions"
+        )
         sys.exit(1)
 
 

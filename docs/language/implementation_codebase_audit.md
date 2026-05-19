@@ -33,7 +33,8 @@ metadata, and the passive Core IR skeleton plus inspection stages exist.
 The hard critique now shifts from "add the first seams" to "make the seams
 truthful enough to steer work." The current risks are:
 
-- feature `status` is still one coarse label rather than a capability matrix;
+- feature capabilities now have a derived matrix, but several axes are still
+  inferred rather than explicit per feature;
 - Core IR inspection is currently a backward projection from Python AST, not
   the authoritative Surface -> Core path;
 - CLI, web, and notebook still shape output/errors differently;
@@ -53,7 +54,7 @@ The adversarial version of this refresh is tracked in
 | Parser cache and profiles | Parser and raw-tree caches are keyed by extra layers and code hash, not full source identity, feature profile, or versioned grammar state. | Future feature profiles, docs-only parsing, and target-tour inspection can reuse stale or wrong parse artifacts. | `NOMI-SUBSTRATE-029` |
 | Surface AST coverage | `BlockCall` has a surface node, but `data`, match expressions, pipeline, and binding targets still lower directly to Python AST. | Normal-form inspection and diagnostics will be inconsistent by feature. | `NOMI-SUBSTRATE-005`, `NOMI-SUBSTRATE-030`, `NOMI-SUBSTRATE-031` |
 | Core IR authority | `prototype.syntax.core` exists, but current lowering is Python AST -> Core for inspection only. | Core IR can look like a plan while Python AST remains the real language definition. | `NOMI-ARCH-019` |
-| Capability status | `SyntaxFeature.status` is a single lifecycle label. | A feature can look implemented while parse, runtime, reduced, docs, samples, web, notebook, and explain coverage differ. | `NOMI-SUBSTRATE-035` |
+| Capability status | `FeatureCapabilityAxes` exposes a derived matrix, but reduced-mode, samples, web, notebook, and docs/spec status are not explicit per feature yet. | A feature can still look more complete than it is if derived axes are treated as proof. | `NOMI-SUBSTRATE-035` |
 | Binding and constraints | Runtime constraints are centered on `AnnAssign` name targets; parameters, data fields, patterns, imports, and block params do not share one `BindingTarget`. | The one-binding story can diverge silently at each name-introduction site. | `NOMI-SUBSTRATE-011` |
 | Data declarations | `data` currently generates `ClassDef` plus `TypeError` field checks, without owned data surface nodes, decode/provenance, redaction, or `BindingError` integration. | Target `data`/decode semantics cannot be explained or diagnosed through the current path. | `NOMI-SUBSTRATE-030` |
 | Match expressions | Match expressions lower through IIFE wrappers with Python `return` semantics. | `return`, source spans, pattern failure, guard failure, and constraint failure can be hard to explain. | `NOMI-SUBSTRATE-031` |
@@ -62,7 +63,7 @@ The adversarial version of this refresh is tracked in
 | Interpreter dispatch | `eval_*` method-name dispatch is simple, but feature ownership, node kinds, resumable policy, and trace hooks are not metadata. | Explanation, reduced-interpreter contracts, and feature manifests cannot align with runtime behavior. | `NOMI-SUBSTRATE-024` |
 | Resumable control | Generator/block execution has paused-frame TODOs and mixed resumable/non-resumable paths. | Block policies, retries, transactions, cleanup, and future concurrency can inherit unclear control semantics. | `NOMI-ARCH-014` |
 | Web/notebook exposure | Runtime facade exists, but feature profiles and inspection are not yet a shared frontend contract. | Target-language labs and current samples may drift apart. | `NOMI-ARCH-003`, `NOMI-SUBSTRATE-027` |
-| Tests and capability matrix | Tests are strong by interpreter mode, but feature status is not declared in one machine-readable matrix. | Implemented, partial, target-only, and rejected syntax remain scattered across docs and tests. | `NOMI-SUBSTRATE-021`, `NOMI-SUBSTRATE-026` |
+| Tests and capability matrix | A derived capability matrix exists, but feature-owned test coverage is not fully declared in one place. | Implemented, partial, target-only, and rejected syntax can still drift across docs and tests. | `NOMI-SUBSTRATE-021`, `NOMI-SUBSTRATE-026` |
 | Postlexer disambiguation | LALR speed depends on token rewrites for contextual syntax. | New expressive syntax can turn the postlexer into an undocumented grammar and perf hotspot. | `NOMI-SUBSTRATE-032` |
 | Desugar and feature profiles | Desugar profiles are manifest-driven now, but runtime/parser profiles are still basically `default`. | The feature manifest can say more than the parser/runtime API can actually select or prove. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002` |
 | Runtime cache identity | `RuntimeSession` now uses `RuntimeCacheKey`, but parser/profile versioning is still mostly placeholder data. | Future feature profiles must update the key rather than bypassing it. | `NOMI-ARCH-015` |
@@ -83,7 +84,7 @@ The adversarial version of this refresh is tracked in
 | `NOMI-ARCH-014` | `prototype/interpreter/python/generator_state.py` | Resumable control needs an explicit frame/policy model before richer block policies. |
 | `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
 | `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Desugar pass selection is manifest-backed; runtime inspection still needs to show the concrete mode/profile pass set. |
-| `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Feature status must split into capability axes instead of one optimistic lifecycle label. |
+| `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Feature status now has derived capability axes; make incomplete axes explicit over time. |
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime AST cache keys now carry mode/profile/source/span/grammar identity; update them as profiles become real. |
 | `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Call-frame/environment ownership needs to be explicit before more semantic state is added. |
 | `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Performance budgets should protect parse/lower/desugar/eval/session paths. |
@@ -143,8 +144,9 @@ not present yet. Target-only docs make this more urgent, because future tests
 need to say whether a feature parses, lowers, runs, explains, appears in web,
 or belongs only to target fixtures.
 
-Next move: create a passive machine-readable capability matrix, then generate
-docs tables from it later if useful.
+Next move: promote derived capability axes into explicit feature-owned fields
+where the defaults hide real gaps, especially reduced-mode, samples, web,
+notebook, and docs/spec status.
 
 ## Suggested Phase Order
 

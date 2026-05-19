@@ -60,7 +60,7 @@ paths explicit now, before expressive syntax multiplies.
 | Postlexer becomes a hidden grammar | High | New syntax depends on token-rewrite heuristics that are hard to reason about locally. | Full token buffering and repeated scans can grow with every disambiguation. | `NOMI-SUBSTRATE-032`: declared postlexer contract + fixtures + perf notes. |
 | Direct Python AST lowering hides Nomi nodes | High | New features cannot be inspected as Nomi normal forms. | Later diagnostics require expensive reverse mapping. | Continue `DataDecl`, `MatchExpr`, `BindingTarget`, `PipeExpr` surface-node migration. |
 | Core IR becomes decorative | High | The project can point at Core IR while real semantics still flow through Python AST. | Future backends and diagnostics inherit a misleading artifact boundary. | `NOMI-ARCH-019`: make Surface -> Core lowering authoritative for a tiny subset. |
-| Capability status lies by omission | High | A feature marked implemented may not parse, reduce, explain, document, sample, or expose consistently. | Tooling and docs can overstate maturity. | `NOMI-SUBSTRATE-035`: split status into capability axes. |
+| Capability status lies by omission | High | Derived capability axes exist, but some rows still infer support from status/docs/tests rather than feature-owned proof. | Tooling and docs can overstate maturity. | `NOMI-SUBSTRATE-035`: make incomplete axes explicit per feature. |
 | Cache identity is under-specified | High | Parser caches can still reuse wrong artifacts once feature profiles and target parsing arrive. | Cache invalidation bugs lead to false performance wins or stale execution. | `NOMI-SUBSTRATE-029`: typed parser cache keys. |
 | Profile plumbing stops halfway | Medium | Desugar metadata exists, but parser/runtime inspection still cannot fully select or prove named profiles. | Extra passes or missing passes become hidden hot-path work. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002`: end-to-end profile selection and inspection. |
 | Runtime session cache key can go stale | Medium | `RuntimeCacheKey` exists, but grammar/profile version fields are placeholders until profiles become real. | Good speed path can become unsafe if future profile work bypasses the key. | `NOMI-ARCH-015`: update typed key inputs as profile/version APIs land. |
@@ -223,7 +223,7 @@ Required response:
 | --- | --- | --- |
 | `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Prevent token rewrites from becoming an undocumented grammar and performance sink. |
 | `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Keep manifest-backed pass selection and make inspection honor concrete runtime profiles. |
-| `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Prevent one coarse feature status from overstating implementation maturity. |
+| `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Derived capability axes exist; prevent inferred axes from becoming fake proof. |
 | `NOMI-ARCH-019` | `prototype/syntax/core.py` | Prevent passive Core IR from becoming decorative while Python AST remains authoritative. |
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime cache key is typed; keep profile/grammar/span fields honest as those APIs grow. |
 | `NOMI-ARCH-016` | `prototype/interpreter/python/function.py`, `prototype/interpreter/python/env.py` | Define call-frame/environment ownership before constraints/capabilities make copies expensive or wrong. |

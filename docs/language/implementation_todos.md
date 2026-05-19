@@ -105,13 +105,17 @@ layers move from docs into implementation.
   (Done in `prototype/syntax/features.py` — `BUILTIN_FEATURES` is the single
   source of truth; grammar layers, layer transforms, lowering mixins, and
   desugar passes are all derived from it.)
-- [ ] Add a current capability/spec matrix that separates target-only,
+- [~] Add a current capability/spec matrix that separates target-only,
   parse-only, lowerable, runnable, explainable, documented, sample-covered,
   web-exposed, and notebook-exposed features.
-- [ ] Split `SyntaxFeature.status` into machine-readable capability axes so
+  (`render_feature_capability_table()` and `inspect(stage="capabilities")`
+  expose the first derived matrix. Remaining: make reduced-mode, samples, web,
+  notebook, and docs/spec status explicit instead of derived/defaulted.)
+- [~] Split `SyntaxFeature.status` into machine-readable capability axes so
   parser support, lowering, runtime, reduced-mode support, diagnostics,
   docs/spec status, samples, web, and notebook exposure cannot be collapsed
-  into one optimistic lifecycle label. (`NOMI-SUBSTRATE-035`)
+  into one optimistic lifecycle label. (`NOMI-SUBSTRATE-035`; initial derived
+  axes exist in `FeatureCapabilityAxes`.)
 - [ ] Add named experiment profiles such as `default`, `lab`, `target-tour`,
   and `docs-only` after the parser grows `features=[...]`.
 - [x] Add `tools.syntax.inspect` so every grammar or lowering change can show

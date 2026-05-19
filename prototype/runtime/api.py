@@ -21,7 +21,10 @@ from prototype.runtime.diagnostics import (
 )
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import dump_core, lower_python_ast_to_core
-from prototype.syntax.features import render_feature_layer_table
+from prototype.syntax.features import (
+    render_feature_capability_table,
+    render_feature_layer_table,
+)
 
 
 @dataclass(frozen=True)
@@ -149,6 +152,18 @@ def inspect(
     started = perf_counter()
     if stage == "features":
         output = render_feature_layer_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"capabilities", "capability_matrix"}:
+        output = render_feature_capability_table()
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,

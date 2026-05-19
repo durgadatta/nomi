@@ -61,9 +61,23 @@ class SyntaxFeature:
     #   design-needed    — semantics not settled, parse-only or hidden
     #   research-only    — aspirational, may not parse yet
     #   rejected-for-now — kept for reference, not active
-    # TODO(NOMI-SUBSTRATE-035): Split this single status into a capability
-    # matrix: parse, lower, run, reduce, explain, document, sample, web, and
-    # notebook exposure should be independently visible.
+
+
+@dataclass(frozen=True)
+class FeatureCapabilityAxes:
+    """Current implementation exposure for one feature."""
+
+    target_only: bool = False
+    parse: bool = False
+    lower: bool = False
+    run: bool = False
+    reduce: bool = False
+    explain: bool = False
+    docs: bool = False
+    tests: bool = False
+    samples: bool = False
+    web: bool = False
+    notebook: bool = False
 
 
 # ── expression-precedence ────────────────────────────────────────────
@@ -520,6 +534,67 @@ def render_feature_layer_table(features: list[SyntaxFeature] | None = None) -> s
                 semantic=", ".join(feature.semantic_forms) or "-",
                 reduces=", ".join(feature.reduces_to) or "-",
                 hooks=feature.runtime_hooks_allowed,
+            )
+        )
+    return "\n".join(rows)
+
+
+def get_feature_capabilities(feature: SyntaxFeature) -> FeatureCapabilityAxes:
+    """Return a conservative capability matrix row for one feature."""
+    target_only = feature.status in {"research-only", "design-needed"}
+    parse = feature.status not in {"research-only", "rejected-for-now"}
+    lower = bool(
+        feature.layer_transforms
+        or feature.lowering_mixins
+        or feature.desugar_passes
+        or feature.reduces_to
+    )
+    run = feature.status == "implemented"
+    return FeatureCapabilityAxes(
+        target_only=target_only,
+        parse=parse,
+        lower=lower,
+        run=run,
+        reduce=bool(feature.reduces_to),
+        explain=False,
+        docs=bool(feature.docs),
+        tests=bool(feature.tests),
+        samples=False,
+        web=False,
+        notebook=False,
+    )
+
+
+def render_feature_capability_table(
+    features: list[SyntaxFeature] | None = None,
+) -> str:
+    """Return a current feature capability/spec matrix."""
+
+    def mark(value: bool) -> str:
+        return "yes" if value else "no"
+
+    rows = [
+        "| feature | target-only | parse | lower | run | reduce | explain | "
+        "docs | tests | samples | web | notebook |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for feature in features or BUILTIN_FEATURES:
+        capabilities = get_feature_capabilities(feature)
+        rows.append(
+            "| {name} | {target} | {parse} | {lower} | {run} | {reduce} | "
+            "{explain} | {docs} | {tests} | {samples} | {web} | {notebook} |".format(
+                name=feature.name,
+                target=mark(capabilities.target_only),
+                parse=mark(capabilities.parse),
+                lower=mark(capabilities.lower),
+                run=mark(capabilities.run),
+                reduce=mark(capabilities.reduce),
+                explain=mark(capabilities.explain),
+                docs=mark(capabilities.docs),
+                tests=mark(capabilities.tests),
+                samples=mark(capabilities.samples),
+                web=mark(capabilities.web),
+                notebook=mark(capabilities.notebook),
             )
         )
     return "\n".join(rows)
