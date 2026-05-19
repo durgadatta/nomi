@@ -27,3 +27,8 @@ Current skills:
 
 Project subagent prompts are canonical under `.codex/agents/*.md`. Claude Code
 native shims under `.claude/agents/*.md` point back to those prompts.
+
+## Prompt Templates
+
+Reusable prompt templates are canonical under `.codex/prompts/*.md`. Claude
+Code command shims under `.claude/commands/*.md` point back to those templates.

@@ -201,6 +201,10 @@ not a replacement for reading the relevant docs and tests. Claude Code is wired
 through `.claude/settings.json` to call the same hook scripts, keeping the
 project's agent behavior consistent across both tools.
 
+Reusable agent prompts are canonical under `.codex/prompts/`, with Claude
+command shims under `.claude/commands/`. Project subagent prompts are canonical
+under `.codex/agents/`, with Claude shims under `.claude/agents/`.
+
 ## Web Playground
 
 The web playground under `web/` provides a browser-based Nomi editor backed by

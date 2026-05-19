@@ -50,6 +50,7 @@ def run_checks() -> list[CheckResult]:
         check_skills_frontmatter(),
         check_claude_skill_shims(),
         check_claude_agent_shims(),
+        check_claude_command_shims(),
         check_rag_index_freshness(),
     ]
 
@@ -190,6 +191,33 @@ def check_claude_agent_shims() -> CheckResult:
     if failures:
         return CheckResult("claude-agent-shims", "fail", "; ".join(failures))
     return CheckResult("claude-agent-shims", "pass", f"{len(shim_agents)} Claude agent shims mirror .codex/agents.")
+
+
+def check_claude_command_shims() -> CheckResult:
+    canonical_prompts = sorted(path.stem for path in (ROOT / ".codex/prompts").glob("*.md"))
+    shim_commands = sorted(path.stem for path in (ROOT / ".claude/commands").glob("*.md"))
+
+    if not canonical_prompts:
+        return CheckResult("claude-command-shims", "warn", "No canonical Codex prompts found.")
+
+    failures = []
+    missing = sorted(set(canonical_prompts) - set(shim_commands))
+    extra = sorted(set(shim_commands) - set(canonical_prompts))
+    if missing:
+        failures.append("missing Claude command shims: " + ", ".join(missing))
+    if extra:
+        failures.append("extra Claude command shims: " + ", ".join(extra))
+
+    for prompt in sorted(set(canonical_prompts) & set(shim_commands)):
+        shim = ROOT / ".claude/commands" / f"{prompt}.md"
+        text = shim.read_text(encoding="utf-8")
+        expected = f".codex/prompts/{prompt}.md"
+        if expected not in text:
+            failures.append(f"{prompt}: shim does not reference {expected}")
+
+    if failures:
+        return CheckResult("claude-command-shims", "fail", "; ".join(failures))
+    return CheckResult("claude-command-shims", "pass", f"{len(shim_commands)} Claude command shims mirror .codex/prompts.")
 
 
 def check_rag_index_freshness() -> CheckResult:

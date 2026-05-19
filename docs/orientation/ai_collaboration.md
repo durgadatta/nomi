@@ -49,6 +49,10 @@ clear semantics, tests, examples, and documentation.
   language-design critique, test verification, and docs/RAG synthesis.
 - `.claude/agents/`: Claude Code native subagent shims that point back to the
   `.codex/agents/` prompts.
+- `.codex/prompts/`: canonical reusable prompt templates for task start,
+  checkpoints, review, and snapshot regeneration.
+- `.claude/commands/`: Claude Code command shims that point back to
+  `.codex/prompts/`.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
 - `.codex/config.toml`: tracked Codex defaults for model, reasoning effort,
   sandbox, approval policy, and reusable profiles.

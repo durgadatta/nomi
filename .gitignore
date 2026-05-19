@@ -35,6 +35,8 @@ coverage.xml
 !.codex/hooks.json
 !.codex/hooks/
 !.codex/hooks/**
+!.codex/prompts/
+!.codex/prompts/**
 !.codex/scripts/
 !.codex/scripts/**
 .deepseek/*
