@@ -22,6 +22,7 @@ from prototype.runtime.diagnostics import (
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import dump_core, lower_python_ast_to_core
 from prototype.syntax.features import (
+    DEFAULT_DESUGAR_PROFILE,
     render_feature_capability_table,
     render_feature_layer_table,
 )
@@ -177,10 +178,8 @@ def inspect(
     if stage in {"passes", "desugar_passes"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_pass_table
 
-        # TODO(NOMI-SUBSTRATE-033): Route runtime/parser feature profiles into
-        # this inspection path so it shows the passes that this mode/profile
-        # would actually execute, not only the global or default registry view.
-        output = render_desugar_pass_table()
+        desugar_profile = DEFAULT_DESUGAR_PROFILE if mode == "nomi" else None
+        output = render_desugar_pass_table(profile=desugar_profile)
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,
@@ -196,7 +195,7 @@ def inspect(
 
         parser = pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source)
-        desugar_profile = "default" if mode == "nomi" else None
+        desugar_profile = DEFAULT_DESUGAR_PROFILE if mode == "nomi" else None
         output = render_desugar_expansion(tree, profile=desugar_profile)
         timings = {"total": perf_counter() - started}
         return InspectionResult(

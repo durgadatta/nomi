@@ -62,7 +62,7 @@ paths explicit now, before expressive syntax multiplies.
 | Core IR becomes decorative | High | The project can point at Core IR while real semantics still flow through Python AST. | Future backends and diagnostics inherit a misleading artifact boundary. | `NOMI-ARCH-019`: make Surface -> Core lowering authoritative for a tiny subset. |
 | Capability status lies by omission | High | Derived capability axes exist, but some rows still infer support from status/docs/tests rather than feature-owned proof. | Tooling and docs can overstate maturity. | `NOMI-SUBSTRATE-035`: make incomplete axes explicit per feature. |
 | Cache identity is under-specified | High | Parser caches can still reuse wrong artifacts once feature profiles and target parsing arrive. | Cache invalidation bugs lead to false performance wins or stale execution. | `NOMI-SUBSTRATE-029`: typed parser cache keys. |
-| Profile plumbing stops halfway | Medium | Desugar metadata exists, but parser/runtime inspection still cannot fully select or prove named profiles. | Extra passes or missing passes become hidden hot-path work. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002`: end-to-end profile selection and inspection. |
+| Profile plumbing stops halfway | Medium | Desugar metadata and runtime pass inspection cover current modes, but parser profiles cannot yet select lab/docs-only feature sets. | Extra passes or missing passes become hidden hot-path work. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002`: end-to-end profile selection and inspection. |
 | Runtime session cache key can go stale | Medium | `RuntimeCacheKey` exists, but grammar/profile version fields are placeholders until profiles become real. | Good speed path can become unsafe if future profile work bypasses the key. | `NOMI-ARCH-015`: update typed key inputs as profile/version APIs land. |
 | Environment copy per call remains broad | Medium | Constraints and future capabilities may be copied without explicit ownership. | Function-heavy programs can pay avoidable dictionary-copy cost. | `NOMI-ARCH-016`: call-frame strategy and binding/capability ownership model. |
 | Interpreter dispatch lacks semantic metadata | Medium | Feature ownership and explain hooks stay detached from runtime behavior. | Events may be layered later with extra indirection. | `NOMI-SUBSTRATE-024`: dispatch metadata while preserving fast method lookup. |
@@ -222,7 +222,7 @@ Required response:
 | ID | File | Why it matters |
 | --- | --- | --- |
 | `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Prevent token rewrites from becoming an undocumented grammar and performance sink. |
-| `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Keep manifest-backed pass selection and make inspection honor concrete runtime profiles. |
+| `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Keep manifest-backed pass selection/inspection and extend it to lab/docs-only profiles. |
 | `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Derived capability axes exist; prevent inferred axes from becoming fake proof. |
 | `NOMI-ARCH-019` | `prototype/syntax/core.py` | Prevent passive Core IR from becoming decorative while Python AST remains authoritative. |
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime cache key is typed; keep profile/grammar/span fields honest as those APIs grow. |
@@ -237,7 +237,7 @@ Required response:
 2. Split feature status into capability axes.
 3. Make tiny Surface -> Core lowering authoritative before expanding Core IR.
 4. Add typed parser cache keys and keep runtime cache version fields current.
-5. Make runtime/profile inspection show concrete selected passes.
+5. Extend profile inspection beyond default/reduced into lab/docs-only profiles.
 6. Migrate notebook onto the shared result contract.
 7. Route real parser/lowering/runtime events through `RuntimeEventCollector`
    without letting features invent private diagnostic shapes.
