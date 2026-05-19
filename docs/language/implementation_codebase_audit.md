@@ -64,7 +64,7 @@ The adversarial version of this refresh is tracked in
 | Resumable control | Generator/block execution has paused-frame TODOs and mixed resumable/non-resumable paths. | Block policies, retries, transactions, cleanup, and future concurrency can inherit unclear control semantics. | `NOMI-ARCH-014` |
 | Web/notebook exposure | Runtime facade exists, but feature profiles and inspection are not yet a shared frontend contract. | Target-language labs and current samples may drift apart. | `NOMI-ARCH-003`, `NOMI-SUBSTRATE-027` |
 | Tests and capability matrix | A derived capability matrix exists, but feature-owned test coverage is not fully declared in one place. | Implemented, partial, target-only, and rejected syntax can still drift across docs and tests. | `NOMI-SUBSTRATE-021`, `NOMI-SUBSTRATE-026` |
-| Postlexer disambiguation | LALR speed depends on token rewrites for contextual syntax. | New expressive syntax can turn the postlexer into an undocumented grammar and perf hotspot. | `NOMI-SUBSTRATE-032` |
+| Postlexer disambiguation | LALR speed depends on token rewrites for contextual syntax; token-stream contract tests now cover the existing virtual tokens. | New expressive syntax can still turn the postlexer into a perf hotspot without owner metadata and budgets. | `NOMI-SUBSTRATE-032` |
 | Desugar and feature profiles | Desugar profiles and pass inspection are manifest-driven for default/reduced, but parser profiles are still basically `default`. | The feature manifest can say more than the parser/runtime API can actually select or prove. | `NOMI-SUBSTRATE-033`, `NOMI-ARCH-002` |
 | Runtime cache identity | `RuntimeSession` now uses `RuntimeCacheKey`, but parser/profile versioning is still mostly placeholder data. | Future feature profiles must update the key rather than bypassing it. | `NOMI-ARCH-015` |
 | Call-frame ownership | Function calls shallow-copy environments. | Future constraints, capabilities, and block policies need explicit ownership and faster frame setup. | `NOMI-ARCH-016` |
@@ -82,7 +82,7 @@ The adversarial version of this refresh is tracked in
 | `NOMI-ARCH-013` | `prototype/runtime/api.py` | Public execution should collect diagnostics/events as first-class result fields. |
 | `NOMI-ARCH-019` | `prototype/syntax/core.py` | Core IR must become a real Surface -> Core lowering target, not only Python AST back-projection. |
 | `NOMI-ARCH-014` | `prototype/interpreter/python/generator_state.py` | Resumable control needs an explicit frame/policy model before richer block policies. |
-| `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Postlexer rewrites need fixture snapshots, feature ownership, and performance budget coverage. |
+| `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py`, `prototype/tests/unit/parser/test_nomi_postlexer_contract.py` | Postlexer rewrites have token-stream contracts; feature ownership and performance budget coverage remain. |
 | `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Desugar pass selection and runtime inspection are manifest-backed for current modes. |
 | `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Feature status now has derived capability axes; make incomplete axes explicit over time. |
 | `NOMI-ARCH-015` | `prototype/runtime/session.py` | Runtime AST cache keys now carry mode/profile/source/span/grammar identity; update them as profiles become real. |

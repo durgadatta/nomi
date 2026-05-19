@@ -57,7 +57,7 @@ paths explicit now, before expressive syntax multiplies.
 
 | Risk | Severity | Flexibility impact | Speed impact | Required response |
 | --- | --- | --- | --- | --- |
-| Postlexer becomes a hidden grammar | High | New syntax depends on token-rewrite heuristics that are hard to reason about locally. | Full token buffering and repeated scans can grow with every disambiguation. | `NOMI-SUBSTRATE-032`: declared postlexer contract + fixtures + perf notes. |
+| Postlexer becomes a hidden grammar | High | Token-stream fixtures now cover existing rewrites, but new syntax can still depend on heuristics that are hard to reason about locally. | Full token buffering and repeated scans can grow with every disambiguation. | `NOMI-SUBSTRATE-032`: add owner metadata + perf notes. |
 | Direct Python AST lowering hides Nomi nodes | High | New features cannot be inspected as Nomi normal forms. | Later diagnostics require expensive reverse mapping. | Continue `DataDecl`, `MatchExpr`, `BindingTarget`, `PipeExpr` surface-node migration. |
 | Core IR becomes decorative | High | The project can point at Core IR while real semantics still flow through Python AST. | Future backends and diagnostics inherit a misleading artifact boundary. | `NOMI-ARCH-019`: make Surface -> Core lowering authoritative for a tiny subset. |
 | Capability status lies by omission | High | Derived capability axes exist, but some rows still infer support from status/docs/tests rather than feature-owned proof. | Tooling and docs can overstate maturity. | `NOMI-SUBSTRATE-035`: make incomplete axes explicit per feature. |
@@ -221,7 +221,7 @@ Required response:
 
 | ID | File | Why it matters |
 | --- | --- | --- |
-| `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py` | Prevent token rewrites from becoming an undocumented grammar and performance sink. |
+| `NOMI-SUBSTRATE-032` | `prototype/parser/nomi/postlexer.py`, `prototype/tests/unit/parser/test_nomi_postlexer_contract.py` | Token contracts exist; owner metadata and performance budget coverage remain. |
 | `NOMI-SUBSTRATE-033` | `prototype/parser/nomi/desugar/pipeline.py`, `prototype/runtime/api.py` | Keep manifest-backed pass selection/inspection and extend it to lab/docs-only profiles. |
 | `NOMI-SUBSTRATE-035` | `prototype/syntax/features.py` | Derived capability axes exist; prevent inferred axes from becoming fake proof. |
 | `NOMI-ARCH-019` | `prototype/syntax/core.py` | Prevent passive Core IR from becoming decorative while Python AST remains authoritative. |
