@@ -1,6 +1,7 @@
 mod ast;
 mod error;
 mod lexer;
+mod payload;
 mod parser;
 mod token;
 

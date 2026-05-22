@@ -138,166 +138,156 @@ impl Expr {
     }
 }
 pub(crate) fn module_json(body: &[Stmt]) -> String {
-    let statements = body.iter().map(stmt_json).collect::<Vec<_>>().join(",");
-    format!("{{\"type\":\"Module\",\"body\":[{statements}]}}")
+    json_object(vec![
+        ("type", json_string("Module")),
+        ("body", json_array(body.iter().map(stmt_json))),
+    ])
 }
 
 fn stmt_json(stmt: &Stmt) -> String {
     match stmt {
-        Stmt::Assign { target, value } => format!(
-            "{{\"type\":\"Assign\",\"target\":{},\"value\":{}}}",
-            json_string(target),
-            expr_json(value),
-        ),
-        Stmt::AugAssign { target, op, value } => format!(
-            "{{\"type\":\"AugAssign\",\"target\":{},\"op\":{},\"value\":{}}}",
-            json_string(target),
-            json_string(op),
-            expr_json(value),
-        ),
-        Stmt::Expr(value) => format!(
-            "{{\"type\":\"Expr\",\"value\":{}}}",
-            expr_json(value),
-        ),
+        Stmt::Assign { target, value } => json_object(vec![
+            ("type", json_string("Assign")),
+            ("target", json_string(target)),
+            ("value", expr_json(value)),
+        ]),
+        Stmt::AugAssign { target, op, value } => json_object(vec![
+            ("type", json_string("AugAssign")),
+            ("target", json_string(target)),
+            ("op", json_string(op)),
+            ("value", expr_json(value)),
+        ]),
+        Stmt::Expr(value) => json_object(vec![
+            ("type", json_string("Expr")),
+            ("value", expr_json(value)),
+        ]),
         Stmt::FunctionDef { name, params, body } => function_json(Some(name), params, body),
         Stmt::Return(value) => optional_expr_json("Return", value),
         Stmt::Yield(value) => optional_expr_json("Yield", value),
         Stmt::Raise(value) => optional_expr_json("Raise", value),
-        Stmt::Simple(kind) => format!("{{\"type\":{}}}", json_string(kind)),
+        Stmt::Simple(kind) => json_object(vec![("type", json_string(kind))]),
         Stmt::Suite {
             kind,
             head,
             body,
             clauses,
-        } => {
-            let body = body.iter().map(stmt_json).collect::<Vec<_>>().join(",");
-            let clauses = clauses
-                .iter()
-                .map(clause_json)
-                .collect::<Vec<_>>()
-                .join(",");
-            format!(
-                "{{\"type\":\"Suite\",\"kind\":{},\"head\":{},\"body\":[{}],\"clauses\":[{}]}}",
-                json_string(kind),
-                json_string(head),
-                body,
-                clauses,
-            )
-        }
+        } => json_object(vec![
+            ("type", json_string("Suite")),
+            ("kind", json_string(kind)),
+            ("head", json_string(head)),
+            ("body", json_array(body.iter().map(stmt_json))),
+            ("clauses", json_array(clauses.iter().map(clause_json))),
+        ]),
     }
 }
 
 fn clause_json(clause: &Clause) -> String {
-    let body = clause
-        .body
-        .iter()
-        .map(stmt_json)
-        .collect::<Vec<_>>()
-        .join(",");
-    format!(
-        "{{\"kind\":{},\"head\":{},\"body\":[{}]}}",
-        json_string(&clause.kind),
-        json_string(&clause.head),
-        body,
-    )
+    json_object(vec![
+        ("kind", json_string(&clause.kind)),
+        ("head", json_string(&clause.head)),
+        ("body", json_array(clause.body.iter().map(stmt_json))),
+    ])
 }
 
 fn optional_expr_json(kind: &str, value: &Option<Expr>) -> String {
     match value {
-        Some(value) => format!(
-            "{{\"type\":{},\"value\":{}}}",
-            json_string(kind),
-            expr_json(value)
-        ),
-        None => format!("{{\"type\":{},\"value\":null}}", json_string(kind)),
+        Some(value) => json_object(vec![("type", json_string(kind)), ("value", expr_json(value))]),
+        None => json_object(vec![("type", json_string(kind)), ("value", json_null())]),
     }
 }
 
 fn expr_json(expr: &Expr) -> String {
     match expr {
-        Expr::Name(value) => format!("{{\"type\":\"Name\",\"id\":{}}}", json_string(value)),
-        Expr::Number(value) => format!("{{\"type\":\"Number\",\"value\":{}}}", json_string(value)),
-        Expr::String(value) => format!("{{\"type\":\"String\",\"value\":{}}}", json_string(value)),
-        Expr::Constant(value) => {
-            format!("{{\"type\":\"Constant\",\"value\":{}}}", json_string(value))
-        }
-        Expr::List(items) => {
-            let items = items.iter().map(expr_json).collect::<Vec<_>>().join(",");
-            format!("{{\"type\":\"List\",\"items\":[{}]}}", items)
-        }
-        Expr::Tuple(items) => {
-            let items = items.iter().map(expr_json).collect::<Vec<_>>().join(",");
-            format!("{{\"type\":\"Tuple\",\"items\":[{}]}}", items)
-        }
-        Expr::Dict => "{\"type\":\"Dict\"}".to_string(),
-        Expr::Attribute { value, attr } => format!(
-            "{{\"type\":\"Attribute\",\"value\":{},\"attr\":{}}}",
-            expr_json(value),
-            json_string(attr),
-        ),
-        Expr::Subscript { value, slice } => format!(
-            "{{\"type\":\"Subscript\",\"value\":{},\"slice\":{}}}",
-            expr_json(value),
-            expr_json(slice),
-        ),
+        Expr::Name(value) => json_object(vec![
+            ("type", json_string("Name")),
+            ("id", json_string(value)),
+        ]),
+        Expr::Number(value) => json_object(vec![
+            ("type", json_string("Number")),
+            ("value", json_string(value)),
+        ]),
+        Expr::String(value) => json_object(vec![
+            ("type", json_string("String")),
+            ("value", json_string(value)),
+        ]),
+        Expr::Constant(value) => json_object(vec![
+            ("type", json_string("Constant")),
+            ("value", json_string(value)),
+        ]),
+        Expr::List(items) => json_object(vec![
+            ("type", json_string("List")),
+            ("items", json_array(items.iter().map(expr_json))),
+        ]),
+        Expr::Tuple(items) => json_object(vec![
+            ("type", json_string("Tuple")),
+            ("items", json_array(items.iter().map(expr_json))),
+        ]),
+        Expr::Dict => json_object(vec![("type", json_string("Dict"))]),
+        Expr::Attribute { value, attr } => json_object(vec![
+            ("type", json_string("Attribute")),
+            ("value", expr_json(value)),
+            ("attr", json_string(attr)),
+        ]),
+        Expr::Subscript { value, slice } => json_object(vec![
+            ("type", json_string("Subscript")),
+            ("value", expr_json(value)),
+            ("slice", expr_json(slice)),
+        ]),
         Expr::Call { func, args } => {
-            let args = args.iter().map(expr_json).collect::<Vec<_>>().join(",");
-            format!(
-                "{{\"type\":\"Call\",\"func\":{},\"args\":[{}]}}",
-                expr_json(func),
-                args,
-            )
+            json_object(vec![
+                ("type", json_string("Call")),
+                ("func", expr_json(func)),
+                ("args", json_array(args.iter().map(expr_json))),
+            ])
         }
-        Expr::BinOp { left, op, right } => format!(
-            "{{\"type\":\"BinOp\",\"left\":{},\"op\":{},\"right\":{}}}",
-            expr_json(left),
-            json_string(op_name(*op)),
-            expr_json(right),
-        ),
-        Expr::Compare { left, op, right } => format!(
-            "{{\"type\":\"Compare\",\"left\":{},\"op\":{},\"right\":{}}}",
-            expr_json(left),
-            json_string(cmp_op_name(*op)),
-            expr_json(right),
-        ),
-        Expr::BoolOp { left, op, right } => format!(
-            "{{\"type\":\"BoolOp\",\"left\":{},\"op\":{},\"right\":{}}}",
-            expr_json(left),
-            json_string(bool_op_name(*op)),
-            expr_json(right),
-        ),
-        Expr::UnaryOp { op, value } => format!(
-            "{{\"type\":\"UnaryOp\",\"op\":{},\"value\":{}}}",
-            json_string(unary_op_name(*op)),
-            expr_json(value),
-        ),
-        Expr::IfExp { body, test, orelse } => format!(
-            "{{\"type\":\"IfExp\",\"body\":{},\"test\":{},\"orelse\":{}}}",
-            expr_json(body),
-            expr_json(test),
-            expr_json(orelse),
-        ),
+        Expr::BinOp { left, op, right } => json_object(vec![
+            ("type", json_string("BinOp")),
+            ("left", expr_json(left)),
+            ("op", json_string(op_name(*op))),
+            ("right", expr_json(right)),
+        ]),
+        Expr::Compare { left, op, right } => json_object(vec![
+            ("type", json_string("Compare")),
+            ("left", expr_json(left)),
+            ("op", json_string(cmp_op_name(*op))),
+            ("right", expr_json(right)),
+        ]),
+        Expr::BoolOp { left, op, right } => json_object(vec![
+            ("type", json_string("BoolOp")),
+            ("left", expr_json(left)),
+            ("op", json_string(bool_op_name(*op))),
+            ("right", expr_json(right)),
+        ]),
+        Expr::UnaryOp { op, value } => json_object(vec![
+            ("type", json_string("UnaryOp")),
+            ("op", json_string(unary_op_name(*op))),
+            ("value", expr_json(value)),
+        ]),
+        Expr::IfExp { body, test, orelse } => json_object(vec![
+            ("type", json_string("IfExp")),
+            ("body", expr_json(body)),
+            ("test", expr_json(test)),
+            ("orelse", expr_json(orelse)),
+        ]),
         Expr::FunctionExpr { params, body } => function_json(None, params, body),
-        Expr::Raw(value) => format!("{{\"type\":\"Raw\",\"value\":{}}}", json_string(value)),
+        Expr::Raw(value) => json_object(vec![
+            ("type", json_string("Raw")),
+            ("value", json_string(value)),
+        ]),
     }
 }
 
 fn function_json(name: Option<&String>, params: &[String], body: &Expr) -> String {
     let name = match name {
         Some(value) => json_string(value),
-        None => "null".to_string(),
+        None => json_null(),
     };
-    let params = params
-        .iter()
-        .map(|param| json_string(param))
-        .collect::<Vec<_>>()
-        .join(",");
-    format!(
-        "{{\"type\":\"FunctionDef\",\"name\":{},\"params\":[{}],\"body\":{}}}",
-        name,
-        params,
-        expr_json(body),
-    )
+    json_object(vec![
+        ("type", json_string("FunctionDef")),
+        ("name", name),
+        ("params", json_array(params.iter().map(|param| json_string(param)))),
+        ("body", expr_json(body)),
+    ])
 }
 
 fn op_name(op: BinOp) -> &'static str {
@@ -338,18 +328,4 @@ fn unary_op_name(op: UnaryOp) -> &'static str {
     }
 }
 
-fn json_string(value: &str) -> String {
-    let mut escaped = String::from("\"");
-    for ch in value.chars() {
-        match ch {
-            '"' => escaped.push_str("\\\""),
-            '\\' => escaped.push_str("\\\\"),
-            '\n' => escaped.push_str("\\n"),
-            '\r' => escaped.push_str("\\r"),
-            '\t' => escaped.push_str("\\t"),
-            other => escaped.push(other),
-        }
-    }
-    escaped.push('"');
-    escaped
-}
+use crate::payload::{json_array, json_null, json_object, json_string};
