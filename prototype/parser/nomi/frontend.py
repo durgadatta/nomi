@@ -33,6 +33,7 @@ DEFAULT_FRONTEND = "lark-lalr"
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _TREE_SITTER_NOMI_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "tree_sitter_nomi"
 _RUST_FAST_AST_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "rust_fast_ast"
+_PEST_READABLE_CST_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "pest_readable_cst"
 
 
 @dataclass(frozen=True, slots=True)
@@ -539,19 +540,41 @@ class RustFastAstParserFrontend(JsonPayloadParserFrontend):
     inline_source_prefix = "nomi-rust-fast-source-"
 
     def _parse_payload_file(self, source_path: Path) -> dict[str, Any]:
-        cargo = shutil.which("cargo")
-        if cargo is None:
-            raise RuntimeError("cargo is required for rust-fast-ast parsing")
-        return _run_rust_fast_ast(cargo, source_path)
+        return _run_cargo_json_parser(
+            crate_dir=_RUST_FAST_AST_DIR,
+            command="ast-json",
+            source_path=source_path,
+            target_name="rust-fast-ast",
+        )
 
     def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
         return python_ast_from_rust_payload(payload)
+
+
+class PestReadableCstParserFrontend(JsonPayloadParserFrontend):
+    """PEG parser scaffold that emits a serialized CST/debug payload."""
+
+    spec = next(
+        spec
+        for spec in PARSER_FRONTEND_CANDIDATES
+        if spec.name == "pest-readable-cst"
+    )
+    inline_source_prefix = "nomi-pest-readable-source-"
+
+    def _parse_payload_file(self, source_path: Path) -> dict[str, Any]:
+        return _run_cargo_json_parser(
+            crate_dir=_PEST_READABLE_CST_DIR,
+            command="cst-json",
+            source_path=source_path,
+            target_name="pest-readable-cst",
+        )
 
 
 _FRONTENDS = {
     DEFAULT_FRONTEND: LarkParserFrontend(),
     "tree-sitter-cst": TreeSitterParserFrontend(),
     "rust-fast-ast": RustFastAstParserFrontend(),
+    "pest-readable-cst": PestReadableCstParserFrontend(),
 }
 
 
@@ -686,11 +709,20 @@ def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any
     return summary
 
 
-def _run_rust_fast_ast(cargo: str, source_path: Path) -> dict[str, Any]:
+def _run_cargo_json_parser(
+    *,
+    crate_dir: Path,
+    command: str,
+    source_path: Path,
+    target_name: str,
+) -> dict[str, Any]:
+    cargo = shutil.which("cargo")
+    if cargo is None:
+        raise RuntimeError(f"cargo is required for {target_name} parsing")
     source_path = source_path.resolve()
     target_dir = (
         Path(tempfile.gettempdir())
-        / "nomi-rust-fast-ast-target"
+        / f"nomi-{target_name}-target"
         / os.environ.get("PYTEST_XDIST_WORKER", "local")
     )
     result = subprocess.run(
@@ -699,14 +731,14 @@ def _run_rust_fast_ast(cargo: str, source_path: Path) -> dict[str, Any]:
             "run",
             "--quiet",
             "--manifest-path",
-            str(_RUST_FAST_AST_DIR / "Cargo.toml"),
+            str(crate_dir / "Cargo.toml"),
             "--target-dir",
             str(target_dir),
             "--",
-            "ast-json",
+            command,
             str(source_path),
         ],
-        cwd=_RUST_FAST_AST_DIR,
+        cwd=crate_dir,
         text=True,
         capture_output=True,
         check=False,

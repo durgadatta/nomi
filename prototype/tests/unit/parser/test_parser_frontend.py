@@ -66,6 +66,16 @@ def test_python_ast_frontends_are_explicitly_registered():
     ) == ("lark-lalr", "rust-fast-ast")
 
 
+def test_peg_frontend_is_registered_but_not_promoted():
+    frontend = get_parser_frontend("pest-readable-cst")
+
+    assert frontend.spec.status == "research-candidate"
+    assert frontend.spec.grammar_format == "pest PEG grammar"
+    assert frontend.spec.capabilities.parse_current_grammar is False
+    assert frontend.spec.capabilities.lower_to_python_ast is False
+    assert frontend.spec.capabilities.selectable_for_execution is False
+
+
 def test_parser_experiment_registry_has_fast_and_readable_candidates():
     role_map = {
         role: spec.name
