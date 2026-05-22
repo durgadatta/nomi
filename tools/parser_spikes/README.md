@@ -74,12 +74,16 @@ function equations, and arrow-function assignments. Unit tests compare its
 `ast.dump(..., include_attributes=False, indent=2)` output against Lark exactly
 for that slice. It is intentionally not enrolled as a full Python-AST frontend
 until it can parse the current grammar and pass the shared all-fixture AST
-equivalence tests.
+equivalence tests. See `rust_fast_ast/README.md` for the detailed completion
+handoff.
 
 ## Handoff Notes
 
 For the next pass, keep the replacement gate strict:
 
+- Read `tools/parser_spikes/rust_fast_ast/README.md` first. It contains the
+  concrete syntax backlog, promotion checklist, parity workflow, and known
+  traps for completing the Rust parser.
 - Broaden `rust_fast_ast/src/main.rs` by syntax family, starting with expression
   parity before block statements.
 - Add every newly supported Rust syntax slice to

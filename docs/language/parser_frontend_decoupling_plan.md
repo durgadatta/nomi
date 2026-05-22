@@ -231,6 +231,9 @@ Current implementation checkpoint:
 - `rust-fast-ast` must not set `parse_current_grammar`,
   `lower_to_python_ast`, or `selectable_for_execution` until it passes the
   shared all-fixture AST equivalence tests.
+- `tools/parser_spikes/rust_fast_ast/README.md` is the detailed implementation
+  handoff for finishing the Rust parser: current coverage, missing syntax,
+  promotion gates, parity workflow, and performance cleanup.
 
 Recommended next implementation order:
 
