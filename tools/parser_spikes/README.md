@@ -75,3 +75,27 @@ function equations, and arrow-function assignments. Unit tests compare its
 for that slice. It is intentionally not enrolled as a full Python-AST frontend
 until it can parse the current grammar and pass the shared all-fixture AST
 equivalence tests.
+
+## Handoff Notes
+
+For the next pass, keep the replacement gate strict:
+
+- Broaden `rust_fast_ast/src/main.rs` by syntax family, starting with expression
+  parity before block statements.
+- Add every newly supported Rust syntax slice to
+  `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py` and compare the
+  exact text dump against `lark-lalr`.
+- Do not move `rust-fast-ast` into `get_python_ast_frontends()` by setting
+  `lower_to_python_ast=True` until it can pass the shared sample/snippet matrix.
+- Do not commit generated Cargo output. `target/` is intentionally ignored; the
+  tracked Rust spike state should stay at `Cargo.toml`, `Cargo.lock`, and
+  source files.
+
+Useful checks:
+
+```bash
+cargo test --manifest-path tools/parser_spikes/rust_fast_ast/Cargo.toml
+pytest prototype/tests/unit/parser/test_rust_fast_ast_frontend.py
+pytest prototype/tests/unit/parser
+python3 -m tools.syntax.inspect --stage parser-frontends
+```

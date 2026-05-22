@@ -217,6 +217,42 @@ Python AST is allowed after Surface/Core, never before them in new frontend work
    because direct Python AST lowering would otherwise hide the very boundary
    the parser work is trying to create.
 
+## Next Pass Checkpoint
+
+Current implementation checkpoint:
+
+- `lark-lalr` remains the only selectable execution frontend.
+- `tree-sitter-cst` accepts the current sample/snippet parse matrix, but its
+  grammar is still token-preserving rather than structural.
+- `rust-fast-ast` is the first Rust direct-AST spike. It can emit a JSON payload
+  and adapt that payload to Python `ast.Module` for the first exact-parity
+  slice: assignments, calls, arithmetic precedence, function equations, and
+  arrow-function assignments.
+- `rust-fast-ast` must not set `parse_current_grammar`,
+  `lower_to_python_ast`, or `selectable_for_execution` until it passes the
+  shared all-fixture AST equivalence tests.
+
+Recommended next implementation order:
+
+1. Add snapshot/debug tooling for the Rust JSON payload so failures can compare
+   payload shape before Python AST adaptation.
+2. Expand the Rust parser expression layer: unary operators, comparisons,
+   boolean operators, attributes/subscripts, list/dict literals, and call
+   keyword arguments.
+3. Add simple suite/block parsing and map the first statement constructs:
+   `func`, `return`, `if`, `while`, `for`, and `match` only after expression
+   parity is stable.
+4. Once a meaningful subset passes exact AST parity, replace `cargo run` in
+   `RustFastAstParserFrontend` with a cached binary path or a build helper so
+   the parser matrix measures parser work instead of Cargo startup.
+5. Promote `rust-fast-ast` into `get_python_ast_frontends()` only when it can
+   pass `prototype/tests/unit/parser/test_parser_frontend_acceptance.py` for
+   the full sample/snippet AST dump matrix.
+
+Do not commit Rust build products. `**/target/` is ignored, and only
+`Cargo.toml`, `Cargo.lock`, and source files under `tools/parser_spikes/` should
+be tracked for this spike.
+
 ## Sources
 
 - Tree-sitter grammar DSL: <https://tree-sitter.github.io/tree-sitter/creating-parsers/2-the-grammar-dsl.html>
