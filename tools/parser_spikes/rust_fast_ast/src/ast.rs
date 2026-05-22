@@ -29,6 +29,12 @@ pub(crate) enum Stmt {
         value: Expr,
         body: Vec<Stmt>,
     },
+    WhereFunction {
+        name: String,
+        params: Vec<String>,
+        value: Expr,
+        body: Vec<Stmt>,
+    },
     Suite {
         kind: String,
         head: String,
@@ -213,6 +219,31 @@ fn stmt_json(stmt: &Stmt) -> String {
             ("body", json_array(body.iter().map(stmt_json))),
             ("clauses", json_array(std::iter::empty())),
             ("target", json_string(target)),
+            ("value", expr_json(value)),
+        ]),
+        Stmt::WhereFunction {
+            name,
+            params,
+            value,
+            body,
+        } => json_object(vec![
+            ("type", json_string("Suite")),
+            ("kind", json_string("WhereFunction")),
+            (
+                "head",
+                json_string(&format!(
+                    "{name}({}) = {}",
+                    params.join(", "),
+                    value.brief()
+                )),
+            ),
+            ("body", json_array(body.iter().map(stmt_json))),
+            ("clauses", json_array(std::iter::empty())),
+            ("name", json_string(name)),
+            (
+                "params",
+                json_array(params.iter().map(|param| json_string(param))),
+            ),
             ("value", expr_json(value)),
         ]),
         Stmt::Suite {

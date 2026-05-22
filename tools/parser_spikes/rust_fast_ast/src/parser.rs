@@ -278,22 +278,35 @@ impl Parser {
             self.advance();
             if matches!(self.peek().kind, TokenKind::Colon) {
                 let where_body = self.parse_suite_from_current_colon()?;
-                return Ok(Some(Stmt::Suite {
-                    kind: "WhereFunction".to_string(),
-                    head: format!("{name}(...)= {}", body.brief()),
+                return Ok(Some(Stmt::WhereFunction {
+                    name,
+                    params,
+                    value: body,
                     body: where_body,
-                    clauses: Vec::new(),
                 }));
             }
-            let rest = self.collect_raw_until_line_end();
-            return Ok(Some(Stmt::Suite {
-                kind: "WhereFunction".to_string(),
-                head: format!("{name}(...)= {} where {rest}", body.brief()),
-                body: Vec::new(),
-                clauses: Vec::new(),
+            let where_body = self.parse_inline_suite_until_stmt_end()?;
+            return Ok(Some(Stmt::WhereFunction {
+                name,
+                params,
+                value: body,
+                body: where_body,
             }));
         }
         Ok(Some(Stmt::FunctionDef { name, params, body }))
+    }
+
+    fn parse_inline_suite_until_stmt_end(&mut self) -> Result<Vec<Stmt>, ParseError> {
+        let mut body = Vec::new();
+        while !self.at_stmt_end() {
+            body.push(self.parse_stmt()?);
+            if matches!(self.peek().kind, TokenKind::Semi) {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        Ok(body)
     }
 
     fn try_assignment_like(&mut self) -> Result<Option<Stmt>, ParseError> {
@@ -335,12 +348,11 @@ impl Parser {
                     body,
                 }));
             }
-            let rest = self.collect_raw_until_line_end();
-            return Ok(Some(Stmt::Suite {
-                kind: "WhereAssign".to_string(),
-                head: format!("{target} = {} where {rest}", value.brief()),
-                body: Vec::new(),
-                clauses: Vec::new(),
+            let body = self.parse_inline_suite_until_stmt_end()?;
+            return Ok(Some(Stmt::WhereAssign {
+                target,
+                value,
+                body,
             }));
         }
         if op == "=" {

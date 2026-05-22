@@ -36,6 +36,20 @@ def test_nomi_feature(nomi_mode):
     assert bindings["result"] == 10
 ```
 
+## Parser Frontend Fixtures
+
+Use `nomi_parser_frontend` when a test should prove that Nomi source behaves
+the same through every Python-AST-capable parser frontend. The default set is
+all such frontends, currently `lark-lalr` and `rust-fast-ast`.
+
+```bash
+pytest prototype/tests/regression/test_interpreter.py --nomi-parser-frontends rust-fast-ast
+NOMI_PARSER_FRONTEND=lark-lalr pytest prototype/tests/regression/test_interpreter.py
+```
+
+The broad interpreter regression keeps the existing Lark snapshots and compares
+non-Lark frontend results to Lark in memory, avoiding duplicate snapshot files.
+
 ## Run Tiers
 
 ```bash

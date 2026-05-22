@@ -32,10 +32,21 @@ _SECTION_OPERATOR_FACTORIES = {
 def python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
     if payload.get("type") != "Module":
         raise ValueError(f"unsupported Rust AST payload: {payload.get('type')!r}")
-    return ast.Module(
-        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
-        type_ignores=[],
-    )
+    body = []
+    decorators = []
+    for stmt_payload in payload["body"]:
+        decorator = _decorator_from_rust_payload(stmt_payload)
+        if decorator is not None:
+            decorators.append(decorator)
+            continue
+        stmt = _stmt_from_rust_payload(stmt_payload)
+        if decorators and isinstance(stmt, (ast.FunctionDef, ast.ClassDef)):
+            stmt.decorator_list = [*decorators, *stmt.decorator_list]
+            decorators = []
+        body.append(stmt)
+    if decorators:
+        raise ValueError("dangling Rust decorator payload")
+    return ast.Module(body=body, type_ignores=[])
 
 
 def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
@@ -61,9 +72,11 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
                 value=_expr_from_rust_payload(payload["value"]),
             )
         case "Expr":
+            if raw_stmt := _raw_stmt_from_rust_expr(payload["value"]):
+                return raw_stmt
             return ast.Expr(value=_expr_from_rust_payload(payload["value"]))
         case "FunctionDef":
-            return _function_from_rust_payload(payload)
+            return _function_equation_from_rust_payload(payload)
         case "Return":
             value = payload["value"]
             return ast.Return(
@@ -89,6 +102,8 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
             return ast.Continue()
         case "Suite" if payload.get("kind") == "Func":
             return _func_suite_from_rust_payload(payload)
+        case "Suite" if payload.get("kind") == "Class":
+            return _class_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "For":
             return _for_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "If":
@@ -97,6 +112,8 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
             return _unless_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "While":
             return _while_suite_from_rust_payload(payload)
+        case "Suite" if payload.get("kind") == "With":
+            return _with_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "Guard":
             return _guard_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "Try":
@@ -113,8 +130,34 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
             return _match_assign_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "WhereAssign":
             return _where_assign_suite_from_rust_payload(payload)
+        case "Suite" if payload.get("kind") == "WhereFunction":
+            return _where_function_suite_from_rust_payload(payload)
         case other:
             raise ValueError(f"unsupported Rust AST statement: {other!r}")
+
+
+def _decorator_from_rust_payload(payload: dict[str, Any]) -> ast.expr | None:
+    if payload.get("type") != "Expr":
+        return None
+    value = payload.get("value", {})
+    if value.get("type") != "Raw":
+        return None
+    raw = value["value"].strip()
+    if not raw.startswith("@"):
+        return None
+    return _raw_or_python_expr(raw.removeprefix("@").strip())
+
+
+def _raw_stmt_from_rust_expr(payload: dict[str, Any]) -> ast.stmt | None:
+    if payload.get("type") != "Raw":
+        return None
+    raw = payload["value"].strip()
+    if not (raw.startswith("import ") or raw.startswith("from ")):
+        return None
+    body = ast.parse(raw).body
+    if len(body) == 1 and isinstance(body[0], (ast.Import, ast.ImportFrom)):
+        return body[0]
+    return None
 
 
 def _defer_stmt_from_rust_text(raw: str) -> ast.stmt:
@@ -137,6 +180,19 @@ def _func_equation_from_assignment_payload(
     if parsed is None:
         return None
     name, eq_args, guard = parsed
+    fn = _function_equation_from_parts(
+        name=name,
+        eq_args=eq_args,
+        body=_expr_from_rust_payload(payload["value"]),
+    )
+    if guard is not None:
+        fn._nomi_eq_guard = guard
+    return fn
+
+
+def _function_equation_from_parts(
+    *, name: str, eq_args: list[Any], body: ast.expr
+) -> ast.FunctionDef:
     args_list = []
     defaults = []
     for index, arg in enumerate(eq_args):
@@ -160,14 +216,20 @@ def _func_equation_from_assignment_payload(
             vararg=None,
             kwarg=None,
         ),
-        body=[ast.Return(value=_expr_from_rust_payload(payload["value"]))],
+        body=[ast.Return(value=body)],
         decorator_list=[],
         returns=None,
     )
     fn._nomi_eq_args = eq_args
-    if guard is not None:
-        fn._nomi_eq_guard = guard
     return fn
+
+
+def _function_equation_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:
+    return _function_equation_from_parts(
+        name=payload["name"],
+        eq_args=[(param, None) for param in payload["params"]],
+        body=_expr_from_rust_payload(payload["body"]),
+    )
 
 
 def _func_equation_target_from_text(
@@ -290,6 +352,16 @@ def _func_suite_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:
     )
 
 
+def _class_suite_from_rust_payload(payload: dict[str, Any]) -> ast.ClassDef:
+    return ast.ClassDef(
+        name=payload["head"],
+        bases=[],
+        keywords=[],
+        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]] or [ast.Pass()],
+        decorator_list=[],
+    )
+
+
 def _for_suite_from_rust_payload(payload: dict[str, Any]) -> ast.For:
     target_text, separator, iter_text = payload["head"].partition(" in ")
     if not separator:
@@ -361,6 +433,13 @@ def _while_suite_from_rust_payload(payload: dict[str, Any]) -> ast.While:
         )
     return ast.While(
         test=_raw_or_nomi_expr(payload["head"]),
+        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
+    )
+
+
+def _with_suite_from_rust_payload(payload: dict[str, Any]) -> ast.With:
+    return ast.With(
+        items=[ast.withitem(context_expr=_raw_or_python_expr(payload["head"]))],
         body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
     )
 
@@ -771,12 +850,20 @@ def _top_level_call_like_raw(raw: str) -> bool:
 def _call_from_rust_text(raw: str) -> ast.Call:
     func_text, _, rest = raw.partition(" (")
     args_text = rest[:-1].strip()
-    args = (
-        []
-        if not args_text
-        else [_raw_or_python_expr(part) for part in _split_top_level(args_text)]
-    )
-    return ast.Call(func=_raw_or_python_expr(func_text), args=args, keywords=[])
+    args = []
+    keywords = []
+    for part in _split_top_level(args_text):
+        before_default, has_default, default_text = _partition_default(part)
+        if has_default and before_default.strip().isidentifier():
+            keywords.append(
+                ast.keyword(
+                    arg=before_default.strip(),
+                    value=_raw_or_python_expr(default_text),
+                )
+            )
+        elif part:
+            args.append(_raw_or_python_expr(part))
+    return ast.Call(func=_raw_or_python_expr(func_text), args=args, keywords=keywords)
 
 
 def _section_like_raw(raw: str) -> bool:
@@ -1000,6 +1087,18 @@ def _where_assign_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Assign
         _stmt_from_rust_payload(item) for item in payload.get("body", ())
     ]
     return stmt
+
+
+def _where_function_suite_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:
+    fn = _function_equation_from_parts(
+        name=payload["name"],
+        eq_args=[(param, None) for param in payload["params"]],
+        body=_expr_from_rust_payload(payload["value"]),
+    )
+    fn._nomi_where_body = [
+        _stmt_from_rust_payload(item) for item in payload.get("body", ())
+    ]
+    return fn
 
 
 def _function_signature_from_text(head: str) -> ast.FunctionDef:
