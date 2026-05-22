@@ -58,6 +58,13 @@ non-selectable until they can parse the full current grammar and lower to the
 same Python AST backend artifact. This prevents a fast subset parser from
 quietly becoming the language definition.
 
+The parse-acceptance rule is shared: every registered frontend whose
+`ParserFrontendCapabilities.parse_current_grammar` flag is true participates in
+`prototype/tests/unit/parser/test_parser_frontend_acceptance.py`. That test
+matrix runs the same sample files and feature snippets through Lark and the new
+parser. Future frontends join by implementing `parse_accepts()` and setting the
+capability flag; they do not get a separate, weaker parser test path.
+
 ## Parser Technology Direction
 
 ### Keep Lark As Bootstrap
@@ -85,6 +92,8 @@ Current spike:
 - `tools/parser_spikes/tree_sitter_nomi/` contains a generated Tree-sitter
   parser.
 - The first acceptance fixture is `samples/demo.nomi`.
+- The parser frontend acceptance matrix now also runs sample files and focused
+  feature snippets through both `lark-lalr` and `tree-sitter-cst`.
 - The current spike is line-oriented and token-preserving: it proves the
   non-Lark parser toolchain can consume the full demo file without parse
   errors, but it is not yet structural enough to lower to Python AST.

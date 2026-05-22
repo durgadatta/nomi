@@ -9,7 +9,11 @@ interface.
 
 from __future__ import annotations
 
+import json
 import os
+import shutil
+import subprocess
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -24,6 +28,8 @@ from .postlexer import NomiPostLexer
 
 GRAMMAR_VERSION = "builtin-features-v1"
 DEFAULT_FRONTEND = "lark-lalr"
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_TREE_SITTER_NOMI_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "tree_sitter_nomi"
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,14 +110,17 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
     LARK_FRONTEND_SPEC,
     ParserFrontendSpec(
         name="tree-sitter-cst",
-        status="demo-parse-spike",
+        status="parse-spike",
         grammar_format="Tree-sitter line-oriented token grammar",
         implementation="generated C parser with Rust Tree-sitter CLI",
         cst_artifact="Tree-sitter concrete syntax tree",
         output_contract="Nomi Surface IR, then Python AST backend",
-        capabilities=ParserFrontendCapabilities(source_spans=True),
+        capabilities=ParserFrontendCapabilities(
+            parse_current_grammar=True,
+            source_spans=True,
+        ),
         notes=(
-            "parses samples/demo.nomi without Tree-sitter errors",
+            "participates in parser-frontend acceptance tests",
             "needs structural grammar, indentation contract, and Python AST adapter",
         ),
     ),
@@ -271,13 +280,96 @@ class LarkParserFrontend:
             source_identity=source_identity,
         )
 
+    def parse_accepts(self, *, code=None, filename=None) -> None:
+        """Raise if this frontend cannot parse the given source."""
+        self.parse_raw_tree(code=code, filename=filename, preserve_positions=False)
+
+
+class TreeSitterParserFrontend:
+    """Tree-sitter parser spike for parse-acceptance parity."""
+
+    spec = next(
+        spec
+        for spec in PARSER_FRONTEND_CANDIDATES
+        if spec.name == "tree-sitter-cst"
+    )
+
+    def parser_cache_key(
+        self,
+        *,
+        extra_layers=None,
+        preserve_positions=None,
+    ) -> ParserCacheKey:
+        if extra_layers:
+            raise ValueError("tree-sitter-cst does not support Lark layers")
+        return ParserCacheKey(
+            grammar_layers=("tree-sitter-nomi",),
+            preserve_positions=bool(preserve_positions),
+            frontend=self.spec.name,
+        )
+
+    def parse_raw_tree(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> dict[str, Any]:
+        return self._parse_summary(code=code, filename=filename)
+
+    def parse_transformed_tree(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> dict[str, Any]:
+        return self.parse_raw_tree(code=code, filename=filename)
+
+    def parse_artifacts(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> ParseArtifacts:
+        raw_tree = self.parse_raw_tree(code=code, filename=filename)
+        source_identity = (
+            str(Path(filename).resolve()) if filename is not None else None
+        )
+        return ParseArtifacts(
+            frontend=self.spec,
+            raw_tree=raw_tree,
+            transformed_tree=raw_tree,
+            source_identity=source_identity,
+        )
+
+    def parse_accepts(self, *, code=None, filename=None) -> None:
+        self._parse_summary(code=code, filename=filename)
+
+    def _parse_summary(self, *, code=None, filename=None) -> dict[str, Any]:
+        tree_sitter = _tree_sitter_binary()
+        if tree_sitter is None:
+            raise RuntimeError(
+                "tree-sitter CLI is required for tree-sitter-cst parsing"
+            )
+        if filename is not None:
+            return _run_tree_sitter_parse(tree_sitter, Path(filename))
+        if code is None:
+            raise ValueError("code or filename is required")
+        with tempfile.TemporaryDirectory(prefix="nomi-ts-source-") as temp_dir:
+            path = Path(temp_dir) / "inline.nomi"
+            path.write_text(code, encoding="utf-8")
+            return _run_tree_sitter_parse(tree_sitter, path)
+
 
 _FRONTENDS = {
     DEFAULT_FRONTEND: LarkParserFrontend(),
+    "tree-sitter-cst": TreeSitterParserFrontend(),
 }
 
 
-def get_parser_frontend(name: str = DEFAULT_FRONTEND) -> LarkParserFrontend:
+def get_parser_frontend(name: str = DEFAULT_FRONTEND):
     try:
         return _FRONTENDS[name]
     except KeyError as exc:
@@ -330,3 +422,54 @@ def get_selectable_parser_frontends(
         for spec in specs
         if spec.capabilities.selectable_for_execution
     )
+
+
+def get_parse_acceptance_frontends():
+    """Return registered frontends that must pass parse acceptance tests."""
+    return tuple(
+        frontend
+        for frontend in _FRONTENDS.values()
+        if frontend.spec.capabilities.parse_current_grammar
+    )
+
+
+def _tree_sitter_binary() -> str | None:
+    return (
+        shutil.which("tree-sitter")
+        or os.environ.get("TREE_SITTER_BIN")
+        or _cargo_tree_sitter()
+    )
+
+
+def _cargo_tree_sitter() -> str | None:
+    candidate = Path.home() / ".cargo" / "bin" / "tree-sitter"
+    return str(candidate) if candidate.exists() else None
+
+
+def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any]:
+    env = os.environ.copy()
+    with tempfile.TemporaryDirectory(prefix="nomi-tree-sitter-home-") as home:
+        env["HOME"] = home
+        result = subprocess.run(
+            [
+                tree_sitter,
+                "parse",
+                "--grammar-path",
+                str(_TREE_SITTER_NOMI_DIR),
+                str(source_path),
+                "--json-summary",
+            ],
+            cwd=_TREE_SITTER_NOMI_DIR,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+    output_start = result.stdout.find("{")
+    if output_start < 0:
+        raise SyntaxError(result.stdout + result.stderr)
+    summary = json.loads(result.stdout[output_start:])
+    parse_summary = summary["parse_summaries"][0]
+    if not parse_summary["successful"]:
+        raise SyntaxError(result.stdout + result.stderr)
+    return summary

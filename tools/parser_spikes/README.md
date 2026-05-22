@@ -16,6 +16,12 @@ Partial parsers may live here as research artifacts, but they must not be wired
 as selectable execution frontends until their
 `ParserFrontendCapabilities.selectable_for_execution` flag can honestly be set.
 
+Parser frontends that claim current-grammar parsing support must implement
+`parse_accepts()` and set `ParserFrontendCapabilities.parse_current_grammar`.
+That enrolls them in
+`prototype/tests/unit/parser/test_parser_frontend_acceptance.py`, the shared
+parse matrix for sample files and parser feature snippets.
+
 Current local toolchain expectation:
 
 ```bash
