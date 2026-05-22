@@ -1,8 +1,8 @@
 mod ast;
 mod error;
 mod lexer;
-mod payload;
 mod parser;
+mod payload;
 mod token;
 
 use std::env;

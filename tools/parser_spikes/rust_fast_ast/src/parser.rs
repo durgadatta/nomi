@@ -130,20 +130,18 @@ impl Parser {
         if self.eat(&TokenKind::Arrow) {
             let params = self.collect_head_until_colon();
             let body = self.parse_suite_from_current_colon()?;
-            return Ok(Stmt::Suite {
-                kind: "BlockCall".to_string(),
-                head: format!("{} -> {}", expr.brief(), params),
+            return Ok(Stmt::BlockCall {
+                call: expr,
+                params: Some(params),
                 body,
-                clauses: Vec::new(),
             });
         }
         if matches!(self.peek().kind, TokenKind::Colon) {
             let body = self.parse_suite_from_current_colon()?;
-            return Ok(Stmt::Suite {
-                kind: "BlockCall".to_string(),
-                head: expr.brief(),
+            return Ok(Stmt::BlockCall {
+                call: expr,
+                params: None,
                 body,
-                clauses: Vec::new(),
             });
         }
         Ok(Stmt::Expr(expr))
@@ -191,6 +189,16 @@ impl Parser {
             clauses.push(Clause {
                 kind: "Except".to_string(),
                 head,
+                body: clause_body,
+            });
+        }
+        self.skip_separators();
+        if self.is_keyword("finally") {
+            self.advance();
+            let clause_body = self.parse_suite_from_current_colon()?;
+            clauses.push(Clause {
+                kind: "Finally".to_string(),
+                head: String::new(),
                 body: clause_body,
             });
         }
@@ -300,11 +308,10 @@ impl Parser {
             self.advance();
             if matches!(self.peek().kind, TokenKind::Colon) {
                 let body = self.parse_suite_from_current_colon()?;
-                return Ok(Some(Stmt::Suite {
-                    kind: "WhereAssign".to_string(),
-                    head: format!("{target} = {}", value.brief()),
+                return Ok(Some(Stmt::WhereAssign {
+                    target,
+                    value,
                     body,
-                    clauses: Vec::new(),
                 }));
             }
             let rest = self.collect_raw_until_line_end();
@@ -544,7 +551,7 @@ impl Parser {
             }),
             TokenKind::Name(value) => Ok(Expr::Name(value)),
             TokenKind::Number(value) => Ok(Expr::Number(value)),
-            TokenKind::String(value) => Ok(Expr::String(value)),
+            TokenKind::String { value, source } => Ok(Expr::String { value, source }),
             TokenKind::Dollar => {
                 let marker = match self.peek().kind.clone() {
                     TokenKind::Name(value) | TokenKind::Number(value) => {
@@ -557,20 +564,16 @@ impl Parser {
             }
             TokenKind::LParen => self.parse_parenthesized(),
             TokenKind::LBracket => self.parse_list(),
-            TokenKind::LBrace => {
-                self.consume_balanced(TokenKind::LBrace, TokenKind::RBrace)?;
-                Ok(Expr::Dict)
-            }
+            TokenKind::LBrace => self.parse_dict(),
             TokenKind::Plus => Ok(Expr::UnaryOp {
                 op: UnaryOp::UAdd,
                 value: Box::new(self.parse_expr(13)?),
             }),
             TokenKind::Minus => {
-                let right = self.parse_expr(13)?;
-                Ok(Expr::BinOp {
-                    left: Box::new(Expr::Number("0".to_string())),
-                    op: BinOp::Sub,
-                    right: Box::new(right),
+                let value = self.parse_expr(13)?;
+                Ok(Expr::UnaryOp {
+                    op: UnaryOp::USub,
+                    value: Box::new(value),
                 })
             }
             _ => Err(ParseError::new("expected expression", token.offset)),
@@ -580,6 +583,9 @@ impl Parser {
     fn parse_parenthesized(&mut self) -> Result<Expr, ParseError> {
         if self.eat(&TokenKind::RParen) {
             return Ok(Expr::Tuple(Vec::new()));
+        }
+        if let Some(section) = self.try_prefix_operator_section()? {
+            return Ok(section);
         }
         let first = self.parse_arrow_or_expr()?;
         if !self.eat(&TokenKind::Comma) {
@@ -602,6 +608,39 @@ impl Parser {
         Ok(Expr::Tuple(items))
     }
 
+    fn try_prefix_operator_section(&mut self) -> Result<Option<Expr>, ParseError> {
+        let mark = self.cursor;
+        let op = match self.advance().kind {
+            TokenKind::Plus => BinOp::Add,
+            TokenKind::Minus => BinOp::Sub,
+            TokenKind::Star => BinOp::Mult,
+            TokenKind::Slash => BinOp::Div,
+            _ => {
+                self.cursor = mark;
+                return Ok(None);
+            }
+        };
+        let right = match self.parse_expr(0) {
+            Ok(value) => value,
+            Err(_) => {
+                self.cursor = mark;
+                return Ok(None);
+            }
+        };
+        if !self.eat(&TokenKind::RParen) {
+            self.cursor = mark;
+            return Ok(None);
+        }
+        Ok(Some(Expr::FunctionExpr {
+            params: vec!["__s".to_string()],
+            body: Box::new(Expr::BinOp {
+                left: Box::new(Expr::Name("__s".to_string())),
+                op,
+                right: Box::new(right),
+            }),
+        }))
+    }
+
     fn parse_list(&mut self) -> Result<Expr, ParseError> {
         let mut items = Vec::new();
         if self.eat(&TokenKind::RBracket) {
@@ -620,31 +659,30 @@ impl Parser {
         Ok(Expr::List(items))
     }
 
-    fn consume_balanced(
-        &mut self,
-        open: TokenKind,
-        close: TokenKind,
-    ) -> Result<(), ParseError> {
-        let mut depth = 1isize;
-        while depth > 0 {
-            let token = self.advance();
-            if matches!(token.kind, TokenKind::Eof) {
-                return Err(ParseError::new("unterminated balanced expression", token.offset));
+    fn parse_dict(&mut self) -> Result<Expr, ParseError> {
+        let mut items = Vec::new();
+        if self.eat(&TokenKind::RBrace) {
+            return Ok(Expr::Dict(items));
+        }
+        loop {
+            let key = self.parse_arrow_or_expr()?;
+            self.expect(&TokenKind::Colon)?;
+            let value = self.parse_arrow_or_expr()?;
+            items.push((key, value));
+            if !self.eat(&TokenKind::Comma) {
+                break;
             }
-            if same_variant(&token.kind, &open) {
-                depth += 1;
-            } else if same_variant(&token.kind, &close) {
-                depth -= 1;
+            if matches!(self.peek().kind, TokenKind::RBrace) {
+                break;
             }
         }
-        Ok(())
+        self.expect(&TokenKind::RBrace)?;
+        Ok(Expr::Dict(items))
     }
 
     fn current_infix(&self) -> Option<(InfixOp, u8, u8)> {
         match self.peek().kind {
-            TokenKind::Name(ref value) if value == "or" => {
-                Some((InfixOp::Bool(BoolOp::Or), 4, 5))
-            }
+            TokenKind::Name(ref value) if value == "or" => Some((InfixOp::Bool(BoolOp::Or), 4, 5)),
             TokenKind::Name(ref value) if value == "and" => {
                 Some((InfixOp::Bool(BoolOp::And), 6, 7))
             }
@@ -689,7 +727,10 @@ impl Parser {
                 TokenKind::LParen | TokenKind::LBracket | TokenKind::LBrace => depth += 1,
                 TokenKind::RParen | TokenKind::RBracket | TokenKind::RBrace => depth -= 1,
                 TokenKind::Eof => {
-                    return Err(ParseError::new("unexpected end of file", self.peek().offset));
+                    return Err(ParseError::new(
+                        "unexpected end of file",
+                        self.peek().offset,
+                    ));
                 }
                 _ => {}
             }
@@ -740,7 +781,10 @@ impl Parser {
         if self.at_stmt_end() {
             Ok(())
         } else {
-            Err(ParseError::new("expected statement end", self.peek().offset))
+            Err(ParseError::new(
+                "expected statement end",
+                self.peek().offset,
+            ))
         }
     }
 

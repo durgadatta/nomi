@@ -19,6 +19,16 @@ pub(crate) enum Stmt {
     Yield(Option<Expr>),
     Raise(Option<Expr>),
     Simple(String),
+    BlockCall {
+        call: Expr,
+        params: Option<String>,
+        body: Vec<Stmt>,
+    },
+    WhereAssign {
+        target: String,
+        value: Expr,
+        body: Vec<Stmt>,
+    },
     Suite {
         kind: String,
         head: String,
@@ -38,11 +48,14 @@ pub(crate) struct Clause {
 pub(crate) enum Expr {
     Name(String),
     Number(String),
-    String(String),
+    String {
+        value: String,
+        source: String,
+    },
     Constant(String),
     List(Vec<Expr>),
     Tuple(Vec<Expr>),
-    Dict,
+    Dict(Vec<(Expr, Expr)>),
     Attribute {
         value: Box<Expr>,
         attr: String,
@@ -117,6 +130,7 @@ pub(crate) enum BoolOp {
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum UnaryOp {
     UAdd,
+    USub,
     Not,
 }
 
@@ -166,6 +180,41 @@ fn stmt_json(stmt: &Stmt) -> String {
         Stmt::Yield(value) => optional_expr_json("Yield", value),
         Stmt::Raise(value) => optional_expr_json("Raise", value),
         Stmt::Simple(kind) => json_object(vec![("type", json_string(kind))]),
+        Stmt::BlockCall { call, params, body } => {
+            let head = match params {
+                Some(params) => format!("{} -> {}", call.brief(), params),
+                None => call.brief(),
+            };
+            let params = match params {
+                Some(value) => json_string(value),
+                None => json_null(),
+            };
+            json_object(vec![
+                ("type", json_string("Suite")),
+                ("kind", json_string("BlockCall")),
+                ("head", json_string(&head)),
+                ("body", json_array(body.iter().map(stmt_json))),
+                ("clauses", json_array(std::iter::empty())),
+                ("call", expr_json(call)),
+                ("params", params),
+            ])
+        }
+        Stmt::WhereAssign {
+            target,
+            value,
+            body,
+        } => json_object(vec![
+            ("type", json_string("Suite")),
+            ("kind", json_string("WhereAssign")),
+            (
+                "head",
+                json_string(&format!("{target} = {}", value.brief())),
+            ),
+            ("body", json_array(body.iter().map(stmt_json))),
+            ("clauses", json_array(std::iter::empty())),
+            ("target", json_string(target)),
+            ("value", expr_json(value)),
+        ]),
         Stmt::Suite {
             kind,
             head,
@@ -191,7 +240,10 @@ fn clause_json(clause: &Clause) -> String {
 
 fn optional_expr_json(kind: &str, value: &Option<Expr>) -> String {
     match value {
-        Some(value) => json_object(vec![("type", json_string(kind)), ("value", expr_json(value))]),
+        Some(value) => json_object(vec![
+            ("type", json_string(kind)),
+            ("value", expr_json(value)),
+        ]),
         None => json_object(vec![("type", json_string(kind)), ("value", json_null())]),
     }
 }
@@ -206,9 +258,10 @@ fn expr_json(expr: &Expr) -> String {
             ("type", json_string("Number")),
             ("value", json_string(value)),
         ]),
-        Expr::String(value) => json_object(vec![
+        Expr::String { value, source } => json_object(vec![
             ("type", json_string("String")),
             ("value", json_string(value)),
+            ("source", json_string(source)),
         ]),
         Expr::Constant(value) => json_object(vec![
             ("type", json_string("Constant")),
@@ -222,7 +275,17 @@ fn expr_json(expr: &Expr) -> String {
             ("type", json_string("Tuple")),
             ("items", json_array(items.iter().map(expr_json))),
         ]),
-        Expr::Dict => json_object(vec![("type", json_string("Dict"))]),
+        Expr::Dict(items) => json_object(vec![
+            ("type", json_string("Dict")),
+            (
+                "keys",
+                json_array(items.iter().map(|(key, _)| expr_json(key))),
+            ),
+            (
+                "values",
+                json_array(items.iter().map(|(_, value)| expr_json(value))),
+            ),
+        ]),
         Expr::Attribute { value, attr } => json_object(vec![
             ("type", json_string("Attribute")),
             ("value", expr_json(value)),
@@ -233,13 +296,11 @@ fn expr_json(expr: &Expr) -> String {
             ("value", expr_json(value)),
             ("slice", expr_json(slice)),
         ]),
-        Expr::Call { func, args } => {
-            json_object(vec![
-                ("type", json_string("Call")),
-                ("func", expr_json(func)),
-                ("args", json_array(args.iter().map(expr_json))),
-            ])
-        }
+        Expr::Call { func, args } => json_object(vec![
+            ("type", json_string("Call")),
+            ("func", expr_json(func)),
+            ("args", json_array(args.iter().map(expr_json))),
+        ]),
         Expr::BinOp { left, op, right } => json_object(vec![
             ("type", json_string("BinOp")),
             ("left", expr_json(left)),
@@ -285,7 +346,10 @@ fn function_json(name: Option<&String>, params: &[String], body: &Expr) -> Strin
     json_object(vec![
         ("type", json_string("FunctionDef")),
         ("name", name),
-        ("params", json_array(params.iter().map(|param| json_string(param)))),
+        (
+            "params",
+            json_array(params.iter().map(|param| json_string(param))),
+        ),
         ("body", expr_json(body)),
     ])
 }
@@ -324,6 +388,7 @@ fn bool_op_name(op: BoolOp) -> &'static str {
 fn unary_op_name(op: UnaryOp) -> &'static str {
     match op {
         UnaryOp::UAdd => "UAdd",
+        UnaryOp::USub => "USub",
         UnaryOp::Not => "Not",
     }
 }

@@ -25,6 +25,7 @@ from lark.lexer import PatternRE
 from ...grammar.assemble import assemble_grammar, get_layer_pipeline
 from ...syntax.features import get_extra_grammar_layers
 from .postlexer import NomiPostLexer
+from .rust_payload import python_ast_from_rust_payload
 
 
 GRAMMAR_VERSION = "builtin-features-v1"
@@ -66,7 +67,12 @@ class ParserFrontendCapabilities:
 
 @dataclass(frozen=True, slots=True)
 class ParserFrontendSpec:
-    """Describes a parser technology or candidate frontend."""
+    """Describes a parser technology or candidate frontend.
+
+    Parser specs are deliberately family-neutral: handwritten, PEG, LR,
+    Tree-sitter, parser-combinator, and bootstrap Lark frontends all graduate
+    through the same capability gates and shared equivalence tests.
+    """
 
     name: str
     status: str
@@ -142,6 +148,7 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
         experiment_roles=("fast", "direct-ast", "rust"),
         notes=(
             "passes parser frontend acceptance for sample files and snippets",
+            "lowers and executes scripts/demo.nomi through the Python AST backend",
             "not Python-AST equivalent or selectable for execution",
         ),
     ),
@@ -444,7 +451,12 @@ class TreeSitterParserFrontend:
 
 
 class JsonPayloadParserFrontend:
-    """Reusable boundary for frontends that emit a JSON parser payload."""
+    """Reusable boundary for frontends that emit a JSON parser payload.
+
+    This is intentionally not Rust-specific. A future PEG or generated parser
+    can reuse this runner/adapter shape if its CLI emits the same kind of
+    serialized Nomi-owned parser artifact.
+    """
 
     inline_source_prefix = "nomi-json-parser-source-"
 
@@ -532,7 +544,7 @@ class RustFastAstParserFrontend(JsonPayloadParserFrontend):
         return _run_rust_fast_ast(cargo, source_path)
 
     def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
-        return _python_ast_from_rust_payload(payload)
+        return python_ast_from_rust_payload(payload)
 
 
 _FRONTENDS = {
@@ -701,85 +713,3 @@ def _run_rust_fast_ast(cargo: str, source_path: Path) -> dict[str, Any]:
     if result.returncode:
         raise SyntaxError(result.stderr.strip() or result.stdout.strip())
     return json.loads(result.stdout)
-
-
-def _python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
-    if payload.get("type") != "Module":
-        raise ValueError(f"unsupported Rust AST payload: {payload.get('type')!r}")
-    return ast.Module(
-        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
-        type_ignores=[],
-    )
-
-
-def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
-    match payload["type"]:
-        case "Assign":
-            return ast.Assign(
-                targets=[ast.Name(id=payload["target"], ctx=ast.Store())],
-                value=_expr_from_rust_payload(payload["value"]),
-            )
-        case "Expr":
-            return ast.Expr(value=_expr_from_rust_payload(payload["value"]))
-        case "FunctionDef":
-            return _function_from_rust_payload(payload)
-        case other:
-            raise ValueError(f"unsupported Rust AST statement: {other!r}")
-
-
-def _expr_from_rust_payload(payload: dict[str, Any]) -> ast.expr:
-    match payload["type"]:
-        case "Name":
-            return ast.Name(id=payload["id"], ctx=ast.Load())
-        case "Number":
-            return ast.Constant(value=_number_value_from_text(payload["value"]))
-        case "String":
-            return ast.Constant(value=payload["value"])
-        case "Call":
-            return ast.Call(
-                func=_expr_from_rust_payload(payload["func"]),
-                args=[_expr_from_rust_payload(arg) for arg in payload["args"]],
-            )
-        case "BinOp":
-            return ast.BinOp(
-                left=_expr_from_rust_payload(payload["left"]),
-                op=_operator_from_rust_payload(payload["op"]),
-                right=_expr_from_rust_payload(payload["right"]),
-            )
-        case "FunctionDef":
-            return _function_from_rust_payload(payload)
-        case other:
-            raise ValueError(f"unsupported Rust AST expression: {other!r}")
-
-
-def _function_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:
-    return ast.FunctionDef(
-        name=payload["name"],
-        args=ast.arguments(
-            args=[ast.arg(arg=param) for param in payload["params"]],
-        ),
-        body=[ast.Return(value=_expr_from_rust_payload(payload["body"]))],
-    )
-
-
-def _operator_from_rust_payload(name: str) -> ast.operator:
-    match name:
-        case "Add":
-            return ast.Add()
-        case "Sub":
-            return ast.Sub()
-        case "Mult":
-            return ast.Mult()
-        case "Div":
-            return ast.Div()
-        case "Pow":
-            return ast.Pow()
-        case other:
-            raise ValueError(f"unsupported Rust AST operator: {other!r}")
-
-
-def _number_value_from_text(value: str) -> int | float:
-    normalized = value.replace("_", "")
-    if "." in normalized:
-        return float(normalized)
-    return int(normalized)

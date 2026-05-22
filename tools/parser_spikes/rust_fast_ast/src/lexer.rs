@@ -40,7 +40,10 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
             break;
         }
 
-        let ch = source[offset..].chars().next().expect("valid char boundary");
+        let ch = source[offset..]
+            .chars()
+            .next()
+            .expect("valid char boundary");
         match ch {
             ' ' | '\t' | '\r' | '\x0c' => {
                 offset += ch.len_utf8();
@@ -351,7 +354,10 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
             '"' | '\'' => {
                 let (value, next_offset) = read_string(source, offset, ch)?;
                 tokens.push(Token {
-                    kind: TokenKind::String(value),
+                    kind: TokenKind::String {
+                        value,
+                        source: source[offset..next_offset].to_string(),
+                    },
                     offset,
                 });
                 offset = next_offset;
@@ -367,7 +373,10 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
             _ if is_string_prefix_at(source, offset) => {
                 let (value, next_offset) = read_prefixed_string(source, offset)?;
                 tokens.push(Token {
-                    kind: TokenKind::String(value),
+                    kind: TokenKind::String {
+                        value,
+                        source: source[offset..next_offset].to_string(),
+                    },
                     offset,
                 });
                 offset = next_offset;
@@ -407,7 +416,10 @@ fn read_line_indent(source: &str, start: usize) -> (usize, usize, bool) {
     let mut offset = start;
     let mut indent = 0usize;
     while offset < source.len() {
-        let ch = source[offset..].chars().next().expect("valid char boundary");
+        let ch = source[offset..]
+            .chars()
+            .next()
+            .expect("valid char boundary");
         match ch {
             ' ' => {
                 indent += 1;
@@ -436,7 +448,10 @@ fn read_line_indent(source: &str, start: usize) -> (usize, usize, bool) {
 
 fn skip_comment(source: &str, mut offset: usize) -> usize {
     while offset < source.len() {
-        let ch = source[offset..].chars().next().expect("valid char boundary");
+        let ch = source[offset..]
+            .chars()
+            .next()
+            .expect("valid char boundary");
         if ch == '\n' {
             break;
         }
@@ -464,7 +479,10 @@ fn is_string_prefix_at(source: &str, start: usize) -> bool {
     let mut offset = start;
     let mut saw_prefix = false;
     while offset < source.len() {
-        let ch = source[offset..].chars().next().expect("valid char boundary");
+        let ch = source[offset..]
+            .chars()
+            .next()
+            .expect("valid char boundary");
         if matches!(ch, 'f' | 'F' | 'r' | 'R' | 'u' | 'U' | 'b' | 'B') {
             saw_prefix = true;
             offset += ch.len_utf8();
@@ -488,7 +506,10 @@ fn read_string(source: &str, start: usize, quote: char) -> Result<(String, usize
     let mut value = String::new();
     let mut offset = content_start;
     while offset < source.len() {
-        let ch = source[offset..].chars().next().expect("valid char boundary");
+        let ch = source[offset..]
+            .chars()
+            .next()
+            .expect("valid char boundary");
         if escaped {
             let decoded = match ch {
                 'n' => '\n',

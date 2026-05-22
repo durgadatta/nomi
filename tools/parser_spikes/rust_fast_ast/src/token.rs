@@ -2,7 +2,7 @@
 pub(crate) enum TokenKind {
     Name(String),
     Number(String),
-    String(String),
+    String { value: String, source: String },
     Plus,
     Minus,
     Star,
@@ -61,7 +61,7 @@ pub(crate) fn token_name(kind: &TokenKind) -> &'static str {
     match kind {
         TokenKind::Name(_) => "name",
         TokenKind::Number(_) => "number",
-        TokenKind::String(_) => "string",
+        TokenKind::String { .. } => "string",
         TokenKind::Plus => "+",
         TokenKind::Minus => "-",
         TokenKind::Star => "*",
@@ -110,9 +110,8 @@ pub(crate) fn token_name(kind: &TokenKind) -> &'static str {
 
 pub(crate) fn token_text(kind: &TokenKind) -> String {
     match kind {
-        TokenKind::Name(value) | TokenKind::Number(value) | TokenKind::String(value) => {
-            value.clone()
-        }
+        TokenKind::Name(value) | TokenKind::Number(value) => value.clone(),
+        TokenKind::String { source, .. } => source.clone(),
         other => token_name(other).to_string(),
     }
 }
