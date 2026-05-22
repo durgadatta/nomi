@@ -108,6 +108,7 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage raw-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage transformed-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage surface-ast
 python3 -m tools.syntax.inspect samples/demo.nomi --stage python-ast
+python3 -m tools.syntax.inspect --stage parser-frontends
 ```
 
 Use the runtime inspection facade for current Python AST inspection:
@@ -116,6 +117,7 @@ Use the runtime inspection facade for current Python AST inspection:
 from prototype.runtime import inspect
 
 artifact = inspect(source="x = 1\n", mode="nomi", stage="python_ast")
+frontends = inspect(mode="nomi", stage="parser_frontends")
 print(artifact.output)
 ```
 

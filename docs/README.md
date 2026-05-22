@@ -74,11 +74,11 @@ general reading order.
 
 | Task | Read first |
 | --- | --- |
-| Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
+| Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
 | Audit implementation gaps | [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
 | Separate core/sugar/eval layers | [Core Layer Separation Plan](language/core_layer_separation_plan.md), [Language Degrees Of Freedom](language/language_degrees_of_freedom.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Critique implementation flexibility/performance | [Adversarial Implementation Critique](language/adversarial_implementation_critique.md), [Performance Notes](orientation/performance_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md) |
-| Plan Python-independent backends | [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
+| Plan Python-independent backends | [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
 | Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
@@ -137,6 +137,9 @@ Planning and process:
 - [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md):
   staged path from Python-hosted prototype to Nomi Core IR, direct runtime,
   MLIR, LLVM/native, and Wasm/WASI backends.
+- [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md):
+  staged path from Lark-as-parser to parser frontends that produce Nomi-owned
+  CST/Surface/Core artifacts before the Python AST backend.
 - [Test Suite Restructure Plan](language/test_suite_restructure_plan.md):
   planning note for organizing unit, feature, contract, regression, smoke, and
   e2e tests into clearer run tiers.

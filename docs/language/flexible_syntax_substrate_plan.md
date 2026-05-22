@@ -18,12 +18,18 @@ inspectable, and reversible.
 For the detailed critique and stable TODO list that points into code, see
 [Syntax Substrate TODO Audit](syntax_substrate_todo_audit.md).
 
+For the parser-technology boundary specifically, see
+[Parser Frontend Decoupling Plan](parser_frontend_decoupling_plan.md). That
+plan records the first code slice where Lark becomes the implemented parser
+frontend behind `ParserFrontendSpec`, with Tree-sitter/Rust candidates tracked
+as frontends that must emit Nomi-owned artifacts before Python AST lowering.
+
 The current pipeline is already a useful laboratory:
 
 ```text
 source
--> assembled Lark grammar
--> raw Lark tree
+-> parser frontend (Lark today)
+-> raw frontend tree
 -> parse-tree layer pipeline
 -> Python AST lowering
 -> AST desugar pipeline

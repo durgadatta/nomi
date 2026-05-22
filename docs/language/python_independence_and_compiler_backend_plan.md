@@ -37,6 +37,11 @@ Nomi source
 This note treats "ILR" as the likely family of IR technologies around
 intermediate representations, especially MLIR and LLVM IR.
 
+Parser independence is now tracked separately in
+[Parser Frontend Decoupling Plan](parser_frontend_decoupling_plan.md). The
+important boundary is that future parser frontends emit Nomi-owned CST/Surface
+IR before any Python AST backend lowering.
+
 Primary-source observations:
 
 - The LLVM project describes itself as modular, reusable compiler/toolchain
@@ -142,7 +147,7 @@ closer to Nomi semantics.
 
 | Layer | Initial implementation | Later implementation |
 | --- | --- | --- |
-| Parser/CST | Lark + NomiPostLexer | Keep Lark or add Tree-sitter for editor CST; possibly a native parser later. |
+| Parser/CST | `ParserFrontendSpec` with Lark + NomiPostLexer as the implemented frontend | Add Tree-sitter for editor CST/incremental parsing; possibly a Rust native parser later. |
 | Surface IR | Python dataclasses in `prototype/syntax/surface.py` | Language-neutral schema, serializable text/JSON/debug dump. |
 | Core IR | Python dataclasses in `prototype/syntax/core.py` | Stable Nomi Core IR with verifier and textual format. |
 | Interpreter | Current Python AST interpreter | Direct Core IR interpreter or bytecode VM. |

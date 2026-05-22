@@ -10,6 +10,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage capabilities
+    python3 -m tools.syntax.inspect --stage parser-frontends
     python3 -m tools.syntax.inspect --stage passes
     python3 -m tools.syntax.inspect FILE --stage expansions
 """
@@ -22,6 +23,7 @@ from prototype.parser.nomi.usage import (
     parse_raw_tree,
     parse_transformed_tree,
 )
+from prototype.parser.nomi.frontend import render_parser_frontend_table
 from prototype.parser.nomi.desugar.pipeline import (
     render_desugar_expansion,
     render_desugar_pass_table,
@@ -59,6 +61,9 @@ def main():
     if stage in {"capabilities", "capability-matrix", "capability_matrix"}:
         print(render_feature_capability_table())
         return
+    if stage in {"parser-frontends", "parser_frontends", "frontends"}:
+        print(render_parser_frontend_table())
+        return
     if stage in {"passes", "desugar-passes", "desugar_passes"}:
         print(render_desugar_pass_table())
         return
@@ -87,7 +92,8 @@ def main():
         print(
             f"Unknown stage: {stage!r}. "
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
-            f"python-ast, features, capabilities, passes, expansions"
+            f"python-ast, features, capabilities, parser-frontends, "
+            f"passes, expansions"
         )
         sys.exit(1)
 

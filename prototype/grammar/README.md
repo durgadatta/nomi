@@ -5,9 +5,11 @@
 ```
 Source text
     ↓
+ParserFrontendSpec          ← Lark is the implemented frontend today
+    ↓
 assemble_grammar()          ← reads all layer .lark files, returns one grammar string
     ↓
-Lark Earley parser          ← parses source into raw Lark Tree
+Lark LALR parser            ← parses source into raw Lark Tree
     ↓
 LayerPipeline               ← each LayerTransform restructures/annotates the tree
     ↓
@@ -20,7 +22,7 @@ Interpreter                 ← eval
 
 ## Where Is the Grammar?
 
-The **canonical grammar** lives in `prototype/grammar/layers/`.  Each
+The current **Lark grammar** lives in `prototype/grammar/layers/`.  Each
 `.lark` file covers one syntactic concern:
 
 | File | Concern | ~Lines |
@@ -173,6 +175,11 @@ Base classes live in `grammar/layer.py`:
 - `LayerPipeline` — runs transforms in sequence.
 
 ## Grammar Assembly
+
+`assemble.py` provides grammar text and layer-transform construction for the
+current Lark frontend. `prototype/parser/nomi/frontend.py` owns the parser
+frontend boundary so future Tree-sitter or Rust parsers can emit Nomi-owned
+CST/Surface IR before the Python AST backend.
 
 `assemble.py` provides two functions:
 

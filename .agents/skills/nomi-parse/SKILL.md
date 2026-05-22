@@ -46,6 +46,9 @@ Before adding broad syntax, read:
   separation rules.
 - `docs/language/language_degrees_of_freedom.md` — core/sugar/library/scoped/rejected framework.
 - `docs/language/flexible_syntax_substrate_plan.md`
+- `docs/language/parser_frontend_decoupling_plan.md` when work touches Lark,
+  Tree-sitter/Rust parser candidates, parser frontend selection, or the
+  Python AST backend boundary.
 - `docs/language/python_independence_and_compiler_backend_plan.md` when syntax
   work affects the future split between Surface IR, Core IR, Python AST, MLIR,
   LLVM, or Wasm backends.

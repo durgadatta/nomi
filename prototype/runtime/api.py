@@ -26,6 +26,7 @@ from prototype.syntax.features import (
     render_feature_capability_table,
     render_feature_layer_table,
 )
+from prototype.parser.nomi.frontend import render_parser_frontend_table
 
 
 @dataclass(frozen=True)
@@ -165,6 +166,18 @@ def inspect(
 
     if stage in {"capabilities", "capability_matrix"}:
         output = render_feature_capability_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"parser_frontends", "parser-frontends", "frontends"}:
+        output = render_parser_frontend_table()
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,

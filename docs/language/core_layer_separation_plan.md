@@ -43,6 +43,8 @@ This plan complements:
   layers;
 - [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md), which
   plans parser/lowering mechanics;
+- [Parser Frontend Decoupling Plan](parser_frontend_decoupling_plan.md), which
+  makes Lark one parser frontend while preserving the Python AST backend;
 - [Architecture Refactoring Plan](architecture_refactoring_plan.md), which
   plans runtime API, pipeline, sessions, and frontend adapters;
 - [Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md),
