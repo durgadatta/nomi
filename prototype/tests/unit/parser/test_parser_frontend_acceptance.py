@@ -65,6 +65,8 @@ def _parse_accepts(frontend, *, code=None, filename=None):
     except RuntimeError as exc:
         if frontend.spec.name == "tree-sitter-cst" and "tree-sitter CLI" in str(exc):
             pytest.skip(str(exc))
+        if frontend.spec.name == "rust-fast-ast" and "cargo is required" in str(exc):
+            pytest.skip(str(exc))
         raise
 
 

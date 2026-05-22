@@ -60,8 +60,8 @@ def test_rust_fast_ast_first_slice_matches_lark_exactly(name):
 def test_rust_fast_ast_is_not_enrolled_as_full_replacement_yet():
     rust = get_parser_frontend("rust-fast-ast")
 
-    assert rust.spec.status == "ast-slice"
-    assert rust.spec.capabilities.parse_current_grammar is False
+    assert rust.spec.status == "parse-acceptance"
+    assert rust.spec.capabilities.parse_current_grammar is True
     assert rust.spec.capabilities.lower_to_python_ast is False
     assert rust.spec.capabilities.selectable_for_execution is False
 

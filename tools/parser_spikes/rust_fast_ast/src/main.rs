@@ -855,6 +855,24 @@ impl Parser {
         }
         if self.is_keyword("return") {
             self.advance();
+            if self.is_keyword("match") {
+                let value_start = self.cursor;
+                self.advance();
+                let head = self.collect_head_until_colon();
+                if self.colon_starts_indented_suite() {
+                    let body = self.parse_suite_from_current_colon()?;
+                    return Ok(Stmt::Suite {
+                        kind: "ReturnMatch".to_string(),
+                        head,
+                        body,
+                        clauses: Vec::new(),
+                    });
+                }
+                self.cursor = value_start;
+                return Ok(Stmt::Return(Some(Expr::Raw(
+                    self.collect_raw_until_line_end(),
+                ))));
+            }
             return Ok(Stmt::Return(self.parse_optional_expr()?));
         }
         if self.is_keyword("yield") {
@@ -1025,6 +1043,21 @@ impl Parser {
             return Ok(None);
         }
         self.cursor = op_index + 1;
+        if op == "=" && self.is_keyword("match") {
+            let value_start = self.cursor;
+            self.advance();
+            let head = self.collect_head_until_colon();
+            if self.colon_starts_indented_suite() {
+                let body = self.parse_suite_from_current_colon()?;
+                return Ok(Some(Stmt::Suite {
+                    kind: "MatchAssign".to_string(),
+                    head: format!("{target} = match {head}"),
+                    body,
+                    clauses: Vec::new(),
+                }));
+            }
+            self.cursor = value_start;
+        }
         let value = if op == "=" {
             self.parse_assignment_value()
         } else {
@@ -1430,6 +1463,14 @@ impl Parser {
             self.advance();
         }
         self.token_text_range(start, self.cursor)
+    }
+
+    fn colon_starts_indented_suite(&self) -> bool {
+        matches!(self.peek().kind, TokenKind::Colon)
+            && self
+                .tokens
+                .get(self.cursor + 1)
+                .is_some_and(|token| matches!(token.kind, TokenKind::Newline))
     }
 
     fn token_text_range(&self, start: usize, end: usize) -> String {

@@ -131,15 +131,18 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
     ),
     ParserFrontendSpec(
         name="rust-fast-ast",
-        status="ast-slice",
+        status="parse-acceptance",
         grammar_format="handwritten Rust Pratt parser",
         implementation="Rust CLI emitting Nomi-owned JSON AST payload",
         cst_artifact="JSON AST payload",
         output_contract="Python ast.Module adapter",
+        capabilities=ParserFrontendCapabilities(
+            parse_current_grammar=True,
+        ),
         experiment_roles=("fast", "direct-ast", "rust"),
         notes=(
-            "first structural non-Lark AST slice",
-            "not current-grammar complete or selectable for execution",
+            "passes parser frontend acceptance for sample files and snippets",
+            "not Python-AST equivalent or selectable for execution",
         ),
     ),
     ParserFrontendSpec(

@@ -30,9 +30,9 @@ guided-tour forms such as `unless`, `match`/`case`, `guard`, `data`
 declarations, `$` holes, ranges, pipelines, null-safe tokens, and other
 currently-raw expression forms.
 
-The demo slice is not exact Python AST parity. It is a parser-frontier milestone
-only: `rust-fast-ast` still does not parse the full Nomi grammar and must not be
-made selectable for execution yet.
+The parse-acceptance slice is not exact Python AST parity. It is a
+parser-frontier milestone only: `rust-fast-ast` is now enrolled in parser
+frontend acceptance tests, but must not be made selectable for execution yet.
 
 ## Promotion Gate
 
@@ -48,13 +48,14 @@ ParserFrontendCapabilities(
 
 Promotion sequence:
 
-1. Keep `rust-fast-ast` out of `get_python_ast_frontends()` while it only passes
-   `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`.
+1. Keep `rust-fast-ast` out of `get_python_ast_frontends()` while it only emits
+   a structural/tolerant payload.
 2. Set `lower_to_python_ast=True` only when exact AST text parity passes for the
    shared sample/snippet matrix in
    `prototype/tests/unit/parser/test_parser_frontend_acceptance.py`.
-3. Set `parse_current_grammar=True` only when `parse_accepts()` handles every
-   sample file and focused parser snippet accepted by Lark.
+3. `parse_current_grammar=True` is allowed once `parse_accepts()` handles every
+   sample file and focused parser snippet accepted by Lark. This gate is now
+   met for the parser frontend acceptance matrix.
 4. Set `selectable_for_execution=True` only after parser unit tests, relevant
    functional tests, regression samples, CLI execution, and downstream runtime
    behavior all match the Lark path.
