@@ -1,0 +1,26 @@
+{
+  "grammars": [
+    {
+      "name": "nomi",
+      "camelcase": "Nomi",
+      "scope": "source.nomi",
+      "path": ".",
+      "file-types": [
+        "nomi",
+        "nomi.nb"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "description": "Tree-sitter parser spike for Nomi"
+  },
+  "bindings": {
+    "c": true,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false
+  }
+}

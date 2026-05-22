@@ -104,15 +104,15 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
     LARK_FRONTEND_SPEC,
     ParserFrontendSpec(
         name="tree-sitter-cst",
-        status="planned-spike",
-        grammar_format="Tree-sitter grammar.js / grammar.json",
-        implementation="generated C parser with Rust CLI and Python/Rust bindings",
+        status="demo-parse-spike",
+        grammar_format="Tree-sitter line-oriented token grammar",
+        implementation="generated C parser with Rust Tree-sitter CLI",
         cst_artifact="Tree-sitter concrete syntax tree",
         output_contract="Nomi Surface IR, then Python AST backend",
         capabilities=ParserFrontendCapabilities(source_spans=True),
         notes=(
-            "best fit for editor CST, incremental parsing, and syntax tooling",
-            "requires indentation/external-scanner contract",
+            "parses samples/demo.nomi without Tree-sitter errors",
+            "needs structural grammar, indentation contract, and Python AST adapter",
         ),
     ),
     ParserFrontendSpec(

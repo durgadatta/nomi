@@ -80,6 +80,15 @@ Nomi-specific concern: indentation, virtual tokens, soft keywords, and
 postfix/block-call disambiguation must become an explicit external-scanner and
 grammar contract before Tree-sitter can replace Lark for execution parsing.
 
+Current spike:
+
+- `tools/parser_spikes/tree_sitter_nomi/` contains a generated Tree-sitter
+  parser.
+- The first acceptance fixture is `samples/demo.nomi`.
+- The current spike is line-oriented and token-preserving: it proves the
+  non-Lark parser toolchain can consume the full demo file without parse
+  errors, but it is not yet structural enough to lower to Python AST.
+
 ### Treat Rust PEG/LR Tools As Runtime Parser Candidates
 
 Rust parser generators such as pest or LALRPOP are plausible if Nomi wants a
@@ -134,8 +143,9 @@ Python AST is allowed after Surface/Core, never before them in new frontend work
 
 1. Define a serialized CST/Surface IR debug format that both Lark and
    Tree-sitter spikes can emit.
-2. Add a `tools/parser_spikes/tree_sitter_nomi/` grammar plus external scanner
-   contract, but keep it non-selectable until it accepts the current grammar.
+2. Grow `tools/parser_spikes/tree_sitter_nomi/` from the demo-parse grammar
+   into structural rules plus an external scanner contract, but keep it
+   non-selectable until it accepts the current grammar and lowers correctly.
 3. Map the current parser samples through both Lark and Tree-sitter into the same
    Surface IR snapshot.
 4. Move `DataDecl` and `MatchExpr` into Surface IR before any parser swap,

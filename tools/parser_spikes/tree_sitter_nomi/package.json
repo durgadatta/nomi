@@ -1,0 +1,21 @@
+{
+  "name": "tree-sitter-nomi",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Tree-sitter parser spike for Nomi",
+  "main": "bindings/node",
+  "keywords": [
+    "tree-sitter",
+    "nomi"
+  ],
+  "license": "UNLICENSED",
+  "tree-sitter": [
+    {
+      "scope": "source.nomi",
+      "file-types": [
+        "nomi",
+        "nomi.nb"
+      ]
+    }
+  ]
+}

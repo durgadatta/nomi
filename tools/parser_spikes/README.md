@@ -30,3 +30,11 @@ The first Rust-backed candidate should target either:
   then Surface IR and Python AST backend lowering; or
 - `rust-peg-cst`: a Rust parser crate that emits a Nomi-owned CST/Surface
   payload, then Python adapts that payload into the existing Python AST backend.
+
+## Current Spike
+
+`tree_sitter_nomi/` is the first non-Lark parser. It currently proves the
+Tree-sitter toolchain can generate a parser and parse `samples/demo.nomi`
+without errors. It is intentionally not selectable for execution yet because
+its first grammar is line-oriented/token-preserving, not a full structural
+replacement for the Lark grammar and lowering pipeline.

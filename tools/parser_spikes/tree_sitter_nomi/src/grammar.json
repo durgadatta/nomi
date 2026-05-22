@@ -1,0 +1,399 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "nomi",
+  "word": "identifier",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "line"
+      }
+    },
+    "line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "statement"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "statement": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_line_token"
+      }
+    },
+    "_line_token": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hole"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "operator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "punctuation"
+        }
+      ]
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[^\\W\\d]\\w*"
+    },
+    "hole": {
+      "type": "PATTERN",
+      "value": "\\$([0-9]+|[^\\W\\d]\\w*)"
+    },
+    "number": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "0[xX](_?[0-9a-fA-F])+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0[oO](_?[0-7])+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0[bB](_?[01])+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(([0-9](_?[0-9])*)?\\.[0-9](_?[0-9])*|[0-9](_?[0-9])*\\.[0-9](_?[0-9])*)([eE][+-]?[0-9](_?[0-9])*)?"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[0-9](_?[0-9])*([eE][+-]?[0-9](_?[0-9])*)?"
+          }
+        ]
+      }
+    },
+    "string": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "([uUbBfF]?[rR]?|[rR][uUbBfF]?)\"([^\"\\\\\\n]|\\\\.)*\""
+          },
+          {
+            "type": "PATTERN",
+            "value": "([uUbBfF]?[rR]?|[rR][uUbBfF]?)'([^'\\\\\\n]|\\\\.)*'"
+          },
+          {
+            "type": "PATTERN",
+            "value": "([uUbBfF]?[rR]?|[rR][uUbBfF]?)\"\"\"([^\\\\]|\\\\.|\\n)*?\"\"\""
+          },
+          {
+            "type": "PATTERN",
+            "value": "([uUbBfF]?[rR]?|[rR][uUbBfF]?)'''([^\\\\]|\\\\.|\\n)*?'''"
+          }
+        ]
+      }
+    },
+    "operator": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": ">>>"
+          },
+          {
+            "type": "STRING",
+            "value": "<<<"
+          },
+          {
+            "type": "STRING",
+            "value": "=>"
+          },
+          {
+            "type": "STRING",
+            "value": "->"
+          },
+          {
+            "type": "STRING",
+            "value": "|>"
+          },
+          {
+            "type": "STRING",
+            "value": "??"
+          },
+          {
+            "type": "STRING",
+            "value": "?."
+          },
+          {
+            "type": "STRING",
+            "value": "..<"
+          },
+          {
+            "type": "STRING",
+            "value": ".."
+          },
+          {
+            "type": "STRING",
+            "value": "**="
+          },
+          {
+            "type": "STRING",
+            "value": "//="
+          },
+          {
+            "type": "STRING",
+            "value": "<<="
+          },
+          {
+            "type": "STRING",
+            "value": ">>="
+          },
+          {
+            "type": "STRING",
+            "value": "+="
+          },
+          {
+            "type": "STRING",
+            "value": "-="
+          },
+          {
+            "type": "STRING",
+            "value": "*="
+          },
+          {
+            "type": "STRING",
+            "value": "@="
+          },
+          {
+            "type": "STRING",
+            "value": "/="
+          },
+          {
+            "type": "STRING",
+            "value": "%="
+          },
+          {
+            "type": "STRING",
+            "value": "&="
+          },
+          {
+            "type": "STRING",
+            "value": "|="
+          },
+          {
+            "type": "STRING",
+            "value": "^="
+          },
+          {
+            "type": "STRING",
+            "value": "=="
+          },
+          {
+            "type": "STRING",
+            "value": ">="
+          },
+          {
+            "type": "STRING",
+            "value": "<="
+          },
+          {
+            "type": "STRING",
+            "value": "<>"
+          },
+          {
+            "type": "STRING",
+            "value": "!="
+          },
+          {
+            "type": "STRING",
+            "value": "<<"
+          },
+          {
+            "type": "STRING",
+            "value": ">>"
+          },
+          {
+            "type": "STRING",
+            "value": "**"
+          },
+          {
+            "type": "STRING",
+            "value": "//"
+          },
+          {
+            "type": "STRING",
+            "value": "+"
+          },
+          {
+            "type": "STRING",
+            "value": "-"
+          },
+          {
+            "type": "STRING",
+            "value": "~"
+          },
+          {
+            "type": "STRING",
+            "value": "|"
+          },
+          {
+            "type": "STRING",
+            "value": "^"
+          },
+          {
+            "type": "STRING",
+            "value": "&"
+          },
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "STRING",
+            "value": "@"
+          },
+          {
+            "type": "STRING",
+            "value": "/"
+          },
+          {
+            "type": "STRING",
+            "value": "%"
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "STRING",
+            "value": ">"
+          },
+          {
+            "type": "STRING",
+            "value": "<"
+          }
+        ]
+      }
+    },
+    "punctuation": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          },
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          },
+          {
+            "type": "STRING",
+            "value": ","
+          },
+          {
+            "type": "STRING",
+            "value": "."
+          },
+          {
+            "type": "STRING",
+            "value": ":"
+          },
+          {
+            "type": "STRING",
+            "value": ";"
+          }
+        ]
+      }
+    },
+    "comment": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "#"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\n]*"
+          }
+        ]
+      }
+    },
+    "_newline": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "[\\t \\f ]+"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}
