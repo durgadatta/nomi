@@ -11,6 +11,7 @@ local/
 Untitled*.ipynb
 node_modules/
 **/node_modules/
+**/target/
 .vscode-test/
 **/.vscode-test/
 npm-debug.log*

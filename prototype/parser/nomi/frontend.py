@@ -31,6 +31,7 @@ GRAMMAR_VERSION = "builtin-features-v1"
 DEFAULT_FRONTEND = "lark-lalr"
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _TREE_SITTER_NOMI_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "tree_sitter_nomi"
+_RUST_FAST_AST_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "rust_fast_ast"
 
 
 @dataclass(frozen=True, slots=True)
@@ -126,6 +127,19 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
         notes=(
             "participates in parser-frontend acceptance tests",
             "needs structural grammar, indentation contract, and Python AST adapter",
+        ),
+    ),
+    ParserFrontendSpec(
+        name="rust-fast-ast",
+        status="ast-slice",
+        grammar_format="handwritten Rust Pratt parser",
+        implementation="Rust CLI emitting Nomi-owned JSON AST payload",
+        cst_artifact="JSON AST payload",
+        output_contract="Python ast.Module adapter",
+        experiment_roles=("fast", "direct-ast", "rust"),
+        notes=(
+            "first structural non-Lark AST slice",
+            "not current-grammar complete or selectable for execution",
         ),
     ),
     ParserFrontendSpec(
@@ -426,9 +440,83 @@ class TreeSitterParserFrontend:
             return _run_tree_sitter_parse(tree_sitter, path)
 
 
+class RustFastAstParserFrontend:
+    """Rust parser spike that directly emits a Python-AST-adaptable payload."""
+
+    spec = next(
+        spec
+        for spec in PARSER_FRONTEND_CANDIDATES
+        if spec.name == "rust-fast-ast"
+    )
+
+    def parse_raw_tree(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> dict[str, Any]:
+        return self._parse_payload(code=code, filename=filename)
+
+    def parse_transformed_tree(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> dict[str, Any]:
+        return self.parse_raw_tree(code=code, filename=filename)
+
+    def parse_artifacts(
+        self,
+        *,
+        code=None,
+        filename=None,
+        preserve_positions=None,
+    ) -> ParseArtifacts:
+        raw_tree = self.parse_raw_tree(code=code, filename=filename)
+        source_identity = (
+            str(Path(filename).resolve()) if filename is not None else None
+        )
+        return ParseArtifacts(
+            frontend=self.spec,
+            raw_tree=raw_tree,
+            transformed_tree=raw_tree,
+            source_identity=source_identity,
+        )
+
+    def parse_accepts(self, *, code=None, filename=None) -> None:
+        self._parse_payload(code=code, filename=filename)
+
+    def generate_python_ast(self, *, code=None, filename=None) -> ast.Module:
+        payload = self._parse_payload(code=code, filename=filename)
+        return _python_ast_from_rust_payload(payload)
+
+    def python_ast_text(self, *, code=None, filename=None) -> str:
+        return ast.dump(
+            self.generate_python_ast(code=code, filename=filename),
+            include_attributes=False,
+            indent=2,
+        )
+
+    def _parse_payload(self, *, code=None, filename=None) -> dict[str, Any]:
+        cargo = shutil.which("cargo")
+        if cargo is None:
+            raise RuntimeError("cargo is required for rust-fast-ast parsing")
+        if filename is not None:
+            return _run_rust_fast_ast(cargo, Path(filename))
+        if code is None:
+            raise ValueError("code or filename is required")
+        with tempfile.TemporaryDirectory(prefix="nomi-rust-fast-source-") as temp_dir:
+            path = Path(temp_dir) / "inline.nomi"
+            path.write_text(code, encoding="utf-8")
+            return _run_rust_fast_ast(cargo, path)
+
+
 _FRONTENDS = {
     DEFAULT_FRONTEND: LarkParserFrontend(),
     "tree-sitter-cst": TreeSitterParserFrontend(),
+    "rust-fast-ast": RustFastAstParserFrontend(),
 }
 
 
@@ -560,3 +648,114 @@ def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any
     if not parse_summary["successful"]:
         raise SyntaxError(result.stdout + result.stderr)
     return summary
+
+
+def _run_rust_fast_ast(cargo: str, source_path: Path) -> dict[str, Any]:
+    target_dir = (
+        Path(tempfile.gettempdir())
+        / "nomi-rust-fast-ast-target"
+        / os.environ.get("PYTEST_XDIST_WORKER", "local")
+    )
+    result = subprocess.run(
+        [
+            cargo,
+            "run",
+            "--quiet",
+            "--manifest-path",
+            str(_RUST_FAST_AST_DIR / "Cargo.toml"),
+            "--target-dir",
+            str(target_dir),
+            "--",
+            "ast-json",
+            str(source_path),
+        ],
+        cwd=_RUST_FAST_AST_DIR,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode:
+        raise SyntaxError(result.stderr.strip() or result.stdout.strip())
+    return json.loads(result.stdout)
+
+
+def _python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
+    if payload.get("type") != "Module":
+        raise ValueError(f"unsupported Rust AST payload: {payload.get('type')!r}")
+    return ast.Module(
+        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
+        type_ignores=[],
+    )
+
+
+def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
+    match payload["type"]:
+        case "Assign":
+            return ast.Assign(
+                targets=[ast.Name(id=payload["target"], ctx=ast.Store())],
+                value=_expr_from_rust_payload(payload["value"]),
+            )
+        case "Expr":
+            return ast.Expr(value=_expr_from_rust_payload(payload["value"]))
+        case "FunctionDef":
+            return _function_from_rust_payload(payload)
+        case other:
+            raise ValueError(f"unsupported Rust AST statement: {other!r}")
+
+
+def _expr_from_rust_payload(payload: dict[str, Any]) -> ast.expr:
+    match payload["type"]:
+        case "Name":
+            return ast.Name(id=payload["id"], ctx=ast.Load())
+        case "Number":
+            return ast.Constant(value=_number_value_from_text(payload["value"]))
+        case "String":
+            return ast.Constant(value=payload["value"])
+        case "Call":
+            return ast.Call(
+                func=_expr_from_rust_payload(payload["func"]),
+                args=[_expr_from_rust_payload(arg) for arg in payload["args"]],
+            )
+        case "BinOp":
+            return ast.BinOp(
+                left=_expr_from_rust_payload(payload["left"]),
+                op=_operator_from_rust_payload(payload["op"]),
+                right=_expr_from_rust_payload(payload["right"]),
+            )
+        case "FunctionDef":
+            return _function_from_rust_payload(payload)
+        case other:
+            raise ValueError(f"unsupported Rust AST expression: {other!r}")
+
+
+def _function_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:
+    return ast.FunctionDef(
+        name=payload["name"],
+        args=ast.arguments(
+            args=[ast.arg(arg=param) for param in payload["params"]],
+        ),
+        body=[ast.Return(value=_expr_from_rust_payload(payload["body"]))],
+    )
+
+
+def _operator_from_rust_payload(name: str) -> ast.operator:
+    match name:
+        case "Add":
+            return ast.Add()
+        case "Sub":
+            return ast.Sub()
+        case "Mult":
+            return ast.Mult()
+        case "Div":
+            return ast.Div()
+        case "Pow":
+            return ast.Pow()
+        case other:
+            raise ValueError(f"unsupported Rust AST operator: {other!r}")
+
+
+def _number_value_from_text(value: str) -> int | float:
+    normalized = value.replace("_", "")
+    if "." in normalized:
+        return float(normalized)
+    return int(normalized)

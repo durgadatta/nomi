@@ -104,6 +104,7 @@ Current experiment roles:
 | --- | --- |
 | `lark-lalr` | readable bootstrap and current default |
 | `tree-sitter-cst` | fast generated C parser and tooling CST |
+| `rust-fast-ast` | first direct Rust AST payload slice |
 | `winnow-fast-cst` | fastest handwritten Rust parser candidate |
 | `pest-readable-cst` | readable Rust PEG grammar-file candidate |
 | `chumsky-readable-cst` | readable Rust parser-combinator and diagnostics candidate |
@@ -153,6 +154,14 @@ The rule for any Rust parser spike: do not emit Python AST as the primary
 artifact. Emit Nomi CST, Surface IR, or a stable serialized form, then let the
 Python AST backend lower from that Nomi-owned representation.
 
+`tools/parser_spikes/rust_fast_ast/` is the first direct-AST bridge slice. It
+uses a Rust Pratt parser to emit a small JSON AST payload, and
+`prototype/parser/nomi/frontend.py` adapts that payload to Python `ast.Module`.
+Its tests compare exact AST dump text against Lark for simple assignments,
+calls, binary expressions, function equations, and arrow-function assignments.
+It is not a full grammar frontend yet, so its `lower_to_python_ast` capability
+stays false until it can pass the shared all-fixture equivalence matrix.
+
 ### Keep ANTLR As A Portable Fallback
 
 ANTLR4 is worth keeping in the comparison set because it has broad generated
@@ -195,13 +204,16 @@ Python AST is allowed after Surface/Core, never before them in new frontend work
 ## Suggested Next Slices
 
 1. Define a serialized CST/Surface IR debug format that both Lark and
-   Tree-sitter spikes can emit.
-2. Grow `tools/parser_spikes/tree_sitter_nomi/` from the demo-parse grammar
+   Tree-sitter/Rust spikes can emit.
+2. Grow `tools/parser_spikes/rust_fast_ast/` from the first AST slice into
+   suites, blocks, calls, literals, comparisons, and Nomi reductions until it
+   can join the full Python-AST frontend matrix.
+3. Grow `tools/parser_spikes/tree_sitter_nomi/` from the demo-parse grammar
    into structural rules plus an external scanner contract, but keep it
    non-selectable until it accepts the current grammar and lowers correctly.
-3. Map the current parser samples through both Lark and Tree-sitter into the same
-   Surface IR snapshot.
-4. Move `DataDecl` and `MatchExpr` into Surface IR before any parser swap,
+4. Map the current parser samples through Lark and non-Lark frontends into the
+   same Surface IR snapshot.
+5. Move `DataDecl` and `MatchExpr` into Surface IR before any parser swap,
    because direct Python AST lowering would otherwise hide the very boundary
    the parser work is trying to create.
 

@@ -66,3 +66,12 @@ Tree-sitter toolchain can generate a parser and parse `samples/demo.nomi`
 without errors. It is intentionally not selectable for execution yet because
 its first grammar is line-oriented/token-preserving, not a full structural
 replacement for the Lark grammar and lowering pipeline.
+
+`rust_fast_ast/` is the first direct-AST Rust spike. It emits a Nomi-owned JSON
+payload and the Python frontend adapts that payload into `ast.Module`. Its
+first slice covers simple assignments, expression calls, binary expressions,
+function equations, and arrow-function assignments. Unit tests compare its
+`ast.dump(..., include_attributes=False, indent=2)` output against Lark exactly
+for that slice. It is intentionally not enrolled as a full Python-AST frontend
+until it can parse the current grammar and pass the shared all-fixture AST
+equivalence tests.

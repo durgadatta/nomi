@@ -35,6 +35,7 @@ def test_parser_frontend_table_names_planned_non_lark_spikes():
     table = render_parser_frontend_table()
 
     assert "tree-sitter-cst" in table
+    assert "rust-fast-ast" in table
     assert "pest-readable-cst" in table
     assert "winnow-fast-cst" in table
     assert "chumsky-readable-cst" in table
