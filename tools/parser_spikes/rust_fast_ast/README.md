@@ -67,7 +67,13 @@ Python AST artifact, and be safe for normal execution.
 
 ## File Map
 
-- `src/main.rs`: lexer, parser, Rust AST enum, JSON emitter, CLI entry point.
+- `src/main.rs`: CLI argument handling only.
+- `src/error.rs`: `ParseError` and diagnostics.
+- `src/token.rs`: `TokenKind`, `Token`, token display helpers.
+- `src/lexer.rs`: indentation-aware lexer and trivia handling.
+- `src/ast.rs`: Rust-side `Stmt`, `Expr`, operators, and JSON emission.
+- `src/parser.rs`: parser state, statement parsing, Pratt expression parser,
+  and tolerant raw-form collection.
 - `Cargo.toml`: standalone Rust spike package.
 - `Cargo.lock`: tracked for reproducible local spike builds.
 - `prototype/parser/nomi/frontend.py`: registers `rust-fast-ast`, runs the Rust
@@ -134,16 +140,8 @@ Important current parser choices:
 - Indentation is tokenized directly in Rust for the accepted demo slice.
 - Comments are skipped as trivia.
 - Source spans and Nomi surface nodes are not implemented yet.
-
-Before adding much more syntax, split `src/main.rs` into modules:
-
-- `token.rs`: `TokenKind`, `Token`, lexer helpers.
-- `ast.rs`: Rust-side `Module`, `Stmt`, `Expr`, operators, and JSON emission.
-- `parser.rs`: parser state and parse methods.
-- `error.rs`: `ParseError` and diagnostics.
-- `main.rs`: CLI argument handling only.
-
-This will keep the next syntax expansion readable.
+- Keep future parser candidates plug-and-play by preserving the CLI payload
+  contract (`ast-json <path>`) and adapting new internals behind that boundary.
 
 ## Exact AST Parity Rules
 

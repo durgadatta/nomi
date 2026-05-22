@@ -1,0 +1,118 @@
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) enum TokenKind {
+    Name(String),
+    Number(String),
+    String(String),
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    DoubleStar,
+    DoubleSlash,
+    Percent,
+    At,
+    Equal,
+    PlusEqual,
+    MinusEqual,
+    StarEqual,
+    SlashEqual,
+    FatArrow,
+    Arrow,
+    Dollar,
+    Pipe,
+    PipeGreater,
+    Question,
+    QuestionQuestion,
+    QuestionDot,
+    Less,
+    Greater,
+    LessEqual,
+    GreaterEqual,
+    DoubleEqual,
+    NotEqual,
+    LParen,
+    RParen,
+    LBracket,
+    RBracket,
+    LBrace,
+    RBrace,
+    Dot,
+    DotDot,
+    DotDotLess,
+    Colon,
+    Comma,
+    Newline,
+    Indent,
+    Dedent,
+    Semi,
+    Eof,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct Token {
+    pub(crate) kind: TokenKind,
+    pub(crate) offset: usize,
+}
+pub(crate) fn same_variant(left: &TokenKind, right: &TokenKind) -> bool {
+    std::mem::discriminant(left) == std::mem::discriminant(right)
+}
+
+pub(crate) fn token_name(kind: &TokenKind) -> &'static str {
+    match kind {
+        TokenKind::Name(_) => "name",
+        TokenKind::Number(_) => "number",
+        TokenKind::String(_) => "string",
+        TokenKind::Plus => "+",
+        TokenKind::Minus => "-",
+        TokenKind::Star => "*",
+        TokenKind::Slash => "/",
+        TokenKind::DoubleStar => "**",
+        TokenKind::DoubleSlash => "//",
+        TokenKind::Percent => "%",
+        TokenKind::At => "@",
+        TokenKind::Equal => "=",
+        TokenKind::PlusEqual => "+=",
+        TokenKind::MinusEqual => "-=",
+        TokenKind::StarEqual => "*=",
+        TokenKind::SlashEqual => "/=",
+        TokenKind::FatArrow => "=>",
+        TokenKind::Arrow => "->",
+        TokenKind::Dollar => "$",
+        TokenKind::Pipe => "|",
+        TokenKind::PipeGreater => "|>",
+        TokenKind::Question => "?",
+        TokenKind::QuestionQuestion => "??",
+        TokenKind::QuestionDot => "?.",
+        TokenKind::Less => "<",
+        TokenKind::Greater => ">",
+        TokenKind::LessEqual => "<=",
+        TokenKind::GreaterEqual => ">=",
+        TokenKind::DoubleEqual => "==",
+        TokenKind::NotEqual => "!=",
+        TokenKind::LParen => "(",
+        TokenKind::RParen => ")",
+        TokenKind::LBracket => "[",
+        TokenKind::RBracket => "]",
+        TokenKind::LBrace => "{",
+        TokenKind::RBrace => "}",
+        TokenKind::Dot => ".",
+        TokenKind::DotDot => "..",
+        TokenKind::DotDotLess => "..<",
+        TokenKind::Colon => ":",
+        TokenKind::Comma => ",",
+        TokenKind::Newline => "newline",
+        TokenKind::Indent => "indent",
+        TokenKind::Dedent => "dedent",
+        TokenKind::Semi => ";",
+        TokenKind::Eof => "end of file",
+    }
+}
+
+pub(crate) fn token_text(kind: &TokenKind) -> String {
+    match kind {
+        TokenKind::Name(value) | TokenKind::Number(value) | TokenKind::String(value) => {
+            value.clone()
+        }
+        other => token_name(other).to_string(),
+    }
+}
