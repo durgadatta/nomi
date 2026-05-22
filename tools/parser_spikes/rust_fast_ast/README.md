@@ -20,8 +20,19 @@ indent=2)` parity with `lark-lalr` for:
 - arrow-function assignments: `double = x => x * 2`,
   `add = (a, b) => a + b`
 
-It does not parse the full Nomi grammar, does not parse `samples/demo.nomi`, and
-must not be made selectable for execution yet.
+It also has a broader parse-acceptance slice for both demo files:
+`scripts/demo.nomi` and `samples/demo.nomi`. That slice emits a structural JSON
+payload for indentation, `func` suites, `for`/`if`/`while` suites,
+`try`/`except`, returns, yields, raises, augmented assignments, Nomi block
+calls, constrained-binding targets, prefixed/triple strings, lists, attributes,
+comparisons, boolean operators, conditional expressions, `where` suites,
+guided-tour forms such as `unless`, `match`/`case`, `guard`, `data`
+declarations, `$` holes, ranges, pipelines, null-safe tokens, and other
+currently-raw expression forms.
+
+The demo slice is not exact Python AST parity. It is a parser-frontier milestone
+only: `rust-fast-ast` still does not parse the full Nomi grammar and must not be
+made selectable for execution yet.
 
 ## Promotion Gate
 
@@ -59,7 +70,7 @@ Python AST artifact, and be safe for normal execution.
 - `prototype/parser/nomi/frontend.py`: registers `rust-fast-ast`, runs the Rust
   CLI, and adapts the JSON payload to Python `ast.Module`.
 - `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`: exact parity
-  tests for the first supported slice.
+  tests for the first supported slice plus demo parse-acceptance coverage.
 - `prototype/tests/unit/parser/test_parser_frontend.py`: registry and promotion
   guard tests.
 
@@ -113,12 +124,13 @@ source
 Important current parser choices:
 
 - It uses a handwritten Pratt parser for expressions.
-- `current_binop()` owns precedence and associativity.
+- `current_infix()` owns precedence and associativity.
 - Function equations and assignments are parsed speculatively and rewind on
   mismatch.
 - Calls are postfix forms parsed by `parse_postfix()`.
-- Blocks, indentation, keywords, comments as trivia, source spans, and Nomi
-  surface nodes are not implemented yet.
+- Indentation is tokenized directly in Rust for the accepted demo slice.
+- Comments are skipped as trivia.
+- Source spans and Nomi surface nodes are not implemented yet.
 
 Before adding much more syntax, split `src/main.rs` into modules:
 
@@ -160,14 +172,15 @@ When adding a syntax slice:
 
 Work from expressions outward. Expression parity unlocks most statements.
 
-1. **Payload snapshots**
+1. **Payload snapshots** (partially complete)
    - Add a small helper/test that snapshots or asserts the Rust JSON payload
      before Python AST adaptation.
    - This makes failures easier to locate: lexer/parser vs Python adapter.
 
-2. **Lexer completeness for expressions**
+2. **Lexer completeness for expressions** (partially complete)
    - Add tokens for `.`, `[`, `]`, `{`, `}`, `:`, `%`, `//`, `@`, bitwise ops,
      comparisons, `and`, `or`, `not`, `is`, `in`, `None`, `True`, `False`.
+   - Add `$`, range, pipeline, and null-safe tokens.
    - Add string-prefix handling only after basic expression coverage is stable.
    - Preserve byte offsets in every token; later spans depend on them.
 
@@ -193,6 +206,8 @@ Work from expressions outward. Expression parity unlocks most statements.
    - Inline `match`.
    - `try` expression.
    - `where` expression.
+   - Current demo acceptance may keep these as `Raw` payloads. Exact parity and
+     lowering remain future work.
 
 5. **Simple statements**
    - Multiple assignment targets before annotated/augmented assignment.
