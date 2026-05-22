@@ -9,6 +9,9 @@ Pair this with `nomi-parse` for language syntax decisions and with
 
 ## Current Rust Spike
 
+- `tools/parser_spikes/rust_fast_ast/README.md` — status, promotion gates, and
+  the "Observed Improvement Notes" pickup list. Read/update that section when
+  you notice follow-up work.
 - `tools/parser_spikes/rust_fast_ast/src/main.rs` — CLI glue only.
 - `src/error.rs` — parse diagnostics.
 - `src/token.rs` — token model and display helpers.

@@ -240,30 +240,71 @@ Work from expressions outward. Expression parity unlocks most statements.
    - This matters for `DataDecl`, `MatchExpr`, block calls, constraints, and
      other Nomi-native constructs.
 
-## Known Gaps
+## Observed Improvement Notes
 
-The current Rust parser cannot handle:
+These are explicit pickup notes from the current implementation review. Keep
+them fresh as work lands.
 
-- comments as retained trivia
-- indentation, `_INDENT`, `_DEDENT`, or block suites
-- source spans beyond token byte offsets
-- keywords as distinct tokens
-- Python-compatible assignment targets beyond one name
-- annotated assignment or constraints
-- augmented assignment
-- default parameters
-- keyword-only parameters
-- pattern syntax
-- list/dict/set/tuple literals
-- comprehensions
-- attributes, subscripts, slices
-- keyword/starred call arguments
-- imports, classes, exceptions, with/try statements
-- Nomi reductions such as pipeline, nullish, safe navigation, ranges,
-  underscore lambdas, dollar holes, sections, where clauses, data declarations,
-  and block calls
+### Correctness and Parity
 
-This list is not a reason to discard the spike. It is the completion backlog.
+- Replace `Raw` payloads feature by feature with structured nodes, starting
+  with inline `match`, `where`, ranges, pipeline, nullish/safe navigation,
+  operator sections, underscore lambdas, dollar holes, and constrained binding
+  targets.
+- Add exact Python AST parity tests beyond the first slice before setting
+  `lower_to_python_ast=True`. Parse acceptance is already useful, but it is not
+  semantic equivalence.
+- Add payload-shape tests for Nomi-native forms before lowering them. This keeps
+  failures attributable to lexer/parser vs Python adapter.
+- Add source-span fields to tokens and payload nodes before improving
+  diagnostics; byte offsets already exist, but the payload does not expose
+  ranges yet.
+- Decide whether keywords should remain `Name` tokens with parser checks or
+  become distinct token variants. Distinct variants may simplify future grammar
+  parity, but soft-keyword behavior needs care.
+
+### Parser Structure
+
+- Continue shrinking `parser.rs` by moving statement families into focused
+  helpers/modules once behavior stabilizes: suites/control flow, assignments,
+  function forms, and Nomi-native forms.
+- Keep `main.rs` as CLI glue and keep parser behavior out of it.
+- Preserve the `ast-json <path>` CLI contract for future parser candidates.
+  New Rust parsers should plug in behind `JsonPayloadParserFrontend` instead of
+  modifying `rust-fast-ast` assumptions into the frontend boundary.
+- Avoid expanding tolerant parsing indefinitely. Each `Raw` fallback should have
+  a named follow-up path to structured parse and eventual lowering.
+
+### Payload and Adapter
+
+- Keep using `src/payload.rs` helpers rather than manual JSON string assembly.
+  If payload complexity grows, consider `serde_json`, but weigh that against the
+  spike's intentionally tiny dependency surface.
+- Move Python adapter support in `frontend.py` toward parser-neutral payload
+  adapters. The current `_python_ast_from_rust_payload` name is still
+  rust-fast-ast specific.
+- Add a version or schema marker to JSON payloads before supporting multiple
+  Rust parser candidates with different node sets.
+
+### Testing and Tooling
+
+- Add a deterministic Rust fixture sweep helper so the active Lark-accepted
+  `.nomi` set is checked without ad hoc shell loops.
+- Add timeout protection around Rust parser acceptance sweeps to catch parser
+  loops quickly.
+- Add tests that compare Rust parse acceptance against all files accepted by
+  Lark, while explicitly excluding aspirational/scratch files Lark rejects.
+- `cargo fmt` currently cannot run in this environment because `rustfmt` is not
+  installed. Re-run formatting once the toolchain has the component.
+
+### Performance
+
+- Replace Python's `cargo run` invocation with cached binary resolution before
+  measuring speed. Current timings mostly measure Cargo orchestration.
+- Add a build helper or clear fallback error that tells developers how to build
+  the Rust parser binary.
+- Only add Rust to parser performance comparisons after the compared fixture set
+  is identical across frontends.
 
 ## Performance Note
 
