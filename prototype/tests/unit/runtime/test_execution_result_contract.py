@@ -1,4 +1,7 @@
+import ast
+
 from prototype.parser.nomi import frontend as parser_frontends
+from prototype.parser.nomi.frontend import ParserFrontendCapabilities, ParserFrontendSpec
 from prototype.runtime import (
     Diagnostic,
     RuntimeEvent,
@@ -79,6 +82,42 @@ def test_session_can_preflight_with_named_parser_frontend(monkeypatch):
     assert result.ok
     assert result.pipeline.parser_frontend == "test-gate"
     assert result.bindings["x"] == 5
+    assert calls == [("x = 5\n", None)]
+
+
+def test_session_uses_python_ast_capable_parser_frontend(monkeypatch):
+    calls = []
+
+    class FakeFrontend:
+        spec = ParserFrontendSpec(
+            name="test-ast",
+            status="test",
+            grammar_format="test",
+            implementation="test",
+            cst_artifact="test",
+            output_contract="test",
+            capabilities=ParserFrontendCapabilities(lower_to_python_ast=True),
+        )
+
+        def generate_python_ast(self, *, code=None, filename=None):
+            calls.append((code, filename))
+            return ast.Module(
+                body=[
+                    ast.Assign(
+                        targets=[ast.Name(id="x", ctx=ast.Store())],
+                        value=ast.Constant(value=11),
+                    )
+                ],
+                type_ignores=[],
+            )
+
+    monkeypatch.setitem(parser_frontends._FRONTENDS, "test-ast", FakeFrontend())
+    session = create_session(mode="nomi", parser_frontend="test-ast")
+
+    result = session.run(source="x = 5\n", capture_output=True)
+
+    assert result.ok
+    assert result.bindings["x"] == 11
     assert calls == [("x = 5\n", None)]
 
 

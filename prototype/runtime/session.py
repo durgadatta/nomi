@@ -183,9 +183,10 @@ class RuntimeSession:
         timings: dict[str, float],
     ) -> Any:
         parse_started = perf_counter()
-        self._parse_accepts(source=source, filename=filename)
-        parser = self.pipeline.mode_spec.load_parser()
-        tree = parser(filename=filename, code=source, dump=False)
+        tree = self._parse_with_frontend(source=source, filename=filename)
+        if tree is None:
+            parser = self.pipeline.mode_spec.load_parser()
+            tree = parser(filename=filename, code=source, dump=False)
         timings["parse"] = perf_counter() - parse_started
 
         lowerer = self.pipeline.mode_spec.load_session_lowerer()
@@ -234,21 +235,25 @@ class RuntimeSession:
             del self._ast_cache[oldest]
         self._ast_cache[cache_key] = tree
 
-    def _parse_accepts(
+    def _parse_with_frontend(
         self,
         *,
         source: str | None,
         filename: str | Path | None,
-    ) -> None:
+    ) -> Any | None:
         if self.pipeline.parser_frontend == DEFAULT_FRONTEND:
-            return
+            return None
         if self.pipeline.parser != _NOMI_PARSER:
             raise ValueError(
                 "parser_frontend selection is currently supported only for "
                 "Nomi parser modes"
             )
         frontend = get_parser_frontend(self.pipeline.parser_frontend)
+        capabilities = getattr(getattr(frontend, "spec", None), "capabilities", None)
+        if getattr(capabilities, "lower_to_python_ast", False):
+            return frontend.generate_python_ast(code=source, filename=filename)
         frontend.parse_accepts(code=source, filename=filename)
+        return None
 
     @staticmethod
     def _is_block_call_expr(node: ast.Expr) -> bool:

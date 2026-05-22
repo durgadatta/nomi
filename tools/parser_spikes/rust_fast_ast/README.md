@@ -60,16 +60,16 @@ frontend acceptance tests, but must not be made selectable for execution yet.
 It also accepts the older Lark-accepted debug/interpreter fixtures covered by
 `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`.
 
-The runtime can also use this frontend as a parser-gate before handing the
-accepted source to the existing Lark/Python-AST execution backend:
+The runtime can also use this frontend to produce the Python AST artifact before
+handing it to the existing interpreter stack:
 
 ```bash
 python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
 ```
 
-That proves the grammar parser accepts the file on the execution path. The
-frontend now also matches the Lark Python AST text for the shared
-sample/snippet matrix, but it is not a normal execution replacement until
+That proves the parser can feed downstream evaluation on the execution path.
+The frontend now also matches the Lark Python AST text for the shared
+sample/snippet matrix, but it is not a normal default/replacement until
 `selectable_for_execution` is promoted.
 
 ## Promotion Gate
@@ -95,7 +95,7 @@ Promotion sequence:
    is now met; `rust-fast-ast` participates in `get_python_ast_frontends()`.
 3. Set `selectable_for_execution=True` only after parser unit tests, relevant
    functional tests, regression samples, CLI execution, and downstream runtime
-   behavior all match the Lark path.
+   behavior all match the Lark path when the Rust frontend is selected.
 
 Full replacement means all three: parse current grammar, lower to the same
 Python AST artifact, and be safe for normal execution.

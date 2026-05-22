@@ -7,6 +7,7 @@ existing runners instead of moving parser or interpreter internals yet.
 
 from __future__ import annotations
 
+import ast
 import contextlib
 import io
 from dataclasses import dataclass, field
@@ -117,12 +118,16 @@ def execute(
     )
     try:
         with stdout_context, stderr_context:
-            _parse_gate(
+            frontend_tree = _parse_with_frontend(
                 pipeline=pipeline,
                 source=source,
                 filename=filename,
                 tree=tree,
             )
+            if tree is None and frontend_tree is not None:
+                tree = frontend_tree
+                source = None
+                filename = None
             bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:
         timings = {"total": perf_counter() - started}
@@ -229,9 +234,7 @@ def inspect(
     if stage in {"expansions", "desugar_expansions"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
 
-        _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
-        parser = pipeline.mode_spec.load_parser()
-        tree = parser(filename=filename, code=source)
+        tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
         desugar_profile = DEFAULT_DESUGAR_PROFILE if mode == "nomi" else None
         output = render_desugar_expansion(tree, profile=desugar_profile)
         timings = {"total": perf_counter() - started}
@@ -245,9 +248,7 @@ def inspect(
         )
 
     if stage in {"core", "implementation_core"}:
-        _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
-        parser = pipeline.mode_spec.load_parser()
-        tree = parser(filename=filename, code=source)
+        tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
         core = lower_python_ast_to_core(tree)
         output = dump_core(core)
         timings = {"total": perf_counter() - started}
@@ -265,9 +266,17 @@ def inspect(
         # core AST, and backend-lowered stages as PipelineSpec grows.
         raise ValueError(f"Unsupported inspection stage: {stage!r}")
 
-    _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
-    parser = pipeline.mode_spec.load_parser()
-    output = parser(filename=filename, code=source, dump=True)
+    tree = _parse_with_frontend(
+        pipeline=pipeline,
+        source=source,
+        filename=filename,
+        tree=None,
+    )
+    if tree is None:
+        parser = pipeline.mode_spec.load_parser()
+        output = parser(filename=filename, code=source, dump=True)
+    else:
+        output = ast.dump(tree, include_attributes=False, indent=2)
     timings = {"total": perf_counter() - started}
     return InspectionResult(
         mode=mode,
@@ -279,23 +288,45 @@ def inspect(
     )
 
 
-def _parse_gate(
+def _parse_or_load_default(
+    *,
+    pipeline: PipelineSpec,
+    source: str | None,
+    filename: str | Path | None,
+) -> Any:
+    tree = _parse_with_frontend(
+        pipeline=pipeline,
+        source=source,
+        filename=filename,
+        tree=None,
+    )
+    if tree is not None:
+        return tree
+    parser = pipeline.mode_spec.load_parser()
+    return parser(filename=filename, code=source)
+
+
+def _parse_with_frontend(
     *,
     pipeline: PipelineSpec,
     source: str | None,
     filename: str | Path | None,
     tree: Any | None,
-) -> None:
-    """Run the selected parser frontend as a generic acceptance gate."""
+) -> Any | None:
+    """Return a selected frontend AST, or run it as a parse-only gate."""
     if tree is not None or pipeline.parser_frontend == DEFAULT_FRONTEND:
-        return
+        return None
     if pipeline.parser != _NOMI_PARSER:
         raise ValueError(
             "parser_frontend selection is currently supported only for "
             "Nomi parser modes"
         )
     frontend = get_parser_frontend(pipeline.parser_frontend)
+    capabilities = getattr(getattr(frontend, "spec", None), "capabilities", None)
+    if getattr(capabilities, "lower_to_python_ast", False):
+        return frontend.generate_python_ast(code=source, filename=filename)
     frontend.parse_accepts(code=source, filename=filename)
+    return None
 
 
 def create_session(
