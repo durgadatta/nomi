@@ -68,6 +68,8 @@ in a domain.
 
 - Install the package locally: `python3 -m pip install -e .`
 - Install development extras: `python3 -m pip install -e '.[dev]'`
+- Rust parser spikes use the root `rust-toolchain.toml` (stable + `rustfmt`).
+  With `rustup` installed, Cargo commands will use that project toolchain.
 - Run the CLI: `nomi scripts/demo.nomi`
 - Run without installation: `python3 scripts/cli.py scripts/demo.nomi`
 - Build/run the Dockerized notebook: `python3 scripts/run_nomi_docker.py`
