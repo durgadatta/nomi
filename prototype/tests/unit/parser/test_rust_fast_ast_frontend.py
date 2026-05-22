@@ -15,6 +15,17 @@ RUST_FAST_AST_SNIPPETS = {
     "parenthesized-arrow-assignment": "add = (a, b) => a + b\n",
 }
 
+RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES = (
+    "PLAY/debug/blocks.nomi",
+    "PLAY/debug/fix.nomi",
+    "PLAY/debug/functions.nomi",
+    "prototype/tests/data/sample_sources/interpreter/blocks.nomi",
+    "prototype/tests/data/sample_sources/interpreter/func_styles.nomi",
+    "prototype/tests/data/sample_sources/interpreter/functions.nomi",
+    "prototype/tests/data/sample_sources/interpreter/sample.nomi",
+    "scripts/demo.nomi",
+)
+
 
 def _python_ast_text(frontend, code):
     try:
@@ -111,3 +122,17 @@ def test_rust_fast_ast_accepts_guided_tour_demo_payload():
         statement.get("type") == "Assign" and statement.get("target") == "data"
         for statement in statements
     )
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES,
+    ids=RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES,
+)
+def test_rust_fast_ast_accepts_lark_accepted_extra_fixtures(relative_path):
+    rust = get_parser_frontend("rust-fast-ast")
+    repo_root = Path(__file__).resolve().parents[4]
+
+    payload = _rust_payload(rust, repo_root / relative_path)
+
+    assert payload["type"] == "Module"

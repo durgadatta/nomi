@@ -33,6 +33,8 @@ currently-raw expression forms.
 The parse-acceptance slice is not exact Python AST parity. It is a
 parser-frontier milestone only: `rust-fast-ast` is now enrolled in parser
 frontend acceptance tests, but must not be made selectable for execution yet.
+It also accepts the older Lark-accepted debug/interpreter fixtures covered by
+`prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`.
 
 ## Promotion Gate
 

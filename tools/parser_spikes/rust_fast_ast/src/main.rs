@@ -658,8 +658,14 @@ fn read_line_indent(source: &str, start: usize) -> (usize, usize, bool) {
             '\r' | '\x0c' => {
                 offset += ch.len_utf8();
             }
-            '\n' => return (indent, offset, false),
-            '#' => return (indent, offset, false),
+            '\n' => return (indent, offset + ch.len_utf8(), true),
+            '#' => {
+                let comment_end = skip_comment(source, offset);
+                if comment_end < source.len() && source[comment_end..].starts_with('\n') {
+                    return (indent, comment_end + 1, true);
+                }
+                return (indent, comment_end, true);
+            }
             _ => return (indent, offset, false),
         }
     }
@@ -833,6 +839,12 @@ impl Parser {
         if self.is_keyword("while") {
             return self.parse_head_suite("While");
         }
+        if self.is_keyword("class") {
+            return self.parse_head_suite("Class");
+        }
+        if self.is_keyword("with") {
+            return self.parse_head_suite("With");
+        }
         if self.is_keyword("unless") {
             return self.parse_head_suite("Unless");
         }
@@ -873,15 +885,15 @@ impl Parser {
                     self.collect_raw_until_line_end(),
                 ))));
             }
-            return Ok(Stmt::Return(self.parse_optional_expr()?));
+            return Ok(Stmt::Return(self.parse_optional_expr_or_raw()));
         }
         if self.is_keyword("yield") {
             self.advance();
-            return Ok(Stmt::Yield(self.parse_optional_expr()?));
+            return Ok(Stmt::Yield(self.parse_optional_expr_or_raw()));
         }
         if self.is_keyword("raise") {
             self.advance();
-            return Ok(Stmt::Raise(self.parse_optional_expr()?));
+            return Ok(Stmt::Raise(self.parse_optional_expr_or_raw()));
         }
         if self.is_keyword("pass") || self.is_keyword("break") || self.is_keyword("continue") {
             let name = self.advance_name()?;
@@ -1031,6 +1043,25 @@ impl Parser {
             return Ok(None);
         }
         let body = self.parse_expr(0)?;
+        if self.is_keyword("where") {
+            self.advance();
+            if matches!(self.peek().kind, TokenKind::Colon) {
+                let where_body = self.parse_suite_from_current_colon()?;
+                return Ok(Some(Stmt::Suite {
+                    kind: "WhereFunction".to_string(),
+                    head: format!("{name}(...)= {}", body.brief()),
+                    body: where_body,
+                    clauses: Vec::new(),
+                }));
+            }
+            let rest = self.collect_raw_until_line_end();
+            return Ok(Some(Stmt::Suite {
+                kind: "WhereFunction".to_string(),
+                head: format!("{name}(...)= {} where {rest}", body.brief()),
+                body: Vec::new(),
+                clauses: Vec::new(),
+            }));
+        }
         Ok(Some(Stmt::FunctionDef { name, params, body }))
     }
 
@@ -1065,11 +1096,20 @@ impl Parser {
         };
         if op == "=" && self.is_keyword("where") {
             self.advance();
-            let body = self.parse_suite_from_current_colon()?;
+            if matches!(self.peek().kind, TokenKind::Colon) {
+                let body = self.parse_suite_from_current_colon()?;
+                return Ok(Some(Stmt::Suite {
+                    kind: "WhereAssign".to_string(),
+                    head: format!("{target} = {}", value.brief()),
+                    body,
+                    clauses: Vec::new(),
+                }));
+            }
+            let rest = self.collect_raw_until_line_end();
             return Ok(Some(Stmt::Suite {
                 kind: "WhereAssign".to_string(),
-                head: format!("{target} = {}", value.brief()),
-                body,
+                head: format!("{target} = {} where {rest}", value.brief()),
+                body: Vec::new(),
                 clauses: Vec::new(),
             }));
         }
@@ -1124,11 +1164,17 @@ impl Parser {
         None
     }
 
-    fn parse_optional_expr(&mut self) -> Result<Option<Expr>, ParseError> {
+    fn parse_optional_expr_or_raw(&mut self) -> Option<Expr> {
         if self.at_stmt_end() {
-            Ok(None)
-        } else {
-            Ok(Some(self.parse_expr(0)?))
+            return None;
+        }
+        let mark = self.cursor;
+        match self.parse_expr(0) {
+            Ok(value) if self.at_stmt_end() => Some(value),
+            Ok(_) | Err(_) => {
+                self.cursor = mark;
+                Some(Expr::Raw(self.collect_raw_until_line_end()))
+            }
         }
     }
 
