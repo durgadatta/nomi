@@ -443,14 +443,10 @@ class TreeSitterParserFrontend:
             return _run_tree_sitter_parse(tree_sitter, path)
 
 
-class RustFastAstParserFrontend:
-    """Rust parser spike that directly emits a Python-AST-adaptable payload."""
+class JsonPayloadParserFrontend:
+    """Reusable boundary for frontends that emit a JSON parser payload."""
 
-    spec = next(
-        spec
-        for spec in PARSER_FRONTEND_CANDIDATES
-        if spec.name == "rust-fast-ast"
-    )
+    inline_source_prefix = "nomi-json-parser-source-"
 
     def parse_raw_tree(
         self,
@@ -493,7 +489,7 @@ class RustFastAstParserFrontend:
 
     def generate_python_ast(self, *, code=None, filename=None) -> ast.Module:
         payload = self._parse_payload(code=code, filename=filename)
-        return _python_ast_from_rust_payload(payload)
+        return self._python_ast_from_payload(payload)
 
     def python_ast_text(self, *, code=None, filename=None) -> str:
         return ast.dump(
@@ -503,17 +499,40 @@ class RustFastAstParserFrontend:
         )
 
     def _parse_payload(self, *, code=None, filename=None) -> dict[str, Any]:
+        if filename is not None:
+            return self._parse_payload_file(Path(filename))
+        if code is None:
+            raise ValueError("code or filename is required")
+        with tempfile.TemporaryDirectory(prefix=self.inline_source_prefix) as temp_dir:
+            path = Path(temp_dir) / "inline.nomi"
+            path.write_text(code, encoding="utf-8")
+            return self._parse_payload_file(path)
+
+    def _parse_payload_file(self, source_path: Path) -> dict[str, Any]:
+        raise NotImplementedError
+
+    def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
+        raise NotImplementedError
+
+
+class RustFastAstParserFrontend(JsonPayloadParserFrontend):
+    """Rust parser spike that directly emits a Python-AST-adaptable payload."""
+
+    spec = next(
+        spec
+        for spec in PARSER_FRONTEND_CANDIDATES
+        if spec.name == "rust-fast-ast"
+    )
+    inline_source_prefix = "nomi-rust-fast-source-"
+
+    def _parse_payload_file(self, source_path: Path) -> dict[str, Any]:
         cargo = shutil.which("cargo")
         if cargo is None:
             raise RuntimeError("cargo is required for rust-fast-ast parsing")
-        if filename is not None:
-            return _run_rust_fast_ast(cargo, Path(filename))
-        if code is None:
-            raise ValueError("code or filename is required")
-        with tempfile.TemporaryDirectory(prefix="nomi-rust-fast-source-") as temp_dir:
-            path = Path(temp_dir) / "inline.nomi"
-            path.write_text(code, encoding="utf-8")
-            return _run_rust_fast_ast(cargo, path)
+        return _run_rust_fast_ast(cargo, source_path)
+
+    def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
+        return _python_ast_from_rust_payload(payload)
 
 
 _FRONTENDS = {
