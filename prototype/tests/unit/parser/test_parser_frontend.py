@@ -3,7 +3,9 @@ from prototype.parser.nomi.frontend import (
     PARSER_FRONTEND_CANDIDATES,
     ParserFrontendCapabilities,
     ParserFrontendSpec,
+    get_functional_replacement_frontends,
     get_parser_frontend,
+    get_python_ast_frontends,
     get_selectable_parser_frontends,
     render_parser_frontend_table,
 )
@@ -33,8 +35,10 @@ def test_parser_frontend_table_names_planned_non_lark_spikes():
     table = render_parser_frontend_table()
 
     assert "tree-sitter-cst" in table
-    assert "rust-peg-cst" in table
-    assert "| frontend | status | full grammar | python AST | selectable |" in table
+    assert "pest-readable-cst" in table
+    assert "winnow-fast-cst" in table
+    assert "chumsky-readable-cst" in table
+    assert "| frontend | status | full grammar | python AST | selectable | roles |" in table
     assert "Nomi Surface IR, then Python AST backend" in table
 
 
@@ -51,6 +55,27 @@ def test_only_full_parity_frontends_are_selectable_for_execution():
     )
 
 
+def test_no_non_lark_frontend_claims_replacement_before_ast_equivalence():
+    assert get_functional_replacement_frontends() == ()
+
+
+def test_python_ast_frontends_are_explicitly_registered():
+    assert tuple(
+        frontend.spec.name for frontend in get_python_ast_frontends()
+    ) == ("lark-lalr",)
+
+
+def test_parser_experiment_registry_has_fast_and_readable_candidates():
+    role_map = {
+        role: spec.name
+        for spec in PARSER_FRONTEND_CANDIDATES
+        for role in spec.experiment_roles
+    }
+
+    assert role_map["fast"]
+    assert role_map["readable"]
+
+
 def test_parser_frontend_table_accepts_explicit_specs():
     table = render_parser_frontend_table(
         (
@@ -65,9 +90,10 @@ def test_parser_frontend_table_accepts_explicit_specs():
                     parse_current_grammar=True,
                     lower_to_python_ast=True,
                 ),
+                experiment_roles=("fast",),
             ),
         )
     )
 
     assert "example grammar" in table
-    assert "| example | research-candidate | yes | yes | no |" in table
+    assert "| example | research-candidate | yes | yes | no | fast |" in table

@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from prototype.parser.nomi.frontend import get_parse_acceptance_frontends
+from prototype.parser.nomi.frontend import (
+    get_parse_acceptance_frontends,
+    get_parser_frontend,
+    get_python_ast_frontends,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -48,6 +52,13 @@ def _acceptance_frontend_params():
     ]
 
 
+def _python_ast_frontend_params():
+    return [
+        pytest.param(frontend, id=frontend.spec.name)
+        for frontend in get_python_ast_frontends()
+    ]
+
+
 def _parse_accepts(frontend, *, code=None, filename=None):
     try:
         frontend.parse_accepts(code=code, filename=filename)
@@ -67,3 +78,20 @@ def test_parser_frontends_accept_sample_files(frontend, path):
 @pytest.mark.parametrize("name", tuple(PARSER_SNIPPETS), ids=tuple(PARSER_SNIPPETS))
 def test_parser_frontends_accept_feature_snippets(frontend, name):
     _parse_accepts(frontend, code=PARSER_SNIPPETS[name])
+
+
+@pytest.mark.parametrize("frontend", _python_ast_frontend_params())
+@pytest.mark.parametrize("path", PARSER_SAMPLE_FILES, ids=lambda path: path.name)
+def test_python_ast_frontends_match_lark_for_sample_files(frontend, path):
+    lark = get_parser_frontend("lark-lalr")
+
+    assert frontend.python_ast_text(filename=path) == lark.python_ast_text(filename=path)
+
+
+@pytest.mark.parametrize("frontend", _python_ast_frontend_params())
+@pytest.mark.parametrize("name", tuple(PARSER_SNIPPETS), ids=tuple(PARSER_SNIPPETS))
+def test_python_ast_frontends_match_lark_for_feature_snippets(frontend, name):
+    lark = get_parser_frontend("lark-lalr")
+    code = PARSER_SNIPPETS[name]
+
+    assert frontend.python_ast_text(code=code) == lark.python_ast_text(code=code)

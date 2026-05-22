@@ -65,6 +65,25 @@ matrix runs the same sample files and feature snippets through Lark and the new
 parser. Future frontends join by implementing `parse_accepts()` and setting the
 capability flag; they do not get a separate, weaker parser test path.
 
+The Python-AST equivalence rule is stricter: every registered frontend whose
+`ParserFrontendCapabilities.lower_to_python_ast` flag is true must produce
+exactly the same `ast.dump(..., include_attributes=False, indent=2)` text as
+`lark-lalr` for the same sample files and feature snippets. A parser may parse
+successfully before it can lower, but it cannot claim backend compatibility
+until this text artifact matches.
+
+A non-Lark frontend is a functional replacement only when all of these are
+true:
+
+```text
+parse_current_grammar
+lower_to_python_ast
+selectable_for_execution
+```
+
+`get_functional_replacement_frontends()` is intentionally empty until a
+non-Lark parser satisfies that full contract.
+
 ## Parser Technology Direction
 
 ### Keep Lark As Bootstrap
@@ -73,15 +92,40 @@ Lark remains the default parser frontend until another frontend can produce
 the same artifacts and pass the existing parser/runtime suite. It is still
 useful for fast grammar iteration and Python-hosted testing.
 
-### Spike Tree-sitter Next
+### Compare Multiple Parser Families
 
-Tree-sitter is the best next parser frontend candidate because it is designed
-around concrete syntax trees, parser generation, editor embedding, and
-incremental parsing. Its grammar DSL has explicit sequence, choice, repeat,
-precedence, alias, field, keyword, conflict, and external-scanner concepts.
-Its implementation model is also attractive for Nomi: the CLI reads a grammar
-and emits a generated C parser, while the runtime library can be embedded from
-other languages.
+Tree-sitter is useful, but it should not become the only parser experiment.
+Nomi should compare parser families under one acceptance matrix and choose a
+default only after both ergonomics and speed are visible.
+
+Current experiment roles:
+
+| Frontend | Role |
+| --- | --- |
+| `lark-lalr` | readable bootstrap and current default |
+| `tree-sitter-cst` | fast generated C parser and tooling CST |
+| `winnow-fast-cst` | fastest handwritten Rust parser candidate |
+| `pest-readable-cst` | readable Rust PEG grammar-file candidate |
+| `chumsky-readable-cst` | readable Rust parser-combinator and diagnostics candidate |
+| `lalrpop-lr-cst` | generated Rust LR parser candidate |
+
+For each implemented frontend, the rule is the same:
+
+```text
+same accepted source -> same Surface/Core/Python AST behavior
+```
+
+Speed and readability are selection criteria, not permission to accept a
+different language.
+
+### Tree-sitter Spike
+
+Tree-sitter is still a useful candidate because it is designed around concrete
+syntax trees, parser generation, editor embedding, and incremental parsing. Its
+grammar DSL has explicit sequence, choice, repeat, precedence, alias, field,
+keyword, conflict, and external-scanner concepts. Its implementation model is
+also attractive for Nomi: the CLI reads a grammar and emits a generated C
+parser, while the runtime library can be embedded from other languages.
 
 Nomi-specific concern: indentation, virtual tokens, soft keywords, and
 postfix/block-call disambiguation must become an explicit external-scanner and

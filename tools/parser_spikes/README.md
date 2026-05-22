@@ -22,6 +22,20 @@ That enrolls them in
 `prototype/tests/unit/parser/test_parser_frontend_acceptance.py`, the shared
 parse matrix for sample files and parser feature snippets.
 
+Parser frontends that claim Python AST backend support must implement
+`python_ast_text()` and set `ParserFrontendCapabilities.lower_to_python_ast`.
+The same test file then compares their text AST dump against `lark-lalr`
+exactly. Parse success is not enough to call a parser functionally equivalent.
+
+For quick local comparisons, run:
+
+```bash
+python3 -m tools.parser_spikes.parse_matrix --iterations 5
+```
+
+This prints the same sample-file matrix for every parse-capable frontend, with
+basic per-file timings. It is a smoke comparison, not a final benchmark.
+
 Current local toolchain expectation:
 
 ```bash
@@ -30,12 +44,20 @@ cargo --version
 tree-sitter --version
 ```
 
-The first Rust-backed candidate should target either:
+The first Rust-backed candidates should target these distinct experiment goals:
 
 - `tree-sitter-cst`: full CST with an indentation/external-scanner contract,
   then Surface IR and Python AST backend lowering; or
-- `rust-peg-cst`: a Rust parser crate that emits a Nomi-owned CST/Surface
-  payload, then Python adapts that payload into the existing Python AST backend.
+- `winnow-fast-cst`: a Rust parser-combinator crate aimed at the fastest
+  handwritten parser path;
+- `pest-readable-cst`: a Rust PEG grammar-file parser aimed at readability;
+- `chumsky-readable-cst`: a Rust parser-combinator path aimed at readable
+  parser code and diagnostics;
+- `lalrpop-lr-cst`: a generated Rust LR parser comparable to the current LALR
+  shape.
+
+Every candidate should emit a Nomi-owned CST/Surface payload first. Python AST
+is the backend adapter target, not the grammar author's primary data model.
 
 ## Current Spike
 

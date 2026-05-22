@@ -16,6 +16,6 @@ def test_inspect_returns_parser_frontend_table():
 
     assert isinstance(result, InspectionResult)
     assert result.stage == "parser_frontends"
-    assert "| frontend | status | full grammar | python AST | selectable |" in result.output
+    assert "| frontend | status | full grammar | python AST | selectable | roles |" in result.output
     assert "lark-lalr" in result.output
     assert "tree-sitter-cst" in result.output

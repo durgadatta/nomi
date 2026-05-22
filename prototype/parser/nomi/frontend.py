@@ -14,6 +14,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import ast
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -73,6 +74,7 @@ class ParserFrontendSpec:
     cst_artifact: str
     output_contract: str
     capabilities: ParserFrontendCapabilities = ParserFrontendCapabilities()
+    experiment_roles: tuple[str, ...] = ()
     notes: tuple[str, ...] = ()
 
 
@@ -103,6 +105,7 @@ LARK_FRONTEND_SPEC = ParserFrontendSpec(
         "bootstrap path",
         "keeps Python AST backend unchanged",
     ),
+    experiment_roles=("readable-bootstrap", "current-default"),
 )
 
 
@@ -119,21 +122,62 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
             parse_current_grammar=True,
             source_spans=True,
         ),
+        experiment_roles=("fast", "tooling", "generated-c"),
         notes=(
             "participates in parser-frontend acceptance tests",
             "needs structural grammar, indentation contract, and Python AST adapter",
         ),
     ),
     ParserFrontendSpec(
-        name="rust-peg-cst",
+        name="pest-readable-cst",
         status="research-candidate",
-        grammar_format="PEG grammar, likely pest-style",
-        implementation="Rust parser crate exposed through a serialized artifact",
+        grammar_format="pest PEG grammar",
+        implementation="Rust pest parser crate exposed through serialized CST",
         cst_artifact="Nomi-owned CST or Surface IR payload",
         output_contract="Nomi Surface IR, then Python AST backend",
+        experiment_roles=("readable", "grammar-file", "rust"),
         notes=(
-            "useful if a Rust-native parser is needed before editor tooling",
-            "must not emit Python AST as its primary semantic artifact",
+            "candidate for the most readable non-Lark grammar",
+            "must join acceptance tests before parse_current_grammar=True",
+        ),
+    ),
+    ParserFrontendSpec(
+        name="winnow-fast-cst",
+        status="research-candidate",
+        grammar_format="Rust parser combinators",
+        implementation="Rust winnow parser crate exposed through serialized CST",
+        cst_artifact="Nomi-owned CST or Surface IR payload",
+        output_contract="Nomi Surface IR, then Python AST backend",
+        experiment_roles=("fast", "handwritten", "rust"),
+        notes=(
+            "candidate for the fastest non-Lark parser",
+            "must join acceptance tests before parse_current_grammar=True",
+        ),
+    ),
+    ParserFrontendSpec(
+        name="chumsky-readable-cst",
+        status="research-candidate",
+        grammar_format="Rust parser combinators",
+        implementation="Rust chumsky parser crate exposed through serialized CST",
+        cst_artifact="Nomi-owned CST or Surface IR payload",
+        output_contract="Nomi Surface IR, then Python AST backend",
+        experiment_roles=("readable", "diagnostics", "rust"),
+        notes=(
+            "candidate for readable parser code and recovery diagnostics",
+            "must join acceptance tests before parse_current_grammar=True",
+        ),
+    ),
+    ParserFrontendSpec(
+        name="lalrpop-lr-cst",
+        status="research-candidate",
+        grammar_format="LALRPOP LR grammar",
+        implementation="Rust LALRPOP parser crate exposed through serialized CST",
+        cst_artifact="Nomi-owned CST or Surface IR payload",
+        output_contract="Nomi Surface IR, then Python AST backend",
+        experiment_roles=("generated-lr", "rust"),
+        notes=(
+            "candidate for a Rust LR parser comparable to current LALR shape",
+            "must join acceptance tests before parse_current_grammar=True",
         ),
     ),
     ParserFrontendSpec(
@@ -143,6 +187,7 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
         implementation="generated parser with Python3 target available",
         cst_artifact="ANTLR parse tree",
         output_contract="Nomi Surface IR, then Python AST backend",
+        experiment_roles=("portable", "generated"),
         notes=(
             "broad target-language support",
             "less directly aligned with incremental editor parsing",
@@ -284,6 +329,24 @@ class LarkParserFrontend:
         """Raise if this frontend cannot parse the given source."""
         self.parse_raw_tree(code=code, filename=filename, preserve_positions=False)
 
+    def generate_python_ast(self, *, code=None, filename=None) -> ast.Module:
+        from .ast_ import NomiToPythonAST
+        from ...syntax.surface import lower_surface_to_python
+
+        if code is None:
+            code = Path(filename).read_text(encoding="utf-8")
+        tree = self.parse_transformed_tree(code=code, filename=filename)
+        node = NomiToPythonAST().transform(tree)
+        lower_surface_to_python(node)
+        return node
+
+    def python_ast_text(self, *, code=None, filename=None) -> str:
+        return ast.dump(
+            self.generate_python_ast(code=code, filename=filename),
+            include_attributes=False,
+            indent=2,
+        )
+
 
 class TreeSitterParserFrontend:
     """Tree-sitter parser spike for parse-acceptance parity."""
@@ -384,15 +447,15 @@ def render_parser_frontend_table(
 ) -> str:
     rows = [
         "| frontend | status | full grammar | python AST | selectable | "
-        "grammar | implementation | artifact | output |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "roles | grammar | implementation | artifact | output |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for spec in specs:
         capabilities = spec.capabilities
         rows.append(
             (
                 "| {name} | {status} | {full} | {python_ast} | "
-                "{selectable} | {grammar} | {implementation} | "
+                "{selectable} | {roles} | {grammar} | {implementation} | "
                 "{artifact} | {output} |"
             ).format(
                 name=spec.name,
@@ -400,6 +463,7 @@ def render_parser_frontend_table(
                 full=_mark(capabilities.parse_current_grammar),
                 python_ast=_mark(capabilities.lower_to_python_ast),
                 selectable=_mark(capabilities.selectable_for_execution),
+                roles=", ".join(spec.experiment_roles) or "-",
                 grammar=spec.grammar_format,
                 implementation=spec.implementation,
                 artifact=spec.cst_artifact,
@@ -424,12 +488,35 @@ def get_selectable_parser_frontends(
     )
 
 
+def get_functional_replacement_frontends(
+    specs: tuple[ParserFrontendSpec, ...] = PARSER_FRONTEND_CANDIDATES,
+) -> tuple[str, ...]:
+    """Return non-Lark frontends that can replace the current default parser."""
+    return tuple(
+        spec.name
+        for spec in specs
+        if spec.name != DEFAULT_FRONTEND
+        and spec.capabilities.parse_current_grammar
+        and spec.capabilities.lower_to_python_ast
+        and spec.capabilities.selectable_for_execution
+    )
+
+
 def get_parse_acceptance_frontends():
     """Return registered frontends that must pass parse acceptance tests."""
     return tuple(
         frontend
         for frontend in _FRONTENDS.values()
         if frontend.spec.capabilities.parse_current_grammar
+    )
+
+
+def get_python_ast_frontends():
+    """Return frontends that must match the Python AST backend artifact."""
+    return tuple(
+        frontend
+        for frontend in _FRONTENDS.values()
+        if frontend.spec.capabilities.lower_to_python_ast
     )
 
 
