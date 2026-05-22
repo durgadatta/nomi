@@ -29,6 +29,9 @@ semantic center of the language.
 `prototype/parser/nomi/frontend.py` now owns the parser frontend contract:
 
 - `ParserFrontendSpec` describes one frontend technology.
+- `ParserFrontendCapabilities` records whether that frontend parses the full
+  current grammar, lowers to Python AST, preserves spans, and is selectable for
+  execution.
 - `ParseArtifacts` names the raw and transformed artifacts before Python AST
   lowering.
 - `LarkParserFrontend` wraps the current Lark LALR parser, postlexer, parse
@@ -49,6 +52,11 @@ generate_ast()
 That compatibility layer is intentional. Existing tests, notebook tooling, web
 playground paths, and interpreter modes should not need to change during the
 first parser decoupling pass.
+
+The execution-selection rule is strict: non-Lark frontends must stay
+non-selectable until they can parse the full current grammar and lower to the
+same Python AST backend artifact. This prevents a fast subset parser from
+quietly becoming the language definition.
 
 ## Parser Technology Direction
 
@@ -126,9 +134,9 @@ Python AST is allowed after Surface/Core, never before them in new frontend work
 
 1. Define a serialized CST/Surface IR debug format that both Lark and
    Tree-sitter spikes can emit.
-2. Add a small `tools/parser_spikes/tree_sitter_nomi/` grammar with only
-   literals, names, assignment, function call, and indentation tokens.
-3. Map one existing Nomi sample through both Lark and Tree-sitter into the same
+2. Add a `tools/parser_spikes/tree_sitter_nomi/` grammar plus external scanner
+   contract, but keep it non-selectable until it accepts the current grammar.
+3. Map the current parser samples through both Lark and Tree-sitter into the same
    Surface IR snapshot.
 4. Move `DataDecl` and `MatchExpr` into Surface IR before any parser swap,
    because direct Python AST lowering would otherwise hide the very boundary

@@ -47,6 +47,16 @@ class RawTreeCacheKey:
 
 
 @dataclass(frozen=True, slots=True)
+class ParserFrontendCapabilities:
+    """Current support level for one parser frontend."""
+
+    parse_current_grammar: bool = False
+    lower_to_python_ast: bool = False
+    source_spans: bool = False
+    selectable_for_execution: bool = False
+
+
+@dataclass(frozen=True, slots=True)
 class ParserFrontendSpec:
     """Describes a parser technology or candidate frontend."""
 
@@ -56,6 +66,7 @@ class ParserFrontendSpec:
     implementation: str
     cst_artifact: str
     output_contract: str
+    capabilities: ParserFrontendCapabilities = ParserFrontendCapabilities()
     notes: tuple[str, ...] = ()
 
 
@@ -76,6 +87,12 @@ LARK_FRONTEND_SPEC = ParserFrontendSpec(
     implementation="Python + Lark LALR + NomiPostLexer",
     cst_artifact="Lark Tree",
     output_contract="layer-transformed tree for NomiToPythonAST",
+    capabilities=ParserFrontendCapabilities(
+        parse_current_grammar=True,
+        lower_to_python_ast=True,
+        source_spans=True,
+        selectable_for_execution=True,
+    ),
     notes=(
         "bootstrap path",
         "keeps Python AST backend unchanged",
@@ -92,6 +109,7 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
         implementation="generated C parser with Rust CLI and Python/Rust bindings",
         cst_artifact="Tree-sitter concrete syntax tree",
         output_contract="Nomi Surface IR, then Python AST backend",
+        capabilities=ParserFrontendCapabilities(source_spans=True),
         notes=(
             "best fit for editor CST, incremental parsing, and syntax tooling",
             "requires indentation/external-scanner contract",
@@ -273,17 +291,23 @@ def render_parser_frontend_table(
     specs: tuple[ParserFrontendSpec, ...] = PARSER_FRONTEND_CANDIDATES,
 ) -> str:
     rows = [
-        "| frontend | status | grammar | implementation | artifact | output |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| frontend | status | full grammar | python AST | selectable | "
+        "grammar | implementation | artifact | output |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for spec in specs:
+        capabilities = spec.capabilities
         rows.append(
             (
-                "| {name} | {status} | {grammar} | {implementation} | "
+                "| {name} | {status} | {full} | {python_ast} | "
+                "{selectable} | {grammar} | {implementation} | "
                 "{artifact} | {output} |"
             ).format(
                 name=spec.name,
                 status=spec.status,
+                full=_mark(capabilities.parse_current_grammar),
+                python_ast=_mark(capabilities.lower_to_python_ast),
+                selectable=_mark(capabilities.selectable_for_execution),
                 grammar=spec.grammar_format,
                 implementation=spec.implementation,
                 artifact=spec.cst_artifact,
@@ -291,3 +315,18 @@ def render_parser_frontend_table(
             )
         )
     return "\n".join(rows)
+
+
+def _mark(value: bool) -> str:
+    return "yes" if value else "no"
+
+
+def get_selectable_parser_frontends(
+    specs: tuple[ParserFrontendSpec, ...] = PARSER_FRONTEND_CANDIDATES,
+) -> tuple[str, ...]:
+    """Return parser frontends safe to select for normal execution."""
+    return tuple(
+        spec.name
+        for spec in specs
+        if spec.capabilities.selectable_for_execution
+    )
