@@ -36,13 +36,24 @@ frontend acceptance tests, but must not be made selectable for execution yet.
 It also accepts the older Lark-accepted debug/interpreter fixtures covered by
 `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`.
 
+The runtime can also use this frontend as a parser-gate before handing the
+accepted source to the existing Lark/Python-AST execution backend:
+
+```bash
+python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
+```
+
+That proves the grammar parser accepts the file on the execution path. It is
+not a semantic replacement claim until `lower_to_python_ast` and
+`selectable_for_execution` are promoted.
+
 ## Promotion Gate
 
 Do not change these capability flags until the stated gate is genuinely met:
 
 ```python
 ParserFrontendCapabilities(
-    parse_current_grammar=False,
+    parse_current_grammar=True,
     lower_to_python_ast=False,
     selectable_for_execution=False,
 )
@@ -78,6 +89,9 @@ Python AST artifact, and be safe for normal execution.
 - `Cargo.lock`: tracked for reproducible local spike builds.
 - `prototype/parser/nomi/frontend.py`: registers `rust-fast-ast`, runs the Rust
   CLI, and adapts the JSON payload to Python `ast.Module`.
+- `prototype/runtime/api.py`, `prototype/runtime/session.py`, and
+  `scripts/cli.py`: expose parser-gated execution through the generic
+  `parser_frontend` selector.
 - `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`: exact parity
   tests for the first supported slice plus demo parse-acceptance coverage.
 - `prototype/tests/unit/parser/test_parser_frontend.py`: registry and promotion
@@ -285,6 +299,12 @@ them fresh as work lands.
   rust-fast-ast specific.
 - Add a version or schema marker to JSON payloads before supporting multiple
   Rust parser candidates with different node sets.
+- Keep parser-gated execution generic: runtime and CLI should call
+  `get_parser_frontend(name).parse_accepts(...)` by name, not branch on
+  `rust-fast-ast`. Future parsers should join by registration plus tests.
+- Once a non-Lark frontend earns `lower_to_python_ast=True`, add a backend
+  routing hook that can execute from that frontend's lowered artifact rather
+  than using parser-gated Lark execution.
 
 ### Testing and Tooling
 
@@ -329,6 +349,7 @@ pytest prototype/tests/unit/parser/test_parser_frontend.py
 pytest prototype/tests/unit/parser
 python3 -m tools.syntax.inspect --stage parser-frontends
 python3 -m tools.parser_spikes.parse_matrix --iterations 1
+python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
 ```
 
 To inspect Lark's current AST text for a snippet:

@@ -124,6 +124,17 @@ def test_rust_fast_ast_accepts_guided_tour_demo_payload():
     )
 
 
+def test_rust_fast_ast_accepts_relative_source_path(monkeypatch):
+    rust = get_parser_frontend("rust-fast-ast")
+    repo_root = Path(__file__).resolve().parents[4]
+    monkeypatch.chdir(repo_root)
+
+    payload = _rust_payload(rust, Path("samples/demo.nomi"))
+
+    assert payload["type"] == "Module"
+    assert len(payload["body"]) >= 80
+
+
 @pytest.mark.parametrize(
     "relative_path",
     RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES,

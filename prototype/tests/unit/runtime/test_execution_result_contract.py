@@ -1,3 +1,4 @@
+from prototype.parser.nomi import frontend as parser_frontends
 from prototype.runtime import (
     Diagnostic,
     RuntimeEvent,
@@ -61,6 +62,24 @@ def test_session_can_opt_into_output_capture():
     assert result.stdout == "cell\n"
     assert result.stderr == ""
     assert result.bindings["x"] == 4
+
+
+def test_session_can_preflight_with_named_parser_frontend(monkeypatch):
+    calls = []
+
+    class FakeFrontend:
+        def parse_accepts(self, *, code=None, filename=None):
+            calls.append((code, filename))
+
+    monkeypatch.setitem(parser_frontends._FRONTENDS, "test-gate", FakeFrontend())
+    session = create_session(mode="nomi", parser_frontend="test-gate")
+
+    result = session.run(source="x = 5\n", capture_output=True)
+
+    assert result.ok
+    assert result.pipeline.parser_frontend == "test-gate"
+    assert result.bindings["x"] == 5
+    assert calls == [("x = 5\n", None)]
 
 
 def test_session_uses_runtime_event_collector_snapshot():

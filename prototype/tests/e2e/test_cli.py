@@ -21,7 +21,8 @@ def test_cli_help_prints_usage():
     result = run_cli("--help")
 
     assert result.returncode == 0
-    assert "Usage: nomi [filename]" in result.stdout
+    assert "usage: nomi" in result.stdout
+    assert "--parser-frontend" in result.stdout
     assert result.stderr == ""
 
 

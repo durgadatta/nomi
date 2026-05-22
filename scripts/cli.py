@@ -4,16 +4,37 @@ Nomi CLI - Run Nomi or Python files
 """
 
 import sys
+import argparse
 from pathlib import Path
 
+from prototype.parser.nomi.frontend import DEFAULT_FRONTEND
+
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        prog="nomi",
+        description="Run Nomi or Python files",
+    )
+    parser.add_argument(
+        "filename",
+        nargs="?",
+        default="scripts/demo.nomi",
+        help=".nomi or .py file (default: scripts/demo.nomi)",
+    )
+    parser.add_argument(
+        "--parser-frontend",
+        default=DEFAULT_FRONTEND,
+        help=(
+            "Nomi parser frontend to preflight before execution "
+            f"(default: {DEFAULT_FRONTEND})"
+        ),
+    )
+    return parser.parse_args(argv)
+
+
 def main():
-    # Get filename from args or use default
-    if len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help"]:
-        print("Usage: nomi [filename]")
-        print("  filename: .nomi or .py file (default: scripts/demo.nomi)")
-        return
-    
-    filename = sys.argv[1] if len(sys.argv) > 1 else 'scripts/demo.nomi'
+    args = parse_args(sys.argv[1:])
+    filename = args.filename
     file_path = Path(filename)
     
     if not file_path.exists():
@@ -30,7 +51,11 @@ def main():
 
     from prototype.runtime import execute
 
-    result = execute(filename=file_path, mode=mode)
+    result = execute(
+        filename=file_path,
+        mode=mode,
+        parser_frontend=args.parser_frontend,
+    )
     if result.stdout:
         print(result.stdout, end="")
     if result.stderr:

@@ -433,9 +433,9 @@ class TreeSitterParserFrontend:
             raise RuntimeError(
                 "tree-sitter CLI is required for tree-sitter-cst parsing"
             )
-        if filename is not None:
-            return _run_tree_sitter_parse(tree_sitter, Path(filename))
         if code is None:
+            if filename is not None:
+                return _run_tree_sitter_parse(tree_sitter, Path(filename))
             raise ValueError("code or filename is required")
         with tempfile.TemporaryDirectory(prefix="nomi-ts-source-") as temp_dir:
             path = Path(temp_dir) / "inline.nomi"
@@ -499,9 +499,9 @@ class JsonPayloadParserFrontend:
         )
 
     def _parse_payload(self, *, code=None, filename=None) -> dict[str, Any]:
-        if filename is not None:
-            return self._parse_payload_file(Path(filename))
         if code is None:
+            if filename is not None:
+                return self._parse_payload_file(Path(filename))
             raise ValueError("code or filename is required")
         with tempfile.TemporaryDirectory(prefix=self.inline_source_prefix) as temp_dir:
             path = Path(temp_dir) / "inline.nomi"
@@ -644,6 +644,7 @@ def _cargo_tree_sitter() -> str | None:
 
 
 def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any]:
+    source_path = source_path.resolve()
     env = os.environ.copy()
     with tempfile.TemporaryDirectory(prefix="nomi-tree-sitter-home-") as home:
         env["HOME"] = home
@@ -673,6 +674,7 @@ def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any
 
 
 def _run_rust_fast_ast(cargo: str, source_path: Path) -> dict[str, Any]:
+    source_path = source_path.resolve()
     target_dir = (
         Path(tempfile.gettempdir())
         / "nomi-rust-fast-ast-target"

@@ -15,9 +15,13 @@ from pathlib import Path
 from time import perf_counter
 from typing import Any
 
+from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
 from prototype.runtime.api import ExecutionResult
 from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
+
+
+_NOMI_PARSER = "prototype.parser.nomi.usage.generate_ast"
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,6 +32,7 @@ class RuntimeCacheKey:
     source_identity: str | None
     mode: str
     profile: str
+    parser_frontend: str
     parser: str
     lowering: str
     grammar_version: str = "builtin-features-v1"
@@ -38,13 +43,18 @@ class RuntimeCacheKey:
 class RuntimeSession:
     mode: str = "nomi"
     profile: str = "default"
+    parser_frontend: str = DEFAULT_FRONTEND
     cache_size: int = 0
     pipeline: PipelineSpec = field(init=False)
     interpreter: Any = field(init=False)
     _ast_cache: dict[RuntimeCacheKey, Any] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
-        self.pipeline = build_pipeline_spec(mode=self.mode, profile=self.profile)
+        self.pipeline = build_pipeline_spec(
+            mode=self.mode,
+            profile=self.profile,
+            parser_frontend=self.parser_frontend,
+        )
         self.reset()
 
     @property
@@ -173,6 +183,7 @@ class RuntimeSession:
         timings: dict[str, float],
     ) -> Any:
         parse_started = perf_counter()
+        self._parse_accepts(source=source, filename=filename)
         parser = self.pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source, dump=False)
         timings["parse"] = perf_counter() - parse_started
@@ -202,6 +213,7 @@ class RuntimeSession:
             source_identity=source_identity,
             mode=self.mode,
             profile=self.profile,
+            parser_frontend=self.pipeline.parser_frontend,
             parser=self.pipeline.parser,
             lowering=self.pipeline.lowering,
         )
@@ -221,6 +233,22 @@ class RuntimeSession:
             oldest = next(iter(self._ast_cache))
             del self._ast_cache[oldest]
         self._ast_cache[cache_key] = tree
+
+    def _parse_accepts(
+        self,
+        *,
+        source: str | None,
+        filename: str | Path | None,
+    ) -> None:
+        if self.pipeline.parser_frontend == DEFAULT_FRONTEND:
+            return
+        if self.pipeline.parser != _NOMI_PARSER:
+            raise ValueError(
+                "parser_frontend selection is currently supported only for "
+                "Nomi parser modes"
+            )
+        frontend = get_parser_frontend(self.pipeline.parser_frontend)
+        frontend.parse_accepts(code=source, filename=filename)
 
     @staticmethod
     def _is_block_call_expr(node: ast.Expr) -> bool:

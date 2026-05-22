@@ -26,7 +26,14 @@ from prototype.syntax.features import (
     render_feature_capability_table,
     render_feature_layer_table,
 )
-from prototype.parser.nomi.frontend import render_parser_frontend_table
+from prototype.parser.nomi.frontend import (
+    DEFAULT_FRONTEND,
+    get_parser_frontend,
+    render_parser_frontend_table,
+)
+
+
+_NOMI_PARSER = "prototype.parser.nomi.usage.generate_ast"
 
 
 @dataclass(frozen=True)
@@ -70,6 +77,7 @@ def execute(
     tree: Any | None = None,
     mode: str = "nomi",
     profile: str = "default",
+    parser_frontend: str = DEFAULT_FRONTEND,
     raise_on_error: bool = True,
     capture_output: bool = True,
     diagnostics: tuple[Diagnostic, ...] = (),
@@ -83,7 +91,11 @@ def execute(
     sessions here without forcing every frontend to know parser internals.
     """
 
-    pipeline = build_pipeline_spec(mode=mode, profile=profile)
+    pipeline = build_pipeline_spec(
+        mode=mode,
+        profile=profile,
+        parser_frontend=parser_frontend,
+    )
 
     runner = pipeline.mode_spec.load_runner()
     collector = event_collector or RuntimeEventCollector(
@@ -105,6 +117,12 @@ def execute(
     )
     try:
         with stdout_context, stderr_context:
+            _parse_gate(
+                pipeline=pipeline,
+                source=source,
+                filename=filename,
+                tree=tree,
+            )
             bindings = runner(code=source, file_name=filename, tree=tree)
     except Exception as exc:
         timings = {"total": perf_counter() - started}
@@ -146,11 +164,16 @@ def inspect(
     filename: str | Path | None = None,
     mode: str = "nomi",
     profile: str = "default",
+    parser_frontend: str = DEFAULT_FRONTEND,
     stage: str = "python_ast",
 ) -> InspectionResult:
     """Inspect one read-only pipeline artifact for the selected mode."""
 
-    pipeline = build_pipeline_spec(mode=mode, profile=profile)
+    pipeline = build_pipeline_spec(
+        mode=mode,
+        profile=profile,
+        parser_frontend=parser_frontend,
+    )
     started = perf_counter()
     if stage == "features":
         output = render_feature_layer_table()
@@ -206,6 +229,7 @@ def inspect(
     if stage in {"expansions", "desugar_expansions"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
 
+        _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
         parser = pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source)
         desugar_profile = DEFAULT_DESUGAR_PROFILE if mode == "nomi" else None
@@ -221,6 +245,7 @@ def inspect(
         )
 
     if stage in {"core", "implementation_core"}:
+        _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
         parser = pipeline.mode_spec.load_parser()
         tree = parser(filename=filename, code=source)
         core = lower_python_ast_to_core(tree)
@@ -240,6 +265,7 @@ def inspect(
         # core AST, and backend-lowered stages as PipelineSpec grows.
         raise ValueError(f"Unsupported inspection stage: {stage!r}")
 
+    _parse_gate(pipeline=pipeline, source=source, filename=filename, tree=None)
     parser = pipeline.mode_spec.load_parser()
     output = parser(filename=filename, code=source, dump=True)
     timings = {"total": perf_counter() - started}
@@ -253,10 +279,30 @@ def inspect(
     )
 
 
+def _parse_gate(
+    *,
+    pipeline: PipelineSpec,
+    source: str | None,
+    filename: str | Path | None,
+    tree: Any | None,
+) -> None:
+    """Run the selected parser frontend as a generic acceptance gate."""
+    if tree is not None or pipeline.parser_frontend == DEFAULT_FRONTEND:
+        return
+    if pipeline.parser != _NOMI_PARSER:
+        raise ValueError(
+            "parser_frontend selection is currently supported only for "
+            "Nomi parser modes"
+        )
+    frontend = get_parser_frontend(pipeline.parser_frontend)
+    frontend.parse_accepts(code=source, filename=filename)
+
+
 def create_session(
     *,
     mode: str = "nomi",
     profile: str = "default",
+    parser_frontend: str = DEFAULT_FRONTEND,
     cache_size: int = 0,
 ):
     """Create a persistent runtime session for cells, notebooks, and REPLs."""
@@ -264,4 +310,9 @@ def create_session(
     # Local import avoids a module cycle: RuntimeSession returns ExecutionResult.
     from prototype.runtime.session import RuntimeSession
 
-    return RuntimeSession(mode=mode, profile=profile, cache_size=cache_size)
+    return RuntimeSession(
+        mode=mode,
+        profile=profile,
+        parser_frontend=parser_frontend,
+        cache_size=cache_size,
+    )
