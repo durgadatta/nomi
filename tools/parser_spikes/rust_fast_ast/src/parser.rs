@@ -226,9 +226,30 @@ impl Parser {
             self.suite_closed = true;
             Ok(body)
         } else {
-            let stmt = self.parse_stmt()?;
-            Ok(vec![stmt])
+            let mut body = Vec::new();
+            loop {
+                body.push(self.parse_stmt()?);
+                if matches!(self.peek().kind, TokenKind::Semi) {
+                    self.advance();
+                    if self.at_inline_suite_end() {
+                        break;
+                    }
+                    continue;
+                }
+                break;
+            }
+            Ok(body)
         }
+    }
+
+    fn at_inline_suite_end(&self) -> bool {
+        matches!(
+            self.peek().kind,
+            TokenKind::Newline | TokenKind::Dedent | TokenKind::Eof
+        ) || self.is_keyword("except")
+            || self.is_keyword("finally")
+            || self.is_keyword("elif")
+            || self.is_keyword("else")
     }
 
     fn try_function_equation(&mut self) -> Result<Option<Stmt>, ParseError> {

@@ -137,19 +137,20 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
     ),
     ParserFrontendSpec(
         name="rust-fast-ast",
-        status="parse-acceptance",
+        status="python-ast-parity",
         grammar_format="handwritten Rust Pratt parser",
         implementation="Rust CLI emitting Nomi-owned JSON AST payload",
         cst_artifact="JSON AST payload",
         output_contract="Python ast.Module adapter",
         capabilities=ParserFrontendCapabilities(
             parse_current_grammar=True,
+            lower_to_python_ast=True,
         ),
         experiment_roles=("fast", "direct-ast", "rust"),
         notes=(
             "passes parser frontend acceptance for sample files and snippets",
-            "lowers and executes scripts/demo.nomi through the Python AST backend",
-            "not Python-AST equivalent or selectable for execution",
+            "matches Lark Python AST text for the shared sample/snippet matrix",
+            "not selectable for execution until wider runtime parity is proven",
         ),
     ),
     ParserFrontendSpec(

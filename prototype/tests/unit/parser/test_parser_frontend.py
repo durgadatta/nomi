@@ -63,7 +63,7 @@ def test_no_non_lark_frontend_claims_replacement_before_ast_equivalence():
 def test_python_ast_frontends_are_explicitly_registered():
     assert tuple(
         frontend.spec.name for frontend in get_python_ast_frontends()
-    ) == ("lark-lalr",)
+    ) == ("lark-lalr", "rust-fast-ast")
 
 
 def test_parser_experiment_registry_has_fast_and_readable_candidates():

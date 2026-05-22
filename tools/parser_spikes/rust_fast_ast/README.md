@@ -67,9 +67,10 @@ accepted source to the existing Lark/Python-AST execution backend:
 python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
 ```
 
-That proves the grammar parser accepts the file on the execution path. It is
-not a semantic replacement claim until `lower_to_python_ast` and
-`selectable_for_execution` are promoted.
+That proves the grammar parser accepts the file on the execution path. The
+frontend now also matches the Lark Python AST text for the shared
+sample/snippet matrix, but it is not a normal execution replacement until
+`selectable_for_execution` is promoted.
 
 ## Promotion Gate
 
@@ -78,22 +79,21 @@ Do not change these capability flags until the stated gate is genuinely met:
 ```python
 ParserFrontendCapabilities(
     parse_current_grammar=True,
-    lower_to_python_ast=False,
+    lower_to_python_ast=True,
     selectable_for_execution=False,
 )
 ```
 
 Promotion sequence:
 
-1. Keep `rust-fast-ast` out of `get_python_ast_frontends()` while it only emits
-   a structural/tolerant payload.
-2. Set `lower_to_python_ast=True` only when exact AST text parity passes for the
-   shared sample/snippet matrix in
-   `prototype/tests/unit/parser/test_parser_frontend_acceptance.py`.
-3. `parse_current_grammar=True` is allowed once `parse_accepts()` handles every
+1. `parse_current_grammar=True` is allowed once `parse_accepts()` handles every
    sample file and focused parser snippet accepted by Lark. This gate is now
    met for the parser frontend acceptance matrix.
-4. Set `selectable_for_execution=True` only after parser unit tests, relevant
+2. Set `lower_to_python_ast=True` only when exact AST text parity passes for the
+   shared sample/snippet matrix in
+   `prototype/tests/unit/parser/test_parser_frontend_acceptance.py`. This gate
+   is now met; `rust-fast-ast` participates in `get_python_ast_frontends()`.
+3. Set `selectable_for_execution=True` only after parser unit tests, relevant
    functional tests, regression samples, CLI execution, and downstream runtime
    behavior all match the Lark path.
 
@@ -289,13 +289,14 @@ them fresh as work lands.
 
 ### Correctness and Parity
 
-- Replace `Raw` payloads feature by feature with structured nodes, starting
-  with inline `match`, `where`, ranges, pipeline, nullish/safe navigation,
-  operator sections, underscore lambdas, dollar holes, and constrained binding
-  targets.
-- Add exact Python AST parity tests beyond the first slice before setting
-  `lower_to_python_ast=True`. Parse acceptance is already useful, but it is not
-  semantic equivalence.
+- Replace remaining `Raw` payloads feature by feature with structured nodes.
+  The Python adapter currently lowers the shared parity matrix, including
+  inline `match`, `where`, ranges, pipeline, nullish/safe navigation, operator
+  sections, underscore lambdas, dollar holes, `defer`, `unless`, try
+  expressions, and function equations.
+- Keep expanding exact Python AST parity beyond the shared matrix before
+  promoting normal execution. AST parity is necessary but not sufficient for
+  runtime equivalence.
 - Add payload-shape tests for Nomi-native forms before lowering them. This keeps
   failures attributable to lexer/parser vs Python adapter.
 - Add source-span fields to tokens and payload nodes before improving

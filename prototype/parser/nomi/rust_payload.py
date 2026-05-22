@@ -8,6 +8,7 @@ their own adapter modules and join the same frontend equivalence tests.
 from __future__ import annotations
 
 import ast
+import keyword
 from typing import Any
 
 from lark import Token
@@ -16,6 +17,16 @@ from .lowering.data_decl import DataDeclMixin
 
 
 _DATA_DECL_BUILDER = DataDeclMixin()
+_SECTION_OPERATOR_FACTORIES = {
+    "+": ast.Add,
+    "-": ast.Sub,
+    "*": ast.Mult,
+    "/": ast.Div,
+    "//": ast.FloorDiv,
+    "%": ast.Mod,
+    "@": ast.MatMult,
+    "**": ast.Pow,
+}
 
 
 def python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
@@ -28,10 +39,15 @@ def python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
 
 
 def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
+    if payload["type"].startswith("defer "):
+        return _defer_stmt_from_rust_text(payload["type"])
+
     match payload["type"]:
         case "Assign":
             if payload["target"].startswith("type "):
                 return _type_alias_from_rust_payload(payload)
+            if equation := _func_equation_from_assignment_payload(payload):
+                return equation
             if ":" in payload["target"]:
                 return _ann_assign_from_rust_payload(payload)
             return ast.Assign(
@@ -77,12 +93,16 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
             return _for_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "If":
             return _if_suite_from_rust_payload(payload)
+        case "Suite" if payload.get("kind") == "Unless":
+            return _unless_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "While":
             return _while_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "Guard":
             return _guard_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "Try":
             return _try_suite_from_rust_payload(payload)
+        case "Suite" if payload.get("kind") == "ReturnMatch":
+            return _return_match_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "BlockCall":
             return _block_call_suite_from_rust_payload(payload)
         case "Suite" if payload.get("kind") == "Data":
@@ -95,6 +115,99 @@ def _stmt_from_rust_payload(payload: dict[str, Any]) -> ast.stmt:
             return _where_assign_suite_from_rust_payload(payload)
         case other:
             raise ValueError(f"unsupported Rust AST statement: {other!r}")
+
+
+def _defer_stmt_from_rust_text(raw: str) -> ast.stmt:
+    stmt_text = raw.removeprefix("defer ").strip()
+    try:
+        body = ast.parse(stmt_text).body
+    except SyntaxError:
+        body = [ast.Expr(value=_raw_or_python_expr(stmt_text))]
+    if len(body) != 1 or not isinstance(body[0], (ast.Assign, ast.Expr)):
+        raise ValueError(f"unsupported Rust defer statement: {raw!r}")
+    stmt = body[0]
+    stmt._nomi_defer = True
+    return stmt
+
+
+def _func_equation_from_assignment_payload(
+    payload: dict[str, Any],
+) -> ast.FunctionDef | None:
+    parsed = _func_equation_target_from_text(payload["target"])
+    if parsed is None:
+        return None
+    name, eq_args, guard = parsed
+    args_list = []
+    defaults = []
+    for index, arg in enumerate(eq_args):
+        if isinstance(arg, tuple):
+            arg_name, arg_default = arg
+            args_list.append(ast.arg(arg=arg_name))
+            if arg_default is not None:
+                defaults.append(arg_default)
+        elif isinstance(arg, str):
+            args_list.append(ast.arg(arg=arg))
+        else:
+            args_list.append(ast.arg(arg=f"__{index}"))
+    fn = ast.FunctionDef(
+        name=name,
+        args=ast.arguments(
+            posonlyargs=[],
+            args=args_list,
+            kwonlyargs=[],
+            kw_defaults=[],
+            defaults=defaults,
+            vararg=None,
+            kwarg=None,
+        ),
+        body=[ast.Return(value=_expr_from_rust_payload(payload["value"]))],
+        decorator_list=[],
+        returns=None,
+    )
+    fn._nomi_eq_args = eq_args
+    if guard is not None:
+        fn._nomi_eq_guard = guard
+    return fn
+
+
+def _func_equation_target_from_text(
+    target: str,
+) -> tuple[str, list[Any], ast.expr | None] | None:
+    head, _, guard_text = target.partition(" when ")
+    guard = _raw_or_python_expr(guard_text.strip()) if guard_text else None
+    head = head.strip()
+    if " (" in head and head.endswith(")"):
+        name, _, rest = head.partition(" (")
+        if not name.strip().isidentifier():
+            return None
+        return (
+            name.strip(),
+            _func_equation_args_from_text(rest[:-1].strip()),
+            guard,
+        )
+    parts = head.split()
+    if len(parts) == 2 and all(part.isidentifier() for part in parts):
+        return (parts[0], [parts[1]], guard)
+    return None
+
+
+def _func_equation_args_from_text(args_text: str) -> list[Any]:
+    if not args_text:
+        return []
+    eq_args = []
+    for part in _split_top_level(args_text):
+        if not part:
+            continue
+        before_default, has_default, default_text = _partition_default(part)
+        if has_default:
+            eq_args.append((before_default.strip(), _raw_or_python_expr(default_text)))
+            continue
+        expr = _raw_or_python_expr(before_default.strip())
+        if isinstance(expr, ast.Name):
+            eq_args.append((expr.id, None))
+        else:
+            eq_args.append(expr)
+    return eq_args
 
 
 def _expr_from_rust_payload(payload: dict[str, Any]) -> ast.expr:
@@ -192,7 +305,7 @@ def _if_suite_from_rust_payload(payload: dict[str, Any]) -> ast.If:
     pattern_text, subject_text = _split_pattern_subject(payload["head"])
     if subject_text is not None:
         return ast.Match(
-            subject=_expr_from_python_source(subject_text),
+            subject=_raw_or_nomi_expr(subject_text),
             cases=[
                 ast.match_case(
                     pattern=_pattern_from_rust_text(pattern_text),
@@ -203,7 +316,18 @@ def _if_suite_from_rust_payload(payload: dict[str, Any]) -> ast.If:
             ],
         )
     return ast.If(
-        test=_expr_from_python_source(payload["head"]),
+        test=_raw_or_nomi_expr(payload["head"]),
+        body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
+        orelse=[],
+    )
+
+
+def _unless_suite_from_rust_payload(payload: dict[str, Any]) -> ast.If:
+    return ast.If(
+        test=ast.UnaryOp(
+            op=ast.Not(),
+            operand=_raw_or_nomi_expr(payload["head"]),
+        ),
         body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
         orelse=[],
     )
@@ -216,7 +340,7 @@ def _while_suite_from_rust_payload(payload: dict[str, Any]) -> ast.While:
             test=ast.Constant(value=True),
             body=[
                 ast.Match(
-                    subject=_expr_from_python_source(subject_text),
+                    subject=_raw_or_nomi_expr(subject_text),
                     cases=[
                         ast.match_case(
                             pattern=_pattern_from_rust_text(pattern_text),
@@ -236,7 +360,7 @@ def _while_suite_from_rust_payload(payload: dict[str, Any]) -> ast.While:
             ],
         )
     return ast.While(
-        test=_expr_from_python_source(payload["head"]),
+        test=_raw_or_nomi_expr(payload["head"]),
         body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
     )
 
@@ -246,7 +370,7 @@ def _guard_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Match:
     if subject_text is None:
         raise ValueError(f"unsupported Rust guard head: {payload['head']!r}")
     return ast.Match(
-        subject=_expr_from_python_source(subject_text),
+        subject=_raw_or_nomi_expr(subject_text),
         cases=[
             ast.match_case(
                 pattern=_pattern_from_rust_text(pattern_text),
@@ -278,6 +402,32 @@ def _try_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Try:
             for stmt in [_stmt_from_rust_payload(item) for item in clause.get("body", ())]
         ],
     )
+
+
+def _return_match_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Return:
+    match_node = ast.Match(
+        subject=_raw_or_nomi_expr(payload["head"]),
+        cases=[
+            _match_case_from_rust_payload(case_payload, expression_case=True)
+            for case_payload in payload["body"]
+        ],
+    )
+    func = ast.FunctionDef(
+        name=None,
+        args=ast.arguments(
+            posonlyargs=[],
+            args=[],
+            kwonlyargs=[],
+            kw_defaults=[],
+            defaults=[],
+            vararg=None,
+            kwarg=None,
+        ),
+        body=[match_node],
+        decorator_list=[],
+        returns=None,
+    )
+    return ast.Return(value=ast.Call(func=func, args=[], keywords=[]))
 
 
 def _except_handler_from_rust_payload(payload: dict[str, Any]) -> ast.ExceptHandler:
@@ -368,7 +518,7 @@ def _data_field_spec_from_raw(name: str, raw: str):
 
 def _match_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Match:
     return ast.Match(
-        subject=_expr_from_python_source(payload["head"]),
+        subject=_raw_or_nomi_expr(payload["head"]),
         cases=[
             _match_case_from_rust_payload(case_payload, expression_case=False)
             for case_payload in payload["body"]
@@ -381,7 +531,7 @@ def _match_assign_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Assign
     if not subject_text:
         raise ValueError(f"unsupported Rust match assignment head: {payload['head']!r}")
     match_node = ast.Match(
-        subject=_expr_from_python_source(subject_text),
+        subject=_raw_or_nomi_expr(subject_text),
         cases=[
             _match_case_from_rust_payload(case_payload, expression_case=True)
             for case_payload in payload["body"]
@@ -409,18 +559,34 @@ def _match_assign_suite_from_rust_payload(payload: dict[str, Any]) -> ast.Assign
 
 
 def _raw_expr_from_rust_payload(raw: str) -> ast.expr:
+    if raw.startswith("$"):
+        return ast.Name(id=raw, ctx=ast.Load())
+    if _top_level_call_like_raw(raw):
+        return _call_from_rust_text(raw)
+    if raw.startswith("try "):
+        return _try_expr_from_rust_text(raw)
     if raw.startswith("match "):
         return _inline_match_from_rust_text(raw)
+    if _section_like_raw(raw):
+        return _section_from_rust_text(raw)
     if "??" in raw:
         return _nullish_from_rust_text(raw)
     if "?." in raw:
         return _safe_navigation_from_rust_text(raw)
     if "|>" in raw:
         return _pipeline_from_rust_text(raw)
-    if _call_like_raw(raw):
+    if " > > > " in raw:
+        return _compose_from_rust_text(raw)
+    if "=>" in raw:
+        return _arrow_function_from_rust_text(raw)
+    if raw.startswith("[") and raw.endswith("]"):
+        return _list_from_rust_text(raw)
+    if _top_level_call_like_raw(raw):
         return _call_from_rust_text(raw)
     if " .. " in raw or " ..< " in raw:
         return _range_from_rust_text(raw)
+    if python_expr := _try_python_expr_from_source(raw):
+        return python_expr
     raise ValueError(f"unsupported Rust AST expression: 'Raw'")
 
 
@@ -435,6 +601,37 @@ def _nullish_from_rust_text(raw: str) -> ast.IfExp:
         ),
         body=_raw_or_python_expr(left_text),
         orelse=_raw_or_python_expr(right_text),
+    )
+
+
+def _try_expr_from_rust_text(raw: str) -> ast.Call:
+    body_text, separator, handler_text = raw.removeprefix("try ").partition(" except ")
+    if not separator:
+        raise ValueError(f"unsupported Rust try expression: {raw!r}")
+    error_text, separator, fallback_text = handler_text.partition(" : ")
+    if not separator:
+        raise ValueError(f"unsupported Rust try expression handler: {raw!r}")
+    return ast.Call(
+        func=ast.FunctionDef(
+            name=None,
+            args=ast.arguments(args=[]),
+            body=[
+                ast.Try(
+                    body=[ast.Return(value=_raw_or_python_expr(body_text))],
+                    handlers=[
+                        ast.ExceptHandler(
+                            type=_expr_from_python_source(error_text.strip()),
+                            name=None,
+                            body=[ast.Return(value=_raw_or_python_expr(fallback_text))],
+                        )
+                    ],
+                    orelse=[],
+                    finalbody=[],
+                )
+            ],
+        ),
+        args=[],
+        keywords=[],
     )
 
 
@@ -502,15 +699,135 @@ def _pipeline_from_rust_text(raw: str) -> ast.expr:
     return value
 
 
+def _compose_from_rust_text(raw: str) -> ast.FunctionDef:
+    left_text, right_text = _split_top_level_token(raw, "> > >")
+    return ast.FunctionDef(
+        name=None,
+        args=ast.arguments(args=[ast.arg(arg="__x")]),
+        body=[
+            ast.Return(
+                value=ast.Call(
+                    func=_raw_or_python_expr(right_text),
+                    args=[
+                        ast.Call(
+                            func=_raw_or_python_expr(left_text),
+                            args=[ast.Name(id="__x", ctx=ast.Load())],
+                            keywords=[],
+                        )
+                    ],
+                    keywords=[],
+                )
+            )
+        ],
+    )
+
+
+def _arrow_function_from_rust_text(raw: str) -> ast.FunctionDef:
+    raw = _strip_wrapping_parens(raw.strip())
+    params_text, separator, body_text = raw.partition("=>")
+    if not separator:
+        raise ValueError(f"unsupported Rust arrow function: {raw!r}")
+    params_text = _strip_wrapping_parens(params_text.strip())
+    params = [part.strip() for part in _split_top_level(params_text) if part.strip()]
+    return ast.FunctionDef(
+        name=None,
+        args=ast.arguments(args=[ast.arg(arg=param) for param in params]),
+        body=[ast.Return(value=_raw_or_python_expr(body_text.strip()))],
+    )
+
+
+def _list_from_rust_text(raw: str) -> ast.List:
+    inner = raw.removeprefix("[").removesuffix("]").strip()
+    items = []
+    for part in _split_top_level(inner):
+        if part.startswith("* "):
+            items.append(
+                ast.Starred(
+                    value=_raw_or_python_expr(part.removeprefix("* ").strip()),
+                    ctx=ast.Load(),
+                )
+            )
+        elif part:
+            items.append(_raw_or_python_expr(part))
+    return ast.List(elts=items, ctx=ast.Load())
+
+
 def _call_like_raw(raw: str) -> bool:
     return raw.endswith(")") and " (" in raw
+
+
+def _top_level_call_like_raw(raw: str) -> bool:
+    if not _call_like_raw(raw):
+        return False
+    func_text, _, _rest = raw.partition(" (")
+    if any(token in func_text for token in ("??", "?.", "|>", " > > > ", "=>")):
+        return False
+    return all(
+        part.strip().isidentifier() and not keyword.iskeyword(part.strip())
+        for part in func_text.split(".")
+    )
 
 
 def _call_from_rust_text(raw: str) -> ast.Call:
     func_text, _, rest = raw.partition(" (")
     args_text = rest[:-1].strip()
-    args = [] if not args_text else [_raw_or_python_expr(part) for part in _split_top_level(args_text)]
+    args = (
+        []
+        if not args_text
+        else [_raw_or_python_expr(part) for part in _split_top_level(args_text)]
+    )
     return ast.Call(func=_raw_or_python_expr(func_text), args=args, keywords=[])
+
+
+def _section_like_raw(raw: str) -> bool:
+    if not (raw.startswith("(") and raw.endswith(")")):
+        return False
+    parts = raw[1:-1].strip().split()
+    return (
+        len(parts) in {1, 2}
+        and any(part in _SECTION_OPERATOR_FACTORIES for part in parts)
+    )
+
+
+def _section_from_rust_text(raw: str) -> ast.FunctionDef:
+    parts = raw[1:-1].strip().split()
+    if len(parts) == 1:
+        op_factory = _SECTION_OPERATOR_FACTORIES[parts[0]]
+        return ast.FunctionDef(
+            name=None,
+            args=ast.arguments(args=[ast.arg(arg="__a"), ast.arg(arg="__b")]),
+            body=[
+                ast.Return(
+                    value=ast.BinOp(
+                        left=ast.Name(id="__a", ctx=ast.Load()),
+                        op=op_factory(),
+                        right=ast.Name(id="__b", ctx=ast.Load()),
+                    )
+                )
+            ],
+        )
+    first, second = parts
+    if first in _SECTION_OPERATOR_FACTORIES:
+        op_factory = _SECTION_OPERATOR_FACTORIES[first]
+        value = ast.BinOp(
+            left=ast.Name(id="__s", ctx=ast.Load()),
+            op=op_factory(),
+            right=_raw_or_python_expr(second),
+        )
+    elif second in _SECTION_OPERATOR_FACTORIES:
+        op_factory = _SECTION_OPERATOR_FACTORIES[second]
+        value = ast.BinOp(
+            left=_raw_or_python_expr(first),
+            op=op_factory(),
+            right=ast.Name(id="__s", ctx=ast.Load()),
+        )
+    else:
+        raise ValueError(f"unsupported Rust operator section: {raw!r}")
+    return ast.FunctionDef(
+        name=None,
+        args=ast.arguments(args=[ast.arg(arg="__s")]),
+        body=[ast.Return(value=value)],
+    )
 
 
 def _range_from_rust_text(raw: str) -> ast.Call:
@@ -544,15 +861,26 @@ def _split_range_step(text: str) -> tuple[str, str | None]:
 def _raw_or_python_expr(text: str) -> ast.expr:
     text = text.strip()
     if (
-        "??" in text
+        _section_like_raw(text)
+        or "??" in text
         or "?." in text
+        or "=>" in text
         or "|>" in text
+        or " > > > " in text
+        or (text.startswith("[") and text.endswith("]"))
         or " .. " in text
         or " ..< " in text
-        or _call_like_raw(text)
+        or _top_level_call_like_raw(text)
     ):
         return _raw_expr_from_rust_payload(text)
     return _expr_from_python_source(text)
+
+
+def _try_python_expr_from_source(source: str) -> ast.expr | None:
+    try:
+        return _expr_from_python_source(source)
+    except SyntaxError:
+        return None
 
 
 def _raw_or_nomi_expr(text: str) -> ast.expr:
@@ -570,7 +898,7 @@ def _inline_match_from_rust_text(raw: str) -> ast.Call:
         for part in _split_top_level(cases_text, delimiter=";")
         if part.strip()
     ]
-    match_node = ast.Match(subject=_expr_from_python_source(subject_text.strip()), cases=cases)
+    match_node = ast.Match(subject=_raw_or_nomi_expr(subject_text.strip()), cases=cases)
     func = ast.FunctionDef(
         name=None,
         args=ast.arguments(
