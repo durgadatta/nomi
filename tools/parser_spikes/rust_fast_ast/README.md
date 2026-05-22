@@ -6,19 +6,35 @@ as real replacement machinery, not as the replacement itself.
 
 ## Current Status
 
+The root `rust-toolchain.toml` pins the project Rust toolchain to stable and
+declares `rustfmt` as a required component for this spike.
+
 `rust-fast-ast` currently supports exact `ast.dump(..., include_attributes=False,
 indent=2)` parity with `lark-lalr` for:
 
 - simple assignments: `x = 1`
 - expression statements: `print("x")`
 - positional calls: `f(a, 1)`
-- arithmetic binary expressions: `+`, `-`, `*`, `/`, `**`
+- arithmetic binary expressions: `+`, `-`, `*`, `/`, `//`, `%`, `@`, `**`
 - parenthesized arithmetic precedence: `(1 + 2) * 3`
-- unary minus, represented internally as `0 - expr` to match the current first
-  slice only where tests require it
+- unary plus, unary minus, and `not`
+- constants: `None`, `True`, `False`, numbers, strings, and f-strings
+- comparisons, including chained comparisons such as `0 <= score <= 100`
+- boolean `and`/`or`
+- conditional expressions: `"Pass" if score >= 60 else "Fail"`
+- list, tuple, and dict literals
+- attributes and subscripts
+- simple annotated assignment constraints:
+  `age:int, is_positive = 25`
+- constraint messages: `age >= 13 else "Too young"`
 - function equations: `add(a, b) = a + b`
 - arrow-function assignments: `double = x => x * 2`,
   `add = (a, b) => a + b`
+- simple `func` suites, `return`, `yield`, `raise`, `pass`, augmented
+  assignment, `for`, `if`, `while`, `guard`, `try`/`except`/`finally`,
+  `match`, `data`, `where`, and Nomi block-call suites
+- simple Nomi expressions: inline `match`, `(+2)` operator sections, ranges,
+  pipelines, nullish `??`, and safe navigation
 
 It also has a broader parse-acceptance slice for both demo files:
 `scripts/demo.nomi` and `samples/demo.nomi`. That slice emits a structural JSON
@@ -29,6 +45,14 @@ comparisons, boolean operators, conditional expressions, `where` suites,
 guided-tour forms such as `unless`, `match`/`case`, `guard`, `data`
 declarations, `$` holes, ranges, pipelines, null-safe tokens, and other
 currently-raw expression forms.
+
+As of the current checkpoint, `scripts/demo.nomi`, `samples/block.nomi`,
+`samples/constraint.nomi`, and every shared feature snippet in
+`test_parser_frontend_acceptance.py` lower through `rust-fast-ast` to the exact
+same Python AST dump as `lark-lalr`. The Rust-generated core demo AST also
+executes successfully in the Nomi interpreter. This is still not a replacement
+claim: the broader sample matrix has remaining guided-tour forms whose Rust
+payload is parse-accepted but not fully lowered.
 
 The parse-acceptance slice is not exact Python AST parity. It is a
 parser-frontier milestone only: `rust-fast-ast` is now enrolled in parser
@@ -88,7 +112,10 @@ Python AST artifact, and be safe for normal execution.
 - `Cargo.toml`: standalone Rust spike package.
 - `Cargo.lock`: tracked for reproducible local spike builds.
 - `prototype/parser/nomi/frontend.py`: registers `rust-fast-ast`, runs the Rust
-  CLI, and adapts the JSON payload to Python `ast.Module`.
+  CLI, and delegates JSON adaptation.
+- `prototype/parser/nomi/rust_payload.py`: adapts the Rust JSON payload to
+  Python AST. Keep parser-specific lowering out of `frontend.py` so future
+  PEG/CST parser adapters can live beside it.
 - `prototype/runtime/api.py`, `prototype/runtime/session.py`, and
   `scripts/cli.py`: expose parser-gated execution through the generic
   `parser_frontend` selector.
@@ -193,42 +220,43 @@ Work from expressions outward. Expression parity unlocks most statements.
    - This makes failures easier to locate: lexer/parser vs Python adapter.
 
 2. **Lexer completeness for expressions** (partially complete)
-   - Add tokens for `.`, `[`, `]`, `{`, `}`, `:`, `%`, `//`, `@`, bitwise ops,
-     comparisons, `and`, `or`, `not`, `is`, `in`, `None`, `True`, `False`.
-   - Add `$`, range, pipeline, and null-safe tokens.
-   - Add string-prefix handling only after basic expression coverage is stable.
+   - Tokens exist for `.`, `[`, `]`, `{`, `}`, `:`, `%`, `//`, `@`,
+     comparisons, `and`, `or`, `not`, constants, `$`, range, pipeline,
+     null-safe forms, and prefixed strings.
+   - Remaining: bitwise ops, shifts, `is`, `in`, starred forms, and keyword
+     argument punctuation/shape.
    - Preserve byte offsets in every token; later spans depend on them.
 
-3. **Expression parity**
-   - Constants: `None`, `True`, `False`, integers, floats, strings.
-   - Unary: `+x`, `-x`, `~x`, `not x`.
-   - Binary: `%`, `//`, `@`, bitwise ops, shifts.
-   - Comparisons: chains like `a < b <= c`, `is not`, `not in`.
-   - Boolean: `a and b`, `a or b`.
-   - Conditional expression: `x if cond else y`.
-   - Attributes and subscripts: `obj.name`, `items[0]`, slices.
-   - Literals: tuples, lists, dicts, sets.
-   - Calls: keyword args, starred args, `**kwargs`.
+3. **Expression parity** (partially complete)
+   - Done: constants, strings/f-strings, unary `+`/`-`/`not`, arithmetic
+     `+ - * / // % @ **`, chained comparisons, boolean `and`/`or`,
+     conditional expressions, attributes, simple subscripts, lists, tuples,
+     and dicts.
+   - Remaining: `~x`, bitwise ops, shifts, `is not`, `not in`, slices,
+     populated dicts/sets, keyword args, starred args, and `**kwargs`.
 
 4. **Nomi expression forms**
-   - Nullish: `a ?? b`.
-   - Pipeline: `x |> f`.
+   - Nullish: `a ?? b` (simple parity slice done).
+   - Pipeline: `x |> f` (simple parity slice done).
    - Composition: `f >>> g`, `f <<< g`.
-   - Ranges: `1..5`, `1..<5`, `1..10 by 2`.
-   - Safe navigation: `data?.get("name")?.[0]`.
-   - Operator sections: `(+1)`, `(2*)`, `(+)`.
+   - Ranges: `1..5`, `1..<5`, `1..10 by 2` (simple parity slice done).
+   - Safe navigation: `data?.get("name")?.[0]` (simple parity slice done).
+   - Operator sections: `(+1)` (simple parity slice done), `(2*)`, `(+)`.
    - Underscore and dollar-hole lambdas.
-   - Inline `match`.
+   - Inline `match` (simple parity slice done).
    - `try` expression.
    - `where` expression.
-   - Current demo acceptance may keep these as `Raw` payloads. Exact parity and
-     lowering remain future work.
+   - Remaining raw-expression work is mostly richer composition, spread,
+     keyword/starred calls, slices, and less-common operators.
 
-5. **Simple statements**
-   - Multiple assignment targets before annotated/augmented assignment.
-   - `return`, `pass`, `break`, `continue`, `yield`.
-   - `func name(...): suite`.
-   - `if`/`elif`/`else`, `while`, `for`.
+5. **Simple statements** (partially complete)
+   - Done: simple and annotated assignment, augmented assignment,
+     `return`, `pass`, `yield`, `raise`, simple `func`, simple `for`,
+     simple `if`, `try`/`except`/`finally`, `while`/`guard` pattern forms,
+     `match`, `data`, `where`, and block calls with/without params.
+   - Remaining: multiple assignment targets, `break`, `continue` parity tests,
+     `elif`/`else`, `while`, `finally`, decorators, defaults beyond the
+     Python-compatible `func` head path, and imports.
    - Imports only after basic control flow is stable.
 
 6. **Indentation and suites**
@@ -294,9 +322,9 @@ them fresh as work lands.
 - Keep using `src/payload.rs` helpers rather than manual JSON string assembly.
   If payload complexity grows, consider `serde_json`, but weigh that against the
   spike's intentionally tiny dependency surface.
-- Move Python adapter support in `frontend.py` toward parser-neutral payload
-  adapters. The current `_python_ast_from_rust_payload` name is still
-  rust-fast-ast specific.
+- Keep Python adapter support parser-specific but modular: `frontend.py` should
+  route to focused payload/CST adapter modules rather than growing a large
+  lowering tail.
 - Add a version or schema marker to JSON payloads before supporting multiple
   Rust parser candidates with different node sets.
 - Keep parser-gated execution generic: runtime and CLI should call

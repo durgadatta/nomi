@@ -40,6 +40,13 @@ Target architecture for new work:
     → Python AST backend or direct runtime backend
 ```
 
+Parser frontend work must stay parser-family neutral. Lark, Rust fast AST,
+future PEG grammars, parser combinators, Tree-sitter, or LR frontends should
+all join the same `ParserFrontendSpec` registry and shared parse/AST/runtime
+equivalence matrices. Do not let a new parser candidate define a dialect of
+Nomi; internal CSTs can differ, observable accepted source and lowered
+artifacts cannot.
+
 Before adding broad syntax, read:
 - `docs/language/language_foundation.md` — the design target.
 - `docs/language/core_layer_separation_plan.md` — layer vocabulary and eval

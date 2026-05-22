@@ -72,6 +72,15 @@ exactly the same `ast.dump(..., include_attributes=False, indent=2)` text as
 successfully before it can lower, but it cannot claim backend compatibility
 until this text artifact matches.
 
+This rule is parser-family neutral. A future PEG parser, LR parser,
+parser-combinator frontend, Tree-sitter frontend, or handwritten parser should
+join the same registry, same sample/snippet acceptance matrix, same AST
+equivalence matrix, and same downstream runtime checks. Frontends may differ in
+their internal CST, error recovery, generated code, or implementation language;
+they must not define a different Nomi. Until Surface/Core IR is authoritative,
+Lark remains the reference oracle for accepted source and Python AST backend
+shape.
+
 A non-Lark frontend is a functional replacement only when all of these are
 true:
 
@@ -119,6 +128,19 @@ same accepted source -> same Surface/Core/Python AST behavior
 Speed and readability are selection criteria, not permission to accept a
 different language.
 
+When adding a new parser family, add a distinct `ParserFrontendSpec`, runner,
+payload/CST adapter, and test enrollment. Do not special-case the shared
+equivalence tests for that parser. If the parser is temporarily tolerant or
+raw-preserving, keep it parse-acceptance-only until its lowered artifact is
+identical to the reference path.
+
+Keep the implementation modular as parser families accumulate. `frontend.py`
+should remain the registry, capability, and process-runner boundary; each
+parser-specific serialized artifact should live in a focused adapter module
+such as `rust_payload.py` or a future PEG/CST payload adapter. A new parser
+family should not append hundreds of lowering lines to the shared frontend
+file.
+
 ### Tree-sitter Spike
 
 Tree-sitter is still a useful candidate because it is designed around concrete
@@ -150,9 +172,15 @@ fast native parser crate before editor tooling is the main concern. pest uses
 PEG grammar files compiled into Rust parser code; LALRPOP is a Rust parser
 generator in the Yacc/ANTLR/Menhir family.
 
-The rule for any Rust parser spike: do not emit Python AST as the primary
-artifact. Emit Nomi CST, Surface IR, or a stable serialized form, then let the
-Python AST backend lower from that Nomi-owned representation.
+The next Rust parser spike may reasonably be a PEG grammar frontend, likely
+`pest-readable-cst` if readability and grammar-file clarity are the goal. Its
+first milestone should be parser acceptance against the shared sample/snippet
+matrix; its second milestone should be a serialized CST/Surface payload that
+can lower through the same Python AST backend contract as other frontends.
+
+The rule for any Rust parser spike, including PEG: do not emit Python AST as
+the primary artifact. Emit Nomi CST, Surface IR, or a stable serialized form,
+then let the Python AST backend lower from that Nomi-owned representation.
 
 `tools/parser_spikes/rust_fast_ast/` is the first direct-AST bridge slice. It
 uses a Rust Pratt parser to emit a small JSON AST payload, and
@@ -225,30 +253,42 @@ Current implementation checkpoint:
 - `tree-sitter-cst` accepts the current sample/snippet parse matrix, but its
   grammar is still token-preserving rather than structural.
 - `rust-fast-ast` is the first Rust direct-AST spike. It can emit a JSON payload
-  and adapt that payload to Python `ast.Module` for the first exact-parity
-  slice: assignments, calls, arithmetic precedence, function equations, and
-  arrow-function assignments.
-- `rust-fast-ast` must not set `parse_current_grammar`,
-  `lower_to_python_ast`, or `selectable_for_execution` until it passes the
-  shared all-fixture AST equivalence tests.
+  and adapt that payload to Python `ast.Module` for an exact-parity slice that
+  now includes the core `scripts/demo.nomi` file, `samples/block.nomi`,
+  `samples/constraint.nomi`, and the shared parser feature snippets. That
+  Rust-generated Python AST also executes successfully through the Nomi
+  interpreter for the core demo.
+- `rust-fast-ast` has `parse_current_grammar=True` because it passes the shared
+  parse-acceptance matrix. It must not set `lower_to_python_ast` or
+  `selectable_for_execution` until it passes the shared all-fixture AST
+  equivalence and runtime behavior tests, including the broader guided-tour
+  samples.
 - `tools/parser_spikes/rust_fast_ast/README.md` is the detailed implementation
   handoff for finishing the Rust parser: current coverage, missing syntax,
   promotion gates, parity workflow, and performance cleanup.
 
 Recommended next implementation order:
 
-1. Add snapshot/debug tooling for the Rust JSON payload so failures can compare
-   payload shape before Python AST adaptation.
-2. Expand the Rust parser expression layer: unary operators, comparisons,
-   boolean operators, attributes/subscripts, list/dict literals, and call
-   keyword arguments.
-3. Add simple suite/block parsing and map the first statement constructs:
-   `func`, `return`, `if`, `while`, `for`, and `match` only after expression
-   parity is stable.
-4. Once a meaningful subset passes exact AST parity, replace `cargo run` in
+1. Add parser-neutral snapshot/debug tooling for serialized parser payloads so
+   Rust fast AST, future PEG, and other frontends can compare payload/CST shape
+   before Python AST adaptation.
+2. Finish the expression layer beyond the current slice: slices, sets,
+   keyword/starred call arguments, spread in literals, composition operators,
+   bitwise/shift operators, and `is`/`in`.
+3. Expand suite/block lowering beyond the current sample slice: `unless`,
+   `elif`/`else`, defer statements, multiple assignment/pattern targets, and
+   remaining guided-tour forms in `samples/demo*.nomi`.
+4. Split `rust_payload.py` into smaller adapter modules before adding another
+   large syntax family; likely boundaries are expressions, statements,
+   patterns, and shared text-splitting helpers.
+5. Once a meaningful subset passes exact AST parity, replace `cargo run` in
    `RustFastAstParserFrontend` with a cached binary path or a build helper so
    the parser matrix measures parser work instead of Cargo startup.
-5. Promote `rust-fast-ast` into `get_python_ast_frontends()` only when it can
+6. Keep the PEG candidate path explicit: when `pest-readable-cst` starts,
+   register it as a separate frontend with parse-acceptance-only capability,
+   then graduate it through the same payload, AST equivalence, and runtime
+   gates.
+7. Promote `rust-fast-ast` into `get_python_ast_frontends()` only when it can
    pass `prototype/tests/unit/parser/test_parser_frontend_acceptance.py` for
    the full sample/snippet AST dump matrix.
 
