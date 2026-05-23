@@ -206,18 +206,30 @@ boundaries, and package ownership. Keep the detailed plan in
   migration path.
 - [ ] Keep `NOMI-ARCH-018` current: Python AST should become one backend behind
   Nomi-owned Surface/Core IR, not the permanent language IR.
-- [ ] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
+  (Partially done: `prototype/runtime/backends/` exists with `python_ast.py` as
+  one backend, `core_direct.py` as proof of decoupling, and `NOMI_USE_CORE_IR=1`
+  gating the Core IR path.)
+- [x] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
   serious native or Wasm backend work.
-- [ ] Upgrade `NOMI-ARCH-019` from passive inspection to an authoritative tiny
+  (Done: 17 CoreNode types, `verify_core(strict=True)`, `core_to_python_ast()`,
+  `lower_python_ast_to_core()`, `NOMI_VERIFY_CORE=1` gate.)
+- [~] Upgrade `NOMI-ARCH-019` from passive inspection to an authoritative tiny
   Surface -> Core lowering path before runtime diagnostics or backend work rely
   on Core IR as a source of truth.
+  (In progress: all 17 node types lower, but BinOp, Compare, UnaryOp, etc. still
+  produce Diagnostic sentinels. See `core_runtime_backend_design.md` for the
+  next backend plan.)
 - [ ] Add `NOMI-ARCH-020`: run an MLIR spike only for a tiny pure subset after
   Core IR inspection works.
-- [ ] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend
+- [x] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend
   tests before LLVM/ORC/native codegen.
-- [ ] Add `NOMI-ARCH-022`: define runtime values, ABI, memory, host
+  (Done: `EvalBackendCapabilities`, `EvalBackendSpec`, registry,
+  `NOMI_USE_CORE_IR=1` gate, `render_eval_backend_table()`.)
+- [~] Add `NOMI-ARCH-022`: define runtime values, ABI, memory, host
   capabilities, and Python interop boundaries before compiling dynamic
   features.
+  (Design written: [`core_runtime_backend_design.md`](core_runtime_backend_design.md).
+  Implementation in 7 slices — see Track 0D below.)
 
 ## Track 0C: Core Layer Separation Preparation
 
@@ -266,6 +278,58 @@ directories wholesale.
   migration candidate after reduction-target tests exist. Started: both
   conditional-flow sugars now have L4 feature metadata and reduction targets;
   remaining work is surface/core expansion inspection and provenance.
+
+## Track 0D: Core Runtime Backend (Python-Independent Reference)
+
+Design: [`core_runtime_backend_design.md`](core_runtime_backend_design.md).
+The Core Runtime is the reference implementation that defines Nomi-owned
+abstractions (Value system, Frame environments, ControlFlow signals, fenced
+host interop) that future Rust/Wasm/LLVM backends implement in their host
+language. The Python implementation stays as the test oracle.
+
+### Slice 1: Value system + basic eval (7 node types)
+Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
+- [ ] Define `Value` subtypes: `IntValue`, `FloatValue`, `BoolValue`,
+  `StrValue`, `NilValue`, `FunctionValue`, `NativeValue`.
+- [ ] Define `ControlFlow` subtypes: `ReturnSignal`, `BreakSignal`,
+  `ContinueSignal`, `YieldSignal`.
+- [ ] Define `Frame` with scoped bindings, parent chain, lookup, assign, extend.
+- [ ] Implement `CoreRuntime.eval()` dispatching on: `Literal`, `Load`, `Bind`,
+  `Function`, `Call`, `Return`, `Branch`.
+- [ ] Implement `_unbox()` for `EvalBackendResult.bindings` compatibility.
+- [ ] Parity tests against `python_ast` backend for the 7-node subset.
+
+### Slice 2: Data and fields (2 node types)
+- [ ] Implement `eval_ConstructData()` — evaluate fields, return `DataValue`.
+- [ ] Implement `eval_GetField()` — access `DataValue.fields[name]`.
+- [ ] Parity tests for data construction and field access.
+
+### Slice 3: Control flow (2 node types)
+- [ ] Implement `eval_Loop()` — while-style loop with `BreakSignal`/`ContinueSignal`.
+- [ ] Implement `eval_Sequence()` — evaluate elements, produce list.
+- [ ] Parity tests for loops and sequences.
+
+### Slice 4: Pattern matching (2 node types)
+- [ ] Implement `eval_Match()` — subject evaluation + case dispatch.
+- [ ] Implement `eval_PatternTest()` — pattern matching + guard + body.
+- [ ] Parity tests for match expressions.
+
+### Slice 5: Exception handling (2 node types)
+- [ ] Define `ErrorValue` subtype.
+- [ ] Implement `eval_Raise()` — produce `ErrorValue`.
+- [ ] Implement `eval_Handle()` — try/catch dispatch, always eval `finalbody`.
+- [ ] Parity tests for raise and handle.
+
+### Slice 6: Host interop + unboxing
+- [ ] Implement `NativeValue` wrapping and host-call dispatch table.
+- [ ] Complete `_unbox()` for all value types.
+- [ ] Host-interop parity tests (print, len, etc.).
+
+### Slice 7: Blocks and resume (capability promotion)
+- [ ] Implement block-call support (`yield_to_block` equivalent).
+- [ ] Add `GeneratorState` for resumable functions.
+- [ ] Promote `supports_blocks=True`, `supports_resume=True`.
+- [ ] Block-call parity tests.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 

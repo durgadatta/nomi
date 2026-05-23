@@ -21,12 +21,29 @@ backend code, not language semantics.
 - `__init__.py` — `EvalBackendSpec`, `EvalBackendCapabilities`, registry
 - `python_ast.py` — wraps existing interpreter behind Core IR adapter
 - `core_direct.py` — dispatches on CoreNode types directly (no Python AST)
+- `core_runtime.py` — **next**: reference runtime with Nomi-owned values,
+  scoped frames, explicit control flow (see design doc)
 
 Opt-in gates (env vars):
 - `NOMI_VERIFY_CORE=1` — lower to Core IR and verify after parsing
 - `NOMI_USE_CORE_IR=1` — route execution through Core IR + backend
 
 Inspect with: `python3 -m tools.syntax.inspect --stage eval-backends`
+
+## Adding a new eval backend
+
+Read `docs/language/core_runtime_backend_design.md` before writing a new backend.
+Every backend must:
+
+1. Define a `spec: EvalBackendSpec` with capability flags.
+2. Implement `evaluate(core_ir: Module) -> EvalBackendResult`.
+3. Dispatch on all 17 CoreNode types (or explicitly reject unsupported ones).
+4. Register via `register_backend(name, instance)`.
+
+The `core_runtime.py` design is the reference pattern — Nomi-owned Value types,
+scoped Frame environments, explicit ControlFlow signals, and fenced host interop.
+Future Rust/Wasm/LLVM backends implement the same abstractions in their host
+language. The Python reference stays as the test oracle.
 
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup

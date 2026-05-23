@@ -49,6 +49,8 @@ Read before broad implementation work:
 - [`architecture_refactoring_plan.md`](../language/architecture_refactoring_plan.md)
 - [`flexible_syntax_substrate_plan.md`](../language/flexible_syntax_substrate_plan.md)
 - [`python_independence_and_compiler_backend_plan.md`](../language/python_independence_and_compiler_backend_plan.md)
+- [`core_runtime_backend_design.md`](../language/core_runtime_backend_design.md) —
+  reference design for the next backend; read before writing a new eval backend.
 
 ## Layer Discipline
 

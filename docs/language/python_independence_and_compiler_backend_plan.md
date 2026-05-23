@@ -212,6 +212,11 @@ Exit gate:
 
 Goal: prove Nomi can run without Python AST.
 
+Design: [`core_runtime_backend_design.md`](core_runtime_backend_design.md) —
+detailed reference architecture with Nomi-owned Value system, scoped Frame
+environments, explicit ControlFlow signals, fenced host interop, and a 7-slice
+implementation sequence.
+
 Work:
 
 - implement a small direct interpreter over Core IR for a subset:
