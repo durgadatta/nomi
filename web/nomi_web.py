@@ -194,6 +194,27 @@ def _eval_in_session(code: str) -> dict:
     }
 
 
+def core_json_for_nomi(code: str) -> dict:
+    """Lower Nomi source to serialized Core IR for the JavaScript backend."""
+    global _runtime_session
+    if not code.endswith("\n"):
+        code += "\n"
+    if _runtime_session is None:
+        reset_session()
+
+    started = time.perf_counter()
+    core_json = _runtime_session.core_json(source=code)
+    return {
+        "ok": True,
+        "core_json": core_json,
+        "session": _get_counter(),
+        "timing": {
+            "total_ms": (time.perf_counter() - started) * 1000,
+            "cache_hit": False,
+        },
+    }
+
+
 async def run_nomi(code: str) -> dict:
     if not code.endswith("\n"):
         code += "\n"

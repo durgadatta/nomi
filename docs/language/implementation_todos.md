@@ -382,6 +382,24 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] `samples/demo.nomi` runs with `NOMI_EVAL_BACKEND=core-runtime`.
 - [ ] Turn demo smoke into cross-backend semantic parity assertions.
 
+### Slice 15: Serialized Core IR and first non-Python runtime
+- [x] Define Core IR JSON payload helpers in `prototype/syntax/core_json.py`.
+- [x] Add `core-json` inspection through `tools.syntax.inspect` and
+  `prototype.runtime.inspect()`.
+- [x] Implement `web/core_runtime.js` as a JavaScript evaluator over serialized
+  Core IR JSON.
+- [x] Add fixture-level parity against Python `core-runtime` for bindings,
+  function calls, operations, sequences, for-each, and stdout.
+- [x] Dispatch every currently registered CoreNode in the JavaScript runtime.
+- [x] Add JS parity coverage for mappings, spreads, data fields, match/rest
+  patterns, error handling, and simple yield-to-block.
+- [x] Run `samples/demo.nomi` through session-lowered Core JSON in Node.
+- [x] Add browser worker opt-in: `web/?backend=js-core-runtime`.
+- [ ] Move the fixture into a shared backend fixture corpus and expand it up
+  the backend independence fixture ladder.
+- [ ] Promote the JS runtime from opt-in browser path to default only after
+  fixture corpus parity and host capability policy are settled.
+
 ## Track 1: Binding, Constraints, And Data Boundaries
 
 - [ ] Introduce a runtime `BindingError` type with fields for name, value,

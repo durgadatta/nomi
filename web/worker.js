@@ -5,6 +5,7 @@ const PYODIDE_BASE = "https://cdn.jsdelivr.net/pyodide/v0.27.2/full/";
 let pyodide = null;
 let runNomi = null;
 let resetSession = null;
+let coreJsonForNomi = null;
 
 function postLog(message) {
   postMessage({ type: "log", message });
@@ -31,6 +32,7 @@ function convertPyValue(value) {
 
 async function initRuntime() {
   postLog("Loading Pyodide...");
+  importScripts("./core_runtime.js");
   importScripts(PYODIDE_BASE + "pyodide.js");
   pyodide = await loadPyodide({ indexURL: PYODIDE_BASE });
 
@@ -45,6 +47,31 @@ async function initRuntime() {
   await pyodide.globals.get("init_nomi")();
   runNomi = pyodide.globals.get("run_nomi");
   resetSession = pyodide.globals.get("reset_session");
+  coreJsonForNomi = pyodide.globals.get("core_json_for_nomi");
+}
+
+async function runWithJsCoreRuntime(code) {
+  const lowerStart = performance.now();
+  const lowered = convertPyValue(await coreJsonForNomi(code || ""));
+  const lowerMs = performance.now() - lowerStart;
+  const evalStart = performance.now();
+  const result = self.NomiCoreRuntime.evaluateCorePayload(
+    JSON.parse(lowered.core_json),
+  );
+  const evalMs = performance.now() - evalStart;
+  return {
+    output: result.stdout || "",
+    session: lowered.session,
+    backend: result.backend,
+    timing: {
+      ...(lowered.timing || {}),
+      parse_ms: lowerMs,
+      eval_ms: evalMs,
+      total_ms: lowerMs + evalMs,
+      cache_hit: false,
+    },
+    bindings: result.bindings,
+  };
 }
 
 async function handleMessage(message) {
@@ -56,12 +83,14 @@ async function handleMessage(message) {
       return;
     }
 
-    if (!runNomi || !resetSession) {
+    if (!runNomi || !resetSession || !coreJsonForNomi) {
       throw new Error("Nomi runtime is not ready");
     }
 
     if (type === "run") {
-      const result = await runNomi(message.data.code || "");
+      const result = message.data.backend === "js-core-runtime"
+        ? await runWithJsCoreRuntime(message.data.code || "")
+        : await runNomi(message.data.code || "");
       postMessage({ id, type: "result", result: convertPyValue(result) });
       return;
     }

@@ -14,6 +14,12 @@ function formatTiming(timing, elapsed) {
   return `last run ${total} ms · parse ${parse} · desugar ${desugar} · eval ${evalMs}`;
 }
 
+function runtimeLabel(result) {
+  return result && result.backend === "js-core-runtime"
+    ? "Pyodide parser + JS Core Runtime"
+    : "Pyodide worker";
+}
+
 async function runCell(idx, advance, options) {
   if (!_ready || !_runFn) return;
   const manageControls = !(options && options.batch);
@@ -52,7 +58,7 @@ async function runCell(idx, advance, options) {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.session) {
-      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
+      byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
     }
   } catch (e) {
     const elapsed = Math.max(1, Math.round(performance.now() - start));
@@ -134,7 +140,7 @@ async function runPlainCode() {
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
 
     if (r.session) {
-      byId("runtime-detail").textContent = `Pyodide worker · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
+      byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
     }
   } catch (e) {
     outPre.textContent = String(e);

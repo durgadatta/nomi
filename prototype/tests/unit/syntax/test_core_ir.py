@@ -30,6 +30,13 @@ from prototype.syntax.core import (
     lower_python_ast_to_core,
     verify_core,
 )
+from prototype.syntax.core_json import (
+    CORE_IR_JSON_SCHEMA,
+    CORE_IR_JSON_VERSION,
+    core_from_json,
+    core_to_json,
+    core_to_json_payload,
+)
 
 
 # ── verifier ──────────────────────────────────────────────────────────────────
@@ -77,6 +84,31 @@ def test_verify_core_non_strict_accepts_diagnostic():
 def test_verify_core_strict_accepts_valid_tree():
     node = Module(body=(Bind(name="x", value=Literal(value=1)),))
     verify_core(node, strict=True)
+
+
+def test_core_ir_json_payload_round_trips():
+    node = Module(
+        body=(
+            Bind(
+                name="items",
+                value=Sequence(elements=(Literal(value=1), Literal(value=2))),
+            ),
+            Bind(
+                name="first",
+                value=Call(
+                    func=Load(name="len"),
+                    args=(Load(name="items"),),
+                ),
+            ),
+        )
+    )
+
+    payload = core_to_json_payload(node)
+    restored = core_from_json(core_to_json(node))
+
+    assert payload["schema"] == CORE_IR_JSON_SCHEMA
+    assert payload["version"] == CORE_IR_JSON_VERSION
+    assert dump_core(restored) == dump_core(node)
 
 
 # ── dump ──────────────────────────────────────────────────────────────────────

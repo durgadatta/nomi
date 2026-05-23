@@ -23,6 +23,7 @@ from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mo
 from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import lower_python_ast_to_core, verify_core
+from prototype.syntax.core_json import core_to_json
 
 
 _NOMI_PARSER = "prototype.parser.nomi.usage.generate_ast"
@@ -192,6 +193,44 @@ class RuntimeSession:
         leading = ast.fix_missing_locations(leading)
         self.interpreter.eval(leading)
         return True, self.interpreter.eval(last)
+
+    def lower_to_core_ir(
+        self,
+        *,
+        source: str | None = None,
+        filename: str | Path | None = None,
+        tree: Any | None = None,
+        strict: bool = True,
+    ) -> Any:
+        """Parse/lower input through this session and return verified Core IR."""
+        timings: dict[str, float] = {}
+        if tree is None:
+            tree = self._parse_and_lower(
+                source=source,
+                filename=filename,
+                timings=timings,
+            )
+        tree = ast.fix_missing_locations(tree)
+        core = lower_python_ast_to_core(tree)
+        verify_core(core, strict=strict)
+        return core
+
+    def core_json(
+        self,
+        *,
+        source: str | None = None,
+        filename: str | Path | None = None,
+        tree: Any | None = None,
+        strict: bool = True,
+    ) -> str:
+        """Return backend-neutral Core IR JSON for this session's pipeline."""
+        core = self.lower_to_core_ir(
+            source=source,
+            filename=filename,
+            tree=tree,
+            strict=strict,
+        )
+        return core_to_json(core)
 
     def _parse_and_lower(
         self,

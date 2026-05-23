@@ -1,5 +1,6 @@
 import asyncio
 import importlib.util
+import json
 from pathlib import Path
 
 
@@ -50,3 +51,17 @@ def test_web_runtime_reset_clears_session_cache():
     assert cached["timing"]["cache_hit"] is True
     assert reset["ok"] is True
     assert after_reset["timing"]["cache_hit"] is False
+
+
+def test_web_runtime_bridge_can_emit_core_json_for_js_backend():
+    async def run():
+        nomi_web = load_nomi_web()
+        await nomi_web.init_nomi()
+        return nomi_web.core_json_for_nomi("x = 1 + 2\n")
+
+    lowered = asyncio.run(run())
+    payload = json.loads(lowered["core_json"])
+
+    assert lowered["ok"] is True
+    assert payload["schema"] == "nomi.core-ir"
+    assert payload["root"]["type"] == "Module"

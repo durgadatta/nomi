@@ -300,6 +300,24 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"core_json", "core-json"}:
+        session = create_session(
+            mode=mode,
+            profile=profile,
+            parser_frontend=parser_frontend,
+            eval_backend=eval_backend,
+        )
+        output = session.core_json(source=source, filename=filename)
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"core_verify", "core-verify"}:
         tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
         core = lower_python_ast_to_core(tree)

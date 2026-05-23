@@ -43,6 +43,17 @@ Core IR Module
 - `samples/demo.nomi` now runs through the direct `core-runtime` backend as a
   smoke target. This proves executable independence from Python AST for the
   demo path, but it is not yet a default-backend promotion.
+- `prototype/syntax/core_json.py` serializes verified Core IR as a
+  backend-neutral JSON payload (`schema: "nomi.core-ir"`, `version: 1`).
+  Inspect it with `python3 -m tools.syntax.inspect FILE --stage core-json`.
+- `web/core_runtime.js` is the first non-Python evaluator. It consumes the Core
+  IR JSON payload directly, dispatches every currently registered CoreNode, and
+  is tested against the Python `core-runtime` for fixtures covering bindings,
+  functions, calls, operations, sequences, mappings, data fields, match/rest
+  patterns, error handling, for-each, yield-to-block, and stdout.
+- The browser worker has an opt-in JS execution path:
+  `web/?backend=js-core-runtime`. Pyodide still supplies parsing/lowering; JS
+  executes the serialized Core IR.
 
 ## Reusable Backend Boundary
 
@@ -213,6 +224,11 @@ Implemented enough for the demo smoke path:
 - block calls represented on Core `Call`;
 - yield-to-block dispatch for simple caller blocks and yielded values;
 - `ForEach` Core IR for `for item in sequence`.
+- serialized Core IR JSON export/import for backend-neutral fixture exchange.
+- JavaScript Core Runtime dispatch for every currently registered CoreNode,
+  including simple yield-to-block and raise/handle semantics.
+- `samples/demo.nomi` runs through session-lowered Core IR JSON in Node and
+  through the browser worker behind `?backend=js-core-runtime`.
 
 Known parity risks before default promotion:
 
@@ -229,10 +245,12 @@ Known parity risks before default promotion:
 
 ## Next Implementation Slice
 
-Turn the demo smoke path into a cross-backend acceptance gate:
+Turn the initial JS fixture into a cross-backend acceptance gate:
 
 1. add a smaller backend fixture corpus independent of `samples/demo.nomi`;
-2. compare selected bindings/stdout across `python-ast` and `core-runtime`;
+2. compare selected bindings/stdout across `python-ast`, `core-runtime`, and
+   `web/core_runtime.js`;
 3. preserve constraint metadata in Core IR instead of projecting annotations to
    plain `Bind`;
-4. define a serialized Core IR schema for the JavaScript/Web runtime path.
+4. document the Core IR JSON schema as a stable-enough test contract before
+   making the JS backend the default browser execution path.

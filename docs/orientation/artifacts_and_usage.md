@@ -89,6 +89,19 @@ or `create_session(..., eval_backend="core-runtime")`):
 -> bindings / ExecutionResult
 ```
 
+Core IR can also be emitted as a backend-neutral JSON payload:
+
+```bash
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core-json
+```
+
+The JSON schema helpers live in `prototype/syntax/core_json.py`. The first
+non-Python consumer is `web/core_runtime.js`, a JavaScript Core Runtime that
+dispatches every currently registered CoreNode and can run session-lowered
+`samples/demo.nomi`. In the playground, try it with
+`web/?backend=js-core-runtime`; Pyodide still handles parsing/lowering while JS
+executes serialized Core IR.
+
 The eval backend registry is at `prototype/runtime/backends/`. Current
 backends:
 `python_ast` (wraps the existing interpreter behind Core IR),

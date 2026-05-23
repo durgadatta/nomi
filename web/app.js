@@ -12,6 +12,9 @@ let _executionCounter = 0;
 let _activeCellIndex = 0;
 let _notebookMode = false;
 let _bootStart = performance.now();
+let _evalBackend = new URLSearchParams(location.search).get("backend") === "js-core-runtime"
+  ? "js-core-runtime"
+  : "python-ast";
 
 function byId(id) { return document.getElementById(id); }
 function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
@@ -75,7 +78,7 @@ async function startRuntimeWorker() {
   };
 
   await callRuntime("init");
-  _runFn = (code) => callRuntime("run", { code });
+  _runFn = (code) => callRuntime("run", { code, backend: _evalBackend });
   _resetFn = () => callRuntime("reset");
 }
 
@@ -109,7 +112,10 @@ async function init() {
   _ready = true;
   byId("loading").style.display = "none";
   setStatus("ready", "ready");
-  byId("runtime-detail").textContent = `Pyodide ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
+  const backendLabel = _evalBackend === "js-core-runtime"
+    ? "Pyodide parser + JS Core Runtime"
+    : "Pyodide runtime";
+  byId("runtime-detail").textContent = `${backendLabel} ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
   setControlsDisabled(false);
 
   // Defer by two frames so the browser lays out editor containers

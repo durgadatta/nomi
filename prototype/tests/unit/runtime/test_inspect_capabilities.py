@@ -19,3 +19,12 @@ def test_inspect_returns_parser_frontend_table():
     assert "| frontend | status | full grammar | python AST | selectable | roles |" in result.output
     assert "lark-lalr" in result.output
     assert "tree-sitter-cst" in result.output
+
+
+def test_inspect_returns_core_json_payload():
+    result = inspect(source="x = 1\n", stage="core_json")
+
+    assert isinstance(result, InspectionResult)
+    assert result.stage == "core_json"
+    assert '"schema": "nomi.core-ir"' in result.output
+    assert '"type": "Module"' in result.output

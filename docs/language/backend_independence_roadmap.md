@@ -55,14 +55,22 @@ current web playground workflow.
 Concrete path:
 
 1. Emit serialized Core IR JSON from Python tooling and load it in the browser.
-2. Implement a TypeScript `CoreRuntime` with the same value/frame/control-flow
+   The first schema boundary now lives in `prototype/syntax/core_json.py` and
+   can be inspected with `python3 -m tools.syntax.inspect FILE --stage core-json`.
+2. Implement a TypeScript/JavaScript `CoreRuntime` with the same value/frame/control-flow
    variants as the Python reference.
+   The first non-Python evaluator is `web/core_runtime.js`; it consumes the
+   serialized Core IR payload directly, dispatches every currently registered
+   CoreNode, and runs `samples/demo.nomi` after Python/Pyodide parsing and
+   lowering.
 3. Add browser `HostCapabilities`: stdout buffer, stdin prompt later, clock,
    cancellation, and safe module loading from the web manifest.
 4. Add cross-backend tests that run small Core IR fixtures in Python
-   `core-runtime` and TypeScript runtime and compare `ExecutionResult` JSON.
+   `core-runtime` and the JavaScript runtime and compare `ExecutionResult` JSON.
 5. Move `web/nomi_web.py` from "run Python through Pyodide" to "parse/lower
    through a bundled artifact, then execute Core IR in JS" in stages.
+   A query-param opt-in now exists for the worker path:
+   `web/?backend=js-core-runtime`.
 
 Near-term compromise:
 
@@ -171,7 +179,10 @@ Backends should graduate through the same fixture ladder:
 
 - Keep `core-runtime` unselectable as the default until cross-backend parity
   tests cover the fixture ladder.
-- Add serialized Core IR inspection before implementing the JS runtime.
+- Grow serialized Core IR inspection from the current JSON schema into a
+  documented backend fixture corpus.
+- Grow the first JavaScript Core Runtime (`web/core_runtime.js`) from
+  current CoreNode parity toward default web playground use.
 - Add a `prototype/tests/backend_fixtures/` corpus once two direct backends
   exist, so parity tests are not tied to Python AST fixtures.
 - Keep Pyodide web execution working while introducing a JS Core Runtime path.

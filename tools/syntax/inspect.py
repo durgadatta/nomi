@@ -7,6 +7,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage transformed-tree
     python3 -m tools.syntax.inspect FILE --stage surface-ast
     python3 -m tools.syntax.inspect FILE --stage core
+    python3 -m tools.syntax.inspect FILE --stage core-json
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage capabilities
@@ -97,6 +98,10 @@ def main():
         print(generate_ast(code=code, dump=True, keep_surface=True))
     elif stage == "core":
         print(dump_core(lower_python_ast_to_core(generate_ast(code=code))))
+    elif stage in {"core-json", "core_json"}:
+        from prototype.runtime import create_session
+
+        print(create_session(mode="nomi").core_json(source=code))
     elif stage in {"core-verify", "core_verify"}:
         tree = generate_ast(code=code)
         core = lower_python_ast_to_core(tree)
@@ -127,7 +132,7 @@ def main():
         print(
             f"Unknown stage: {stage!r}. "
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
-            f"core-verify, core-to-python, backend-lowered, "
+            f"core-json, core-verify, core-to-python, backend-lowered, "
             f"python-ast, features, capabilities, parser-frontends, "
             f"eval-backends, passes, expansions"
         )
