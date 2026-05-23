@@ -21,6 +21,7 @@ from prototype.runtime.backends.values import (
     DataValue,
     ErrorValue,
     FunctionValue,
+    MappingValue,
     NIL,
     NativeValue,
     SequenceValue,
@@ -36,21 +37,25 @@ from prototype.syntax.core import (
     Branch,
     Call,
     CompareOp,
+    ConditionalExpr,
     ConstructData,
     CoreNode,
     Diagnostic,
     Function,
     GetField,
+    GetItem,
     Handle,
     Literal,
     Load,
     Loop,
+    MappingLiteral,
     Match,
     Module,
     PatternTest,
     Raise,
     Return,
     Sequence,
+    Spread,
     UnaryOp,
     verify_core,
 )
@@ -272,14 +277,56 @@ class CoreRuntimeEvaluator:
             current = right_value
         return box_value(True)
 
+    def _eval_ConditionalExpr(self, node: ConditionalExpr) -> Value | ControlFlow:
+        test = self.eval(node.test)
+        if isinstance(test, ControlFlow):
+            return test
+        branch = node.then_value if is_truthy(test) else node.else_value
+        return self.eval(branch)
+
     def _eval_Sequence(self, node: Sequence) -> Value | ControlFlow:
         elements: list[Value] = []
         for elem in node.elements:
+            if isinstance(elem, Spread):
+                spread_value = self.eval(elem.value)
+                if isinstance(spread_value, ControlFlow):
+                    return spread_value
+                elements.extend(self._spread_elements(spread_value))
+                continue
             value = self.eval(elem)
             if isinstance(value, ControlFlow):
                 return value
             elements.append(value)
         return SequenceValue(tuple(elements))
+
+    def _eval_MappingLiteral(self, node: MappingLiteral) -> Value | ControlFlow:
+        entries: dict[Any, Value] = {}
+        for key_node, value_node in node.entries:
+            key = self.eval(key_node)
+            if isinstance(key, ControlFlow):
+                return key
+            value = self.eval(value_node)
+            if isinstance(value, ControlFlow):
+                return value
+            entries[unbox_value(key)] = value
+        return MappingValue(entries)
+
+    def _eval_GetItem(self, node: GetItem) -> Value | ControlFlow:
+        obj = self.eval(node.object_)
+        if isinstance(obj, ControlFlow):
+            return obj
+        key = self.eval(node.key)
+        if isinstance(key, ControlFlow):
+            return key
+        key_value = unbox_value(key)
+        if isinstance(obj, SequenceValue):
+            return obj.elements[key_value]
+        if isinstance(obj, MappingValue):
+            return obj.entries[key_value]
+        return box_value(unbox_value(obj)[key_value])
+
+    def _eval_Spread(self, node: Spread) -> Value | ControlFlow:
+        raise RuntimeError("Spread can only be evaluated inside Sequence")
 
     def _eval_ConstructData(self, node: ConstructData) -> Value | ControlFlow:
         fields: dict[str, Value] = {}
@@ -393,6 +440,14 @@ class CoreRuntimeEvaluator:
 
     def _eval_Diagnostic(self, node: Diagnostic) -> Value:
         raise RuntimeError(f"Unexecutable Core diagnostic: {node.message}")
+
+    @staticmethod
+    def _spread_elements(value: Value) -> tuple[Value, ...]:
+        if isinstance(value, SequenceValue):
+            return value.elements
+        if isinstance(value, MappingValue):
+            return tuple(box_value(key) for key in value.entries)
+        return tuple(box_value(item) for item in unbox_value(value))
 
     @staticmethod
     def _apply_binary_op(op: str, left: Any, right: Any) -> Any:

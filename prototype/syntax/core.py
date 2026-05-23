@@ -96,6 +96,29 @@ class CompareOp(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class ConditionalExpr(CoreNode):
+    test: CoreNode | None = None
+    then_value: CoreNode | None = None
+    else_value: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class MappingLiteral(CoreNode):
+    entries: tuple[tuple[CoreNode, CoreNode], ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class GetItem(CoreNode):
+    object_: CoreNode | None = None
+    key: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class Spread(CoreNode):
+    value: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class Diagnostic(CoreNode):
     message: str = ""
 
@@ -162,6 +185,10 @@ CORE_NODE_TYPES = (
     BinaryOp,
     BooleanOp,
     CompareOp,
+    ConditionalExpr,
+    MappingLiteral,
+    GetItem,
+    Spread,
     Diagnostic,
     Loop,
     Match,
@@ -291,6 +318,30 @@ def dump_core(node: CoreNode) -> str:
                 lines.extend(_dump(value.left, indent + 1))
             for child in value.comparators:
                 lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, ConditionalExpr):
+            lines = [f"{prefix}ConditionalExpr"]
+            for child in (value.test, value.then_value, value.else_value):
+                if child is not None:
+                    lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, MappingLiteral):
+            lines = [f"{prefix}MappingLiteral"]
+            for key, item_value in value.entries:
+                lines.append(f"{prefix}  entry")
+                lines.extend(_dump(key, indent + 2))
+                lines.extend(_dump(item_value, indent + 2))
+            return lines
+        if isinstance(value, GetItem):
+            lines = [f"{prefix}GetItem"]
+            for child in (value.object_, value.key):
+                if child is not None:
+                    lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, Spread):
+            lines = [f"{prefix}Spread"]
+            if value.value is not None:
+                lines.extend(_dump(value.value, indent + 1))
             return lines
         if isinstance(value, Diagnostic):
             return [f"{prefix}Diagnostic({value.message!r})"]
@@ -721,6 +772,64 @@ def _lower_compare_op(node: CompareOp) -> ast.expr:
     )
 
 
+@_expr_handler(ConditionalExpr)
+def _lower_conditional_expr(node: ConditionalExpr) -> ast.expr:
+    return ast.IfExp(
+        test=(
+            _core_expr(node.test)
+            if node.test is not None
+            else ast.Constant(value=False)
+        ),
+        body=(
+            _core_expr(node.then_value)
+            if node.then_value is not None
+            else ast.Constant(value=None)
+        ),
+        orelse=(
+            _core_expr(node.else_value)
+            if node.else_value is not None
+            else ast.Constant(value=None)
+        ),
+    )
+
+
+@_expr_handler(MappingLiteral)
+def _lower_mapping_literal(node: MappingLiteral) -> ast.expr:
+    return ast.Dict(
+        keys=[_core_expr(key) for key, _ in node.entries],
+        values=[_core_expr(value) for _, value in node.entries],
+    )
+
+
+@_expr_handler(GetItem)
+def _lower_get_item(node: GetItem) -> ast.expr:
+    return ast.Subscript(
+        value=(
+            _core_expr(node.object_)
+            if node.object_ is not None
+            else ast.Name(id="_")
+        ),
+        slice=(
+            _core_expr(node.key)
+            if node.key is not None
+            else ast.Constant(value=None)
+        ),
+        ctx=ast.Load(),
+    )
+
+
+@_expr_handler(Spread)
+def _lower_spread(node: Spread) -> ast.expr:
+    return ast.Starred(
+        value=(
+            _core_expr(node.value)
+            if node.value is not None
+            else ast.Constant(value=None)
+        ),
+        ctx=ast.Load(),
+    )
+
+
 @_expr_handler(GetField)
 def _lower_get_field(node: GetField) -> ast.expr:
     return ast.Attribute(
@@ -881,6 +990,12 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
             ),
             comparators=tuple(_lower_expr(c) for c in node.comparators),
         )
+    if isinstance(node, ast.IfExp):
+        return ConditionalExpr(
+            test=_lower_expr(node.test),
+            then_value=_lower_expr(node.body),
+            else_value=_lower_expr(node.orelse),
+        )
     if isinstance(node, ast.FunctionDef):
         return Function(
             params=tuple(str(arg.arg) for arg in node.args.args),
@@ -891,10 +1006,22 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
             object_=_lower_expr(node.value),
             field=str(node.attr),
         )
+    if isinstance(node, ast.Subscript):
+        return GetItem(
+            object_=_lower_expr(node.value),
+            key=_lower_expr(node.slice),
+        )
     if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
         return Sequence(
             elements=tuple(_lower_expr(elt) for elt in node.elts),
         )
+    if isinstance(node, ast.Dict):
+        entries: list[tuple[CoreNode, CoreNode]] = []
+        for key, value in zip(node.keys, node.values):
+            entries.append((_lower_expr(key), _lower_expr(value)))
+        return MappingLiteral(entries=tuple(entries))
+    if isinstance(node, ast.Starred):
+        return Spread(value=_lower_expr(node.value))
     return _unsupported(node)
 
 

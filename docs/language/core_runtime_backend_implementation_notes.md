@@ -200,8 +200,8 @@ The backend can graduate in these steps:
 
 ## Next Implementation Slice
 
-Broaden Core IR coverage for ordinary programs beyond expression operations:
-subscript access, container literals beyond simple sequences, augmented
-assignment, imports, and Python/Nomi-specific control forms. These should land
-as Core IR nodes or explicit lowering rules before `core-runtime` claims
-full-language support.
+Broaden Core IR coverage for pattern forms and statement control that now block
+`samples/demo.nomi`: `MatchValue`, `MatchAs`, sequence/mapping patterns,
+`Pass`, `Break`, annotated assignment, and `Yield`. These should land as Core
+IR nodes or explicit lowering rules before `core-runtime` claims full-language
+support.

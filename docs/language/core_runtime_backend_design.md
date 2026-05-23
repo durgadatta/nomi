@@ -258,6 +258,10 @@ class CoreRuntime:
 | `BinaryOp` | Evaluate operands and apply portable binary operator token (`+`, `-`, `*`, etc.). |
 | `BooleanOp` | Short-circuit `and` / `or`, returning the selected operand value. |
 | `CompareOp` | Evaluate chained comparisons and return `BoolValue`. |
+| `ConditionalExpr` | Evaluate `test`, then one expression branch. |
+| `MappingLiteral` | Evaluate key/value entries into `MappingValue`. |
+| `GetItem` | Evaluate object and key, then index sequence/mapping/native host value. |
+| `Spread` | Expand iterable values inside `Sequence`; reject outside sequence context. |
 | `Loop` | Repeatedly eval `test` then `body`. `BreakSignal` exits. `ContinueSignal` skips to next iteration. |
 | `Match` | Evaluate `subject`. For each `PatternTest` case, check pattern match + guard. First match wins. |
 | `PatternTest` | Match `pattern` against a value. If `guard` is present and falsy, skip. Eval `body`. |
@@ -318,22 +322,26 @@ It graduates through capability promotion:
 — introduces portable operator tokens before ordinary programs can run outside
 the Python AST backend.
 
-### Slice 4: Control flow (2 node types)
+### Slice 4: Data access expressions (4 node types)
+`ConditionalExpr`, `MappingLiteral`, `GetItem`, `Spread`
+— introduces portable mapping/subscript and sequence-spread support.
+
+### Slice 5: Control flow (2 node types)
 `Loop`, `Sequence`
 — introduces `BreakSignal`, `ContinueSignal`, and collection values.
 
-### Slice 5: Pattern matching (2 node types)
+### Slice 6: Pattern matching (2 node types)
 `Match`, `PatternTest`
 — introduces pattern destructuring and guard evaluation.
 
-### Slice 6: Exception handling (2 node types)
+### Slice 7: Exception handling (2 node types)
 `Raise`, `Handle`
 — introduces `ErrorValue` and handler dispatch.
 
-### Slice 7: Host interop + unboxing
+### Slice 8: Host interop + unboxing
 `NativeValue` wrapping, host-call dispatch table, `_unbox` for public API.
 
-### Slice 8: Blocks and resume (capability promotion)
+### Slice 9: Blocks and resume (capability promotion)
 Block calls, yield, resume — the most complex capability. May need `GeneratorState`.
 
 ## Testing Strategy

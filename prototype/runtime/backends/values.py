@@ -54,6 +54,11 @@ class SequenceValue(Value):
 
 
 @dataclass(frozen=True, slots=True)
+class MappingValue(Value):
+    entries: Mapping[Any, Value]
+
+
+@dataclass(frozen=True, slots=True)
 class DataValue(Value):
     name: str
     fields: Mapping[str, Value]
@@ -94,6 +99,13 @@ def box_value(value: Any) -> Value:
         return StrValue(value)
     if isinstance(value, (list, tuple)):
         return SequenceValue(tuple(box_value(item) for item in value))
+    if isinstance(value, dict):
+        return MappingValue(
+            {
+                key: box_value(item_value)
+                for key, item_value in value.items()
+            }
+        )
     if callable(value):
         name = getattr(value, "__name__", type(value).__name__)
         return NativeValue(name=str(name), callable=value)
@@ -114,6 +126,11 @@ def unbox_value(value: Value) -> Any:
         return None
     if isinstance(value, SequenceValue):
         return [unbox_value(item) for item in value.elements]
+    if isinstance(value, MappingValue):
+        return {
+            key: unbox_value(item_value)
+            for key, item_value in value.entries.items()
+        }
     if isinstance(value, DataValue):
         return {
             value.name: {
@@ -144,4 +161,6 @@ def is_truthy(value: Value) -> bool:
         return value.value != ""
     if isinstance(value, SequenceValue):
         return bool(value.elements)
+    if isinstance(value, MappingValue):
+        return bool(value.entries)
     return True
