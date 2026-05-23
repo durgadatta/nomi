@@ -5,6 +5,9 @@
 > Scope: staged path from the Python-hosted prototype toward a Python-independent
 > Nomi implementation using modern compiler infrastructure. This is not a
 > rewrite request and not an immediate LLVM implementation plan.
+>
+> Concrete backend target roadmap:
+> [`backend_independence_roadmap.md`](backend_independence_roadmap.md).
 
 ## Purpose
 
