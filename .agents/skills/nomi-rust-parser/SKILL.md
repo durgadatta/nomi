@@ -69,6 +69,12 @@ Advance capabilities independently:
 Never promote execution because a tolerant/raw payload parses files. Raw
 payloads are useful for acceptance, not semantic parity.
 
+When a new parser frontend is registered in `_FRONTENDS`
+(`prototype/parser/nomi/frontend.py`), also add its name to `BENCH_FRONTENDS`
+in `tools/perf/bench_parsers.py` so it appears in the parser comparison
+benchmark.  If it is a Rust subprocess, add its crate metadata to
+`_RUST_CRATES` in the same file for optional peak-RSS measurement.
+
 ## Workflow
 
 1. Start with `git status --short`.

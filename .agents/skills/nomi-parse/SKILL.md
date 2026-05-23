@@ -22,7 +22,8 @@ reduction target and should not require a final evaluator hook.
 - `prototype/parser/nomi/usage.py` — generate_ast() entry point
 - `prototype/parser/nomi/desugar/` — AST reduction passes
 - `docs/orientation/performance_notes.md` — parser performance history,
-  LALR migration notes, and known ambiguity traps
+  LALR migration notes, known ambiguity traps, and parser frontend benchmarking
+  tooling (`tools/perf/bench_parsers.py`, `scripts/profile_parsers.py`).
 
 ## Architecture
 ```

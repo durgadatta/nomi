@@ -26,6 +26,26 @@ is negligible for typical source files.
   After the LALR migration this count is expected to be zero; use wall-clock
   parse and pipeline timings instead.
 
+### Parser Frontend Benchmark
+
+- **Benchmark**: `tools/perf/bench_parsers.py` — compares all registered parser
+  frontends on parse time, full-pipeline time, and memory.  Generates a
+  self-contained HTML report with bar charts and detail tables.
+- **Convenience script**: `scripts/profile_parsers.py` — defaults to
+  `samples/demo.nomi`, opens browser.
+- **Output**: `reports/bench/bench_{stem}.html` and `bench_{stem}.json`
+  (gitignored).
+- **Frontend list**: the benchmark iterates `BENCH_FRONTENDS` in
+  `tools/perf/bench_parsers.py`.  **When you register a new parser frontend**
+  (new entry in `_FRONTENDS` in `prototype/parser/nomi/frontend.py`), also add
+  its name to `BENCH_FRONTENDS` so it appears in the benchmark.  If the new
+  frontend is a Rust subprocess, add its crate metadata to `_RUST_CRATES` for
+  optional RSS measurement (`--rss` flag).
+- **Metrics**: parse acceptance wall-clock time (with Lark cache clearing for
+  honest measurement), full pipeline parse+eval time (via `RuntimeSession`, only
+  for frontends with `lower_to_python_ast=True`), Python heap memory via
+  `tracemalloc`, and optional subprocess peak RSS via `/usr/bin/time -l`.
+
 ## Performance Guardrail TODO
 
 `NOMI-ARCH-017`: add an opt-in performance budget check that protects the
