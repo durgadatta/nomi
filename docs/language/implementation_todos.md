@@ -282,6 +282,8 @@ directories wholesale.
 ## Track 0D: Core Runtime Backend (Python-Independent Reference)
 
 Design: [`core_runtime_backend_design.md`](core_runtime_backend_design.md).
+Implementation notes:
+[`core_runtime_backend_implementation_notes.md`](core_runtime_backend_implementation_notes.md).
 The Core Runtime is the reference implementation that defines Nomi-owned
 abstractions (Value system, Frame environments, ControlFlow signals, fenced
 host interop) that future Rust/Wasm/LLVM backends implement in their host
