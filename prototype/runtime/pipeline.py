@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
@@ -49,7 +50,11 @@ def build_pipeline_spec(
         raise ValueError(f"Unsupported runtime profile: {profile!r}")
     get_parser_frontend(parser_frontend)
     mode_spec = get_mode_spec(mode)
-    resolved_backend = eval_backend if eval_backend is not None else mode_spec.eval_backend
+    resolved_backend = (
+        eval_backend
+        if eval_backend is not None
+        else os.environ.get("NOMI_EVAL_BACKEND", mode_spec.eval_backend)
+    )
     get_eval_backend(resolved_backend)
 
     return PipelineSpec(

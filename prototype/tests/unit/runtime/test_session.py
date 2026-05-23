@@ -102,3 +102,30 @@ def test_session_does_not_capture_value_when_display_is_disabled():
     assert result.ok
     assert not result.has_value
     assert result.value is None
+
+
+def test_session_can_use_core_runtime_backend_for_core_subset():
+    session = create_session(mode="nomi", eval_backend="core-runtime")
+
+    first = session.run(source="x = 2\n")
+    second = session.run(source="y = x\n")
+
+    assert first.ok
+    assert second.ok
+    assert second.pipeline.eval_backend == "core-runtime"
+    assert second.bindings["x"] == 2
+    assert second.bindings["y"] == 2
+
+
+def test_session_core_runtime_backend_is_isolated_between_sessions():
+    first_session = create_session(mode="nomi", eval_backend="core-runtime")
+    second_session = create_session(mode="nomi", eval_backend="core-runtime")
+
+    first_session.run(source="x = 2\n")
+    result = second_session.run(
+        source="y = x\n",
+        raise_on_error=False,
+    )
+
+    assert not result.ok
+    assert "x" not in second_session.bindings

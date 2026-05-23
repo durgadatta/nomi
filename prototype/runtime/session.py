@@ -18,6 +18,7 @@ from typing import Any
 
 from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
 from prototype.runtime.api import ExecutionResult
+from prototype.runtime.backends import get_eval_backend
 from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
 from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
@@ -36,6 +37,7 @@ class RuntimeCacheKey:
     mode: str
     profile: str
     parser_frontend: str
+    eval_backend: str
     parser: str
     lowering: str
     grammar_version: str = "builtin-features-v1"
@@ -47,6 +49,7 @@ class RuntimeSession:
     mode: str = "nomi"
     profile: str = "default"
     parser_frontend: str = DEFAULT_FRONTEND
+    eval_backend: str | None = None
     cache_size: int = 0
     pipeline: PipelineSpec = field(init=False)
     interpreter: Any = field(init=False)
@@ -58,8 +61,9 @@ class RuntimeSession:
             mode=self.mode,
             profile=self.profile,
             parser_frontend=self.parser_frontend,
+            eval_backend=self.eval_backend,
         )
-        self.backend = make_python_ast_backend_for_mode(self.pipeline.mode_spec)
+        self.backend = self._make_backend()
         self.reset()
 
     @property
@@ -69,6 +73,7 @@ class RuntimeSession:
     def reset(self, *, clear_cache: bool = False) -> None:
         interpreter_cls = self.pipeline.mode_spec.load_interpreter_class()
         self.interpreter = interpreter_cls()
+        self.backend = self._make_backend()
         if clear_cache:
             self._ast_cache.clear()
 
@@ -230,6 +235,7 @@ class RuntimeSession:
             parser_frontend=self.pipeline.parser_frontend,
             parser=self.pipeline.parser,
             lowering=self.pipeline.lowering,
+            eval_backend=self.pipeline.eval_backend,
         )
 
     def _get_cached_tree(self, cache_key: RuntimeCacheKey | None) -> Any | None:
@@ -278,6 +284,13 @@ class RuntimeSession:
             os.environ.get("NOMI_USE_CORE_IR") == "1"
             or self.pipeline.eval_backend != "python-ast"
         )
+
+    def _make_backend(self) -> Any:
+        if self.pipeline.eval_backend == "python-ast":
+            return make_python_ast_backend_for_mode(self.pipeline.mode_spec)
+        backend = get_eval_backend(self.pipeline.eval_backend)
+        fork = getattr(backend, "fork", None)
+        return fork() if callable(fork) else backend
 
     def _eval_core_ir(
         self, tree: ast.Module, *, display_last_expr: bool

@@ -33,6 +33,19 @@ def test_execute_can_return_exception_without_raising():
     assert result.timings["total"] >= 0
 
 
+def test_execute_can_use_core_runtime_backend_for_core_subset():
+    result = execute(
+        source="x = 1\ny = x\n",
+        mode="nomi",
+        eval_backend="core-runtime",
+    )
+
+    assert result.ok
+    assert result.pipeline.eval_backend == "core-runtime"
+    assert result.bindings["x"] == 1
+    assert result.bindings["y"] == 1
+
+
 def test_execute_rejects_unknown_profile_until_feature_profiles_exist():
     with pytest.raises(ValueError, match="Unsupported runtime profile"):
         execute(source="x = 1\n", profile="lab")

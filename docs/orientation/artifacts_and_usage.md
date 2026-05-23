@@ -76,21 +76,26 @@ The current default pipeline is:
 -> bindings / ExecutionResult
 ```
 
-With opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
+With opt-in Core IR path (`NOMI_USE_CORE_IR=1`) or an explicit eval backend
+(`NOMI_EVAL_BACKEND=core-runtime`, `execute(..., eval_backend="core-runtime")`,
+or `create_session(..., eval_backend="core-runtime")`):
 
 ```text
 .nomi source
 -> ... Python AST artifact
 -> lower_python_ast_to_core() -> Core IR (L1 nodes)
 -> verify_core(strict=True)
--> eval backend dispatch (python_ast or core_direct)
+-> eval backend dispatch (python_ast, core_direct, or core-runtime)
 -> bindings / ExecutionResult
 ```
 
-The eval backend registry is at `prototype/runtime/backends/`. Currently two
-backends: `python_ast` (wraps the existing interpreter behind Core IR) and
-`core_direct` (dispatches directly on CoreNode types, no Python AST roundtrip).
-Enable verification without changing the eval path with `NOMI_VERIFY_CORE=1`.
+The eval backend registry is at `prototype/runtime/backends/`. Current
+backends:
+`python_ast` (wraps the existing interpreter behind Core IR),
+`core_direct` (minimal direct CoreNode dispatch proof), and
+`core-runtime` (portable reference runtime with Nomi-owned values, frames, and
+explicit control-flow signals). Enable verification without changing the eval
+path with `NOMI_VERIFY_CORE=1`.
 
 Useful files:
 
@@ -104,7 +109,7 @@ Useful files:
     surface artifacts such as `BlockCall`.
 -   **Eval backends:** `prototype/runtime/backends/` — eval backend registry
     (`EvalBackendSpec`, `EvalBackendCapabilities`), Python AST backend adapter,
-    and Core IR direct evaluator.
+    Core IR direct evaluator, and portable Core Runtime reference backend.
 -   **Runtime API:** `prototype/runtime/api.py`, `modes.py`, `pipeline.py`, and
     `session.py` provide the public facade and mode metadata.
 -   **Execution:** Execution is handled by a layered interpreter located

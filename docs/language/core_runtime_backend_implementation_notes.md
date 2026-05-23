@@ -34,6 +34,11 @@ Core IR Module
   Surface -> Core lowering is authoritative for the full language.
 - `RuntimeSession` already has an opt-in Core IR execution path through
   `NOMI_USE_CORE_IR=1` or a non-`python-ast` `PipelineSpec.eval_backend`.
+- `core-runtime` is now registered as an unselectable prototype backend and can
+  be selected explicitly for the current Core subset through
+  `execute(..., eval_backend="core-runtime")`,
+  `create_session(..., eval_backend="core-runtime")`, or
+  `NOMI_EVAL_BACKEND=core-runtime`.
 
 ## Reusable Backend Boundary
 
@@ -192,7 +197,10 @@ The backend can graduate in these steps:
 - Do not add Rust/Wasm codegen until the Python reference backend has a small,
   clear value/environment/control-flow contract.
 
-## Immediate Next Commit
+## Next Implementation Slice
 
-Implement Slice A as standalone modules and tests. The modules should have no
-dependency on parser internals, Python AST, or the current interpreter classes.
+Broaden Core IR coverage for expressions that ordinary programs need before the
+backend can run sample files: binary operations, comparisons, unary operations,
+boolean operations, and assignment-like mutation. These should land as Core IR
+nodes or explicit lowering rules before `core-runtime` claims full-language
+support.

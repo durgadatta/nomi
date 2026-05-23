@@ -84,6 +84,7 @@ def execute(
     mode: str = "nomi",
     profile: str = "default",
     parser_frontend: str = DEFAULT_FRONTEND,
+    eval_backend: str | None = None,
     raise_on_error: bool = True,
     capture_output: bool = True,
     diagnostics: tuple[Diagnostic, ...] = (),
@@ -101,13 +102,30 @@ def execute(
         mode=mode,
         profile=profile,
         parser_frontend=parser_frontend,
+        eval_backend=eval_backend,
     )
-
-    runner = pipeline.mode_spec.load_runner()
     collector = event_collector or RuntimeEventCollector(
         diagnostics=list(diagnostics),
         events=list(events),
     )
+
+    if pipeline.eval_backend != "python-ast":
+        session = create_session(
+            mode=mode,
+            profile=profile,
+            parser_frontend=parser_frontend,
+            eval_backend=pipeline.eval_backend,
+        )
+        return session.run(
+            source=source,
+            filename=filename,
+            tree=tree,
+            raise_on_error=raise_on_error,
+            capture_output=capture_output,
+            event_collector=collector,
+        )
+
+    runner = pipeline.mode_spec.load_runner()
     started = perf_counter()
     stdout = io.StringIO()
     stderr = io.StringIO()
@@ -175,6 +193,7 @@ def inspect(
     mode: str = "nomi",
     profile: str = "default",
     parser_frontend: str = DEFAULT_FRONTEND,
+    eval_backend: str | None = None,
     stage: str = "python_ast",
 ) -> InspectionResult:
     """Inspect one read-only pipeline artifact for the selected mode."""
@@ -183,6 +202,7 @@ def inspect(
         mode=mode,
         profile=profile,
         parser_frontend=parser_frontend,
+        eval_backend=eval_backend,
     )
     started = perf_counter()
     if stage == "features":
@@ -403,6 +423,7 @@ def create_session(
     mode: str = "nomi",
     profile: str = "default",
     parser_frontend: str = DEFAULT_FRONTEND,
+    eval_backend: str | None = None,
     cache_size: int = 0,
 ):
     """Create a persistent runtime session for cells, notebooks, and REPLs."""
@@ -414,5 +435,6 @@ def create_session(
         mode=mode,
         profile=profile,
         parser_frontend=parser_frontend,
+        eval_backend=eval_backend,
         cache_size=cache_size,
     )

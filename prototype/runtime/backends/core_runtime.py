@@ -80,14 +80,19 @@ class CoreRuntimeEvaluator:
     spec = CORE_RUNTIME_SPEC
 
     def __init__(self, host_calls: dict[str, Any] | None = None) -> None:
+        self._raw_host_calls = dict(host_calls or {})
         self._global_frame = Frame()
         self._current_frame = self._global_frame
         self._host_calls = {
             name: box_value(func)
-            for name, func in (host_calls or {}).items()
+            for name, func in self._raw_host_calls.items()
         }
         for name, value in self._host_calls.items():
             self._global_frame.bind(name, value)
+
+    def fork(self) -> CoreRuntimeEvaluator:
+        """Return a fresh evaluator with the same host-call configuration."""
+        return CoreRuntimeEvaluator(host_calls=self._raw_host_calls)
 
     def evaluate(
         self, core_ir: Module, *, display_last_expr: bool = False

@@ -22,14 +22,15 @@ source
 -> Python-hosted interpreter
 ```
 
-Opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
+Opt-in Core IR path (`NOMI_USE_CORE_IR=1`) or explicit eval backend
+(`NOMI_EVAL_BACKEND=core-runtime`, `execute(..., eval_backend="core-runtime")`):
 
 ```text
 source
 -> ... Python AST artifact
 -> lower_python_ast_to_core() -> Core IR (L1 nodes, 17 types)
 -> verify_core(strict=True)
--> eval backend dispatch (python_ast or core_direct)
+-> eval backend dispatch (python_ast, core_direct, or core-runtime)
 ```
 
 Target path:

@@ -17,6 +17,7 @@ def test_session_cache_uses_typed_runtime_cache_key():
     assert cache_key.source_identity is None
     assert cache_key.mode == "nomi"
     assert cache_key.profile == "default"
+    assert cache_key.eval_backend == session.pipeline.eval_backend
     assert cache_key.parser == session.pipeline.parser
     assert cache_key.lowering == session.pipeline.lowering
 
