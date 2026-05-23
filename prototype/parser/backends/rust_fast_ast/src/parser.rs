@@ -166,11 +166,26 @@ impl Parser {
         self.advance();
         let head = self.collect_head_until_colon();
         let body = self.parse_suite_from_current_colon()?;
+        let mut clauses = Vec::new();
+        let saved = self.cursor;
+        self.skip_separators();
+        if self.is_keyword("else") {
+            self.advance();
+            let clause_head = self.collect_head_until_colon();
+            let clause_body = self.parse_suite_from_current_colon()?;
+            clauses.push(Clause {
+                kind: "Else".to_string(),
+                head: clause_head,
+                body: clause_body,
+            });
+        } else {
+            self.cursor = saved;
+        }
         Ok(Stmt::Suite {
             kind: kind.to_string(),
             head,
             body,
-            clauses: Vec::new(),
+            clauses,
         })
     }
 
@@ -606,6 +621,13 @@ impl Parser {
                 let value = self.parse_expr(13)?;
                 Ok(Expr::UnaryOp {
                     op: UnaryOp::USub,
+                    value: Box::new(value),
+                })
+            }
+            TokenKind::Tilde => {
+                let value = self.parse_expr(13)?;
+                Ok(Expr::UnaryOp {
+                    op: UnaryOp::Invert,
                     value: Box::new(value),
                 })
             }

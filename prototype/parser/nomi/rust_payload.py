@@ -366,10 +366,15 @@ def _for_suite_from_rust_payload(payload: dict[str, Any]) -> ast.For:
     target_text, separator, iter_text = payload["head"].partition(" in ")
     if not separator:
         raise ValueError(f"unsupported Rust for head: {payload['head']!r}")
+    orelse = []
+    for clause in payload.get("clauses", []):
+        if clause.get("kind") == "Else":
+            orelse = [_stmt_from_rust_payload(stmt) for stmt in clause["body"]]
     return ast.For(
         target=_store_ctx(_expr_from_python_source(target_text)),
         iter=_expr_from_python_source(iter_text),
         body=[_stmt_from_rust_payload(stmt) for stmt in payload["body"]],
+        orelse=orelse,
     )
 
 
@@ -654,7 +659,7 @@ def _raw_expr_from_rust_payload(raw: str) -> ast.expr:
         return _safe_navigation_from_rust_text(raw)
     if "|>" in raw:
         return _pipeline_from_rust_text(raw)
-    if " > > > " in raw:
+    if " > > > " in raw or " >>> " in raw:
         return _compose_from_rust_text(raw)
     if "=>" in raw:
         return _arrow_function_from_rust_text(raw)
@@ -670,26 +675,73 @@ def _raw_expr_from_rust_payload(raw: str) -> ast.expr:
 
 
 def _nullish_from_rust_text(raw: str) -> ast.IfExp:
-    left_text, right_text = _split_top_level_token(raw, "??")
-    left = _raw_or_python_expr(left_text)
-    return ast.IfExp(
-        test=ast.Compare(
-            left=left,
-            ops=[ast.IsNot()],
-            comparators=[ast.Constant(value=None)],
-        ),
-        body=_raw_or_python_expr(left_text),
-        orelse=_raw_or_python_expr(right_text),
-    )
+    parts = _split_top_level_token(raw, "??")
+    result = _raw_or_python_expr(parts[-1])
+    for part in reversed(parts[:-1]):
+        left = _raw_or_python_expr(part)
+        result = ast.IfExp(
+            test=ast.Compare(
+                left=left,
+                ops=[ast.IsNot()],
+                comparators=[ast.Constant(value=None)],
+            ),
+            body=left,
+            orelse=result,
+        )
+    return result
 
 
 def _try_expr_from_rust_text(raw: str) -> ast.Call:
-    body_text, separator, handler_text = raw.removeprefix("try ").partition(" except ")
+    text = raw.removeprefix("try ")
+    body_text, separator, rest = text.partition(" except ")
     if not separator:
         raise ValueError(f"unsupported Rust try expression: {raw!r}")
-    error_text, separator, fallback_text = handler_text.partition(" : ")
-    if not separator:
-        raise ValueError(f"unsupported Rust try expression handler: {raw!r}")
+    handlers = []
+    current = rest
+    while current.strip():
+        error_text, sep, after = current.partition(" : ")
+        if not sep:
+            raise ValueError(f"unsupported Rust try expression handler: {raw!r}")
+        fallback_text = ""
+        depth = 0
+        quote = None
+        escaped = False
+        next_start = len(after)
+        for i, ch in enumerate(after):
+            if quote is not None:
+                if escaped:
+                    escaped = False
+                elif ch == "\\":
+                    escaped = True
+                elif ch == quote:
+                    quote = None
+                fallback_text += ch
+                continue
+            if ch in "'\"":
+                quote = ch
+                fallback_text += ch
+                continue
+            if ch in "([{":
+                depth += 1
+            elif ch in ")]}":
+                depth -= 1
+            elif ch == " " and after[i:i + len(" except ")] == " except " and depth == 0:
+                fallback_text = fallback_text.rstrip()
+                next_start = i + len(" except ")
+                break
+            fallback_text += ch
+        handlers.append((error_text.strip(), fallback_text.strip()))
+        current = after[next_start:]
+        if not current.strip():
+            break
+    ast_handlers = [
+        ast.ExceptHandler(
+            type=_expr_from_python_source(err),
+            name=None,
+            body=[ast.Return(value=_raw_or_python_expr(fb))],
+        )
+        for err, fb in handlers
+    ]
     return ast.Call(
         func=ast.FunctionDef(
             name=None,
@@ -697,13 +749,7 @@ def _try_expr_from_rust_text(raw: str) -> ast.Call:
             body=[
                 ast.Try(
                     body=[ast.Return(value=_raw_or_python_expr(body_text))],
-                    handlers=[
-                        ast.ExceptHandler(
-                            type=_expr_from_python_source(error_text.strip()),
-                            name=None,
-                            body=[ast.Return(value=_raw_or_python_expr(fallback_text))],
-                        )
-                    ],
+                    handlers=ast_handlers,
                     orelse=[],
                     finalbody=[],
                 )
@@ -779,7 +825,7 @@ def _pipeline_from_rust_text(raw: str) -> ast.expr:
 
 
 def _compose_from_rust_text(raw: str) -> ast.FunctionDef:
-    left_text, right_text = _split_top_level_token(raw, "> > >")
+    left_text, right_text = _split_top_level_token(raw, " >>> ") if " >>> " in raw else _split_top_level_token(raw, "> > >")
     return ast.FunctionDef(
         name=None,
         args=ast.arguments(args=[ast.arg(arg="__x")]),
@@ -1360,6 +1406,16 @@ def _operator_from_rust_payload(name: str) -> ast.operator:
             return ast.MatMult()
         case "Pow":
             return ast.Pow()
+        case "BitAnd":
+            return ast.BitAnd()
+        case "BitOr":
+            return ast.BitOr()
+        case "BitXor":
+            return ast.BitXor()
+        case "LShift":
+            return ast.LShift()
+        case "RShift":
+            return ast.RShift()
         case other:
             raise ValueError(f"unsupported Rust AST operator: {other!r}")
 
@@ -1414,6 +1470,8 @@ def _unary_operator_from_rust_payload(name: str) -> ast.unaryop:
             return ast.USub()
         case "Not":
             return ast.Not()
+        case "Invert":
+            return ast.Invert()
         case other:
             raise ValueError(f"unsupported Rust AST unary operator: {other!r}")
 

@@ -100,9 +100,16 @@ def _stable_eval_result(
     return _stable_result_text(bindings, stdout_value)
 
 
+_RE_OBJECT_ADDR = re.compile(r'\bat\s+0x[0-9a-fA-F]+\b')
+
+
+def _normalize_stdout(lines):
+    return [_RE_OBJECT_ADDR.sub('at 0x0', line) for line in lines]
+
+
 def _stable_result_text(bindings, stdout_value) -> str:
     stable_bindings = stabilize_locals(bindings)
-    stable_bindings['stdout'] = stdout_value
+    stable_bindings['stdout'] = _normalize_stdout(stdout_value)
     return json.dumps(stable_bindings, indent=2)
 
 

@@ -115,6 +115,11 @@ pub(crate) enum BinOp {
     Mod,
     MatMult,
     Pow,
+    BitAnd,
+    BitOr,
+    BitXor,
+    LShift,
+    RShift,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -138,6 +143,7 @@ pub(crate) enum UnaryOp {
     UAdd,
     USub,
     Not,
+    Invert,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -395,6 +401,11 @@ fn op_name(op: BinOp) -> &'static str {
         BinOp::Mod => "Mod",
         BinOp::MatMult => "MatMult",
         BinOp::Pow => "Pow",
+        BinOp::BitAnd => "BitAnd",
+        BinOp::BitOr => "BitOr",
+        BinOp::BitXor => "BitXor",
+        BinOp::LShift => "LShift",
+        BinOp::RShift => "RShift",
     }
 }
 
@@ -421,6 +432,7 @@ fn unary_op_name(op: UnaryOp) -> &'static str {
         UnaryOp::UAdd => "UAdd",
         UnaryOp::USub => "USub",
         UnaryOp::Not => "Not",
+        UnaryOp::Invert => "Invert",
     }
 }
 

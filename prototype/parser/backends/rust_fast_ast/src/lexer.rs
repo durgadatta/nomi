@@ -186,9 +186,30 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
                     offset = next;
                 }
             }
+            '~' => {
+                tokens.push(Token {
+                    kind: TokenKind::Tilde,
+                    offset,
+                });
+                offset += ch.len_utf8();
+            }
             '%' => {
                 tokens.push(Token {
                     kind: TokenKind::Percent,
+                    offset,
+                });
+                offset += ch.len_utf8();
+            }
+            '&' => {
+                tokens.push(Token {
+                    kind: TokenKind::Amper,
+                    offset,
+                });
+                offset += ch.len_utf8();
+            }
+            '^' => {
+                tokens.push(Token {
+                    kind: TokenKind::Circumflex,
                     offset,
                 });
                 offset += ch.len_utf8();
@@ -236,7 +257,13 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
             }
             '<' => {
                 let next = offset + ch.len_utf8();
-                if source[next..].starts_with('=') {
+                if source[next..].starts_with('<') {
+                    tokens.push(Token {
+                        kind: TokenKind::LeftShift,
+                        offset,
+                    });
+                    offset = next + 1;
+                } else if source[next..].starts_with('=') {
                     tokens.push(Token {
                         kind: TokenKind::LessEqual,
                         offset,
@@ -252,7 +279,22 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
             }
             '>' => {
                 let next = offset + ch.len_utf8();
-                if source[next..].starts_with('=') {
+                if source[next..].starts_with('>') {
+                    let next2 = next + 1;
+                    if source[next2..].starts_with('>') {
+                        tokens.push(Token {
+                            kind: TokenKind::CompFwd,
+                            offset,
+                        });
+                        offset = next2 + 1;
+                    } else {
+                        tokens.push(Token {
+                            kind: TokenKind::RightShift,
+                            offset,
+                        });
+                        offset = next + 1;
+                    }
+                } else if source[next..].starts_with('=') {
                     tokens.push(Token {
                         kind: TokenKind::GreaterEqual,
                         offset,
