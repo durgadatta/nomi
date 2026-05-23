@@ -15,6 +15,7 @@ from prototype.runtime.backends.control_flow import (
     ContinueSignal,
     ControlFlow,
     ReturnSignal,
+    YieldSignal,
 )
 from prototype.runtime.backends.environment import Frame
 from prototype.runtime.backends.values import (
@@ -60,6 +61,7 @@ from prototype.syntax.core import (
     Sequence,
     Spread,
     UnaryOp,
+    Yield,
     verify_core,
 )
 
@@ -206,6 +208,12 @@ class CoreRuntimeEvaluator:
         if isinstance(value, ControlFlow):
             return value
         return ReturnSignal(value)
+
+    def _eval_Yield(self, node: Yield) -> ControlFlow:
+        value = self.eval(node.value)
+        if isinstance(value, ControlFlow):
+            return value
+        return YieldSignal(value)
 
     def _eval_Branch(self, node: Branch) -> Value | ControlFlow:
         test = self.eval(node.test)

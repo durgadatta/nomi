@@ -63,6 +63,11 @@ class Return(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class Yield(CoreNode):
+    value: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class Branch(CoreNode):
     test: CoreNode | None = None
     then_body: Module | None = None
@@ -195,6 +200,7 @@ CORE_NODE_TYPES = (
     Function,
     Call,
     Return,
+    Yield,
     Branch,
     NoOp,
     Break,
@@ -305,6 +311,11 @@ def dump_core(node: CoreNode) -> str:
             return lines
         if isinstance(value, Return):
             lines = [f"{prefix}Return"]
+            if value.value is not None:
+                lines.extend(_dump(value.value, indent + 1))
+            return lines
+        if isinstance(value, Yield):
+            lines = [f"{prefix}Yield"]
             if value.value is not None:
                 lines.extend(_dump(value.value, indent + 1))
             return lines
@@ -612,6 +623,11 @@ def _lower_return(node: Return) -> ast.stmt:
     return ast.Return(value=_core_expr(node.value))
 
 
+@_expr_handler(Yield)
+def _lower_yield(node: Yield) -> ast.expr:
+    return ast.Yield(value=_core_expr(node.value))
+
+
 @_stmt_handler(Branch)
 def _lower_branch(node: Branch) -> ast.stmt:
     return ast.If(
@@ -684,7 +700,14 @@ def _lower_handle(node: Handle) -> ast.stmt:
     for h in node.handlers:
         exc_type: ast.expr | None = None
         exc_name: str | None = None
-        if isinstance(h, Bind):
+        body = [ast.Pass()]
+        if isinstance(h, PatternTest):
+            if h.pattern is not None and not (
+                isinstance(h.pattern, Load) and h.pattern.name == "_"
+            ):
+                exc_type = _core_expr(h.pattern)
+            body = _core_body(h.body)
+        elif isinstance(h, Bind):
             exc_name = h.name
             exc_type = _core_expr(h.value)
         else:
@@ -693,9 +716,7 @@ def _lower_handle(node: Handle) -> ast.stmt:
             ast.ExceptHandler(
                 type=exc_type,
                 name=exc_name,
-                body=[ast.Pass()] if not isinstance(h, PatternTest) else _core_body(
-                    Module(body=tuple())
-                ),
+                body=body,
             )
         )
     return ast.Try(
@@ -749,15 +770,8 @@ def _lower_call(node: Call) -> ast.expr:
 
 @_expr_handler(Function)
 def _lower_function(node: Function) -> ast.expr:
-    if node.body and node.body.body:
-        inner = node.body.body[0]
-        if isinstance(inner, Return):
-            body_expr = _core_expr(inner.value)
-        else:
-            body_expr = _core_expr(inner) if isinstance(inner, CoreNode) else ast.Constant(value=None)
-    else:
-        body_expr = ast.Constant(value=None)
-    return ast.Lambda(
+    return ast.FunctionDef(
+        name=None,
         args=ast.arguments(
             args=[ast.arg(arg=p) for p in node.params],
             posonlyargs=[],
@@ -765,7 +779,7 @@ def _lower_function(node: Function) -> ast.expr:
             kw_defaults=[],
             defaults=[],
         ),
-        body=body_expr,
+        body=_core_body(node.body),
     )
 
 
@@ -947,6 +961,13 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
                 value=_lower_expr(node.value),
             )
         return _unsupported(node)
+    if isinstance(node, ast.AnnAssign):
+        if isinstance(node.target, ast.Name):
+            return Bind(
+                name=str(node.target.id),
+                value=_lower_expr(node.value),
+            )
+        return _unsupported(node)
     if isinstance(node, ast.Expr):
         return _lower_expr(node.value)
     if isinstance(node, ast.Return):
@@ -1034,6 +1055,8 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
             func=_lower_expr(node.func),
             args=tuple(_lower_expr(arg) for arg in node.args),
         )
+    if isinstance(node, ast.Yield):
+        return Yield(value=_lower_expr(node.value))
     if isinstance(node, ast.UnaryOp):
         return UnaryOp(
             op=_AST_TO_UNARY_OP.get(type(node.op), type(node.op).__name__),

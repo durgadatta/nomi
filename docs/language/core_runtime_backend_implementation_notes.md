@@ -200,7 +200,8 @@ The backend can graduate in these steps:
 
 ## Next Implementation Slice
 
-Broaden Core IR coverage for the remaining forms that now block
-`samples/demo.nomi`: annotated assignment / constrained binding and `Yield`.
-These should land as Core IR nodes or explicit lowering rules before
-`core-runtime` claims full-language support.
+Now that `samples/demo.nomi` passes strict Core IR verification and
+`core-to-python` lowering, broaden executable `core-runtime` parity. The main
+remaining gaps are host builtin defaults, class/data constructors, exception
+matching, generator/block resume semantics, and preserving constraint metadata
+instead of projecting annotated bindings to plain `Bind`.
