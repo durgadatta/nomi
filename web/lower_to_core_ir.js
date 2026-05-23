@@ -4,9 +4,14 @@
 //
 // Takes the JSON output of the Rust fast-ast parser and produces
 // the { schema, version, root } envelope expected by core_runtime.js.
+//
+// Wrapped in an IIFE so const declarations don't collide with core_runtime.js
+// when both are loaded via importScripts in a classic web worker.
 
-var CORE_IR_JSON_SCHEMA = typeof CORE_IR_JSON_SCHEMA !== "undefined" ? CORE_IR_JSON_SCHEMA : "nomi.core-ir";
-var CORE_IR_JSON_VERSION = typeof CORE_IR_JSON_VERSION !== "undefined" ? CORE_IR_JSON_VERSION : 1;
+(function() {
+
+const CORE_IR_JSON_SCHEMA = "nomi.core-ir";
+const CORE_IR_JSON_VERSION = 1;
 
 // ─── Core IR factory functions ───────────────────────────────────────────────
 
@@ -1058,3 +1063,5 @@ if (typeof module !== "undefined" && module.exports) {
 if (typeof self !== "undefined") {
   self.NomiCoreLowerer = { lowerRustAstToCoreIr };
 }
+
+})();
