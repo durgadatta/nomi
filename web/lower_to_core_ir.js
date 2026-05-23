@@ -5,8 +5,8 @@
 // Takes the JSON output of the Rust fast-ast parser and produces
 // the { schema, version, root } envelope expected by core_runtime.js.
 
-const CORE_IR_JSON_SCHEMA = "nomi.core-ir";
-const CORE_IR_JSON_VERSION = 1;
+var CORE_IR_JSON_SCHEMA = typeof CORE_IR_JSON_SCHEMA !== "undefined" ? CORE_IR_JSON_SCHEMA : "nomi.core-ir";
+var CORE_IR_JSON_VERSION = typeof CORE_IR_JSON_VERSION !== "undefined" ? CORE_IR_JSON_VERSION : 1;
 
 // ─── Core IR factory functions ───────────────────────────────────────────────
 
