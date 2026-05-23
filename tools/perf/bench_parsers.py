@@ -51,12 +51,12 @@ BENCH_FRONTENDS = [
 # Crate metadata for Rust subprocess RSS measurement.
 _RUST_CRATES = {
     "rust-fast-ast": {
-        "crate_dir": _REPO / "parser_frontends" / "rust_fast_ast",
+        "crate_dir": _REPO / "parsers" / "rust_fast_ast",
         "command": "ast-json",
         "binary_name": "nomi-rust-fast-ast",
     },
     "pest-readable-cst": {
-        "crate_dir": _REPO / "parser_frontends" / "pest_readable_cst",
+        "crate_dir": _REPO / "parsers" / "pest_readable_cst",
         "command": "cst-json",
         "binary_name": "nomi-pest-readable-cst",
     },

@@ -156,7 +156,7 @@ grammar contract before Tree-sitter can replace Lark for execution parsing.
 
 Current spike:
 
-- `parser_frontends/tree_sitter_nomi/` contains a generated Tree-sitter
+- `parsers/tree_sitter_nomi/` contains a generated Tree-sitter
   parser.
 - The first acceptance fixture is `samples/demo.nomi`.
 - The parser frontend acceptance matrix now also runs sample files and focused
@@ -182,7 +182,7 @@ The rule for any Rust parser spike, including PEG: do not emit Python AST as
 the primary artifact. Emit Nomi CST, Surface IR, or a stable serialized form,
 then let the Python AST backend lower from that Nomi-owned representation.
 
-`parser_frontends/rust_fast_ast/` is the first direct-AST bridge slice. It
+`parsers/rust_fast_ast/` is the first direct-AST bridge slice. It
 uses a Rust Pratt parser to emit a small JSON AST payload, and
 `prototype/parser/nomi/frontend.py` adapts that payload to Python `ast.Module`.
 Its tests compare exact AST dump text against Lark for simple assignments,
@@ -233,10 +233,10 @@ Python AST is allowed after Surface/Core, never before them in new frontend work
 
 1. Define a serialized CST/Surface IR debug format that both Lark and
    Tree-sitter/Rust spikes can emit.
-2. Grow `parser_frontends/rust_fast_ast/` from the first AST slice into
+2. Grow `parsers/rust_fast_ast/` from the first AST slice into
    suites, blocks, calls, literals, comparisons, and Nomi reductions until it
    can join the full Python-AST frontend matrix.
-3. Grow `parser_frontends/tree_sitter_nomi/` from the demo-parse grammar
+3. Grow `parsers/tree_sitter_nomi/` from the demo-parse grammar
    into structural rules plus an external scanner contract, but keep it
    non-selectable until it accepts the current grammar and lowers correctly.
 4. Map the current parser samples through Lark and non-Lark frontends into the
@@ -263,7 +263,7 @@ Current implementation checkpoint:
   `selectable_for_execution` until it passes the shared all-fixture AST
   equivalence and runtime behavior tests, including the broader guided-tour
   samples.
-- `parser_frontends/rust_fast_ast/README.md` is the detailed implementation
+- `parsers/rust_fast_ast/README.md` is the detailed implementation
   handoff for finishing the Rust parser: current coverage, missing syntax,
   promotion gates, parity workflow, and performance cleanup.
 

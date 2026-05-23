@@ -9,12 +9,12 @@ Pair this with `nomi-parse` for language syntax decisions and with
 
 ## Current Rust Spike
 
-- `parser_frontends/rust_fast_ast/README.md` — status, promotion gates, and
+- `parsers/rust_fast_ast/README.md` — status, promotion gates, and
   the "Observed Improvement Notes" pickup list. Read/update that section when
   you notice follow-up work.
 - `rust-toolchain.toml` — project Rust toolchain declaration. Keep required
   components such as `rustfmt` explicit here.
-- `parser_frontends/rust_fast_ast/src/main.rs` — CLI glue only.
+- `parsers/rust_fast_ast/src/main.rs` — CLI glue only.
 - `src/error.rs` — parse diagnostics.
 - `src/token.rs` — token model and display helpers.
 - `src/lexer.rs` — indentation-aware lexer.
@@ -79,7 +79,7 @@ benchmark.  If it is a Rust subprocess, add its crate metadata to
 
 1. Start with `git status --short`.
 2. Run the focused Rust crate check:
-   `cargo test --manifest-path parser_frontends/rust_fast_ast/Cargo.toml`.
+   `cargo test --manifest-path parsers/rust_fast_ast/Cargo.toml`.
 3. Run parser frontend tests:
    `pytest prototype/tests/unit/parser/test_rust_fast_ast_frontend.py prototype/tests/unit/parser/test_rust_fast_ast_lowering_parity.py prototype/tests/unit/parser/test_parser_frontend_acceptance.py prototype/tests/unit/parser/test_parser_frontend.py`.
 4. When changing suite/block lowering, also run:
