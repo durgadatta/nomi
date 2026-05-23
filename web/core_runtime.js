@@ -718,6 +718,7 @@ class CoreRuntime {
     return {
       abs: (value) => Math.abs(value),
       bool: native("bool", (value) => truthy(value), true),
+      Exception: native("Exception", (msg) => ({ kind: "error", errorKind: "Exception", message: String(msg) }), true),
       filter: native("filter", (func, sequence) => {
         const kept = [];
         for (const item of this.iterValues(sequence)) {
@@ -799,8 +800,16 @@ class CoreRuntime {
     if (op === ">=") return left >= right;
     if (op === "is") return left === right;
     if (op === "is not") return left !== right;
-    if (op === "in") return right.includes(left);
-    if (op === "not in") return !right.includes(left);
+    if (op === "in") {
+      if (Array.isArray(right)) return right.includes(left);
+      if (right && typeof right === "object") return left in right;
+      return false;
+    }
+    if (op === "not in") {
+      if (Array.isArray(right)) return !right.includes(left);
+      if (right && typeof right === "object") return !(left in right);
+      return true;
+    }
     throw new Error(`Unsupported compare op ${op}`);
   }
 }

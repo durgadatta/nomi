@@ -621,6 +621,11 @@ class CoreRuntimeEvaluator:
         return {
             "abs": NativeValue("abs", lambda value: abs(unbox_value(value)), True),
             "bool": NativeValue("bool", lambda value: is_truthy(value), True),
+            "Exception": NativeValue(
+                "Exception",
+                lambda msg: ErrorValue(str(unbox_value(msg)), kind="Exception"),
+                True,
+            ),
             "filter": NativeValue("filter", self._host_filter, True),
             "float": NativeValue(
                 "float",
