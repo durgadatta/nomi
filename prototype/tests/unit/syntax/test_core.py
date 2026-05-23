@@ -82,8 +82,8 @@ def test_lower_python_ast_to_core_supports_tiny_inspection_subset():
 
 
 def test_lower_python_ast_to_core_marks_unsupported_shapes_as_diagnostics():
-    python_tree = ast.parse("x = 1 + 2\n")
+    python_tree = ast.parse("x = [n for n in xs]\n")
 
-    assert "Diagnostic('unsupported Python AST: BinOp')" in dump_core(
+    assert "Diagnostic('unsupported Python AST: ListComp')" in dump_core(
         lower_python_ast_to_core(python_tree)
     )
