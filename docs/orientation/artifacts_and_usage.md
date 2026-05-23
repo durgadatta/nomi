@@ -196,7 +196,7 @@ Going forward, implementation work should make those layers explicit:
 1. record feature layer metadata in `SyntaxFeature`;
 2. preserve source spans in surface artifacts;
 3. ~~define passive Core IR nodes and a verifier before changing eval~~ done —
-   `prototype/syntax/core.py` (17 nodes, `verify_core()`, `core_to_python_ast()`,
+   `prototype/syntax/core.py` (registered CoreNode dataclasses, `verify_core()`, `core_to_python_ast()`,
    `lower_python_ast_to_core()`);
 4. ~~expose inspection stages through `prototype.runtime.inspect()`~~ done —
    `core`, `core-verify`, `core-to-python`, `backend-lowered`, `eval-backends`,

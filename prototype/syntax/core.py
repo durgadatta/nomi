@@ -70,6 +70,32 @@ class Branch(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class UnaryOp(CoreNode):
+    op: str = ""
+    operand: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class BinaryOp(CoreNode):
+    left: CoreNode | None = None
+    op: str = ""
+    right: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class BooleanOp(CoreNode):
+    op: str = ""
+    values: tuple[CoreNode, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class CompareOp(CoreNode):
+    left: CoreNode | None = None
+    ops: tuple[str, ...] = ()
+    comparators: tuple[CoreNode, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class Diagnostic(CoreNode):
     message: str = ""
 
@@ -132,6 +158,10 @@ CORE_NODE_TYPES = (
     Call,
     Return,
     Branch,
+    UnaryOp,
+    BinaryOp,
+    BooleanOp,
+    CompareOp,
     Diagnostic,
     Loop,
     Match,
@@ -238,6 +268,29 @@ def dump_core(node: CoreNode) -> str:
             for child in (value.test, value.then_body, value.else_body):
                 if child is not None:
                     lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, UnaryOp):
+            lines = [f"{prefix}UnaryOp({value.op!r})"]
+            if value.operand is not None:
+                lines.extend(_dump(value.operand, indent + 1))
+            return lines
+        if isinstance(value, BinaryOp):
+            lines = [f"{prefix}BinaryOp({value.op!r})"]
+            for child in (value.left, value.right):
+                if child is not None:
+                    lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, BooleanOp):
+            lines = [f"{prefix}BooleanOp({value.op!r})"]
+            for child in value.values:
+                lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, CompareOp):
+            lines = [f"{prefix}CompareOp({value.ops!r})"]
+            if value.left is not None:
+                lines.extend(_dump(value.left, indent + 1))
+            for child in value.comparators:
+                lines.extend(_dump(child, indent + 1))
             return lines
         if isinstance(value, Diagnostic):
             return [f"{prefix}Diagnostic({value.message!r})"]
@@ -356,6 +409,51 @@ def _core_body(module: Module | None) -> list[ast.stmt]:
 
 _STMT_DISPATCH: dict[type, object] = {}
 _EXPR_DISPATCH: dict[type, object] = {}
+
+_BIN_OP_TO_AST = {
+    "+": ast.Add,
+    "-": ast.Sub,
+    "*": ast.Mult,
+    "/": ast.Div,
+    "//": ast.FloorDiv,
+    "%": ast.Mod,
+    "**": ast.Pow,
+    "@": ast.MatMult,
+    "<<": ast.LShift,
+    ">>": ast.RShift,
+    "|": ast.BitOr,
+    "^": ast.BitXor,
+    "&": ast.BitAnd,
+}
+_AST_TO_BIN_OP = {cls: token for token, cls in _BIN_OP_TO_AST.items()}
+
+_UNARY_OP_TO_AST = {
+    "+": ast.UAdd,
+    "-": ast.USub,
+    "~": ast.Invert,
+    "not": ast.Not,
+}
+_AST_TO_UNARY_OP = {cls: token for token, cls in _UNARY_OP_TO_AST.items()}
+
+_BOOL_OP_TO_AST = {
+    "and": ast.And,
+    "or": ast.Or,
+}
+_AST_TO_BOOL_OP = {cls: token for token, cls in _BOOL_OP_TO_AST.items()}
+
+_CMP_OP_TO_AST = {
+    "==": ast.Eq,
+    "!=": ast.NotEq,
+    "<": ast.Lt,
+    "<=": ast.LtE,
+    ">": ast.Gt,
+    ">=": ast.GtE,
+    "is": ast.Is,
+    "is not": ast.IsNot,
+    "in": ast.In,
+    "not in": ast.NotIn,
+}
+_AST_TO_CMP_OP = {cls: token for token, cls in _CMP_OP_TO_AST.items()}
 
 
 def _stmt_handler(*types_: type):
@@ -557,6 +655,72 @@ def _lower_function(node: Function) -> ast.expr:
     )
 
 
+@_expr_handler(UnaryOp)
+def _lower_unary_op(node: UnaryOp) -> ast.expr:
+    try:
+        op_type = _UNARY_OP_TO_AST[node.op]
+    except KeyError as exc:
+        raise CoreVerificationError(f"Unknown unary op {node.op!r}") from exc
+    return ast.UnaryOp(
+        op=op_type(),
+        operand=(
+            _core_expr(node.operand)
+            if node.operand is not None
+            else ast.Constant(value=None)
+        ),
+    )
+
+
+@_expr_handler(BinaryOp)
+def _lower_binary_op(node: BinaryOp) -> ast.expr:
+    try:
+        op_type = _BIN_OP_TO_AST[node.op]
+    except KeyError as exc:
+        raise CoreVerificationError(f"Unknown binary op {node.op!r}") from exc
+    return ast.BinOp(
+        left=(
+            _core_expr(node.left)
+            if node.left is not None
+            else ast.Constant(value=None)
+        ),
+        op=op_type(),
+        right=(
+            _core_expr(node.right)
+            if node.right is not None
+            else ast.Constant(value=None)
+        ),
+    )
+
+
+@_expr_handler(BooleanOp)
+def _lower_boolean_op(node: BooleanOp) -> ast.expr:
+    try:
+        op_type = _BOOL_OP_TO_AST[node.op]
+    except KeyError as exc:
+        raise CoreVerificationError(f"Unknown boolean op {node.op!r}") from exc
+    return ast.BoolOp(
+        op=op_type(),
+        values=_core_exprs(node.values),
+    )
+
+
+@_expr_handler(CompareOp)
+def _lower_compare_op(node: CompareOp) -> ast.expr:
+    try:
+        ops = [_CMP_OP_TO_AST[op]() for op in node.ops]
+    except KeyError as exc:
+        raise CoreVerificationError(f"Unknown compare op {exc.args[0]!r}") from exc
+    return ast.Compare(
+        left=(
+            _core_expr(node.left)
+            if node.left is not None
+            else ast.Constant(value=None)
+        ),
+        ops=ops,
+        comparators=_core_exprs(node.comparators),
+    )
+
+
 @_expr_handler(GetField)
 def _lower_get_field(node: GetField) -> ast.expr:
     return ast.Attribute(
@@ -691,6 +855,31 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
         return Call(
             func=_lower_expr(node.func),
             args=tuple(_lower_expr(arg) for arg in node.args),
+        )
+    if isinstance(node, ast.UnaryOp):
+        return UnaryOp(
+            op=_AST_TO_UNARY_OP.get(type(node.op), type(node.op).__name__),
+            operand=_lower_expr(node.operand),
+        )
+    if isinstance(node, ast.BinOp):
+        return BinaryOp(
+            left=_lower_expr(node.left),
+            op=_AST_TO_BIN_OP.get(type(node.op), type(node.op).__name__),
+            right=_lower_expr(node.right),
+        )
+    if isinstance(node, ast.BoolOp):
+        return BooleanOp(
+            op=_AST_TO_BOOL_OP.get(type(node.op), type(node.op).__name__),
+            values=tuple(_lower_expr(value) for value in node.values),
+        )
+    if isinstance(node, ast.Compare):
+        return CompareOp(
+            left=_lower_expr(node.left),
+            ops=tuple(
+                _AST_TO_CMP_OP.get(type(op), type(op).__name__)
+                for op in node.ops
+            ),
+            comparators=tuple(_lower_expr(c) for c in node.comparators),
         )
     if isinstance(node, ast.FunctionDef):
         return Function(

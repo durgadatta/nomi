@@ -37,7 +37,7 @@ Every backend must:
 
 1. Define a `spec: EvalBackendSpec` with capability flags.
 2. Implement `evaluate(core_ir: Module) -> EvalBackendResult`.
-3. Dispatch on all 17 CoreNode types (or explicitly reject unsupported ones).
+3. Dispatch on every registered CoreNode type (or explicitly reject unsupported ones).
 4. Register via `register_backend(name, instance)`.
 
 The `core_runtime.py` design is the reference pattern — Nomi-owned Value types,

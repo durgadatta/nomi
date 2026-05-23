@@ -29,9 +29,10 @@ Core IR Module
 - `prototype/runtime/backends/core_direct.py` proves direct CoreNode dispatch,
   but it is intentionally not reusable as a native design because it uses raw
   Python dictionaries, callables, exceptions, and values.
-- `prototype/syntax/core.py` has 17 CoreNode types plus `verify_core(strict=True)`.
-  This is enough to give a future backend a stable node contract even before
-  Surface -> Core lowering is authoritative for the full language.
+- `prototype/syntax/core.py` has registered CoreNode dataclasses plus
+  `verify_core(strict=True)`. This is enough to give a future backend a stable
+  node contract even before Surface -> Core lowering is authoritative for the
+  full language.
 - `RuntimeSession` already has an opt-in Core IR execution path through
   `NOMI_USE_CORE_IR=1` or a non-`python-ast` `PipelineSpec.eval_backend`.
 - `core-runtime` is now registered as an unselectable prototype backend and can
@@ -100,7 +101,7 @@ Files:
 Deliverables:
 - `CORE_RUNTIME_SPEC` registered as `core-runtime`.
 - `CoreRuntimeEvaluator.evaluate()` verifies Core IR strictly.
-- Dispatch table covers all 17 CoreNode classes, even if unsupported nodes
+- Dispatch table covers every registered CoreNode class, even if unsupported nodes
   produce explicit diagnostics or `NotImplementedError` at first.
 - Initial implemented nodes: `Module`, `Literal`, `Load`, `Bind`, `Function`,
   `Call`, `Return`, `Branch`.
@@ -183,7 +184,7 @@ The backend can graduate in these steps:
 - **G2**: implements Slice A and B; parity tests pass for basic Core IR.
 - **G3**: can be selected explicitly in `RuntimeSession` or a test-only
   pipeline but is still not a default backend.
-- **G4**: supports all 17 CoreNode classes either semantically or through
+- **G4**: supports every registered CoreNode class either semantically or through
   deliberate, tested rejection.
 - **G5**: passes a cross-backend acceptance file set alongside `python-ast`.
 - **G6**: `selectable_for_execution=True`.
@@ -199,8 +200,8 @@ The backend can graduate in these steps:
 
 ## Next Implementation Slice
 
-Broaden Core IR coverage for expressions that ordinary programs need before the
-backend can run sample files: binary operations, comparisons, unary operations,
-boolean operations, and assignment-like mutation. These should land as Core IR
-nodes or explicit lowering rules before `core-runtime` claims full-language
-support.
+Broaden Core IR coverage for ordinary programs beyond expression operations:
+subscript access, container literals beyond simple sequences, augmented
+assignment, imports, and Python/Nomi-specific control forms. These should land
+as Core IR nodes or explicit lowering rules before `core-runtime` claims
+full-language support.

@@ -30,9 +30,12 @@ from prototype.runtime.backends.values import (
     unbox_value,
 )
 from prototype.syntax.core import (
+    BinaryOp,
     Bind,
+    BooleanOp,
     Branch,
     Call,
+    CompareOp,
     ConstructData,
     CoreNode,
     Diagnostic,
@@ -48,6 +51,7 @@ from prototype.syntax.core import (
     Raise,
     Return,
     Sequence,
+    UnaryOp,
     verify_core,
 )
 
@@ -202,6 +206,72 @@ class CoreRuntimeEvaluator:
         branch = node.then_body if is_truthy(test) else node.else_body
         return self._eval_module(branch)
 
+    def _eval_UnaryOp(self, node: UnaryOp) -> Value | ControlFlow:
+        operand = self.eval(node.operand)
+        if isinstance(operand, ControlFlow):
+            return operand
+        value = unbox_value(operand)
+        if node.op == "+":
+            return box_value(+value)
+        if node.op == "-":
+            return box_value(-value)
+        if node.op == "~":
+            return box_value(~value)
+        if node.op == "not":
+            return box_value(not is_truthy(operand))
+        raise RuntimeError(f"Unsupported unary op {node.op!r}")
+
+    def _eval_BinaryOp(self, node: BinaryOp) -> Value | ControlFlow:
+        left = self.eval(node.left)
+        if isinstance(left, ControlFlow):
+            return left
+        right = self.eval(node.right)
+        if isinstance(right, ControlFlow):
+            return right
+        return box_value(
+            self._apply_binary_op(node.op, unbox_value(left), unbox_value(right))
+        )
+
+    def _eval_BooleanOp(self, node: BooleanOp) -> Value | ControlFlow:
+        if not node.values:
+            return NIL
+        if node.op == "and":
+            last: Value = NIL
+            for value_node in node.values:
+                value = self.eval(value_node)
+                if isinstance(value, ControlFlow):
+                    return value
+                last = value
+                if not is_truthy(value):
+                    return value
+            return last
+        if node.op == "or":
+            last = NIL
+            for value_node in node.values:
+                value = self.eval(value_node)
+                if isinstance(value, ControlFlow):
+                    return value
+                last = value
+                if is_truthy(value):
+                    return value
+            return last
+        raise RuntimeError(f"Unsupported boolean op {node.op!r}")
+
+    def _eval_CompareOp(self, node: CompareOp) -> Value | ControlFlow:
+        left = self.eval(node.left)
+        if isinstance(left, ControlFlow):
+            return left
+        current = unbox_value(left)
+        for op, comparator in zip(node.ops, node.comparators):
+            right = self.eval(comparator)
+            if isinstance(right, ControlFlow):
+                return right
+            right_value = unbox_value(right)
+            if not self._apply_compare_op(op, current, right_value):
+                return box_value(False)
+            current = right_value
+        return box_value(True)
+
     def _eval_Sequence(self, node: Sequence) -> Value | ControlFlow:
         elements: list[Value] = []
         for elem in node.elements:
@@ -323,6 +393,60 @@ class CoreRuntimeEvaluator:
 
     def _eval_Diagnostic(self, node: Diagnostic) -> Value:
         raise RuntimeError(f"Unexecutable Core diagnostic: {node.message}")
+
+    @staticmethod
+    def _apply_binary_op(op: str, left: Any, right: Any) -> Any:
+        if op == "+":
+            return left + right
+        if op == "-":
+            return left - right
+        if op == "*":
+            return left * right
+        if op == "/":
+            return left / right
+        if op == "//":
+            return left // right
+        if op == "%":
+            return left % right
+        if op == "**":
+            return left ** right
+        if op == "@":
+            return left @ right
+        if op == "<<":
+            return left << right
+        if op == ">>":
+            return left >> right
+        if op == "|":
+            return left | right
+        if op == "^":
+            return left ^ right
+        if op == "&":
+            return left & right
+        raise RuntimeError(f"Unsupported binary op {op!r}")
+
+    @staticmethod
+    def _apply_compare_op(op: str, left: Any, right: Any) -> bool:
+        if op == "==":
+            return left == right
+        if op == "!=":
+            return left != right
+        if op == "<":
+            return left < right
+        if op == "<=":
+            return left <= right
+        if op == ">":
+            return left > right
+        if op == ">=":
+            return left >= right
+        if op == "is":
+            return left is right
+        if op == "is not":
+            return left is not right
+        if op == "in":
+            return left in right
+        if op == "not in":
+            return left not in right
+        raise RuntimeError(f"Unsupported compare op {op!r}")
 
 
 register_backend("core-runtime", CoreRuntimeEvaluator())

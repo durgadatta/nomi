@@ -3,7 +3,7 @@
 > Status: implementation plan for the next backend after `core_direct.py`.
 >
 > Scope: a Python-independent-in-design reference runtime that dispatches on all
-> 17 Core IR node types using Nomi-owned values, scoped environments, explicit
+> registered Core IR node types using Nomi-owned values, scoped environments, explicit
 > control flow, and a single eval loop. This is Stage 3 of
 > [`python_independence_and_compiler_backend_plan.md`](python_independence_and_compiler_backend_plan.md).
 
@@ -22,7 +22,7 @@ serves as the executable spec.
 ## Architecture
 
 ```
-Core IR (Module with 17 node types)
+Core IR (Module with registered node types)
         |
         v
 +-------------------+
@@ -210,7 +210,7 @@ The backend class implements:
 
 ```python
 class CoreRuntime:
-    """Reference Nomi runtime. Dispatches all 17 Core IR node types."""
+    """Reference Nomi runtime. Dispatches registered Core IR node types."""
 
     spec = CORE_RUNTIME_SPEC  # selectable_for_execution=False initially
 
@@ -254,6 +254,10 @@ class CoreRuntime:
 | `Call` | Evaluate `node.func`, evaluate `node.args`. If `NativeValue`, call with unboxed args. If `FunctionValue`, extend frame, eval body, catch `ReturnSignal`. |
 | `Return` | Evaluate `node.value`, wrap in `ReturnSignal`. |
 | `Branch` | Evaluate `test`. If truthy, eval `then_body`; else eval `else_body`. |
+| `UnaryOp` | Evaluate operand and apply portable unary operator token (`-`, `+`, `~`, `not`). |
+| `BinaryOp` | Evaluate operands and apply portable binary operator token (`+`, `-`, `*`, etc.). |
+| `BooleanOp` | Short-circuit `and` / `or`, returning the selected operand value. |
+| `CompareOp` | Evaluate chained comparisons and return `BoolValue`. |
 | `Loop` | Repeatedly eval `test` then `body`. `BreakSignal` exits. `ContinueSignal` skips to next iteration. |
 | `Match` | Evaluate `subject`. For each `PatternTest` case, check pattern match + guard. First match wins. |
 | `PatternTest` | Match `pattern` against a value. If `guard` is present and falsy, skip. Eval `body`. |
@@ -292,7 +296,7 @@ It graduates through capability promotion:
 | Gate | Capability | What it unlocks |
 |------|-----------|----------------|
 | **G1** | `evaluates_native_ir=True` | Runs without Python AST roundtrip (satisfied from day one). |
-| **G2** | `supports_full_language=True` | All 17 node types dispatch cleanly. Parity tests pass against Python AST backend for covered constructs. |
+| **G2** | `supports_full_language=True` | Registered node types dispatch cleanly. Parity tests pass against Python AST backend for covered constructs. |
 | **G3** | `supports_blocks=True` | Block calls, yield, resume work. |
 | **G4** | `supports_exceptions=True` | Raise/Handle dispatch works. |
 | **G5** | `supports_python_interop=True` | NativeValue wrapping and host-call dispatch work. |
@@ -309,22 +313,27 @@ It graduates through capability promotion:
 `ConstructData`, `GetField`
 — introduces `DataValue`, the foundation for user-defined types.
 
-### Slice 3: Control flow (2 node types)
+### Slice 3: Expression operations (4 node types)
+`UnaryOp`, `BinaryOp`, `BooleanOp`, `CompareOp`
+— introduces portable operator tokens before ordinary programs can run outside
+the Python AST backend.
+
+### Slice 4: Control flow (2 node types)
 `Loop`, `Sequence`
 — introduces `BreakSignal`, `ContinueSignal`, and collection values.
 
-### Slice 4: Pattern matching (2 node types)
+### Slice 5: Pattern matching (2 node types)
 `Match`, `PatternTest`
 — introduces pattern destructuring and guard evaluation.
 
-### Slice 5: Exception handling (2 node types)
+### Slice 6: Exception handling (2 node types)
 `Raise`, `Handle`
 — introduces `ErrorValue` and handler dispatch.
 
-### Slice 6: Host interop + unboxing
+### Slice 7: Host interop + unboxing
 `NativeValue` wrapping, host-call dispatch table, `_unbox` for public API.
 
-### Slice 7: Blocks and resume (capability promotion)
+### Slice 8: Blocks and resume (capability promotion)
 Block calls, yield, resume — the most complex capability. May need `GeneratorState`.
 
 ## Testing Strategy
@@ -347,7 +356,7 @@ Additionally:
 ## Relationship to Other Backends
 
 ```
-                  Core IR (17 node types)
+                  Core IR (registered node types)
                        |
           +------------+------------+
           |            |            |

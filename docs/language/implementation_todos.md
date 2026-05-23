@@ -211,14 +211,14 @@ boundaries, and package ownership. Keep the detailed plan in
   gating the Core IR path.)
 - [x] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
   serious native or Wasm backend work.
-  (Done: 17 CoreNode types, `verify_core(strict=True)`, `core_to_python_ast()`,
+  (Done: registered CoreNode types, `verify_core(strict=True)`, `core_to_python_ast()`,
   `lower_python_ast_to_core()`, `NOMI_VERIFY_CORE=1` gate.)
 - [~] Upgrade `NOMI-ARCH-019` from passive inspection to an authoritative tiny
   Surface -> Core lowering path before runtime diagnostics or backend work rely
   on Core IR as a source of truth.
-  (In progress: all 17 node types lower, but BinOp, Compare, UnaryOp, etc. still
-  produce Diagnostic sentinels. See `core_runtime_backend_design.md` for the
-  next backend plan.)
+  (In progress: registered node types lower, and basic expression operations now
+  have Core IR nodes. Remaining Python AST forms still produce Diagnostic
+  sentinels. See `core_runtime_backend_design.md` for the next backend plan.)
 - [ ] Add `NOMI-ARCH-020`: run an MLIR spike only for a tiny pure subset after
   Core IR inspection works.
 - [x] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend
@@ -306,28 +306,35 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Implement `eval_GetField()` — access `DataValue.fields[name]`.
 - [x] Contract tests for data construction and field access.
 
-### Slice 3: Control flow (2 node types)
+### Slice 3: Expression operations (4 node types)
+- [x] Define `UnaryOp`, `BinaryOp`, `BooleanOp`, and `CompareOp` Core IR nodes.
+- [x] Lower Python AST operation nodes into portable Core IR operation nodes.
+- [x] Lower Core IR operation nodes back to Python AST for `python-ast` backend compatibility.
+- [x] Implement operation dispatch in `core-runtime`.
+- [x] Focused syntax and runtime tests for operation nodes.
+
+### Slice 4: Control flow (2 node types)
 - [x] Implement `eval_Loop()` — while-style loop with `BreakSignal`/`ContinueSignal`.
 - [x] Implement `eval_Sequence()` — evaluate elements, produce list.
 - [x] Parity tests for loops and sequences.
 
-### Slice 4: Pattern matching (2 node types)
+### Slice 5: Pattern matching (2 node types)
 - [ ] Implement `eval_Match()` — subject evaluation + case dispatch.
 - [ ] Implement `eval_PatternTest()` — pattern matching + guard + body.
 - [ ] Parity tests for match expressions.
 
-### Slice 5: Exception handling (2 node types)
+### Slice 6: Exception handling (2 node types)
 - [ ] Define `ErrorValue` subtype.
 - [ ] Implement `eval_Raise()` — produce `ErrorValue`.
 - [ ] Implement `eval_Handle()` — try/catch dispatch, always eval `finalbody`.
 - [ ] Parity tests for raise and handle.
 
-### Slice 6: Host interop + unboxing
+### Slice 7: Host interop + unboxing
 - [x] Implement `NativeValue` wrapping and host-call dispatch table.
 - [x] Complete `_unbox()` for all value types.
 - [ ] Host-interop parity tests (print, len, etc.).
 
-### Slice 7: Blocks and resume (capability promotion)
+### Slice 8: Blocks and resume (capability promotion)
 - [ ] Implement block-call support (`yield_to_block` equivalent).
 - [ ] Add `GeneratorState` for resumable functions.
 - [ ] Promote `supports_blocks=True`, `supports_resume=True`.

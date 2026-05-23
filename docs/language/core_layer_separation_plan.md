@@ -405,7 +405,7 @@ Use these files as the starting map:
 | --- | --- | --- |
 | Feature registry | `prototype/syntax/features.py` | Add layer metadata and reduction targets. |
 | Surface nodes | `prototype/syntax/surface.py` | Keep user-spelled shape and spans before backend lowering. |
-| Core IR | `prototype/syntax/core.py` | L1 dataclasses (17 nodes), `verify_core()`, `core_to_python_ast()`, `lower_python_ast_to_core()`. |
+| Core IR | `prototype/syntax/core.py` | L1 dataclasses, `verify_core()`, `core_to_python_ast()`, `lower_python_ast_to_core()`. |
 | Parser API | `prototype/parser/nomi/usage.py` | Expose more inspection stages without changing default execution. |
 | Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and opt-in core execution (`NOMI_USE_CORE_IR=1`). |
 | Pipeline metadata | `prototype/runtime/pipeline.py` | Records stages, profiles, layers, and `eval_backend` target. |
