@@ -251,13 +251,184 @@ Known parity risks before default promotion:
 - block/yield support is enough for the demo but not a full resumable generator
   model.
 
+## JS Core Runtime Operational Completion Plan
+
+This section is the working checklist for making `js-core-runtime` maximally
+functional. "Fully run `samples/demo.nomi`" means more than process success:
+the JavaScript backend should execute the session-lowered Core IR, produce the
+same user-facing behavior as the intended Nomi runtime, and expose any
+remaining backend differences as explicit, tested decisions.
+
+### Current Demo Audit
+
+Command used for this audit:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+from prototype.runtime import create_session
+
+path = Path("samples/demo.nomi")
+for backend in ["python-ast", "core-runtime", "js-core-runtime"]:
+    result = create_session(mode="nomi", eval_backend=backend).run(
+        filename=path,
+        capture_output=True,
+        raise_on_error=False,
+    )
+    print(backend, result.ok, len(result.stdout.splitlines()))
+PY
+```
+
+Current status:
+
+- `python-ast`, `core-runtime`, and `js-core-runtime` all execute
+  `samples/demo.nomi` without exceptions.
+- `js-core-runtime` matches `core-runtime` for the important demo bindings:
+  `count == 2`, `collected == [2, 4, 6]`, `total == 6`, `parsed == 0`, and
+  `result == 49`.
+- `js-core-runtime` and `core-runtime` still differ from each other on display
+  details: JS prints integer-looking floats as `5`, `12`, `Point(x=3, y=5)`
+  while Python `core-runtime` prints `5.0`, `12.0`, `Point(x=3.0, y=5.0)`.
+- Both direct runtimes still differ from the `python-ast` demo output in the
+  `defer` section: the current Core projection preserves lowered call order,
+  not the intended LIFO defer semantics.
+- Type aliases are not a Core concept yet. `python-ast` leaves `UserId` and
+  `JsonStr` as Python classes; `core-runtime` leaks host functions for them;
+  `js-core-runtime` currently omits them from exported bindings. This is a
+  semantic-core gap, not only a JS gap.
+- Python-shaped values such as `filter`/`map` iterators and Python class
+  objects should not be treated as direct-runtime parity targets. The direct
+  runtime target is Nomi-owned values and display, with `python-ast` retained
+  as a compatibility oracle until Nomi display/value policy is settled.
+
+### Completion Definition
+
+`js-core-runtime` can be called maximally functional for the current prototype
+when these gates are true:
+
+1. `create_session(mode="nomi", eval_backend="js-core-runtime")` runs
+   `samples/demo.nomi` and the backend fixture ladder without exception.
+2. User-facing stdout for `samples/demo.nomi` matches the chosen direct-runtime
+   oracle exactly. Until Core-owned defer/display policy lands, the temporary
+   oracle is `core-runtime` plus a tracked list of intentional display gaps.
+3. All currently registered CoreNode types either execute semantically in JS or
+   reject with a named diagnostic that matches Python `core-runtime`.
+4. Host calls used by the demo and fixture ladder are declared as capabilities,
+   not ambient JS globals.
+5. Browser execution through `web/?backend=js-core-runtime` uses the same Core
+   JSON payload and produces the same `ExecutionResult` shape as Node tests.
+6. The backend fixture ladder contains at least one fixture for each roadmap
+   rung already represented in Core IR: operations, calls/recursion,
+   collections/data, loops, patterns, errors, host calls, block/yield calls,
+   and demo smoke.
+7. Promotion remains blocked until source spans/diagnostics, constraint
+   metadata, and host capability policy are explicit enough for user-facing
+   default execution.
+
+### Workstream A: Exact Demo Semantics
+
+Goal: turn "demo executes" into "demo behavior is intentionally identical."
+
+1. Add `test_js_core_runtime_demo_stdout_parity` that compares full stdout for
+   `samples/demo.nomi` against the selected direct-runtime oracle.
+2. Decide whether the short-term stdout oracle is `python-ast` or
+   `core-runtime` per section:
+   - defer/resource cleanup should follow intended LIFO behavior, currently
+     visible in `python-ast`;
+   - list/data/string display should follow Nomi-owned direct-runtime display,
+     not Python object reprs;
+   - numeric display should be specified once, then shared by Python and JS
+     direct runtimes.
+3. Fix defer ordering by making defer a Core-owned semantic event rather than a
+   lowered ordinary call sequence. This likely needs a Core node or explicit
+   finalizer stack in both direct runtimes.
+4. Normalize direct-runtime display helpers:
+   - booleans: `True`/`False` or `true`/`false`, decide once;
+   - nil: `None` or future Nomi spelling, decide once;
+   - floats: preserve `.0` when the value was a float;
+   - data: stable `Point(x=3.0, y=5.0)`-style display or a Nomi-owned record
+     display spelling.
+5. Convert the current selected binding assertions for demo into full stdout
+   and selected-value parity tests once display/defer decisions are fixed.
+
+### Workstream B: Core IR Contract Completeness
+
+Goal: make JS behavior follow the same Core IR contract a future JVM/C/Wasm
+backend would implement.
+
+1. Keep the static "every registered CoreNode has JS dispatch" test.
+2. Add negative tests for unsupported/misplaced nodes:
+   `Spread` outside `Sequence`, `PatternTest` outside `Match`/`Handle`,
+   module-level `Return`, module-level `Break`, module-level `Yield`, and
+   unexecutable `Diagnostic`.
+3. Add a Core IR JSON schema snapshot for a compact fixture. The schema should
+   document `schema`, `version`, `root`, `type`, tuple-as-array encoding, and
+   literal-value limits.
+4. Move Python `core-runtime` and JS display/value decisions into shared
+   fixture expectations instead of ad hoc assertions inside backend tests.
+5. Extend `EvalBackendResult` parity checks to include stdout, stderr,
+   diagnostics, value, and `has_value`, not only selected bindings.
+
+### Workstream C: Host Capability Manifest
+
+Goal: make host behavior portable and inspectable.
+
+1. Extract default host calls into a declared table for Python and JS direct
+   runtimes. Minimum fields:
+   `name`, `arity`, `expects_values`, `pure`, `may_print`, `may_throw`,
+   `available_in_browser`, and notes.
+2. Add an inspection stage or backend table column for host capabilities only
+   after the table exists; avoid inventing a separate doc first.
+3. Add fixture cases for `range`, `list`, `sum`, `map`, `filter`, `str`, `int`,
+   `float`, `bool`, `abs`, and `len`.
+4. Ensure host exceptions become `ErrorValue`/JS error values with stable
+   `kind`, `message`, and optional payload fields.
+5. Decide whether type aliases (`type UserId = int`) lower to metadata,
+   constructor aliases, or erased declarations; then make both direct runtimes
+   export or intentionally hide them consistently.
+
+### Workstream D: Browser Operational Readiness
+
+Goal: make the browser path prove the same runtime as Node tests.
+
+1. Keep `web/?backend=js-core-runtime` opt-in until this checklist is green.
+2. Add a browser/worker contract test for JS backend mode, not just
+   `core_json_for_nomi()`.
+3. Verify `web/manifest.json` includes every Python module needed for
+   parsing/lowering; run `python3 scripts/make_web.py --check` in every web
+   backend commit.
+4. Keep Pyodide as parser/lowerer for now. Do not claim browser independence
+   until parser/lowering also leave Pyodide.
+5. Add a manual smoke note for local launch:
+   `python3 scripts/launch_web.py --no-browser`, then open
+   `/web/?backend=js-core-runtime` and run `samples/demo.nomi`.
+
+### Workstream E: Promotion Gates
+
+Goal: make promotion boring and evidence-based.
+
+`js-core-runtime` remains explicitly runnable but not promoted as default until:
+
+- full backend fixture ladder passes against selected direct-runtime oracles;
+- `samples/demo.nomi` exact stdout parity is tested or every remaining diff is
+  documented as an intentional direct-runtime policy;
+- host capabilities are declared and covered;
+- error/diagnostic shape is stable enough for users;
+- browser worker tests cover JS execution mode;
+- performance is measured for demo and fixture ladder startup/eval time;
+- docs consistently distinguish:
+  - Python-hosted parsing/lowering,
+  - Python `core-runtime` reference execution,
+  - JavaScript Core Runtime execution,
+  - future parser-independent browser execution.
+
 ## Next Implementation Slice
 
-Turn the first cross-backend fixture ladder into promotion evidence:
+Start Workstream A with a failing or xfail-marked exact demo parity test, then
+fix the smallest direct-runtime semantic gap it exposes. The likely first
+implementation slice is:
 
-1. expand the fixture ladder with host capability, block/resume edge, and
-   diagnostics cases;
-2. preserve constraint metadata in Core IR instead of projecting annotations to
-   plain `Bind`;
-3. document the Core IR JSON schema as a stable-enough test contract before
-   making the JS backend the default browser execution path.
+1. add full stdout comparison for `core-runtime` vs `js-core-runtime`;
+2. normalize float/data display between direct runtimes;
+3. add a tracked test for the current defer-order gap against `python-ast`;
+4. decide whether defer gets a Core node now or remains a documented blocker.

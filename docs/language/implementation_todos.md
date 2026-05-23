@@ -406,6 +406,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
   and compare it across `python-ast`, `core-runtime`, and `js-core-runtime`.
 - [ ] Expand the fixture ladder with host capability, source-map, diagnostic,
   and resume edge cases.
+- [ ] Execute the JS Core Runtime Operational Completion Plan in
+  `core_runtime_backend_implementation_notes.md`: exact demo stdout parity,
+  Core JSON contract tests, host capability manifest, browser JS execution
+  contracts, and promotion evidence.
 - [ ] Promote the JS runtime from opt-in browser path to default only after
   fixture corpus parity and host capability policy are settled.
 
