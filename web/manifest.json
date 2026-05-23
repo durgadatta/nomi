@@ -119,6 +119,7 @@
   "samples": [
     "samples/block.nomi",
     "samples/collections.nomi",
+    "samples/comprehensive.nomi",
     "samples/constraint.nomi",
     "samples/demo.nomi",
     "samples/demo_terse.nomi",

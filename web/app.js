@@ -12,9 +12,9 @@ let _executionCounter = 0;
 let _activeCellIndex = 0;
 let _notebookMode = false;
 let _bootStart = performance.now();
-let _evalBackend = new URLSearchParams(location.search).get("backend") === "js-core-runtime"
-  ? "js-core-runtime"
-  : "python-ast";
+let _evalBackend = new URLSearchParams(location.search).get("backend") === "python-ast"
+  ? "python-ast"
+  : "js-core-runtime";
 
 function byId(id) { return document.getElementById(id); }
 function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
@@ -114,7 +114,7 @@ async function init() {
   setStatus("ready", "ready");
   const backendLabel = _evalBackend === "js-core-runtime"
     ? "Pyodide parser + JS Core Runtime"
-    : "Pyodide runtime";
+    : "Pyodide full runtime";
   byId("runtime-detail").textContent = `${backendLabel} ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
   setControlsDisabled(false);
 

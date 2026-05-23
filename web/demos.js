@@ -65,6 +65,23 @@ match score:
         label = "regular"
 
 print(f"score={score}, grade={label}")`
+  },
+  comprehensive: {
+    title: "comprehensive.nomi", desc: "Full coverage suite: functions, lambdas, patterns, control flow, data, blocks, and edge cases.",
+    source: "samples/comprehensive.nomi",
+    code: `# Functions, lambdas, patterns, data, blocks, edge cases
+add(a, b) = a + b
+double = x => x * 2
+
+func each(sequence):
+    for item in sequence:
+        yield item
+
+collected = []
+each([1, 2, 3]) -> n:
+    collected = collected + [n * 2]
+
+print(collected)`
   }
 };
 
