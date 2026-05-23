@@ -129,7 +129,7 @@ range_expr = { bin_expr ~ (range_op ~ bin_expr ~ ("by" ~ bin_expr)?)? }
 // -- binary expression --------------------------------------------------
 bin_expr = { factor ~ (bin_op ~ factor)* }
     bin_op = _{ "|" | "^" | "&" | "<<" | ">>" | "+" | "-"
-              | "*" | "@" | "/" | "%" | "//" }
+              | "*" | "@" | "//" | "/" | "%" }
 
 // -- unary / power ------------------------------------------------------
 factor = { unary | power }
