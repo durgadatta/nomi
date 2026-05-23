@@ -368,6 +368,21 @@ def test_js_core_runtime_runs_demo_through_session_core_json():
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_js_core_runtime_demo_stdout_matches_python_core_runtime():
+    path = ROOT / "samples/demo.nomi"
+    core_result = create_session(mode="nomi", eval_backend="core-runtime").run(
+        filename=path,
+        capture_output=True,
+    )
+    js_result = create_session(mode="nomi", eval_backend="js-core-runtime").run(
+        filename=path,
+        capture_output=True,
+    )
+
+    assert js_result.stdout == core_result.stdout
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
 def test_runtime_session_runs_demo_on_js_core_runtime_backend():
     session = create_session(mode="nomi", eval_backend="js-core-runtime")
 

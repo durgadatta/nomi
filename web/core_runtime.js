@@ -21,15 +21,17 @@ function valueError(message) {
   return error;
 }
 
-function box(value) {
+function box(value, valueType = null) {
   if (value && typeof value === "object" && typeof value.kind === "string") {
     return value;
   }
   if (value === null || value === undefined) return NIL;
   if (typeof value === "boolean") return { kind: "bool", value };
-  if (typeof value === "number") return Number.isInteger(value)
-    ? { kind: "int", value }
-    : { kind: "float", value };
+  if (typeof value === "number") {
+    return valueType === "float" || !Number.isInteger(value)
+      ? { kind: "float", value }
+      : { kind: "int", value };
+  }
   if (typeof value === "string") return { kind: "str", value };
   if (Array.isArray(value)) return { kind: "sequence", elements: value.map(box) };
   if (typeof value === "function") {
@@ -216,7 +218,7 @@ class CoreRuntime {
   }
 
   evalLiteral(node) {
-    return box(node.value);
+    return box(node.value, node.value_type || null);
   }
 
   evalLoad(node) {
@@ -365,8 +367,8 @@ class CoreRuntime {
     const operand = this.eval(node.operand);
     if (isSignal(operand)) return operand;
     const value = unbox(operand);
-    if (node.op === "+") return box(+value);
-    if (node.op === "-") return box(-value);
+    if (node.op === "+") return box(+value, operand.kind);
+    if (node.op === "-") return box(-value, operand.kind);
     if (node.op === "~") return box(~value);
     if (node.op === "not") return box(!truthy(operand));
     throw new Error(`Unsupported unary op ${node.op}`);
@@ -377,7 +379,8 @@ class CoreRuntime {
     if (isSignal(left)) return left;
     const right = this.eval(node.right);
     if (isSignal(right)) return right;
-    return box(this.applyBinaryOp(node.op, unbox(left), unbox(right)));
+    const result = this.applyBinaryOp(node.op, unbox(left), unbox(right));
+    return box(result, this.binaryResultKind(node.op, left, right, result));
   }
 
   evalBooleanOp(node) {
@@ -679,6 +682,9 @@ class CoreRuntime {
     if (value.kind === "nil") return "None";
     if (value.kind === "bool") return value.value ? "True" : "False";
     if (value.kind === "str") return value.value;
+    if (value.kind === "float" && Number.isInteger(value.value)) {
+      return value.value.toFixed(1);
+    }
     if (value.kind === "sequence") {
       return `[${value.elements.map((item) => this.displayValue(item)).join(", ")}]`;
     }
@@ -759,6 +765,13 @@ class CoreRuntime {
     if (op === "^") return left ^ right;
     if (op === "&") return left & right;
     throw new Error(`Unsupported binary op ${op}`);
+  }
+
+  binaryResultKind(op, left, right, result) {
+    if (typeof result !== "number") return null;
+    if (op === "/") return "float";
+    if (left.kind === "float" || right.kind === "float") return "float";
+    return null;
   }
 
   applyCompareOp(op, left, right) {

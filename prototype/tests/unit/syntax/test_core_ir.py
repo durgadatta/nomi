@@ -111,6 +111,20 @@ def test_core_ir_json_payload_round_trips():
     assert dump_core(restored) == dump_core(node)
 
 
+def test_core_ir_json_preserves_literal_numeric_kind():
+    payload = core_to_json_payload(
+        Module(
+            body=(
+                Literal(value=3),
+                Literal(value=3.0),
+            )
+        )
+    )
+
+    assert payload["root"]["body"][0]["value_type"] == "int"
+    assert payload["root"]["body"][1]["value_type"] == "float"
+
+
 # ── dump ──────────────────────────────────────────────────────────────────────
 
 

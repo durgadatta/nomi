@@ -286,9 +286,10 @@ Current status:
 - `js-core-runtime` matches `core-runtime` for the important demo bindings:
   `count == 2`, `collected == [2, 4, 6]`, `total == 6`, `parsed == 0`, and
   `result == 49`.
-- `js-core-runtime` and `core-runtime` still differ from each other on display
-  details: JS prints integer-looking floats as `5`, `12`, `Point(x=3, y=5)`
-  while Python `core-runtime` prints `5.0`, `12.0`, `Point(x=3.0, y=5.0)`.
+- `js-core-runtime` stdout now matches `core-runtime` stdout for
+  `samples/demo.nomi`. Core IR JSON preserves numeric literal kind so JS can
+  display float-looking values like `5.0`, `12.0`, and
+  `Point(x=3.0, y=5.0)` consistently with the Python reference runtime.
 - Both direct runtimes still differ from the `python-ast` demo output in the
   `defer` section: the current Core projection preserves lowered call order,
   not the intended LIFO defer semantics.
@@ -428,7 +429,7 @@ Start Workstream A with a failing or xfail-marked exact demo parity test, then
 fix the smallest direct-runtime semantic gap it exposes. The likely first
 implementation slice is:
 
-1. add full stdout comparison for `core-runtime` vs `js-core-runtime`;
-2. normalize float/data display between direct runtimes;
-3. add a tracked test for the current defer-order gap against `python-ast`;
-4. decide whether defer gets a Core node now or remains a documented blocker.
+1. add a tracked test for the current defer-order gap against `python-ast`;
+2. decide whether defer gets a Core node now or remains a documented blocker;
+3. expand demo parity from stdout to structured diagnostics/value policy once
+   those contracts exist.

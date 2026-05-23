@@ -15,6 +15,7 @@ from prototype.syntax.core import (
     CORE_NODE_TYPES,
     CoreNode,
     CoreVerificationError,
+    Literal,
     verify_core,
 )
 
@@ -76,6 +77,8 @@ def _node_to_json(node: CoreNode) -> dict[str, Any]:
         if field.name == "span":
             continue
         result[field.name] = _value_to_json(getattr(node, field.name))
+    if isinstance(node, Literal):
+        result["value_type"] = _literal_value_type(node.value)
     return result
 
 
@@ -128,3 +131,17 @@ def _value_from_json(value: Any) -> Any:
     raise CoreVerificationError(
         f"Cannot deserialize {type(value).__name__} from Core IR JSON"
     )
+
+
+def _literal_value_type(value: Any) -> str:
+    if value is None:
+        return "nil"
+    if isinstance(value, bool):
+        return "bool"
+    if isinstance(value, int):
+        return "int"
+    if isinstance(value, float):
+        return "float"
+    if isinstance(value, str):
+        return "str"
+    return type(value).__name__
