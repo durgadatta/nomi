@@ -32,6 +32,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="fail instead of choosing the next free port when the requested port is busy",
     )
+    parser.add_argument(
+        "--no-wasm",
+        action="store_true",
+        help="skip building the WASM parser",
+    )
     return parser.parse_args()
 
 
@@ -61,6 +66,15 @@ def choose_port(host: str, preferred: int, strict: bool) -> int:
     raise SystemExit(f"No free port found near {preferred}.")
 
 
+def build_wasm() -> None:
+    build_script = ROOT / "scripts" / "build_wasm.sh"
+    if not build_script.exists():
+        print("WASM build script not found — skipping WASM build.")
+        return
+    print("Building WASM parser...")
+    subprocess.run(["bash", str(build_script)], check=True)
+
+
 def regenerate_manifest() -> None:
     print("Building web manifest...")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "make_web.py")], check=True)
@@ -68,6 +82,8 @@ def regenerate_manifest() -> None:
 
 def main() -> int:
     args = parse_args()
+    if not args.no_wasm:
+        build_wasm()
     if not args.no_manifest:
         regenerate_manifest()
 
