@@ -1,0 +1,12 @@
+[package]
+name = "nomi-pest-readable-cst"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pest = "2.7"
+pest_derive = "2.7"
+
+[profile.release]
+codegen-units = 1
+lto = true
