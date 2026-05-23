@@ -349,21 +349,38 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Focused runtime tests for literal, capture, sequence, mapping, rest, guard/capture rollback paths.
 
 ### Slice 10: Exception handling (2 node types)
-- [ ] Define `ErrorValue` subtype.
-- [ ] Implement `eval_Raise()` — produce `ErrorValue`.
-- [ ] Implement `eval_Handle()` — try/catch dispatch, always eval `finalbody`.
-- [ ] Parity tests for raise and handle.
+- [x] Define `ErrorValue` subtype.
+- [x] Implement `eval_Raise()` — produce `ErrorValue`.
+- [x] Fence native host exceptions into `ErrorValue`.
+- [x] Implement `eval_Handle()` — try/catch dispatch, always eval `finalbody`.
+- [x] Focused tests for native error fencing and handler matching.
 
 ### Slice 11: Host interop + unboxing
 - [x] Implement `NativeValue` wrapping and host-call dispatch table.
 - [x] Complete `_unbox()` for all value types.
-- [ ] Host-interop parity tests (print, len, etc.).
+- [x] Add default fenced host calls needed by demo: `list`, `range`, `sum`,
+  `str`, `int`, `float`, `abs`, `filter`, `map`, `len`, `bool`, and `print`.
+- [x] Host-interop tests for builtins and explicit supplied host functions.
 
 ### Slice 12: Blocks and resume (capability promotion)
-- [ ] Implement block-call support (`yield_to_block` equivalent).
-- [ ] Add `GeneratorState` for resumable functions.
+- [x] Preserve block-call payloads on Core `Call`.
+- [x] Implement simple yield-to-block support for caller blocks and yielded values.
+- [ ] Add `GeneratorState` for general resumable functions.
 - [ ] Promote `supports_blocks=True`, `supports_resume=True`.
-- [ ] Block-call parity tests.
+- [x] Block-call focused tests.
+
+### Slice 13: For-each loops
+- [x] Define `ForEach` Core IR node.
+- [x] Lower Python AST `for target in iterable` into `ForEach` for simple named targets.
+- [x] Lower Core `ForEach` back to Python AST.
+- [x] Implement direct `core-runtime` `ForEach` dispatch.
+- [x] Focused syntax/runtime tests.
+
+### Slice 14: Demo direct-runtime smoke
+- [x] `samples/demo.nomi` passes strict Core IR verification.
+- [x] `samples/demo.nomi` lowers Core IR back to Python AST.
+- [x] `samples/demo.nomi` runs with `NOMI_EVAL_BACKEND=core-runtime`.
+- [ ] Turn demo smoke into cross-backend semantic parity assertions.
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 

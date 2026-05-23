@@ -94,8 +94,10 @@ backends:
 `python_ast` (wraps the existing interpreter behind Core IR),
 `core_direct` (minimal direct CoreNode dispatch proof), and
 `core-runtime` (portable reference runtime with Nomi-owned values, frames, and
-explicit control-flow signals). Enable verification without changing the eval
-path with `NOMI_VERIFY_CORE=1`.
+explicit control-flow signals). `samples/demo.nomi` runs through
+`core-runtime` as an opt-in smoke target, but the backend remains unpromoted
+until cross-backend parity gates are in place. Enable verification without
+changing the eval path with `NOMI_VERIFY_CORE=1`.
 
 Useful files:
 

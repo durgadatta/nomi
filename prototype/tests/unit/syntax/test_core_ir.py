@@ -15,6 +15,7 @@ from prototype.syntax.core import (
     Function,
     GetField,
     Handle,
+    ForEach,
     Literal,
     Load,
     Loop,
@@ -165,7 +166,7 @@ def test_lower_python_ast_to_core_while():
 def test_lower_python_ast_to_core_for():
     core = lower_python_ast_to_core(py_ast.parse("for i in items: pass"))
     stmt = core.body[0]
-    assert isinstance(stmt, Loop)
+    assert isinstance(stmt, ForEach)
     assert isinstance(stmt.body, Module)
 
 

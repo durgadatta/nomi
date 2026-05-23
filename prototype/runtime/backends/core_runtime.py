@@ -19,6 +19,7 @@ from prototype.runtime.backends.control_flow import (
 )
 from prototype.runtime.backends.environment import Frame
 from prototype.runtime.backends.values import (
+    DataConstructorValue,
     DataValue,
     ErrorValue,
     FunctionValue,
@@ -45,6 +46,7 @@ from prototype.syntax.core import (
     CoreNode,
     Diagnostic,
     Function,
+    ForEach,
     GetField,
     GetItem,
     Handle,
@@ -94,11 +96,21 @@ class CoreRuntimeEvaluator:
     spec = CORE_RUNTIME_SPEC
 
     def __init__(self, host_calls: dict[str, Any] | None = None) -> None:
-        self._raw_host_calls = dict(host_calls or {})
+        default_host_calls = self._default_host_calls()
+        self._default_host_names = frozenset(default_host_calls)
+        self._raw_host_calls = {
+            **default_host_calls,
+            **dict(host_calls or {}),
+        }
         self._global_frame = Frame()
         self._current_frame = self._global_frame
+        self._current_block: FunctionValue | None = None
         self._host_calls = {
-            name: box_value(func)
+            name: (
+                func
+                if isinstance(func, NativeValue)
+                else box_value(func)
+            )
             for name, func in self._raw_host_calls.items()
         }
         for name, value in self._host_calls.items():
@@ -121,7 +133,7 @@ class CoreRuntimeEvaluator:
             raise RuntimeError(result.message)
         has_value = display_last_expr and result is not NIL
         return EvalBackendResult(
-            bindings=self._global_frame.export_bindings(),
+            bindings=self._export_global_bindings(),
             value=unbox_value(result) if has_value else None,
             has_value=has_value,
         )
@@ -184,17 +196,30 @@ class CoreRuntimeEvaluator:
             if isinstance(value, ControlFlow):
                 return value
             args.append(value)
+        block = self.eval(node.block) if node.block is not None else None
+        if isinstance(block, ControlFlow):
+            return block
+        if block is not None and not isinstance(block, FunctionValue):
+            raise TypeError(f"{type(block).__name__} is not a block")
         if isinstance(func, NativeValue):
-            return box_value(func.callable(*[unbox_value(arg) for arg in args]))
+            return self._call_native(func, tuple(args))
+        if isinstance(func, DataConstructorValue):
+            return self._construct_data(func, tuple(args))
         if isinstance(func, FunctionValue):
-            return self._call_function(func, tuple(args))
+            return self._call_function(func, tuple(args), block=block)
         raise TypeError(f"{type(func).__name__} is not callable")
 
     def _call_function(
-        self, func: FunctionValue, args: tuple[Value, ...]
+        self,
+        func: FunctionValue,
+        args: tuple[Value, ...],
+        *,
+        block: FunctionValue | None = None,
     ) -> Value | ControlFlow:
         saved_frame = self._current_frame
+        saved_block = self._current_block
         self._current_frame = func.closure.extend(func.params, args)
+        self._current_block = block
         try:
             result = self._eval_module(func.body)
             if isinstance(result, ReturnSignal):
@@ -202,10 +227,13 @@ class CoreRuntimeEvaluator:
             return result
         finally:
             self._current_frame = saved_frame
+            self._current_block = saved_block
 
     def _eval_Return(self, node: Return) -> ControlFlow:
         value = self.eval(node.value)
         if isinstance(value, ControlFlow):
+            return value
+        if isinstance(value, ErrorValue):
             return value
         return ReturnSignal(value)
 
@@ -213,6 +241,12 @@ class CoreRuntimeEvaluator:
         value = self.eval(node.value)
         if isinstance(value, ControlFlow):
             return value
+        if self._current_block is not None:
+            args = (value,) if self._current_block.params else ()
+            result = self._call_function(self._current_block, args)
+            if isinstance(result, ControlFlow):
+                return result
+            return NIL
         return YieldSignal(value)
 
     def _eval_Branch(self, node: Branch) -> Value | ControlFlow:
@@ -349,18 +383,37 @@ class CoreRuntimeEvaluator:
         raise RuntimeError("Spread can only be evaluated inside Sequence")
 
     def _eval_ConstructData(self, node: ConstructData) -> Value | ControlFlow:
-        fields: dict[str, Value] = {}
-        for name, field_node in node.fields:
-            value = self.eval(field_node)
-            if isinstance(value, ControlFlow):
-                return value
-            fields[name] = value
-        return DataValue(name=node.name, fields=fields)
+        if any(
+            not isinstance(field_node, Literal) or field_node.value is not None
+            for _, field_node in node.fields
+        ):
+            fields: dict[str, Value] = {}
+            for name, field_node in node.fields:
+                value = self.eval(field_node)
+                if isinstance(value, ControlFlow):
+                    return value
+                fields[name] = value
+            return DataValue(name=node.name, fields=fields)
+        constructor = DataConstructorValue(
+            name=node.name,
+            fields=tuple(name for name, _ in node.fields),
+        )
+        self._current_frame.assign(node.name, constructor)
+        return constructor
 
     def _eval_GetField(self, node: GetField) -> Value | ControlFlow:
         obj = self.eval(node.object_)
         if isinstance(obj, ControlFlow):
             return obj
+        if isinstance(obj, MappingValue) and node.field == "get":
+            return NativeValue(
+                name="mapping.get",
+                callable=lambda key, default=NIL: obj.entries.get(
+                    unbox_value(key),
+                    default,
+                ),
+                expects_values=True,
+            )
         if not isinstance(obj, DataValue):
             raise TypeError(f"{type(obj).__name__} has no field {node.field!r}")
         try:
@@ -384,6 +437,27 @@ class CoreRuntimeEvaluator:
             if isinstance(body_result, ControlFlow):
                 return body_result
             last = body_result
+
+    def _eval_ForEach(self, node: ForEach) -> Value | ControlFlow:
+        iterable = self.eval(node.iterable)
+        if isinstance(iterable, ControlFlow):
+            return iterable
+        ran = False
+        last: Value | ControlFlow = NIL
+        for item in self._iter_values(iterable):
+            ran = True
+            self._current_frame.assign(node.target, item)
+            body_result = self._eval_module(node.body)
+            if isinstance(body_result, BreakSignal):
+                return NIL
+            if isinstance(body_result, ContinueSignal):
+                continue
+            if isinstance(body_result, ControlFlow):
+                return body_result
+            last = body_result
+        if not ran and node.else_body is not None:
+            return self._eval_module(node.else_body)
+        return last
 
     def _eval_Match(self, node: Match) -> Value | ControlFlow:
         subject = self.eval(node.subject)
@@ -482,13 +556,166 @@ class CoreRuntimeEvaluator:
     ) -> Value | ControlFlow:
         for handler in handlers:
             if isinstance(handler, PatternTest):
-                matched, result = self._eval_pattern_test(handler, error)
+                matched, result = self._eval_error_handler(handler, error)
                 if matched:
                     return result
         return error
 
     def _eval_Diagnostic(self, node: Diagnostic) -> Value:
         raise RuntimeError(f"Unexecutable Core diagnostic: {node.message}")
+
+    def _export_global_bindings(self) -> dict[str, object]:
+        exported = {}
+        for name, value in self._global_frame.bindings.items():
+            if (
+                name in self._default_host_names
+                and self._host_calls.get(name) is value
+            ):
+                continue
+            exported[name] = unbox_value(value)
+        return exported
+
+    def _call_native(
+        self, func: NativeValue, args: tuple[Value, ...]
+    ) -> Value | ControlFlow:
+        try:
+            if func.expects_values:
+                result = func.callable(*args)
+            else:
+                result = func.callable(*[unbox_value(arg) for arg in args])
+        except Exception as exc:
+            return ErrorValue(str(exc), kind=type(exc).__name__)
+        return result if isinstance(result, Value) else box_value(result)
+
+    def _construct_data(
+        self, constructor: DataConstructorValue, args: tuple[Value, ...]
+    ) -> DataValue:
+        if len(args) != len(constructor.fields):
+            raise TypeError(
+                f"{constructor.name} expected {len(constructor.fields)} "
+                f"arguments, received {len(args)}"
+            )
+        return DataValue(
+            name=constructor.name,
+            fields=dict(zip(constructor.fields, args)),
+        )
+
+    def _default_host_calls(self) -> dict[str, NativeValue]:
+        return {
+            "abs": NativeValue("abs", lambda value: abs(unbox_value(value)), True),
+            "bool": NativeValue("bool", lambda value: is_truthy(value), True),
+            "filter": NativeValue("filter", self._host_filter, True),
+            "float": NativeValue(
+                "float",
+                lambda value: float(unbox_value(value)),
+                True,
+            ),
+            "int": NativeValue("int", lambda value: int(unbox_value(value)), True),
+            "len": NativeValue("len", lambda value: len(unbox_value(value)), True),
+            "list": NativeValue("list", self._host_list, True),
+            "map": NativeValue("map", self._host_map, True),
+            "print": NativeValue("print", self._host_print, True),
+            "range": NativeValue("range", self._host_range, True),
+            "str": NativeValue("str", self._host_str, True),
+            "sum": NativeValue("sum", lambda value: sum(unbox_value(value)), True),
+        }
+
+    def _host_filter(self, func: Value, sequence: Value) -> SequenceValue:
+        kept: list[Value] = []
+        for item in self._iter_values(sequence):
+            result = self._apply_value_callable(func, (item,))
+            if isinstance(result, ControlFlow):
+                raise RuntimeError(
+                    f"Unexpected {type(result).__name__} inside filter"
+                )
+            if is_truthy(result):
+                kept.append(item)
+        return SequenceValue(tuple(kept))
+
+    def _host_list(self, value: Value | None = None) -> SequenceValue:
+        if value is None:
+            return SequenceValue(())
+        return SequenceValue(tuple(self._iter_values(value)))
+
+    def _host_map(self, func: Value, sequence: Value) -> SequenceValue:
+        mapped: list[Value] = []
+        for item in self._iter_values(sequence):
+            result = self._apply_value_callable(func, (item,))
+            if isinstance(result, ControlFlow):
+                raise RuntimeError(
+                    f"Unexpected {type(result).__name__} inside map"
+                )
+            mapped.append(result)
+        return SequenceValue(tuple(mapped))
+
+    def _host_print(self, *values: Value) -> None:
+        print(*(self._display_value(value) for value in values))
+        return None
+
+    def _host_range(self, *values: Value) -> SequenceValue:
+        args = [unbox_value(value) for value in values]
+        return SequenceValue(tuple(box_value(item) for item in range(*args)))
+
+    def _host_str(self, value: Value) -> str:
+        return self._display_value(value)
+
+    def _apply_value_callable(
+        self, func: Value, args: tuple[Value, ...]
+    ) -> Value | ControlFlow:
+        if isinstance(func, FunctionValue):
+            return self._call_function(func, args)
+        if isinstance(func, NativeValue):
+            return self._call_native(func, args)
+        if isinstance(func, DataConstructorValue):
+            return self._construct_data(func, args)
+        raise TypeError(f"{type(func).__name__} is not callable")
+
+    def _iter_values(self, value: Value) -> tuple[Value, ...]:
+        if isinstance(value, SequenceValue):
+            return value.elements
+        if isinstance(value, MappingValue):
+            return tuple(box_value(key) for key in value.entries)
+        return tuple(box_value(item) for item in unbox_value(value))
+
+    def _display_value(self, value: Value) -> str:
+        if isinstance(value, DataValue):
+            fields = ", ".join(
+                f"{name}={self._display_value(field_value)}"
+                for name, field_value in value.fields.items()
+            )
+            return f"{value.name}({fields})"
+        if isinstance(value, SequenceValue):
+            return str([unbox_value(item) for item in value.elements])
+        if isinstance(value, MappingValue):
+            return str(unbox_value(value))
+        if isinstance(value, FunctionValue):
+            return unbox_value(value)
+        if isinstance(value, DataConstructorValue):
+            return unbox_value(value)
+        return str(unbox_value(value))
+
+    def _eval_error_handler(
+        self, handler: PatternTest, error: ErrorValue
+    ) -> tuple[bool, Value | ControlFlow]:
+        if handler.pattern is not None and not self._error_pattern_matches(
+            handler.pattern,
+            error,
+        ):
+            return False, NIL
+        if handler.guard is not None:
+            guard = self.eval(handler.guard)
+            if isinstance(guard, ControlFlow):
+                return True, guard
+            if not is_truthy(guard):
+                return False, NIL
+        return True, self._eval_module(handler.body)
+
+    def _error_pattern_matches(self, pattern: CoreNode, error: ErrorValue) -> bool:
+        if isinstance(pattern, Load):
+            return pattern.name in {"_", "Exception", error.kind}
+        if isinstance(pattern, Literal):
+            return pattern.value in {error.kind, error.message}
+        return self._pattern_matches(pattern, error)
 
     @staticmethod
     def _spread_elements(value: Value) -> tuple[Value, ...]:

@@ -65,6 +65,12 @@ class DataValue(Value):
 
 
 @dataclass(frozen=True, slots=True)
+class DataConstructorValue(Value):
+    name: str
+    fields: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class FunctionValue(Value):
     params: tuple[str, ...]
     body: Module | None
@@ -75,11 +81,13 @@ class FunctionValue(Value):
 class NativeValue(Value):
     name: str
     callable: Callable[..., Any]
+    expects_values: bool = False
 
 
 @dataclass(frozen=True, slots=True)
 class ErrorValue(Value):
     message: str
+    kind: str = "RuntimeError"
     payload: Value | None = None
 
 
@@ -138,6 +146,8 @@ def unbox_value(value: Value) -> Any:
                 for name, field_value in value.fields.items()
             }
         }
+    if isinstance(value, DataConstructorValue):
+        return f"<data {value.name}>"
     if isinstance(value, FunctionValue):
         return f"<function ({', '.join(value.params)})>"
     if isinstance(value, NativeValue):

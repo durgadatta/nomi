@@ -25,6 +25,7 @@ def test_lower_python_ast_to_core_value_and_capture_patterns():
     assert isinstance(match, Match)
     assert len(match.cases) == 2
     assert isinstance(match.cases[0], PatternTest)
+    assert match.cases[0].guard is None
     assert isinstance(match.cases[1].pattern, Load)
     assert match.cases[1].pattern.name == "name"
 

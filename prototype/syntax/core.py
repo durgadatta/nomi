@@ -55,6 +55,7 @@ class Function(CoreNode):
 class Call(CoreNode):
     func: CoreNode | None = None
     args: tuple[CoreNode, ...] = ()
+    block: Function | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,6 +152,14 @@ class Loop(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class ForEach(CoreNode):
+    target: str = ""
+    iterable: CoreNode | None = None
+    body: Module | None = None
+    else_body: Module | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class Match(CoreNode):
     subject: CoreNode | None = None
     cases: tuple[CoreNode, ...] = ()
@@ -215,6 +224,7 @@ CORE_NODE_TYPES = (
     Spread,
     Diagnostic,
     Loop,
+    ForEach,
     Match,
     PatternTest,
     ConstructData,
@@ -308,6 +318,9 @@ def dump_core(node: CoreNode) -> str:
                 lines.extend(_dump(value.func, indent + 1))
             for arg in value.args:
                 lines.extend(_dump(arg, indent + 1))
+            if value.block is not None:
+                lines.append(f"{prefix}  Block")
+                lines.extend(_dump(value.block, indent + 2))
             return lines
         if isinstance(value, Return):
             lines = [f"{prefix}Return"]
@@ -383,6 +396,12 @@ def dump_core(node: CoreNode) -> str:
         if isinstance(value, Loop):
             lines = [f"{prefix}Loop"]
             for child in (value.test, value.body, value.else_body):
+                if child is not None:
+                    lines.extend(_dump(child, indent + 1))
+            return lines
+        if isinstance(value, ForEach):
+            lines = [f"{prefix}ForEach({value.target!r})"]
+            for child in (value.iterable, value.body, value.else_body):
                 if child is not None:
                     lines.extend(_dump(child, indent + 1))
             return lines
@@ -661,6 +680,20 @@ def _lower_loop(node: Loop) -> ast.stmt:
     )
 
 
+@_stmt_handler(ForEach)
+def _lower_for_each(node: ForEach) -> ast.stmt:
+    return ast.For(
+        target=ast.Name(id=node.target, ctx=ast.Store()),
+        iter=(
+            _core_expr(node.iterable)
+            if node.iterable is not None
+            else ast.Name(id="_")
+        ),
+        body=_core_body(node.body),
+        orelse=_core_body(node.else_body) if node.else_body else [],
+    )
+
+
 @_stmt_handler(Match)
 def _lower_match(node: Match) -> ast.stmt:
     cases: list[ast.match_case] = []
@@ -761,10 +794,23 @@ def _lower_load(node: Load) -> ast.expr:
 
 @_expr_handler(Call)
 def _lower_call(node: Call) -> ast.expr:
+    keywords = []
+    if node.block is not None:
+        from prototype.interpreter.constants import BLOCK_KWARG, Block
+
+        params = None
+        if len(node.block.params) == 1:
+            params = ast.Name(id=node.block.params[0], ctx=ast.Store())
+        keywords.append(
+            ast.keyword(
+                arg=BLOCK_KWARG,
+                value=Block(body=_core_body(node.block.body), params=params),
+            )
+        )
     return ast.Call(
         func=_core_expr(node.func) if node.func is not None else ast.Name(id="<unknown>"),
         args=_core_exprs(node.args),
-        keywords=[],
+        keywords=keywords,
     )
 
 
@@ -999,8 +1045,11 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
             else_body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.orelse)),
         )
     if isinstance(node, ast.For):
-        return Loop(
-            test=_lower_expr(node.iter),
+        if not isinstance(node.target, ast.Name):
+            return _unsupported(node)
+        return ForEach(
+            target=str(node.target.id),
+            iterable=_lower_expr(node.iter),
             body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.body)),
             else_body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.orelse)),
         )
@@ -1010,7 +1059,7 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
             cases.append(
                 PatternTest(
                     pattern=_lower_pattern(case.pattern),
-                    guard=_lower_expr(case.guard),
+                    guard=_lower_expr(case.guard) if case.guard is not None else None,
                     body=Module(body=tuple(_lower_stmt(stmt) for stmt in case.body)),
                 )
             )
@@ -1039,6 +1088,10 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
         for stmt in node.body:
             if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
                 fields.append((str(stmt.target.id), _lower_expr(stmt.value)))
+            elif isinstance(stmt, ast.FunctionDef) and stmt.name == "__init__":
+                for arg in stmt.args.args:
+                    if arg.arg != "self":
+                        fields.append((str(arg.arg), Literal(value=None)))
         return ConstructData(name=str(node.name), fields=tuple(fields))
     return _unsupported(node)
 
@@ -1051,9 +1104,11 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
     if isinstance(node, ast.Name):
         return Load(name=str(node.id))
     if isinstance(node, ast.Call):
+        block = _lower_call_block(node)
         return Call(
             func=_lower_expr(node.func),
             args=tuple(_lower_expr(arg) for arg in node.args),
+            block=block,
         )
     if isinstance(node, ast.Yield):
         return Yield(value=_lower_expr(node.value))
@@ -1136,6 +1191,25 @@ def _lower_pattern(node: ast.AST | None) -> CoreNode:
             entries.append((_lower_expr(key), _lower_pattern(pattern)))
         return MappingLiteral(entries=tuple(entries))
     return _unsupported(node)
+
+
+def _lower_call_block(node: ast.Call) -> Function | None:
+    for keyword in node.keywords:
+        if keyword.arg != "__block__":
+            continue
+        block = keyword.value
+        body = getattr(block, "body", None)
+        if body is None:
+            return None
+        params: tuple[str, ...] = ()
+        block_params = getattr(block, "params", None)
+        if isinstance(block_params, ast.Name):
+            params = (block_params.id,)
+        return Function(
+            params=params,
+            body=Module(body=tuple(_lower_stmt(stmt) for stmt in body)),
+        )
+    return None
 
 
 def _unsupported(node: ast.AST) -> Diagnostic:

@@ -40,6 +40,9 @@ Core IR Module
   `execute(..., eval_backend="core-runtime")`,
   `create_session(..., eval_backend="core-runtime")`, or
   `NOMI_EVAL_BACKEND=core-runtime`.
+- `samples/demo.nomi` now runs through the direct `core-runtime` backend as a
+  smoke target. This proves executable independence from Python AST for the
+  demo path, but it is not yet a default-backend promotion.
 
 ## Reusable Backend Boundary
 
@@ -198,10 +201,38 @@ The backend can graduate in these steps:
 - Do not add Rust/Wasm codegen until the Python reference backend has a small,
   clear value/environment/control-flow contract.
 
+## Current Direct Runtime Coverage
+
+Implemented enough for the demo smoke path:
+
+- default fenced host calls for `abs`, `bool`, `filter`, `float`, `int`, `len`,
+  `list`, `map`, `print`, `range`, `str`, and `sum`;
+- data constructors as `DataConstructorValue` producing `DataValue`;
+- native host errors fenced into `ErrorValue`;
+- `Handle` matching by error kind;
+- block calls represented on Core `Call`;
+- yield-to-block dispatch for simple caller blocks and yielded values;
+- `ForEach` Core IR for `for item in sequence`.
+
+Known parity risks before default promotion:
+
+- `defer` behavior currently arrives through lowered call order rather than a
+  Core-owned defer/finally semantic event;
+- annotated/constrained bindings are projected to plain `Bind`, so constraint
+  metadata is not yet preserved in Core IR;
+- host capabilities are a useful default table, but not yet a declared portable
+  capability manifest;
+- `DataValue` API unboxing is still compatibility-shaped for Python tests rather
+  than a final user display/value protocol;
+- block/yield support is enough for the demo but not a full resumable generator
+  model.
+
 ## Next Implementation Slice
 
-Now that `samples/demo.nomi` passes strict Core IR verification and
-`core-to-python` lowering, broaden executable `core-runtime` parity. The main
-remaining gaps are host builtin defaults, class/data constructors, exception
-matching, generator/block resume semantics, and preserving constraint metadata
-instead of projecting annotated bindings to plain `Bind`.
+Turn the demo smoke path into a cross-backend acceptance gate:
+
+1. add a smaller backend fixture corpus independent of `samples/demo.nomi`;
+2. compare selected bindings/stdout across `python-ast` and `core-runtime`;
+3. preserve constraint metadata in Core IR instead of projecting annotations to
+   plain `Bind`;
+4. define a serialized Core IR schema for the JavaScript/Web runtime path.
