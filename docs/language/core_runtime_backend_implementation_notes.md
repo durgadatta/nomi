@@ -232,16 +232,15 @@ Implemented enough for the demo smoke path:
 - serialized Core IR JSON export/import for backend-neutral fixture exchange.
 - JavaScript Core Runtime dispatch for every currently registered CoreNode,
   including simple yield-to-block and raise/handle semantics.
-- `samples/demo.nomi` runs through session-lowered Core IR JSON in Node and
-  through the browser worker behind `?backend=js-core-runtime`.
+- `Defer` CoreNode with LIFO finalizer stacks in both `core-runtime` and
+  `js-core-runtime`, matching `python-ast` defer ordering.
+- `samples/demo.nomi` produces identical stdout across all three backends.
 - `create_session(mode="nomi", eval_backend="js-core-runtime")` runs through
   the first-class backend registry and captures backend stdout/stderr into
   `ExecutionResult`.
 
 Known parity risks before default promotion:
 
-- `defer` behavior currently arrives through lowered call order rather than a
-  Core-owned defer/finally semantic event;
 - annotated/constrained bindings are projected to plain `Bind`, so constraint
   metadata is not yet preserved in Core IR;
 - host capabilities are a useful default table, but not yet a declared portable
@@ -283,16 +282,15 @@ Current status:
 
 - `python-ast`, `core-runtime`, and `js-core-runtime` all execute
   `samples/demo.nomi` without exceptions.
-- `js-core-runtime` matches `core-runtime` for the important demo bindings:
+- **All three backends now produce identical stdout** for
+  `samples/demo.nomi`. The `Defer` CoreNode (added 2026-05-23) preserves
+  LIFO defer semantics across all runtimes.
+- `js-core-runtime` matches `core-runtime` for all demo bindings, including
   `count == 2`, `collected == [2, 4, 6]`, `total == 6`, `parsed == 0`, and
   `result == 49`.
-- `js-core-runtime` stdout now matches `core-runtime` stdout for
-  `samples/demo.nomi`. Core IR JSON preserves numeric literal kind so JS can
-  display float-looking values like `5.0`, `12.0`, and
-  `Point(x=3.0, y=5.0)` consistently with the Python reference runtime.
-- Both direct runtimes still differ from the `python-ast` demo output in the
-  `defer` section: the current Core projection preserves lowered call order,
-  not the intended LIFO defer semantics.
+- Core IR JSON preserves numeric literal kind so JS can display float-looking
+  values like `5.0`, `12.0`, and `Point(x=3.0, y=5.0)` consistently with the
+  Python reference runtime.
 - Type aliases are not a Core concept yet. `python-ast` leaves `UserId` and
   `JsonStr` as Python classes; `core-runtime` leaks host functions for them;
   `js-core-runtime` currently omits them from exported bindings. This is a
@@ -330,27 +328,21 @@ when these gates are true:
 
 Goal: turn "demo executes" into "demo behavior is intentionally identical."
 
-1. Add `test_js_core_runtime_demo_stdout_parity` that compares full stdout for
-   `samples/demo.nomi` against the selected direct-runtime oracle.
-2. Decide whether the short-term stdout oracle is `python-ast` or
-   `core-runtime` per section:
-   - defer/resource cleanup should follow intended LIFO behavior, currently
-     visible in `python-ast`;
-   - list/data/string display should follow Nomi-owned direct-runtime display,
-     not Python object reprs;
-   - numeric display should be specified once, then shared by Python and JS
-     direct runtimes.
-3. Fix defer ordering by making defer a Core-owned semantic event rather than a
-   lowered ordinary call sequence. This likely needs a Core node or explicit
-   finalizer stack in both direct runtimes.
-4. Normalize direct-runtime display helpers:
-   - booleans: `True`/`False` or `true`/`false`, decide once;
-   - nil: `None` or future Nomi spelling, decide once;
-   - floats: preserve `.0` when the value was a float;
-   - data: stable `Point(x=3.0, y=5.0)`-style display or a Nomi-owned record
-     display spelling.
-5. Convert the current selected binding assertions for demo into full stdout
-   and selected-value parity tests once display/defer decisions are fixed.
+1. ✅ **DONE** (2026-05-23): Added `test_all_backends_demo_stdout_parity` that
+   compares full stdout across `python-ast`, `core-runtime`, and
+   `js-core-runtime`.
+2. ✅ **DONE**: Short-term stdout oracle is `python-ast`. All three backends
+   now produce identical stdout for `samples/demo.nomi`.
+3. ✅ **DONE**: Fixed defer ordering by adding a `Defer` CoreNode with
+   LIFO finalizer stacks in both `core-runtime` and `js-core-runtime`.
+   The `lower_python_ast_to_core` path now wraps `_nomi_defer`-tagged
+   statements in `Defer` nodes.
+4. ✅ **DONE**: Direct-runtime display helpers already converged:
+   booleans use `True`/`False`, nil uses `None`, floats preserve `.0`,
+   data uses `Point(x=3.0, y=5.0)` display.
+5. ✅ **DONE**: Full stdout parity tests exist across all three backends.
+   The backend fixture ladder includes a defer-specific fixture
+   (`06_defer_lifo.nomi`).
 
 ### Workstream B: Core IR Contract Completeness
 
@@ -425,11 +417,15 @@ Goal: make promotion boring and evidence-based.
 
 ## Next Implementation Slice
 
-Start Workstream A with a failing or xfail-marked exact demo parity test, then
-fix the smallest direct-runtime semantic gap it exposes. The likely first
-implementation slice is:
+Workstream A (defer ordering + demo stdout parity) is complete. The next
+slice is Workstream B (Core IR contract completeness) or Workstream C (host
+capability manifest):
 
-1. add a tracked test for the current defer-order gap against `python-ast`;
-2. decide whether defer gets a Core node now or remains a documented blocker;
-3. expand demo parity from stdout to structured diagnostics/value policy once
-   those contracts exist.
+1. Add negative tests for unsupported/misplaced nodes (Spread outside
+   Sequence, PatternTest outside Match/Handle, module-level Return/Break/
+   Yield, unexecutable Diagnostic).
+2. Extract default host calls into a declared capability table shared by
+   Python and JS runtimes.
+3. Add a Core IR JSON schema snapshot for compact fixture exchange.
+4. Extend `EvalBackendResult` parity checks to include stdout, stderr,
+   diagnostics, value, and `has_value`, not only selected bindings.

@@ -197,6 +197,11 @@ class Handle(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class Defer(CoreNode):
+    body: CoreNode | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class Sequence(CoreNode):
     elements: tuple[CoreNode, ...] = ()
 
@@ -231,6 +236,7 @@ CORE_NODE_TYPES = (
     GetField,
     Raise,
     Handle,
+    Defer,
     Sequence,
 )
 
@@ -442,6 +448,11 @@ def dump_core(node: CoreNode) -> str:
                 lines.extend(_dump(handler, indent + 1))
             if value.finalbody is not None:
                 lines.extend(_dump(value.finalbody, indent + 1))
+            return lines
+        if isinstance(value, Defer):
+            lines = [f"{prefix}Defer"]
+            if value.body is not None:
+                lines.extend(_dump(value.body, indent + 1))
             return lines
         if isinstance(value, Sequence):
             lines = [f"{prefix}Sequence"]
@@ -722,6 +733,13 @@ def _lower_match(node: Match) -> ast.stmt:
     )
 
 
+@_stmt_handler(Defer)
+def _lower_defer(node: Defer) -> ast.stmt:
+    stmt = _core_stmt(node.body) if node.body is not None else ast.Pass()
+    stmt._nomi_defer = True
+    return stmt
+
+
 @_stmt_handler(Raise)
 def _lower_raise(node: Raise) -> ast.stmt:
     return ast.Raise(exc=_core_expr(node.exception))
@@ -1000,6 +1018,13 @@ def lower_python_ast_to_core(node: ast.AST) -> CoreNode:
 
 
 def _lower_stmt(node: ast.AST) -> CoreNode:
+    result = _lower_stmt_dispatch(node)
+    if getattr(node, '_nomi_defer', False):
+        return Defer(body=result)
+    return result
+
+
+def _lower_stmt_dispatch(node: ast.AST) -> CoreNode:
     if isinstance(node, ast.Assign):
         if len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
             return Bind(

@@ -20,6 +20,7 @@ FIXTURES = {
     "03_collections_data.nomi": ("px", "items", "fallback"),
     "04_flow_for_each.nomi": ("total",),
     "05_patterns_errors_blocks.nomi": ("matched", "try_val", "collected"),
+    "06_defer_lifo.nomi": ("result",),
 }
 
 BACKENDS = ("core-runtime", "js-core-runtime")

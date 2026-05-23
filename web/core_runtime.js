@@ -154,6 +154,7 @@ class CoreRuntime {
     this.globalFrame = new Frame();
     this.currentFrame = this.globalFrame;
     this.currentBlock = null;
+    this.deferStack = [];
     const calls = { ...this.defaultHostCalls(), ...hostCalls };
     for (const [name, call] of Object.entries(calls)) {
       this.globalFrame.bind(name, box(call));
@@ -267,15 +268,25 @@ class CoreRuntime {
 
     const savedFrame = this.currentFrame;
     const savedBlock = this.currentBlock;
+    const savedDefer = this.deferStack;
     this.currentFrame = func.closure.extend(func.params, args);
     this.currentBlock = block;
+    this.deferStack = [];
     try {
-      const result = this.evalModule(func.body);
-      if (isSignal(result) && result.control === "return") return result.value;
-      return result;
+      const rawResult = this.evalModule(func.body);
+      const resultValue = (isSignal(rawResult) && rawResult.control === "return")
+        ? rawResult.value
+        : rawResult;
+      for (let i = this.deferStack.length - 1; i >= 0; i--) {
+        const deferred = this.eval(this.deferStack[i]);
+        if (isSignal(deferred)) return deferred;
+        if (deferred.kind === "error") return deferred;
+      }
+      return resultValue;
     } finally {
       this.currentFrame = savedFrame;
       this.currentBlock = savedBlock;
+      this.deferStack = savedDefer;
     }
   }
 
@@ -616,6 +627,11 @@ class CoreRuntime {
     const finalResult = this.evalModule(node.finalbody);
     if (isSignal(finalResult)) return finalResult;
     return result;
+  }
+
+  evalDefer(node) {
+    this.deferStack.push(node.body);
+    return NIL;
   }
 
   handleError(error, handlers) {

@@ -44,6 +44,7 @@ from prototype.syntax.core import (
     ConditionalExpr,
     ConstructData,
     CoreNode,
+    Defer,
     Diagnostic,
     Function,
     ForEach,
@@ -105,6 +106,7 @@ class CoreRuntimeEvaluator:
         self._global_frame = Frame()
         self._current_frame = self._global_frame
         self._current_block: FunctionValue | None = None
+        self._defer_stack: list[CoreNode] = []
         self._host_calls = {
             name: (
                 func
@@ -218,16 +220,27 @@ class CoreRuntimeEvaluator:
     ) -> Value | ControlFlow:
         saved_frame = self._current_frame
         saved_block = self._current_block
+        saved_defer = self._defer_stack
         self._current_frame = func.closure.extend(func.params, args)
         self._current_block = block
+        self._defer_stack = []
         try:
             result = self._eval_module(func.body)
             if isinstance(result, ReturnSignal):
-                return result.value
-            return result
+                result_value = result.value
+            else:
+                result_value = result
+            for stmt in reversed(self._defer_stack):
+                deferred = self.eval(stmt)
+                if isinstance(deferred, ControlFlow):
+                    return deferred
+                if isinstance(deferred, ErrorValue):
+                    return deferred
+            return result_value
         finally:
             self._current_frame = saved_frame
             self._current_block = saved_block
+            self._defer_stack = saved_defer
 
     def _eval_Return(self, node: Return) -> ControlFlow:
         value = self.eval(node.value)
@@ -550,6 +563,10 @@ class CoreRuntimeEvaluator:
         if isinstance(final, ControlFlow):
             return final
         return result
+
+    def _eval_Defer(self, node: Defer) -> Value:
+        self._defer_stack.append(node.body)
+        return NIL
 
     def _handle_error(
         self, error: ErrorValue, handlers: tuple[CoreNode, ...]

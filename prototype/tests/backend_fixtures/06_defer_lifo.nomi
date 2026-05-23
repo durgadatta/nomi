@@ -1,0 +1,7 @@
+func tracked():
+    defer print("third")
+    defer print("second")
+    print("first")
+    return 42
+
+result = tracked()
