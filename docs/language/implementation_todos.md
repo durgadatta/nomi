@@ -296,20 +296,20 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Define `ControlFlow` subtypes: `ReturnSignal`, `BreakSignal`,
   `ContinueSignal`, `YieldSignal`.
 - [x] Define `Frame` with scoped bindings, parent chain, lookup, assign, extend.
-- [ ] Implement `CoreRuntime.eval()` dispatching on: `Literal`, `Load`, `Bind`,
+- [x] Implement `CoreRuntime.eval()` dispatching on: `Literal`, `Load`, `Bind`,
   `Function`, `Call`, `Return`, `Branch`.
-- [ ] Implement `_unbox()` for `EvalBackendResult.bindings` compatibility.
-- [ ] Parity tests against `python_ast` backend for the 7-node subset.
+- [x] Implement `_unbox()` for `EvalBackendResult.bindings` compatibility.
+- [x] Parity tests against `python_ast` backend for the 7-node subset.
 
 ### Slice 2: Data and fields (2 node types)
-- [ ] Implement `eval_ConstructData()` — evaluate fields, return `DataValue`.
-- [ ] Implement `eval_GetField()` — access `DataValue.fields[name]`.
-- [ ] Parity tests for data construction and field access.
+- [x] Implement `eval_ConstructData()` — evaluate fields, return `DataValue`.
+- [x] Implement `eval_GetField()` — access `DataValue.fields[name]`.
+- [x] Contract tests for data construction and field access.
 
 ### Slice 3: Control flow (2 node types)
-- [ ] Implement `eval_Loop()` — while-style loop with `BreakSignal`/`ContinueSignal`.
-- [ ] Implement `eval_Sequence()` — evaluate elements, produce list.
-- [ ] Parity tests for loops and sequences.
+- [x] Implement `eval_Loop()` — while-style loop with `BreakSignal`/`ContinueSignal`.
+- [x] Implement `eval_Sequence()` — evaluate elements, produce list.
+- [x] Parity tests for loops and sequences.
 
 ### Slice 4: Pattern matching (2 node types)
 - [ ] Implement `eval_Match()` — subject evaluation + case dispatch.
@@ -323,8 +323,8 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [ ] Parity tests for raise and handle.
 
 ### Slice 6: Host interop + unboxing
-- [ ] Implement `NativeValue` wrapping and host-call dispatch table.
-- [ ] Complete `_unbox()` for all value types.
+- [x] Implement `NativeValue` wrapping and host-call dispatch table.
+- [x] Complete `_unbox()` for all value types.
 - [ ] Host-interop parity tests (print, len, etc.).
 
 ### Slice 7: Blocks and resume (capability promotion)

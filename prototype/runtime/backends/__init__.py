@@ -106,3 +106,13 @@ def render_eval_backend_table() -> str:
             f"| {name:<24} | {spec.status:<22} | {spec.ir_contract:<24} | {selectable:<10} |"
         )
     return "\n".join(rows)
+
+
+def _load_builtin_backends() -> None:
+    """Import built-in backends so their registry entries are available."""
+    from prototype.runtime.backends import core_direct  # noqa: F401
+    from prototype.runtime.backends import core_runtime  # noqa: F401
+    from prototype.runtime.backends import python_ast  # noqa: F401
+
+
+_load_builtin_backends()
