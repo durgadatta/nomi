@@ -121,7 +121,9 @@ layers move from docs into implementation.
 - [x] Add `tools.syntax.inspect` so every grammar or lowering change can show
   raw tree, transformed tree, surface AST, core AST, Python AST backend, and
   normal-form expansion.
-  (Done — `python3 -m tools.syntax.inspect FILE --stage <stage>`.)
+  (Done — 15 stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`,
+  `core`, `core-verify`, `core-to-python`, `backend-lowered`, `features`,
+  `capabilities`, `parser-frontends`, `eval-backends`, `passes`, `expansions`.)
 - [~] Introduce `SourceSpan` and preserve it through the earliest practical
   parser/lowering path for bindings, functions, calls, match cases, and block
   calls.

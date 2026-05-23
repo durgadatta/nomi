@@ -21,7 +21,12 @@ from prototype.runtime.diagnostics import (
     RuntimeEventCollector,
 )
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
-from prototype.syntax.core import dump_core, lower_python_ast_to_core
+from prototype.syntax.core import (
+    core_to_python_ast,
+    dump_core,
+    lower_python_ast_to_core,
+    verify_core,
+)
 from prototype.syntax.features import (
     DEFAULT_DESUGAR_PROFILE,
     render_feature_capability_table,
@@ -231,6 +236,20 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"eval_backends", "eval-backends"}:
+        from prototype.runtime.backends import render_eval_backend_table
+
+        output = render_eval_backend_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"expansions", "desugar_expansions"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
 
@@ -251,6 +270,56 @@ def inspect(
         tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
         core = lower_python_ast_to_core(tree)
         output = dump_core(core)
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"core_verify", "core-verify"}:
+        tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
+        core = lower_python_ast_to_core(tree)
+        try:
+            verify_core(core, strict=True)
+            output = f"Core IR verification: PASS\n{dump_core(core)}"
+        except Exception as exc:
+            output = f"Core IR verification: FAIL\n{exc}"
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"core_to_python", "core-to-python"}:
+        tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
+        core = lower_python_ast_to_core(tree)
+        py_tree = core_to_python_ast(core)
+        output = ast.dump(py_tree, include_attributes=False, indent=2)
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"backend_lowered", "backend-lowered"}:
+        from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
+
+        tree = _parse_or_load_default(pipeline=pipeline, source=source, filename=filename)
+        core = lower_python_ast_to_core(tree)
+        backend = make_python_ast_backend_for_mode(pipeline.mode_spec)
+        output = backend.render_lowered(core)
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,

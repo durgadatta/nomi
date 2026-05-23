@@ -70,6 +70,8 @@ pytest --interpreter-modes reduced                        # only reduced
 pytest prototype/tests/path/to/test_file.py               # focused
 pytest --force-regen prototype/tests/regression/test_interpreter.py  # regen snapshots
 pytest prototype/tests/ -o "addopts="                     # serial (override -n auto)
+NOMI_VERIFY_CORE=1 pytest                                 # with Core IR verification gate
+NOMI_USE_CORE_IR=1 pytest                                # route eval through Core IR + backend
 ```
 
 ## Rules

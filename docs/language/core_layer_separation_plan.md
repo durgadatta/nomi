@@ -405,13 +405,14 @@ Use these files as the starting map:
 | --- | --- | --- |
 | Feature registry | `prototype/syntax/features.py` | Add layer metadata and reduction targets. |
 | Surface nodes | `prototype/syntax/surface.py` | Keep user-spelled shape and spans before backend lowering. |
-| Core IR | `prototype/syntax/core.py` or `prototype/core/ir.py` | New passive L1 dataclasses and verifier. |
+| Core IR | `prototype/syntax/core.py` | L1 dataclasses (17 nodes), `verify_core()`, `core_to_python_ast()`, `lower_python_ast_to_core()`. |
 | Parser API | `prototype/parser/nomi/usage.py` | Expose more inspection stages without changing default execution. |
-| Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and future opt-in core execution. |
-| Pipeline metadata | `prototype/runtime/pipeline.py` | Record stages, profiles, layers, and backend target. |
-| Mode metadata | `prototype/runtime/modes.py` | Keep current mode behavior visible as data. |
-| Reduced guard | `prototype/interpreter/reduced/interpreter.py` | Continue catching unreduced forms; later delegate to Core IR verifier. |
-| Syntax inspector | `tools/syntax/inspect.py` | Make artifact boundaries visible from the command line. |
+| Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and opt-in core execution (`NOMI_USE_CORE_IR=1`). |
+| Pipeline metadata | `prototype/runtime/pipeline.py` | Records stages, profiles, layers, and `eval_backend` target. |
+| Mode metadata | `prototype/runtime/modes.py` | Keep current mode behavior visible as data; `eval_backend` field. |
+| Eval backends | `prototype/runtime/backends/` | Backend registry, Python AST adapter, Core IR direct evaluator. |
+| Reduced guard | `prototype/interpreter/reduced/interpreter.py` | Catch unreduced forms; Core IR verifier (`NOMI_VERIFY_CORE=1`) adds second guardrail. |
+| Syntax inspector | `tools/syntax/inspect.py` | Make artifact boundaries visible from the command line (15 stages). |
 
 ### Preparatory Commit Shape
 

@@ -16,6 +16,18 @@ Classify the form as L0-L7. L4 sugar must reduce before eval; L2/L3 semantic
 core belongs in the future core evaluator; L7 backend special cases belong in
 backend code, not language semantics.
 
+## Eval backend registry
+`prototype/runtime/backends/` mirrors the parser frontend/backend pattern:
+- `__init__.py` — `EvalBackendSpec`, `EvalBackendCapabilities`, registry
+- `python_ast.py` — wraps existing interpreter behind Core IR adapter
+- `core_direct.py` — dispatches on CoreNode types directly (no Python AST)
+
+Opt-in gates (env vars):
+- `NOMI_VERIFY_CORE=1` — lower to Core IR and verify after parsing
+- `NOMI_USE_CORE_IR=1` — route execution through Core IR + backend
+
+Inspect with: `python3 -m tools.syntax.inspect --stage eval-backends`
+
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
 - `prototype/interpreter/python/binding.py` — Assignment, augmented assignment, annotated assignment
@@ -95,6 +107,8 @@ eval(node, state, generator_state):
 pytest                                  # all three (python, nomi, reduced)
 pytest --interpreter-modes reduced      # only reduced
 NOMI_INTERPRETER_MODE=reduced pytest   # env var alternative
+NOMI_VERIFY_CORE=1 pytest              # enable Core IR verification gate
+NOMI_USE_CORE_IR=1 pytest             # route eval through Core IR + backend
 ```
 
 For feature experiments, add focused runtime tests only after parse and

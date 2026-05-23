@@ -10,6 +10,7 @@ from __future__ import annotations
 import ast
 import contextlib
 import io
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
@@ -17,8 +18,10 @@ from typing import Any
 
 from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
 from prototype.runtime.api import ExecutionResult
+from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
 from prototype.runtime.diagnostics import RuntimeEventCollector
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
+from prototype.syntax.core import lower_python_ast_to_core, verify_core
 
 
 _NOMI_PARSER = "prototype.parser.nomi.usage.generate_ast"
@@ -47,6 +50,7 @@ class RuntimeSession:
     cache_size: int = 0
     pipeline: PipelineSpec = field(init=False)
     interpreter: Any = field(init=False)
+    backend: Any = field(init=False)
     _ast_cache: dict[RuntimeCacheKey, Any] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
@@ -55,6 +59,7 @@ class RuntimeSession:
             profile=self.profile,
             parser_frontend=self.parser_frontend,
         )
+        self.backend = make_python_ast_backend_for_mode(self.pipeline.mode_spec)
         self.reset()
 
     @property
@@ -118,11 +123,19 @@ class RuntimeSession:
 
                 if not tree_locations_fixed:
                     tree = ast.fix_missing_locations(tree)
+                if os.environ.get("NOMI_VERIFY_CORE") == "1":
+                    self._verify_core(tree)
                 eval_started = perf_counter()
-                has_value, value = self._eval_tree(
-                    tree,
-                    display_last_expr=display_last_expr,
-                )
+                if self._use_core_ir_path():
+                    has_value, value = self._eval_core_ir(
+                        tree,
+                        display_last_expr=display_last_expr,
+                    )
+                else:
+                    has_value, value = self._eval_tree(
+                        tree,
+                        display_last_expr=display_last_expr,
+                    )
                 timings["eval"] = perf_counter() - eval_started
         except Exception as exc:
             timings["total"] = perf_counter() - started
@@ -254,6 +267,26 @@ class RuntimeSession:
             return frontend.generate_python_ast(code=source, filename=filename)
         frontend.parse_accepts(code=source, filename=filename)
         return None
+
+    @staticmethod
+    def _verify_core(tree: ast.Module) -> None:
+        core = lower_python_ast_to_core(tree)
+        verify_core(core, strict=True)
+
+    def _use_core_ir_path(self) -> bool:
+        return (
+            os.environ.get("NOMI_USE_CORE_IR") == "1"
+            or self.pipeline.eval_backend != "python-ast"
+        )
+
+    def _eval_core_ir(
+        self, tree: ast.Module, *, display_last_expr: bool
+    ) -> tuple[bool, Any]:
+        core = lower_python_ast_to_core(tree)
+        verify_core(core, strict=True)
+        result = self.backend.evaluate(core, display_last_expr=display_last_expr)
+        self.interpreter.global_env.bindings.update(result.bindings)
+        return result.has_value, result.value
 
     @staticmethod
     def _is_block_call_expr(node: ast.Expr) -> bool:

@@ -22,6 +22,16 @@ source
 -> Python-hosted interpreter
 ```
 
+Opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
+
+```text
+source
+-> ... Python AST artifact
+-> lower_python_ast_to_core() -> Core IR (L1 nodes, 17 types)
+-> verify_core(strict=True)
+-> eval backend dispatch (python_ast or core_direct)
+```
+
 Target path:
 
 ```text
@@ -96,45 +106,29 @@ Initial contracts:
 
 ### 2. Core IR Skeleton
 
-Add passive core artifacts before changing execution:
+~~Add passive core artifacts before changing execution.~~ Done.
 
-```text
-prototype/syntax/core.py
-prototype/tests/unit/syntax/test_core_ir.py
-```
-
-Start with dataclasses and a verifier for:
-
-```text
-Module, Literal, Load, Bind, Function, Call, Return, Branch, Diagnostic
-```
-
-No runtime should depend on this first version. The goal is a stable shape for
-inspection and tests.
+`prototype/syntax/core.py` — 17 passive frozen-dataclass CoreNode types
+(Module, Literal, Load, Bind, Function, Call, Return, Branch, Diagnostic,
+Loop, Match, PatternTest, ConstructData, GetField, Raise, Handle, Sequence).
+Includes `verify_core(strict=...)`, `dump_core()`, `core_to_python_ast()`
+(forward lowering), and `lower_python_ast_to_core()` (backward projection).
 
 ### 3. Inspection Stages
 
-Grow `prototype.runtime.inspect()` and `tools.syntax.inspect` toward shared
-stage names:
+~~Grow `prototype.runtime.inspect()` and `tools.syntax.inspect`.~~ Done.
 
-```text
-raw_tree
-transformed_tree
-surface
-semantic_core
-implementation_core
-python_ast
-features
-```
-
-Start with a feature/layer table stage if Core IR is not ready yet.
+Current stages via CLI and API:
+`raw_tree`, `transformed_tree`, `surface-ast`, `python-ast`, `core`,
+`core-verify`, `core-to-python`, `backend-lowered`, `features`, `capabilities`,
+`parser-frontends`, `eval-backends`, `passes`, `expansions`.
 
 ### 4. Reduced/Core Guardrails
 
 Keep `prototype/interpreter/reduced/interpreter.py` aligned with declared
-reductions. It currently guards against Python AST forms that should have been
-desugared. The next version should also understand feature metadata and,
-eventually, Core IR verifier results.
+reductions. The Core IR verifier (`verify_core(strict=True)`) now provides an
+additional guardrail via `NOMI_VERIFY_CORE=1`. The reduced interpreter and the
+verifier should converge on the same set of rejected forms.
 
 ### 5. First Semantic Core Slice
 
@@ -176,6 +170,10 @@ Goal:
 # Full suite
 pytest
 
+# Core IR verification gate
+NOMI_VERIFY_CORE=1 pytest
+NOMI_USE_CORE_IR=1 pytest
+
 # Feature and contract checks
 pytest prototype/tests/features
 pytest prototype/tests/contracts
@@ -188,6 +186,10 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage raw-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage transformed-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage surface-ast
 python3 -m tools.syntax.inspect samples/demo.nomi --stage python-ast
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core-verify
+python3 -m tools.syntax.inspect --stage eval-backends
+python3 -m tools.syntax.inspect --stage parser-frontends
 
 # Runtime facade from Python
 python3 - <<'PY'

@@ -14,6 +14,13 @@ cross-language research corpus (`docs/research/language_family_coverage_map.md`)
 3. `prototype/interpreter/reduced/interpreter.py` — add NotImplementedError override
 4. `prototype/tests/unit/parser/desugar/test_<name>.py` — test the desugaring
 
+After desugaring, verify Core IR roundtrip integrity:
+```bash
+NOMI_VERIFY_CORE=1 pytest prototype/tests/unit/parser/desugar/test_<name>.py
+```
+The `NOMI_VERIFY_CORE=1` gate catches forms that the reduced interpreter
+would also reject, via the shared `verify_core(strict=True)` verifier.
+
 For larger syntax reductions, also update the planned feature manifest or
 `docs/language/syntax_substrate_todo_audit.md` with the feature owner, normal
 form, status, pass metadata, diagnostics, and inspection expectations.

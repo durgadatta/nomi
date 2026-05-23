@@ -11,8 +11,12 @@ Usage::
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage capabilities
     python3 -m tools.syntax.inspect --stage parser-frontends
+    python3 -m tools.syntax.inspect --stage eval-backends
     python3 -m tools.syntax.inspect --stage passes
     python3 -m tools.syntax.inspect FILE --stage expansions
+    python3 -m tools.syntax.inspect FILE --stage core-verify
+    python3 -m tools.syntax.inspect FILE --stage core-to-python
+    python3 -m tools.syntax.inspect FILE --stage backend-lowered
 """
 
 import sys
@@ -28,7 +32,13 @@ from prototype.parser.nomi.desugar.pipeline import (
     render_desugar_expansion,
     render_desugar_pass_table,
 )
-from prototype.syntax.core import dump_core, lower_python_ast_to_core
+from prototype.runtime.backends import render_eval_backend_table
+from prototype.syntax.core import (
+    core_to_python_ast,
+    dump_core,
+    lower_python_ast_to_core,
+    verify_core,
+)
 from prototype.syntax.features import (
     render_feature_capability_table,
     render_feature_layer_table,
@@ -67,6 +77,9 @@ def main():
     if stage in {"passes", "desugar-passes", "desugar_passes"}:
         print(render_desugar_pass_table())
         return
+    if stage in {"eval-backends", "eval_backends"}:
+        print(render_eval_backend_table())
+        return
 
     if filename is None:
         print(__doc__)
@@ -84,6 +97,28 @@ def main():
         print(generate_ast(code=code, dump=True, keep_surface=True))
     elif stage == "core":
         print(dump_core(lower_python_ast_to_core(generate_ast(code=code))))
+    elif stage in {"core-verify", "core_verify"}:
+        tree = generate_ast(code=code)
+        core = lower_python_ast_to_core(tree)
+        try:
+            verify_core(core, strict=True)
+            print(f"Core IR verification: PASS\n{dump_core(core)}")
+        except Exception as exc:
+            print(f"Core IR verification: FAIL\n{exc}")
+    elif stage in {"core-to-python", "core_to_python"}:
+        import ast as py_ast
+        tree = generate_ast(code=code)
+        core = lower_python_ast_to_core(tree)
+        py_tree = core_to_python_ast(core)
+        py_tree = py_ast.fix_missing_locations(py_tree)
+        print(py_ast.dump(py_tree, include_attributes=False, indent=2))
+    elif stage in {"backend-lowered", "backend_lowered"}:
+        from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
+        from prototype.runtime.modes import get_mode_spec
+        tree = generate_ast(code=code)
+        core = lower_python_ast_to_core(tree)
+        backend = make_python_ast_backend_for_mode(get_mode_spec("nomi"))
+        print(backend.render_lowered(core))
     elif stage == "python-ast":
         print(generate_ast(code=code, dump=True))
     elif stage in {"expansions", "desugar-expansions", "desugar_expansions"}:
@@ -92,8 +127,9 @@ def main():
         print(
             f"Unknown stage: {stage!r}. "
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
+            f"core-verify, core-to-python, backend-lowered, "
             f"python-ast, features, capabilities, parser-frontends, "
-            f"passes, expansions"
+            f"eval-backends, passes, expansions"
         )
         sys.exit(1)
 

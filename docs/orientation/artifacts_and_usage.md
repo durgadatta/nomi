@@ -76,6 +76,22 @@ The current default pipeline is:
 -> bindings / ExecutionResult
 ```
 
+With opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
+
+```text
+.nomi source
+-> ... Python AST artifact
+-> lower_python_ast_to_core() -> Core IR (L1 nodes)
+-> verify_core(strict=True)
+-> eval backend dispatch (python_ast or core_direct)
+-> bindings / ExecutionResult
+```
+
+The eval backend registry is at `prototype/runtime/backends/`. Currently two
+backends: `python_ast` (wraps the existing interpreter behind Core IR) and
+`core_direct` (dispatches directly on CoreNode types, no Python AST roundtrip).
+Enable verification without changing the eval path with `NOMI_VERIFY_CORE=1`.
+
 Useful files:
 
 -   **Grammar and Parsing:** Lark is used to define the grammar and
@@ -86,6 +102,9 @@ Useful files:
     desugar passes.
 -   **Surface nodes:** `prototype/syntax/surface.py` contains early Nomi-owned
     surface artifacts such as `BlockCall`.
+-   **Eval backends:** `prototype/runtime/backends/` — eval backend registry
+    (`EvalBackendSpec`, `EvalBackendCapabilities`), Python AST backend adapter,
+    and Core IR direct evaluator.
 -   **Runtime API:** `prototype/runtime/api.py`, `modes.py`, `pipeline.py`, and
     `session.py` provide the public facade and mode metadata.
 -   **Execution:** Execution is handled by a layered interpreter located
@@ -108,28 +127,37 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage raw-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage transformed-tree
 python3 -m tools.syntax.inspect samples/demo.nomi --stage surface-ast
 python3 -m tools.syntax.inspect samples/demo.nomi --stage python-ast
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core-verify
+python3 -m tools.syntax.inspect samples/demo.nomi --stage core-to-python
+python3 -m tools.syntax.inspect samples/demo.nomi --stage backend-lowered
 python3 -m tools.syntax.inspect --stage parser-frontends
+python3 -m tools.syntax.inspect --stage eval-backends
+python3 -m tools.syntax.inspect --stage features
+python3 -m tools.syntax.inspect --stage capabilities
+python3 -m tools.syntax.inspect --stage passes
+python3 -m tools.syntax.inspect samples/demo.nomi --stage expansions
 ```
 
-Use the runtime inspection facade for current Python AST inspection:
+Use the runtime inspection facade:
 
 ```python
 from prototype.runtime import inspect
 
 artifact = inspect(source="x = 1\n", mode="nomi", stage="python_ast")
 frontends = inspect(mode="nomi", stage="parser_frontends")
+backends  = inspect(mode="nomi", stage="eval_backends")
+core_ok   = inspect(source="x = 1\n", mode="python", stage="core_verify")
 print(artifact.output)
 ```
 
-Future stages should align with the core-layer plan:
+Current stages:
 
 ```text
-raw_tree
-transformed_tree
-surface
-semantic_core
-implementation_core
-python_ast
+raw_tree, transformed_tree, surface-ast, python-ast, core
+core-verify, core-to-python, backend-lowered
+features, capabilities, parser-frontends, eval-backends
+passes, expansions
 ```
 
 ## Test Suite
@@ -162,10 +190,14 @@ Going forward, implementation work should make those layers explicit:
 
 1. record feature layer metadata in `SyntaxFeature`;
 2. preserve source spans in surface artifacts;
-3. define passive Core IR nodes and a verifier before changing eval;
-4. expose inspection stages through `prototype.runtime.inspect()`;
+3. ~~define passive Core IR nodes and a verifier before changing eval~~ done —
+   `prototype/syntax/core.py` (17 nodes, `verify_core()`, `core_to_python_ast()`,
+   `lower_python_ast_to_core()`);
+4. ~~expose inspection stages through `prototype.runtime.inspect()`~~ done —
+   `core`, `core-verify`, `core-to-python`, `backend-lowered`, `eval-backends`,
+   plus parser-frontends, features, capabilities, passes, expansions;
 5. keep Python AST as the compatibility backend while direct core evaluation
-   grows behind opt-in tests.
+   grows behind opt-in env vars (`NOMI_VERIFY_CORE=1`, `NOMI_USE_CORE_IR=1`).
 
 Do not add new permanent evaluator hooks for syntax sugar. If a construct is
 L4 sugar, it should reduce to L2/L3 meaning before eval.

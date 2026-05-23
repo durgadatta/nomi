@@ -33,6 +33,14 @@ reduction target and should not require a final evaluator hook.
     → Interpreter.eval()
 ```
 
+With opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
+```
+.nomi source → ... → Python ast.Module
+    → lower_python_ast_to_core() → Core IR
+    → verify_core(strict=True)
+    → backend.evaluate()  (python_ast or core_direct)
+```
+
 Target architecture for new work:
 ```
 .nomi source → feature-selected parser/profile → raw/transformed tree

@@ -23,6 +23,7 @@ class ModeSpec:
     lowering: str
     interpreter: str
     session_lowerer: str | None = None
+    eval_backend: str = "python-ast"
 
     def load_runner(self) -> Callable:
         return resolve_dotted(f"{self.runner_module}.run_eval_loop")
