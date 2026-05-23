@@ -70,6 +70,21 @@ class Branch(CoreNode):
 
 
 @dataclass(frozen=True, slots=True)
+class NoOp(CoreNode):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class Break(CoreNode):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class Continue(CoreNode):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
 class UnaryOp(CoreNode):
     op: str = ""
     operand: CoreNode | None = None
@@ -181,6 +196,9 @@ CORE_NODE_TYPES = (
     Call,
     Return,
     Branch,
+    NoOp,
+    Break,
+    Continue,
     UnaryOp,
     BinaryOp,
     BooleanOp,
@@ -296,6 +314,12 @@ def dump_core(node: CoreNode) -> str:
                 if child is not None:
                     lines.extend(_dump(child, indent + 1))
             return lines
+        if isinstance(value, NoOp):
+            return [f"{prefix}NoOp"]
+        if isinstance(value, Break):
+            return [f"{prefix}Break"]
+        if isinstance(value, Continue):
+            return [f"{prefix}Continue"]
         if isinstance(value, UnaryOp):
             lines = [f"{prefix}UnaryOp({value.op!r})"]
             if value.operand is not None:
@@ -450,6 +474,30 @@ def _core_exprs(nodes: tuple[CoreNode, ...]) -> list[ast.expr]:
     return [_core_expr(n) for n in nodes]
 
 
+def _core_pattern(node: CoreNode | None) -> ast.pattern:
+    if node is None:
+        return ast.MatchAs()
+    if isinstance(node, Literal):
+        if node.value in (None, True, False):
+            return ast.MatchSingleton(value=node.value)
+        return ast.MatchValue(value=ast.Constant(value=node.value))
+    if isinstance(node, Load):
+        return ast.MatchAs(name=None if node.name == "_" else node.name)
+    if isinstance(node, Sequence):
+        return ast.MatchSequence(patterns=[_core_pattern(e) for e in node.elements])
+    if isinstance(node, Spread):
+        if isinstance(node.value, Load) and node.value.name != "_":
+            return ast.MatchStar(name=node.value.name)
+        return ast.MatchStar(name=None)
+    if isinstance(node, MappingLiteral):
+        return ast.MatchMapping(
+            keys=[_core_expr(key) for key, _ in node.entries],
+            patterns=[_core_pattern(value) for _, value in node.entries],
+            rest=None,
+        )
+    return ast.MatchValue(value=_core_expr(node))
+
+
 def _core_body(module: Module | None) -> list[ast.stmt]:
     if module is None or not module.body:
         return [ast.Pass()]
@@ -573,6 +621,21 @@ def _lower_branch(node: Branch) -> ast.stmt:
     )
 
 
+@_stmt_handler(NoOp)
+def _lower_no_op(node: NoOp) -> ast.stmt:
+    return ast.Pass()
+
+
+@_stmt_handler(Break)
+def _lower_break(node: Break) -> ast.stmt:
+    return ast.Break()
+
+
+@_stmt_handler(Continue)
+def _lower_continue(node: Continue) -> ast.stmt:
+    return ast.Continue()
+
+
 @_stmt_handler(Loop)
 def _lower_loop(node: Loop) -> ast.stmt:
     return ast.While(
@@ -587,7 +650,7 @@ def _lower_match(node: Match) -> ast.stmt:
     cases: list[ast.match_case] = []
     for c in node.cases:
         if isinstance(c, PatternTest):
-            pat = _core_expr(c.pattern) if c.pattern is not None else ast.MatchAs()
+            pat = _core_pattern(c.pattern)
             guard = _core_expr(c.guard)
             cases.append(
                 ast.match_case(
@@ -888,6 +951,12 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
         return _lower_expr(node.value)
     if isinstance(node, ast.Return):
         return Return(value=_lower_expr(node.value))
+    if isinstance(node, ast.Pass):
+        return NoOp()
+    if isinstance(node, ast.Break):
+        return Break()
+    if isinstance(node, ast.Continue):
+        return Continue()
     if isinstance(node, ast.If):
         return Branch(
             test=_lower_expr(node.test),
@@ -919,7 +988,7 @@ def _lower_stmt(node: ast.AST) -> CoreNode:
         for case in node.cases:
             cases.append(
                 PatternTest(
-                    pattern=_lower_expr(case.pattern),
+                    pattern=_lower_pattern(case.pattern),
                     guard=_lower_expr(case.guard),
                     body=Module(body=tuple(_lower_stmt(stmt) for stmt in case.body)),
                 )
@@ -1022,6 +1091,27 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
         return MappingLiteral(entries=tuple(entries))
     if isinstance(node, ast.Starred):
         return Spread(value=_lower_expr(node.value))
+    return _unsupported(node)
+
+
+def _lower_pattern(node: ast.AST | None) -> CoreNode:
+    if node is None:
+        return Load(name="_")
+    if isinstance(node, ast.MatchValue):
+        return _lower_expr(node.value)
+    if isinstance(node, ast.MatchSingleton):
+        return Literal(value=node.value)
+    if isinstance(node, ast.MatchAs):
+        return Load(name=node.name or "_")
+    if isinstance(node, ast.MatchSequence):
+        return Sequence(elements=tuple(_lower_pattern(p) for p in node.patterns))
+    if isinstance(node, ast.MatchStar):
+        return Spread(value=Load(name=node.name or "_"))
+    if isinstance(node, ast.MatchMapping):
+        entries: list[tuple[CoreNode, CoreNode]] = []
+        for key, pattern in zip(node.keys, node.patterns):
+            entries.append((_lower_expr(key), _lower_pattern(pattern)))
+        return MappingLiteral(entries=tuple(entries))
     return _unsupported(node)
 
 

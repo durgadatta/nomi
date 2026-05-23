@@ -34,9 +34,11 @@ from prototype.syntax.core import (
     BinaryOp,
     Bind,
     BooleanOp,
+    Break,
     Branch,
     Call,
     CompareOp,
+    Continue,
     ConditionalExpr,
     ConstructData,
     CoreNode,
@@ -51,6 +53,7 @@ from prototype.syntax.core import (
     MappingLiteral,
     Match,
     Module,
+    NoOp,
     PatternTest,
     Raise,
     Return,
@@ -210,6 +213,15 @@ class CoreRuntimeEvaluator:
             return test
         branch = node.then_body if is_truthy(test) else node.else_body
         return self._eval_module(branch)
+
+    def _eval_NoOp(self, node: NoOp) -> Value:
+        return NIL
+
+    def _eval_Break(self, node: Break) -> ControlFlow:
+        return BreakSignal()
+
+    def _eval_Continue(self, node: Continue) -> ControlFlow:
+        return ContinueSignal()
 
     def _eval_UnaryOp(self, node: UnaryOp) -> Value | ControlFlow:
         operand = self.eval(node.operand)
@@ -385,13 +397,18 @@ class CoreRuntimeEvaluator:
     def _eval_pattern_test(
         self, node: PatternTest, subject: Value
     ) -> tuple[bool, Value | ControlFlow]:
+        snapshot = dict(self._current_frame.bindings)
         if not self._pattern_matches(node.pattern, subject):
+            self._current_frame.bindings.clear()
+            self._current_frame.bindings.update(snapshot)
             return False, NIL
         if node.guard is not None:
             guard = self.eval(node.guard)
             if isinstance(guard, ControlFlow):
                 return True, guard
             if not is_truthy(guard):
+                self._current_frame.bindings.clear()
+                self._current_frame.bindings.update(snapshot)
                 return False, NIL
         return True, self._eval_module(node.body)
 
@@ -404,6 +421,30 @@ class CoreRuntimeEvaluator:
             if pattern.name == "_":
                 return True
             self._current_frame.bind(pattern.name, subject)
+            return True
+        if isinstance(pattern, Sequence):
+            if not isinstance(subject, SequenceValue):
+                return False
+            return self._sequence_pattern_matches(pattern, subject)
+        if isinstance(pattern, Spread):
+            if isinstance(pattern.value, Load) and pattern.value.name != "_":
+                self._current_frame.bind(pattern.value.name, subject)
+            return True
+        if isinstance(pattern, MappingLiteral):
+            if not isinstance(subject, MappingValue):
+                return False
+            for key_pattern, value_pattern in pattern.entries:
+                key = self.eval(key_pattern)
+                if isinstance(key, ControlFlow):
+                    return False
+                key_value = unbox_value(key)
+                if key_value not in subject.entries:
+                    return False
+                if not self._pattern_matches(
+                    value_pattern,
+                    subject.entries[key_value],
+                ):
+                    return False
             return True
         raise TypeError(f"Unsupported pattern node {type(pattern).__name__}")
 
@@ -448,6 +489,45 @@ class CoreRuntimeEvaluator:
         if isinstance(value, MappingValue):
             return tuple(box_value(key) for key in value.entries)
         return tuple(box_value(item) for item in unbox_value(value))
+
+    def _sequence_pattern_matches(
+        self, pattern: Sequence, subject: SequenceValue
+    ) -> bool:
+        spread_index = next(
+            (
+                index
+                for index, item in enumerate(pattern.elements)
+                if isinstance(item, Spread)
+            ),
+            None,
+        )
+        if spread_index is None:
+            if len(pattern.elements) != len(subject.elements):
+                return False
+            return all(
+                self._pattern_matches(item_pattern, item_value)
+                for item_pattern, item_value in zip(
+                    pattern.elements,
+                    subject.elements,
+                )
+            )
+        prefix = pattern.elements[:spread_index]
+        suffix = pattern.elements[spread_index + 1 :]
+        if len(subject.elements) < len(prefix) + len(suffix):
+            return False
+        for item_pattern, item_value in zip(prefix, subject.elements):
+            if not self._pattern_matches(item_pattern, item_value):
+                return False
+        if suffix:
+            suffix_values = subject.elements[-len(suffix) :]
+        else:
+            suffix_values = ()
+        for item_pattern, item_value in zip(suffix, suffix_values):
+            if not self._pattern_matches(item_pattern, item_value):
+                return False
+        rest_end = len(subject.elements) - len(suffix)
+        rest = SequenceValue(subject.elements[len(prefix) : rest_end])
+        return self._pattern_matches(pattern.elements[spread_index], rest)
 
     @staticmethod
     def _apply_binary_op(op: str, left: Any, right: Any) -> Any:

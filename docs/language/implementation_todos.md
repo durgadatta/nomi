@@ -320,28 +320,37 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Implement mapping, subscript, conditional expression, and sequence spread dispatch in `core-runtime`.
 - [x] Focused syntax and runtime tests for data-access nodes.
 
-### Slice 5: Control flow (2 node types)
+### Slice 5: Statement control (3 node types)
+- [x] Define `NoOp`, `Break`, and `Continue` Core IR nodes.
+- [x] Lower Python AST `pass`, `break`, and `continue` into Core IR.
+- [x] Lower Core IR statement-control nodes back to Python AST.
+- [x] Implement no-op and loop-control dispatch in `core-runtime`.
+- [x] Focused syntax and runtime tests for statement-control nodes.
+
+### Slice 6: Control flow (2 node types)
 - [x] Implement `eval_Loop()` — while-style loop with `BreakSignal`/`ContinueSignal`.
 - [x] Implement `eval_Sequence()` — evaluate elements, produce list.
 - [x] Parity tests for loops and sequences.
 
-### Slice 6: Pattern matching (2 node types)
-- [ ] Implement `eval_Match()` — subject evaluation + case dispatch.
-- [ ] Implement `eval_PatternTest()` — pattern matching + guard + body.
-- [ ] Parity tests for match expressions.
+### Slice 7: Pattern matching
+- [x] Lower Python AST value, wildcard/capture, sequence, mapping, and rest patterns into Core IR pattern shapes.
+- [x] Lower Core IR pattern shapes back to Python AST match patterns.
+- [x] Implement `eval_Match()` — subject evaluation + case dispatch.
+- [x] Implement `eval_PatternTest()` — pattern matching + guard + body.
+- [x] Focused runtime tests for literal, capture, sequence, mapping, rest, guard/capture rollback paths.
 
-### Slice 7: Exception handling (2 node types)
+### Slice 8: Exception handling (2 node types)
 - [ ] Define `ErrorValue` subtype.
 - [ ] Implement `eval_Raise()` — produce `ErrorValue`.
 - [ ] Implement `eval_Handle()` — try/catch dispatch, always eval `finalbody`.
 - [ ] Parity tests for raise and handle.
 
-### Slice 8: Host interop + unboxing
+### Slice 9: Host interop + unboxing
 - [x] Implement `NativeValue` wrapping and host-call dispatch table.
 - [x] Complete `_unbox()` for all value types.
 - [ ] Host-interop parity tests (print, len, etc.).
 
-### Slice 9: Blocks and resume (capability promotion)
+### Slice 10: Blocks and resume (capability promotion)
 - [ ] Implement block-call support (`yield_to_block` equivalent).
 - [ ] Add `GeneratorState` for resumable functions.
 - [ ] Promote `supports_blocks=True`, `supports_resume=True`.
