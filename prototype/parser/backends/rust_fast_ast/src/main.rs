@@ -1,17 +1,6 @@
-mod ast;
-mod error;
-mod lexer;
-mod parser;
-mod payload;
-mod token;
-
 use std::env;
 use std::fs;
 use std::process;
-
-use ast::module_json;
-use lexer::lex;
-use parser::Parser;
 
 fn main() {
     if let Err(error) = run() {
@@ -35,10 +24,7 @@ fn run() -> Result<(), String> {
         return Err("too many arguments".to_string());
     }
     let source = fs::read_to_string(path).map_err(|error| error.to_string())?;
-    let tokens = lex(&source).map_err(|error| error.to_string())?;
-    let module = Parser::new(tokens)
-        .parse_module()
-        .map_err(|error| error.to_string())?;
-    println!("{}", module_json(&module));
+    let json = nomi_rust_fast_ast::parse_to_json(&source)?;
+    println!("{json}");
     Ok(())
 }
