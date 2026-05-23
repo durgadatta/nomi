@@ -127,7 +127,7 @@ Deliverables:
 
 Tests:
 - Registry table includes `core-runtime`, but it remains unselectable.
-- Parity with `python_ast` for the implemented subset.
+- Parity with `python-ast` for the implemented subset.
 - Unsupported executable nodes fail clearly instead of silently returning nil.
 
 ### Slice C: Data, Fields, and Sequences
@@ -253,7 +253,7 @@ Known parity risks before default promotion:
 
 ## Next Implementation Slice
 
-Turn the initial JS fixture into a cross-backend acceptance gate:
+Turn the first cross-backend fixture ladder into promotion evidence:
 
 1. expand the fixture ladder with host capability, block/resume edge, and
    diagnostics cases;

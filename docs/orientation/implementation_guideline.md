@@ -23,14 +23,15 @@ source
 ```
 
 Opt-in Core IR path (`NOMI_USE_CORE_IR=1`) or explicit eval backend
-(`NOMI_EVAL_BACKEND=core-runtime`, `execute(..., eval_backend="core-runtime")`):
+(`NOMI_EVAL_BACKEND=core-runtime`, `NOMI_EVAL_BACKEND=js-core-runtime`,
+`execute(..., eval_backend="core-runtime")`):
 
 ```text
 source
 -> ... Python AST artifact
 -> lower_python_ast_to_core() -> Core IR (registered L1 node types)
 -> verify_core(strict=True)
--> eval backend dispatch (python_ast, core_direct, or core-runtime)
+-> eval backend dispatch (python-ast, core-direct, core-runtime, or js-core-runtime)
 ```
 
 Target path:
@@ -51,7 +52,8 @@ Read before broad implementation work:
 - [`flexible_syntax_substrate_plan.md`](../language/flexible_syntax_substrate_plan.md)
 - [`python_independence_and_compiler_backend_plan.md`](../language/python_independence_and_compiler_backend_plan.md)
 - [`core_runtime_backend_design.md`](../language/core_runtime_backend_design.md) —
-  reference design for the next backend; read before writing a new eval backend.
+  reference design for direct runtime backends; read before changing eval
+  backend behavior.
 
 ## Layer Discipline
 

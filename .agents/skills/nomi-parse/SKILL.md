@@ -38,7 +38,7 @@ With opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
 .nomi source → ... → Python ast.Module
     → lower_python_ast_to_core() → Core IR
     → verify_core(strict=True)
-    → backend.evaluate()  (python_ast or core_direct)
+    → backend.evaluate()  (python-ast, core-runtime, or js-core-runtime)
 ```
 
 Target architecture for new work:

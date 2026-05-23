@@ -82,5 +82,17 @@ def make_python_ast_backend_for_mode(mode_spec) -> PythonAstBackend:
     return PythonAstBackend(interpreter_cls, desugar=desugar)
 
 
-# Register the backend name so it can be validated early by the pipeline.
-register_backend("python-ast", None)
+class ModeConstructedPythonAstBackend:
+    """Registry placeholder for the mode-constructed Python AST backend."""
+
+    spec = PYTHON_AST_BACKEND_SPEC
+
+    def evaluate(self, *args, **kwargs):
+        raise RuntimeError(
+            "python-ast backends are constructed from a RuntimeSession mode; "
+            "use make_python_ast_backend_for_mode(mode_spec)"
+        )
+
+
+# Register the backend name and capabilities for inspection/validation.
+register_backend("python-ast", ModeConstructedPythonAstBackend())

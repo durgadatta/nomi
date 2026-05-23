@@ -57,7 +57,8 @@ class EvalBackendResult:
 
 
 # Registry of backend implementations.
-# python-ast entries are constructed per-mode via ``make_python_ast_backend_for_mode``.
+# python-ast has a capability-bearing placeholder; RuntimeSession constructs
+# the concrete backend per mode via ``make_python_ast_backend_for_mode``.
 _BACKENDS: dict[str, Any] = {}
 
 
@@ -92,11 +93,6 @@ def render_eval_backend_table() -> str:
     rows.append(header)
     rows.append("|" + "-" * (len(header) - 2) + "|")
     for name, backend in sorted(_BACKENDS.items()):
-        if backend is None:
-            rows.append(
-                f"| {name:<24} | {'(mode-constructed)':<22} | {'N/A':<24} | {'no':<10} |"
-            )
-            continue
         spec = getattr(backend, "spec", None)
         if spec is None:
             rows.append(

@@ -11,6 +11,7 @@ For the interactive experience design rationale, see
 ## Files
 - `web/index.html` — Monaco Editor with Nomi language definition, Pyodide init, run button
 - `web/nomi_web.py` — Pyodide bridge: loads prototype from manifest, provides run_nomi()
+- `web/core_runtime.js` — JavaScript Core Runtime over serialized Core IR JSON
 - `web/manifest.json` — Auto-generated file list (run `scripts/make_web.py`)
 - `scripts/make_web.py` — Walks prototype/, writes manifest.json
 - `scripts/launch_web.py` — Build manifest + start server + open browser
@@ -20,6 +21,8 @@ For the interactive experience design rationale, see
 python3 scripts/launch_web.py
 # or
 python3 -m http.server 8080 → http://localhost:8080/web/
+# opt into JS Core Runtime execution after Pyodide parsing/lowering:
+# http://localhost:8080/web/?backend=js-core-runtime
 ```
 
 ## Deployment
@@ -29,9 +32,11 @@ python3 -m http.server 8080 → http://localhost:8080/web/
 - `.nojekyll` prevents Jekyll processing
 
 ## Adding files
-When adding new .py files to prototype/:
+When adding new `.py` files to `prototype/` or new runtime modules imported by
+Pyodide:
 ```bash
 python3 scripts/make_web.py    # regenerates manifest.json
+python3 scripts/make_web.py --check
 git add web/manifest.json       # commit the updated manifest
 ```
 

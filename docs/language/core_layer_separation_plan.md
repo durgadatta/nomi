@@ -407,10 +407,10 @@ Use these files as the starting map:
 | Surface nodes | `prototype/syntax/surface.py` | Keep user-spelled shape and spans before backend lowering. |
 | Core IR | `prototype/syntax/core.py` | L1 dataclasses, `verify_core()`, `core_to_python_ast()`, `lower_python_ast_to_core()`. |
 | Parser API | `prototype/parser/nomi/usage.py` | Expose more inspection stages without changing default execution. |
-| Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and opt-in core execution (`NOMI_USE_CORE_IR=1`). |
+| Runtime facade | `prototype/runtime/api.py` | Route `inspect()` and opt-in core execution (`NOMI_USE_CORE_IR=1`, explicit eval backends). |
 | Pipeline metadata | `prototype/runtime/pipeline.py` | Records stages, profiles, layers, and `eval_backend` target. |
 | Mode metadata | `prototype/runtime/modes.py` | Keep current mode behavior visible as data; `eval_backend` field. |
-| Eval backends | `prototype/runtime/backends/` | Backend registry, Python AST adapter, Core IR direct evaluator. |
+| Eval backends | `prototype/runtime/backends/` | Backend registry, Python AST adapter, Core Runtime reference, and JS Core wrapper. |
 | Reduced guard | `prototype/interpreter/reduced/interpreter.py` | Catch unreduced forms; Core IR verifier (`NOMI_VERIFY_CORE=1`) adds second guardrail. |
 | Syntax inspector | `tools/syntax/inspect.py` | Make artifact boundaries visible from the command line (15 stages). |
 

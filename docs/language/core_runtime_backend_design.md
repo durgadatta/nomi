@@ -1,6 +1,6 @@
 # Core Runtime Backend Design
 
-> Status: implementation plan for the next backend after `core_direct.py`.
+> Status: reference design for direct Core IR runtime backends.
 >
 > Scope: a Python-independent-in-design reference runtime that dispatches on all
 > registered Core IR node types using Nomi-owned values, scoped environments, explicit
@@ -14,10 +14,11 @@ flat `dict` environment, Python callables for functions, Python exceptions for
 control flow, Python objects for values. A Rust/Wasm/LLVM backend can't use any
 of those.
 
-The Core Runtime Backend (`core_runtime.py`) is the reference implementation that
-defines Nomi-owned abstractions for every runtime concept. Future native backends
-implement the same abstractions in their host language. The Python implementation
-serves as the executable spec.
+The Core Runtime Backend (`core_runtime.py`) is the Python reference
+implementation that defines Nomi-owned abstractions for every runtime concept.
+The JavaScript runtime (`web/core_runtime.js`) is the first non-Python
+implementation of the same Core IR JSON contract. Future native backends
+implement the same abstractions in their host language.
 
 ## Architecture
 
@@ -298,8 +299,11 @@ def _unbox(self, value: Value) -> Any:
 
 ## Capability Graduation Path
 
-The Core Runtime starts with `selectable_for_execution=False` (like `core_direct.py`).
-It graduates through capability promotion:
+The direct runtimes start with `selectable_for_execution=False` (like
+`core_direct.py`). They may still be explicitly runnable by name through
+`RuntimeSession` while unpromoted; `selectable_for_execution=True` means
+"safe to present as a promoted/default-capable backend," not merely "accepted
+by `PipelineSpec.eval_backend`." They graduate through capability promotion:
 
 | Gate | Capability | What it unlocks |
 |------|-----------|----------------|
@@ -308,7 +312,7 @@ It graduates through capability promotion:
 | **G3** | `supports_blocks=True` | Block calls, yield, resume work. |
 | **G4** | `supports_exceptions=True` | Raise/Handle dispatch works. |
 | **G5** | `supports_python_interop=True` | NativeValue wrapping and host-call dispatch work. |
-| **G6** | `selectable_for_execution=True` | Listed in `eval-backends` table. Usable as `pipeline.eval_backend`. |
+| **G6** | `selectable_for_execution=True` | Promoted in `eval-backends` as default-capable after fixture, host-capability, and diagnostics gates. |
 | **G7** | `supports_source_maps=True` | Source spans preserved through eval for diagnostics. |
 
 ## Implementation Sequence

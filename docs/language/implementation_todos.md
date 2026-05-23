@@ -207,8 +207,10 @@ boundaries, and package ownership. Keep the detailed plan in
 - [ ] Keep `NOMI-ARCH-018` current: Python AST should become one backend behind
   Nomi-owned Surface/Core IR, not the permanent language IR.
   (Partially done: `prototype/runtime/backends/` exists with `python_ast.py` as
-  one backend, `core_direct.py` as proof of decoupling, and `NOMI_USE_CORE_IR=1`
-  gating the Core IR path.)
+  one backend, `core_runtime.py` as the Python reference runtime,
+  `js_core.py`/`web/core_runtime.js` as the first non-Python backend, and
+  `NOMI_USE_CORE_IR=1` plus explicit eval-backend selection gating the Core IR
+  path.)
 - [x] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
   serious native or Wasm backend work.
   (Done: registered CoreNode types, `verify_core(strict=True)`, `core_to_python_ast()`,
@@ -218,13 +220,17 @@ boundaries, and package ownership. Keep the detailed plan in
   on Core IR as a source of truth.
   (In progress: registered node types lower, and basic expression operations now
   have Core IR nodes. Remaining Python AST forms still produce Diagnostic
-  sentinels. See `core_runtime_backend_design.md` for the next backend plan.)
+  sentinels. Direct runtime backends now consume this Core IR contract, so the
+  remaining pressure is to replace Python-AST back-projection with
+  Surface -> Core lowering.)
 - [ ] Add `NOMI-ARCH-020`: run an MLIR spike only for a tiny pure subset after
   Core IR inspection works.
 - [x] Add `NOMI-ARCH-021`: define backend capability flags and cross-backend
   tests before LLVM/ORC/native codegen.
   (Done: `EvalBackendCapabilities`, `EvalBackendSpec`, registry,
-  `NOMI_USE_CORE_IR=1` gate, `render_eval_backend_table()`.)
+  `NOMI_USE_CORE_IR=1` gate, `render_eval_backend_table()`, and
+  `prototype/tests/backend_fixtures/` parity across `python-ast`,
+  `core-runtime`, and `js-core-runtime`.)
 - [~] Add `NOMI-ARCH-022`: define runtime values, ABI, memory, host
   capabilities, and Python interop boundaries before compiling dynamic
   features.

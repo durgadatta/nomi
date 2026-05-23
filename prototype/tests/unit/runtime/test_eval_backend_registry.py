@@ -136,8 +136,14 @@ def test_render_eval_backend_table_includes_registered():
 
 
 def test_python_ast_is_registered():
-    """python-ast should be pre-registered as a name (None value = mode-constructed)."""
-    assert "python-ast" in render_eval_backend_table()
+    """python-ast should expose capabilities even though it is mode-constructed."""
+    table = render_eval_backend_table()
+    backend = get_eval_backend("python-ast")
+
+    assert backend.spec.name == "python-ast"
+    assert backend.spec.capabilities.selectable_for_execution is True
+    assert "python-ast" in table
+    assert "implemented" in table
 
 
 def test_js_core_runtime_is_registered():

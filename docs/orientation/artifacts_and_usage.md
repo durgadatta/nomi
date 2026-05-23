@@ -77,15 +77,16 @@ The current default pipeline is:
 ```
 
 With opt-in Core IR path (`NOMI_USE_CORE_IR=1`) or an explicit eval backend
-(`NOMI_EVAL_BACKEND=core-runtime`, `execute(..., eval_backend="core-runtime")`,
-or `create_session(..., eval_backend="core-runtime")`):
+(`NOMI_EVAL_BACKEND=core-runtime`, `NOMI_EVAL_BACKEND=js-core-runtime`,
+`execute(..., eval_backend="core-runtime")`, or
+`create_session(..., eval_backend="js-core-runtime")`):
 
 ```text
 .nomi source
 -> ... Python AST artifact
 -> lower_python_ast_to_core() -> Core IR (L1 nodes)
 -> verify_core(strict=True)
--> eval backend dispatch (python_ast, core_direct, or core-runtime)
+-> eval backend dispatch (python-ast, core-direct, core-runtime, or js-core-runtime)
 -> bindings / ExecutionResult
 ```
 
@@ -104,16 +105,17 @@ executes serialized Core IR.
 
 The eval backend registry is at `prototype/runtime/backends/`. Current
 backends:
-`python_ast` (wraps the existing interpreter behind Core IR),
-`core_direct` (minimal direct CoreNode dispatch proof), and
+`python-ast` (wraps the existing interpreter behind Core IR),
+`core-direct` (minimal direct CoreNode dispatch proof),
 `core-runtime` (portable reference runtime with Nomi-owned values, frames, and
 explicit control-flow signals), and `js-core-runtime` (Node/browser JavaScript
 runtime over serialized Core IR JSON). `samples/demo.nomi` runs through both
-direct backends as opt-in smoke targets, and `prototype/tests/backend_fixtures/`
-is the first shared cross-backend fixture ladder. The direct backends remain
-unpromoted as defaults until host capability policy and broader fixture parity
-are settled. Enable verification without changing the eval path with
-`NOMI_VERIFY_CORE=1`.
+direct runtime backends as opt-in smoke targets, and
+`prototype/tests/backend_fixtures/` is the first shared cross-backend fixture
+ladder. `python-ast` is the only promoted/default-selectable backend; direct
+runtime backends are explicitly runnable by name but remain unpromoted as
+defaults until host capability policy and broader fixture parity are settled.
+Enable verification without changing the eval path with `NOMI_VERIFY_CORE=1`.
 
 Useful files:
 

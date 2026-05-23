@@ -180,10 +180,11 @@ Backends should graduate through the same fixture ladder:
 
 ## Near-Term Repo Markers
 
-- Keep `core-runtime` unselectable as the default until cross-backend parity
+- Keep `core-runtime` and `js-core-runtime` unpromoted as default-capable
+  backends until cross-backend parity, host capability policy, and diagnostics
   tests cover the fixture ladder.
-- Grow serialized Core IR inspection from the current JSON schema into a
-  documented backend fixture corpus.
+- Keep serialized Core IR inspection aligned with the executable session
+  lowering path.
 - Grow the first JavaScript Core Runtime (`web/core_runtime.js`) from
   current CoreNode parity toward default web playground use.
 - Expand the `prototype/tests/backend_fixtures/` corpus so parity tests are not
