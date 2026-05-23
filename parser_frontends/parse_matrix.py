@@ -14,7 +14,7 @@ from pathlib import Path
 from prototype.parser.nomi.frontend import get_parse_acceptance_frontends
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_FILES = (
     REPO_ROOT / "samples" / "block.nomi",
     REPO_ROOT / "samples" / "collections.nomi",

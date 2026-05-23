@@ -1,7 +1,8 @@
-# Parser Spikes
+# Parser Frontends
 
-This directory is for parser-front-end experiments that are not yet selectable
-for normal Nomi execution.
+Parser implementations for Nomi. Each subdirectory is a self-contained parser
+crate or grammar that can be registered as a frontend in
+`prototype/parser/nomi/frontend.py`.
 
 The bar for replacing the default parser is full current-grammar parity:
 
@@ -30,7 +31,7 @@ exactly. Parse success is not enough to call a parser functionally equivalent.
 For quick local comparisons, run:
 
 ```bash
-python3 -m tools.parser_spikes.parse_matrix --iterations 5
+python3 -m parser_frontends.parse_matrix --iterations 5
 ```
 
 This prints the same sample-file matrix for every parse-capable frontend, with
@@ -81,7 +82,7 @@ handoff.
 
 For the next pass, keep the replacement gate strict:
 
-- Read `tools/parser_spikes/rust_fast_ast/README.md` first. It contains the
+- Read `parser_frontends/rust_fast_ast/README.md` first. It contains the
   concrete syntax backlog, promotion checklist, parity workflow, and known
   traps for completing the Rust parser.
 - Broaden `rust_fast_ast/src/main.rs` by syntax family, starting with expression
@@ -98,7 +99,7 @@ For the next pass, keep the replacement gate strict:
 Useful checks:
 
 ```bash
-cargo test --manifest-path tools/parser_spikes/rust_fast_ast/Cargo.toml
+cargo test --manifest-path parser_frontends/rust_fast_ast/Cargo.toml
 pytest prototype/tests/unit/parser/test_rust_fast_ast_frontend.py
 pytest prototype/tests/unit/parser
 python3 -m tools.syntax.inspect --stage parser-frontends

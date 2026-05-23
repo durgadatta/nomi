@@ -31,9 +31,9 @@ from .rust_payload import python_ast_from_rust_payload
 GRAMMAR_VERSION = "builtin-features-v1"
 DEFAULT_FRONTEND = "lark-lalr"
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-_TREE_SITTER_NOMI_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "tree_sitter_nomi"
-_RUST_FAST_AST_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "rust_fast_ast"
-_PEST_READABLE_CST_DIR = _REPO_ROOT / "tools" / "parser_spikes" / "pest_readable_cst"
+_TREE_SITTER_NOMI_DIR = _REPO_ROOT / "parser_frontends" / "tree_sitter_nomi"
+_RUST_FAST_AST_DIR = _REPO_ROOT / "parser_frontends" / "rust_fast_ast"
+_PEST_READABLE_CST_DIR = _REPO_ROOT / "parser_frontends" / "pest_readable_cst"
 
 
 @dataclass(frozen=True, slots=True)
