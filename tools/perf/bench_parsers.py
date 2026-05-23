@@ -53,7 +53,7 @@ _RUST_CRATES = {
     "rust-fast-ast": {
         "crate_dir": _REPO / "tools" / "parser_spikes" / "rust_fast_ast",
         "command": "ast-json",
-        "binary_name": "rust-fast-ast",
+        "binary_name": "nomi-rust-fast-ast",
     },
     "pest-readable-cst": {
         "crate_dir": _REPO / "tools" / "parser_spikes" / "pest_readable_cst",

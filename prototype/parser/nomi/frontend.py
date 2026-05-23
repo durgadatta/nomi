@@ -545,6 +545,7 @@ class RustFastAstParserFrontend(JsonPayloadParserFrontend):
             command="ast-json",
             source_path=source_path,
             target_name="rust-fast-ast",
+            binary_name="nomi-rust-fast-ast",
         )
 
     def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
@@ -567,6 +568,7 @@ class PestReadableCstParserFrontend(JsonPayloadParserFrontend):
             command="cst-json",
             source_path=source_path,
             target_name="pest-readable-cst",
+            binary_name="nomi-pest-readable-cst",
         )
 
 
@@ -709,13 +711,21 @@ def _run_tree_sitter_parse(tree_sitter: str, source_path: Path) -> dict[str, Any
     return summary
 
 
+_CARGO_BINARY_CACHE: dict[tuple[str, str], Path] = {}
+
+
 def _run_cargo_json_parser(
     *,
     crate_dir: Path,
     command: str,
     source_path: Path,
     target_name: str,
+    binary_name: str,
 ) -> dict[str, Any]:
+    """Build a Rust parser crate once, then run its binary directly.
+
+    Avoids the ~180ms overhead of ``cargo run`` on every invocation.
+    """
     cargo = shutil.which("cargo")
     if cargo is None:
         raise RuntimeError(f"cargo is required for {target_name} parsing")
@@ -725,19 +735,34 @@ def _run_cargo_json_parser(
         / f"nomi-{target_name}-target"
         / os.environ.get("PYTEST_XDIST_WORKER", "local")
     )
+
+    cache_key = (str(crate_dir), target_name)
+    binary = _CARGO_BINARY_CACHE.get(cache_key)
+    if binary is None or not binary.is_file():
+        subprocess.run(
+            [
+                cargo,
+                "build",
+                "--quiet",
+                "--manifest-path",
+                str(crate_dir / "Cargo.toml"),
+                "--target-dir",
+                str(target_dir),
+            ],
+            cwd=crate_dir,
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        binary = target_dir / "debug" / binary_name
+        if not binary.is_file():
+            raise RuntimeError(
+                f"Compiled binary not found at {binary} for {target_name}"
+            )
+        _CARGO_BINARY_CACHE[cache_key] = binary
+
     result = subprocess.run(
-        [
-            cargo,
-            "run",
-            "--quiet",
-            "--manifest-path",
-            str(crate_dir / "Cargo.toml"),
-            "--target-dir",
-            str(target_dir),
-            "--",
-            command,
-            str(source_path),
-        ],
+        [str(binary), command, str(source_path)],
         cwd=crate_dir,
         text=True,
         capture_output=True,
