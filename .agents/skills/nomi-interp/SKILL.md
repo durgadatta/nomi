@@ -47,10 +47,12 @@ types, scoped Frame environments, explicit ControlFlow signals, and fenced host
 interop. Non-Python backends should consume serialized Core IR from
 `prototype/syntax/core_json.py`; `web/core_runtime.js` is the first JavaScript
 runtime over that JSON contract and dispatches every currently registered
-CoreNode. The browser worker can opt into it with `web/?backend=js-core-runtime`
-while Pyodide still supplies parsing/lowering. Future Rust/Wasm/LLVM backends
-implement the same abstractions in their host language. The Python reference
-stays as the test oracle.
+CoreNode. `prototype/runtime/backends/js_core.py` registers it as
+`js-core-runtime` for opt-in session execution, and the browser worker can opt
+into it with `web/?backend=js-core-runtime` while Pyodide still supplies
+parsing/lowering. Future Rust/Wasm/LLVM backends implement the same
+abstractions in their host language. The Python reference stays as the test
+oracle.
 
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
@@ -75,6 +77,7 @@ stays as the test oracle.
 - `prototype/interpreter/nomi/env.py` — Environment: adds constraints dict, overrides set() to enforce
 - `prototype/interpreter/nomi/generator_state.py` — CoroutineState: adds block attribute, _handle_yield_to_block
 - `prototype/syntax/core_json.py` — serialized Core IR JSON contract for non-Python backends
+- `prototype/runtime/backends/js_core.py` — Node wrapper registered as `js-core-runtime`
 - `web/core_runtime.js` — first JavaScript Core Runtime over Core IR JSON
 
 ## Reduced interpreter

@@ -1,0 +1,12 @@
+matched = match [1, 2, 3]: case [1, *rest] => rest; case _ => []
+try_val = try int("bad") except ValueError: 7
+
+func each(sequence):
+    for item in sequence:
+        yield item
+
+collected = []
+each([1, 2]) -> item:
+    collected = collected + [item * 10]
+
+print(collected)

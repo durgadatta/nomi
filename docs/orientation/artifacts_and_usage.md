@@ -107,10 +107,13 @@ backends:
 `python_ast` (wraps the existing interpreter behind Core IR),
 `core_direct` (minimal direct CoreNode dispatch proof), and
 `core-runtime` (portable reference runtime with Nomi-owned values, frames, and
-explicit control-flow signals). `samples/demo.nomi` runs through
-`core-runtime` as an opt-in smoke target, but the backend remains unpromoted
-until cross-backend parity gates are in place. Enable verification without
-changing the eval path with `NOMI_VERIFY_CORE=1`.
+explicit control-flow signals), and `js-core-runtime` (Node/browser JavaScript
+runtime over serialized Core IR JSON). `samples/demo.nomi` runs through both
+direct backends as opt-in smoke targets, and `prototype/tests/backend_fixtures/`
+is the first shared cross-backend fixture ladder. The direct backends remain
+unpromoted as defaults until host capability policy and broader fixture parity
+are settled. Enable verification without changing the eval path with
+`NOMI_VERIFY_CORE=1`.
 
 Useful files:
 
@@ -124,7 +127,8 @@ Useful files:
     surface artifacts such as `BlockCall`.
 -   **Eval backends:** `prototype/runtime/backends/` — eval backend registry
     (`EvalBackendSpec`, `EvalBackendCapabilities`), Python AST backend adapter,
-    Core IR direct evaluator, and portable Core Runtime reference backend.
+    Core IR direct evaluator, portable Core Runtime reference backend, and
+    JavaScript Core Runtime wrapper.
 -   **Runtime API:** `prototype/runtime/api.py`, `modes.py`, `pipeline.py`, and
     `session.py` provide the public facade and mode metadata.
 -   **Execution:** Execution is handled by a layered interpreter located

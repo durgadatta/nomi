@@ -101,6 +101,7 @@
     "prototype/runtime/backends/core_direct.py",
     "prototype/runtime/backends/core_runtime.py",
     "prototype/runtime/backends/environment.py",
+    "prototype/runtime/backends/js_core.py",
     "prototype/runtime/backends/python_ast.py",
     "prototype/runtime/backends/values.py",
     "prototype/runtime/diagnostics.py",

@@ -67,6 +67,9 @@ Concrete path:
    cancellation, and safe module loading from the web manifest.
 4. Add cross-backend tests that run small Core IR fixtures in Python
    `core-runtime` and the JavaScript runtime and compare `ExecutionResult` JSON.
+   The first fixture ladder lives under `prototype/tests/backend_fixtures/`
+   and is exercised against `python-ast`, `core-runtime`, and
+   `js-core-runtime`.
 5. Move `web/nomi_web.py` from "run Python through Pyodide" to "parse/lower
    through a bundled artifact, then execute Core IR in JS" in stages.
    A query-param opt-in now exists for the worker path:
@@ -183,8 +186,8 @@ Backends should graduate through the same fixture ladder:
   documented backend fixture corpus.
 - Grow the first JavaScript Core Runtime (`web/core_runtime.js`) from
   current CoreNode parity toward default web playground use.
-- Add a `prototype/tests/backend_fixtures/` corpus once two direct backends
-  exist, so parity tests are not tied to Python AST fixtures.
+- Expand the `prototype/tests/backend_fixtures/` corpus so parity tests are not
+  tied to Python AST regression fixtures or only `samples/demo.nomi`.
 - Keep Pyodide web execution working while introducing a JS Core Runtime path.
 - Preserve Python AST backend as the compatibility oracle until each feature has
   a Core IR fixture and direct runtime coverage.

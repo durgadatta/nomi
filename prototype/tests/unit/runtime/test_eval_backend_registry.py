@@ -63,6 +63,8 @@ def test_backend_result_default_no_value():
     assert result.has_value is False
     assert result.value is None
     assert result.diagnostics == ()
+    assert result.stdout == ""
+    assert result.stderr == ""
 
 
 def test_register_and_get_backend():
@@ -136,3 +138,10 @@ def test_render_eval_backend_table_includes_registered():
 def test_python_ast_is_registered():
     """python-ast should be pre-registered as a name (None value = mode-constructed)."""
     assert "python-ast" in render_eval_backend_table()
+
+
+def test_js_core_runtime_is_registered():
+    table = render_eval_backend_table()
+
+    assert "js-core-runtime" in table
+    assert "Core IR JSON" in table

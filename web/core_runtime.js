@@ -800,10 +800,14 @@ if (typeof self !== "undefined") {
 
 if (typeof require !== "undefined" && require.main === module) {
   const fs = require("node:fs");
-  const sourcePath = process.argv[2];
+  const args = process.argv.slice(2);
+  const sourcePath = args.find((arg) => !arg.startsWith("--"));
   const source = sourcePath
     ? fs.readFileSync(sourcePath, "utf8")
     : fs.readFileSync(0, "utf8");
   const payload = JSON.parse(source);
-  process.stdout.write(`${JSON.stringify(evaluateCorePayload(payload), null, 2)}\n`);
+  const displayLastExpr = args.includes("--display-last-expr");
+  process.stdout.write(
+    `${JSON.stringify(evaluateCorePayload(payload, { displayLastExpr }), null, 2)}\n`,
+  );
 }

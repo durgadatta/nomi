@@ -1,0 +1,10 @@
+data Point:
+    x: int
+    y: int
+
+p = Point(3, 4)
+px = p.x
+items = [1, *[2, 3]]
+mapping = {"a": 10}
+fallback = mapping.get("missing", 99)
+print(px)

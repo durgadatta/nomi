@@ -11,6 +11,7 @@ import ast
 import contextlib
 import io
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
@@ -337,6 +338,10 @@ class RuntimeSession:
         core = lower_python_ast_to_core(tree)
         verify_core(core, strict=True)
         result = self.backend.evaluate(core, display_last_expr=display_last_expr)
+        if result.stdout:
+            print(result.stdout, end="")
+        if result.stderr:
+            print(result.stderr, end="", file=sys.stderr)
         self.interpreter.global_env.bindings.update(result.bindings)
         return result.has_value, result.value
 

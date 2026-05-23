@@ -52,6 +52,8 @@ class EvalBackendResult:
     value: Any = None
     has_value: bool = False
     diagnostics: tuple[str, ...] = ()
+    stdout: str = ""
+    stderr: str = ""
 
 
 # Registry of backend implementations.
@@ -112,6 +114,7 @@ def _load_builtin_backends() -> None:
     """Import built-in backends so their registry entries are available."""
     from prototype.runtime.backends import core_direct  # noqa: F401
     from prototype.runtime.backends import core_runtime  # noqa: F401
+    from prototype.runtime.backends import js_core  # noqa: F401
     from prototype.runtime.backends import python_ast  # noqa: F401
 
 

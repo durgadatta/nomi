@@ -13,6 +13,8 @@ import pytest
 
 from prototype.runtime.backends.core_runtime import CoreRuntimeEvaluator
 from prototype.runtime import create_session
+from prototype.runtime.backends import get_eval_backend
+from prototype.runtime.backends.js_core import JS_CORE_BACKEND_SPEC
 from prototype.syntax.core import (
     BinaryOp,
     Bind,
@@ -161,6 +163,14 @@ def test_js_core_runtime_dispatches_every_registered_core_node():
     ]
 
     assert missing == []
+
+
+def test_js_core_runtime_backend_is_registered():
+    backend = get_eval_backend("js-core-runtime")
+
+    assert backend.spec is JS_CORE_BACKEND_SPEC
+    assert backend.spec.capabilities.evaluates_native_ir is True
+    assert backend.spec.capabilities.supports_blocks is True
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
@@ -326,6 +336,23 @@ def test_js_core_runtime_runs_core_json_from_session_source_pipeline():
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_runtime_session_can_select_js_core_runtime_backend():
+    session = create_session(mode="nomi", eval_backend="js-core-runtime")
+
+    result = session.run(
+        source="x = 1 + 2\nprint(x)\nx\n",
+        capture_output=True,
+        display_last_expr=True,
+    )
+
+    assert result.ok
+    assert result.bindings["x"] == 3
+    assert result.stdout == "3\n"
+    assert result.has_value is True
+    assert result.value == 3
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
 def test_js_core_runtime_runs_demo_through_session_core_json():
     session = create_session(mode="nomi")
     payload = session.core_json(filename=ROOT / "samples/demo.nomi")
@@ -338,3 +365,19 @@ def test_js_core_runtime_runs_demo_through_session_core_json():
     assert result["bindings"]["parsed"] == 0
     assert "add(3, 4)         = 7" in result["stdout"]
     assert "block: collected  = [2, 4, 6]" in result["stdout"]
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_runtime_session_runs_demo_on_js_core_runtime_backend():
+    session = create_session(mode="nomi", eval_backend="js-core-runtime")
+
+    result = session.run(
+        filename=ROOT / "samples/demo.nomi",
+        capture_output=True,
+    )
+
+    assert result.ok
+    assert result.bindings["count"] == 2
+    assert result.bindings["collected"] == [2, 4, 6]
+    assert result.bindings["parsed"] == 0
+    assert "block: collected  = [2, 4, 6]" in result.stdout

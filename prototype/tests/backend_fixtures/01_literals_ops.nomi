@@ -1,0 +1,4 @@
+x = 1 + 2 * 3
+truth = x > 5 and x < 10
+choice = 0 or "fallback"
+print(x)

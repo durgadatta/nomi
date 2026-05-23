@@ -395,8 +395,11 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
   patterns, error handling, and simple yield-to-block.
 - [x] Run `samples/demo.nomi` through session-lowered Core JSON in Node.
 - [x] Add browser worker opt-in: `web/?backend=js-core-runtime`.
-- [ ] Move the fixture into a shared backend fixture corpus and expand it up
-  the backend independence fixture ladder.
+- [x] Register `js-core-runtime` as a first-class eval backend wrapper.
+- [x] Move the first fixture ladder into `prototype/tests/backend_fixtures/`
+  and compare it across `python-ast`, `core-runtime`, and `js-core-runtime`.
+- [ ] Expand the fixture ladder with host capability, source-map, diagnostic,
+  and resume edge cases.
 - [ ] Promote the JS runtime from opt-in browser path to default only after
   fixture corpus parity and host capability policy are settled.
 

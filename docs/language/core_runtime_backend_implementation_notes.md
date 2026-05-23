@@ -54,6 +54,11 @@ Core IR Module
 - The browser worker has an opt-in JS execution path:
   `web/?backend=js-core-runtime`. Pyodide still supplies parsing/lowering; JS
   executes the serialized Core IR.
+- `js-core-runtime` is also registered in the Python eval backend registry via
+  `prototype/runtime/backends/js_core.py`, which shells to Node using the same
+  serialized Core IR JSON boundary.
+- `prototype/tests/backend_fixtures/` is the first shared fixture ladder,
+  compared across `python-ast`, `core-runtime`, and `js-core-runtime`.
 
 ## Reusable Backend Boundary
 
@@ -229,6 +234,9 @@ Implemented enough for the demo smoke path:
   including simple yield-to-block and raise/handle semantics.
 - `samples/demo.nomi` runs through session-lowered Core IR JSON in Node and
   through the browser worker behind `?backend=js-core-runtime`.
+- `create_session(mode="nomi", eval_backend="js-core-runtime")` runs through
+  the first-class backend registry and captures backend stdout/stderr into
+  `ExecutionResult`.
 
 Known parity risks before default promotion:
 
@@ -247,10 +255,9 @@ Known parity risks before default promotion:
 
 Turn the initial JS fixture into a cross-backend acceptance gate:
 
-1. add a smaller backend fixture corpus independent of `samples/demo.nomi`;
-2. compare selected bindings/stdout across `python-ast`, `core-runtime`, and
-   `web/core_runtime.js`;
-3. preserve constraint metadata in Core IR instead of projecting annotations to
+1. expand the fixture ladder with host capability, block/resume edge, and
+   diagnostics cases;
+2. preserve constraint metadata in Core IR instead of projecting annotations to
    plain `Bind`;
-4. document the Core IR JSON schema as a stable-enough test contract before
+3. document the Core IR JSON schema as a stable-enough test contract before
    making the JS backend the default browser execution path.
