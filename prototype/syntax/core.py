@@ -49,6 +49,7 @@ class Bind(CoreNode):
 class Function(CoreNode):
     params: tuple[str, ...] = ()
     body: Module | None = None
+    defaults: tuple[CoreNode, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -314,7 +315,7 @@ def dump_core(node: CoreNode) -> str:
                 lines.extend(_dump(value.value, indent + 1))
             return lines
         if isinstance(value, Function):
-            lines = [f"{prefix}Function(params={value.params!r})"]
+            lines = [f"{prefix}Function(params={value.params!r}, defaults={len(value.defaults)})"]
             if value.body is not None:
                 lines.extend(_dump(value.body, indent + 1))
             return lines
@@ -841,7 +842,7 @@ def _lower_function(node: Function) -> ast.expr:
             posonlyargs=[],
             kwonlyargs=[],
             kw_defaults=[],
-            defaults=[],
+            defaults=_core_exprs(node.defaults),
         ),
         body=_core_body(node.body),
     )
@@ -1061,6 +1062,7 @@ def _lower_stmt_dispatch(node: ast.AST) -> CoreNode:
             value=Function(
                 params=tuple(str(arg.arg) for arg in node.args.args),
                 body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.body)),
+                defaults=tuple(_lower_expr(d) for d in node.args.defaults),
             ),
         )
     if isinstance(node, ast.While):
@@ -1172,6 +1174,7 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
         return Function(
             params=tuple(str(arg.arg) for arg in node.args.args),
             body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.body)),
+            defaults=tuple(_lower_expr(d) for d in node.args.defaults),
         )
     if isinstance(node, ast.Attribute):
         return GetField(

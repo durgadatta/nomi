@@ -75,6 +75,7 @@ class FunctionValue(Value):
     params: tuple[str, ...]
     body: Module | None
     closure: Frame
+    defaults: tuple[Any, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

@@ -178,7 +178,7 @@ class CoreRuntimeEvaluator:
         value = self.eval(node.value)
         if isinstance(value, ControlFlow):
             return value
-        self._current_frame.assign(node.name, value)
+        self._current_frame.bind(node.name, value)
         return value
 
     def _eval_Function(self, node: Function) -> Value:
@@ -186,6 +186,7 @@ class CoreRuntimeEvaluator:
             params=node.params,
             body=node.body,
             closure=self._current_frame,
+            defaults=node.defaults,
         )
 
     def _eval_Call(self, node: Call) -> Value | ControlFlow:
@@ -221,7 +222,19 @@ class CoreRuntimeEvaluator:
         saved_frame = self._current_frame
         saved_block = self._current_block
         saved_defer = self._defer_stack
-        self._current_frame = func.closure.extend(func.params, args)
+        filled_args = list(args)
+        if len(filled_args) < len(func.params):
+            required = len(func.params) - len(func.defaults)
+            if len(filled_args) < required:
+                raise TypeError(
+                    f"Expected at least {required} arguments, received {len(filled_args)}"
+                )
+            for i in range(len(filled_args), len(func.params)):
+                default = self.eval(func.defaults[i - required])
+                if isinstance(default, ControlFlow):
+                    return default
+                filled_args.append(default)
+        self._current_frame = func.closure.extend(func.params, tuple(filled_args))
         self._current_block = block
         self._defer_stack = []
         try:
@@ -255,11 +268,40 @@ class CoreRuntimeEvaluator:
         if isinstance(value, ControlFlow):
             return value
         if self._current_block is not None:
-            args = (value,) if self._current_block.params else ()
-            result = self._call_function(self._current_block, args)
-            if isinstance(result, ControlFlow):
-                return result
-            return NIL
+            block = self._current_block
+            saved_frame = self._current_frame
+            saved_defer = self._defer_stack
+            self._current_frame = block.closure
+            self._current_block = None
+            self._defer_stack = []
+            try:
+                saved_params = {}
+                if block.params:
+                    args = (value,) if len(block.params) == 1 else value
+                    for param, arg in zip(block.params, args):
+                        saved_params[param] = self._current_frame.lookup(param)
+                        self._current_frame.bind(param, arg)
+                result = self._eval_module(block.body)
+                if isinstance(result, ReturnSignal):
+                    result = result.value
+                for stmt in reversed(self._defer_stack):
+                    deferred = self.eval(stmt)
+                    if isinstance(deferred, ControlFlow):
+                        return deferred
+                    if isinstance(deferred, ErrorValue):
+                        return deferred
+                for param, old_value in saved_params.items():
+                    if old_value is None:
+                        self._current_frame.bindings.pop(param, None)
+                    else:
+                        self._current_frame.bind(param, old_value)
+                if isinstance(result, ControlFlow):
+                    return result
+                return NIL
+            finally:
+                self._current_frame = saved_frame
+                self._current_block = block
+                self._defer_stack = saved_defer
         return YieldSignal(value)
 
     def _eval_Branch(self, node: Branch) -> Value | ControlFlow:
@@ -411,7 +453,7 @@ class CoreRuntimeEvaluator:
             name=node.name,
             fields=tuple(name for name, _ in node.fields),
         )
-        self._current_frame.assign(node.name, constructor)
+        self._current_frame.bind(node.name, constructor)
         return constructor
 
     def _eval_GetField(self, node: GetField) -> Value | ControlFlow:

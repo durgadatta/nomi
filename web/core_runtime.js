@@ -231,7 +231,7 @@ class CoreRuntime {
   evalBind(node) {
     const value = this.eval(node.value);
     if (isSignal(value)) return value;
-    this.currentFrame.assign(node.name, value);
+    this.currentFrame.bind(node.name, value);
     return value;
   }
 
@@ -241,6 +241,7 @@ class CoreRuntime {
       params: node.params || [],
       body: node.body,
       closure: this.currentFrame,
+      defaults: node.defaults || [],
     };
   }
 
@@ -269,7 +270,21 @@ class CoreRuntime {
     const savedFrame = this.currentFrame;
     const savedBlock = this.currentBlock;
     const savedDefer = this.deferStack;
-    this.currentFrame = func.closure.extend(func.params, args);
+    const filledArgs = [...args];
+    const defaults = func.defaults || [];
+    if (filledArgs.length < func.params.length) {
+      const required = func.params.length - defaults.length;
+      if (filledArgs.length < required) {
+        throw new TypeError(`Expected at least ${required} arguments, received ${filledArgs.length}`);
+      }
+      for (let i = filledArgs.length; i < func.params.length; i++) {
+        const defaultNode = defaults[i - required];
+        const defaultVal = this.eval(defaultNode);
+        if (isSignal(defaultVal)) return defaultVal;
+        filledArgs.push(defaultVal);
+      }
+    }
+    this.currentFrame = func.closure.extend(func.params, filledArgs);
     this.currentBlock = block;
     this.deferStack = [];
     try {
@@ -317,10 +332,44 @@ class CoreRuntime {
     if (isSignal(value)) return value;
     if (value.kind === "error") return value;
     if (this.currentBlock !== null) {
-      const args = this.currentBlock.params.length > 0 ? [value] : [];
-      const result = this.applyCallable(this.currentBlock, args);
-      if (isSignal(result)) return result;
-      return NIL;
+      const block = this.currentBlock;
+      const savedFrame = this.currentFrame;
+      const savedDefer = this.deferStack;
+      this.currentFrame = block.closure;
+      this.currentBlock = null;
+      this.deferStack = [];
+      const savedParams = {};
+      try {
+        if (block.params.length > 0) {
+          const args = block.params.length === 1 ? [value] : value;
+          block.params.forEach((param, i) => {
+            savedParams[param] = this.currentFrame.lookup(param);
+            this.currentFrame.bind(param, args[i]);
+          });
+        }
+        const rawResult = this.evalModule(block.body);
+        const result = (isSignal(rawResult) && rawResult.control === "return")
+          ? rawResult.value
+          : rawResult;
+        for (let i = this.deferStack.length - 1; i >= 0; i--) {
+          const deferred = this.eval(this.deferStack[i]);
+          if (isSignal(deferred)) return deferred;
+          if (deferred && deferred.kind === "error") return deferred;
+        }
+        for (const [param, oldValue] of Object.entries(savedParams)) {
+          if (oldValue === undefined) {
+            this.currentFrame.bindings.delete(param);
+          } else {
+            this.currentFrame.bind(param, oldValue);
+          }
+        }
+        if (isSignal(result)) return result;
+        return NIL;
+      } finally {
+        this.currentFrame = savedFrame;
+        this.currentBlock = block;
+        this.deferStack = savedDefer;
+      }
     }
     return signal("yield", value);
   }
@@ -487,7 +536,7 @@ class CoreRuntime {
         name: node.name,
         fields: node.fields.map(([name]) => name),
       };
-      this.currentFrame.assign(node.name, constructor);
+      this.currentFrame.bind(node.name, constructor);
       return constructor;
     }
     const fields = {};
