@@ -9,7 +9,7 @@ the grammar grows behind the same gates as the Rust direct-AST parser.
 Current command contract:
 
 ```bash
-cargo run --manifest-path parsers/pest_readable_cst/Cargo.toml -- cst-json samples/demo.nomi
+cargo run --manifest-path prototype/parser/backends/pest_readable_cst/Cargo.toml -- cst-json samples/demo.nomi
 ```
 
 Output is a JSON debug/CST payload on stdout. A nonzero exit means parse or CLI

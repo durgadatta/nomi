@@ -133,7 +133,7 @@ The Rust binary accepts one command:
 
 ```bash
 cargo run --quiet \
-  --manifest-path parsers/rust_fast_ast/Cargo.toml \
+  --manifest-path prototype/parser/backends/rust_fast_ast/Cargo.toml \
   -- ast-json path/to/file.nomi
 ```
 
@@ -372,12 +372,12 @@ Before doing speed comparisons:
 ## Useful Commands
 
 ```bash
-cargo test --manifest-path parsers/rust_fast_ast/Cargo.toml
+cargo test --manifest-path prototype/parser/backends/rust_fast_ast/Cargo.toml
 pytest prototype/tests/unit/parser/test_rust_fast_ast_frontend.py
 pytest prototype/tests/unit/parser/test_parser_frontend.py
 pytest prototype/tests/unit/parser
 python3 -m tools.syntax.inspect --stage parser-frontends
-python3 -m parser.parse_matrix --iterations 1
+python3 -m prototype.parser.parse_matrix --iterations 1
 python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
 ```
 
@@ -391,7 +391,7 @@ To inspect the Rust payload for a snippet:
 
 ```bash
 printf 'x = 1\n' > /private/tmp/nomi-rust-slice.nomi
-cargo run --quiet --manifest-path parsers/rust_fast_ast/Cargo.toml -- ast-json /private/tmp/nomi-rust-slice.nomi
+cargo run --quiet --manifest-path prototype/parser/backends/rust_fast_ast/Cargo.toml -- ast-json /private/tmp/nomi-rust-slice.nomi
 ```
 
 ## Do Not Do

@@ -1,4 +1,4 @@
-from parsers.parse_matrix import MatrixRow, render_matrix
+from prototype.parser.parse_matrix import MatrixRow, render_matrix
 
 
 def test_parse_matrix_renders_frontend_roles():
