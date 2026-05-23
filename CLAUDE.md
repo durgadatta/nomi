@@ -74,7 +74,7 @@ Valid stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`
 
 - Short imperative subject: "Add X", "Fix Y", "Split Z"
 - Body explains why, not what
-- Co-Authored-By trailer for commits made in this session
+- Do NOT add Co-Authored-By trailers — the underlying model varies and auto-attribution is inaccurate
 - One logical change per commit
 
 ## Settings
