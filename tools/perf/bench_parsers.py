@@ -577,8 +577,8 @@ def main() -> int:
         description="Benchmark Nomi parser frontends on time and space"
     )
     parser.add_argument(
-        "--file", default="samples/demo.nomi",
-        help="Source file to benchmark (default: samples/demo.nomi)",
+        "--file", default="samples/comprehensive.nomi",
+        help="Source file to benchmark (default: samples/comprehensive.nomi)",
     )
     parser.add_argument(
         "--iterations", type=int, default=20,

@@ -14,7 +14,7 @@ _REPO = Path(__file__).resolve().parent.parent
 
 
 def main():
-    filename = sys.argv[1] if len(sys.argv) > 1 else "samples/demo.nomi"
+    filename = sys.argv[1] if len(sys.argv) > 1 else "samples/comprehensive.nomi"
     file_path = _REPO / filename
 
     if not file_path.exists():
