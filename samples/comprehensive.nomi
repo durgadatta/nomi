@@ -1,0 +1,815 @@
+# ════════════════════════════════════════════════════════════════
+#   Nomi — Comprehensive Coverage Suite
+#
+#   Extends samples/demo.nomi with systematic coverage of every
+#   language construct: positive paths first, then corner cases
+#   and adversarial edges.  Run with:
+#       nomi samples/comprehensive.nomi
+# ════════════════════════════════════════════════════════════════
+
+
+# ── Functions: Equations ────────────────────────────────────────
+# Basic equation form
+add(a, b) = a + b
+
+# Single-arg without parens
+sq x = x * x
+
+# Default argument
+greet(name, greeting="Hi") = greeting + ", " + name
+
+# Multiple default arguments
+describe(value, prefix="[", suffix="]") = prefix + str(value) + suffix
+
+# Zero-arg function
+now() = 42
+
+# Multi-line function body
+func compute(x):
+    doubled = x * 2
+    return doubled + 1
+
+
+# ── Functions: Arrows ───────────────────────────────────────────
+# Single parameter
+double = x => x * 2
+
+# Multi-parameter
+distance = (x1, y1, x2, y2) => ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+
+# No parameters
+always_seven = () => 7
+
+
+# ── Functions: Piecewise ────────────────────────────────────────
+fib(0) = 0
+fib(1) = 1
+fib(n) = fib(n - 1) + fib(n - 2)
+
+# Guarded equations
+sign(n) when n > 0 =  1
+sign(n) when n < 0 = -1
+sign(n)            =  0
+
+# Piecewise with complex guards
+describe_number(n) when n > 0 and n % 2 == 0 = "positive even"
+describe_number(n) when n > 0 and n % 2 != 0 = "positive odd"
+describe_number(n) when n < 0 = "negative"
+describe_number(_) = "zero"
+
+
+# ── Lambdas: Underscore ─────────────────────────────────────────
+is_even = _ % 2 == 0
+concat3 = _ + _ + _
+increment = _ + 1
+
+# Underscore with comparison
+is_positive = _ > 0
+
+
+# ── Lambdas: Named Holes ────────────────────────────────────────
+sort_key = $1["name"]
+greeting = "Hello, " + $name
+
+# Named hole unused — $1 is first param
+identity_like = $1
+
+
+# ── Lambdas: Operator Sections ──────────────────────────────────
+next = (+1)
+prev = (-1)
+double_op = (2*)
+half = (_ / 2)
+
+
+# ── Ranges ──────────────────────────────────────────────────────
+ten = list(1..10)
+nine = list(1..<10)
+odds = list(1..20 by 2)
+# Descending range
+reverse = list(10..1 by -1)
+# Single-element range
+single_range = list(5..5)
+# Empty range (start > end with positive step)
+empty_range = list(10..1)
+
+
+# ── Pipeline & Composition ──────────────────────────────────────
+squares_sum = 1..5 |> list |> sum
+neg_abs = abs >>> (x => -x)
+
+# Longer pipeline
+complex_pipeline = 1..10 |> list |> filter(_ % 2 == 0) |> map(_ * 3) |> list
+
+
+# ── Where Clauses ───────────────────────────────────────────────
+volume = pi * r * r * h where:
+    pi = 3.14159
+    r  = 2.5
+    h  = 10.0
+
+# Nested where-like computation
+area = base * height / 2 where:
+    base = 10
+    height = 5
+
+
+# ── Null Handling ───────────────────────────────────────────────
+user = None
+display = user ?? "guest"
+
+# Chained null coalesce
+first_valid = None ?? None ?? "fallback"
+
+# Null-safe navigation
+data = {"name": "Ada"}
+first_char_null = data?.get("name")?.[0]
+missing_field = data?.get("age")
+
+# ?. on None
+none_data = None
+none_safe = none_data?.get("anything")
+
+
+# ── Pattern Matching: Expression ────────────────────────────────
+label = match 3: case 1 => "one"; case 2 => "two"; case _ => "many"
+
+# Match with guards in expression (inline)
+flavor = match 42: case n if n < 0 => "negative"; case n if n < 100 => "small"; case _ => "large"
+
+
+# ── Pattern Matching: Statement ─────────────────────────────────
+signal = ""
+match 15:
+    case n if n < 0:
+        signal = "negative"
+    case 0:
+        signal = "zero"
+    case _:
+        signal = "positive"
+
+# Match with sequence destructuring
+seq_result = ""
+match [1, 2, 3]:
+    case [1, *rest]:
+        seq_result = "starts with 1"
+    case _:
+        seq_result = "other"
+
+
+# ── Control Flow: Branching ─────────────────────────────────────
+# unless
+token = "valid"
+status = "ok"
+unless token == "valid":
+    status = "rejected"
+
+# if-let
+config = {"theme": "dark"}
+if {"theme": t} = config:
+    theme = t
+
+# guard-let
+func first(sequence):
+    guard [head, *tail] = sequence:
+        return None
+    return head
+
+first_val = first([10, 20, 30])
+empty_val = first([])
+
+# while-let
+items = [1, 2, 3]
+total = 0
+while [h, *rest] = items:
+    total = total + h
+    items = rest
+
+
+# ── Control Flow: try / defer ───────────────────────────────────
+parsed = try int("not-a-number") except ValueError: 0
+good_parse = try int("42") except ValueError: 0
+
+# Multiple except handlers
+multi_try = try int("bad") except ValueError: 0 except TypeError: -1
+
+# defer — LIFO order
+func tracked_calc(x):
+    defer print("  done: x was " + str(x))
+    defer print("  starting…")
+    return x * x
+
+result = tracked_calc(7)
+
+# Nested defers in different scopes
+func multi_defer():
+    defer print("outer defer")
+    if True:
+        defer print("inner defer")
+        return 99
+
+multi_defer_result = multi_defer()
+
+
+# ── Loops ───────────────────────────────────────────────────────
+# while loop with break
+counter = 0
+total_while = 0
+while counter < 10:
+    if counter == 5:
+        counter = counter + 1
+        continue
+    total_while = total_while + counter
+    counter = counter + 1
+
+# while loop with break
+found = None
+search_idx = 0
+while search_idx < 5:
+    if search_idx == 3:
+        found = search_idx
+        break
+    search_idx = search_idx + 1
+
+
+# ── Collections: Sequences ──────────────────────────────────────
+empty_list = []
+single_list = [42]
+multi_list = [1, 2, 3]
+
+# Spread
+middle = [2, 3]
+all_nums = [1, *middle, 4, 5]
+
+# Multiple spreads
+a = [1, 2]
+b = [3, 4]
+merged = [*a, *b]
+
+# Spread with empty
+empty_spread = [*[], 1, *[]]
+
+# Nested lists
+nested = [[1, 2], [3, 4]]
+
+
+# ── Collections: Mappings ───────────────────────────────────────
+empty_map = {}
+single_key = {"a": 1}
+multi_map = {"x": 10, "y": 20}
+
+# Mapping.get with default
+mapping = {"a": 10}
+fallback_get = mapping.get("missing", 99)
+found_get = mapping.get("a", 99)
+
+# Subscript on mapping
+map_value = mapping["a"]
+
+
+# ── Operations: Arithmetic ──────────────────────────────────────
+# Basic ops
+add_result = 1 + 2
+sub_result = 5 - 3
+mul_result = 4 * 3
+div_result = 10 / 3
+floor_div = 10 // 3
+mod_result = 10 % 3
+pow_result = 2 ** 10
+
+# Unary ops
+neg = -5
+pos = +5
+bit_not = ~0
+
+# Mixed precedence
+expr1 = 1 + 2 * 3
+expr2 = (1 + 2) * 3
+expr3 = 2 ** 3 ** 2
+
+# Negative in expressions
+expr4 = -3 + 5
+expr5 = 5 + -3
+expr6 = 2 * -3
+
+
+# ── Operations: Boolean ─────────────────────────────────────────
+# and / or
+and_true = True and True
+and_false = True and False
+or_true = False or True
+or_false = False or False
+
+# Short-circuit evaluation
+short_and = False and (1 / 0)  # should not error
+short_or = True or (1 / 0)     # should not error
+
+# not
+not_true = not False
+not_false = not True
+not_not = not not True
+
+
+# ── Operations: Comparison ──────────────────────────────────────
+# Equality
+eq_int = 1 == 1
+neq_int = 1 != 2
+eq_str = "a" == "a"
+neq_str = "a" != "b"
+eq_bool = True == True
+eq_none = None == None
+
+# Ordering
+lt = 1 < 2
+gt = 5 > 3
+le = 4 <= 4
+ge = 5 >= 4
+
+# Chained comparisons
+chained1 = 1 < 2 and 2 < 3
+chained2 = 1 <= 1 and 1 <= 2
+
+# is / is not
+is_none = None is None
+is_not_none = 42 is not None
+
+# in
+has_item = 2 in [1, 2, 3]
+not_in = 5 in [1, 2, 3]
+has_key = "a" in {"a": 1}
+
+
+# ── Operations: Bitwise ─────────────────────────────────────────
+bit_and = 5 & 3
+bit_or = 5 | 3
+bit_xor = 5 ^ 3
+bit_shl = 1 << 3
+bit_shr = 8 >> 2
+
+
+# ── Operations: String ──────────────────────────────────────────
+concat = "hello" + " " + "world"
+repeat_str = "ha" * 3
+str_int = str(42)
+str_float = str(3.14)
+str_bool = str(True)
+str_none = str(None)
+
+
+# ── Conditional Expression ──────────────────────────────────────
+ternary_true = "yes" if True else "no"
+ternary_false = "yes" if False else "no"
+nested_ternary = "a" if True else "b" if False else "c"
+
+# Conditional with truthy/falsy
+cond_none = "has" if None else "none"
+cond_zero = "nonzero" if 0 else "zero"
+cond_empty = "full" if [] else "empty"
+cond_str = "text" if "" else "empty_str"
+
+
+# ── Types & Data ────────────────────────────────────────────────
+type UserId = int
+type JsonStr = str
+
+data Point:
+    x: float
+    y: float
+
+p = Point(3.0, 5.0)
+origin = Point(0.0, 0.0)
+
+# Field access
+px = p.x
+py = p.y
+
+# Data with many fields
+data Person:
+    name: str
+    age: int
+    active: bool
+
+alice = Person("Alice", 30, True)
+
+# Nested data
+data Line:
+    start: Point
+    end: Point
+
+line = Line(Point(0.0, 0.0), Point(10.0, 10.0))
+
+
+# ── Constraint Annotations ──────────────────────────────────────
+age: int, age >= 0, age <= 150 = 35
+positive: int, positive > 0 = 95
+
+# Constraint with message
+v: int, v > 0 else "must be positive" = 42
+
+# Parameter constraint
+func sqrt(x: (x >= 0)):
+    return x ** 0.5
+
+
+# ── Block Calls ─────────────────────────────────────────────────
+func twice():
+    yield
+    yield
+
+count = 0
+twice():
+    count = count + 1
+
+# Block with parameter
+func each(sequence):
+    for item in sequence:
+        yield item
+
+collected = []
+each([1, 2, 3]) -> n:
+    collected = collected + [n * 2]
+
+# Empty block call (zero yields)
+func never_yields():
+    return 7
+
+never_result = never_yields()
+
+
+# ── Host Call Interop ───────────────────────────────────────────
+abs_val = abs(-5)
+bool_true = bool(1)
+bool_false = bool(0)
+float_val = float("3.14")
+int_val = int("42")
+len_list = len([1, 2, 3])
+len_str = len("hello")
+list_range = list(range(0, 5))
+list_map = list(map(_ * 2, [1, 2, 3]))
+list_filter = list(filter(_ > 2, [1, 2, 3, 4]))
+sum_list = sum([1, 2, 3, 4])
+str_val = str(True)
+
+# filter/map with arrow lambdas
+filtered = filter(x => x > 0, [-2, 0, 3, -1, 5])
+mapped = map(x => x * x, [1, 2, 3])
+
+
+# ── Edge: Nested Functions & Closures ───────────────────────────
+func make_adder(n):
+    return x => x + n
+
+add5 = make_adder(5)
+add10 = make_adder(10)
+closure_result1 = add5(3)
+closure_result2 = add10(3)
+
+# Closure capturing mutable state — returns a function that closes over count
+func make_counter():
+    count = 0
+    func counter():
+        count = count + 1
+        return count
+    return counter
+
+counter_fn = make_counter()
+
+
+# ── Edge: Name Shadowing ────────────────────────────────────────
+shadow_val = 1
+func shadow_test(shadow_val):
+    return shadow_val
+
+shadow_result = shadow_test(99)
+
+
+# ── Edge: Recursive Patterns ────────────────────────────────────
+func sum_list_rec(items):
+    guard [h, *t] = items:
+        return 0
+    return h + sum_list_rec(t)
+
+sum_rec = sum_list_rec([1, 2, 3, 4])
+
+# Mutual-like recursion via piecewise
+is_even_rec(0) = True
+is_even_rec(n) = is_odd_rec(n - 1)
+is_odd_rec(0) = False
+is_odd_rec(n) = is_even_rec(n - 1)
+
+
+# ── Edge: Handle / Raise ────────────────────────────────────────
+# try expression — basic usage (already covered: parsed, good_parse above)
+# Test nested error handling via functions
+func might_fail(x):
+    if x == 0:
+        raise "zero not allowed"
+    return 100 / x
+
+safe_result = try might_fail(5) except Exception: -1
+error_result = try might_fail(0) except Exception: -1
+
+# finally block execution
+finally_ran = False
+try:
+    x = 1
+finally:
+    finally_ran = True
+
+
+# ── Edge: Empty / Trivial Constructs ────────────────────────────
+# Empty function
+func noop():
+    pass
+
+noop_result = noop()
+
+# Function returning literal
+func return_none():
+    return None
+
+none_result = return_none()
+
+# Very long expression
+long_expr = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10
+
+
+# ── Edge: Sequence Operations ───────────────────────────────────
+# Indexing
+first_elem = [10, 20, 30][0]
+last_elem = [10, 20, 30][2]
+
+# Sequence concat
+concat_list = [1, 2] + [3, 4]
+
+# Nested indexing
+nested_idx = [[1, 2], [3, 4]][1][0]
+
+
+# ── Edge: Data With Computed Fields ─────────────────────────────
+computed_x = 10 * 3
+computed_y = sq(5)
+computed_point = Point(float(computed_x), float(computed_y))
+
+
+# ── Edge: ForEach Variants ──────────────────────────────────────
+# ForEach with else (empty iterable)
+foreach_empty = 0
+for item in []:
+    foreach_empty = foreach_empty + 1
+else:
+    foreach_empty = -1
+
+# ForEach over mapping keys
+foreach_keys = []
+for key in {"a": 1, "b": 2}:
+    foreach_keys = foreach_keys + [key]
+
+
+# ── Edge: Contrived But Valid ───────────────────────────────────
+# Ternary in function call
+print("ternary: " + str("yes" if True else "no"))
+
+# Lambda immediately called
+immediate = (x => x + 1)(5)
+
+# Pipeline with lambda
+pipeline_lambda = 5 |> (_ + 3) |> (_ * 2)
+
+# Match with destructured rest
+rest_pattern = match [1, 2, 3]: case [1, *r] => r; case _ => []
+
+# Block call inside expression — result bound
+func identity_block(x):
+    yield x
+
+block_val = 0
+identity_block(42) -> v:
+    block_val = v
+
+
+# ── Results ─────────────────────────────────────────────────────
+print("═══ Functions ═══")
+print("add(3,4)           = " + str(add(3, 4)))
+print("sq(5)              = " + str(sq(5)))
+print("greet(Bob)          = " + greet("Bob"))
+print("describe(42)        = " + describe(42, "[", "]"))
+print("now()              = " + str(now()))
+print("compute(5)         = " + str(compute(5)))
+print("double(7)          = " + str(double(7)))
+print("distance(3,4,0,0)   = " + str(distance(3, 4, 0, 0)))
+print("always_seven()     = " + str(always_seven()))
+print()
+print("fib(10)            = " + str(fib(10)))
+print("sign(-12)          = " + str(sign(-12)))
+print("sign(0)            = " + str(sign(0)))
+print("describe_number(6) = " + describe_number(6))
+print("describe_number(7) = " + describe_number(7))
+print("describe_number(-3)= " + describe_number(-3))
+print("describe_number(0) = " + describe_number(0))
+print()
+
+print("═══ Lambdas ═══")
+print("is_even(7)         = " + str(is_even(7)))
+print("concat3(a,b,c)     = " + concat3("a", "b", "c"))
+print("increment(5)       = " + str(increment(5)))
+print("is_positive(5)     = " + str(is_positive(5)))
+print("is_positive(-3)    = " + str(is_positive(-3)))
+print("sort_key(name:K)   = " + sort_key({"name": "Kim"}))
+print("greeting(world)    = " + greeting("world"))
+print("next(5)            = " + str(next(5)))
+print("prev(5)            = " + str(prev(5)))
+print("double_op(7)       = " + str(double_op(7)))
+print("half(10)           = " + str(half(10)))
+print()
+
+print("═══ Ranges ═══")
+print("1..10              = " + str(ten))
+print("1..<10             = " + str(nine))
+print("1..20 by 2         = " + str(odds))
+print("10..1 by -1        = " + str(reverse))
+print("5..5               = " + str(single_range))
+print("10..1              = " + str(empty_range))
+print("squares_sum 1..5   = " + str(squares_sum))
+print("neg_abs(-5)        = " + str(neg_abs(-5)))
+print("complex_pipeline   = " + str(complex_pipeline))
+print()
+
+print("═══ Where ═══")
+print("volume             = " + str(volume))
+print("area               = " + str(area))
+print()
+
+print("═══ Null Handling ═══")
+print("user ?? 'guest'     = " + display)
+print("None??None??f       = " + first_valid)
+print("data?.name?.[0]    = " + str(first_char_null))
+print("data?.age          = " + str(missing_field))
+print("None?.anything     = " + str(none_safe))
+print()
+
+print("═══ Pattern Matching ═══")
+print("inline match 3     = " + label)
+print("flavor(42)         = " + flavor)
+print("match stmt signal  = " + signal)
+print("seq match          = " + seq_result)
+print()
+
+print("═══ Control Flow ═══")
+print("unless status      = " + status)
+print("if-let theme       = " + theme)
+print("guard-let first    = " + str(first_val))
+print("guard-let empty    = " + str(empty_val))
+print("while-let total    = " + str(total))
+print("try int('nan')     = " + str(parsed))
+print("try int('42')      = " + str(good_parse))
+print("multi try          = " + str(multi_try))
+print("defer example:")
+print("  " + str(result))
+print("multi_defer        = " + str(multi_defer_result))
+print()
+
+print("═══ Loops ═══")
+print("total_while        = " + str(total_while))
+print("found              = " + str(found))
+print()
+
+print("═══ Collections ═══")
+print("empty_list         = " + str(empty_list))
+print("spread all_nums    = " + str(all_nums))
+print("merged             = " + str(merged))
+print("empty_spread       = " + str(empty_spread))
+print("mapping.get(f)     = " + str(fallback_get))
+print("mapping.get(a)     = " + str(found_get))
+print("mapping[a]         = " + str(map_value))
+print()
+
+print("═══ Arithmetic ═══")
+print("1+2                = " + str(add_result))
+print("10/3               = " + str(div_result))
+print("10//3              = " + str(floor_div))
+print("10%3               = " + str(mod_result))
+print("2**10              = " + str(pow_result))
+print("neg                = " + str(neg))
+print("bit_not            = " + str(bit_not))
+print("1+2*3              = " + str(expr1))
+print("(1+2)*3            = " + str(expr2))
+print()
+
+print("═══ Boolean ═══")
+print("and_true           = " + str(and_true))
+print("and_false          = " + str(and_false))
+print("or_true            = " + str(or_true))
+print("short_and          = " + str(short_and))
+print("short_or           = " + str(short_or))
+print("not_not            = " + str(not_not))
+print()
+
+print("═══ Comparisons ═══")
+print("eq_int             = " + str(eq_int))
+print("eq_str             = " + str(eq_str))
+print("lt                 = " + str(lt))
+print("chained1           = " + str(chained1))
+print("is_none            = " + str(is_none))
+print("has_item           = " + str(has_item))
+print("not_in             = " + str(not_in))
+print("has_key            = " + str(has_key))
+print()
+
+print("═══ Bitwise ═══")
+print("5&3                = " + str(bit_and))
+print("5|3                = " + str(bit_or))
+print("5^3                = " + str(bit_xor))
+print("1<<3               = " + str(bit_shl))
+print("8>>2               = " + str(bit_shr))
+print()
+
+print("═══ Strings ═══")
+print("concat             = " + concat)
+print("repeat_str         = " + repeat_str)
+print("str(42)            = " + str_int)
+print("str(3.14)          = " + str_float)
+print("str(True)          = " + str_bool)
+print("str(None)          = " + str_none)
+print()
+
+print("═══ Conditional ═══")
+print("ternary_true       = " + ternary_true)
+print("ternary_false      = " + ternary_false)
+print("nested_ternary     = " + nested_ternary)
+print("cond_none          = " + cond_none)
+print("cond_zero          = " + cond_zero)
+print("cond_empty         = " + cond_empty)
+print("cond_str           = " + cond_str)
+print()
+
+print("═══ Types & Data ═══")
+print("Point(3,5)         = " + str(p))
+print("origin             = " + str(origin))
+print("p.x                = " + str(px))
+print("p.y                = " + str(py))
+print("Person             = " + str(alice))
+print("nested Line        = " + str(line))
+print("age constraint     = " + str(age))
+print("positive val       = " + str(positive))
+print("sqrt(144)          = " + str(sqrt(144)))
+print("v                  = " + str(v))
+print()
+
+print("═══ Block Calls ═══")
+print("block: count       = " + str(count))
+print("block: collected   = " + str(collected))
+print("never_yields       = " + str(never_result))
+print("block_val          = " + str(block_val))
+print()
+
+print("═══ Host Interop ═══")
+print("abs(-5)            = " + str(abs_val))
+print("bool(1)            = " + str(bool_true))
+print("bool(0)            = " + str(bool_false))
+print("float('3.14')      = " + str(float_val))
+print("int('42')          = " + str(int_val))
+print("len([1,2,3])       = " + str(len_list))
+print("len('hello')       = " + str(len_str))
+print("list(range(0,5))   = " + str(list_range))
+print("map(_*2, [1,2,3])  = " + str(list_map))
+print("filter(_>2, ...)   = " + str(list_filter))
+print("sum([1,2,3,4])     = " + str(sum_list))
+print("str(True)          = " + str_val)
+print("filtered           = " + str(filtered))
+print("mapped             = " + str(mapped))
+print()
+
+print("═══ Closures ═══")
+print("add5(3)            = " + str(closure_result1))
+print("add10(3)           = " + str(closure_result2))
+print()
+
+print("═══ Shadowing ═══")
+print("shadow_test(99)    = " + str(shadow_result))
+print()
+
+print("═══ Recursion ═══")
+print("sum_list_rec       = " + str(sum_rec))
+print("is_even_rec(4)     = " + str(is_even_rec(4)))
+print("is_odd_rec(3)      = " + str(is_odd_rec(3)))
+print()
+
+print("═══ Handle/Raise ═══")
+print("safe_result        = " + str(safe_result))
+print("error_result       = " + str(error_result))
+print()
+
+print("═══ Edge Cases ═══")
+print("noop()             = " + str(noop_result))
+print("return_none()      = " + str(none_result))
+print("long_expr          = " + str(long_expr))
+print("first_elem         = " + str(first_elem))
+print("last_elem          = " + str(last_elem))
+print("concat_list        = " + str(concat_list))
+print("nested_idx         = " + str(nested_idx))
+print("computed_point     = " + str(computed_point))
+print("foreach_empty      = " + str(foreach_empty))
+print("foreach_keys       = " + str(foreach_keys))
+print("immediate lambda   = " + str(immediate))
+print("pipeline_lambda    = " + str(pipeline_lambda))
