@@ -291,11 +291,11 @@ language. The Python implementation stays as the test oracle.
 
 ### Slice 1: Value system + basic eval (7 node types)
 Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
-- [ ] Define `Value` subtypes: `IntValue`, `FloatValue`, `BoolValue`,
+- [x] Define `Value` subtypes: `IntValue`, `FloatValue`, `BoolValue`,
   `StrValue`, `NilValue`, `FunctionValue`, `NativeValue`.
-- [ ] Define `ControlFlow` subtypes: `ReturnSignal`, `BreakSignal`,
+- [x] Define `ControlFlow` subtypes: `ReturnSignal`, `BreakSignal`,
   `ContinueSignal`, `YieldSignal`.
-- [ ] Define `Frame` with scoped bindings, parent chain, lookup, assign, extend.
+- [x] Define `Frame` with scoped bindings, parent chain, lookup, assign, extend.
 - [ ] Implement `CoreRuntime.eval()` dispatching on: `Literal`, `Load`, `Bind`,
   `Function`, `Call`, `Return`, `Branch`.
 - [ ] Implement `_unbox()` for `EvalBackendResult.bindings` compatibility.
