@@ -34,7 +34,7 @@ function convertPyValue(value) {
 async function initWasm() {
   postLog("Loading WASM parser...");
   importScripts("./pkg/nomi_parser_worker.js");
-  const response = await fetch("./pkg/nomi_parser_bg.wasm");
+  const response = await fetch("./pkg/nomi_parser_worker_bg.wasm");
   const bytes = await response.arrayBuffer();
   wasm_bindgen.initSync({ module: bytes });
   wasmReady = true;
