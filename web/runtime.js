@@ -15,9 +15,12 @@ function formatTiming(timing, elapsed) {
 }
 
 function runtimeLabel(result) {
-  return result && result.backend === "js-core-runtime"
-    ? "Pyodide parser + JS Core Runtime"
-    : "Pyodide worker";
+  if (!result) return "WASM + JS Runtime";
+  switch (result.backend) {
+    case "wasm-js": return "WASM + JS Runtime";
+    case "js-core-runtime": return "Pyodide parser + JS Core Runtime";
+    default: return "Pyodide worker";
+  }
 }
 
 async function runCell(idx, advance, options) {

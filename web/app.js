@@ -12,9 +12,11 @@ let _executionCounter = 0;
 let _activeCellIndex = 0;
 let _notebookMode = false;
 let _bootStart = performance.now();
-let _evalBackend = new URLSearchParams(location.search).get("backend") === "python-ast"
-  ? "python-ast"
-  : "js-core-runtime";
+let _evalBackend = "wasm-js";
+const _urlBackend = new URLSearchParams(location.search).get("backend");
+if (_urlBackend === "python-ast" || _urlBackend === "js-core-runtime") {
+  _evalBackend = _urlBackend;
+}
 
 function byId(id) { return document.getElementById(id); }
 function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
@@ -112,7 +114,9 @@ async function init() {
   _ready = true;
   byId("loading").style.display = "none";
   setStatus("ready", "ready");
-  const backendLabel = _evalBackend === "js-core-runtime"
+  const backendLabel = _evalBackend === "wasm-js"
+    ? "WASM parser + JS Runtime"
+    : _evalBackend === "js-core-runtime"
     ? "Pyodide parser + JS Core Runtime"
     : "Pyodide full runtime";
   byId("runtime-detail").textContent = `${backendLabel} ready · ${Math.round(performance.now() - _bootStart)} ms startup`;

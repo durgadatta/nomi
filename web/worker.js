@@ -1,4 +1,4 @@
-// Nomi Web Playground — Pyodide worker runtime
+// Nomi Web Playground — worker runtime (three backends: wasm-js, js-core-runtime, python-ast)
 
 const PYODIDE_BASE = "https://cdn.jsdelivr.net/pyodide/v0.27.2/full/";
 
@@ -6,6 +6,7 @@ let pyodide = null;
 let runNomi = null;
 let resetSession = null;
 let coreJsonForNomi = null;
+let wasmReady = false;
 
 function postLog(message) {
   postMessage({ type: "log", message });
@@ -30,9 +31,20 @@ function convertPyValue(value) {
   return value;
 }
 
-async function initRuntime() {
-  postLog("Loading Pyodide...");
-  importScripts("./core_runtime.js");
+async function initWasm() {
+  postLog("Loading WASM parser...");
+  importScripts("./pkg/nomi_parser_worker.js");
+  const response = await fetch("./pkg/nomi_parser_bg.wasm");
+  const bytes = await response.arrayBuffer();
+  wasm_bindgen.initSync({ module: bytes });
+  wasmReady = true;
+  postLog("WASM parser ready");
+}
+
+async function ensurePyodide() {
+  if (pyodide) return;
+
+  postLog("Loading Pyodide (lazy)...");
   importScripts(PYODIDE_BASE + "pyodide.js");
   pyodide = await loadPyodide({ indexURL: PYODIDE_BASE });
 
@@ -50,7 +62,57 @@ async function initRuntime() {
   coreJsonForNomi = pyodide.globals.get("core_json_for_nomi");
 }
 
+async function initRuntime() {
+  importScripts("./core_runtime.js");
+  importScripts("./lower_to_core_ir.js");
+  await initWasm();
+}
+
+function runWithWasmJs(code) {
+  const parseStart = performance.now();
+  let json;
+  try {
+    json = wasm_bindgen.parse_nomi(code);
+  } catch (e) {
+    return { fallback: true, reason: "parse error: " + e.message };
+  }
+  const rustAst = JSON.parse(json);
+  const parseMs = performance.now() - parseStart;
+
+  const lowerStart = performance.now();
+  const coreIr = self.NomiCoreLowerer.lowerRustAstToCoreIr(rustAst);
+  const lowerMs = performance.now() - lowerStart;
+
+  if (coreIr.diagnosticCount > 0) {
+    return { fallback: true, reason: `${coreIr.diagnosticCount} diagnostics`, diagnosticCount: coreIr.diagnosticCount };
+  }
+
+  const evalStart = performance.now();
+  let result;
+  try {
+    result = self.NomiCoreRuntime.evaluateCorePayload(coreIr, { displayLastExpr: true });
+  } catch (e) {
+    return { fallback: true, reason: "eval error: " + e.message };
+  }
+  const evalMs = performance.now() - evalStart;
+
+  return {
+    output: result.stdout || "",
+    session: null,
+    backend: "wasm-js",
+    timing: {
+      parse_ms: parseMs,
+      lower_ms: lowerMs,
+      eval_ms: evalMs,
+      total_ms: parseMs + lowerMs + evalMs,
+      cache_hit: false,
+    },
+    bindings: result.bindings || {},
+  };
+}
+
 async function runWithJsCoreRuntime(code) {
+  await ensurePyodide();
   const lowerStart = performance.now();
   const lowered = convertPyValue(await coreJsonForNomi(code || ""));
   const lowerMs = performance.now() - lowerStart;
@@ -83,19 +145,38 @@ async function handleMessage(message) {
       return;
     }
 
-    if (!runNomi || !resetSession || !coreJsonForNomi) {
-      throw new Error("Nomi runtime is not ready");
-    }
-
     if (type === "run") {
-      const result = message.data.backend === "js-core-runtime"
-        ? await runWithJsCoreRuntime(message.data.code || "")
-        : await runNomi(message.data.code || "");
+      const code = message.data.code || "";
+      const backend = message.data.backend || "wasm-js";
+
+      if (backend === "wasm-js") {
+        const result = runWithWasmJs(code);
+        if (!result.fallback) {
+          postMessage({ id, type: "result", result });
+          return;
+        }
+        postLog("Falling back to Pyodide: " + result.reason);
+        await ensurePyodide();
+        const pyResult = await runNomi(code);
+        postMessage({ id, type: "result", result: convertPyValue(pyResult) });
+        return;
+      }
+
+      if (backend === "js-core-runtime") {
+        const result = await runWithJsCoreRuntime(code);
+        postMessage({ id, type: "result", result: convertPyValue(result) });
+        return;
+      }
+
+      // python-ast backend
+      await ensurePyodide();
+      const result = await runNomi(code);
       postMessage({ id, type: "result", result: convertPyValue(result) });
       return;
     }
 
     if (type === "reset") {
+      await ensurePyodide();
       const result = resetSession();
       postMessage({ id, type: "reset-done", result: convertPyValue(result) });
       return;
