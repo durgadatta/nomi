@@ -7,6 +7,10 @@ compatibility: deepseek
 Before adding a reduction, check the `nomi-language-design` skill. Each
 reduction should target a specific Nomi normal form and be grounded in the
 cross-language research corpus (`docs/research/language_family_coverage_map.md`).
+Also read `docs/orientation/exploratory_implementation_doctrine.md`: reductions
+should make syntax easier to change by declaring feature ownership, status,
+layer, normal form, diagnostics, and inspection behavior in metadata where
+possible.
 
 ## Files you will touch
 1. `prototype/parser/nomi/desugar/<name>.py` — new desugarer class
@@ -24,6 +28,7 @@ would also reject, via the shared `verify_core(strict=True)` verifier.
 For larger syntax reductions, also update the planned feature manifest or
 `docs/language/syntax_substrate_todo_audit.md` with the feature owner, normal
 form, status, pass metadata, diagnostics, and inspection expectations.
+Avoid one-off reduction wiring that cannot be discovered from feature metadata.
 
 ## Pattern
 

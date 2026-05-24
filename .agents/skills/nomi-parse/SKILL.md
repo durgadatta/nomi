@@ -15,6 +15,12 @@ declare whether it is L2/L3 semantic core, L4 sugar, L5 library convention,
 L6 scoped extension, or L7 backend-facing. L4 syntax must have an inspectable
 reduction target and should not require a final evaluator hook.
 
+Because Nomi is still exploratory, parser work should preserve optionality.
+Prefer declarative feature metadata, versioned payload/schema contracts, and
+inspectable surface/core artifacts over hardcoded parser/lowering branches.
+Read `docs/orientation/exploratory_implementation_doctrine.md` before broad
+parser or frontend changes.
+
 ## Key files
 - `prototype/grammar/layers/*.lark` — layered Lark grammar (assembled at runtime)
 - `prototype/parser/nomi/ast_.py` — NomiToPythonAST transformer
@@ -65,6 +71,8 @@ Before adding broad syntax, read:
 - `docs/language/parser_frontend_decoupling_plan.md` when work touches Lark,
   Tree-sitter/Rust parser candidates, parser frontend selection, or the
   Python AST backend boundary.
+- `docs/language/adversarial_exploratory_implementation_critique.md` when a
+  parser change could make one frontend's mechanics define the language.
 - `docs/language/python_independence_and_compiler_backend_plan.md` when syntax
   work affects the future split between Surface IR, Core IR, Python AST, MLIR,
   LLVM, or Wasm backends.

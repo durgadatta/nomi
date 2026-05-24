@@ -106,6 +106,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 
 **Foundation and direction:**
 - `docs/language/language_foundation.md` — canonical design foundation.
+- `docs/orientation/exploratory_implementation_doctrine.md` — implementation
+  doctrine for keeping early language work flexible, declarative, and
+  reversible.
 - `docs/language/core_layer_separation_plan.md` — operational hierarchy for
   implementation core, semantic core, canonical surface, sugar, libraries,
   scoped extensions, eval separation, and backend targets.
@@ -153,6 +156,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/features/structured_collections_query_language.md` — query/table verbs.
 
 **Architecture and substrate:**
+- `docs/language/adversarial_exploratory_implementation_critique.md` — hostile
+  reading of how implementation convenience can prematurely freeze language
+  design.
 - `docs/language/core_layer_separation_plan.md` — read first when the task
   touches core-vs-sugar boundaries, eval dispatch, Core IR, reduced mode,
   feature layer metadata, or backend portability.
@@ -407,6 +413,9 @@ experimentation:
 - Prefer plans that make features declarative: status, normal form, feature
   owner, grammar, surface/core node, lowering, diagnostics, tests, docs, and
   tool exposure.
+- Preserve optionality. For broad proposals, state what current implementation
+  substrate remains replaceable and what design choice the proposal could make
+  harder later.
 - Add or update inline `NOMI-SUBSTRATE-*` TODOs only at real architectural
   seams, and keep the central audit in sync.
 - Keep target-only syntax out of runnable samples until parser/lowering/tests

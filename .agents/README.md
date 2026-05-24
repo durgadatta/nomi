@@ -2,6 +2,12 @@
 
 Shared AI-agent assets live here so they are not tied to one tool.
 
+All agents should treat Nomi as an early exploratory language-design project.
+Before hardening implementation behavior, prefer declarative/spec-driven
+artifacts: feature metadata, schemas, registries, capability tables, profiles,
+inspection output, and focused tests. See
+`docs/orientation/exploratory_implementation_doctrine.md`.
+
 ## Skills
 
 `skills/*/SKILL.md` files are plain Markdown with YAML frontmatter. Agents with

@@ -17,6 +17,13 @@ The important design pressure is not feature accumulation. Nomi should grow by
 making small semantic primitives combine into richer forms while preserving
 local reasoning, readable syntax, and inspectable reduction.
 
+Nomi is still an early exploratory language-design initiative. Implementation
+work should preserve optionality: prefer declarative/spec-driven metadata,
+registries, schemas, capability tables, and inspectable reductions over
+hardcoded wiring. Treat current substrates (Python AST, Lark, Rust/WASM, JS,
+Pyodide, Core IR) as replaceable laboratory tools, not as the language
+definition.
+
 ## Canonical Reading Order
 
 Start with these files before broad design or implementation changes:
@@ -28,6 +35,8 @@ Start with these files before broad design or implementation changes:
   tool history.
 - `docs/orientation/ai_collaboration.md`: AI collaboration doctrine, accepted use
   cases, and checkpoint workflow.
+- `docs/orientation/exploratory_implementation_doctrine.md`: doctrine for
+  flexible, declarative, reversible implementation while Nomi is exploratory.
 - `docs/README.md`: docs map and current design spine.
 - `docs/language/language_foundation.md`: canonical foundation for the next
   design pass.
@@ -36,6 +45,9 @@ Start with these files before broad design or implementation changes:
   irreducible axes of variation and where languages converge.
 - `docs/language/language_degrees_of_freedom.md`: core/sugar/library/scoped
   freedom framework.
+- `docs/language/adversarial_exploratory_implementation_critique.md`:
+  skeptical critique of implementation choices that could prematurely freeze
+  the language design.
 - `docs/language/implementation_todos.md`: staged design and
   implementation tasks.
 - `docs/features/binding_constraints_feature.md`: constrained
@@ -181,6 +193,14 @@ then the broader relevant suite.
 - Treat binding, constraints, and resumable control as high-risk areas. Read the
   active design docs before changing them.
 - Prefer small, reversible implementation steps over broad rewrites.
+- Prefer declarative/spec-driven extension points. A new syntax or runtime
+  feature should name its owner, status, normal form, layer, reduction/core
+  target, diagnostics, tests, and inspection surface before the implementation
+  becomes hard to unwind.
+- Use metadata/config/registries to drive grammar, lowering, desugar, runtime
+  capabilities, host capabilities, diagnostics, tests, and generated artifacts
+  whenever practical. Manual wiring is acceptable for a fenced spike, but name
+  the intended extraction point.
 - Do not collapse Nomi's design ambition down to the current prototype
   mechanics. The prototype is a laboratory for the language, not the final
   boundary of the language.
@@ -212,7 +232,9 @@ For longer Codex sessions, use this loop:
 2. Restate the concrete goal and identify the files likely to change.
 3. Make a short implementation plan before editing.
 4. Work in focused increments: implement, test, checkpoint, continue.
-5. Leave a concise note in the final answer describing changed files, checks
+5. For broad changes, state how the change preserves or reduces future design
+   optionality.
+6. Leave a concise note in the final answer describing changed files, checks
    run, and any unresolved risk.
 
 When a task is large enough to span multiple prompts, create or update a

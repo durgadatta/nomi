@@ -6,6 +6,12 @@
 > requires touching fewer files and the Python substrate can eventually be
 > replaced by a Nomi-native backend.
 
+This plan now sits under the broader
+[`Exploratory Implementation Doctrine`](../orientation/exploratory_implementation_doctrine.md):
+Nomi is early language-design work, so declarative metadata is not ceremony for
+its own sake. It is how the implementation stays reversible while the language
+is still being discovered.
+
 ## Motivation
 
 The current implementation already has good declarative foundations:
@@ -72,6 +78,29 @@ eval logic. Benefits:
   with clear diagnostics)
 - Self-documenting interpreter surface
 
+## Phase B2: Capability And Host Manifests
+
+**Design next.** The Rust/WASM parser, JavaScript Core Runtime, Python runtime,
+Node wrapper, browser worker, and future Wasm/WASI hosts need a shared way to
+say what they support.
+
+Goal: define data tables for:
+
+- parser frontend capabilities and payload schema versions;
+- eval backend CoreNode coverage and promotion gates;
+- host capabilities such as `print`, `range`, `map`, filesystem, clock,
+  randomness, network, and package loading;
+- result and diagnostic schemas shared by CLI, web, notebook, tests, and AI
+  inspection.
+
+Benefits:
+
+- Browser fast paths can be useful without pretending to be full language
+  defaults.
+- Unsupported features produce structured diagnostics instead of stringly
+  fallback errors.
+- AI agents can inspect one capability table before changing behavior.
+
 ## Phase C: Semantic IR
 
 **Deferred.** Depends on language design settling further and Phase B being
@@ -96,3 +125,11 @@ After Phase A:
   pipeline, or composition files.
 - Phased desugar passes self-validate: a pass in the wrong phase or missing a
   dependency fails fast with a clear error.
+
+After Phase B/B2:
+- Runtime behavior and host availability are declared in data before they are
+  treated as language behavior.
+- Browser, Node, Python, and notebook paths expose compatible result and
+  diagnostic shapes.
+- Capability claims can be checked by tests rather than maintained only in
+  prose.

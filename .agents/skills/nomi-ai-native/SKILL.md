@@ -24,10 +24,17 @@ durable artifact that changes agent behavior:
 - **Commands/templates** for repeated prompts or handoff shapes.
 - **Tests/evals** for checking whether agent-facing assets still work.
 
+For Nomi specifically, AI-native also means preserving design optionality. The
+project is an exploratory language-design initiative, so agent assets should
+push work toward declarative/spec-driven metadata, inspectable reductions, and
+reversible slices rather than fast hardcoded implementation.
+
 ## Start Here
 
 1. Read `AGENTS.md`, `.agents/README.md`, and
    `docs/orientation/ai_collaboration.md`.
+   For broad implementation or agent-behavior changes, also read
+   `docs/orientation/exploratory_implementation_doctrine.md`.
 2. Inspect current tool config:
    - Codex: `.codex/config.toml`, `.codex/hooks.json`, `.codex/hooks/`
    - Claude: `.claude/settings.json`
@@ -59,6 +66,8 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
 
 - **Context shape:** Is `AGENTS.md` concise enough? Are canonical docs linked
   instead of duplicated? Are outdated instructions removed?
+- **Exploratory posture:** Do agent instructions preserve reversible,
+  metadata-driven implementation, or do they reward hardcoded feature work?
 - **Skill coverage:** Is there a skill for each recurring fragile workflow?
   Parser/interpreter/test/web/design/meta should stay separate.
 - **Tool-native discovery:** Can the target agent actually find the asset?

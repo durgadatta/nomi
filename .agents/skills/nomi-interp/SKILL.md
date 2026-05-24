@@ -16,6 +16,13 @@ Classify the form as L0-L7. L4 sugar must reduce before eval; L2/L3 semantic
 core belongs in the future core evaluator; L7 backend special cases belong in
 backend code, not language semantics.
 
+Because Nomi is early and exploratory, runtime work should avoid freezing a
+prototype substrate into the language definition. Prefer backend specs,
+capability manifests, structured result/diagnostic schemas, and feature-owned
+operation metadata over private `eval_*` behavior. Read
+`docs/orientation/exploratory_implementation_doctrine.md` before broad runtime
+changes.
+
 ## Eval backend registry
 `prototype/runtime/backends/` mirrors the parser frontend/backend pattern:
 - `__init__.py` — `EvalBackendSpec`, `EvalBackendCapabilities`, registry
@@ -90,6 +97,9 @@ oracle.
   an `eval_*` method, ask whether the construct is L4 sugar that should lower
   away, L2/L3 semantic core that needs a core operation, or an L7 backend
   workaround.
+- If evaluator behavior is added as a spike, name the declarative home it
+  should migrate to: feature metadata, operation registry, backend capability,
+  host capability, or diagnostic schema.
 - Prefer a shared semantic representation before adding another one-off
   `eval_*` path. Binding, function call, block call, pattern match, decode,
   pipeline, and rewrite should eventually emit consistent semantic events.

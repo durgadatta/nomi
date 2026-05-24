@@ -10,6 +10,12 @@ test generation, and documentation pressure.
 The durable source of truth remains the repository: code, tests, design notes,
 and executable examples.
 
+Nomi is an early exploratory language-design initiative. AI tools should
+optimize for flexible, reversible implementation: declare intent in metadata,
+keep reductions inspectable, and avoid turning the current prototype substrate
+into the de facto language specification. See
+[`exploratory_implementation_doctrine.md`](exploratory_implementation_doctrine.md).
+
 ## Why AI Belongs In The Repo
 
 Nomi's README frames AI and programming languages as complementary forces:
@@ -90,6 +96,8 @@ Do not use AI output as:
 - a final language specification without reconciliation;
 - a substitute for executable tests;
 - an excuse to add syntax that does not reduce to a small semantic primitive;
+- a shortcut around declarative feature metadata, capability gates, or
+  inspection artifacts;
 - a way to overwrite active design direction with a polished but incompatible
   proposal.
 
@@ -137,11 +145,14 @@ An AI-generated idea is ready to move from proposal to implementation only when
 it can answer these questions:
 
 - What primitive or small set of primitives does it reduce to?
+- What declarative owner records the feature: manifest, schema, registry,
+  capability table, or profile?
 - What user-facing pattern becomes clearer?
 - What Python behavior, if any, must remain compatible?
 - Which parser, AST, interpreter, and test surfaces are affected?
 - What example demonstrates the behavior?
 - What failure or diagnostic should exist when the idea is misused?
+- What future design choice would this implementation make harder?
 
 If those answers are not clear, keep the idea in notes or design review rather
 than making it runtime behavior.

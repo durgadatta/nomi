@@ -14,6 +14,12 @@ manifests, selected default desugar passes, source-span opt-in, a runtime
 facade, sessions, and AST caching. The implementation is now fast enough for
 current demos.
 
+For the broader early-language-design posture, read
+[`Exploratory Implementation Doctrine`](../orientation/exploratory_implementation_doctrine.md)
+and
+[`Adversarial Exploratory Implementation Critique`](adversarial_exploratory_implementation_critique.md).
+This file focuses on concrete parser/lowering/runtime risks.
+
 Refresh note, 2026-05-19: this document was updated after a second codebase
 scan. The earlier "class-name filtered desugar profile" critique is no longer
 accurate; desugar pass selection now comes from feature metadata. The remaining
