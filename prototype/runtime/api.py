@@ -10,6 +10,7 @@ from __future__ import annotations
 import ast
 import contextlib
 import io
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
@@ -336,6 +337,28 @@ def inspect(
             eval_backend=eval_backend,
         )
         output = session.core_json(source=source, filename=filename)
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
+    if stage in {"runtime_cache_key", "runtime-cache-key", "cache-key"}:
+        session = create_session(
+            mode=mode,
+            profile=profile,
+            parser_frontend=parser_frontend,
+            eval_backend=eval_backend,
+        )
+        output = json.dumps(
+            session.cache_key_inputs(source=source, filename=filename),
+            indent=2,
+            sort_keys=True,
+        )
         timings = {"total": perf_counter() - started}
         return InspectionResult(
             mode=mode,

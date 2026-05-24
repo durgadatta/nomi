@@ -157,6 +157,7 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage core
 python3 -m tools.syntax.inspect samples/demo.nomi --stage core-verify
 python3 -m tools.syntax.inspect samples/demo.nomi --stage core-to-python
 python3 -m tools.syntax.inspect samples/demo.nomi --stage backend-lowered
+python3 -m tools.syntax.inspect samples/demo.nomi --stage runtime-cache-key
 python3 -m tools.syntax.inspect --stage parser-frontends
 python3 -m tools.syntax.inspect --stage eval-backends
 python3 -m tools.syntax.inspect --stage host-capabilities
@@ -186,6 +187,7 @@ Current stages:
 ```text
 raw_tree, transformed_tree, surface-ast, python-ast, core
 core-verify, core-to-python, backend-lowered
+runtime-cache-key
 features, capabilities, parser-frontends, eval-backends
 host-capabilities, resolved-pipelines
 passes, expansions

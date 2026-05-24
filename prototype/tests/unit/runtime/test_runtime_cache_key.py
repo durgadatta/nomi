@@ -14,6 +14,7 @@ def test_session_cache_uses_typed_runtime_cache_key():
     [cache_key] = session._ast_cache.keys()
     assert isinstance(cache_key, RuntimeCacheKey)
     assert cache_key.source_text == "cached_value = 4\n"
+    assert cache_key.source_digest == "54346cd47ec1334c161d58cdd9815337"
     assert cache_key.source_identity is None
     assert cache_key.mode == "nomi"
     assert cache_key.profile == "default"
@@ -38,3 +39,24 @@ def test_session_cache_distinguishes_source_identity(tmp_path):
     assert len(session._ast_cache) == 2
     identities = {key.source_identity for key in session._ast_cache}
     assert identities == {str(first_file.resolve()), str(second_file.resolve())}
+
+
+def test_session_cache_key_inputs_are_inspectable_without_source_text(tmp_path):
+    path = tmp_path / "source.nomi"
+    path.write_text("cached_value = 4\n", encoding="utf-8")
+    session = create_session(mode="nomi")
+
+    inputs = session.cache_key_inputs(filename=path)
+
+    assert inputs == {
+        "source_digest": "54346cd47ec1334c161d58cdd9815337",
+        "source_identity": str(path.resolve()),
+        "mode": "nomi",
+        "profile": "default",
+        "parser_frontend": "lark-lalr",
+        "parser": session.pipeline.parser,
+        "lowering": session.pipeline.lowering,
+        "eval_backend": session.pipeline.eval_backend,
+        "grammar_version": "builtin-features-v1",
+        "span_mode": "default",
+    }

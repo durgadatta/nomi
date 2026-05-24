@@ -8,6 +8,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage surface-ast
     python3 -m tools.syntax.inspect FILE --stage core
     python3 -m tools.syntax.inspect FILE --stage core-json
+    python3 -m tools.syntax.inspect FILE --stage runtime-cache-key
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage capabilities
@@ -112,6 +113,20 @@ def main():
         from prototype.runtime import create_session
 
         print(create_session(mode="nomi").core_json(source=code))
+    elif stage in {"runtime-cache-key", "runtime_cache_key", "cache-key"}:
+        import json
+        from prototype.runtime import create_session
+
+        print(
+            json.dumps(
+                create_session(mode="nomi").cache_key_inputs(
+                    source=code,
+                    filename=filename,
+                ),
+                indent=2,
+                sort_keys=True,
+            )
+        )
     elif stage in {"core-verify", "core_verify"}:
         tree = generate_ast(code=code)
         core = lower_python_ast_to_core(tree)
@@ -142,7 +157,7 @@ def main():
         print(
             f"Unknown stage: {stage!r}. "
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
-            f"core-json, core-verify, core-to-python, backend-lowered, "
+            f"core-json, runtime-cache-key, core-verify, core-to-python, backend-lowered, "
             f"python-ast, features, capabilities, parser-frontends, "
             f"eval-backends, host-capabilities, resolved-pipelines, passes, expansions"
         )

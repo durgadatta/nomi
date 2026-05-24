@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import contextlib
+import hashlib
 import io
 import os
 import sys
@@ -35,6 +36,7 @@ class RuntimeCacheKey:
     """Identity for cached lowered ASTs in a runtime session."""
 
     source_text: str
+    source_digest: str
     source_identity: str | None
     mode: str
     profile: str
@@ -269,6 +271,7 @@ class RuntimeSession:
         )
         return RuntimeCacheKey(
             source_text=source,
+            source_digest=_source_digest(source),
             source_identity=source_identity,
             mode=self.mode,
             profile=self.profile,
@@ -277,6 +280,42 @@ class RuntimeSession:
             lowering=self.pipeline.lowering,
             eval_backend=self.pipeline.eval_backend,
         )
+
+    def cache_key_inputs(
+        self,
+        *,
+        source: str | None = None,
+        filename: str | Path | None = None,
+    ) -> dict[str, Any]:
+        if source is None and filename is not None:
+            source = Path(filename).read_text(encoding="utf-8")
+        if source is None:
+            raise ValueError("source or filename is required for cache-key inspection")
+        key = RuntimeCacheKey(
+            source_text=source,
+            source_digest=_source_digest(source),
+            source_identity=(
+                str(Path(filename).resolve()) if filename is not None else None
+            ),
+            mode=self.mode,
+            profile=self.profile,
+            parser_frontend=self.pipeline.parser_frontend,
+            parser=self.pipeline.parser,
+            lowering=self.pipeline.lowering,
+            eval_backend=self.pipeline.eval_backend,
+        )
+        return {
+            "source_digest": key.source_digest,
+            "source_identity": key.source_identity,
+            "mode": key.mode,
+            "profile": key.profile,
+            "parser_frontend": key.parser_frontend,
+            "parser": key.parser,
+            "lowering": key.lowering,
+            "eval_backend": key.eval_backend,
+            "grammar_version": key.grammar_version,
+            "span_mode": key.span_mode,
+        }
 
     def _get_cached_tree(self, cache_key: RuntimeCacheKey | None) -> Any | None:
         if cache_key is None:
@@ -352,3 +391,7 @@ class RuntimeSession:
             isinstance(value, ast.Call)
             and any(keyword.arg == "__block__" for keyword in value.keywords)
         )
+
+
+def _source_digest(source: str) -> str:
+    return hashlib.blake2b(source.encode("utf-8"), digest_size=16).hexdigest()

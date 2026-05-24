@@ -196,6 +196,15 @@ def test_inspect_returns_core_dump_for_tiny_subset():
     )
 
 
+def test_inspect_returns_runtime_cache_key_inputs():
+    result = inspect(source="x = 1\n", stage="runtime_cache_key")
+
+    assert result.stage == "runtime_cache_key"
+    assert '"source_digest": "1de70bc15d424d4453e6c531451e490b"' in result.output
+    assert '"source_text"' not in result.output
+    assert '"parser_frontend": "lark-lalr"' in result.output
+
+
 def test_inspect_rejects_unknown_stage_until_more_pipeline_stages_exist():
     with pytest.raises(ValueError, match="Unsupported inspection stage"):
         inspect(source="x = 1\n", stage="surface")
