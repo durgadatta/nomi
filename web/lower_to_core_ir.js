@@ -140,8 +140,9 @@ function lowerExpr(expr) {
       return binaryOp(lowerExpr(expr.left), op, lowerExpr(expr.right));
     }
     case "Compare": {
-      const ops = (expr.ops || []).map(o => CMPOP_MAP[o] || o);
-      const comparators = (expr.comparators || []).map(lowerExpr);
+      // Rust parser produces { op, right } — Python AST produces { ops, comparators }
+      const ops = expr.ops ? (expr.ops || []).map(o => CMPOP_MAP[o] || o) : [CMPOP_MAP[expr.op] || expr.op];
+      const comparators = expr.comparators ? (expr.comparators || []).map(lowerExpr) : [lowerExpr(expr.right)];
       return compareOp(lowerExpr(expr.left), ops, comparators);
     }
     case "BoolOp": {
@@ -246,6 +247,18 @@ function lowerStmt(stmt) {
       return lowerSuite(stmt);
 
     default:
+      // Stmt::Simple serializes the value as the type field directly:
+      //   {"type": "pass"}, {"type": "break"}, {"type": "defer ..."}, etc.
+      // Handle known Simple values here.
+      if (stmt.type === "pass") return noOp();
+      if (stmt.type === "break") return breakNode();
+      if (stmt.type === "continue") return continueNode();
+      if (typeof stmt.type === "string" && stmt.type.startsWith("defer ")) {
+        return defer(moduleNode([lowerRawStmt(stmt.type.slice(6))]));
+      }
+      if (typeof stmt.type === "string" && (stmt.type.startsWith("import ") || stmt.type.startsWith("from "))) {
+        return diagnostic("import not yet in JS lowerer");
+      }
       return diagnostic("unknown stmt type: " + stmt.type);
   }
 }
@@ -263,8 +276,17 @@ function lowerAssign(stmt) {
   let value = stmt.value ? lowerExpr(stmt.value) : NIL;
 
   // _ placeholder → wrap as function: double = _ * 2 → double = x => x * 2
-  if (containsUnderscore(value)) {
+  // Check raw AST (stmt.value) before lowering, so pattern wildcards in match/guard
+  // are not mistaken for underscore lambdas.
+  if (rawContainsUnderscore(stmt.value)) {
     value = wrapUnderscoreAsFunction(value);
+  }
+
+  // $name placeholder → wrap as function: sort_key = $1["name"] → sort_key = ($1) => $1["name"]
+  // Check raw AST before lowering for the same reason.
+  const holeParams = rawCollectNamedHoles(stmt.value);
+  if (holeParams.length > 0) {
+    value = wrapHolesAsFunction(value, holeParams);
   }
 
   // Function equation: f(x, y) = body
@@ -290,6 +312,30 @@ function lowerAssign(stmt) {
     }
     // If params contain non-identifiers, they're patterns; keep as-is for later merging
     return bind(name, { type: "Function", params, body: moduleNode([returnNode(value)]), defaults });
+  }
+
+  // Guarded equation: f(x) when cond = body
+  const whenIdx = target.indexOf(" when ");
+  if (whenIdx >= 0) {
+    const funcPart = target.slice(0, whenIdx).trim();
+    const guardText = target.slice(whenIdx + 6).trim();  // " when " is 6 chars
+    const { name, params, defaults } = parseFuncHead(funcPart);
+    const guard = lowerRawExpr(guardText);
+    return bind(name, {
+      type: "Function",
+      params,
+      body: moduleNode([branch(guard, moduleNode([returnNode(value)]), moduleNode([noOp()]))]),
+      defaults
+    });
+  }
+
+  // Single-arg function without parens: sq x = x * x, add a b = a + b
+  // Target has a space but no parens and no colon.
+  if (target.includes(" ") && !target.includes("(") && !target.includes(":")) {
+    const spaceIdx = target.indexOf(" ");
+    const name = target.slice(0, spaceIdx).trim();
+    const params = target.slice(spaceIdx + 1).trim().split(/\s+/);
+    return bind(name, { type: "Function", params, body: moduleNode([returnNode(value)]), defaults: [] });
   }
 
   // Type alias: type X = ...
@@ -349,10 +395,10 @@ function lowerSuite(stmt) {
     }
     case "For": {
       const { target, iter } = parseForHead(head);
-      return forEach(target, lowerExpr(iter), moduleNode(body), moduleNode(getElseBody()));
+      return forEach(target, lowerRawExpr(iter), moduleNode(body), moduleNode(getElseBody()));
     }
     case "If": {
-      // Check for if-let: if let x = expr
+      // Check for if-let: if let x = expr OR if pattern = expr
       if (head.startsWith("let ")) {
         const rest = head.slice(4).trim();
         const eq = rest.indexOf("=");
@@ -365,24 +411,36 @@ function lowerSuite(stmt) {
           );
         }
       }
+      // Pattern match: if pattern = expr → match expr { pattern => body, _ => else }
+      if (isPatternMatchHead(head)) {
+        return lowerPatternMatchBranch(head, body, getElseBody());
+      }
       const test = lowerRawExpr(head);
       return branch(test, moduleNode(body), moduleNode(getElseBody()));
     }
     case "While": {
+      // Pattern match: while pattern = expr → loop match expr { pattern => body, _ => break }
+      if (isPatternMatchHead(head)) {
+        return lowerPatternMatchLoop(head, body);
+      }
       const test = lowerRawExpr(head);
       return loopNode(test, moduleNode(body), moduleNode(getElseBody()));
     }
     case "Unless": {
+      // Pattern match: unless pattern = expr → unless (negated match)
+      if (isPatternMatchHead(head)) {
+        return lowerPatternMatchNegBranch(head, body);
+      }
       const test = unaryOp("not", lowerRawExpr(head));
       return branch(test, moduleNode(body), []);
     }
     case "Class":
-      return lowerDataLike("Class", head, body);
+      return lowerDataLike("Class", head, stmt.body || []);
     case "Data":
-      return lowerDataLike("Data", head, body);
+      return lowerDataLike("Data", head, stmt.body || []);
     case "Match": {
       const subject = lowerRawExpr(head);
-      const cases = body.map(s => lowerCaseClause(s)).filter(c => c);
+      const cases = (stmt.body || []).map(s => lowerCaseClause(s)).filter(c => c);
       return matchNode(subject, cases);
     }
     case "Try": {
@@ -403,20 +461,56 @@ function lowerSuite(stmt) {
       return handle(moduleNode(body), handlers, moduleNode(finalbody));
     }
     case "BlockCall": {
-      const callExpr = lowerRawExpr(head);
-      return call(callExpr, [], { type: "Function", params: [], body: moduleNode(body), defaults: [] });
+      // Extract func and args from stmt.call (Rust Call node), not the lowered result.
+      // stmt.call is { type: "Call", func: Name, args: [...] } — we need to lower
+      // the func and each arg individually.
+      let func, args;
+      if (stmt.call && stmt.call.type === "Call") {
+        func = lowerExpr(stmt.call.func);
+        args = (stmt.call.args || []).map(a => lowerExpr(a));
+      } else if (stmt.call) {
+        // Non-Call call field — lower as expression
+        func = lowerExpr(stmt.call);
+        args = [];
+      } else {
+        func = lowerRawExpr(head);
+        args = [];
+      }
+      const blockParams = typeof stmt.params === "string"
+        ? stmt.params.split(",").map(s => s.trim()).filter(s => s)
+        : (Array.isArray(stmt.params) ? stmt.params : []);
+      return call(func, args, { type: "Function", params: blockParams, body: moduleNode(body), defaults: [] });
     }
     case "With":
       return diagnostic("with not yet in JS lowerer");
-    case "Guard":
-      return diagnostic("guard suite not yet in JS lowerer");
+    case "Guard": {
+      const head = stmt.head || "";
+      const eqIdx = head.indexOf(" = ");
+      if (eqIdx < 0) return diagnostic("malformed guard: " + head);
+      const patternText = head.slice(0, eqIdx).trim();
+      const subjectText = head.slice(eqIdx + 3).trim();
+      const pattern = lowerPatternText(patternText);
+      const subject = lowerRawExpr(subjectText);
+      const guardBody = (stmt.body || []).map(lowerStmt);
+      return matchNode(subject, [
+        patternTest(pattern, null, moduleNode([noOp()])),
+        patternTest(load("_"), null, moduleNode(guardBody)),
+      ]);
+    }
     case "ReturnMatch": {
       const subject = lowerRawExpr(head);
       const cases = body.map(s => lowerCaseClause(s)).filter(c => c);
       return returnNode(matchNode(subject, cases));
     }
     case "MatchAssign": {
-      return diagnostic("match-assign not yet in JS lowerer");
+      const parts = head.split(" = match ");
+      if (parts.length === 2) {
+        const name = parts[0].trim();
+        const subject = lowerRawExpr(parts[1].trim());
+        const cases = (stmt.body || []).map(s => lowerCaseClause(s)).filter(c => c);
+        return bind(name, matchNode(subject, cases));
+      }
+      return diagnostic("malformed match-assign: " + head);
     }
     case "WhereAssign": {
       const target = stmt.target || head.split("=")[0]?.trim() || "";
@@ -440,6 +534,55 @@ function lowerSuite(stmt) {
   }
 }
 
+function isPatternMatchHead(head) {
+  // Pattern-match heads contain " = " (space-equal-space) —
+  // comparisons use ==, !=, <=, >=, not bare =.
+  return head.indexOf(" = ") >= 0;
+}
+
+function lowerPatternMatchBranch(head, body, elseBody) {
+  // if pattern = expr: body else: elseBody
+  // → match expr { pattern => body, _ => elseBody }
+  const eqIdx = head.indexOf(" = ");
+  const patternText = head.slice(0, eqIdx).trim();
+  const subjectText = head.slice(eqIdx + 3).trim();
+  const pattern = lowerPatternText(patternText);
+  const subject = lowerRawExpr(subjectText);
+  return matchNode(subject, [
+    patternTest(pattern, null, moduleNode(body)),
+    patternTest(load("_"), null, moduleNode(elseBody)),
+  ]);
+}
+
+function lowerPatternMatchLoop(head, body) {
+  // while pattern = expr: body
+  // → loop(true) { match expr { pattern => body, _ => break } }
+  const eqIdx = head.indexOf(" = ");
+  const patternText = head.slice(0, eqIdx).trim();
+  const subjectText = head.slice(eqIdx + 3).trim();
+  const pattern = lowerPatternText(patternText);
+  const subject = lowerRawExpr(subjectText);
+  const matchBody = matchNode(subject, [
+    patternTest(pattern, null, moduleNode(body)),
+    patternTest(load("_"), null, moduleNode([breakNode()])),
+  ]);
+  return loopNode(literal(true, "bool"), moduleNode([matchBody]));
+}
+
+function lowerPatternMatchNegBranch(head, body) {
+  // unless pattern = expr: body
+  // → match expr { pattern => pass, _ => body }
+  const eqIdx = head.indexOf(" = ");
+  const patternText = head.slice(0, eqIdx).trim();
+  const subjectText = head.slice(eqIdx + 3).trim();
+  const pattern = lowerPatternText(patternText);
+  const subject = lowerRawExpr(subjectText);
+  return matchNode(subject, [
+    patternTest(pattern, null, moduleNode([noOp()])),
+    patternTest(load("_"), null, moduleNode(body)),
+  ]);
+}
+
 function parseFuncHead(head) {
   if (!head) return { name: "", params: [], defaults: [] };
   const paren = head.indexOf("(");
@@ -450,18 +593,79 @@ function parseFuncHead(head) {
   const params = [];
   const defaults = [];
   if (paramStr.trim()) {
-    for (const p of paramStr.split(",")) {
-      const eq = p.indexOf("=");
+    for (const p of splitTopLevel(paramStr)) {
+      let paramName = p;
+      let defaultVal = null;
+
+      // Check for default value: name = expr
+      const eq = findAssignEq(p);
       if (eq >= 0) {
-        params.push(p.slice(0, eq).trim());
-        defaults.push(lowerRawExpr(p.slice(eq + 1).trim()));
-      } else {
-        const trimmed = p.trim();
-        if (trimmed) params.push(trimmed);
+        paramName = p.slice(0, eq).trim();
+        defaultVal = lowerRawExpr(p.slice(eq + 1).trim());
+      }
+
+      // Strip constraint annotation: x : (x >= 0) → x
+      const colon = findTopLevelColon(paramName);
+      if (colon >= 0) {
+        paramName = paramName.slice(0, colon).trim();
+      }
+
+      if (paramName) {
+        params.push(paramName);
+        if (defaultVal !== null) defaults.push(defaultVal);
       }
     }
   }
   return { name, params, defaults };
+}
+
+function findTopLevelColon(text) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && ch === ":") return i;
+  }
+  return -1;
+}
+
+// Find = at bracket depth 0 (assignment), skipping ==, !=, <=, >=.
+function findAssignEq(text) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && ch === "=") {
+      // Check not part of ==, !=, <=, >=
+      if (i > 0) {
+        const prev = text[i - 1];
+        if (prev === "=" || prev === "!" || prev === "<" || prev === ">") continue;
+      }
+      if (i < text.length - 1 && text[i + 1] === "=") continue;
+      return i;
+    }
+  }
+  return -1;
 }
 
 function parseForHead(head) {
@@ -485,9 +689,9 @@ function lowerCaseFromSuite(stmt) {
   const head = stmt.head || "";
   const body = (stmt.body || []).map(lowerStmt);
 
-  // "case _: ..." → wildcard
+  // "case _: ..." → wildcard (matches anything)
   if (head.trim() === "_") {
-    return patternTest(literal(null, "nil"), null, moduleNode(body));
+    return patternTest(load("_"), null, moduleNode(body));
   }
 
   // "case pattern if guard: ..."
@@ -505,7 +709,38 @@ function lowerCaseFromSuite(stmt) {
 
 function lowerPatternText(text) {
   text = text.trim();
-  if (!text || text === "_") return literal(null, "nil");
+  if (!text || text === "_") return load("_");
+
+  // Sequence pattern: [a, b, *rest]
+  if (text.startsWith("[") && text.endsWith("]")) {
+    const inner = text.slice(1, -1).trim();
+    if (!inner) return sequence([]);
+    const parts = splitTopLevel(inner);
+    const elements = parts.map(p => {
+      p = p.trim();
+      if (p.startsWith("*")) return spread(load(p.slice(1).trim() || "_"));
+      return lowerPatternText(p);
+    });
+    return sequence(elements);
+  }
+
+  // Mapping pattern: {key: pattern, ...}
+  if (text.startsWith("{") && text.endsWith("}")) {
+    const inner = text.slice(1, -1).trim();
+    if (!inner) return mappingLiteral([]);
+    const parts = splitTopLevel(inner);
+    const entries = parts.map(p => {
+      const colonIdx = p.indexOf(":");
+      if (colonIdx < 0) return [lowerPatternText(p.trim()), load("_")];
+      const key = lowerPatternText(p.slice(0, colonIdx).trim());
+      const val = lowerPatternText(p.slice(colonIdx + 1).trim());
+      return [key, val];
+    });
+    return mappingLiteral(entries);
+  }
+
+  // Star pattern: *name
+  if (text.startsWith("*")) return spread(load(text.slice(1).trim() || "_"));
 
   // Number literal
   if (/^-?\d/.test(text)) return lowerNumber(text);
@@ -523,6 +758,34 @@ function lowerPatternText(text) {
 
   // Name / variable pattern
   return load(text);
+}
+
+function splitTopLevel(text, delimiter) {
+  delimiter = delimiter || ",";
+  const parts = [];
+  let start = 0;
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (ch === delimiter && depth === 0) {
+      parts.push(text.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  const tail = text.slice(start).trim();
+  if (tail) parts.push(tail);
+  return parts;
 }
 
 function lowerExceptHandler(head, body) {
@@ -549,9 +812,17 @@ function lowerDataLike(kind, head, body) {
     if (s.type === "Bind") {
       fields.push([load(s.name), s.value || NIL]);
     } else if (s.type === "Assign") {
-      // Assign from Rust parser
       const val = s.value ? lowerExpr(s.value) : NIL;
       fields.push([load(s.target), val]);
+    } else if (s.type === "Suite" && s.kind === "BlockCall") {
+      // Data field from Rust parser: Suite(kind=BlockCall, head="fieldName", ...)
+      const fieldName = (s.call && s.call.id) || s.head || "";
+      fields.push([load(fieldName), NIL]);
+    } else if (s.kind === "BlockCall") {
+      // Data field (non-Suite wrapper): head contains field name
+      const fieldName = (s.call && s.call.id) || s.head || "";
+      const val = s.value ? lowerExpr(s.value) : NIL;
+      fields.push([load(fieldName), val]);
     }
   }
   return constructData(name, fields);
@@ -575,6 +846,19 @@ function lowerRawExpr(raw) {
   // Simple name
   if (/^[a-zA-Z_]\w*$/.test(text)) return load(text);
 
+  // List literal: [a, b, *spread]
+  if (text.startsWith("[") && text.endsWith("]")) {
+    const inner = text.slice(1, -1).trim();
+    if (!inner) return sequence([]);
+    const parts = splitTopLevel(inner);
+    const elements = parts.map(p => {
+      p = p.trim();
+      if (p.startsWith("*")) return spread(lowerRawExpr(p.slice(1).trim()));
+      return lowerRawExpr(p);
+    });
+    return sequence(elements);
+  }
+
   // Dict/mapping literal: { key: value, ... }
   if (text.startsWith("{") && text.endsWith("}")) return lowerDictExpr(text);
 
@@ -588,11 +872,13 @@ function lowerRawExpr(raw) {
   if (/^match\s/.test(text)) return lowerRawMatchExpr(text);
 
   // Operator sections: (+) (+x) (x+)
+  // Also handles parenthesized expressions: (x => -x), (1 + 2)
   if (text.startsWith("(") && text.endsWith(")")) {
     const inner = text.slice(1, -1).trim();
     if (/^[+\-*/%@|&^~]/.test(inner) || /[+\-*/%@|&^~]$/.test(inner) || inner === "+" || inner === "-") {
       return lowerSectionExpr(inner);
     }
+    return lowerRawExpr(inner);
   }
 
   // Nullish coalescing: a ?? b
@@ -601,9 +887,14 @@ function lowerRawExpr(raw) {
   // Safe navigation: a?.b, a?.b?.c
   if (text.includes("?.")) return lowerSafeNavExpr(text);
 
-  // Call-like: f (args, with, spaces) — must come before |>
+  // not unary: not expr — must be before call-like so "not (x)" isn't call
+  if (/^not\s/.test(text)) {
+    return unaryOp("not", lowerRawExpr(text.slice(4).trim()));
+  }
+
+  // Call-like: f(args) or obj . method (args) — must come before |>
   // so print(1 .. 10 |> sum) parses as call, not pipeline
-  if (/^\w+\s*\(/.test(text)) return lowerCallExpr(text);
+  if (/^\w+(?:\s*\.\s*\w+)*\s*\(/.test(text)) return lowerCallExpr(text);
 
   // Pipeline: a |> b |> c
   if (text.includes("|>")) return lowerPipelineExpr(text);
@@ -620,40 +911,289 @@ function lowerRawExpr(raw) {
   // Ranges: start..end, start..<end, start..end by step
   if (text.includes("..")) return lowerRangeExpr(text);
 
+  // Conditional expression: X if Y else Z — must check before and/or
+  const condMatch = findTopLevelConditional(text);
+  if (condMatch) {
+    return conditionalExpr(
+      lowerRawExpr(condMatch.test),
+      lowerRawExpr(condMatch.thenVal),
+      lowerRawExpr(condMatch.elseVal)
+    );
+  }
+
+  // Boolean ops: a and b, a or b — lower precedence than comparisons
+  const boolMatch = findTopLevelBoolOp(text);
+  if (boolMatch) {
+    return booleanOp(boolMatch.op, [lowerRawExpr(boolMatch.left), lowerRawExpr(boolMatch.right)]);
+  }
+
   // Comparison operators: left op right
-  if (/[><=!]/.test(text) || /\b(?:is|in|not)\b/.test(text)) return lowerComparisonExpr(text);
+  // not unary: not expr — must be before comparison
+  // so "not (x == y)" parses as not(compare)
+  if (/^not\s/.test(text)) {
+    return unaryOp("not", lowerRawExpr(text.slice(4).trim()));
+  }
+
+  const hasComp = /[=!]/.test(text) ||
+    /(?<![<>])[<>](?![<>])/.test(text) ||
+    /\bis\b/.test(text) ||
+    /\bin\b/.test(text);
+	if (hasComp) return lowerComparisonExpr(text);
+
+  // Binary operators: left + right, left - right, etc.
+  // Must come before unary so -x + y parses as (-x) + y, not -(x + y).
+  // Two-char ops: <<, >> (must check before single-char)
+  const shiftOpIdx = findTopLevelShift(text);
+  if (shiftOpIdx >= 0) {
+    const left = text.slice(0, shiftOpIdx).trim();
+    const op = text.slice(shiftOpIdx, shiftOpIdx + 2);
+    const right = text.slice(shiftOpIdx + 2).trim();
+    if (left && right) {
+      return binaryOp(lowerRawExpr(left), op, lowerRawExpr(right));
+    }
+  }
+  const topOpIdx = findTopLevelOp(text);
+  if (topOpIdx >= 0) {
+    const left = text.slice(0, topOpIdx).trim();
+    const op = text[topOpIdx];
+    const right = text.slice(topOpIdx + 1).trim();
+    if (left && right) {
+      return binaryOp(lowerRawExpr(left), op, lowerRawExpr(right));
+    }
+  }
+
+  // Subscript with slice: name[start:end] or name[start:end:step]
+  if (/\[\s*[^\]]*:[^\]]*\]/.test(text) || /\[\s*:\s*\]/.test(text)) {
+    return lowerSliceExpr(text);
+  }
+
+  // Unary operators: -x, +x (but not -5 which is a number literal)
+  if (/^[+\-]/.test(text) && !/^[+\-]\d/.test(text)) {
+    const op = text[0];
+    const operand = lowerRawExpr(text.slice(1).trim());
+    return unaryOp(op, operand);
+  }
 
   // Everything else: potentially Python-specific expression → diagnostic (triggers fallback)
   return diagnostic("raw expr not yet in JS lowerer: " + text.slice(0, 60));
 }
 
+function findTopLevelConditional(text) {
+  let depth = 0, quote = null, escaped = false;
+  let ifIdx = -1, elseIdx = -1;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && ch === " " && ifIdx < 0) {
+      if (text.slice(i, i + 4) === " if ") {
+        ifIdx = i;
+      }
+    }
+    else if (depth === 0 && ch === " " && ifIdx >= 0 && elseIdx < 0) {
+      if (text.slice(i, i + 6) === " else ") {
+        elseIdx = i;
+      }
+    }
+  }
+  if (ifIdx >= 0 && elseIdx > ifIdx) {
+    return {
+      test: text.slice(ifIdx + 4, elseIdx).trim(),
+      thenVal: text.slice(0, ifIdx).trim(),
+      elseVal: text.slice(elseIdx + 6).trim()
+    };
+  }
+  return null;
+}
+
+function findTopLevelBoolOp(text) {
+  let depth = 0, quote = null, escaped = false;
+  let lastOr = -1, lastAnd = -1;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && ch === " " && i < text.length - 3) {
+      const after = text.slice(i + 1);
+      if (after.startsWith("or ")) {
+        lastOr = i;
+      } else if (after.startsWith("and ")) {
+        lastAnd = i;
+      }
+    }
+  }
+  // 'or' has lower precedence — split on rightmost 'or' first
+  if (lastOr >= 0) {
+    return { op: "or", left: text.slice(0, lastOr).trim(), right: text.slice(lastOr + 4).trim() };
+  }
+  if (lastAnd >= 0) {
+    return { op: "and", left: text.slice(0, lastAnd).trim(), right: text.slice(lastAnd + 5).trim() };
+  }
+  return null;
+}
+
+function lowerSliceExpr(text) {
+  // Rust parser adds spaces: "items2 [ 1 : ]" or "name [ start : end : step ]"
+  let bracketStart = -1, bracketEnd = -1;
+  let pdepth = 0, quote = null, escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "{") { pdepth++; }
+    else if (ch === ")" || ch === "}") { pdepth--; }
+    else if (ch === "[" && pdepth === 0) {
+      if (bracketStart < 0) bracketStart = i;
+      pdepth++;
+    }
+    else if (ch === "]" && pdepth === 1 && bracketStart >= 0) {
+      bracketEnd = i;
+      break;
+    }
+  }
+  if (bracketStart < 0 || bracketEnd < 0) return diagnostic("malformed slice: " + text.slice(0, 60));
+  const objText = text.slice(0, bracketStart).trim();
+  const inner = text.slice(bracketStart + 1, bracketEnd).trim();
+  const parts = inner.split(":").filter(s => s !== "").map(s => s.trim());
+  const args = [lowerRawExpr(objText), NIL, NIL, literal(1, "int")];
+  if (parts[0]) args[1] = lowerRawExpr(parts[0]);
+  if (parts[1]) args[2] = lowerRawExpr(parts[1]);
+  if (parts[2]) args[3] = lowerRawExpr(parts[2]);
+  return call(load("slice"), args);
+}
+
+function findTopLevelShift(text) {
+  let depth = 0, quote = null, escaped = false;
+  for (let i = 0; i < text.length - 1; i++) {
+    const ch = text[i];
+    if (quote !== null) {
+      if (escaped) { escaped = false; }
+      else if (ch === "\\") { escaped = true; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && i > 0 && (text.slice(i, i + 2) === "<<" || text.slice(i, i + 2) === ">>")) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function findTopLevelOp(text) {
+  // Find the rightmost operator at the lowest-precedence depth-0 position.
+  // Precedence order: + -  <  * / // %  <  & | ^
+  // Checks lowest-precedence operators first; returns -1 if none found.
+  function lastIndexOfAny(chars) {
+    let depth = 0, quote = null, escaped = false, last = -1;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (quote !== null) {
+        if (escaped) { escaped = false; }
+        else if (ch === "\\") { escaped = true; }
+        else if (ch === quote) { quote = null; }
+        continue;
+      }
+      if (ch === "'" || ch === '"') { quote = ch; }
+      else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+      else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+      else if (depth === 0 && chars.includes(ch) && i > 0) { last = i; }
+    }
+    return last;
+  }
+  // Check in precedence order, lowest first
+  const level1 = lastIndexOfAny("+-");
+  if (level1 >= 0) return level1;
+  const level2 = lastIndexOfAny("*/%");
+  if (level2 >= 0) return level2;
+  return lastIndexOfAny("&|^");
+}
+
 function lowerRawTryExpr(text) {
-  const tryMatch = text.match(/^try\s+(.+?)\s+except\s+(.+?)(?:\s+finally\s+(.+))?$/s);
-  if (!tryMatch) return diagnostic("malformed try expr: " + text.slice(0, 60));
+  // Parse: try BODY except TYPE1 : EXPR1 [except TYPE2 : EXPR2 ...] [finally FINAL]
+  // The regex approach doesn't handle multiple excepts, so parse manually.
+  const bodyStart = 4; // length of "try "
+  const rest = text.slice(bodyStart);
 
-  const bodyExpr = lowerRawExpr(tryMatch[1].trim());
-  const exceptText = tryMatch[2].trim();
-  const finallyText = (tryMatch[3] || "").trim();
-
-  let excType = "Exception";
-  let handlerBody;
-  const asIdx = exceptText.indexOf(":");
-  if (asIdx >= 0) {
-    const before = exceptText.slice(0, asIdx).trim();
-    const after = exceptText.slice(asIdx + 1).trim();
-    if (before) excType = before;
-    handlerBody = lowerRawExpr(after);
-  } else {
-    handlerBody = lowerRawExpr(exceptText);
+  // Find "except" and "finally" at depth 0
+  const segments = []; // [{ kind: "except"|"finally", pos, text }]
+  let depth = 0, quote = null, escaped = false;
+  for (let i = 0; i < rest.length; i++) {
+    const ch = rest[i];
+    if (quote !== null) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"') { quote = ch; }
+    else if (ch === "(" || ch === "[" || ch === "{") { depth++; }
+    else if (ch === ")" || ch === "]" || ch === "}") { depth--; }
+    else if (depth === 0 && ch === " ") {
+      if (rest.slice(i, i + 8) === " except ") {
+        segments.push({ kind: "except", pos: i + 8 });
+      } else if (rest.slice(i, i + 9) === " finally ") {
+        segments.push({ kind: "finally", pos: i + 9 });
+      }
+    }
   }
 
-  const handlers = [patternTest(load(excType), null, moduleNode([returnNode(handlerBody)]))];
-  const finalbody = finallyText ? moduleNode([returnNode(lowerRawExpr(finallyText))]) : [];
+  // Extract body
+  const firstSeg = segments.length > 0 ? segments[0].pos - 7 : rest.length; // back to start of " except"/" finally"
+  const bodyText = rest.slice(0, firstSeg >= 0 ? firstSeg : rest.length).trim();
+  const bodyExpr = lowerRawExpr(bodyText);
 
-  // Wrap as IIFE: (_ => try { return body } except { return handler })
+  // Extract handlers and finally
+  const handlers = [];
+  let finallyBody = [];
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
+    const nextPos = i + 1 < segments.length ? segments[i + 1].pos - (segments[i + 1].kind === "except" ? 7 : 9) : rest.length;
+    const segText = rest.slice(seg.pos, nextPos).trim();
+
+    if (seg.kind === "except") {
+      const colon = segText.indexOf(":");
+      let excType = "Exception";
+      let handlerBody;
+      if (colon >= 0) {
+        const before = segText.slice(0, colon).trim();
+        const after = segText.slice(colon + 1).trim();
+        if (before) excType = before;
+        handlerBody = lowerRawExpr(after);
+      } else {
+        handlerBody = lowerRawExpr(segText);
+      }
+      handlers.push(patternTest(load(excType), null, moduleNode([returnNode(handlerBody)])));
+    } else if (seg.kind === "finally") {
+      const finalExpr = lowerRawExpr(segText);
+      finallyBody = [returnNode(finalExpr)];
+    }
+  }
+
   return call(
-    { type: "Function", params: ["_"], body: moduleNode([
-      handle(moduleNode([returnNode(bodyExpr)]), handlers, finalbody)
+    { type: "Function", params: [], body: moduleNode([
+      handle(moduleNode([returnNode(bodyExpr)]), handlers, moduleNode(finallyBody))
     ]), defaults: [] },
     []
   );
@@ -757,6 +1297,11 @@ function parseSafeNavSegment(text) {
     const args = argsStr ? splitCallArgs(argsStr).map(s => lowerRawExpr(s.trim())) : [];
     return call(getField(load("_0"), methodName), args);
   }
+  // Subscript: ?.[0] or ?.[key]
+  if (text.startsWith("[") && text.endsWith("]")) {
+    const indexStr = text.slice(1, -1).trim();
+    return getItem(load("_0"), lowerRawExpr(indexStr));
+  }
   return getField(load("_0"), text);
 }
 
@@ -778,12 +1323,32 @@ function lowerPipelineExpr(text) {
   const parts = text.split(/\s*\|\>\s*/);
   let result = lowerRawExpr(parts[0]);
   for (let i = 1; i < parts.length; i++) {
-    const right = lowerRawExpr(parts[i]);
+    let right = lowerRawExpr(parts[i]);
+    // Auto-wrap underscore/named-hole expressions as lambdas
+    if (right.type !== "Call" && right.type !== "Load" && right.type !== "Function") {
+      if (containsUnderscore(right) || collectNamedHoles(right).length > 0) {
+        right = wrapUnderscoreAsFunction(right);
+      }
+    }
     if (right.type === "Call") {
-      // Push result as first arg
-      result = call(right.func, [result, ...right.args]);
-    } else if (right.type === "Load") {
-      result = call(right, [result]);
+      // Auto-wrap underscore/hole args as lambdas
+      let hasHoleArg = false;
+      const wrappedArgs = (right.args || []).map(arg => {
+        if (arg.type !== "Function" && arg.type !== "Load" && arg.type !== "Call") {
+          if (containsUnderscore(arg) || collectNamedHoles(arg).length > 0) {
+            hasHoleArg = true;
+            return wrapUnderscoreAsFunction(arg);
+          }
+        }
+        return arg;
+      });
+      // If the call already has hole args (e.g. filter(_ > 2)), the pipeline
+      // result goes last so the order matches: filter(lambda, sequence).
+      if (hasHoleArg) {
+        result = call(right.func, [...wrappedArgs, result]);
+      } else {
+        result = call(right.func, [result, ...wrappedArgs]);
+      }
     } else {
       result = call(right, [result]);
     }
@@ -795,9 +1360,21 @@ function lowerComposeExpr(text) {
   const parts = text.split(/\s*>>>\s*/);
   // f >>> g → x => g(f(x))
   const innerLoad = load("__x__");
-  let result = call(lowerRawExpr(parts[0]), [innerLoad]);
+  let first = lowerRawExpr(parts[0]);
+  if (first.type !== "Call" && first.type !== "Load" && first.type !== "Function") {
+    if (containsUnderscore(first) || collectNamedHoles(first).length > 0) {
+      first = wrapUnderscoreAsFunction(first);
+    }
+  }
+  let result = call(first, [innerLoad]);
   for (let i = 1; i < parts.length; i++) {
-    result = call(lowerRawExpr(parts[i]), [result]);
+    let right = lowerRawExpr(parts[i]);
+    if (right.type !== "Call" && right.type !== "Load" && right.type !== "Function") {
+      if (containsUnderscore(right) || collectNamedHoles(right).length > 0) {
+        right = wrapUnderscoreAsFunction(right);
+      }
+    }
+    result = call(right, [result]);
   }
   return { type: "Function", params: ["__x__"], body: moduleNode([returnNode(result)]), defaults: [] };
 }
@@ -866,7 +1443,20 @@ function lowerCallExpr(text) {
   const argsStr = text.slice(paren + 1, close).trim();
 
   const args = argsStr ? splitCallArgs(argsStr).map(s => lowerRawExpr(s.trim())) : [];
-  return call(load(funcName), args);
+
+  // Handle dotted method calls: obj . method (...) or a.b.c (...)
+  const func = lowerDottedName(funcName);
+  return call(func, args);
+}
+
+function lowerDottedName(text) {
+  // Parse "a.b.c" or "a . b . c" into GetField(GetField(Load("a"), "b"), "c")
+  const parts = text.split(/\s*\.\s*/);
+  let result = load(parts[0]);
+  for (let i = 1; i < parts.length; i++) {
+    result = getField(result, parts[i]);
+  }
+  return result;
 }
 
 // Split call arguments respecting nested parens/brackets
@@ -932,7 +1522,47 @@ function lowerRawStmt(text) {
   return expr;
 }
 
-// ─── Underscore placeholder detection ────────────────────────────────────────
+// ─── Raw AST placeholder detection (before lowering) ─────────────────────────
+// These check the Rust AST to avoid confusing pattern wildcards with lambdas.
+
+function rawContainsUnderscore(node) {
+  if (!node || typeof node !== "object") return false;
+  if (node.type === "Raw") return false; // skip complex expressions
+  if (node.type === "Name" && node.id === "_") return true;
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (Array.isArray(val)) {
+      for (const item of val) {
+        if (rawContainsUnderscore(item)) return true;
+      }
+    } else if (typeof val === "object" && val !== null) {
+      if (rawContainsUnderscore(val)) return true;
+    }
+  }
+  return false;
+}
+
+function rawCollectNamedHoles(node, found = []) {
+  if (!node || typeof node !== "object") return found;
+  // Named holes appear as Raw("$name") or Name("$name") in the Rust AST
+  if (node.type === "Name" && node.id && node.id.startsWith("$") && !found.includes(node.id)) {
+    found.push(node.id);
+  }
+  if (node.type === "Raw" && typeof node.value === "string" && node.value.startsWith("$") && !found.includes(node.value)) {
+    found.push(node.value);
+  }
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (Array.isArray(val)) {
+      for (const item of val) rawCollectNamedHoles(item, found);
+    } else if (typeof val === "object" && val !== null) {
+      rawCollectNamedHoles(val, found);
+    }
+  }
+  return found;
+}
+
+// ─── Lowered-IR placeholder detection ─────────────────────────────────────────
 
 function containsUnderscore(node) {
   if (!node || typeof node !== "object") return false;
@@ -951,7 +1581,69 @@ function containsUnderscore(node) {
 }
 
 function wrapUnderscoreAsFunction(node) {
-  return { type: "Function", params: ["_"], body: moduleNode([returnNode(node)]), defaults: [] };
+  const count = countUnderscores(node);
+  if (count <= 1) {
+    return { type: "Function", params: ["_"], body: moduleNode([returnNode(node)]), defaults: [] };
+  }
+  const counter = { idx: 0 };
+  const renamed = renameUnderscores(node, counter);
+  const params = ["_"];
+  for (let i = 2; i <= count; i++) params.push("_" + i);
+  return { type: "Function", params, body: moduleNode([returnNode(renamed)]), defaults: [] };
+}
+
+function countUnderscores(node) {
+  if (!node || typeof node !== "object") return 0;
+  let count = 0;
+  if (node.type === "Load" && node.name === "_") count = 1;
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (Array.isArray(val)) {
+      for (const item of val) count += countUnderscores(item);
+    } else if (typeof val === "object" && val !== null) {
+      count += countUnderscores(val);
+    }
+  }
+  return count;
+}
+
+function renameUnderscores(node, counter) {
+  if (!node || typeof node !== "object") return node;
+  if (node.type === "Load" && node.name === "_") {
+    counter.idx++;
+    const name = counter.idx === 1 ? "_" : "_" + counter.idx;
+    return { ...node, name };
+  }
+  const result = { ...node };
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (Array.isArray(val)) {
+      result[key] = val.map(item => renameUnderscores(item, counter));
+    } else if (typeof val === "object" && val !== null) {
+      result[key] = renameUnderscores(val, counter);
+    }
+  }
+  return result;
+}
+
+function collectNamedHoles(node, found = []) {
+  if (!node || typeof node !== "object") return found;
+  if (node.type === "Load" && node.name.startsWith("$") && !found.includes(node.name)) {
+    found.push(node.name);
+  }
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (Array.isArray(val)) {
+      for (const item of val) collectNamedHoles(item, found);
+    } else if (typeof val === "object" && val !== null) {
+      collectNamedHoles(val, found);
+    }
+  }
+  return found;
+}
+
+function wrapHolesAsFunction(node, params) {
+  return { type: "Function", params, body: moduleNode([returnNode(node)]), defaults: [] };
 }
 
 // ─── Main entry point ────────────────────────────────────────────────────────
@@ -1007,14 +1699,24 @@ function mergeIntoMatchFunction(name, funcs) {
   const matchParam = "__0";
   const cases = funcs.map(func => {
     const funcBody = func.body.body || [];
-    // Extract the return value from the function body
-    const returnStmt = funcBody.find(s => s.type === "Return");
-    const caseBody = moduleNode([returnNode(returnStmt ? returnStmt.value : NIL)]);
+    // Check for guarded function: body is [Branch(guard, Return(value), NoOp)]
+    let guard = null;
+    let valueNode = NIL;
+    const firstStmt = funcBody[0];
+    if (firstStmt && firstStmt.type === "Branch") {
+      guard = firstStmt.test || null;
+      const thenBody = (firstStmt.then_body && firstStmt.then_body.body) || [];
+      const returnStmt = thenBody.find(s => s.type === "Return");
+      if (returnStmt) valueNode = returnStmt.value || NIL;
+    } else {
+      const returnStmt = funcBody.find(s => s.type === "Return");
+      if (returnStmt) valueNode = returnStmt.value || NIL;
+    }
+    const caseBody = moduleNode([returnNode(valueNode)]);
     // Convert each param to a pattern
     const patterns = (func.params || []).map(p => paramToPattern(p));
-    // For single-param functions, use a simple pattern
     const pattern = patterns.length === 1 ? patterns[0] : sequence(patterns);
-    return patternTest(pattern, null, caseBody);
+    return patternTest(pattern, guard, caseBody);
   });
 
   const fn = {

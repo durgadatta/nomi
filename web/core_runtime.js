@@ -341,10 +341,17 @@ class CoreRuntime {
       const savedParams = {};
       try {
         if (block.params.length > 0) {
-          const args = block.params.length === 1 ? [value] : value;
+          let args;
+          if (block.params.length === 1) {
+            args = [value];
+          } else if (value.kind === "sequence") {
+            args = value.elements;
+          } else {
+            args = [value];
+          }
           block.params.forEach((param, i) => {
             savedParams[param] = this.currentFrame.lookup(param);
-            this.currentFrame.bind(param, args[i]);
+            this.currentFrame.bind(param, args[i] || NIL);
           });
         }
         const rawResult = this.evalModule(block.body);
@@ -534,7 +541,7 @@ class CoreRuntime {
       const constructor = {
         kind: "constructor",
         name: node.name,
-        fields: node.fields.map(([name]) => name),
+        fields: node.fields.map(([name]) => typeof name === "string" ? name : name.name),
       };
       this.currentFrame.bind(node.name, constructor);
       return constructor;
@@ -543,7 +550,8 @@ class CoreRuntime {
     for (const [name, fieldNode] of node.fields || []) {
       const value = this.eval(fieldNode);
       if (isSignal(value)) return value;
-      fields[name] = value;
+      const key = typeof name === "string" ? name : name.name;
+      fields[key] = value;
     }
     return { kind: "data", name: node.name, fields };
   }
@@ -557,6 +565,15 @@ class CoreRuntime {
         return objectValue.entries.has(keyValue)
           ? objectValue.entries.get(keyValue)
           : defaultValue;
+      }, true);
+    }
+    if (objectValue.kind === "mapping" && node.field === "items") {
+      return native("mapping.items", () => {
+        const items = [];
+        for (const [key, value] of objectValue.entries) {
+          items.push({ kind: "sequence", elements: [box(key), value] });
+        }
+        return { kind: "sequence", elements: items };
       }, true);
     }
     if (objectValue.kind !== "data") {
@@ -801,6 +818,22 @@ class CoreRuntime {
       print: native("print", (...values) => {
         this.stdout.push(`${values.map((value) => this.displayValue(value)).join(" ")}\n`);
         return null;
+      }, true),
+      slice: native("slice", (obj, start, end, step) => {
+        const stepVal = step === undefined || step === null ? 1 : unbox(step);
+        const startVal = start === undefined || start === null ? 0 : unbox(start);
+        let source;
+        if (Array.isArray(obj)) source = obj;
+        else if (obj && obj.kind === "sequence") source = obj.elements.map(unbox);
+        else if (typeof obj === "string") source = obj;
+        else source = String(obj);
+        const endVal = end === undefined || end === null ? source.length : unbox(end);
+        const result = [];
+        for (let i = startVal; stepVal > 0 ? i < endVal : i > endVal; i += stepVal) {
+          result.push(source[i]);
+        }
+        if (typeof source === "string") return result.join("");
+        return { kind: "sequence", elements: result.map(box) };
       }, true),
       range: (...args) => {
         const [start, stop, step] =

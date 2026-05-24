@@ -15,12 +15,7 @@ function formatTiming(timing, elapsed) {
 }
 
 function runtimeLabel(result) {
-  if (!result) return "WASM + JS Runtime";
-  switch (result.backend) {
-    case "wasm-js": return "WASM + JS Runtime";
-    case "js-core-runtime": return "Pyodide parser + JS Core Runtime";
-    default: return "Pyodide worker";
-  }
+  return "WASM + JS Runtime";
 }
 
 async function runCell(idx, advance, options) {
@@ -176,7 +171,7 @@ window.resetRuntime = async function() {
   try {
     const result = await _resetFn();
     clearNotebookOutputs();
-    byId("runtime-detail").textContent = result && result.session ? `Pyodide worker · reset session ${result.session}` : "Pyodide worker · reset";
+    byId("runtime-detail").textContent = "Runtime reset";
     setStatus("ready", "ready");
   } catch (error) {
     byId("runtime-detail").textContent = String(error);
@@ -190,13 +185,13 @@ window.restartWorker = async function() {
   if (!_ready) return;
   setControlsDisabled(true);
   setStatus("running", "running");
-  byId("runtime-detail").textContent = "Restarting Pyodide worker...";
+  byId("runtime-detail").textContent = "Restarting runtime...";
   try {
     _ready = false;
     await startRuntimeWorker();
     _ready = true;
     clearNotebookOutputs();
-    byId("runtime-detail").textContent = "Pyodide worker · restarted";
+    byId("runtime-detail").textContent = "Runtime restarted";
     setStatus("ready", "ready");
   } catch (error) {
     _ready = false;

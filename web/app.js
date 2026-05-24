@@ -13,10 +13,6 @@ let _activeCellIndex = 0;
 let _notebookMode = false;
 let _bootStart = performance.now();
 let _evalBackend = "wasm-js";
-const _urlBackend = new URLSearchParams(location.search).get("backend");
-if (_urlBackend === "python-ast" || _urlBackend === "js-core-runtime") {
-  _evalBackend = _urlBackend;
-}
 
 function byId(id) { return document.getElementById(id); }
 function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
@@ -69,7 +65,7 @@ async function startRuntimeWorker() {
   _runtimePending.forEach(({ reject }) => reject(new Error("Runtime worker restarted")));
   _runtimePending.clear();
 
-  _runtimeWorker = new Worker("./worker.js");
+  _runtimeWorker = new Worker("./worker.js?v=3");
   _runtimeWorker.onmessage = handleRuntimeMessage;
   _runtimeWorker.onerror = (event) => {
     const error = new Error(event.message || "Runtime worker failed");
@@ -114,12 +110,7 @@ async function init() {
   _ready = true;
   byId("loading").style.display = "none";
   setStatus("ready", "ready");
-  const backendLabel = _evalBackend === "wasm-js"
-    ? "WASM parser + JS Runtime"
-    : _evalBackend === "js-core-runtime"
-    ? "Pyodide parser + JS Core Runtime"
-    : "Pyodide full runtime";
-  byId("runtime-detail").textContent = `${backendLabel} ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
+  byId("runtime-detail").textContent = `WASM + JS Runtime ready · ${Math.round(performance.now() - _bootStart)} ms startup`;
   setControlsDisabled(false);
 
   // Defer by two frames so the browser lays out editor containers

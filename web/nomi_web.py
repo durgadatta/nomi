@@ -236,11 +236,9 @@ async def run_nomi(code: str) -> dict:
         import traceback
         tb = traceback.format_exc()
         _log(f"Error in run_nomi: {e}\n{tb}")
-        # Show last 5 traceback lines to pinpoint the source file
-        lines = tb.strip().split("\n")
-        short_tb = "\n".join(lines[-6:]) if len(lines) > 5 else tb
+        # Return full traceback so we can see the exact call path
         return {
-            "error": short_tb,
+            "error": tb.strip(),
             "output": result.stdout,
             "session": _get_counter(),
             "timing": timings,

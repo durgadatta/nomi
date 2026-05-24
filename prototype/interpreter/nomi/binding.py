@@ -20,6 +20,13 @@ class Annotation:
         self.var_name = var_name
         self.ann, self.message = self._unwrap_message(ann)
         self.interpreter = interpreter
+        if not isinstance(self.ann, ast.AST):
+            raise TypeError(
+                f"Annotation for '{var_name}' is a {type(self.ann).__name__}, "
+                f"not an ast.AST node. This indicates an incomplete lowering step "
+                f"in the parser — a Lark Tree leaked into the annotation AST. "
+                f"Raw annotation: {ann!r}"
+            )
         self._source = ast.unparse(self.ann)
 
     @staticmethod

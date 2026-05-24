@@ -153,8 +153,21 @@ class BlockCall(SurfaceNode):
         for stmt in self.block_body:
             if isinstance(stmt, SurfaceNode):
                 lowered_body.append(lower_surface_to_python(stmt.lower()))
-            else:
+            elif isinstance(stmt, ast.AST):
                 lowered_body.append(stmt)
+            else:
+                import sys
+                print(
+                    f"[surface] ERROR: non-AST object {type(stmt).__name__} in "
+                    f"block body — this indicates an incomplete lowering step. "
+                    f"object={stmt!r}",
+                    file=sys.stderr,
+                )
+                raise TypeError(
+                    f"BlockCall.lower: expected ast.AST or SurfaceNode in block_body, "
+                    f"got {type(stmt).__name__}. This indicates a missing transformer "
+                    f"method for a grammar rule used inside a block call body."
+                )
 
         block = Block(body=lowered_body, params=self.block_params)
         call.keywords.append(ast.keyword(arg=BLOCK_KWARG, value=block))
@@ -179,6 +192,19 @@ def lower_surface_to_python(root: ast.AST) -> ast.AST:
         if isinstance(node, SurfaceNode):
             return _walk(node.lower())
         if not isinstance(node, ast.AST):
+            # Defensive: non-AST objects (e.g. lark.Tree) should not be
+            # present in a lowered Python AST.  Log and return unchanged
+            # so the rest of the pipeline can still report the error.
+            if hasattr(node, 'data') and hasattr(node, 'children'):
+                import sys
+                print(
+                    f"[surface] WARNING: lark.Tree '{(node.data)}' found in"
+                    f" Python AST — this indicates an incomplete lowering step.",
+                    file=sys.stderr,
+                )
+            # Descend into non-AST containers (Block, etc.) to catch
+            # Trees hiding inside their fields.
+            _walk_non_ast(node)
             return node
 
         for field_name, value in ast.iter_fields(node):
@@ -192,6 +218,40 @@ def lower_surface_to_python(root: ast.AST) -> ast.AST:
                 setattr(node, field_name, new_list)
             elif isinstance(value, ast.AST):
                 _walk(value)
+            elif value is not None and hasattr(value, '__slots__'):
+                _walk_non_ast(value)
         return node
+
+    def _walk_non_ast(obj):
+        """Descend into non-AST objects (dataclasses, Block) to find Trees."""
+        slots = getattr(obj, '__slots__', None)
+        if slots is None:
+            return
+        if isinstance(slots, str):
+            slots = (slots,)
+        for slot in slots:
+            if not hasattr(obj, slot):
+                continue
+            value = getattr(obj, slot)
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    if isinstance(item, (ast.AST, SurfaceNode)):
+                        _walk(item)
+                    elif type(item).__name__ == 'Tree' and hasattr(item, 'data'):
+                        import sys
+                        print(
+                            f"[surface] WARNING: lark.Tree '{item.data}' found in"
+                            f" non-AST object {type(obj).__name__}.{slot}[{i}]",
+                            file=sys.stderr,
+                        )
+            elif isinstance(value, (ast.AST, SurfaceNode)):
+                _walk(value)
+            elif type(value).__name__ == 'Tree' and hasattr(value, 'data'):
+                import sys
+                print(
+                    f"[surface] WARNING: lark.Tree '{value.data}' found in"
+                    f" non-AST object {type(obj).__name__}.{slot}",
+                    file=sys.stderr,
+                )
 
     return _walk(root)

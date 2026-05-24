@@ -1,5 +1,16 @@
+import os
+import sys
+
+from lark import Tree as LarkTree
+
 from ...parser.python.ast_ import PythonASTTransformer
 from .functions import FunctionsMixin
+
+# Set NOMI_LOG_UNHANDLED_RULES=1 to print every grammar rule that falls
+# through to Lark's default Tree constructor (diagnostic for Pyodide).
+_SHOULD_LOG_UNHANDLED = os.environ.get(
+    "NOMI_LOG_UNHANDLED_RULES", ""
+).lower() in ("1", "true", "yes")
 
 # TODO(NOMI-SUBSTRATE-005): Extend the Surface AST layer to cover data
 # declarations, match expressions, constraints, and syntax islands.
@@ -14,4 +25,10 @@ class NomiToPythonAST(
     FunctionsMixin,
     PythonASTTransformer
 ):
-    pass
+    def __default__(self, data, children, meta):
+        if _SHOULD_LOG_UNHANDLED:
+            print(
+                f"[nomi] unhandled rule: {data!r} ({len(children)} children)",
+                file=sys.stderr,
+            )
+        return LarkTree(data, children, meta)

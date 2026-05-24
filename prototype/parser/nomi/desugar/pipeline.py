@@ -14,6 +14,8 @@ import copy
 import os
 import sys
 
+from lark import Tree as LarkTree
+
 from prototype.syntax.features import (
     BUILTIN_FEATURES,
     DEFAULT_DESUGAR_PROFILE,
@@ -21,6 +23,53 @@ from prototype.syntax.features import (
 )
 from prototype.utils import resolve_dotted
 from .base import Phase
+
+
+def _find_lark_trees_in_ast(node, path="root", _seen=None):
+    """Return a list of ``(path, tree_data)`` for any Lark Tree objects
+    embedded inside *node*, which must be a Python ``ast.AST``.
+
+    Descends into ``ast.AST``, ``SurfaceNode`` dataclasses, lists, tuples,
+    and any object with ``__slots__`` or ``__dict__``.  Every entry identifies
+    the containment path and the unhandled grammar rule name.
+    """
+    if _seen is None:
+        _seen = set()
+    obj_id = id(node)
+    if obj_id in _seen:
+        return []
+    _seen.add(obj_id)
+
+    found = []
+    if isinstance(node, LarkTree):
+        found.append((path, node.data))
+        return found
+
+    fields = None
+    if isinstance(node, ast.AST):
+        fields = [(f, getattr(node, f, None)) for f in node._fields]
+    elif hasattr(node, "__slots__"):
+        slots = node.__slots__
+        if isinstance(slots, str):
+            slots = (slots,)
+        fields = [(f, getattr(node, f, None)) for f in slots if hasattr(node, f)]
+    elif hasattr(node, "__dict__") and not isinstance(node, type):
+        fields = list(node.__dict__.items())
+
+    if fields is not None:
+        for field_name, value in fields:
+            if isinstance(value, LarkTree):
+                found.append((f"{path}.{field_name}", value.data))
+            elif isinstance(value, (list, tuple)):
+                for i, item in enumerate(value):
+                    found.extend(
+                        _find_lark_trees_in_ast(item, f"{path}.{field_name}[{i}]", _seen)
+                    )
+            elif value is not None and not isinstance(value, (str, int, float, bool, bytes)):
+                found.extend(
+                    _find_lark_trees_in_ast(value, f"{path}.{field_name}", _seen)
+                )
+    return found
 
 _SHOULD_CHECK_INVARIANTS = os.environ.get(
     'NOMI_DESUGAR_CHECK_INVARIANTS', ''
@@ -151,6 +200,28 @@ def _check_pass_invariants(tree: ast.Module, pass_cls, pass_name: str):
 
 
 def _run_desugar_passes(tree: ast.Module, passes) -> ast.Module:
+    if not isinstance(tree, ast.AST):
+        raise TypeError(
+            f"_run_desugar_passes expected an ast.AST node, got {type(tree).__name__}. "
+            f"This indicates an incomplete Lark→Python-AST lowering step."
+        )
+    unlowered = _find_lark_trees_in_ast(tree)
+    if unlowered:
+        rules = sorted({data for _, data in unlowered})
+        paths = [f"{p} ({d})" for p, d in unlowered[:5]]
+        if len(unlowered) > 5:
+            paths.append(f"... and {len(unlowered) - 5} more")
+        detail = "\n  ".join(paths)
+        print(
+            f"[desugar] ERROR: {len(unlowered)} Lark Tree(s) found inside Python AST "
+            f"before desugar pipeline. Unhandled grammar rules: {rules}\n"
+            f"  {detail}",
+            file=sys.stderr,
+        )
+        raise TypeError(
+            f"_run_desugar_passes: {len(unlowered)} unhandled grammar rule(s) — "
+            f"{', '.join(rules)}. Add a transformer method for each rule."
+        )
     for pass_cls in passes:
         tree = pass_cls().visit(tree)
         if _SHOULD_CHECK_INVARIANTS:

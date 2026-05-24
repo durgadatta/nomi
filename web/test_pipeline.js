@@ -95,8 +95,6 @@ test("demo_terse.nomi eval", () => {
 // ── Test 4: comprehensive.nomi parses and lowers ──────────────────────────
 
 test("comprehensive.nomi parse + lower", () => {
-  // comprehensive.nomi may have diagnostics — that's OK, it triggers Pyodide fallback.
-  // We just verify it parses and the lowerer runs without crashing.
   const source = fs.readFileSync(path.join(SAMPLES_DIR, "comprehensive.nomi"), "utf8");
   const json = parse_nomi(source);
   const ast = JSON.parse(json);
@@ -104,10 +102,16 @@ test("comprehensive.nomi parse + lower", () => {
   assert(ast.body.length > 50, `expected many body entries, got ${ast.body.length}`);
   const coreIr = lowerRustAstToCoreIr(ast);
   assert(coreIr.schema === "nomi.core-ir", "expected nomi.core-ir schema");
-  // Diagnostics are expected — log count but don't fail
-  if (coreIr.diagnosticCount > 0) {
-    console.log(`         (${coreIr.diagnosticCount} diagnostics — triggers Pyodide fallback)`);
-  }
+  assert(coreIr.diagnosticCount === 0, `expected 0 diagnostics, got ${coreIr.diagnosticCount}`);
+});
+
+test("comprehensive.nomi eval", () => {
+  const source = fs.readFileSync(path.join(SAMPLES_DIR, "comprehensive.nomi"), "utf8");
+  const coreIr = parseAndLower(source);
+  const result = evaluateCorePayload(coreIr, { displayLastExpr: true });
+  assert(!result.error, `eval error: ${result.error}`);
+  const lines = result.stdout.trim().split("\n");
+  assert(lines.length > 190, `expected >190 output lines, got ${lines.length}`);
 });
 
 // ── Test 5: Error handling ────────────────────────────────────────────────
