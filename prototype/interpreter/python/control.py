@@ -103,8 +103,8 @@ class ControlMixin(ExceptionMixin):
     def eval_For(self, node: ast.For, *, state=None, generator_state: 'CoroutineState' = None) -> None:
         """Evaluate a For loop node - unified approach."""
         
-        # TODO: split resumable and non-resumable loop execution paths so the
-        # plain interpreter does not pay for generator bookkeeping on every loop.
+        # TODO(NOMI-ARCH-014): Split resumable and non-resumable loop execution
+        # paths so plain execution avoids generator bookkeeping.
         if state is None:
             state = self._initial_for_state(node)
         try:
@@ -168,7 +168,8 @@ class ControlMixin(ExceptionMixin):
         """Evaluate a While loop node - unified approach."""
         
         # Initialize state
-        # TODO: mirror the for-loop split here once resumable state handling is isolated.
+        # TODO(NOMI-ARCH-014): Mirror the for-loop split once resumable state
+        # handling is isolated.
         if state is None:
             state = self._initial_while_state(node)
         try:

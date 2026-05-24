@@ -39,7 +39,8 @@ class CoroutineState:
         # node specific (stack) - review later
         self.injected_exception: Optional[Exception] = None
 
-        # TODO: move paused frame bookkeeping into a dedicated resumable-frame type.
+        # TODO(NOMI-ARCH-014): Move paused-frame bookkeeping into a dedicated
+        # resumable-frame type.
         # This is only for compound statements (For/While/Try).
         self.paused_frames = []
         self._processing_frame = None  # Frame currently being evaluated 
@@ -90,7 +91,8 @@ class CoroutineState:
     def frame_to_resume(self):
         # TODO(NOMI-ARCH-014): Replace raw paused-frame dictionaries with a
         # named resumable-frame/policy model before adding richer block policies.
-        # TODO: make the pause/resume policy explicit instead of relying on list order here.
+        # TODO(NOMI-ARCH-014): Make the pause/resume policy explicit instead of
+        # relying on list order here.
         if self.paused_frames:
             frame = self.paused_frames.pop(0)
             self._processing_frame = frame  # Track what we're processing
@@ -193,7 +195,8 @@ class CoroutineState:
 
     def get_lineno(self) -> int:
         """Get current line number for error reporting."""
-        # TODO: derive line info from the active paused frame stack, not just the current index.
+        # TODO(NOMI-ARCH-014): Derive line info from the active paused-frame
+        # stack, not just the current index.
         if self.index < len(self.body):
             return getattr(self.body[self.index], 'lineno', 1)
         

@@ -37,8 +37,6 @@ class IdentifierMixin:
         """
         dotted_name: name ("." name)*
         Build an attribute access chain: a.b.c becomes ast.Attribute(ast.Attribute(ast.Name(a), b), c)
-
-        # TODO: preserve source-name metadata separately so dotted names do not lose diagnostics when strings are collapsed.
         """
         if len(items) == 1:
             # Single name: just return a Name node

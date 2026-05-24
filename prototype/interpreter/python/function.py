@@ -91,8 +91,8 @@ class FunctionMixin(FunctionCallMixin):
         '''
         isolate evaluating function from the binding
         note that, at the moment, there is no "Function" node
-        there maybe one later; this allows function to be
-        created without bindings
+        NOMI-ARCH-016 tracks the eventual call-frame/function value boundary;
+        this keeps function creation separate from binding for now.
         '''
         # Create function environment with closure as parent
         func_env = self._new_closure_env()
@@ -222,7 +222,8 @@ class FunctionMixin(FunctionCallMixin):
 
 
         # Note: constraints are already set up in parent env, so env.set() will check them automatically
-        # TODO: route this through the shared binding/constraint engine once the parser and runtime agree on one path.
+        # TODO(NOMI-SUBSTRATE-011): Route this through the shared
+        # binding/constraint engine once parser and runtime agree on one path.
         
         posonlyargs = list(func_node.args.posonlyargs)
         positional_or_keyword_args = list(func_node.args.args)
