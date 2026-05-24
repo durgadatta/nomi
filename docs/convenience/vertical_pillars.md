@@ -1,4 +1,4 @@
-# Vertical Surface Pillars
+# Vertical Surface Pillars And Evolution Paths
 
 > Status: active design review.
 >
@@ -74,6 +74,76 @@ After strings/functions/collections, the highest-value missing concrete
 surfaces are **Data Values**, **Failure Values**, **Patterns**, and
 **Resources/World Values**. They are tangible enough to improve syntax and
 interaction, while vertical enough to require string-level research.
+
+## High-Impact Evolution Paths
+
+The most important surfaces are better understood as paths from simple code to
+sophisticated code. A pleasing language lets the user keep the same mental
+model while climbing the path.
+
+| Path | First-hour surface | Everyday surface | Sophisticated surface | Normal-form owners | UX promise |
+|------|--------------------|------------------|-----------------------|--------------------|------------|
+| Text as common interface | string literal, interpolation, display | raw/multiline text, parse/format, regex capture | typed strings, safe interpolation, Unicode views, redaction | Data boundary, Pattern, Flow, Absence/result, Explanation | Text stays easy, but unsafe sinks become explicit. |
+| Functions as glue | call, `func`, simple return | equations, `=>`, holes, local `where` helpers | piecewise clauses, composition, block-call policies | Function, Binding, Pattern, Block | Abstraction grows without inventing a second call model. |
+| Collections as one-to-many | list/map/set, range, slice | pipeline, `where`/`select`, folds, comprehensions | streams, tables, query plans, result collection, shape/rank libraries | Flow, Function, Pattern, Absence/result, Explanation | The same transform reads well at 3 items or 3 million rows. |
+| Data as shape | named fields, lightweight records | `data` declarations, defaults, variants, equality/display | decode schemas, exhaustiveness, generated docs, schema export | Binding, Data boundary, Pattern, Explanation | Ad hoc dictionaries can mature into domain values without ceremony shock. |
+| Patterns as choice | destructuring, `if` conditions | `match`, guards, selectors, result/option cases | function clauses, regex captures, row selectors, decode paths | Pattern, Binding, Data boundary, Function | Choosing by shape becomes clearer than nested conditionals. |
+| Absence/result as non-success | `none`, defaulting, optional access | `Result`, `Ok`/`Err`, `try`, guarded unwrap | accumulated decode errors, result collection, policy-aware recovery | Absence/result, Pattern, Block, Flow | Failure is visible and recoverable without turning every line into ceremony. |
+| Resources as world contact | `Path`, `Url`, `Command`, `Secret` values | `open`, `fetch`, `run`, file/request/response values | capabilities, scoped lifetimes, cleanup, redaction, sandbox manifests | Data boundary, Block, Absence/result, Explanation | World-touching code looks like values plus policy, not stringly magic. |
+| Blocks as scoped policy | attached block, `using`, `defer` | retry, transaction, examples/checks, trace scopes | structured concurrency, resource lifetimes, capability scopes | Block, Function, Absence/result, Explanation | Control policy is visible at the call site and inspectable after reduction. |
+| Modules as growth boundary | import a file/module | aliases, exports, visibility, examples in docs | packages, versions, content hashes, migrations, capability manifests | Binding, Data boundary, Explanation | A script can become a project without changing how names feel. |
+| Explanation as feedback | readable errors, examples | `check:`, `examples:`, `trace`, `explain` | expansion views, flow plans, structured logs, notebook/LSP/AI events | Explanation, Block, Data boundary | Advanced features remain humane because users can see what happened. |
+| Measures as correctness surface | numbers, ranges, duration literals | decimal/money/time APIs, units as values | array shape, dimensional analysis, scheduling/deadlines | Data boundary, Flow, Pattern, Absence/result | Quantities stop being anonymous numbers when correctness needs it. |
+
+These paths are high-impact because they are not niche domains. They describe
+how ordinary programs naturally grow:
+
+```text
+text comes in -> data gets shaped -> functions transform -> collections scale ->
+patterns choose -> failure appears -> resources touch the world -> blocks manage
+policy -> modules preserve names -> explanation keeps the experience pleasant
+```
+
+The order is not a strict implementation schedule. It is a user-experience
+ladder. Each step should preserve the previous step's intuition.
+
+## Layering Model
+
+Nomi should layer these paths by universality, not by how impressive a feature
+looks in isolation.
+
+| Layer | Role | Surfaces | Admission rule |
+|-------|------|----------|----------------|
+| L1 Immediate | What users meet in tiny programs. | strings, numbers, booleans, `none`, calls, simple functions, lists/maps/sets, ranges, imports | Must be teachable without explaining the whole language. |
+| L2 Everyday | What makes small programs pleasant and maintainable. | data values, patterns, pipelines, result/absence, `where`, comprehensions, examples/checks | Must remove common friction without hiding control or data shape. |
+| L3 Reliable | What turns scripts into tools. | decode, typed resources, guarded failure, block policies, modules, traces, display/redaction | Must make boundaries and recovery explicit. |
+| L4 Scaled | What keeps larger programs coherent. | packages, schema export, query/table plans, stream materialization, capabilities, flow explanation | Must compose from L1-L3 and remain inspectable. |
+| L5 Specialized | Domain or expert power. | query blocks, array/rank notation, symbolic/lazy computation, advanced effects, macros, domain DSLs | Must be fenced, explainable, and reducible to primary surfaces. |
+
+This layering protects the language from special-case creep. If a proposed
+construct cannot justify itself at L1-L3, it should usually start as a library
+or scoped extension. If it succeeds there and becomes broadly useful, it can be
+promoted with examples, diagnostics, and an inspectable reduction.
+
+## Evolution Principles
+
+Use these principles when turning a path into syntax, libraries, or tooling:
+
+- **Same concept, richer surface.** A `Path` should feel like a safer string
+  boundary; a `Table` should feel like a richer collection; a block policy
+  should feel like an ordinary call with visible attached code.
+- **Simple remains valid.** The advanced form must not make the beginner form
+  look wrong. A list comprehension, a loop, and a pipeline can coexist if their
+  roles are clear.
+- **Promotion requires pressure.** Move from library to syntax only after
+  repeated ordinary use shows a shared shape that diagnostics and tooling can
+  improve.
+- **Secondary layers compose downward.** Query plans, concurrency policies,
+  typed sinks, and DSL-like forms must explain themselves in terms of values,
+  calls, functions, collections, patterns, blocks, and results.
+- **The UX is part of the feature.** A feature packet is incomplete until it
+  names examples, error messages, formatter behavior, `explain` output, and
+  migration posture.
 
 ## Candidate Pillar 1: Data Values And Variants
 
@@ -642,24 +712,36 @@ changes what users write, read, inspect, or diagnose.
 
 ## Recommended Next Passes
 
-Do not fully specify every pillar at once. The highest-value sequence is:
+Do not fully specify every pillar at once. Advance along the paths that most
+improve ordinary programming first:
 
-1. **Data Values And Variants** — concrete, central, and currently too
-   compressed inside `data_and_types.md`.
-2. **Resources And World Values** — immediately improves paths, URLs, commands,
-   files, secrets, IO, security, and browser/runtime capability design.
-3. **Results, Absence, And Failure Values** — sharpens failure ergonomics
-   across parse/decode/IO/pipelines.
-4. **Blocks, Policies, And Managed Calls** — turns resource handling, retry,
-   examples, tracing, and concurrency into one visible interaction.
-5. **Numbers, Quantities, And Shape** and **Time Values** — prevent quiet
-   correctness bugs before the standard library ossifies.
+1. **Data As Shape** — make `data` records/variants feel like the natural
+   upgrade from maps, tuples, and decoded external values.
+2. **Patterns As Choice** — unify destructuring, `match`, selectors, function
+   clauses, result cases, and decode paths.
+3. **Absence/Result As Non-Success** — sharpen optional access, defaults,
+   guarded unwrap, `Result`, `collect_results`, and diagnostics across
+   parse/decode/IO/pipelines.
+4. **Resources As World Contact** — make `Path`, `Url`, `Command`, `Secret`,
+   `File`, `Request`, and `Response` typed values with visible policy.
+5. **Blocks As Scoped Policy** — connect `using`, `defer`, retry,
+   transaction, examples/checks, tracing, and future concurrency as one
+   caller-visible interaction.
+6. **Explanation As Feedback** — ensure every sophisticated path has examples,
+   diagnostics, `explain`, traces, and AI/LSP-readable events.
+7. **Modules As Growth Boundary** — let scripts become projects through
+   imports, exports, package identity, docs, examples, versions, and migration.
+8. **Measures As Correctness Surface** — treat numbers, decimals, money, time,
+   durations, units, ranges, array shape, and deadlines as ordinary values that
+   gain safety where needed.
 
 Each pillar should eventually get a string-style packet:
 
 ```text
 user surface
 design pressure
+evolution path
+layer classification
 normal-form ownership
 cross-language evidence
 Nomi direction

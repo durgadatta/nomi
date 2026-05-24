@@ -26,6 +26,14 @@ or domain-specific constructs should begin as libraries, data values, explicit
 functions, block policies, or fenced secondary layers that compose from those
 primary surfaces.
 
+When the task is broad or product-facing, think in evolution paths rather than
+feature buckets: text as interface, functions as glue, collections as
+one-to-many, data as shape, patterns as choice, absence/result as non-success,
+resources as world contact, blocks as scoped policy, modules as growth
+boundary, explanation as feedback, and measures as correctness surface. A good
+Nomi feature should let the user climb from first-hour code to sophisticated
+code without switching mental models.
+
 For core/sugar/backend separation work, use
 `docs/language/core_layer_separation_plan.md` as the operational layer map:
 L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
@@ -173,10 +181,10 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/convenience/data_and_types.md` — data boundary, types, aliases.
 - `docs/convenience/strings.md` — string pillar: interpolation, literals, typed
   wrappers, pattern matching on strings, Unicode, serialization, security.
-- `docs/convenience/vertical_pillars.md` — concrete cross-cutting surfaces,
-  starting with strings/text, functions/calls, collections/flow, then data
-  values, resources/world values, failure values, patterns/selectors,
-  blocks/policies, quantities/shape, time values, modules, and explanation
+- `docs/convenience/vertical_pillars.md` — concrete cross-cutting surfaces and
+  evolution paths, starting with strings/text, functions/calls,
+  collections/flow, then data as shape, patterns as choice, absence/result,
+  resources/world values, blocks/policies, modules, measures, and explanation
   surfaces.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature
   families and recommendations.
