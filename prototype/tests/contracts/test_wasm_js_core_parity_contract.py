@@ -19,6 +19,35 @@ CORE_PARITY_SNIPPETS = {
     "expression": "1 + 2\n",
     "call": "print(1 + 2)\n",
     "function": "func add(a, b):\n    return a + b\nresult = add(1, 2)\n",
+    "function-default": "func add(a, b = 1):\n    return a + b\nresult = add(2)\n",
+    "list-literal": "xs = [1, 2, 3]\n",
+    "dict-literal": 'm = {"a": 1, "b": 2}\n',
+    "if-else": "if True:\n    x = 1\nelse:\n    x = 2\n",
+    "pipeline": "x = [1, 2, 3] |> sum\n",
+}
+
+
+EXPECTED_CORE_GAPS = {
+    "while-loop": {
+        "source": "x = 0\nwhile x < 3:\n    x = x + 1\n",
+        "capability": "js-lowerer.loop-core-shape",
+        "diagnostic": False,
+    },
+    "for-loop": {
+        "source": "total = 0\nfor x in [1, 2, 3]:\n    total = total + x\n",
+        "capability": "js-lowerer.foreach-core-shape",
+        "diagnostic": False,
+    },
+    "range": {
+        "source": "x = 1..5\n",
+        "capability": "js-lowerer.range-core-shape",
+        "diagnostic": False,
+    },
+    "with": {
+        "source": 'with open("x") as f:\n    x = 1\n',
+        "capability": "js-lowerer.with",
+        "diagnostic": True,
+    },
 }
 
 
@@ -95,3 +124,22 @@ def test_wasm_js_lowering_diagnostic_is_structured_for_unsupported_construct():
     assert diagnostic["capability"] == "js-lowerer.raw-expression"
     assert diagnostic["frontend"] == "rust-fast-ast-wasm"
     assert diagnostic["backend"] == "js-core-runtime"
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
+@pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")
+@pytest.mark.parametrize("name", tuple(EXPECTED_CORE_GAPS), ids=tuple(EXPECTED_CORE_GAPS))
+def test_wasm_js_source_to_core_differences_are_named_capability_gaps(name):
+    gap = EXPECTED_CORE_GAPS[name]
+    payload = _core_payload_from_wasm_js(gap["source"])
+
+    if gap["diagnostic"]:
+        assert payload["diagnosticCount"] > 0
+        assert payload["diagnostics"][0]["capability"] == gap["capability"]
+        return
+
+    assert payload["diagnosticCount"] == 0
+    assert _normalized(payload["root"]) != _normalized(
+        _core_from_python_session(gap["source"])
+    )
+    assert gap["capability"].startswith("js-lowerer.")
