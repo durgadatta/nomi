@@ -92,6 +92,14 @@ test("demo_terse.nomi eval", () => {
   assert(lines[4] === "55", `line 4: ${lines[4]}`);
 });
 
+test("expression-only source returns display value", () => {
+  const coreIr = parseAndLower("1 + 2\n");
+  const result = evaluateCorePayload(coreIr, { displayLastExpr: true });
+  assert(result.has_value === true, "expected final expression value");
+  assert(result.value === 3, `expected value 3, got ${result.value}`);
+  assert(result.stdout === "", "expected no stdout");
+});
+
 // ── Test 4: comprehensive.nomi parses and lowers ──────────────────────────
 
 test("comprehensive.nomi parse + lower", () => {

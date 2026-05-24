@@ -18,6 +18,20 @@ function runtimeLabel(result) {
   return "WASM + JS Runtime";
 }
 
+function formatRuntimeValue(value) {
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "None";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function outputForResult(result) {
+  if (result.error) return result.error;
+  if (result.output) return result.output;
+  if (result.has_value) return formatRuntimeValue(result.value);
+  return "(no output)";
+}
+
 async function runCell(idx, advance, options) {
   if (!_ready || !_runFn) return;
   const manageControls = !(options && options.batch);
@@ -45,7 +59,7 @@ async function runCell(idx, advance, options) {
     const r = await _runFn(code);
     const elapsed = Math.max(1, Math.round(performance.now() - start));
     const error = r.error || "";
-    const output = error || r.output || "(no output)";
+    const output = outputForResult(r);
 
     _executionCounter++;
     outer.dataset.execCount = _executionCounter;
@@ -132,7 +146,7 @@ async function runPlainCode() {
     const r = await _runFn(code);
     const elapsed = Math.max(1, Math.round(performance.now() - start));
     const error = r.error || "";
-    const output = error || r.output || "(no output)";
+    const output = outputForResult(r);
 
     outPre.textContent = output;
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";

@@ -53,6 +53,9 @@ function runWithWasmJs(code) {
   return {
     output: result.stdout || "",
     backend: "wasm-js",
+    value: result.value,
+    has_value: result.has_value === true,
+    diagnostics: result.diagnostics || [],
     timing: {
       parse_ms: parseMs,
       lower_ms: lowerMs,
