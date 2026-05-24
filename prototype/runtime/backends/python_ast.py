@@ -30,6 +30,8 @@ PYTHON_AST_BACKEND_SPEC = EvalBackendSpec(
         supports_exceptions=True,
         supports_resume=True,
         supports_python_interop=True,
+        selectable_for_session_execution=True,
+        default_for_cli=True,
         selectable_for_execution=True,
     ),
     notes=(

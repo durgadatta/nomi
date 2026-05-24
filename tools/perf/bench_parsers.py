@@ -631,7 +631,7 @@ def main() -> int:
             flags.append("parse")
         if caps.lower_to_python_ast:
             flags.append("ast")
-        if caps.selectable_for_execution:
+        if caps.selectable_for_session_execution or caps.selectable_for_execution:
             flags.append("exec")
         print(f"  {name}: {', '.join(flags)}")
     print()

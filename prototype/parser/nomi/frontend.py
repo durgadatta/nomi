@@ -62,7 +62,11 @@ class ParserFrontendCapabilities:
 
     parse_current_grammar: bool = False
     lower_to_python_ast: bool = False
+    emit_core_json: bool = False
     source_spans: bool = False
+    selectable_for_session_execution: bool = False
+    selectable_for_browser_experiment: bool = False
+    default_for_browser_playground: bool = False
     selectable_for_execution: bool = False
 
 
@@ -107,6 +111,7 @@ LARK_FRONTEND_SPEC = ParserFrontendSpec(
         parse_current_grammar=True,
         lower_to_python_ast=True,
         source_spans=True,
+        selectable_for_session_execution=True,
         selectable_for_execution=True,
     ),
     notes=(
@@ -146,6 +151,9 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
         capabilities=ParserFrontendCapabilities(
             parse_current_grammar=True,
             lower_to_python_ast=True,
+            emit_core_json=True,
+            selectable_for_browser_experiment=True,
+            default_for_browser_playground=True,
         ),
         experiment_roles=("fast", "direct-ast", "rust"),
         notes=(
@@ -594,23 +602,27 @@ def render_parser_frontend_table(
     specs: tuple[ParserFrontendSpec, ...] = PARSER_FRONTEND_CANDIDATES,
 ) -> str:
     rows = [
-        "| frontend | status | full grammar | python AST | selectable | "
-        "roles | grammar | implementation | artifact | output |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| frontend | status | full grammar | python AST | core JSON | "
+        "session exec | browser exp | browser default | roles | grammar | "
+        "implementation | artifact | output |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for spec in specs:
         capabilities = spec.capabilities
         rows.append(
             (
-                "| {name} | {status} | {full} | {python_ast} | "
-                "{selectable} | {roles} | {grammar} | {implementation} | "
-                "{artifact} | {output} |"
+                "| {name} | {status} | {full} | {python_ast} | {core_json} | "
+                "{session_exec} | {browser_exp} | {browser_default} | {roles} | "
+                "{grammar} | {implementation} | {artifact} | {output} |"
             ).format(
                 name=spec.name,
                 status=spec.status,
                 full=_mark(capabilities.parse_current_grammar),
                 python_ast=_mark(capabilities.lower_to_python_ast),
-                selectable=_mark(capabilities.selectable_for_execution),
+                core_json=_mark(capabilities.emit_core_json),
+                session_exec=_mark(_selectable_for_session(capabilities)),
+                browser_exp=_mark(capabilities.selectable_for_browser_experiment),
+                browser_default=_mark(capabilities.default_for_browser_playground),
                 roles=", ".join(spec.experiment_roles) or "-",
                 grammar=spec.grammar_format,
                 implementation=spec.implementation,
@@ -625,6 +637,13 @@ def _mark(value: bool) -> str:
     return "yes" if value else "no"
 
 
+def _selectable_for_session(capabilities: ParserFrontendCapabilities) -> bool:
+    return (
+        capabilities.selectable_for_session_execution
+        or capabilities.selectable_for_execution
+    )
+
+
 def get_selectable_parser_frontends(
     specs: tuple[ParserFrontendSpec, ...] = PARSER_FRONTEND_CANDIDATES,
 ) -> tuple[str, ...]:
@@ -632,7 +651,7 @@ def get_selectable_parser_frontends(
     return tuple(
         spec.name
         for spec in specs
-        if spec.capabilities.selectable_for_execution
+        if _selectable_for_session(spec.capabilities)
     )
 
 
@@ -646,7 +665,7 @@ def get_functional_replacement_frontends(
         if spec.name != DEFAULT_FRONTEND
         and spec.capabilities.parse_current_grammar
         and spec.capabilities.lower_to_python_ast
-        and spec.capabilities.selectable_for_execution
+        and _selectable_for_session(spec.capabilities)
     )
 
 

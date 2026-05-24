@@ -284,6 +284,20 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"resolved_pipelines", "resolved-pipelines", "pipelines"}:
+        from prototype.runtime.pipeline import render_resolved_pipeline_table
+
+        output = render_resolved_pipeline_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"expansions", "desugar_expansions"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
 

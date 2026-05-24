@@ -70,7 +70,9 @@ python3 scripts/cli.py --parser-frontend rust-fast-ast samples/demo.nomi
 That proves the parser can feed downstream evaluation on the execution path.
 The frontend now also matches the Lark Python AST text for the shared
 sample/snippet matrix, but it is not a normal default/replacement until
-`selectable_for_execution` is promoted.
+`selectable_for_session_execution` is promoted. It is separately declared as
+the browser playground experiment/default parser because that path lowers Rust
+AST JSON through the JS Core lowerer instead of the Python session pipeline.
 
 ## Promotion Gate
 
@@ -80,7 +82,10 @@ Do not change these capability flags until the stated gate is genuinely met:
 ParserFrontendCapabilities(
     parse_current_grammar=True,
     lower_to_python_ast=True,
-    selectable_for_execution=False,
+    emit_core_json=True,
+    selectable_for_session_execution=False,
+    selectable_for_browser_experiment=True,
+    default_for_browser_playground=True,
 )
 ```
 
@@ -93,9 +98,9 @@ Promotion sequence:
    shared sample/snippet matrix in
    `prototype/tests/unit/parser/test_parser_frontend_acceptance.py`. This gate
    is now met; `rust-fast-ast` participates in `get_python_ast_frontends()`.
-3. Set `selectable_for_execution=True` only after parser unit tests, relevant
-   functional tests, regression samples, CLI execution, and downstream runtime
-   behavior all match the Lark path when the Rust frontend is selected.
+3. Set `selectable_for_session_execution=True` only after parser unit tests,
+   relevant functional tests, regression samples, CLI execution, and downstream
+   runtime behavior all match the Lark path when the Rust frontend is selected.
 
 Full replacement means all three: parse current grammar, lower to the same
 Python AST artifact, and be safe for normal execution.

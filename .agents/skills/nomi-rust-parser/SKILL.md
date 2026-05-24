@@ -63,8 +63,9 @@ Advance capabilities independently:
 2. `lower_to_python_ast=True` only after exact `ast.dump(...,
    include_attributes=False, indent=2)` parity for shared Python-AST frontend
    tests.
-3. `selectable_for_execution=True` only after parser, functional, regression,
-   CLI, and downstream runtime behavior match the Lark path.
+3. `selectable_for_session_execution=True` only after parser, functional,
+   regression, CLI, and downstream runtime behavior match the Lark path.
+   Browser experiment/default claims use separate flags.
 
 Never promote execution because a tolerant/raw payload parses files. Raw
 payloads are useful for acceptance, not semantic parity.

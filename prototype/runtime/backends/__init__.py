@@ -28,6 +28,11 @@ class EvalBackendCapabilities:
     supports_resume: bool = False
     supports_python_interop: bool = False
     supports_source_maps: bool = False
+    selectable_for_session_execution: bool = False
+    selectable_for_browser_execution: bool = False
+    default_for_cli: bool = False
+    default_for_web: bool = False
+    requires_host_capabilities: tuple[str, ...] = ()
     selectable_for_execution: bool = False
 
 
@@ -83,27 +88,47 @@ def get_selectable_eval_backends() -> tuple[str, ...]:
         for name, backend in _BACKENDS.items()
         if backend is not None
         and getattr(backend, "spec", None) is not None
-        and backend.spec.capabilities.selectable_for_execution
+        and _selectable_for_session(backend.spec.capabilities)
     )
 
 
 def render_eval_backend_table() -> str:
     rows: list[str] = []
-    header = f"| {'backend':<24} | {'status':<22} | {'IR contract':<24} | {'selectable':<10} |"
+    header = (
+        f"| {'backend':<24} | {'status':<22} | {'IR contract':<24} | "
+        f"{'session':<10} | {'browser':<10} | {'CLI default':<11} | "
+        f"{'web default':<11} |"
+    )
     rows.append(header)
     rows.append("|" + "-" * (len(header) - 2) + "|")
     for name, backend in sorted(_BACKENDS.items()):
         spec = getattr(backend, "spec", None)
         if spec is None:
             rows.append(
-                f"| {name:<24} | {'(no spec)':<22} | {'N/A':<24} | {'no':<10} |"
+                f"| {name:<24} | {'(no spec)':<22} | {'N/A':<24} | "
+                f"{'no':<10} | {'no':<10} | {'no':<11} | {'no':<11} |"
             )
             continue
-        selectable = "yes" if spec.capabilities.selectable_for_execution else "no"
+        caps = spec.capabilities
         rows.append(
-            f"| {name:<24} | {spec.status:<22} | {spec.ir_contract:<24} | {selectable:<10} |"
+            f"| {name:<24} | {spec.status:<22} | {spec.ir_contract:<24} | "
+            f"{_mark(_selectable_for_session(caps)):<10} | "
+            f"{_mark(caps.selectable_for_browser_execution):<10} | "
+            f"{_mark(caps.default_for_cli):<11} | "
+            f"{_mark(caps.default_for_web):<11} |"
         )
     return "\n".join(rows)
+
+
+def _selectable_for_session(capabilities: EvalBackendCapabilities) -> bool:
+    return (
+        capabilities.selectable_for_session_execution
+        or capabilities.selectable_for_execution
+    )
+
+
+def _mark(value: bool) -> str:
+    return "yes" if value else "no"
 
 
 def _load_builtin_backends() -> None:

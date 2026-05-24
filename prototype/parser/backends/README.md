@@ -14,8 +14,9 @@ parse current Nomi grammar
 ```
 
 Partial parsers may live here as research artifacts, but they must not be wired
-as selectable execution frontends until their
-`ParserFrontendCapabilities.selectable_for_execution` flag can honestly be set.
+as session execution frontends until their
+`ParserFrontendCapabilities.selectable_for_session_execution` flag can honestly
+be set. Browser experiments use separate host-specific flags.
 
 Parser frontends that claim current-grammar parsing support must implement
 `parse_accepts()` and set `ParserFrontendCapabilities.parse_current_grammar`.

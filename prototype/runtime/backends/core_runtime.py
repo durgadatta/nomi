@@ -82,6 +82,7 @@ CORE_RUNTIME_SPEC = EvalBackendSpec(
         supports_exceptions=False,
         supports_resume=False,
         supports_python_interop=False,
+        requires_host_capabilities=("nomi.host-capabilities",),
         selectable_for_execution=False,
     ),
     notes=(

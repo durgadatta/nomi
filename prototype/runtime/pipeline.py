@@ -36,6 +36,69 @@ class PipelineSpec:
         return self.mode_spec.interpreter
 
 
+@dataclass(frozen=True)
+class ResolvedPipeline:
+    """Named pipeline answer for user-facing hosts and contract tests."""
+
+    name: str
+    host: str
+    parser_frontend: str
+    lowerer: str
+    eval_backend: str
+    default: bool = False
+    notes: str = ""
+
+
+RESOLVED_PIPELINES: tuple[ResolvedPipeline, ...] = (
+    ResolvedPipeline(
+        name="python-session-default",
+        host="python",
+        parser_frontend=DEFAULT_FRONTEND,
+        lowerer="mode session lowerer",
+        eval_backend="python-ast",
+        default=True,
+        notes="CLI, notebook, tests, and runtime facade default",
+    ),
+    ResolvedPipeline(
+        name="browser-playground-default",
+        host="browser",
+        parser_frontend="rust-fast-ast-wasm",
+        lowerer="prototype/runtime/js/lower_to_core_ir.js",
+        eval_backend="js-core-runtime",
+        default=True,
+        notes="web playground worker path",
+    ),
+    ResolvedPipeline(
+        name="node-core-test",
+        host="node",
+        parser_frontend="lark-lalr",
+        lowerer="Python session Core IR JSON",
+        eval_backend="js-core-runtime",
+        notes="Node wrapper parity tests",
+    ),
+)
+
+
+def render_resolved_pipeline_table() -> str:
+    rows = [
+        "| pipeline | host | parser frontend | lowerer | eval backend | default | notes |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for pipeline in RESOLVED_PIPELINES:
+        rows.append(
+            "| {name} | {host} | {parser} | {lowerer} | {backend} | {default} | {notes} |".format(
+                name=pipeline.name,
+                host=pipeline.host,
+                parser=pipeline.parser_frontend,
+                lowerer=pipeline.lowerer,
+                backend=pipeline.eval_backend,
+                default="yes" if pipeline.default else "no",
+                notes=pipeline.notes,
+            )
+        )
+    return "\n".join(rows)
+
+
 def build_pipeline_spec(
     *,
     mode: str = "nomi",

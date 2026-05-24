@@ -40,6 +40,9 @@ JS_CORE_BACKEND_SPEC = EvalBackendSpec(
         supports_exceptions=True,
         supports_resume=False,
         supports_python_interop=False,
+        selectable_for_browser_execution=True,
+        default_for_web=True,
+        requires_host_capabilities=("nomi.host-capabilities",),
         selectable_for_execution=False,
     ),
     notes=(

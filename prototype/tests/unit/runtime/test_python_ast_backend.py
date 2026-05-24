@@ -27,6 +27,8 @@ def test_spec_has_correct_capabilities():
     assert caps.lowers_to_python_ast is True
     assert caps.supports_full_language is True
     assert caps.supports_blocks is True
+    assert caps.selectable_for_session_execution is True
+    assert caps.default_for_cli is True
     assert caps.selectable_for_execution is True
 
 

@@ -39,7 +39,7 @@ def test_parser_frontend_table_names_planned_non_lark_spikes():
     assert "pest-readable-cst" in table
     assert "winnow-fast-cst" in table
     assert "chumsky-readable-cst" in table
-    assert "| frontend | status | full grammar | python AST | selectable | roles |" in table
+    assert "| frontend | status | full grammar | python AST | core JSON | session exec | browser exp | browser default | roles |" in table
     assert "Nomi Surface IR, then Python AST backend" in table
 
 
@@ -51,7 +51,8 @@ def test_only_full_parity_frontends_are_selectable_for_execution():
     ]
     assert non_lark_frontends
     assert all(
-        not spec.capabilities.selectable_for_execution
+        not spec.capabilities.selectable_for_session_execution
+        and not spec.capabilities.selectable_for_execution
         for spec in non_lark_frontends
     )
 
@@ -107,4 +108,4 @@ def test_parser_frontend_table_accepts_explicit_specs():
     )
 
     assert "example grammar" in table
-    assert "| example | research-candidate | yes | yes | no | fast |" in table
+    assert "| example | research-candidate | yes | yes | no | no | no | no | fast |" in table

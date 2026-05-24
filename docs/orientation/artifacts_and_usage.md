@@ -159,6 +159,8 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage core-to-python
 python3 -m tools.syntax.inspect samples/demo.nomi --stage backend-lowered
 python3 -m tools.syntax.inspect --stage parser-frontends
 python3 -m tools.syntax.inspect --stage eval-backends
+python3 -m tools.syntax.inspect --stage host-capabilities
+python3 -m tools.syntax.inspect --stage resolved-pipelines
 python3 -m tools.syntax.inspect --stage features
 python3 -m tools.syntax.inspect --stage capabilities
 python3 -m tools.syntax.inspect --stage passes
@@ -173,6 +175,8 @@ from prototype.runtime import inspect
 artifact = inspect(source="x = 1\n", mode="nomi", stage="python_ast")
 frontends = inspect(mode="nomi", stage="parser_frontends")
 backends  = inspect(mode="nomi", stage="eval_backends")
+hosts     = inspect(mode="nomi", stage="host_capabilities")
+pipelines = inspect(mode="nomi", stage="resolved_pipelines")
 core_ok   = inspect(source="x = 1\n", mode="python", stage="core_verify")
 print(artifact.output)
 ```
@@ -183,6 +187,7 @@ Current stages:
 raw_tree, transformed_tree, surface-ast, python-ast, core
 core-verify, core-to-python, backend-lowered
 features, capabilities, parser-frontends, eval-backends
+host-capabilities, resolved-pipelines
 passes, expansions
 ```
 
@@ -221,7 +226,8 @@ Going forward, implementation work should make those layers explicit:
    `lower_python_ast_to_core()`);
 4. ~~expose inspection stages through `prototype.runtime.inspect()`~~ done —
    `core`, `core-verify`, `core-to-python`, `backend-lowered`, `eval-backends`,
-   plus parser-frontends, features, capabilities, passes, expansions;
+   host-capabilities, resolved-pipelines, plus parser-frontends, features,
+   capabilities, passes, expansions;
 5. keep Python AST as the compatibility backend while direct core evaluation
    grows behind opt-in env vars (`NOMI_VERIFY_CORE=1`, `NOMI_USE_CORE_IR=1`).
 

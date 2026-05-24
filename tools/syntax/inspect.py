@@ -14,6 +14,7 @@ Usage::
     python3 -m tools.syntax.inspect --stage parser-frontends
     python3 -m tools.syntax.inspect --stage eval-backends
     python3 -m tools.syntax.inspect --stage host-capabilities
+    python3 -m tools.syntax.inspect --stage resolved-pipelines
     python3 -m tools.syntax.inspect --stage passes
     python3 -m tools.syntax.inspect FILE --stage expansions
     python3 -m tools.syntax.inspect FILE --stage core-verify
@@ -36,6 +37,7 @@ from prototype.parser.nomi.desugar.pipeline import (
 )
 from prototype.runtime.backends import render_eval_backend_table
 from prototype.runtime.host_capabilities import render_host_capability_table
+from prototype.runtime.pipeline import render_resolved_pipeline_table
 from prototype.syntax.core import (
     core_to_python_ast,
     dump_core,
@@ -85,6 +87,9 @@ def main():
         return
     if stage in {"host-capabilities", "host_capabilities"}:
         print(render_host_capability_table())
+        return
+    if stage in {"resolved-pipelines", "resolved_pipelines", "pipelines"}:
+        print(render_resolved_pipeline_table())
         return
 
     if filename is None:
@@ -139,7 +144,7 @@ def main():
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
             f"core-json, core-verify, core-to-python, backend-lowered, "
             f"python-ast, features, capabilities, parser-frontends, "
-            f"eval-backends, passes, expansions"
+            f"eval-backends, host-capabilities, resolved-pipelines, passes, expansions"
         )
         sys.exit(1)
 

@@ -74,6 +74,8 @@ def test_rust_fast_ast_is_not_enrolled_as_full_replacement_yet():
     assert rust.spec.status == "python-ast-parity"
     assert rust.spec.capabilities.parse_current_grammar is True
     assert rust.spec.capabilities.lower_to_python_ast is True
+    assert rust.spec.capabilities.selectable_for_browser_experiment is True
+    assert rust.spec.capabilities.default_for_browser_playground is True
     assert rust.spec.capabilities.selectable_for_execution is False
 
 

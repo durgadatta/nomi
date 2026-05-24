@@ -24,17 +24,24 @@ def test_default_capabilities_all_false():
         "supports_resume",
         "supports_python_interop",
         "supports_source_maps",
+        "selectable_for_session_execution",
+        "selectable_for_browser_execution",
+        "default_for_cli",
+        "default_for_web",
         "selectable_for_execution",
     ):
         assert getattr(caps, field_name) is False
+    assert caps.requires_host_capabilities == ()
 
 
 def test_capabilities_can_be_selectively_enabled():
     caps = EvalBackendCapabilities(
         lowers_to_python_ast=True,
+        selectable_for_session_execution=True,
         selectable_for_execution=True,
     )
     assert caps.lowers_to_python_ast is True
+    assert caps.selectable_for_session_execution is True
     assert caps.selectable_for_execution is True
     assert caps.evaluates_native_ir is False
 
@@ -48,7 +55,7 @@ def test_spec_requires_capabilities():
         output_contract="bindings",
     )
     assert spec.name == "test"
-    assert spec.capabilities.selectable_for_execution is False
+    assert spec.capabilities.selectable_for_session_execution is False
 
 
 def test_backend_result_stores_bindings_and_value():
@@ -141,6 +148,7 @@ def test_python_ast_is_registered():
     backend = get_eval_backend("python-ast")
 
     assert backend.spec.name == "python-ast"
+    assert backend.spec.capabilities.selectable_for_session_execution is True
     assert backend.spec.capabilities.selectable_for_execution is True
     assert "python-ast" in table
     assert "implemented" in table
@@ -148,6 +156,9 @@ def test_python_ast_is_registered():
 
 def test_js_core_runtime_is_registered():
     table = render_eval_backend_table()
+    backend = get_eval_backend("js-core-runtime")
 
+    assert backend.spec.capabilities.selectable_for_browser_execution is True
+    assert backend.spec.capabilities.default_for_web is True
     assert "js-core-runtime" in table
     assert "Core IR JSON" in table

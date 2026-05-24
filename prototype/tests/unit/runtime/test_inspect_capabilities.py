@@ -16,7 +16,7 @@ def test_inspect_returns_parser_frontend_table():
 
     assert isinstance(result, InspectionResult)
     assert result.stage == "parser_frontends"
-    assert "| frontend | status | full grammar | python AST | selectable | roles |" in result.output
+    assert "| frontend | status | full grammar | python AST | core JSON | session exec | browser exp | browser default | roles |" in result.output
     assert "lark-lalr" in result.output
     assert "tree-sitter-cst" in result.output
 
@@ -37,3 +37,13 @@ def test_inspect_returns_host_capability_table():
     assert result.stage == "host_capabilities"
     assert "| capability | runtimes | arity | pure | prints |" in result.output
     assert "| print | core-runtime, js-core-runtime | variadic | no | yes |" in result.output
+
+
+def test_inspect_returns_resolved_pipeline_table():
+    result = inspect(stage="resolved_pipelines")
+
+    assert isinstance(result, InspectionResult)
+    assert result.stage == "resolved_pipelines"
+    assert "| pipeline | host | parser frontend | lowerer | eval backend |" in result.output
+    assert "python-session-default" in result.output
+    assert "browser-playground-default" in result.output
