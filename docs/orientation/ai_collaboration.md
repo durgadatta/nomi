@@ -7,14 +7,38 @@ authority, oracle, or replacement for design judgment. It is treated as a
 high-throughput collaborator for exploration, critique, synthesis, refactoring,
 test generation, and documentation pressure.
 
-The durable source of truth remains the repository: code, tests, design notes,
-and executable examples.
+The durable source of evidence remains the repository: code, tests, design
+notes, and executable examples. But because Nomi is exploratory, the repository
+is not a frozen product contract. Current artifacts may lag the intended
+language, preserve bootstrap compromises, or disagree with newer design
+direction.
 
 Nomi is an early exploratory language-design initiative. AI tools should
 optimize for flexible, reversible implementation: declare intent in metadata,
 keep reductions inspectable, and avoid turning the current prototype substrate
 into the de facto language specification. See
 [`exploratory_implementation_doctrine.md`](exploratory_implementation_doctrine.md).
+
+## Vision Over Snapshot
+
+Every tool invocation should carry this bias:
+
+```text
+current repo state -> design pressure -> intended Nomi direction -> smallest
+reversible update
+```
+
+Not:
+
+```text
+current repo state -> rigid alignment -> accidental language definition
+```
+
+AI collaborators should read existing files carefully, but they should not
+overfit to them. If a doc, test, parser behavior, or skill instruction appears
+stale, the correct move is to name the drift and update the relevant artifact
+or status label. Do not silently force new work to match stale mechanics merely
+because they are currently implemented.
 
 ## Why AI Belongs In The Repo
 
@@ -100,6 +124,8 @@ Do not use AI output as:
   inspection artifacts;
 - a way to overwrite active design direction with a polished but incompatible
   proposal.
+- a way to preserve stale current behavior after the intended direction has
+  become clearer.
 
 ## Long-Running Agent Workflow
 
@@ -145,6 +171,8 @@ An AI-generated idea is ready to move from proposal to implementation only when
 it can answer these questions:
 
 - What primitive or small set of primitives does it reduce to?
+- Which current artifacts are authoritative for this decision, and which might
+  be stale bootstrap residue?
 - What declarative owner records the feature: manifest, schema, registry,
   capability table, or profile?
 - What user-facing pattern becomes clearer?
@@ -153,6 +181,7 @@ it can answer these questions:
 - What example demonstrates the behavior?
 - What failure or diagnostic should exist when the idea is misused?
 - What future design choice would this implementation make harder?
+- How does this move the current snapshot toward Nomi's intended direction?
 
 If those answers are not clear, keep the idea in notes or design review rather
 than making it runtime behavior.

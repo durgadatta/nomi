@@ -10,6 +10,14 @@ Use this skill when the task is about Nomi's language direction, syntax
 research, convenience features, design philosophy, or translating ideas from
 other languages into a coherent Nomi surface.
 
+Nomi is fast-evolving and exploratory. Treat existing docs, tests, parser
+behavior, and prototype mechanics as design evidence, not immutable law. The
+goal is to follow the idea and spirit of Nomi: small semantic primitives,
+readable expression, explicit boundaries, inspectable reductions, and
+reversible implementation. If the current repo snapshot conflicts with that
+direction, name the drift and update the status/doc/skill instead of rigidly
+aligning new work to stale artifacts.
+
 For core/sugar/backend separation work, use
 `docs/language/core_layer_separation_plan.md` as the operational layer map:
 L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
@@ -89,6 +97,12 @@ Adopt/Refuse/Adapt tables):
 Do not copy syntax because it is attractive elsewhere. Extract the durable user
 need, compare close relatives, reduce the idea to a Nomi normal form, then
 recommend one coherent spelling.
+
+Also do not copy Nomi's current prototype shape merely because it exists. The
+current implementation is a laboratory snapshot; the design target is the
+coherent language it is helping reveal. Use current behavior to find
+constraints, regressions, and examples, then decide whether it represents
+active direction, bootstrap residue, or stale documentation.
 
 ```text
 source language -> user need -> semantic difference -> Nomi normal form -> surface syntax
@@ -235,25 +249,28 @@ portability, Core IR, scoped extension, or Python independence.
 1. **Check existing research first.** Read `language_family_coverage_map.md`
    to see if the topic is already covered. If a deep dive exists, read its
    Adopt/Refuse/Adapt table before proposing anything new.
-2. Identify the everyday programming pressure: readability, boundary safety,
+2. Identify whether current repo artifacts reflect active direction,
+   transitional implementation, or stale residue. Do not force the proposal to
+   match stale state; record the drift and update the relevant status labels.
+3. Identify the everyday programming pressure: readability, boundary safety,
    callback flattening, pattern choice, failure handling, data transformation,
    configuration, testing, explanation, or another concrete need.
-3. Compare at least three nearby source-language forms (use the existing deep
+4. Compare at least three nearby source-language forms (use the existing deep
    dives when they cover the languages — don't re-research from scratch).
-4. Group almost-same features and name the nuance that actually matters.
-5. Decide the Nomi normal form and whether the idea is:
+5. Group almost-same features and name the nuance that actually matters.
+6. Decide the Nomi normal form and whether the idea is:
    `implemented`, `prototype-ready`, `design-needed`, `library-first`,
    `research-only`, or `rejected-for-now`.
-6. Recommend one Nomi path. Prefer library-first and docs-first when semantics,
+7. Recommend one Nomi path. Prefer library-first and docs-first when semantics,
    diagnostics, or interactions are not yet clear.
-7. Update docs with a consolidation table, examples, status, and rationale.
-8. If the research is genuinely new (not in the corpus), write a deep dive
+8. Update docs with a consolidation table, examples, status, and rationale.
+9. If the research is genuinely new (not in the corpus), write a deep dive
    following the existing format, then update both index files.
-9. For broad syntax/semantics planning, update
+10. For broad syntax/semantics planning, update
    `docs/language/syntax_substrate_todo_audit.md`,
    `docs/language/implementation_todos.md`, or
    `docs/language/forward_implementation_plan.md`.
-10. Avoid implementation unless the user explicitly asks for it or the task is
+11. Avoid implementation unless the user explicitly asks for it or the task is
     already scoped as implementation work.
 
 ## Spec-Editor Workflow
@@ -488,7 +505,7 @@ path (documented in `CLAUDE.md`):
    snapshot regeneration.
 
 Key substrate files:
-- `prototype/syntax/features.py` — feature manifest registry (single source of truth)
+- `prototype/syntax/features.py` — current feature manifest registry
 - `prototype/syntax/surface.py` — surface node base + `lower_surface_to_python`
 - `prototype/parser/nomi/lowering/` — per-feature Lark→AST lowering modules
 - `prototype/parser/nomi/desugar/pipeline.py` — desugar pass chain (derived from features)

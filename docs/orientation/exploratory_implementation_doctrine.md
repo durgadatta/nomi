@@ -27,7 +27,38 @@ current mechanics feel inevitable. Python AST, Lark, Rust/WASM, JavaScript,
 Core IR, and Pyodide are substrates. Nomi's normal forms, feature metadata,
 diagnostics, examples, and reductions are the language design.
 
+Current artifacts are therefore **evidence, not a cage**. A file that is green,
+documented, or implemented may still encode an old compromise, a narrow
+bootstrap path, or an unresolved experiment. Tooling and agents should read the
+repo for context, but should not freeze Nomi around whatever happens to exist
+today. When artifacts disagree, prefer the project trajectory: coherent
+semantic primitives, readable surface syntax, explicit boundaries, inspectable
+reductions, and reversible choices.
+
 ## Doctrine
+
+### 0. Direction Over Snapshot
+
+The job is not to preserve every current behavior. The job is to evolve toward
+the language Nomi is trying to become.
+
+Use the current repo as:
+
+- a map of working experiments;
+- a record of design pressure;
+- a source of constraints and regressions to understand;
+- a place to make intent executable.
+
+Do not use the current repo as:
+
+- proof that a prototype substrate is the language definition;
+- a reason to align new design with stale wording;
+- an excuse to keep inconsistent status labels;
+- a substitute for naming the intended normal form, layer, diagnostic, and
+  inspection surface.
+
+If the spirit and the snapshot disagree, write down the disagreement and choose
+the smallest reversible step that moves the snapshot toward the spirit.
 
 ### 1. Specifications Before Clever Code
 
@@ -124,6 +155,12 @@ archaeology. Favor:
 AI agents should not rush from "possible" to "implemented." Their job is to
 make uncertainty explicit and shrink the next safe step.
 
+They should also avoid a quieter failure mode: overfitting to the current
+repository shape. Passing tests, existing grammar forms, or old docs can show
+what exists; they do not always show what Nomi means to become. Before
+hardening current behavior, agents should ask whether it reflects the active
+design direction or only the bootstrap path.
+
 Before changing parser/interpreter/runtime behavior, an agent should ask:
 
 - What normal form owns this?
@@ -182,4 +219,3 @@ Reversibility risk:
 ```
 
 If this report is mostly blank, the work is not ready to harden.
-

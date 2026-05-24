@@ -250,8 +250,8 @@ and long-running Codex-style checkpoint workflow.
 
 The companion process note `ai_collaboration.md` explains how
 Nomi uses AI for exploration, critique, implementation planning, test pressure,
-and checkpointing while keeping code, tests, and active design docs as the
-source of truth.
+and checkpointing while treating code, tests, and active design docs as durable
+evidence for the intended language, not as a frozen product contract.
 
 These artifacts follow the public AGENTS.md convention and reflect the existing
 Nomi AI collaboration history documented in `implementation_guideline.md`, the

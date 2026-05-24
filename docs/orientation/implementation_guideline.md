@@ -10,6 +10,13 @@
 Nomi is still intentionally Python-hosted. That is a productive bootstrap
 choice, not the language boundary.
 
+Use current implementation behavior as a working specimen, not a final
+contract. The Python-hosted path, Core IR bridge, parser frontends, and tests
+may expose stale compromises or incomplete migrations. When implementation
+mechanics conflict with the active design intent, prefer a small reversible
+change that makes the mismatch explicit and moves the prototype toward the
+intended language.
+
 Current path:
 
 ```text
@@ -164,6 +171,8 @@ Goal:
 - Prefer facade-first changes over package moves.
 - Keep old imports working while new APIs mature.
 - Keep Python AST backend behavior green while adding new artifacts.
+- Do not overfit new architecture or syntax work to current bootstrap shapes;
+  preserve compatibility deliberately, not by accident.
 - Do not combine semantic changes with mechanical layer moves.
 - Add focused contract tests before migrating frontends or public APIs.
 - Preserve source spans whenever a new node shape is introduced.
@@ -218,3 +227,7 @@ design material until reconciled with:
 Agents should make implementation changes in small commits and leave notes in
 the relevant plan when they discover a sharper boundary, stale assumption, or
 new preparatory task.
+
+When an agent discovers a stale artifact, the preferred response is not to
+pretend the artifact is canonical. Mark the status, update the relevant doc or
+skill, and keep the code path reversible until the design is settled.

@@ -24,6 +24,15 @@ hardcoded wiring. Treat current substrates (Python AST, Lark, Rust/WASM, JS,
 Pyodide, Core IR) as replaceable laboratory tools, not as the language
 definition.
 
+Because the project is fast-moving, current code and docs are evidence, not
+final authority. They may be inconsistent, stale, or narrower than the intended
+language. Agents should follow Nomi's direction and spirit: small coherent
+primitives, inspectable reductions, readable everyday syntax, explicit
+boundaries, and reversible implementation. When today's artifacts conflict,
+name the conflict, prefer the path that preserves the long-term design, and
+update the relevant docs or status labels instead of rigidly conforming to a
+stale snapshot.
+
 ## Canonical Reading Order
 
 Start with these files before broad design or implementation changes:
@@ -193,6 +202,10 @@ then the broader relevant suite.
 
 - Preserve Python parity where Nomi intentionally follows Python; make
   deliberate semantic departures explicit in tests and docs.
+- Treat the current prototype as a laboratory snapshot, not a finished
+  contract. Do not overfit new work to stale mechanics when the active design
+  direction points elsewhere; record the mismatch and keep the implementation
+  reversible.
 - Keep parser, lowering, and interpreter changes aligned. A syntax change often
   needs grammar coverage, AST lowering, runtime behavior, and regression tests.
 - Treat binding, constraints, and resumable control as high-risk areas. Read the
@@ -276,5 +289,5 @@ It also incorporates practical long-running Codex workflow patterns discussed
 in the r/codex thread at
 https://www.reddit.com/r/codex/comments/1t0v2da/how_are_people_getting_codex_to_work_for_longer/:
 keep an agent entrypoint, write plans for large work, checkpoint progress, use
-repo docs as source of truth, and break work into executable chunks instead of
-depending on chat memory alone.
+repo docs as durable context/evidence, and break work into executable chunks
+instead of depending on chat memory alone.
