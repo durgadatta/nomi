@@ -358,10 +358,11 @@ Goal: make JS behavior follow the same Core IR contract a future JVM/C/Wasm
 backend would implement.
 
 1. Keep the static "every registered CoreNode has JS dispatch" test.
-2. Add negative tests for unsupported/misplaced nodes:
-   `Spread` outside `Sequence`, `PatternTest` outside `Match`/`Handle`,
-   module-level `Return`, module-level `Break`, module-level `Yield`, and
-   unexecutable `Diagnostic`.
+2. 🟡 **PARTIAL**: Negative tests now cover `Spread` outside `Sequence`,
+   `PatternTest` outside `Match`/`Handle`, and unexecutable `Diagnostic`.
+   Python `core-runtime` rejects `Diagnostic` during strict verification; the
+   JS runtime rejects the same node during evaluation. Remaining:
+   module-level `Return`, `Break`, and `Yield` signal diagnostics.
 3. Add a Core IR JSON schema snapshot for a compact fixture. The schema should
    document `schema`, `version`, `root`, `type`, tuple-as-array encoding, and
    literal-value limits.

@@ -25,6 +25,7 @@ from prototype.syntax.core import (
     PatternTest,
     Return,
     Sequence,
+    Spread,
 )
 
 
@@ -134,11 +135,34 @@ def test_core_runtime_rejects_missing_host_function():
         backend.evaluate(core)
 
 
-def test_core_runtime_rejects_diagnostic_core():
+@pytest.mark.parametrize(
+    ("core", "message"),
+    (
+        (
+            Module(body=(Diagnostic(message="bad"),)),
+            "Diagnostic node: 'bad'",
+        ),
+        (
+            Module(body=(Spread(value=Literal(value=1)),)),
+            "Spread can only be evaluated inside Sequence",
+        ),
+        (
+            Module(
+                body=(
+                    PatternTest(
+                        pattern=Literal(value=1),
+                        body=Module(body=(Literal(value="one"),)),
+                    ),
+                )
+            ),
+            "PatternTest can only be evaluated inside Match or Handle",
+        ),
+    ),
+)
+def test_core_runtime_rejects_misplaced_or_diagnostic_core(core, message):
     backend = CoreRuntimeEvaluator()
-    core = Module(body=(Diagnostic(message="bad"),))
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match=message):
         backend.evaluate(core)
 
 

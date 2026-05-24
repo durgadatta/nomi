@@ -21,6 +21,7 @@ from prototype.syntax.core import (
     Call,
     CORE_NODE_TYPES,
     ConstructData,
+    Diagnostic,
     GetField,
     GetItem,
     Handle,
@@ -131,6 +132,17 @@ def _run_python_core_runtime(core: Module) -> tuple[dict[str, object], str]:
 
 def _run_js_core_runtime(core: Module) -> dict[str, object]:
     return _run_js_payload(json.dumps(core_to_json_payload(core)))
+
+
+def _run_js_core_runtime_error(core: Module) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [NODE, str(JS_RUNTIME_PATH)],
+        input=json.dumps(core_to_json_payload(core)),
+        text=True,
+        capture_output=True,
+        check=False,
+        cwd=ROOT,
+    )
 
 
 def _run_js_payload(payload: str) -> dict[str, object]:
@@ -322,6 +334,38 @@ def test_js_core_runtime_matches_python_for_yield_to_block():
     )
 
     _assert_js_matches_python(core)
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
+@pytest.mark.parametrize(
+    ("core", "message"),
+    (
+        (
+            Module(body=(Diagnostic(message="bad"),)),
+            "Unexecutable Core diagnostic: bad",
+        ),
+        (
+            Module(body=(Spread(value=Literal(value=1)),)),
+            "Spread can only be evaluated inside Sequence",
+        ),
+        (
+            Module(
+                body=(
+                    PatternTest(
+                        pattern=Literal(value=1),
+                        body=Module(body=(Literal(value="one"),)),
+                    ),
+                )
+            ),
+            "PatternTest can only be evaluated inside Match or Handle",
+        ),
+    ),
+)
+def test_js_core_runtime_rejects_misplaced_or_diagnostic_core(core, message):
+    completed = _run_js_core_runtime_error(core)
+
+    assert completed.returncode != 0
+    assert message in completed.stderr
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")

@@ -531,7 +531,7 @@ class CoreRuntimeEvaluator:
         return NIL
 
     def _eval_PatternTest(self, node: PatternTest) -> Value | ControlFlow:
-        raise RuntimeError("PatternTest can only be evaluated inside Match")
+        raise RuntimeError("PatternTest can only be evaluated inside Match or Handle")
 
     def _eval_pattern_test(
         self, node: PatternTest, subject: Value
