@@ -51,7 +51,7 @@ def build_metadata(manifest: dict) -> dict:
         "schema": "nomi.web-manifest-metadata",
         "version": 1,
         "generated_by": "scripts/make_web.py",
-        "runtime_profile": "browser-pyodide-legacy",
+        "runtime_profile": "browser-wasm-js",
         "file_count": len(manifest["files"]),
         "sample_count": len(manifest["samples"]),
         "manifest_digest": hashlib.sha256(

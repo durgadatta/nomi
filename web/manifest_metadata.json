@@ -2,7 +2,7 @@
   "file_count": 116,
   "generated_by": "scripts/make_web.py",
   "manifest_digest": "e62a2e34f54e9ade4f53373fa84905aa76730aa39cf164442c64a3cc8586dc3b",
-  "runtime_profile": "browser-pyodide-legacy",
+  "runtime_profile": "browser-wasm-js",
   "sample_count": 9,
   "schema": "nomi.web-manifest-metadata",
   "version": 1

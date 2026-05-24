@@ -22,6 +22,9 @@ def test_web_manifest_metadata_matches_manifest():
     assert metadata["manifest_digest"] == hashlib.sha256(
         manifest_text.encode("utf-8")
     ).hexdigest()
+    assert metadata["runtime_profile"] == "browser-wasm-js", (
+        f"runtime_profile must be browser-wasm-js, got {metadata.get('runtime_profile')!r}"
+    )
 
 
 def test_web_manifest_and_metadata_are_fresh():

@@ -1,6 +1,8 @@
 """
-Nomi browser runtime — loads the prototype source tree into Pyodide
-and provides run_nomi(code) and reset_session() entry points.
+Nomi Pyodide runtime — opt-in backend triggered by ?backend=pyodide.
+
+Loaded only by web/worker_pyodide.js. The default web flow uses the
+WASM + JS Core Runtime (prototype/runtime/js/worker.js) with no Pyodide.
 """
 
 import asyncio

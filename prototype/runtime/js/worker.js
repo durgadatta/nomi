@@ -1,5 +1,4 @@
-// Nomi JS runtime worker — WASM parser + JS Core Runtime host (no Python/Pyodide)
-
+// Nomi JS runtime worker — WASM parser + JS Core Runtime host.
 let runtime = null;
 
 function postLog(message) {

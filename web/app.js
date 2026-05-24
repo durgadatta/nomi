@@ -13,7 +13,7 @@ let _executionCounter = 0;
 let _activeCellIndex = 0;
 let _notebookMode = false;
 let _bootStart = performance.now();
-let _evalBackend = "wasm-js";
+let _evalBackend = new URLSearchParams(location.search).get("backend") || "wasm-js";
 const RUNTIME_INIT_TIMEOUT_MS = 5000;
 const RUNTIME_RUN_TIMEOUT_MS = 10000;
 
@@ -93,7 +93,11 @@ async function startRuntimeWorker(options) {
   }
   _runtimeGeneration++;
 
-  _runtimeWorker = new Worker("../prototype/runtime/js/worker.js?v=4");
+  const workerPath = _evalBackend === "pyodide"
+    ? "./worker_pyodide.js?v=4"
+    : "../prototype/runtime/js/worker.js?v=4";
+
+  _runtimeWorker = new Worker(workerPath);
   _runtimeWorker.onmessage = handleRuntimeMessage;
   _runtimeWorker.onerror = (event) => {
     const error = new Error(event.message || "Runtime worker failed");

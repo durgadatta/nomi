@@ -15,6 +15,7 @@ function formatTiming(timing, elapsed) {
 }
 
 function runtimeLabel(result) {
+  if (result.backend === "python-ast") return "Pyodide Runtime";
   return "WASM + JS Runtime";
 }
 
