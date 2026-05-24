@@ -10,6 +10,7 @@ interface.
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import shutil
 import subprocess
@@ -51,7 +52,7 @@ class ParserCacheKey:
 class RawTreeCacheKey:
     """Identity for a raw parse tree cache entry."""
 
-    source_hash: int
+    source_digest: str
     source_identity: str | None
     parser_key: ParserCacheKey
 
@@ -310,7 +311,7 @@ class LarkParserFrontend:
             str(Path(filename).resolve()) if filename is not None else None
         )
         key = RawTreeCacheKey(
-            source_hash=hash(code),
+            source_digest=_source_digest(code),
             source_identity=source_identity,
             parser_key=parser_key,
         )
@@ -635,6 +636,10 @@ def render_parser_frontend_table(
 
 def _mark(value: bool) -> str:
     return "yes" if value else "no"
+
+
+def _source_digest(source: str) -> str:
+    return hashlib.blake2b(source.encode("utf-8"), digest_size=16).hexdigest()
 
 
 def _selectable_for_session(capabilities: ParserFrontendCapabilities) -> bool:

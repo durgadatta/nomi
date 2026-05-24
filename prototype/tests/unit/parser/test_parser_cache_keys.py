@@ -30,3 +30,22 @@ def test_raw_tree_cache_uses_source_identity(tmp_path):
     assert str(first.resolve()) in identities
     assert str(second.resolve()) in identities
     assert all(isinstance(key, RawTreeCacheKey) for key in new_keys)
+    assert {key.source_digest for key in new_keys} == {
+        "1de70bc15d424d4453e6c531451e490b"
+    }
+
+
+def test_raw_tree_cache_digest_distinguishes_source_text(tmp_path):
+    first = tmp_path / "first.nomi"
+    second = tmp_path / "second.nomi"
+    first.write_text("x = 1\n", encoding="utf-8")
+    second.write_text("x = 2\n", encoding="utf-8")
+    before = set(usage._RAW_TREE_CACHE)
+
+    usage.parse_raw_tree(filename=first, preserve_positions=False)
+    usage.parse_raw_tree(filename=second, preserve_positions=False)
+
+    new_keys = set(usage._RAW_TREE_CACHE) - before
+    digests = {key.source_digest for key in new_keys}
+    assert len(digests) == 2
+    assert all(len(digest) == 32 for digest in digests)
