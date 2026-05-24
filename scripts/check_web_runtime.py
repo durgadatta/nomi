@@ -49,6 +49,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_wasm_js_core_parity_contract.py",
                 "prototype/tests/contracts/test_wasm_js_pipeline_contract.py",
                 "prototype/tests/contracts/test_host_capabilities_contract.py",
+                "prototype/tests/contracts/test_web_manifest_metadata_contract.py",
                 "prototype/tests/unit/runtime/test_js_core_runtime_backend.py",
             ],
         ),

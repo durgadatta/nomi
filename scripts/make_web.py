@@ -6,6 +6,7 @@ under prototype/.
 
 import argparse
 import difflib
+import hashlib
 import json
 from pathlib import Path
 
@@ -14,6 +15,7 @@ PROTOTYPE_DIR = ROOT / "prototype"
 SAMPLES_DIR = ROOT / "samples"
 WEB_DIR = ROOT / "web"
 MANIFEST_PATH = WEB_DIR / "manifest.json"
+METADATA_PATH = WEB_DIR / "manifest_metadata.json"
 RUNTIME_SUFFIXES = {".py", ".lark"}
 SAMPLE_SUFFIXES = {".nomi", ".nomi.nb"}
 IGNORED_PARTS = {"__pycache__", "tests", "archive"}
@@ -43,6 +45,21 @@ def build_manifest() -> dict:
     return {"files": files, "samples": samples}
 
 
+def build_metadata(manifest: dict) -> dict:
+    rendered_manifest = json.dumps(manifest, indent=2) + "\n"
+    return {
+        "schema": "nomi.web-manifest-metadata",
+        "version": 1,
+        "generated_by": "scripts/make_web.py",
+        "runtime_profile": "browser-pyodide-legacy",
+        "file_count": len(manifest["files"]),
+        "sample_count": len(manifest["samples"]),
+        "manifest_digest": hashlib.sha256(
+            rendered_manifest.encode("utf-8")
+        ).hexdigest(),
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -56,10 +73,16 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     manifest = build_manifest()
+    metadata = build_metadata(manifest)
     rendered = json.dumps(manifest, indent=2) + "\n"
+    rendered_metadata = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
 
     if args.check:
         current = MANIFEST_PATH.read_text() if MANIFEST_PATH.exists() else ""
+        current_metadata = (
+            METADATA_PATH.read_text() if METADATA_PATH.exists() else ""
+        )
+        failed = False
         if current != rendered:
             diff = difflib.unified_diff(
                 current.splitlines(),
@@ -69,6 +92,18 @@ def main() -> int:
                 lineterm="",
             )
             print("\n".join(diff))
+            failed = True
+        if current_metadata != rendered_metadata:
+            diff = difflib.unified_diff(
+                current_metadata.splitlines(),
+                rendered_metadata.splitlines(),
+                fromfile=str(METADATA_PATH),
+                tofile=f"{METADATA_PATH} (generated)",
+                lineterm="",
+            )
+            print("\n".join(diff))
+            failed = True
+        if failed:
             return 1
         print(
             f"{MANIFEST_PATH} is up to date "
@@ -77,9 +112,11 @@ def main() -> int:
         return 0
 
     MANIFEST_PATH.write_text(rendered)
+    METADATA_PATH.write_text(rendered_metadata)
     print(
         f"Wrote {len(manifest['files'])} runtime files and "
-        f"{len(manifest['samples'])} samples to {MANIFEST_PATH}"
+        f"{len(manifest['samples'])} samples to {MANIFEST_PATH} "
+        f"and {METADATA_PATH}"
     )
     return 0
 
