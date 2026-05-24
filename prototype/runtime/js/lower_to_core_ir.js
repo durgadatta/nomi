@@ -12,6 +12,8 @@
 
 const CORE_IR_JSON_SCHEMA = "nomi.core-ir";
 const CORE_IR_JSON_VERSION = 1;
+const RUST_AST_JSON_SCHEMA = "nomi.rust-ast";
+const RUST_AST_JSON_VERSION = 1;
 
 // ─── Core IR factory functions ───────────────────────────────────────────────
 
@@ -1706,6 +1708,24 @@ function wrapHolesAsFunction(node, params) {
 function lowerRustAstToCoreIr(rustAst) {
   diagnostics = [];
 
+  if (rustAst.schema !== RUST_AST_JSON_SCHEMA || rustAst.version !== RUST_AST_JSON_VERSION) {
+    const diag = diagnostic(
+      `unsupported Rust AST payload contract: ${rustAst.schema || "(missing)"} v${rustAst.version || "(missing)"}`,
+      {
+        capability: "rust-ast-json.contract",
+        node_type: rustAst.type || null,
+      }
+    );
+    diagnostics = collectDiagnostics(diag);
+    return {
+      schema: CORE_IR_JSON_SCHEMA,
+      version: CORE_IR_JSON_VERSION,
+      root: moduleNode([diag]),
+      diagnostics,
+      diagnosticCount: diagnostics.length
+    };
+  }
+
   const body = (rustAst.body || []).map(lowerStmt);
 
   // Merge consecutive same-name function bindings into match-based functions.
@@ -1828,10 +1848,18 @@ function collectDiagnostics(node) {
 // ─── Exports ─────────────────────────────────────────────────────────────────
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { lowerRustAstToCoreIr };
+  module.exports = {
+    lowerRustAstToCoreIr,
+    RUST_AST_JSON_SCHEMA,
+    RUST_AST_JSON_VERSION,
+  };
 }
 if (typeof self !== "undefined") {
-  self.NomiCoreLowerer = { lowerRustAstToCoreIr };
+  self.NomiCoreLowerer = {
+    lowerRustAstToCoreIr,
+    RUST_AST_JSON_SCHEMA,
+    RUST_AST_JSON_VERSION,
+  };
 }
 
 })();

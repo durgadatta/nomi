@@ -127,6 +127,30 @@ def test_wasm_js_lowering_diagnostic_is_structured_for_unsupported_construct():
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_wasm_js_lowerer_rejects_unknown_rust_ast_payload_contract():
+    completed = subprocess.run(
+        [
+            NODE,
+            "-e",
+            (
+                f"const lowerer = require({str(CORE_FROM_SOURCE.parent / 'lower_to_core_ir.js')!r});"
+                "const payload = lowerer.lowerRustAstToCoreIr({schema: 'nomi.other-ast', version: 1, type: 'Module', body: []});"
+                "process.stdout.write(JSON.stringify(payload));"
+            ),
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["diagnosticCount"] == 1
+    assert payload["diagnostics"][0]["capability"] == "rust-ast-json.contract"
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
 @pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")
 @pytest.mark.parametrize("name", tuple(EXPECTED_CORE_GAPS), ids=tuple(EXPECTED_CORE_GAPS))
 def test_wasm_js_source_to_core_differences_are_named_capability_gaps(name):
