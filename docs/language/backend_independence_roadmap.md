@@ -187,10 +187,13 @@ Backends should graduate through the same fixture ladder:
   tests cover the fixture ladder.
 - Keep serialized Core IR inspection aligned with the executable session
   lowering path.
-- Grow the first JavaScript Core Runtime (`prototype/runtime/js/core_runtime.js`) from
-  current CoreNode parity toward default web playground use.
+- Grow the current default browser path from playground-fast to
+  promotion-ready: Rust/WASM parser, JS lowerer, and JS Core Runtime must share
+  cross-pipeline parity gates with the Lark/Python path.
 - Expand the `prototype/tests/backend_fixtures/` corpus so parity tests are not
   tied to Python AST regression fixtures or only `samples/demo.nomi`.
-- Keep Pyodide web execution working while introducing a JS Core Runtime path.
+- Keep the legacy Pyodide bridge working as a compatibility fallback until the
+  JS/WASM path has structured diagnostics, host capabilities, and fixture
+  parity.
 - Preserve Python AST backend as the compatibility oracle until each feature has
   a Core IR fixture and direct runtime coverage.

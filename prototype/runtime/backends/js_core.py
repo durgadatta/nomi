@@ -44,7 +44,7 @@ JS_CORE_BACKEND_SPEC = EvalBackendSpec(
     ),
     notes=(
         "first non-Python runtime backend",
-        "uses Pyodide/Python only for parsing/lowering when selected via session",
+        "Node wrapper consumes session-lowered Core IR; browser default uses Rust/WASM parsing plus JS lowering",
         "dispatches every currently registered CoreNode in JavaScript",
     ),
 )

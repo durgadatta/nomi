@@ -268,9 +268,12 @@ under `.codex/agents/`, with Claude shims under `.claude/agents/`.
 ## Web Playground
 
 The web playground under `web/` provides a browser-based Nomi editor backed by
-Monaco and Pyodide. It is a static site: the Python-hosted prototype is loaded
-into the browser from files listed in `web/manifest.json`, and sample programs
-are loaded from `samples/*.nomi`.
+Monaco. Its current default execution path uses the Rust/WASM parser,
+`prototype/runtime/js/lower_to_core_ir.js`, and
+`prototype/runtime/js/core_runtime.js`; the older Pyodide bridge remains in the
+tree for compatibility work. It is a static site: sample programs are loaded
+from `samples/*.nomi`, and the legacy Python-hosted bridge loads prototype
+files listed in `web/manifest.json`.
 
 The playground has two execution modes. `Run File` and `Ctrl+Enter` evaluate
 the current editor contents from a clean interpreter session. `# %%` comments
@@ -285,12 +288,13 @@ Use the launcher for local testing:
 python3 scripts/launch_web.py
 ```
 
-The launcher regenerates the manifest, picks the requested port or the next
-available one, starts `python3 -m http.server`, and opens the playground. Common
-options:
+The launcher builds the WASM parser unless `--no-wasm` is passed, regenerates
+the manifest, picks the requested port or the next available one, starts
+`python3 -m http.server`, and opens the playground. Common options:
 
 ```bash
 python3 scripts/launch_web.py --no-browser
+python3 scripts/launch_web.py --no-wasm
 python3 scripts/launch_web.py --port 8090
 python3 scripts/launch_web.py --strict-port
 ```
@@ -314,7 +318,9 @@ Nomi source is parsed by a Rust WASM parser (`nomi_parser.wasm`), lowered to
 Core IR by `prototype/runtime/js/lower_to_core_ir.js`, and executed by `prototype/runtime/js/core_runtime.js`.
 This path is the default in the browser playground. See
 [`wasm_js_runtime_review.md`](wasm_js_runtime_review.md) for the current
-architecture review and promotion risks.
+architecture review and promotion risks, and
+[`global_consistency_audit.md`](global_consistency_audit.md) for repo-wide
+follow-up notes.
 
 ```text
 .nomi source

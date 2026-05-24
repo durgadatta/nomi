@@ -70,13 +70,12 @@ replacement for the Lark grammar and lowering pipeline.
 
 `rust_fast_ast/` is the first direct-AST Rust spike. It emits a Nomi-owned JSON
 payload and the Python frontend adapts that payload into `ast.Module`. Its
-first slice covers simple assignments, expression calls, binary expressions,
-function equations, and arrow-function assignments. Unit tests compare its
-`ast.dump(..., include_attributes=False, indent=2)` output against Lark exactly
-for that slice. It is intentionally not enrolled as a full Python-AST frontend
-until it can parse the current grammar and pass the shared all-fixture AST
-equivalence tests. See `rust_fast_ast/README.md` for the detailed completion
-handoff.
+current slice has exact Python AST parity for the shared parser snippet matrix
+and selected demo/block/constraint fixtures, and it participates in the
+Python-AST-capable frontend set. It remains intentionally not selectable for
+normal execution until parser unit tests, functional behavior, regression
+samples, CLI execution, and downstream runtime behavior match the Lark path.
+See `rust_fast_ast/README.md` for the detailed completion handoff.
 
 ## Handoff Notes
 
@@ -90,8 +89,8 @@ For the next pass, keep the replacement gate strict:
 - Add every newly supported Rust syntax slice to
   `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py` and compare the
   exact text dump against `lark-lalr`.
-- Do not move `rust-fast-ast` into `get_python_ast_frontends()` by setting
-  `lower_to_python_ast=True` until it can pass the shared sample/snippet matrix.
+- Do not set `selectable_for_execution=True` for `rust-fast-ast` until the
+  runtime/regression/CLI promotion gate is genuinely met.
 - Do not commit generated Cargo output. `target/` is intentionally ignored; the
   tracked Rust spike state should stay at `Cargo.toml`, `Cargo.lock`, and
   source files.

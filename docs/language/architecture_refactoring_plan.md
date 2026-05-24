@@ -321,9 +321,10 @@ Notes from implementation:
   until the frontend is ready to consume structured results.
 - Web reset now means "fresh interpreter and cleared AST cache in the same
   worker." Hard cancellation should remain a separate worker-level operation.
-- Web Restart Worker now terminates and recreates the worker/Pyodide runtime.
-  That is heavier than reset, but it is the right recovery path for stuck or
-  poisoned worker state.
+- Web Restart Worker now terminates and recreates the browser runtime worker.
+  In the current default path that reloads the Rust/WASM parser and JS Core
+  Runtime; in the legacy bridge it reloads Pyodide. That is heavier than reset,
+  but it is the right recovery path for stuck or poisoned worker state.
 
 Next safe extension:
 

@@ -7,7 +7,8 @@ Nomi is an experimental programming language built on a **small, coherent core**
 Rather than piling on features, Nomi focuses on a unified core where expressiveness emerges naturally. This minimalism encourages intuitive composition and sharp mental models, aligning programming with how humans reason about processes and abstractions.
 
 > **Try it live:** [durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/) —
-> a browser playground with Monaco editor, Pyodide runtime, and interactive samples.
+> a browser playground with Monaco editor, a Rust/WASM parser, a JavaScript
+> Core Runtime, and interactive samples.
 
 ---
 
@@ -110,9 +111,10 @@ roadmap and packaging notes.
 A live instance runs at **[durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/)**.
 
 To run locally, the playground lives at [web](web/). It uses Monaco for editing
-and Pyodide to run the Python-hosted prototype in the browser. The sample list
-is generated from `samples/*.nomi` and `samples/*.nomi.nb`, so sample files
-stay in sync with the web editor.
+and defaults to a lightweight Rust/WASM parser plus JavaScript Core Runtime.
+The older Pyodide bridge remains in the tree for compatibility work. The sample
+list is generated from `samples/*.nomi` and `samples/*.nomi.nb`, so sample
+files stay in sync with the web editor.
 
 The editor also supports lightweight notebook-style cells. Mark cells with
 `# %%`, use `Shift+Enter` to run the current cell in a persistent browser
@@ -123,9 +125,10 @@ and use `Run File` or `Ctrl+Enter` for a normal full-file run.
 python3 scripts/launch_web.py
 ```
 
-The launcher regenerates `web/manifest.json`, chooses a local port, starts a
-static server, and opens `http://127.0.0.1:8080/web/` by default. Use
-`--no-browser` for headless use or `--port 8090` if the default port is busy.
+The launcher builds the WASM parser, regenerates `web/manifest.json`, chooses a
+local port, starts a static server, and opens `http://127.0.0.1:8080/web/` by
+default. Use `--no-browser` for headless use, `--no-wasm` when the generated
+WASM artifacts are already fresh, or `--port 8090` if the default port is busy.
 
 After adding or removing runtime files or sample `.nomi` files, regenerate the
 manifest directly with:
