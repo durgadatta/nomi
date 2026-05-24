@@ -400,7 +400,8 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Add JS parity coverage for mappings, spreads, data fields, match/rest
   patterns, error handling, and simple yield-to-block.
 - [x] Run `samples/demo.nomi` through session-lowered Core JSON in Node.
-- [x] Add browser worker opt-in: `web/?backend=js-core-runtime`.
+- [x] Add browser worker path; the current default is Rust/WASM parser -> JS
+  lowerer -> JS Core Runtime.
 - [x] Register `js-core-runtime` as a first-class eval backend wrapper.
 - [x] Move the first fixture ladder into `prototype/tests/backend_fixtures/`
   and compare it across `python-ast`, `core-runtime`, and `js-core-runtime`.

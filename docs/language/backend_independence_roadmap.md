@@ -61,8 +61,8 @@ Concrete path:
    variants as the Python reference.
    The first non-Python evaluator is `prototype/runtime/js/core_runtime.js`; it consumes the
    serialized Core IR payload directly, dispatches every currently registered
-   CoreNode, and runs `samples/demo.nomi` after Python/Pyodide parsing and
-   lowering.
+   CoreNode, and runs `samples/demo.nomi` after Python-session lowering or
+   browser-side Rust/WASM parsing plus JS lowering.
 3. Add browser `HostCapabilities`: stdout buffer, stdin prompt later, clock,
    cancellation, and safe module loading from the web manifest.
 4. Add cross-backend tests that run small Core IR fixtures in Python
@@ -70,16 +70,18 @@ Concrete path:
    The first fixture ladder lives under `prototype/tests/backend_fixtures/`
    and is exercised against `python-ast`, `core-runtime`, and
    `js-core-runtime`.
-5. Move `web/nomi_web.py` from "run Python through Pyodide" to "parse/lower
-   through a bundled artifact, then execute Core IR in JS" in stages.
-   A query-param opt-in now exists for the worker path:
-   `web/?backend=js-core-runtime`.
+5. Move the browser from "run Python through Pyodide" to "parse/lower through
+   a bundled artifact, then execute Core IR in JS" in stages. The current
+   playground default is Rust/WASM parser -> JS lowerer -> JS Core Runtime;
+   `web/nomi_web.py` remains as a legacy bridge.
 
 Near-term compromise:
 
-- Keep Pyodide for parsing/lowering until the Rust or JS parser can emit Core IR.
+- Keep the legacy Pyodide bridge until the Rust/WASM parser and JS lowerer have
+  cross-pipeline parity against Lark/Python.
 - Execute Core IR in JS for accepted fixtures first.
-- Eventually ship parser + Core Runtime without Pyodide.
+- Ship parser + Core Runtime without Pyodide only after the browser pipeline
+  has structured diagnostics and source-to-Core parity gates.
 
 ## Target 2: JVM Runtime
 

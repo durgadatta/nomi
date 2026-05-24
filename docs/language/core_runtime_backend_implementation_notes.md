@@ -51,9 +51,12 @@ Core IR Module
   is tested against the Python `core-runtime` for fixtures covering bindings,
   functions, calls, operations, sequences, mappings, data fields, match/rest
   patterns, error handling, for-each, yield-to-block, and stdout.
-- The browser worker has an opt-in JS execution path:
-  `web/?backend=js-core-runtime`. Pyodide still supplies parsing/lowering; JS
-  executes the serialized Core IR.
+- The browser worker now has a no-Pyodide default path: Rust/WASM parser,
+  `prototype/runtime/js/lower_to_core_ir.js`, then
+  `prototype/runtime/js/core_runtime.js`. This is fast enough for the web
+  playground, but it is a separate source-to-Core pipeline from the Python
+  session path and needs cross-pipeline parity tests before default-promotion
+  claims move beyond the playground.
 - `js-core-runtime` is also registered in the Python eval backend registry via
   `prototype/runtime/backends/js_core.py`, which shells to Node using the same
   serialized Core IR JSON boundary.
@@ -314,8 +317,9 @@ when these gates are true:
    reject with a named diagnostic that matches Python `core-runtime`.
 4. Host calls used by the demo and fixture ladder are declared as capabilities,
    not ambient JS globals.
-5. Browser execution through `web/?backend=js-core-runtime` uses the same Core
-   JSON payload and produces the same `ExecutionResult` shape as Node tests.
+5. Browser execution through the WASM parser + JS lowerer path produces the
+   same Core JSON semantics and result shape as Node tests for the supported
+   subset.
 6. The backend fixture ladder contains at least one fixture for each roadmap
    rung already represented in Core IR: operations, calls/recursion,
    collections/data, loops, patterns, errors, host calls, block/yield calls,
@@ -384,17 +388,16 @@ Goal: make host behavior portable and inspectable.
 
 Goal: make the browser path prove the same runtime as Node tests.
 
-1. Keep `web/?backend=js-core-runtime` opt-in until this checklist is green.
-2. Add a browser/worker contract test for JS backend mode, not just
-   `core_json_for_nomi()`.
-3. Verify `web/manifest.json` includes every Python module needed for
-   parsing/lowering; run `python3 scripts/make_web.py --check` in every web
-   backend commit.
-4. Keep Pyodide as parser/lowerer for now. Do not claim browser independence
-   until parser/lowering also leave Pyodide.
-5. Add a manual smoke note for local launch:
-   `python3 scripts/launch_web.py --no-browser`, then open
-   `/web/?backend=js-core-runtime` and run `samples/demo.nomi`.
+1. Add a browser/worker contract test for the current WASM parser + JS lowerer
+   + JS runtime path, not just `core_json_for_nomi()`.
+2. Verify `web/manifest.json` remains fresh for the legacy Pyodide bridge while
+   the JS/WASM path remains the default; run
+   `python3 scripts/make_web.py --check` in every web backend commit.
+3. Do not claim language-wide browser independence until the Rust/WASM parser
+   and JS lowerer have cross-pipeline parity against the Lark/Python path.
+4. Add a manual smoke note for local launch:
+   `python3 scripts/launch_web.py --no-browser`, then open `/web/` and run
+   `samples/demo.nomi`.
 
 ### Workstream E: Promotion Gates
 

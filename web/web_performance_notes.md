@@ -1,5 +1,10 @@
 # Nomi Web Playground — Performance Notes
 
+> Historical note: early sections describe the previous Pyodide worker path.
+> The current browser default is the Rust/WASM parser plus JavaScript Core
+> Runtime path. See `docs/orientation/wasm_js_runtime_review.md` for the latest
+> architecture review and promotion risks.
+
 ## Current execution pipeline (per cell)
 
 ```

@@ -43,6 +43,7 @@ from prototype.syntax.core_json import core_to_json_payload
 
 ROOT = Path(__file__).resolve().parents[4]
 NODE = shutil.which("node")
+JS_RUNTIME_PATH = ROOT / "prototype" / "runtime" / "js" / "core_runtime.js"
 
 
 def _fixture_core() -> Module:
@@ -134,7 +135,7 @@ def _run_js_core_runtime(core: Module) -> dict[str, object]:
 
 def _run_js_payload(payload: str) -> dict[str, object]:
     completed = subprocess.run(
-        [NODE, str(ROOT / "web/core_runtime.js")],
+        [NODE, str(JS_RUNTIME_PATH)],
         input=payload,
         text=True,
         capture_output=True,
@@ -154,7 +155,7 @@ def _assert_js_matches_python(core: Module) -> dict[str, object]:
 
 
 def test_js_core_runtime_dispatches_every_registered_core_node():
-    source = (ROOT / "web/core_runtime.js").read_text(encoding="utf-8")
+    source = JS_RUNTIME_PATH.read_text(encoding="utf-8")
 
     missing = [
         node_type.__name__

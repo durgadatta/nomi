@@ -1,6 +1,6 @@
 ---
 name: nomi-web
-description: Work with the Nomi web playground — Pyodide bridge, Monaco editor, manifest, deployment.
+description: Work with the Nomi web playground — Rust/WASM parser worker, JS runtime, legacy Pyodide bridge, Monaco editor, manifest, deployment.
 compatibility: deepseek
 ---
 
@@ -9,9 +9,12 @@ For the interactive experience design rationale, see
 `docs/research/ai_readable_semantics_deep_dive.md`.
 
 ## Files
-- `web/index.html` — Monaco Editor with Nomi language definition, Pyodide init, run button
-- `web/nomi_web.py` — Pyodide bridge: loads prototype from manifest, provides run_nomi()
-- `web/core_runtime.js` — JavaScript Core Runtime over serialized Core IR JSON
+- `web/index.html` — Monaco Editor shell and notebook controls
+- `web/app.js` — starts the browser worker and wires runtime request/response
+- `prototype/runtime/js/worker.js` — Rust/WASM parser + JS Core Runtime worker
+- `prototype/runtime/js/lower_to_core_ir.js` — Rust AST JSON to Core IR JSON lowerer
+- `prototype/runtime/js/core_runtime.js` — JavaScript Core Runtime over serialized Core IR JSON
+- `web/nomi_web.py` — legacy Pyodide bridge: loads prototype from manifest, provides run_nomi()
 - `web/manifest.json` — Auto-generated file list (run `scripts/make_web.py`)
 - `scripts/make_web.py` — Walks prototype/, writes manifest.json
 - `scripts/launch_web.py` — Build manifest + start server + open browser
@@ -21,8 +24,7 @@ For the interactive experience design rationale, see
 python3 scripts/launch_web.py
 # or
 python3 -m http.server 8080 → http://localhost:8080/web/
-# opt into JS Core Runtime execution after Pyodide parsing/lowering:
-# http://localhost:8080/web/?backend=js-core-runtime
+# JS/WASM execution is the current browser default.
 ```
 
 ## Deployment
