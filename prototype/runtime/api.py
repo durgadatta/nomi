@@ -270,6 +270,20 @@ def inspect(
             timings=timings,
         )
 
+    if stage in {"host_capabilities", "host-capabilities"}:
+        from prototype.runtime.host_capabilities import render_host_capability_table
+
+        output = render_host_capability_table()
+        timings = {"total": perf_counter() - started}
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings=timings,
+        )
+
     if stage in {"expansions", "desugar_expansions"}:
         from prototype.parser.nomi.desugar.pipeline import render_desugar_expansion
 

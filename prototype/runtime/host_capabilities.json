@@ -1,0 +1,148 @@
+{
+  "schema": "nomi.host-capabilities",
+  "version": 1,
+  "capabilities": [
+    {
+      "name": "Exception",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": false,
+      "available_in_browser": true,
+      "notes": "Constructs an expected runtime error value."
+    },
+    {
+      "name": "abs",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": false,
+      "available_in_browser": true
+    },
+    {
+      "name": "bool",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": false,
+      "available_in_browser": true
+    },
+    {
+      "name": "filter",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "2",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "float",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "int",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "len",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "list",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "0..1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "map",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "2",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "print",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "variadic",
+      "expects_values": true,
+      "pure": false,
+      "may_print": true,
+      "may_throw": false,
+      "available_in_browser": true
+    },
+    {
+      "name": "range",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1..3",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    },
+    {
+      "name": "slice",
+      "runtimes": ["js-core-runtime"],
+      "arity": "2..4",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true,
+      "notes": "Temporary JS lowerer helper for slice expressions."
+    },
+    {
+      "name": "str",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": false,
+      "available_in_browser": true
+    },
+    {
+      "name": "sum",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "1",
+      "expects_values": true,
+      "pure": true,
+      "may_print": false,
+      "may_throw": true,
+      "available_in_browser": true
+    }
+  ]
+}

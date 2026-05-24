@@ -80,9 +80,11 @@ eval logic. Benefits:
 
 ## Phase B2: Capability And Host Manifests
 
-**Design next.** The Rust/WASM parser, JavaScript Core Runtime, Python runtime,
+**Started.** The Rust/WASM parser, JavaScript Core Runtime, Python runtime,
 Node wrapper, browser worker, and future Wasm/WASI hosts need a shared way to
-say what they support.
+say what they support. The first checked manifest is
+`prototype/runtime/host_capabilities.json`, covered by
+`prototype/tests/contracts/test_host_capabilities_contract.py`.
 
 Goal: define data tables for:
 

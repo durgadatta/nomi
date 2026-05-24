@@ -36,6 +36,8 @@ Opt-in gates (env vars):
 - `NOMI_USE_CORE_IR=1` — route execution through Core IR + backend
 
 Inspect with: `python3 -m tools.syntax.inspect --stage eval-backends`
+Inspect host capabilities with:
+`python3 -m tools.syntax.inspect --stage host-capabilities`
 Inspect backend-neutral Core IR JSON with:
 `python3 -m tools.syntax.inspect FILE --stage core-json`
 

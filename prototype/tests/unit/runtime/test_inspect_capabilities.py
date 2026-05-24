@@ -28,3 +28,12 @@ def test_inspect_returns_core_json_payload():
     assert result.stage == "core_json"
     assert '"schema": "nomi.core-ir"' in result.output
     assert '"type": "Module"' in result.output
+
+
+def test_inspect_returns_host_capability_table():
+    result = inspect(stage="host_capabilities")
+
+    assert isinstance(result, InspectionResult)
+    assert result.stage == "host_capabilities"
+    assert "| capability | runtimes | arity | pure | prints |" in result.output
+    assert "| print | core-runtime, js-core-runtime | variadic | no | yes |" in result.output

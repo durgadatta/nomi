@@ -111,13 +111,15 @@ Improvement:
 
 ### 6. Host Capabilities Are Ambient
 
-Direct runtimes expose useful builtins, but the host boundary is still an
-implementation table rather than a declared capability model. This matters more
-now that browser, Node, Python, and future Wasm/WASI hosts can differ.
+Direct runtimes expose useful builtins. The first host capability manifest now
+lives at `prototype/runtime/host_capabilities.json` and is checked against the
+Python and JS direct runtimes. This gives the project a declaration point, but
+the model still needs to grow before browser, Node, Python, and future
+Wasm/WASI hosts can differ safely.
 
 Improvement:
 
-- Extract host capabilities into a shared manifest or generated table.
+- Expand the shared manifest beyond the current direct-runtime demo builtins.
 - Record availability, arity, purity, output behavior, error behavior, and
   browser/server differences.
 - Make host capabilities visible through `tools.syntax.inspect` or a runtime
