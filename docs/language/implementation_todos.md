@@ -666,10 +666,12 @@ intentionally small, file-specific hints for the next cleanup pass.
   backlog items or tests. Remaining (2026-05-15 scan):
   Done: loose runtime TODO comments now point to `NOMI-ARCH-014`,
   `NOMI-ARCH-016`, or `NOMI-SUBSTRATE-011` as appropriate.
-- [ ] Fix side-by-side editor/output scrolling in the web playground
+- [x] Fix side-by-side editor/output scrolling in the web playground
   ([`web/index.html`](../../web/index.html)); known constraints and approaches
   documented in
   [`web/web_playground_ui_challenges.md`](../../web/web_playground_ui_challenges.md).
+  Done: single-cell/plain modes now explicitly lay out Monaco against the
+  split-pane grid cell and give the output pane its own scroll boundary.
 
 ## Milestone Sequence
 

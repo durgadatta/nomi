@@ -68,6 +68,7 @@ async function runCell(idx, advance, options) {
     outNum.textContent = _executionCounter;
     outPre.textContent = output;
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
+    layoutAllEditorsSoon();
 
     if (r.session) {
       byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
@@ -81,6 +82,7 @@ async function runCell(idx, advance, options) {
     outNum.textContent = _executionCounter;
     outPre.textContent = String(e);
     outDiv.className = "nb-cell-output error show";
+    layoutAllEditorsSoon();
   }
 
   runBtn.classList.remove("running");
@@ -150,6 +152,7 @@ async function runPlainCode() {
 
     outPre.textContent = output;
     outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
+    layoutAllEditorsSoon();
 
     if (r.session) {
       byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
@@ -157,6 +160,7 @@ async function runPlainCode() {
   } catch (e) {
     outPre.textContent = String(e);
     outDiv.className = "nb-cell-output error show";
+    layoutAllEditorsSoon();
   }
 
   setControlsDisabled(false);

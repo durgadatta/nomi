@@ -1,6 +1,6 @@
 # Web Playground UI — Challenges & Observations
 
-## Side-by-side layout / Monaco scrolling (UNRESOLVED)
+## Side-by-side layout / Monaco scrolling (FIXED)
 
 The side-by-side layout (editor left, output right) for single-cell/non-notebook
 samples has a persistent scrolling issue: neither the Monaco editor pane nor the
@@ -38,14 +38,22 @@ height, but the interplay between:
 …creates a fragile layout where small CSS changes toggle between "no scrollbar"
 and "content overflows viewport."
 
-### Current state
+### Fix
+
+The side-by-side path now gives Monaco explicit container dimensions when the
+playground enters single-cell or plain mode. `layoutEditor()` reads the editor
+pane's actual grid-cell rectangle and calls `editor.layout({ width, height })`
+after layout settles, on resize, and after sidebar dragging. The editor pane
+uses `overflow: hidden` only after Monaco is explicitly sized, while the output
+pane has `min-height: 0` and `overflow: auto` so it scrolls independently.
+
+### Previous state
 
 The side-by-side layout is in place with the `single-cell` CSS class toggled by
 JS when only one cell exists. The `grid-template-rows` fix on `.workspace` gives
 the chain a definite height. The editor container has no `overflow` restriction.
-In practice, scrolling may still not work reliably — further investigation
-likely needs a dedicated debugging session with browser DevTools to inspect
-computed heights and ResizeObserver behavior.
+In practice, scrolling still did not work reliably because Monaco's automatic
+layout could miss the final split-pane dimensions.
 
 ### Alternative approaches (not tried)
 

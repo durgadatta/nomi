@@ -78,7 +78,7 @@
 <script>
 init().then(() => {
   setupResize(byId("resize-l"), byId("sidebar"));
-  addEventListener("resize", () => _cellEditors.forEach(ed => ed && ed.layout()));
+  addEventListener("resize", layoutAllEditorsSoon);
 }).catch((error) => {
   console.error(error);
   byId("loading-msg").textContent = error && error.message ? error.message : String(error);

@@ -139,7 +139,7 @@ function setupResize(handle, left) {
   addEventListener("mousemove", (e) => {
     if (!dragging) return;
     document.documentElement.style.setProperty("--sidebar-width", `${Math.max(180, Math.min(420, e.clientX - left.getBoundingClientRect().left))}px`);
-    _cellEditors.forEach(ed => ed && ed.layout());
+    layoutAllEditorsSoon();
   });
   addEventListener("mouseup", () => {
     dragging = false; handle.classList.remove("dragging");

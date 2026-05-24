@@ -30,6 +30,7 @@ function loadCode(code) {
   const single = chunks.length === 1;
   byId("nb-scroll").classList.toggle("single-cell", single);
   byId("nb-cells").classList.toggle("single-cell", single);
+  layoutAllEditorsSoon();
   updateFooter();
 }
 
@@ -46,6 +47,7 @@ function loadPlain(code) {
 
   createPlainCell(code);
   _executionCounter = 0;
+  layoutAllEditorsSoon();
   updateFooter();
 }
 
@@ -54,6 +56,7 @@ function addCell(initialCode) {
   createCell(initialCode || "");
   byId("nb-scroll").classList.remove("single-cell");
   byId("nb-cells").classList.remove("single-cell");
+  layoutAllEditorsSoon();
   scrollToBottom();
 }
 
@@ -72,6 +75,7 @@ function createPlainCell(code) {
   createEditor(0, code, true);
   updateFooter();
   setActiveCell(0);
+  layoutAllEditorsSoon();
 }
 
 function createCell(code) {
@@ -112,6 +116,7 @@ function createCell(code) {
   updateFooter();
 
   if (_cellEditors.length === 1) setActiveCell(0);
+  layoutAllEditorsSoon();
   return idx;
 }
 
@@ -168,7 +173,7 @@ function createEditor(idx, code, plain) {
       const h = Math.min(maxH, Math.max(60, e.contentHeight));
       el.style.height = h + "px";
     }
-    editor.layout();
+    layoutEditor(idx);
   });
 
   editor.onDidFocusEditorText(() => setActiveCell(idx));
@@ -199,6 +204,7 @@ function createEditor(idx, code, plain) {
   // Focus the new editor so the user can start typing immediately.
   // (setActiveCell may have run before the deferred editor was ready.)
   editor.focus();
+  layoutEditorSoon(idx);
 }
 
 function disposeAllCells() {
@@ -218,6 +224,7 @@ function deleteCell(idx) {
   const single = _cellEditors.length === 1;
   byId("nb-scroll").classList.toggle("single-cell", single);
   byId("nb-cells").classList.toggle("single-cell", single);
+  layoutAllEditorsSoon();
   updateFooter();
 }
 
@@ -252,4 +259,36 @@ function updateFooter() {
 function scrollToBottom() {
   const s = byId("nb-scroll");
   s.scrollTop = s.scrollHeight;
+}
+
+function isFixedPaneLayout() {
+  const cls = byId("nb-cells").classList;
+  return cls.contains("single-cell") || cls.contains("plain-mode");
+}
+
+function layoutEditor(idx) {
+  const editor = _cellEditors[idx];
+  const el = document.querySelector(`.nb-cell-editor[data-idx="${idx}"]`);
+  if (!editor || !el) return;
+  if (!isFixedPaneLayout()) {
+    editor.layout();
+    return;
+  }
+  const rect = el.getBoundingClientRect();
+  editor.layout({
+    width: Math.max(1, Math.floor(rect.width)),
+    height: Math.max(1, Math.floor(rect.height)),
+  });
+}
+
+function layoutEditorSoon(idx) {
+  requestAnimationFrame(() => requestAnimationFrame(() => layoutEditor(idx)));
+}
+
+function layoutAllEditorsSoon() {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    _cellEditors.forEach((editor, idx) => {
+      if (editor) layoutEditor(idx);
+    });
+  }));
 }
