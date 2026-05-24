@@ -40,6 +40,11 @@ than one feature. See
 how Nomi should handle `if`, `match`, `try`, block calls, loops, recursion, and
 value-producing blocks.
 
+For broad syntax quality and special-form promotion, see
+[syntax_special_forms_quality_review.md](syntax_special_forms_quality_review.md).
+It inventories the current surface, names gaps, and adds UX/diagnostic gates
+before convenience syntax hardens.
+
 ## Documents
 
 ### Synthesis & Planning
@@ -49,6 +54,7 @@ value-producing blocks.
 | [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
 | [interaction_map.md](interaction_map.md) | Global/local feature interaction map for coherent synthesis across normal forms |
 | [syntax_design_rules.md](syntax_design_rules.md) | Concrete syntax-design rules derived from the dimensions analysis (primitive budget, axis coherence, elimination form, etc.) |
+| [syntax_special_forms_quality_review.md](syntax_special_forms_quality_review.md) | Whole-language syntax/special-form audit, quality gates, gap closures, and UX bar |
 | [expression_statement_orientation.md](expression_statement_orientation.md) | Doctrine for expression-capable and statement-friendly control surfaces |
 | [vertical_pillars.md](vertical_pillars.md) | Concrete cross-cutting surfaces and evolution paths from simple programs to sophisticated programs |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
@@ -75,9 +81,10 @@ value-producing blocks.
 | Status | Count | Features |
 |--------|-------|----------|
 | **implemented** | 10+ | `func`, `=>`, equations, piecewise, holes, sections, compose, `where`, `\|>`, ranges, spread, `unless`, if-let, while-let, guard-let, match, or-patterns, `?.`, `??`, try-expr, `defer`, decorators, f-strings, multi-line strings, raw strings, type aliases, imports (Python-compatible) |
-| **design-settled** | 13+ | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), `nomi fmt`, Tree-sitter + LSP, domain-name import paths, Display/Debug format |
+| **design-settled** | 10+ | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `nomi fmt`, Tree-sitter + LSP, domain-name import paths, Display/Debug format |
+| **design-settled approach** | 4+ | structured concurrency, query plans, result pipelines, examples/checks/explanation direction — accepted models that still need complete packets before hard spec text |
 | **prototype-ready** | 3 | binding error diagnostics, `BindingTarget`, constrained captures |
-| **design-needed** | 10+ | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, canonical collection verb names, query plans/materialization, typed string wrappers (`sql""`/`html""`/`re""`/`sh""`), interpolator dispatch, regex capture patterns, Unicode string views |
+| **design-needed** | 10+ | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, canonical collection verb names, query materialization/row scope, typed string wrappers (`sql""`/`html""`/`re""`/`sh""`), interpolator dispatch, regex capture patterns, Unicode string views, explanation event schema |
 | **library-first** | 5+ | command functions, config layering, path values, safe commands, primary collection helpers, parallel collections |
 | **research-only** | 4+ | macros, symbolic/lazy computation boundaries, channels/actors, pure/read-only blocks |
 
@@ -110,6 +117,7 @@ Start here based on what you're trying to do:
 | Intent | Start with |
 |--------|-----------|
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
+| **Audit syntax and special-form quality** | [syntax_special_forms_quality_review.md](syntax_special_forms_quality_review.md) (inventory, UX bar, promotion gates, gaps) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
 | **Resolve statement vs expression tension** | [expression_statement_orientation.md](expression_statement_orientation.md) (`if`, `match`, `try`, loops, recursion, block calls, value-producing blocks) |
@@ -126,16 +134,17 @@ Start here based on what you're trying to do:
 ### The Synthesis Docs (read in order)
 
 1. [syntax_design_rules.md](syntax_design_rules.md) — concrete rules for designing surface syntax, derived from the dimensions analysis.  Includes nuance (when rules bend, how conflicts resolve).
-2. [expression_statement_orientation.md](expression_statement_orientation.md) — doctrine for constructs that can be statements or value-producing expressions.
-3. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
-4. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
-5. [vertical_pillars.md](vertical_pillars.md) — cross-cutting pillars that span several normal forms and need coherent feature packets.
-6. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
-7. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
+2. [syntax_special_forms_quality_review.md](syntax_special_forms_quality_review.md) — whole-language audit and quality gates for syntax/special forms.
+3. [expression_statement_orientation.md](expression_statement_orientation.md) — doctrine for constructs that can be statements or value-producing expressions.
+4. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
+5. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
+6. [vertical_pillars.md](vertical_pillars.md) — cross-cutting pillars that span several normal forms and need coherent feature packets.
+7. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
+8. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
 
-These seven docs form the synthesis stack: rules → expression/statement
-orientation → lessons → interactions → vertical surfaces → comparisons →
-roadmap.
+These eight docs form the synthesis stack: rules → syntax quality review →
+expression/statement orientation → lessons → interactions → vertical surfaces
+→ comparisons → roadmap.
 
 ## Consolidation Rules
 

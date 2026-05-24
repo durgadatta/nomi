@@ -50,6 +50,7 @@ fail even if the bridge gaps are addressed.
 | Standard prelude | The spec names ordinary tasks but does not yet define the boring first library surface. | `language_spec.md` appendix or future prelude plan. |
 | First-hour path | Nomi needs a tiny learnable path before advanced features dominate the docs. | `README.md`, future first-hour note, target fixtures. |
 | State and capability | Files, network, time, subprocesses, mutation, and authority need practical rules before advanced effects appear. | future state/capability note; block feature docs. |
+| Syntax/special-form quality gates | Syntax can look coherent locally while still failing UX, status, formatter, explanation, or keyword-budget checks. | `../convenience/syntax_special_forms_quality_review.md`. |
 
 ## Consolidation Moves
 
@@ -119,13 +120,16 @@ The next highest-leverage docs pass should do this:
 
 1. Add or update a capability matrix that reads across parser, lowering,
    runtime, tests, samples, docs, web, and notebook exposure.
-2. Start `data_decode_boundary_feature.md` using the feature packet, because
+2. Use `syntax_special_forms_quality_review.md` before promoting any new
+   syntax; it is now the audit surface for UX, keyword budget, diagnostics, and
+   status honesty.
+3. Start `data_decode_boundary_feature.md` using the feature packet, because
    decode combines binding, data, diagnostics, security, and everyday adoption.
-3. Extract a compact failure taxonomy from `absence_and_result.md`,
+4. Extract a compact failure taxonomy from `absence_and_result.md`,
    `error_handling.md`, pattern docs, and constraint docs.
-4. Add a shared explanation-event vocabulary before implementing more
+5. Add a shared explanation-event vocabulary before implementing more
    feature-specific diagnostics.
-5. Keep `language_spec.md` concrete, but mark target-only sections clearly
+6. Keep `language_spec.md` concrete, but mark target-only sections clearly
    until the capability matrix says otherwise.
 
 ## Avoid

@@ -517,6 +517,7 @@ test it, and only then change the abstraction.
 ## 11. References
 
 - [../language/language_design_dimensions.md](../language/language_design_dimensions.md) — full dimensions analysis
+- [syntax_special_forms_quality_review.md](syntax_special_forms_quality_review.md) — whole-language syntax/special-form audit and promotion gates
 - [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns and integration rules
 - [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine
 - [../language/language_degrees_of_freedom.md](../language/language_degrees_of_freedom.md) — core/sugar/library/scoped freedom framework
