@@ -55,6 +55,15 @@ extensions, and L7 backend targets. The most important implementation rule is:
 L4 sugar should reduce before eval; do not grant sugar permanent evaluator
 semantics.
 
+For implementation-gap or architecture-evolvability passes, use
+`docs/language/implementation_evolvability_gap_review.md` as the gate. A
+proposal should make features feature-owned, capability-honest,
+layer-classified, inspectably reduced, test-matrix-backed, frontend-consistent,
+and reversible while experimental. Do not overfit tool work to the current
+prototype shape when a feature packet, manifest field, Surface/Core node,
+runtime result contract, semantic event record, feature profile, or frontend
+adapter would preserve more optionality.
+
 ## Research Corpus (May 2026)
 
 The project has a substantial cross-language research corpus — 23 deep-dive
@@ -155,6 +164,10 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/language/core_layer_separation_plan.md` — operational hierarchy for
   implementation core, semantic core, canonical surface, sugar, libraries,
   scoped extensions, eval separation, and backend targets.
+- `docs/language/implementation_evolvability_gap_review.md` — project-wide
+  gate for feature ownership, explicit capability axes, Surface/Core
+  authority, runtime result contracts, frontend parity, test matrices, and
+  reversible implementation.
 - `docs/language/spec_readiness_map.md` — promotion workflow for turning
   research, convenience notes, feature docs, target fixtures, and
   implementation plans into spec-ready language sections.
@@ -223,6 +236,9 @@ Read the smallest relevant set before changing docs or making recommendations.
   feature layer metadata, or backend portability.
 - `docs/language/architecture_refactoring_plan.md` — runtime API, pipeline,
   package, host, and frontend adapter refactoring.
+- `docs/language/implementation_evolvability_gap_review.md` — cross-project
+  implementation-gap review for evolvability, capability honesty, and
+  frontend/backend consistency.
 - `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
   lowering, and interpreter architecture.
 - `docs/language/syntax_substrate_todo_audit.md` — central critique and TODO
@@ -507,6 +523,8 @@ When editing design docs:
 When the user asks for major future syntax, semantics, or faster
 experimentation:
 
+- Treat `docs/language/implementation_evolvability_gap_review.md` as the
+  project-wide gate for implementation-gap passes and broad substrate changes.
 - Treat `docs/language/flexible_syntax_substrate_plan.md` and
   `docs/language/syntax_substrate_todo_audit.md` as the bridge from language
   design to syntax implementation.

@@ -57,6 +57,10 @@ Start with these files before broad design or implementation changes:
 - `docs/language/adversarial_exploratory_implementation_critique.md`:
   skeptical critique of implementation choices that could prematurely freeze
   the language design.
+- `docs/language/implementation_evolvability_gap_review.md`: project-wide gate
+  for feature ownership, capability honesty, Surface/Core authority, runtime
+  result contracts, frontend parity, test matrices, and reversible
+  implementation.
 - `docs/language/implementation_todos.md`: staged design and
   implementation tasks.
 - `docs/features/binding_constraints_feature.md`: constrained

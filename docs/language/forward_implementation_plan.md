@@ -22,6 +22,7 @@ Nomi now has a richer design spine:
 - [Flexible Syntax Substrate Plan](flexible_syntax_substrate_plan.md)
 - [Syntax Substrate TODO Audit](syntax_substrate_todo_audit.md)
 - [Architecture Refactoring Plan](architecture_refactoring_plan.md)
+- [Implementation Evolvability Gap Review](implementation_evolvability_gap_review.md)
 - [Language Feature Todos](implementation_todos.md)
 
 This plan answers a narrower question:
@@ -40,16 +41,19 @@ coherent even if later phases are postponed.
    diagnostics, examples, and open questions are written down.
 2. **Small semantic commits**: each implementation slice should prove one
    semantic claim through focused tests.
-3. **Docs and tests move together**: accepted behavior updates specs, runnable
+3. **Evolvability before breadth**: broad work should preserve feature
+   ownership, capability honesty, Surface/Core authority, shared result
+   contracts, frontend parity, and reversibility.
+4. **Docs and tests move together**: accepted behavior updates specs, runnable
    examples, and regression snapshots in the same implementation wave.
-4. **Do not chase all syntax first**: implement semantic anchors before adding
+5. **Do not chase all syntax first**: implement semantic anchors before adding
    more convenience surface.
-5. **Python parity remains evidence, not a prison**: preserve parity where Nomi
+6. **Python parity remains evidence, not a prison**: preserve parity where Nomi
    intentionally follows Python; depart explicitly where Nomi's model requires
    it.
-6. **Diagnostics are first-class**: if a feature cannot explain failure, it is
+7. **Diagnostics are first-class**: if a feature cannot explain failure, it is
    not done.
-7. **Defer advanced layers**: symbolic rewrite, dense array notation, effect
+8. **Defer advanced layers**: symbolic rewrite, dense array notation, effect
    typing, scoped notation, and concurrency should wait until everyday
    semantics are stable.
 

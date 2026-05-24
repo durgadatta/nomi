@@ -23,6 +23,12 @@ profiles, and feature-owned tests.
 This audit records the main implementation improvement areas found in the
 May 2026 scan and points each one to an existing or new central TODO.
 
+For the cross-cutting evolvability version of this audit, see
+[`implementation_evolvability_gap_review.md`](implementation_evolvability_gap_review.md).
+That review turns the concrete code seams below into project-wide gates for
+feature ownership, capability honesty, Surface/Core authority, result
+contracts, frontend parity, and reversible implementation.
+
 ## Latest Refresh: 2026-05-19
 
 This pass checked the current code against the earlier audit. Several earlier
@@ -46,6 +52,25 @@ truthful enough to steer work." The current risks are:
 
 The adversarial version of this refresh is tracked in
 [`adversarial_implementation_critique.md`](adversarial_implementation_critique.md).
+
+## Evolvability Refresh: 2026-05-24
+
+The latest implementation-gap pass did not add new behavior. It reframed the
+findings below as an evolvability contract:
+
+- every promoted feature needs an ownership packet, explicit capability axes,
+  layer classification, reduction target, diagnostics, tests, docs, frontend
+  exposure, and reversibility note;
+- Surface -> Core should become authoritative for small stable subsets before
+  Core IR is treated as a diagnostic or backend source of truth;
+- `BindingTarget`, `DataDecl`, `MatchExpr`, and `PipeExpr` are the highest
+  leverage passive surface-node migrations;
+- `ExecutionResult`, semantic events, feature profiles, and frontend adapters
+  should converge before new user-facing syntax relies on private output or
+  error shapes.
+
+Use the evolvability review as the project-wide gate; use this audit for the
+concrete code seams and TODO anchors.
 
 ## High-Priority Findings
 

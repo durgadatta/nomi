@@ -23,6 +23,11 @@ For a full-docs scan that names hidden bridge gaps and planning priorities, see
 For the implementation scan that ties code seams to stable TODO IDs, see
 [Implementation Codebase Audit](implementation_codebase_audit.md).
 
+For the project-wide evolvability lens that turns those seams into feature
+ownership, capability honesty, frontend parity, and reversible implementation
+rules, see
+[Implementation Evolvability Gap Review](implementation_evolvability_gap_review.md).
+
 For the staged path away from Python as the semantic center, see
 [Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
 
@@ -87,6 +92,10 @@ see [Spec Readiness Map](spec_readiness_map.md).
 - [ ] For each major feature spec, include the explanation contract from
   `spec_readiness_map.md`: what happened, where, what value, what rule, what
   the user can do next, and what is redacted.
+- [ ] Use `implementation_evolvability_gap_review.md` as the implementation
+  gate before broad syntax, runtime, backend, web, notebook, or package work:
+  every promoted feature should name its owner, layer, capability axes,
+  reduction, diagnostics, tests, frontend exposure, and reversibility story.
 
 ## Track 0A: Declarative Syntax And Experimentation Substrate
 
@@ -167,6 +176,10 @@ layers move from docs into implementation.
 - [ ] Update `.agents/skills/nomi-*` whenever the substrate workflow changes,
   so agents propose feature-owned, spec-driven changes instead of scattered
   grammar/interpreter patches.
+- [ ] Keep the evolvability scorecard current whenever a major substrate seam
+  changes: feature metadata, capability axes, Surface/Core authority,
+  runtime result contract, feature profiles, test matrix, semantic events, or
+  frontend exposure.
 
 ## Track 0B: Runtime And Architecture Refactoring
 

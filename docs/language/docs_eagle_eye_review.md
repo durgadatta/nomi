@@ -51,6 +51,7 @@ fail even if the bridge gaps are addressed.
 | First-hour path | Nomi needs a tiny learnable path before advanced features dominate the docs. | `README.md`, future first-hour note, target fixtures. |
 | State and capability | Files, network, time, subprocesses, mutation, and authority need practical rules before advanced effects appear. | future state/capability note; block feature docs. |
 | Syntax/special-form quality gates | Syntax can look coherent locally while still failing UX, status, formatter, explanation, or keyword-budget checks. | `../convenience/syntax_special_forms_quality_review.md`. |
+| Implementation evolvability gate | A feature can be attractive and still harden private parser, lowering, runtime, backend, or frontend seams too early. | `implementation_evolvability_gap_review.md`. |
 
 ## Consolidation Moves
 
@@ -129,7 +130,9 @@ The next highest-leverage docs pass should do this:
    `error_handling.md`, pattern docs, and constraint docs.
 5. Add a shared explanation-event vocabulary before implementing more
    feature-specific diagnostics.
-6. Keep `language_spec.md` concrete, but mark target-only sections clearly
+6. Use `implementation_evolvability_gap_review.md` before broad implementation
+   work; it is the implementation counterpart to the syntax/special-form gate.
+7. Keep `language_spec.md` concrete, but mark target-only sections clearly
    until the capability matrix says otherwise.
 
 ## Avoid
