@@ -8,6 +8,9 @@
 >
 > Concrete backend target roadmap:
 > [`backend_independence_roadmap.md`](backend_independence_roadmap.md).
+>
+> Grounded tool/artifact survey:
+> [`modern_language_implementation_artifacts.md`](modern_language_implementation_artifacts.md).
 
 ## Purpose
 

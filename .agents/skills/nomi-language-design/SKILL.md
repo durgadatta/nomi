@@ -64,6 +64,14 @@ prototype shape when a feature packet, manifest field, Surface/Core node,
 runtime result contract, semantic event record, feature profile, or frontend
 adapter would preserve more optionality.
 
+For modern implementation-tool choices, use
+`docs/language/modern_language_implementation_artifacts.md`. Map tools such as
+LLVM, MLIR, Tree-sitter, LSP, Wasm/WASI, Cranelift, formatters, and runtime
+bundles to concrete Nomi artifacts: CST, Surface IR, Core IR, verifier, dumps,
+semantic events, source maps, fixture ladders, host capabilities, and frontend
+contracts. Tool adoption should make iteration easier, not make the tool the
+language definition.
+
 ## Research Corpus (May 2026)
 
 The project has a substantial cross-language research corpus — 23 deep-dive
@@ -168,6 +176,10 @@ Read the smallest relevant set before changing docs or making recommendations.
   gate for feature ownership, explicit capability axes, Surface/Core
   authority, runtime result contracts, frontend parity, test matrices, and
   reversible implementation.
+- `docs/language/modern_language_implementation_artifacts.md` — grounded
+  survey of real language implementation artifacts and tools, including LLVM,
+  MLIR, Tree-sitter, LSP, Rust/Swift/GHC IR layers, WebAssembly/WIT,
+  Cranelift, Roslyn, and TypeScript compiler APIs.
 - `docs/language/spec_readiness_map.md` — promotion workflow for turning
   research, convenience notes, feature docs, target fixtures, and
   implementation plans into spec-ready language sections.
@@ -239,6 +251,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/language/implementation_evolvability_gap_review.md` — cross-project
   implementation-gap review for evolvability, capability honesty, and
   frontend/backend consistency.
+- `docs/language/modern_language_implementation_artifacts.md` — actual
+  toolchain/artifact lessons for parser frontends, IRs, verifier/pass
+  pipelines, compiler backends, LSP, Wasm, host capabilities, and fixtures.
 - `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
   lowering, and interpreter architecture.
 - `docs/language/syntax_substrate_todo_audit.md` — central critique and TODO
@@ -525,6 +540,9 @@ experimentation:
 
 - Treat `docs/language/implementation_evolvability_gap_review.md` as the
   project-wide gate for implementation-gap passes and broad substrate changes.
+- Treat `docs/language/modern_language_implementation_artifacts.md` as the
+  grounded tool-choice note before recommending LLVM, MLIR, Tree-sitter, LSP,
+  Wasm/WASI, Cranelift, formatter, source-map, or runtime-bundle work.
 - Treat `docs/language/flexible_syntax_substrate_plan.md` and
   `docs/language/syntax_substrate_todo_audit.md` as the bridge from language
   design to syntax implementation.

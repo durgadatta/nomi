@@ -31,6 +31,10 @@ rules, see
 For the staged path away from Python as the semantic center, see
 [Python Independence And Compiler Backend Plan](python_independence_and_compiler_backend_plan.md).
 
+For concrete lessons from modern language implementation tools and real
+compiler/tooling artifacts, see
+[Modern Language Implementation Artifacts](modern_language_implementation_artifacts.md).
+
 For the implementation/core/sugar/backend layer vocabulary, eval separation
 rules, and preparatory Core IR sequence, see
 [Core Layer Separation Plan](core_layer_separation_plan.md).
@@ -96,6 +100,10 @@ see [Spec Readiness Map](spec_readiness_map.md).
   gate before broad syntax, runtime, backend, web, notebook, or package work:
   every promoted feature should name its owner, layer, capability axes,
   reduction, diagnostics, tests, frontend exposure, and reversibility story.
+- [ ] Use `modern_language_implementation_artifacts.md` before adopting a new
+  implementation tool such as Tree-sitter, MLIR, LLVM, Cranelift, Wasm/WASI,
+  LSP, or a formatter/runtime bundle. The tool must map to concrete artifacts,
+  tests, inspection, diagnostics, and backend/frontend contracts.
 
 ## Track 0A: Declarative Syntax And Experimentation Substrate
 

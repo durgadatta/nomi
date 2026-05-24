@@ -164,3 +164,7 @@ This is the implementation counterpart to
 [`syntax_special_forms_quality_review.md`](../convenience/syntax_special_forms_quality_review.md):
 syntax quality asks whether a form deserves to exist; evolvability asks whether
 the project can keep learning after it exists.
+
+For a grounded survey of modern implementation tools and the concrete artifacts
+they teach Nomi to preserve, see
+[`modern_language_implementation_artifacts.md`](modern_language_implementation_artifacts.md).
