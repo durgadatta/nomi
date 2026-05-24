@@ -24,6 +24,11 @@ Strings are a first-class cross-cutting pillar, not currently a ninth normal
 form. See [strings.md](strings.md) for how string features reduce to Data
 boundary, Pattern, Flow, Absence/result, and Explanation.
 
+Some other concerns are similarly vertical across the whole language
+experience. See [vertical_pillars.md](vertical_pillars.md) for the active
+review of Trust/Effects, Time/Lifecycle, Names/Identity, Explanation,
+Data Exchange, Numbers/Shape, and Evolution/Toolability.
+
 ## Documents
 
 ### Synthesis & Planning
@@ -33,6 +38,7 @@ boundary, Pattern, Flow, Absence/result, and Explanation.
 | [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
 | [interaction_map.md](interaction_map.md) | Global/local feature interaction map for coherent synthesis across normal forms |
 | [syntax_design_rules.md](syntax_design_rules.md) | Concrete syntax-design rules derived from the dimensions analysis (primitive budget, axis coherence, elimination form, etc.) |
+| [vertical_pillars.md](vertical_pillars.md) | Cross-cutting language-experience pillars that deserve string-level design review before implementation |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
 | [expanded_language_research.md](expanded_language_research.md) | Index to detailed research notes in `docs/research/` |
@@ -94,6 +100,7 @@ Start here based on what you're trying to do:
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
+| **Identify cross-cutting pillars** | [vertical_pillars.md](vertical_pillars.md) (trust/effects, time/lifecycle, names/identity, explanation, data exchange, numbers/shape, toolability) |
 | **Integrate symbolic or lazy computation** | [../features/symbolic_structural_computation.md](../features/symbolic_structural_computation.md) → [flow_and_collections.md](flow_and_collections.md) → [meta_testing.md](meta_testing.md) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
 | **Promote a design into the spec** | [../language/spec_readiness_map.md](../language/spec_readiness_map.md) (feature packet + spec conversion matrix) |
@@ -108,11 +115,12 @@ Start here based on what you're trying to do:
 1. [syntax_design_rules.md](syntax_design_rules.md) — concrete rules for designing surface syntax, derived from the dimensions analysis.  Includes nuance (when rules bend, how conflicts resolve).
 2. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
 3. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
-4. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
-5. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
+4. [vertical_pillars.md](vertical_pillars.md) — cross-cutting pillars that span several normal forms and need coherent feature packets.
+5. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
+6. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
 
-These five docs form the synthesis stack: rules → lessons → interactions →
-comparisons → roadmap.
+These six docs form the synthesis stack: rules → lessons → interactions →
+verticals → comparisons → roadmap.
 
 ## Consolidation Rules
 

@@ -161,6 +161,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/convenience/data_and_types.md` — data boundary, types, aliases.
 - `docs/convenience/strings.md` — string pillar: interpolation, literals, typed
   wrappers, pattern matching on strings, Unicode, serialization, security.
+- `docs/convenience/vertical_pillars.md` — cross-cutting pillars such as
+  trust/effects, time/lifecycle, names/identity, explanation, data exchange,
+  numbers/shape, and evolution/toolability.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature
   families and recommendations.
 - Relevant focused docs under `docs/convenience/` (e.g., `patterns.md`,
@@ -219,6 +222,10 @@ Strings are a first-class cross-cutting pillar, not currently a ninth normal
 form. String features should reduce to Data boundary, Pattern, Flow,
 Absence/result, and Explanation unless a future capstone explicitly promotes
 String to a new normal form.
+
+Other cross-cutting pillars may deserve string-level review without becoming
+new normal forms. Use `docs/convenience/vertical_pillars.md` to classify these
+concerns and to choose the next focused design packet.
 
 If a candidate cannot reduce to this set, keep it research-only or propose the
 smallest new primitive it would require.
@@ -337,6 +344,27 @@ Work in checkpointed passes:
    `docs/language/demo_target.nomi` before touching runnable samples.
 7. **Commit after each pass.** Leave the repo in a coherent state with notes
    for the next exact pass.
+
+## Vertical Pillar Workflow
+
+Use this when the user asks what aspects cut across the whole language
+experience, or asks for string-level review of broad concerns such as effects,
+time, names, explanation, data exchange, numbers, or tooling.
+
+1. Read `docs/convenience/vertical_pillars.md`, `interaction_map.md`,
+   `review_and_roadmap.md`, and the relevant existing focused docs.
+2. Treat the pillar as cross-cutting, not automatically as a new normal form.
+   Name the normal-form owners it reduces to.
+3. Check the research corpus before adding external research. Start with
+   `language_family_coverage_map.md`, then the deep dives cited by the pillar.
+4. For the selected pillar, write or update a string-style packet:
+   design pressure, normal-form ownership, cross-language evidence, Nomi
+   direction, status table, spec packet needed, rejected alternatives, and next
+   implementation/research steps.
+5. Keep the exploratory posture explicit. If current artifacts are stale or
+   too narrow, mark the drift instead of forcing the pillar to match them.
+6. Update `docs/convenience/README.md`, `vertical_pillars.md`, and this skill
+   when the pillar list or workflow changes.
 
 For function/pattern/collection work, always check:
 
