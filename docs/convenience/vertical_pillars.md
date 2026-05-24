@@ -1,12 +1,12 @@
-# Vertical Pillars
+# Vertical Surface Pillars
 
 > Status: active design review.
 >
-> Scope: documentation-only synthesis. This file identifies language
-> experience pillars that cut vertically across Nomi's normal forms. They are
-> not new normal forms by default. Like [strings.md](strings.md), each pillar
-> must reduce to existing normal-form owners until a capstone pass deliberately
-> promotes it.
+> Scope: documentation-only synthesis. This file identifies concrete surface
+> pillars that users touch directly or indirectly across the language, in the
+> same spirit as strings, functions, and collections. These are not automatically
+> new normal forms. Each pillar must still reduce to existing normal-form owners
+> until a capstone pass deliberately promotes it.
 >
 > Design posture: Nomi is exploratory. Treat this as a working map for research
 > and feature packets, not a frozen taxonomy. Current docs and implementation
@@ -16,370 +16,640 @@
 
 ## Purpose
 
-Some concerns are too pervasive to live comfortably in a single feature doc.
-Strings are one: they touch data boundaries, patterns, flow, absence/result,
-security, display, diagnostics, and tooling. Functions and collections are
-similar: they are normal-form owners, but also shape the entire feel of the
-language.
+The previous pillar map over-indexed on support concerns such as trust,
+lifecycle, and toolability. Those matter, but they are not the same kind of
+thing as strings, functions, and collections. A user does not usually reach for
+"trust" as a surface form. They reach for a path, a file, a URL, a result, a
+duration, an import, a data value, or an example.
 
-This document asks:
+This document focuses on **tangible language surfaces**:
 
 ```text
-Which other concerns are vertical enough to deserve string-level treatment?
+thing users write/read -> cross-language pressure -> Nomi surface direction
 ```
 
-A vertical pillar is admitted when it:
+Not:
 
-- appears in first-hour programs and in serious production programs;
-- crosses at least four normal forms;
-- affects syntax, runtime behavior, diagnostics, tooling, and standard-library
+```text
+architectural concern -> governance guide -> vague principle
+```
+
+A vertical surface pillar is admitted when it:
+
+- appears as a value, literal, declaration, call, block, pattern, or operator
+  in ordinary programs;
+- crosses several normal forms;
+- affects syntax, interaction, diagnostics, tooling, and standard-library
   shape;
-- becomes dangerous or incoherent if handled as ad hoc library calls;
+- is common enough that ad hoc library conventions would fragment the language;
 - benefits from cross-language research before implementation;
 - can still reduce to Nomi's small semantic primitives.
 
-## Priority Map
+## Surface Pillar Map
 
-| Priority | Pillar | Why vertical | Current owner docs | Next artifact |
-|----------|--------|--------------|--------------------|---------------|
-| 1 | Trust, Effects, And Capabilities | Every program touches files, network, env, secrets, subprocesses, clocks, randomness, and host authority. | [concurrency.md](concurrency.md), [absence_and_result.md](absence_and_result.md), [data_and_types.md](data_and_types.md), [../research/security_and_trust_deep_dive.md](../research/security_and_trust_deep_dive.md) | `trust_effects_and_capabilities.md` |
-| 2 | Time, Scheduling, And Lifecycle | Timeouts, cancellation, clocks, retries, resources, async, tests, and determinism cut through control flow and reliability. | [concurrency.md](concurrency.md), [absence_and_result.md](absence_and_result.md), [../research/error_handling_defer_resource_cleanup_notes.md](../research/error_handling_defer_resource_cleanup_notes.md), [../research/standard_library_design_comparative.md](../research/standard_library_design_comparative.md) | `time_and_lifecycle.md` |
-| 3 | Names, Scope, Modules, And Identity | Every binding, import, export, package, capability, type, field, and diagnostic depends on stable name identity. | [scope_context.md](scope_context.md), [modules_imports.md](modules_imports.md), [data_and_types.md](data_and_types.md), [../research/packaging_and_project_structure_deep_dive.md](../research/packaging_and_project_structure_deep_dive.md) | `names_scope_and_identity.md` |
-| 4 | Explanation, Observability, And Examples | Diagnostics, traces, examples, logs, notebooks, LSP, AI-readable semantics, and `explain` should share one event vocabulary. | [meta_testing.md](meta_testing.md), [interaction_map.md](interaction_map.md), [../research/diagnostics_and_explanations_comparative.md](../research/diagnostics_and_explanations_comparative.md), [../research/ai_readable_semantics_deep_dive.md](../research/ai_readable_semantics_deep_dive.md) | Expand `meta_testing.md` or create `explanation_observability.md` |
-| 5 | Data Exchange, Formats, And Boundaries | JSON, CSV, config, CLI/env, databases, schemas, serialization, provenance, and redaction need one boundary story. | [data_and_types.md](data_and_types.md), [strings.md](strings.md), [../research/data_boundary_systems_deep_dive.md](../research/data_boundary_systems_deep_dive.md) | Expand `data_and_types.md` into a boundary packet |
-| 6 | Numbers, Quantities, And Shape | Money, decimal, units, dates, array/rank, table columns, numeric precision, and display formatting shape daily correctness. | [flow_and_collections.md](flow_and_collections.md), [strings.md](strings.md), [../research/array_languages_deep_dive.md](../research/array_languages_deep_dive.md), [../research/scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md) | `numbers_quantities_and_shape.md` |
-| 7 | Evolution, Style, And Toolability | Formatting, editions, migration, package stability, semantic tokens, generated artifacts, and AI-readability decide whether the language can grow. | [../language/spec_readiness_map.md](../language/spec_readiness_map.md), [../orientation/ai_collaboration.md](../orientation/ai_collaboration.md), [../research/formatting_and_style_deep_dive.md](../research/formatting_and_style_deep_dive.md), [../research/package_docs_and_examples_deep_dive.md](../research/package_docs_and_examples_deep_dive.md) | `evolution_style_and_toolability.md` |
+| Priority | Surface pillar | What the user touches | Cross-cutting pressure | Current docs | Next packet |
+|----------|----------------|-----------------------|------------------------|--------------|-------------|
+| 0 | Strings And Text | `"..."`, `f"..."`, raw strings, regex, interpolation, display | Text crosses humans, formats, patterns, security, Unicode, logs, and diagnostics. | [strings.md](strings.md) | Continue string spec packet |
+| 1 | Data Values And Variants | `data User`, fields, constructors, variants, records, enum-like cases | Values shape binding, patterns, decode, display, equality, examples, and schema export. | [data_and_types.md](data_and_types.md), [patterns.md](patterns.md) | `data_values_and_variants.md` or expand data doc |
+| 2 | Resources And World Values | `Path`, `File`, `Url`, `Request`, `Response`, `Command`, `Secret`, capabilities | Programs touch files, network, env, subprocesses, secrets, and host authority through concrete values. | [strings.md](strings.md), [concurrency.md](concurrency.md), [data_and_types.md](data_and_types.md) | `resources_and_world.md` |
+| 3 | Results, Absence, And Failure Values | `none`, `?`, `Result`, `Ok`, `Err`, `try`, errors, diagnostics | Non-success appears in access, parsing, IO, decode, match, pipelines, and block policies. | [absence_and_result.md](absence_and_result.md), [patterns.md](patterns.md) | Strengthen `absence_and_result.md` |
+| 4 | Patterns And Selectors | `match`, destructuring, guards, regex capture, field/row selectors | Users choose by shape everywhere: data, external maps, rows, strings, results, and function clauses. | [patterns.md](patterns.md), [strings.md](strings.md) | `patterns.md` string-level review |
+| 5 | Blocks, Policies, And Managed Calls | `using(...) -> x:`, `retry:`, `transaction:`, `defer`, `trace:` | Caller-attached code handles resources, transactions, tests, examples, concurrency, and control transfer. | [scope_context.md](scope_context.md), [concurrency.md](concurrency.md), [../features/block_calls_feature.md](../features/block_calls_feature.md) | `blocks_and_policies.md` |
+| 6 | Numbers, Quantities, And Shape | integers, floats, decimals, money, units, ranges, arrays, dimensions | Numeric values drive correctness in loops, tables, formatting, money, time, measurement, and arrays. | [flow_and_collections.md](flow_and_collections.md), [data_and_types.md](data_and_types.md) | `numbers_quantities_and_shape.md` |
+| 7 | Time And Temporal Values | `Duration`, `Instant`, `Date`, `TimeZone`, deadlines, schedules | Time shows up as values, parsed text, retries, timeout policies, tests, logs, and deterministic examples. | [concurrency.md](concurrency.md), [absence_and_result.md](absence_and_result.md) | `time_values.md` |
+| 8 | Modules, Imports, And Packages | `import`, aliases, exports, package paths, versions, hashes | Names across files shape visibility, extension methods, package identity, reproducibility, and diagnostics. | [modules_imports.md](modules_imports.md), [scope_context.md](scope_context.md) | `modules_packages_and_identity.md` |
+| 9 | Examples, Checks, And Explanation Surfaces | `examples:`, `check:`, `trace`, `explain`, structured logs | Users understand code through examples, diagnostics, traces, notebooks, LSP, and AI-readable events. | [meta_testing.md](meta_testing.md), [interaction_map.md](interaction_map.md) | `explanation_surfaces.md` |
 
-The first four are the highest leverage. They govern safety, control,
-identity, and understanding: the places where inconsistency becomes expensive
-fast.
+Strings, functions, collections, and patterns are already prominent in the
+convenience docs. The highest-value missing concrete surfaces are **Data
+Values**, **Resources/World Values**, **Failure Values**, and **Blocks/Policies**.
+They are tangible enough to improve syntax and interaction, while vertical
+enough to require string-level research.
 
-## Pillar 1: Trust, Effects, And Capabilities
+## Pillar 1: Data Values And Variants
 
-### Design Pressure
+### User Surface
 
-Most real programs touch the world: files, network, environment variables,
-databases, secrets, subprocesses, randomness, clocks, package downloads, and
-foreign APIs. If Nomi treats these as ordinary strings and functions, safety
-will depend on convention. If it makes every effect a heavyweight type-system
-problem, ordinary scripts become scholastic.
+```nomi
+data User:
+    id: UserId
+    email: Email
+    plan: Plan = Plan.Free
 
-Nomi needs a humane middle layer: effects are explicit at boundaries, authority
-is represented as values/capabilities, and block policies describe scoped use.
+data Result[T, E]:
+    Ok(value: T)
+    Err(error: E)
+
+user = User(id, email)
+match user:
+    case User(id, email, plan):
+        ...
+```
+
+### Why It Is Vertical
+
+Data values are where names, constraints, display, equality, patterns, decode,
+serialization, examples, and schema export meet. If data is underdesigned,
+every domain invents its own record/shape/schema/DTO convention.
 
 ### Normal-Form Ownership
 
-| Concern | Owner | Reduction target |
+| Surface | Owner | Reduction target |
 |---------|-------|------------------|
-| Files, network, env, subprocesses | Block + Data boundary | capability value enters a scoped block or typed sink |
-| Secrets, PII, credentials | Data boundary + Explanation | wrapped values with redacted display and explicit reveal |
-| Expected failure from external world | Absence/result | `Result`, not sentinel values or swallowed exceptions |
-| Resource cleanup | Block | caller code attached to policy; `yield` controls lifetime |
-| Permissions and host authority | Data boundary + Explanation | manifest/capability table plus traceable denial diagnostics |
+| Field declaration | Binding | field value is tentatively bound and constrained |
+| Constructor call | Function + Data boundary | ordinary call creates owned value |
+| Variant case | Pattern + Data boundary | closed alternative with pattern form |
+| Decode from JSON/CSV/config | Data boundary + Absence/result | parse/decode returns `Result` with paths |
+| Display/equality/redaction | Explanation | generated event/display protocol |
 
 ### Cross-Language Evidence
 
-- Rust, Zig, Go, and Swift show the value of explicit resource and error
-  boundaries.
-- Nix, Deno, and capability systems show that authority should be visible,
-  not ambient.
-- Perl/Ruby taint systems show that whole-ecosystem taint tracking is too
-  costly unless every library participates.
-- Web frameworks and SQL APIs show that typed sinks beat stringly conventions.
+- Rust, Swift, Kotlin, Scala, Haskell, and F# show that product/sum data is a
+  central modeling surface.
+- Python dataclasses/Pydantic show the ergonomic pull of runtime data models.
+- TypeScript shows structural types are useful at boundaries but weak for
+  exhaustiveness.
+- Elm/serde/Pydantic show that decode diagnostics need field paths and
+  accumulated errors.
 
 ### Nomi Direction
 
-Prefer capability values and typed sinks over ambient authority:
+`data` should be the single owned-data declaration family. It should cover
+records and variants without splitting into `struct`, `enum`, `class`,
+`record`, `schema`, and `interface`.
+
+Design-needed:
+
+- exact constructor/display/equality generation;
+- variant syntax and exhaustiveness diagnostics;
+- field defaults and field-level constraints;
+- decode provenance and error accumulation;
+- schema export as tooling, not a second declaration language;
+- extension methods and operator protocols for data values.
+
+Rejected-for-now:
+
+- a peer `schema` keyword for external data;
+- structural type equivalence as the default owned-data model;
+- generated magic methods that cannot be explained.
+
+## Pillar 2: Resources And World Values
+
+### User Surface
 
 ```nomi
-with_capability(FileRead("./data")) -> files:
-    rows = files.open("users.csv")
+path: Path = Path("./users.csv")
+api: Url = Url("https://api.example.com")
+
+using(open(path)) -> file:
+    rows = file.read()
         |> Csv.decode(User)
         |> collect_results
+
+cmd = Command("tar", ["-czf", archive, path])
 ```
 
-Design-needed:
+### Why It Is Vertical
 
-- capability value shape and import/export policy;
-- host capability manifests for Python, browser, Node, and future Wasm/WASI;
-- typed sinks for SQL, HTML, URL, shell/process, logs, and secrets;
-- redaction and `explain --unsafe` rules;
-- how effects appear in examples, tests, and traces.
-
-Rejected-for-now:
-
-- full information-flow control as the everyday layer;
-- ambient string permissions as the only authority model;
-- shell-language strings as the default process API.
-
-## Pillar 2: Time, Scheduling, And Lifecycle
-
-### Design Pressure
-
-Time is everywhere and notoriously easy to get wrong: durations vs instants,
-wall clocks vs monotonic clocks, time zones, cancellation, retries, deadlines,
-test determinism, cleanup ordering, and async lifecycle. These concerns touch
-block calls, flow, result, explanation, and standard-library design.
+A resource is a concrete value that touches the outside world: file, URL,
+socket, request, response, command, secret, random source, clock, database
+connection. These are not just strings. They determine safety, permissions,
+cleanup, failure, traces, and tests.
 
 ### Normal-Form Ownership
 
-| Concern | Owner | Reduction target |
+| Surface | Owner | Reduction target |
 |---------|-------|------------------|
-| Deadlines and timeouts | Block + Absence/result | policy block returns value or timeout `Result` |
-| Cancellation | Block + Flow | structured cancellation scope, not hidden global state |
-| Clocks | Data boundary + Explanation | explicit clock capability; traces show time source |
-| Retry/backoff | Block | caller code attached to retry policy |
-| Time parsing/formatting | Data boundary + String pillar | typed `Instant`, `LocalDate`, `Duration`; explicit parse result |
+| `Path`, `Url`, `Command`, `Secret` | Data boundary + String pillar | typed value from text with explicit conversion |
+| `File`, `Response`, `Connection` | Block + Absence/result | acquired value with scoped lifetime and failures |
+| capability value | Data boundary + Explanation | authority with provenance and denial diagnostics |
+| resource cleanup | Block | policy call owns cleanup and `yield` |
+| logging/redaction | Explanation | structured event with safe display |
 
 ### Cross-Language Evidence
 
-- Go's `context` shows cancellation must be pervasive, but manual context
-  threading can infect APIs.
-- Kotlin and Swift structured concurrency show lifetimes should be scoped.
-- Java/.NET date-time histories show that early ambiguous APIs live for
-  decades.
-- Rust separates `Instant`, `Duration`, and system time; this is a useful
-  model for avoiding wall-clock confusion.
+- Python `pathlib`, Rust `Path`/`Command`, Java `Path`, Go `os`/`exec`, and
+  Swift `URL` show paths, URLs, and commands need typed APIs.
+- Deno, Nix, and capability systems show authority should be visible.
+- Shell languages show the danger of treating process invocation as string
+  concatenation.
+- Web and SQL APIs show that typed sinks prevent injection better than
+  conventions.
 
 ### Nomi Direction
 
-Time should start library-first but policy-shaped:
-
-```nomi
-within(2.seconds) -> deadline:
-    response = fetch(url, deadline)
-    return response.decode(Json)
-```
+Make world-touching values typed and policy-shaped. A resource should either be
+a plain inert value (`Path`, `Url`, `Command`) or an acquired value whose
+lifetime is controlled by a block policy (`File`, `Connection`).
 
 Design-needed:
 
-- `Duration`, `Instant`, `LocalDate`, `DateTime`, and `TimeZone` boundaries;
-- monotonic vs wall-clock API split;
-- cancellation event vocabulary;
-- deterministic test clocks for examples/checks;
-- how timeout, cancellation, cleanup failure, and body failure compose.
+- standard `Path`, `Url`, `Command`, `Secret`, `File`, `Request`, `Response`
+  value contracts;
+- `open`, `run`, `fetch`, and database APIs as typed sinks;
+- capability manifests for Python, browser, Node, and future Wasm/WASI;
+- redaction and `explain --unsafe`;
+- how resource failures compose with `Result`, `defer`, and block cleanup.
 
 Rejected-for-now:
 
-- one universal `DateTime` type;
-- implicit global clock in tests;
-- unstructured cancellation tokens threaded through every ordinary function.
+- raw path/URL/command strings as the default API;
+- shell-language string execution as the teaching path;
+- ambient authority with no traceable capability.
 
-## Pillar 3: Names, Scope, Modules, And Identity
+## Pillar 3: Results, Absence, And Failure Values
 
-### Design Pressure
+### User Surface
 
-Names are how users orient themselves. Nomi already has a strong binding story,
-but name identity cuts wider: local bindings, parameters, pattern captures,
-fields, data variants, imports, aliases, package names, capability names,
-extension methods, generated symbols, and diagnostics.
+```nomi
+name = user.profile?.display_name ?? "Anonymous"
 
-If this pillar is underspecified, every later feature invents its own lookup
-rules.
+match parse_int(raw):
+    case Ok(n): n
+    case Err(problem): explain(problem)
+
+guard Ok(config) = Config.decode(raw) else:
+    return Err("bad config")
+```
+
+### Why It Is Vertical
+
+Failure is not a subsystem. It appears in field access, parsing, decoding, IO,
+networking, resource cleanup, validation, pattern matching, pipelines, examples,
+and diagnostics. The user constantly sees and writes failure surfaces.
 
 ### Normal-Form Ownership
 
-| Concern | Owner | Reduction target |
+| Surface | Owner | Reduction target |
 |---------|-------|------------------|
-| Local variables and parameters | Binding | tentative bind, constraint check, commit |
-| Pattern captures | Pattern + Binding | match then scoped binding |
-| Imports and exports | Binding + Data boundary | external module decoded into visible names |
-| Package identity | Data boundary + Explanation | domain path, version, hash, provenance |
-| Extension methods/operators | Function + Binding | imported function/protocol visible at use site |
+| `none`, `?.`, `??` | Absence/result | absence-only access and fallback |
+| `Result`, `Ok`, `Err` | Data boundary + Pattern | expected failure as data |
+| `try` expression | Absence/result + Explanation | local boundary around unexpected exception |
+| `guard Ok(x) = ...` | Pattern + Flow | early exit on non-match |
+| diagnostics/errors | Explanation | structured event with path, cause, and suggestion |
 
 ### Cross-Language Evidence
 
-- Go and Deno make import paths explicit and domain-shaped.
-- Rust and Swift show that extension/protocol visibility needs disciplined
-  import rules.
-- Python shows the power and cost of import-time execution and dynamic module
-  state.
-- Nix/Dhall show content-addressed identity for reproducible external inputs.
+- Rust, Swift, Zig, Go, Gleam, Elm, Haskell, and Kotlin show the major failure
+  forks: result values, exceptions, nullable values, and propagation operators.
+- Python and JavaScript show the cost of mixing absence, falsey values,
+  exceptions, and sentinel returns.
+- Elm/Gleam show how strong result conventions improve everyday readability.
 
 ### Nomi Direction
 
-Make imports ordinary binding events with provenance:
+Keep three stories separate:
 
-```nomi
-import "example.com/acme/users" as users
-import "example.com/schemas/user.nomi" sha256:abc123...
-```
+- absence: `none`, `?.`, `??`;
+- expected failure: `Result`, `Ok`, `Err`, pattern matching;
+- unexpected failure: exception/diagnostic boundary.
 
 Design-needed:
 
-- exact module identity: file path, domain path, package name, version, hash;
-- import-time side-effect policy;
-- extension method visibility and conflict diagnostics;
-- generated-name rules for desugar and macro-like futures;
-- `explain import` view showing source, version, hash, exports, and aliases.
+- exact `Result` and `Option` data declarations;
+- whether a propagation operator exists and what it expands to;
+- failure behavior in pipelines;
+- error context chaining;
+- cleanup failure vs body failure diagnostics;
+- `collect_results` and related flow helpers.
 
 Rejected-for-now:
 
-- implicit global package namespace;
-- wildcard imports as the default teaching path;
-- dynamic import side effects as an ordinary configuration mechanism.
+- `?.` catching `Err` or exceptions;
+- sentinel values like `-1` for search/parse failure;
+- Go-style `(value, err)` as the primary surface.
 
-## Pillar 4: Explanation, Observability, And Examples
+## Pillar 4: Patterns And Selectors
 
-### Design Pressure
+### User Surface
 
-Every feature has two user experiences: writing it and understanding it when it
-fails. Nomi's ambition depends on making the second one excellent. Diagnostics,
-examples, traces, logs, notebooks, query plans, expansion views, and AI-readable
-semantics should share one event vocabulary.
+```nomi
+match event:
+    case {"type": "click", "target": target}:
+        record_click(target)
+    case User(id, email):
+        send(email)
+    case re"(\w+)@(.+)" as name, domain:
+        validate(name, domain)
+
+active_names = users |> where(_.active) |> select(_.name)
+```
+
+### Why It Is Vertical
+
+Patterns and selectors are how users pull meaning out of values. They appear in
+`match`, `if-let`, `guard-let`, function clauses, data constructors, rows,
+strings, regexes, table transforms, and query plans.
 
 ### Normal-Form Ownership
 
-| Concern | Owner | Reduction target |
+| Surface | Owner | Reduction target |
 |---------|-------|------------------|
-| Diagnostics | Explanation | structured event with source spans and suggested fixes |
-| Examples/checks | Explanation + Block | executable examples scoped to the code they explain |
-| Logging/tracing | Explanation + Data boundary | structured events with redaction and provenance |
-| Query/flow plans | Flow + Explanation | inspectable intermediate stages |
-| Desugar/macro-like futures | Explanation | expansion events preserving source spans |
+| `match` case | Pattern | shape test, tentative captures, constraints |
+| `if/guard pattern = value` | Pattern + Flow | conditional binding or early exit |
+| field selector `_.name` | Function + Flow | tiny function over selected field |
+| regex capture | Pattern + String pillar | string test plus capture binding |
+| row/group selector | Binding + Flow | visible row/group scope |
 
 ### Cross-Language Evidence
 
-- Rust and Elm show that diagnostics are architecture, not prose polish.
-- Racket and Smalltalk show the value of interactive explanation surfaces.
-- Jupyter/Pluto/Observable show that execution history and examples shape the
-  language experience, not just tooling.
-- LSP, Tree-sitter, typed ASTs, and AI-readable traces show why machine-readable
-  semantics matter.
+- ML/Rust/Swift/Kotlin/Scala show match as a major readability surface.
+- Elixir/Gleam show pattern matching as everyday binding.
+- SQL/LINQ/dplyr show selectors become their own language if row scope is not
+  designed explicitly.
+- JavaScript/Python destructuring show lightweight patterns are useful but can
+  drift from full match semantics.
 
 ### Nomi Direction
 
-Explanation should be the shared rendering layer for diagnostics, examples,
-logs, traces, and expansion views:
-
-```nomi
-explain:
-    rows
-    |> where(_.active)
-    |> select(User.decode)
-    |> collect_results
-```
+Unify pattern use without making selectors magical. Pattern failure, constraint
+failure, and `Err` should remain distinguishable.
 
 Design-needed:
 
-- canonical event schema;
-- redaction and unsafe reveal rules;
-- relation between examples, tests, notebooks, and docs;
-- query/flow plan explanation;
-- expansion display for sugar, typed strings, and future scoped extensions.
+- function clause patterns vs explicit `match`;
+- selector shorthand and row scope;
+- regex capture syntax and typed groups;
+- mapping/list pattern diagnostics;
+- exhaustiveness for nominal variants;
+- `explain match` trace shape.
 
 Rejected-for-now:
 
-- string logs as the only observability surface;
-- stack traces as the primary user diagnostic;
-- macro or DSL features that cannot explain their expansion.
+- a second query selector language with hidden row scope;
+- nil-specific binding syntax that bypasses patterns;
+- regex literals as a grammar-level pattern language.
 
-## Pillar 5: Data Exchange, Formats, And Boundaries
+## Pillar 5: Blocks, Policies, And Managed Calls
 
-### Design Pressure
+### User Surface
 
-Nomi's `Data.decode()` story is already strong, but the vertical pillar is
-wider than `data` declarations: JSON, CSV, TOML, YAML, HTML forms, CLI args,
-environment variables, databases, schemas, config merge, generated clients,
-schema export, provenance, redaction, and partial/lax decoding.
+```nomi
+using(open(path)) -> file:
+    text = file.read()
+
+retry(3, on=NetworkError):
+    send(request)
+
+transaction(db):
+    db.insert(user)
+
+trace "import users":
+    import_users(path)
+```
+
+### Why It Is Vertical
+
+Blocks are concrete syntax users read constantly: resource scopes,
+transactions, tests, examples, retries, traces, callbacks, concurrency, and
+future effect policies. If every domain gets a keyword, the language becomes a
+menu. If everything is a callback, the user experience collapses.
+
+### Normal-Form Ownership
+
+| Surface | Owner | Reduction target |
+|---------|-------|------------------|
+| attached block call | Block + Function | ordinary call plus caller-side code invoked by `yield` |
+| block parameter | Binding | scoped binding with constraints |
+| resource policy | Block + Absence/result | acquire, yield, cleanup, report failure |
+| examples/checks | Block + Explanation | executable code with expected result |
+| concurrency policy | Block + Flow | scoped scheduling/cancellation policy |
+
+### Cross-Language Evidence
+
+- Ruby blocks, Kotlin/Swift trailing closures, Python context managers, Gleam
+  `use`, Go `defer`, and Zig `errdefer` all solve pieces of this surface.
+- Effect-handler languages show the broader shape, but too much effect theory
+  would burden ordinary code.
 
 ### Nomi Direction
 
-Treat external formats as parse layers feeding the same decode boundary:
-
-```nomi
-config =
-    Config.decode(Toml.parse(file.read()))
-    |> require_ok
-```
+Keep one visible attached-block story. Domain policies should be library calls
+first, not new keywords.
 
 Design-needed:
 
-- parse vs decode separation;
-- source provenance for every decoded field;
-- strict/lax coercion policy;
-- config merge semantics;
-- schema export as tooling, not core syntax;
-- typed string wrappers integrating with decode.
+- exact block-call spelling and parameter binding;
+- `yield` event semantics;
+- cleanup/body failure ordering;
+- block result and `Result` propagation;
+- trace/example/check integration;
+- structured concurrency as block policy.
+
+Rejected-for-now:
+
+- many domain keywords: `with`, `using`, `transaction`, `retry`, `test` as
+  unrelated syntax families;
+- implicit receivers that hide block scope;
+- callback-heavy APIs as the primary teaching path.
 
 ## Pillar 6: Numbers, Quantities, And Shape
 
-### Design Pressure
-
-Numbers look primitive until programs handle money, measurement, precision,
-statistics, arrays, tables, units, dates, byte sizes, percentages, and display.
-This pillar deserves early design attention because numeric mistakes are quiet.
-
-### Nomi Direction
-
-Start with boring numeric clarity, then add domain power through typed values
-and explicit shape/rank functions:
+### User Surface
 
 ```nomi
+count: int = 42
 price: Money["USD"] = Money.usd("12.99")
 timeout: Duration = 2.seconds
 area = width.meters * height.meters
+matrix.shape()
+values |> window(7) |> select(mean)
 ```
+
+### Why It Is Vertical
+
+Numeric values are everywhere, but the hard parts are concrete: money,
+decimals, units, durations, ranges, sizes, percentages, arrays, tables,
+statistics, and display. This surface affects literals, parsing, constraints,
+collection flow, formatting, and diagnostics.
+
+### Normal-Form Ownership
+
+| Surface | Owner | Reduction target |
+|---------|-------|------------------|
+| numeric literal | Data boundary | typed value construction |
+| range/step | Flow | collection value or iterator |
+| unit/quantity | Data boundary + Function | typed wrapper plus arithmetic protocols |
+| array shape/rank | Flow + Explanation | named shape/rank functions with inspectable plans |
+| formatting | String pillar + Explanation | display protocol with units/precision |
+
+### Cross-Language Evidence
+
+- Python/JavaScript show the cost of easy binary floats for everything.
+- Julia/R/MATLAB/APL show the power and risk of numeric/array-first design.
+- F#, Swift packages, and scientific libraries show units and quantities are
+  valuable but can become type-heavy.
+- Finance software shows money must not be casual float arithmetic.
+
+### Nomi Direction
+
+Start boring and explicit. Add domain power through typed values and named
+shape/rank functions before dense notation.
 
 Design-needed:
 
 - integer/float/decimal/money boundaries;
-- units and quantities as library-first typed wrappers;
-- array shape/rank vocabulary;
-- display and formatting protocol interaction;
-- parse failures as `Result`, not silent coercion.
+- unit and quantity wrappers;
+- range and shape vocabulary;
+- display and parse protocols;
+- overflow/precision policy;
+- table numeric summary verbs.
 
 Rejected-for-now:
 
 - dense array glyphs as ordinary syntax;
 - implicit unit conversion across domains;
-- using binary float for money examples.
+- binary float in money examples.
 
-## Pillar 7: Evolution, Style, And Toolability
+## Pillar 7: Time And Temporal Values
 
-### Design Pressure
+### User Surface
 
-A language is not just syntax. It is formatting, migration, package stability,
-editions, deprecation, generated artifacts, LSP, semantic tokens, examples,
-documentation, and AI/tool readability. If these are afterthoughts, early
-design wins become hard to keep.
+```nomi
+timeout = 2.seconds
+started: Instant = clock.now()
+due: LocalDate = Date.parse("2026-05-24") |> require_ok
+
+within(timeout):
+    fetch(url)
+```
+
+### Why It Is Vertical
+
+Time appears as values, parsed text, formatting, deadlines, retries,
+observability, scheduling, tests, and cleanup. It is concrete, user-facing, and
+easy to get wrong if represented as strings or raw numbers.
+
+### Normal-Form Ownership
+
+| Surface | Owner | Reduction target |
+|---------|-------|------------------|
+| `Duration`, `Instant`, `Date` | Data boundary | typed temporal values |
+| parse/format | String pillar + Absence/result | explicit `Result` from text |
+| timeout/deadline block | Block + Absence/result | scoped policy with failure reason |
+| test clock | Explanation + Data boundary | deterministic clock capability |
+| logs/traces | Explanation | event time source recorded |
+
+### Cross-Language Evidence
+
+- Java/.NET histories show ambiguous date-time APIs are long-lived mistakes.
+- Rust and Go separate monotonic and wall-clock concerns.
+- JavaScript shows how a single weak `Date` abstraction leaks everywhere.
+- Kotlin/Swift structured concurrency shows deadlines and cancellation should
+  be scoped.
 
 ### Nomi Direction
 
-Treat evolution as a designed surface:
-
-- `nomi fmt` as a stabilizing force;
-- editions/migration before 1.0 hardening;
-- feature status labels in docs and manifests;
-- generated artifacts with freshness checks;
-- semantic events consumable by LSP, notebooks, and AI tools;
-- packages incubating outside the core before promotion.
+Make time visible as typed values and scoped policies, not raw seconds or
+ambient globals.
 
 Design-needed:
 
-- edition policy;
-- migration tooling expectations;
-- package incubation tiers;
-- canonical formatting choices;
-- semantic token taxonomy;
-- doc/example/test integration.
+- `Duration`, `Instant`, `LocalDate`, `DateTime`, and `TimeZone` contracts;
+- monotonic vs wall-clock split;
+- parse/format behavior and locale boundaries;
+- deterministic test clocks;
+- timeout, cancellation, cleanup failure interaction.
+
+Rejected-for-now:
+
+- one universal `DateTime`;
+- implicit global clock in examples/tests;
+- raw integer seconds as the everyday API.
+
+## Pillar 8: Modules, Imports, And Packages
+
+### User Surface
+
+```nomi
+import "example.com/acme/users" as users
+import "example.com/schemas/user.nomi" sha256:abc123...
+
+pub func normalize(user: User) -> User:
+    ...
+```
+
+### Why It Is Vertical
+
+Imports and packages are concrete syntax, but they also define identity,
+visibility, extension availability, build reproducibility, examples, docs, and
+diagnostics. A language can feel clean locally and still become unpleasant if
+module identity is muddy.
+
+### Normal-Form Ownership
+
+| Surface | Owner | Reduction target |
+|---------|-------|------------------|
+| import | Binding + Data boundary | external module decoded into visible names |
+| alias | Binding | local name for imported value/module |
+| export/public | Binding + Explanation | visible API plus docs/examples |
+| package path/version/hash | Data boundary + Explanation | provenance and reproducibility |
+| extension visibility | Function + Binding | imported protocol/function visible at use site |
+
+### Cross-Language Evidence
+
+- Go and Deno make import paths explicit and domain-shaped.
+- Rust/Cargo shows package identity, features, docs, examples, and editions
+  need one coherent story.
+- Python shows import-time side effects are powerful but surprising.
+- Nix/Dhall show content-addressed imports as a reproducibility tool.
+
+### Nomi Direction
+
+Treat imports as binding events with provenance. Keep package identity visible
+enough for diagnostics and reproducibility.
+
+Design-needed:
+
+- file path vs domain path vs package name rules;
+- import-time side-effect policy;
+- visibility/export syntax;
+- extension method conflict diagnostics;
+- `explain import`;
+- package incubation and edition policy.
+
+Rejected-for-now:
+
+- implicit global package namespace;
+- wildcard imports as the default path;
+- hidden import-time configuration.
+
+## Pillar 9: Examples, Checks, And Explanation Surfaces
+
+### User Surface
+
+```nomi
+func normalize_email(email: str) -> str:
+    examples:
+        " A@B.COM " => "a@b.com"
+    return email.strip().lower()
+
+check:
+    normalize_email("x@y.com") == "x@y.com"
+
+explain:
+    users |> select(User.decode) |> collect_results
+```
+
+### Why It Is Vertical
+
+Examples, checks, traces, diagnostics, and explanation are concrete surfaces a
+user sees while writing and debugging. This pillar is not just tooling: it is
+how Nomi makes reductions inspectable and keeps advanced syntax humane.
+
+### Normal-Form Ownership
+
+| Surface | Owner | Reduction target |
+|---------|-------|------------------|
+| `examples:` | Explanation + Block | executable examples attached to code |
+| `check:` | Explanation + Block | assertion block with diagnostics |
+| `trace` | Explanation + Block | contextual event scope |
+| `explain` | Explanation | render semantic events and reductions |
+| structured log | Explanation + Data boundary | event with redaction/provenance |
+
+### Cross-Language Evidence
+
+- Rust and Elm show diagnostics are architecture, not prose polish.
+- Racket, Smalltalk, Jupyter, Pluto, and Observable show interactive
+  explanation shapes the language experience.
+- LSP and AI-readable traces show why events should be structured, not just
+  strings.
+
+### Nomi Direction
+
+Make examples, checks, traces, logs, and `explain` views share one event
+vocabulary.
+
+Design-needed:
+
+- canonical event schema;
+- example/check execution timing;
+- redaction and unsafe reveal;
+- expansion display for sugar and scoped extensions;
+- query/flow plan explanation;
+- notebook/LSP/AI rendering targets.
+
+Rejected-for-now:
+
+- string logs as the only observability surface;
+- stack traces as the main user diagnostic;
+- macro/DSL features with opaque expansion.
+
+## Support Concerns
+
+Trust, effects, lifecycle, style, editions, and toolability are still crucial.
+But they should usually enter through one of the concrete surfaces above:
+
+| Support concern | Concrete surfaces where it manifests |
+|-----------------|---------------------------------------|
+| Trust/security | Resources, strings, data boundaries, examples, modules |
+| Lifecycle/cancellation | Blocks, resources, time values, results |
+| Formatting/style | Every syntax surface; especially data, patterns, flow, blocks |
+| Toolability/AI-readability | Examples, explanation, modules, generated artifacts |
+| Evolution/editions | Modules/packages, syntax surfaces, formatter, migrations |
+
+This keeps the design tangible. A support concern becomes actionable when it
+changes what users write, read, inspect, or diagnose.
 
 ## Recommended Next Passes
 
-Do not try to fully specify every pillar at once. The highest-value sequence is:
+Do not fully specify every pillar at once. The highest-value sequence is:
 
-1. **Trust, Effects, And Capabilities** — because it constrains strings, IO,
-   security, resource handling, web/runtime, and package execution.
-2. **Time, Scheduling, And Lifecycle** — because it clarifies concurrency,
-   retries, cancellation, test determinism, and cleanup.
-3. **Names, Scope, Modules, And Identity** — because it will decide imports,
-   extension methods, packages, capabilities, and generated names.
-4. **Explanation, Observability, And Examples** — because every other pillar
-   should emit events and diagnostics through the same surface.
+1. **Data Values And Variants** — concrete, central, and currently too
+   compressed inside `data_and_types.md`.
+2. **Resources And World Values** — immediately improves paths, URLs, commands,
+   files, secrets, IO, security, and browser/runtime capability design.
+3. **Results, Absence, And Failure Values** — sharpens failure ergonomics
+   across parse/decode/IO/pipelines.
+4. **Blocks, Policies, And Managed Calls** — turns resource handling, retry,
+   examples, tracing, and concurrency into one visible interaction.
+5. **Numbers, Quantities, And Shape** and **Time Values** — prevent quiet
+   correctness bugs before the standard library ossifies.
 
 Each pillar should eventually get a string-style packet:
 
 ```text
+user surface
 design pressure
 normal-form ownership
 cross-language evidence
@@ -392,8 +662,15 @@ implementation/research next steps
 
 ## Design Context
 
-- [Strings](strings.md) — model for a cross-cutting pillar that reduces to
-  existing normal forms instead of becoming a new primitive by default.
+- [Strings](strings.md) — model for a concrete cross-cutting surface that
+  reduces to existing normal forms instead of becoming a new primitive by
+  default.
+- [Data & Types](data_and_types.md) — current home for data declarations,
+  aliases, decode, secrets, and type-shaped boundaries.
+- [Absence & Result](absence_and_result.md) — current home for absence,
+  expected failure, exceptions, `try`, and cleanup.
+- [Flow & Collections](flow_and_collections.md) — current home for collection
+  and pipeline surfaces.
 - [Interaction Map](interaction_map.md) — global/local feature interactions
   and one-way synthesis choices.
 - [Syntax Design Rules](syntax_design_rules.md) — primitive budget and axis
@@ -401,5 +678,3 @@ implementation/research next steps
 - [Cross-Language Synthesis Master](../research/cross_language_synthesis_master.md) —
   capstone normal-form synthesis and risk that the normal-form count may be
   wrong.
-- [Language Family Coverage Map](../research/language_family_coverage_map.md) —
-  research corpus index and under-covered dimensions.
