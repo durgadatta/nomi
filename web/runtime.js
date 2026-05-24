@@ -195,6 +195,13 @@ window.resetRuntime = async function() {
   }
 };
 
+window.cancelRun = async function() {
+  if (!_ready) return;
+  setStatus("running", "running");
+  byId("runtime-detail").textContent = "Cancelling runtime request...";
+  await cancelRuntime("Runtime request cancelled by user");
+};
+
 window.restartWorker = async function() {
   if (!_ready) return;
   setControlsDisabled(true);
