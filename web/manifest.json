@@ -105,6 +105,7 @@
     "prototype/runtime/backends/python_ast.py",
     "prototype/runtime/backends/values.py",
     "prototype/runtime/diagnostics.py",
+    "prototype/runtime/host_capabilities.py",
     "prototype/runtime/modes.py",
     "prototype/runtime/pipeline.py",
     "prototype/runtime/session.py",
