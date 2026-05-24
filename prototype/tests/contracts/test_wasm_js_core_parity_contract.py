@@ -55,6 +55,22 @@ def _core_from_wasm_js(source: str):
     return payload["root"]
 
 
+def _core_payload_from_wasm_js(source: str):
+    completed = subprocess.run(
+        [NODE, str(CORE_FROM_SOURCE)],
+        input=source,
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["schema"] == "nomi.core-ir"
+    assert payload["version"] == 1
+    return payload
+
+
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
 @pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")
 @pytest.mark.parametrize("name", tuple(CORE_PARITY_SNIPPETS), ids=tuple(CORE_PARITY_SNIPPETS))
@@ -64,3 +80,18 @@ def test_wasm_js_source_to_core_matches_python_session_for_stable_slice(name):
     assert _normalized(_core_from_wasm_js(source)) == _normalized(
         _core_from_python_session(source)
     )
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
+@pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")
+def test_wasm_js_lowering_diagnostic_is_structured_for_unsupported_construct():
+    payload = _core_payload_from_wasm_js("import math\n")
+
+    assert payload["diagnosticCount"] == 1
+    diagnostic = payload["diagnostics"][0]
+    assert diagnostic["phase"] == "lower"
+    assert diagnostic["severity"] == "error"
+    assert diagnostic["source_excerpt"] == "import math"
+    assert diagnostic["capability"] == "js-lowerer.raw-expression"
+    assert diagnostic["frontend"] == "rust-fast-ast-wasm"
+    assert diagnostic["backend"] == "js-core-runtime"

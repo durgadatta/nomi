@@ -50,7 +50,20 @@ function mappingLiteral(entries) { return { type: "MappingLiteral", entries: ent
 function getItem(obj, key)   { return { type: "GetItem", object_: obj, key }; }
 function getField(obj, field) { return { type: "GetField", object_: obj, field }; }
 function spread(value)       { return { type: "Spread", value }; }
-function diagnostic(message) { return { type: "Diagnostic", message }; }
+function diagnostic(message, details) {
+  const diagnostic = {
+    phase: "lower",
+    severity: "error",
+    message,
+    span: null,
+    source_excerpt: details && details.source_excerpt ? details.source_excerpt : null,
+    node_type: details && details.node_type ? details.node_type : null,
+    capability: details && details.capability ? details.capability : "js-lowerer.unsupported",
+    frontend: "rust-fast-ast-wasm",
+    backend: "js-core-runtime",
+  };
+  return { type: "Diagnostic", message, diagnostic };
+}
 function loopNode(test, body, elseBody) {
   const node = { type: "Loop", test, body };
   if (elseBody && elseBody.length) node.else_body = elseBody;
@@ -106,7 +119,7 @@ const AUGOP_MAP = {
 
 // ─── Expression lowering ─────────────────────────────────────────────────────
 
-let diagnosticCount = 0;
+let diagnostics = [];
 
 function lowerExpr(expr) {
   if (!expr || typeof expr !== "object") return NIL;
@@ -175,7 +188,7 @@ function lowerExpr(expr) {
       return lowerRawExpr(expr.value || "");
     }
     default:
-      return diagnostic("unknown expr type: " + expr.type);
+      return diagnostic("unknown expr type: " + expr.type, { node_type: expr.type });
   }
 }
 
@@ -239,8 +252,13 @@ function lowerStmt(stmt) {
       if (text === "break") return breakNode();
       if (text === "continue") return continueNode();
       if (text.startsWith("defer ")) return defer(moduleNode([lowerRawStmt(text.slice(6))]));
-      if (text.startsWith("import ") || text.startsWith("from ")) return diagnostic("import not yet in JS lowerer");
-      return diagnostic("unknown simple stmt: " + text);
+      if (text.startsWith("import ") || text.startsWith("from ")) {
+        return diagnostic("import not yet in JS lowerer", {
+          source_excerpt: text,
+          capability: "js-lowerer.import",
+        });
+      }
+      return diagnostic("unknown simple stmt: " + text, { source_excerpt: text });
     }
 
     case "Suite":
@@ -257,9 +275,12 @@ function lowerStmt(stmt) {
         return defer(moduleNode([lowerRawStmt(stmt.type.slice(6))]));
       }
       if (typeof stmt.type === "string" && (stmt.type.startsWith("import ") || stmt.type.startsWith("from "))) {
-        return diagnostic("import not yet in JS lowerer");
+        return diagnostic("import not yet in JS lowerer", {
+          source_excerpt: stmt.type,
+          capability: "js-lowerer.import",
+        });
       }
-      return diagnostic("unknown stmt type: " + stmt.type);
+      return diagnostic("unknown stmt type: " + stmt.type, { node_type: stmt.type });
   }
 }
 
@@ -482,11 +503,17 @@ function lowerSuite(stmt) {
       return call(func, args, { type: "Function", params: blockParams, body: moduleNode(body), defaults: [] });
     }
     case "With":
-      return diagnostic("with not yet in JS lowerer");
+      return diagnostic("with not yet in JS lowerer", {
+        node_type: "Suite",
+        capability: "js-lowerer.with",
+      });
     case "Guard": {
       const head = stmt.head || "";
       const eqIdx = head.indexOf(" = ");
-      if (eqIdx < 0) return diagnostic("malformed guard: " + head);
+      if (eqIdx < 0) return diagnostic("malformed guard: " + head, {
+        source_excerpt: head,
+        capability: "js-lowerer.guard",
+      });
       const patternText = head.slice(0, eqIdx).trim();
       const subjectText = head.slice(eqIdx + 3).trim();
       const pattern = lowerPatternText(patternText);
@@ -510,7 +537,10 @@ function lowerSuite(stmt) {
         const cases = (stmt.body || []).map(s => lowerCaseClause(s)).filter(c => c);
         return bind(name, matchNode(subject, cases));
       }
-      return diagnostic("malformed match-assign: " + head);
+      return diagnostic("malformed match-assign: " + head, {
+        source_excerpt: head,
+        capability: "js-lowerer.match-assign",
+      });
     }
     case "WhereAssign": {
       const target = stmt.target || head.split("=")[0]?.trim() || "";
@@ -530,7 +560,7 @@ function lowerSuite(stmt) {
       return bind(name, { type: "Function", params, body: moduleNode([...whereBody, returnNode(funcValue)]), defaults: [] });
     }
     default:
-      return diagnostic("unknown suite kind: " + kind);
+      return diagnostic("unknown suite kind: " + kind, { node_type: kind });
   }
 }
 
@@ -832,7 +862,9 @@ function lowerDataLike(kind, head, body) {
 
 function lowerRawExpr(raw) {
   const text = raw.trim();
-  if (!text) return diagnostic("empty raw expression");
+  if (!text) return diagnostic("empty raw expression", {
+    capability: "js-lowerer.raw-expression",
+  });
 
   // Literals — handle before heuristics
   if (text === "None") return NIL;
@@ -975,7 +1007,10 @@ function lowerRawExpr(raw) {
   }
 
   // Everything else: potentially Python-specific expression → diagnostic (triggers fallback)
-  return diagnostic("raw expr not yet in JS lowerer: " + text.slice(0, 60));
+  return diagnostic("raw expr not yet in JS lowerer: " + text.slice(0, 60), {
+    source_excerpt: text.slice(0, 120),
+    capability: "js-lowerer.raw-expression",
+  });
 }
 
 function findTopLevelConditional(text) {
@@ -1070,7 +1105,12 @@ function lowerSliceExpr(text) {
       break;
     }
   }
-  if (bracketStart < 0 || bracketEnd < 0) return diagnostic("malformed slice: " + text.slice(0, 60));
+  if (bracketStart < 0 || bracketEnd < 0) {
+    return diagnostic("malformed slice: " + text.slice(0, 60), {
+      source_excerpt: text.slice(0, 120),
+      capability: "js-lowerer.slice",
+    });
+  }
   const objText = text.slice(0, bracketStart).trim();
   const inner = text.slice(bracketStart + 1, bracketEnd).trim();
   const parts = inner.split(":").filter(s => s !== "").map(s => s.trim());
@@ -1201,7 +1241,10 @@ function lowerRawTryExpr(text) {
 
 function lowerRawMatchExpr(text) {
   const m = text.match(/^match\s+(.+?)\s*:\s*(.+)$/s);
-  if (!m) return diagnostic("malformed match expr: " + text.slice(0, 60));
+  if (!m) return diagnostic("malformed match expr: " + text.slice(0, 60), {
+    source_excerpt: text.slice(0, 120),
+    capability: "js-lowerer.match-expression",
+  });
 
   const subject = lowerRawExpr(m[1].trim());
   const rest = m[2].trim();
@@ -1255,7 +1298,10 @@ function lowerSectionExpr(inner) {
     return { type: "Function", params: ["_1"], body: moduleNode([returnNode(binaryOp(load("_1"), op, operand))]), defaults: [] };
   }
 
-  return diagnostic("unrecognized section: " + inner);
+  return diagnostic("unrecognized section: " + inner, {
+    source_excerpt: inner,
+    capability: "js-lowerer.section",
+  });
 }
 
 function lowerNullishExpr(text) {
@@ -1403,7 +1449,10 @@ function lowerRangeExpr(text) {
   let sepIdx = exclusiveIdx >= 0 ? exclusiveIdx : inclusiveIdx;
   let exclusive = exclusiveIdx >= 0;
 
-  if (sepIdx < 0) return diagnostic("malformed range: " + text);
+  if (sepIdx < 0) return diagnostic("malformed range: " + text, {
+    source_excerpt: text,
+    capability: "js-lowerer.range",
+  });
 
   const start = text.slice(0, sepIdx).trim();
   const afterSep = text.slice(sepIdx + (exclusive ? 3 : 2));
@@ -1437,7 +1486,10 @@ function lowerRangeExpr(text) {
 function lowerCallExpr(text) {
   const paren = text.indexOf("(");
   const close = text.lastIndexOf(")");
-  if (paren < 0 || close < 0) return diagnostic("malformed call: " + text);
+  if (paren < 0 || close < 0) return diagnostic("malformed call: " + text, {
+    source_excerpt: text,
+    capability: "js-lowerer.call",
+  });
 
   const funcName = text.slice(0, paren).trim();
   const argsStr = text.slice(paren + 1, close).trim();
@@ -1511,7 +1563,10 @@ function lowerComparisonExpr(text) {
       }
     }
   }
-  return diagnostic("raw comparison not handled: " + text.slice(0, 60));
+  return diagnostic("raw comparison not handled: " + text.slice(0, 60), {
+    source_excerpt: text.slice(0, 120),
+    capability: "js-lowerer.comparison",
+  });
 }
 
 function lowerRawStmt(text) {
@@ -1649,7 +1704,7 @@ function wrapHolesAsFunction(node, params) {
 // ─── Main entry point ────────────────────────────────────────────────────────
 
 function lowerRustAstToCoreIr(rustAst) {
-  diagnosticCount = 0;
+  diagnostics = [];
 
   const body = (rustAst.body || []).map(lowerStmt);
 
@@ -1657,13 +1712,14 @@ function lowerRustAstToCoreIr(rustAst) {
   // E.g., fact(1) = 1; fact(n) = fact(n-1) * n → single match-based fact function.
   const merged = mergeFunctionOverloads(body);
 
-  diagnosticCount += countDiagnostics({ type: "Module", body: merged });
+  diagnostics = collectDiagnostics({ type: "Module", body: merged });
 
   return {
     schema: CORE_IR_JSON_SCHEMA,
     version: CORE_IR_JSON_VERSION,
     root: moduleNode(merged),
-    diagnosticCount
+    diagnostics,
+    diagnosticCount: diagnostics.length
   };
 }
 
@@ -1742,19 +1798,31 @@ function paramToPattern(p) {
   return load(p);
 }
 
-function countDiagnostics(node) {
-  if (!node || typeof node !== "object") return 0;
-  let count = 0;
-  if (node.type === "Diagnostic") count++;
+function collectDiagnostics(node) {
+  if (!node || typeof node !== "object") return [];
+  let records = [];
+  if (node.type === "Diagnostic") {
+    records.push(node.diagnostic || {
+      phase: "lower",
+      severity: "error",
+      message: node.message || "lowering diagnostic",
+      span: null,
+      source_excerpt: null,
+      node_type: null,
+      capability: "js-lowerer.unsupported",
+      frontend: "rust-fast-ast-wasm",
+      backend: "js-core-runtime",
+    });
+  }
   for (const key of Object.keys(node)) {
     const val = node[key];
     if (Array.isArray(val)) {
-      for (const item of val) count += countDiagnostics(item);
+      for (const item of val) records = records.concat(collectDiagnostics(item));
     } else if (typeof val === "object" && val !== null) {
-      count += countDiagnostics(val);
+      records = records.concat(collectDiagnostics(val));
     }
   }
-  return count;
+  return records;
 }
 
 // ─── Exports ─────────────────────────────────────────────────────────────────

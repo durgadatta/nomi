@@ -22,13 +22,81 @@ async function initRuntime() {
   runtime = new NomiCoreRuntime.CoreRuntime();
 }
 
+function diagnosticRecord({ phase, message, severity, capability, frontend, backend }) {
+  return {
+    phase,
+    severity: severity || "error",
+    message,
+    span: null,
+    source_excerpt: null,
+    node_type: null,
+    capability: capability || null,
+    frontend: frontend || "rust-fast-ast-wasm",
+    backend: backend || "js-core-runtime",
+  };
+}
+
+function resultEnvelope({
+  ok,
+  bindings,
+  value,
+  hasValue,
+  stdout,
+  stderr,
+  diagnostics,
+  timings,
+  error,
+}) {
+  const output = stdout || "";
+  return {
+    ok,
+    error: error || "",
+    output,
+    stdout: output,
+    stderr: stderr || "",
+    backend: "wasm-js",
+    value: value === undefined ? null : value,
+    has_value: hasValue === true,
+    bindings: bindings || {},
+    diagnostics: diagnostics || [],
+    timings: timings || {},
+    timing: timings || {},
+    pipeline: {
+      parser_frontend: "rust-fast-ast-wasm",
+      lowerer: "js-core-lowerer",
+      eval_backend: "js-core-runtime",
+      host: "browser-worker",
+    },
+  };
+}
+
 function runWithWasmJs(code) {
   const parseStart = performance.now();
   let json;
   try {
     json = wasm_bindgen.parse_nomi(code);
   } catch (e) {
-    return { error: "parse error: " + e.message };
+    const totalMs = performance.now() - parseStart;
+    const message = "parse error: " + e.message;
+    return resultEnvelope({
+      ok: false,
+      error: message,
+      diagnostics: [
+        diagnosticRecord({
+          phase: "parse",
+          message,
+          capability: "rust-fast-ast-wasm.parse",
+          backend: null,
+        }),
+      ],
+      timings: {
+        parse_ms: totalMs,
+        lower_ms: 0,
+        eval_ms: 0,
+        total_ms: totalMs,
+        cache_hit: false,
+      },
+    });
   }
   const rustAst = JSON.parse(json);
   const parseMs = performance.now() - parseStart;
@@ -38,7 +106,24 @@ function runWithWasmJs(code) {
   const lowerMs = performance.now() - lowerStart;
 
   if (coreIr.diagnosticCount > 0) {
-    return { error: `${coreIr.diagnosticCount} lowering diagnostic(s) — some constructs not yet handled by the JS lowerer` };
+    const diagnostics = coreIr.diagnostics || [];
+    const first = diagnostics[0] || diagnosticRecord({
+      phase: "lower",
+      message: `${coreIr.diagnosticCount} lowering diagnostic(s)`,
+      capability: "js-lowerer.unsupported",
+    });
+    return resultEnvelope({
+      ok: false,
+      error: first.message,
+      diagnostics,
+      timings: {
+        parse_ms: parseMs,
+        lower_ms: lowerMs,
+        eval_ms: 0,
+        total_ms: parseMs + lowerMs,
+        cache_hit: false,
+      },
+    });
   }
 
   const evalStart = performance.now();
@@ -46,17 +131,37 @@ function runWithWasmJs(code) {
   try {
     result = runtime.evaluate(coreIr, { displayLastExpr: true });
   } catch (e) {
-    return { error: "eval error: " + e.message };
+    const evalMs = performance.now() - evalStart;
+    const message = "eval error: " + e.message;
+    return resultEnvelope({
+      ok: false,
+      error: message,
+      diagnostics: [
+        diagnosticRecord({
+          phase: "eval",
+          message,
+          capability: "js-core-runtime.eval",
+        }),
+      ],
+      timings: {
+        parse_ms: parseMs,
+        lower_ms: lowerMs,
+        eval_ms: evalMs,
+        total_ms: parseMs + lowerMs + evalMs,
+        cache_hit: false,
+      },
+    });
   }
   const evalMs = performance.now() - evalStart;
 
-  return {
-    output: result.stdout || "",
-    backend: "wasm-js",
+  return resultEnvelope({
+    ok: true,
     value: result.value,
-    has_value: result.has_value === true,
+    hasValue: result.has_value === true,
+    stdout: result.stdout || "",
+    stderr: result.stderr || "",
     diagnostics: result.diagnostics || [],
-    timing: {
+    timings: {
       parse_ms: parseMs,
       lower_ms: lowerMs,
       eval_ms: evalMs,
@@ -64,7 +169,7 @@ function runWithWasmJs(code) {
       cache_hit: false,
     },
     bindings: result.bindings || {},
-  };
+  });
 }
 
 async function handleMessage(message) {
