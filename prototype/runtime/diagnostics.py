@@ -12,9 +12,31 @@ class Diagnostic:
 
     message: str
     severity: str = "error"
+    phase: str | None = None
     code: str | None = None
     span: Any | None = None
+    source_excerpt: str | None = None
+    node_type: str | None = None
+    capability: str | None = None
+    frontend: str | None = None
+    backend: str | None = None
     details: dict[str, Any] = field(default_factory=dict)
+
+    def to_record(self) -> dict[str, Any]:
+        """Return the shared diagnostic JSON shape used by browser/runtime APIs."""
+        return {
+            "phase": self.phase,
+            "severity": self.severity,
+            "message": self.message,
+            "span": self.span,
+            "source_excerpt": self.source_excerpt,
+            "node_type": self.node_type,
+            "capability": self.capability,
+            "frontend": self.frontend,
+            "backend": self.backend,
+            "code": self.code,
+            "details": dict(self.details),
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,15 +70,27 @@ class RuntimeEventCollector:
         message: str,
         *,
         severity: str = "error",
+        phase: str | None = None,
         code: str | None = None,
         span: Any | None = None,
+        source_excerpt: str | None = None,
+        node_type: str | None = None,
+        capability: str | None = None,
+        frontend: str | None = None,
+        backend: str | None = None,
         details: dict[str, Any] | None = None,
     ) -> Diagnostic:
         diagnostic = Diagnostic(
             message=message,
             severity=severity,
+            phase=phase,
             code=code,
             span=span,
+            source_excerpt=source_excerpt,
+            node_type=node_type,
+            capability=capability,
+            frontend=frontend,
+            backend=backend,
             details=details or {},
         )
         self.add_diagnostic(diagnostic)

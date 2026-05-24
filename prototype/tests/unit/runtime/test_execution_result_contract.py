@@ -32,14 +32,51 @@ def test_execution_result_can_carry_diagnostics_and_events():
     assert result.events == (event,)
 
 
+def test_diagnostic_exposes_shared_json_record_shape():
+    diagnostic = Diagnostic(
+        message="unsupported construct",
+        severity="warning",
+        phase="lower",
+        code="NOMI-L001",
+        span={"line": 1, "column": 1},
+        source_excerpt="with x:",
+        node_type="With",
+        capability="js-lowerer.with",
+        frontend="rust-fast-ast-wasm",
+        backend="js-core-runtime",
+        details={"hint": "try a simpler form"},
+    )
+
+    assert diagnostic.to_record() == {
+        "phase": "lower",
+        "severity": "warning",
+        "message": "unsupported construct",
+        "span": {"line": 1, "column": 1},
+        "source_excerpt": "with x:",
+        "node_type": "With",
+        "capability": "js-lowerer.with",
+        "frontend": "rust-fast-ast-wasm",
+        "backend": "js-core-runtime",
+        "code": "NOMI-L001",
+        "details": {"hint": "try a simpler form"},
+    }
+
+
 def test_execute_uses_runtime_event_collector_snapshot():
     collector = RuntimeEventCollector()
-    diagnostic = collector.diagnostic("careful", severity="warning")
+    diagnostic = collector.diagnostic(
+        "careful",
+        severity="warning",
+        phase="eval",
+        capability="runtime.test",
+    )
     event = collector.event("runtime.test", payload={"ok": True})
 
     result = execute(source="x = 1\n", event_collector=collector)
 
     assert result.diagnostics == (diagnostic,)
+    assert result.diagnostics[0].to_record()["phase"] == "eval"
+    assert result.diagnostics[0].to_record()["capability"] == "runtime.test"
     assert result.events == (event,)
 
 
