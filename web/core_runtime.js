@@ -576,6 +576,51 @@ class CoreRuntime {
         return { kind: "sequence", elements: items };
       }, true);
     }
+    // String methods
+    if (objectValue.kind === "str") {
+      const strVal = objectValue.value;
+      switch (node.field) {
+        case "strip": return native("str.strip", () => strVal.trim(), true);
+        case "title": {
+          const titled = strVal.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+          return native("str.title", () => titled, true);
+        }
+        case "lower": return native("str.lower", () => strVal.toLowerCase(), true);
+        case "upper": return native("str.upper", () => strVal.toUpperCase(), true);
+        case "replace": return native("str.replace", (oldS, newS) => strVal.replaceAll(unbox(oldS), unbox(newS)), true);
+        case "split": return native("str.split", (sep) => {
+          const parts = sep === undefined || sep === null ? strVal.trim().split(/\s+/) : strVal.split(unbox(sep));
+          return { kind: "sequence", elements: parts.map(s => box(s)) };
+        }, true);
+        case "startswith": return native("str.startswith", (prefix) => strVal.startsWith(unbox(prefix)), true);
+        case "endswith": return native("str.endswith", (suffix) => strVal.endsWith(unbox(suffix)), true);
+      }
+    }
+
+    // Sequence methods
+    if (objectValue.kind === "sequence") {
+      switch (node.field) {
+        case "append": return native("seq.append", (item) => { objectValue.elements.push(item); return NIL; }, true);
+        case "pop": return native("seq.pop", () => {
+          if (objectValue.elements.length === 0) throw new Error("pop from empty sequence");
+          return objectValue.elements.pop();
+        }, true);
+        case "len": return native("seq.len", () => box(objectValue.elements.length), true);
+      }
+    }
+
+    // Mapping methods
+    if (objectValue.kind === "mapping") {
+      switch (node.field) {
+        case "keys": return native("mapping.keys", () => {
+          return { kind: "sequence", elements: Array.from(objectValue.entries.keys()).map(k => box(k)) };
+        }, true);
+        case "values": return native("mapping.values", () => {
+          return { kind: "sequence", elements: Array.from(objectValue.entries.values()) };
+        }, true);
+      }
+    }
+
     if (objectValue.kind !== "data") {
       throw new TypeError(`${objectValue.kind} has no field '${node.field}'`);
     }
