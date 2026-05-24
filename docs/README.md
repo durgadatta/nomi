@@ -63,6 +63,9 @@ Concrete project, process, and tooling docs.
 - [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md):
   flexible, declarative, reversible implementation rules for early language
   design work.
+- [Technical Implementation Improvement Notes](orientation/technical_implementation_improvement_notes.md):
+  current high-impact scan across parser, runtime, web, contracts, host
+  capabilities, and generated artifacts.
 - [VS Code Extension](orientation/vscode_extension.md): local extension
   surface and roadmap.
 - [RAG MCP Context](orientation/rag_mcp.md): local retrieval and MCP scaffold
@@ -78,7 +81,7 @@ general reading order.
 | Task | Read first |
 | --- | --- |
 | Add or change syntax | [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), the relevant [Convenience](convenience/) note, [Design Proposal Template](language/design_proposal_template.md) |
-| Audit implementation gaps | [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
+| Audit implementation gaps | [Technical Implementation Improvement Notes](orientation/technical_implementation_improvement_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md) |
 | Separate core/sugar/eval layers | [Core Layer Separation Plan](language/core_layer_separation_plan.md), [Language Degrees Of Freedom](language/language_degrees_of_freedom.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Critique implementation flexibility/performance | [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md), [Adversarial Exploratory Implementation Critique](language/adversarial_exploratory_implementation_critique.md), [Adversarial Implementation Critique](language/adversarial_implementation_critique.md), [Performance Notes](orientation/performance_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md) |
 | Plan Python-independent backends | [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
