@@ -47,26 +47,35 @@ A vertical surface pillar is admitted when it:
 
 ## Surface Pillar Map
 
+The most pervasive primary surfaces are **strings/text**, **functions/calls**,
+and **collections/flow**. They are not edge cases, refinements, or domain
+features; they appear in nearly every program a broad audience will write. New
+primary constructs should meet that level of universal appeal. Narrower
+constructs should begin as library conventions, explicit functions, data values,
+block policies, or fenced secondary layers that compose from the primary
+surfaces.
+
 | Priority | Surface pillar | What the user touches | Cross-cutting pressure | Current docs | Next packet |
 |----------|----------------|-----------------------|------------------------|--------------|-------------|
 | 0 | Strings And Text | `"..."`, `f"..."`, raw strings, regex, interpolation, display | Text crosses humans, formats, patterns, security, Unicode, logs, and diagnostics. | [strings.md](strings.md) | Continue string spec packet |
-| 1 | Data Values And Variants | `data User`, fields, constructors, variants, records, enum-like cases | Values shape binding, patterns, decode, display, equality, examples, and schema export. | [data_and_types.md](data_and_types.md), [patterns.md](patterns.md) | `data_values_and_variants.md` or expand data doc |
-| 2 | Resources And World Values | `Path`, `File`, `Url`, `Request`, `Response`, `Command`, `Secret`, capabilities | Programs touch files, network, env, subprocesses, secrets, and host authority through concrete values. | [strings.md](strings.md), [concurrency.md](concurrency.md), [data_and_types.md](data_and_types.md) | `resources_and_world.md` |
-| 3 | Results, Absence, And Failure Values | `none`, `?`, `Result`, `Ok`, `Err`, `try`, errors, diagnostics | Non-success appears in access, parsing, IO, decode, match, pipelines, and block policies. | [absence_and_result.md](absence_and_result.md), [patterns.md](patterns.md) | Strengthen `absence_and_result.md` |
-| 4 | Patterns And Selectors | `match`, destructuring, guards, regex capture, field/row selectors | Users choose by shape everywhere: data, external maps, rows, strings, results, and function clauses. | [patterns.md](patterns.md), [strings.md](strings.md) | `patterns.md` string-level review |
-| 5 | Blocks, Policies, And Managed Calls | `using(...) -> x:`, `retry:`, `transaction:`, `defer`, `trace:` | Caller-attached code handles resources, transactions, tests, examples, concurrency, and control transfer. | [scope_context.md](scope_context.md), [concurrency.md](concurrency.md), [../features/block_calls_feature.md](../features/block_calls_feature.md) | `blocks_and_policies.md` |
-| 6 | Numbers, Quantities, And Shape | integers, floats, decimals, money, units, ranges, arrays, dimensions | Numeric values drive correctness in loops, tables, formatting, money, time, measurement, and arrays. | [flow_and_collections.md](flow_and_collections.md), [data_and_types.md](data_and_types.md) | `numbers_quantities_and_shape.md` |
-| 7 | Time And Temporal Values | `Duration`, `Instant`, `Date`, `TimeZone`, deadlines, schedules | Time shows up as values, parsed text, retries, timeout policies, tests, logs, and deterministic examples. | [concurrency.md](concurrency.md), [absence_and_result.md](absence_and_result.md) | `time_values.md` |
-| 8 | Modules, Imports, And Packages | `import`, aliases, exports, package paths, versions, hashes | Names across files shape visibility, extension methods, package identity, reproducibility, and diagnostics. | [modules_imports.md](modules_imports.md), [scope_context.md](scope_context.md) | `modules_packages_and_identity.md` |
-| 9 | Examples, Checks, And Explanation Surfaces | `examples:`, `check:`, `trace`, `explain`, structured logs | Users understand code through examples, diagnostics, traces, notebooks, LSP, and AI-readable events. | [meta_testing.md](meta_testing.md), [interaction_map.md](interaction_map.md) | `explanation_surfaces.md` |
+| 1 | Functions And Calls | `func`, calls, parameters, `=>`, equations, holes, composition, `where` | Behavior is declared, passed, inspected, tested, constrained, and generated across every surface. | [functions.md](functions.md) | Continue function surface review |
+| 2 | Collections And Flow | lists, maps, sets, ranges, slices, comprehensions, `\|>`, transforms | Programs move values through lists, records, results, tables, streams, and plans. | [flow_and_collections.md](flow_and_collections.md) | Continue collection surface review |
+| 3 | Data Values And Variants | `data User`, fields, constructors, variants, records, enum-like cases | Values shape binding, patterns, decode, display, equality, examples, and schema export. | [data_and_types.md](data_and_types.md), [patterns.md](patterns.md) | `data_values_and_variants.md` or expand data doc |
+| 4 | Results, Absence, And Failure Values | `none`, `?`, `Result`, `Ok`, `Err`, `try`, errors, diagnostics | Non-success appears in access, parsing, IO, decode, match, pipelines, and block policies. | [absence_and_result.md](absence_and_result.md), [patterns.md](patterns.md) | Strengthen `absence_and_result.md` |
+| 5 | Patterns And Selectors | `match`, destructuring, guards, regex capture, field/row selectors | Users choose by shape everywhere: data, external maps, rows, strings, results, and function clauses. | [patterns.md](patterns.md), [strings.md](strings.md) | `patterns.md` string-level review |
+| 6 | Resources And World Values | `Path`, `File`, `Url`, `Request`, `Response`, `Command`, `Secret`, capabilities | Programs touch files, network, env, subprocesses, secrets, and host authority through concrete values. | [strings.md](strings.md), [concurrency.md](concurrency.md), [data_and_types.md](data_and_types.md) | `resources_and_world.md` |
+| 7 | Blocks, Policies, And Managed Calls | `using(...) -> x:`, `retry:`, `transaction:`, `defer`, `trace:` | Caller-attached code handles resources, transactions, tests, examples, concurrency, and control transfer. | [scope_context.md](scope_context.md), [concurrency.md](concurrency.md), [../features/block_calls_feature.md](../features/block_calls_feature.md) | `blocks_and_policies.md` |
+| 8 | Numbers, Quantities, And Shape | integers, floats, decimals, money, units, ranges, arrays, dimensions | Numeric values drive correctness in loops, tables, formatting, money, time, measurement, and arrays. | [flow_and_collections.md](flow_and_collections.md), [data_and_types.md](data_and_types.md) | `numbers_quantities_and_shape.md` |
+| 9 | Time And Temporal Values | `Duration`, `Instant`, `Date`, `TimeZone`, deadlines, schedules | Time shows up as values, parsed text, retries, timeout policies, tests, logs, and deterministic examples. | [concurrency.md](concurrency.md), [absence_and_result.md](absence_and_result.md) | `time_values.md` |
+| 10 | Modules, Imports, And Packages | `import`, aliases, exports, package paths, versions, hashes | Names across files shape visibility, extension methods, package identity, reproducibility, and diagnostics. | [modules_imports.md](modules_imports.md), [scope_context.md](scope_context.md) | `modules_packages_and_identity.md` |
+| 11 | Examples, Checks, And Explanation Surfaces | `examples:`, `check:`, `trace`, `explain`, structured logs | Users understand code through examples, diagnostics, traces, notebooks, LSP, and AI-readable events. | [meta_testing.md](meta_testing.md), [interaction_map.md](interaction_map.md) | `explanation_surfaces.md` |
 
-Strings, functions, collections, and patterns are already prominent in the
-convenience docs. The highest-value missing concrete surfaces are **Data
-Values**, **Resources/World Values**, **Failure Values**, and **Blocks/Policies**.
-They are tangible enough to improve syntax and interaction, while vertical
-enough to require string-level research.
+After strings/functions/collections, the highest-value missing concrete
+surfaces are **Data Values**, **Failure Values**, **Patterns**, and
+**Resources/World Values**. They are tangible enough to improve syntax and
+interaction, while vertical enough to require string-level research.
 
-## Pillar 1: Data Values And Variants
+## Candidate Pillar 1: Data Values And Variants
 
 ### User Surface
 
@@ -133,7 +142,7 @@ Rejected-for-now:
 - structural type equivalence as the default owned-data model;
 - generated magic methods that cannot be explained.
 
-## Pillar 2: Resources And World Values
+## Candidate Pillar 2: Resources And World Values
 
 ### User Surface
 
@@ -197,7 +206,7 @@ Rejected-for-now:
 - shell-language string execution as the teaching path;
 - ambient authority with no traceable capability.
 
-## Pillar 3: Results, Absence, And Failure Values
+## Candidate Pillar 3: Results, Absence, And Failure Values
 
 ### User Surface
 
@@ -259,7 +268,7 @@ Rejected-for-now:
 - sentinel values like `-1` for search/parse failure;
 - Go-style `(value, err)` as the primary surface.
 
-## Pillar 4: Patterns And Selectors
+## Candidate Pillar 4: Patterns And Selectors
 
 ### User Surface
 
@@ -320,7 +329,7 @@ Rejected-for-now:
 - nil-specific binding syntax that bypasses patterns;
 - regex literals as a grammar-level pattern language.
 
-## Pillar 5: Blocks, Policies, And Managed Calls
+## Candidate Pillar 5: Blocks, Policies, And Managed Calls
 
 ### User Surface
 
@@ -383,7 +392,7 @@ Rejected-for-now:
 - implicit receivers that hide block scope;
 - callback-heavy APIs as the primary teaching path.
 
-## Pillar 6: Numbers, Quantities, And Shape
+## Candidate Pillar 6: Numbers, Quantities, And Shape
 
 ### User Surface
 
@@ -441,7 +450,7 @@ Rejected-for-now:
 - implicit unit conversion across domains;
 - binary float in money examples.
 
-## Pillar 7: Time And Temporal Values
+## Candidate Pillar 7: Time And Temporal Values
 
 ### User Surface
 
@@ -497,7 +506,7 @@ Rejected-for-now:
 - implicit global clock in examples/tests;
 - raw integer seconds as the everyday API.
 
-## Pillar 8: Modules, Imports, And Packages
+## Candidate Pillar 8: Modules, Imports, And Packages
 
 ### User Surface
 
@@ -554,7 +563,7 @@ Rejected-for-now:
 - wildcard imports as the default path;
 - hidden import-time configuration.
 
-## Pillar 9: Examples, Checks, And Explanation Surfaces
+## Candidate Pillar 9: Examples, Checks, And Explanation Surfaces
 
 ### User Surface
 

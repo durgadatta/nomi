@@ -8,14 +8,26 @@
 >
 > Deep research: [cross_language_synthesis_master.md §4.2](../research/cross_language_synthesis_master.md)
 > (function normal form),
+> [modern_language_feature_survey.md](../research/modern_language_feature_survey.md)
+> (Gleam, Roc, Hylo, Koka, Verse function/control surfaces),
+> [csharp_java_dart_modern_features.md](../research/csharp_java_dart_modern_features.md)
+> (mainstream lambdas and method syntax),
+> [beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md)
+> (multi-clause functions and pipe-heavy APIs),
 > [scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md)
-> (multiple dispatch, broadcasting, dot-call conventions).
+> (multiple dispatch, broadcasting, dot-call conventions),
+> and [first_hour_pedagogy_deep_dive.md](../research/first_hour_pedagogy_deep_dive.md)
+> (beginner-facing function teaching).
 >
 > Companion: [design_lessons_and_integration.md §4.2](design_lessons_and_integration.md)
 > for the function normal form integration critique.
 >
 > Interaction map: [interaction_map.md](interaction_map.md) connects function
 > sugar to pattern dispatch, collection flow, block calls, and result handling.
+>
+> Primary surface: functions and calls are unavoidable. Every Nomi user will
+> define behavior, pass behavior, call behavior, inspect behavior, or read
+> behavior that another surface generated.
 
 ## Design Pressure
 
@@ -38,6 +50,14 @@ make a function value where the reader can still see its inputs, body, and role
 Nomi should therefore keep one coherent ladder of function forms. A form lower
 on the ladder is acceptable only while it remains obvious.
 
+The admission bar is high because function sugar affects every other surface.
+Add a function form only when it helps ordinary programmers with ordinary code:
+named behavior, callback arguments, tiny transforms, local helpers, pattern
+dispatch, and readable pipelines. If a construct mainly helps a specialty style
+such as dense point-free programming, generic currying, algebraic effect
+notation, or query-planner internals, it belongs in a library, fenced layer, or
+future research packet first.
+
 | Need | Preferred Nomi form | Why |
 | --- | --- | --- |
 | Named, block-bodied behavior | `func name(params): ...` | Most explicit; best for effects, control flow, examples, and constraints. |
@@ -48,6 +68,30 @@ on the ladder is acceptable only while it remains obvious.
 | Tiny multi-argument relation | `$1 + $2` or `$name` | Useful when explicit order or names improve a short expression. |
 | Reusable transform pipeline | `f >>> g` / `f <<< g` today, future teaching may converge on `>>` | Composition builds a function for later; pipeline applies a value now. |
 | Local helper derivation | `expr where: ...` | Keeps the main expression first while helper bindings remain local. |
+
+## Universal Function Surface
+
+The unavoidable function surface is small:
+
+| Surface | User-facing need | Layer |
+| --- | --- | --- |
+| call syntax | Apply named behavior to values. | primary |
+| `func name(params): ...` | Define block-bodied behavior with statements, control flow, examples, effects, and result checks. | primary |
+| `name(params) = expr` | Name a simple expression without ceremony. | primary |
+| `(x, y) => expr` | Pass behavior as a value while keeping inputs visible. | primary |
+| pattern/guard clauses | Define compact classifiers and recursive cases. | primary, by reduction to Pattern |
+| `_`, `$1`, `$name`, operator sections | Remove lambda noise from tiny transforms. | primary but style-limited |
+| `where` helpers | Keep local derivations attached to the expression they support. | primary, by reduction to Binding |
+| composition | Build reusable transforms from existing functions. | primary but teaching spelling unsettled |
+| automatic currying | Make every partial call a function. | secondary/rejected for everyday layer |
+| broad partial application | Specialize selected arguments of a call. | secondary; explicit holes or helpers first |
+| method references | Refer to member calls without writing a lambda. | secondary; wait for member/type model |
+| context/implicit parameters | Supply capabilities, clocks, locale, loggers, or DB handles implicitly. | future capability layer |
+| do-notation / monad sugar | Sequence result/effectful computations. | research-only until Result/block story matures |
+
+This keeps the first-hour and thousandth-hour story aligned: a function is still
+parameters plus body plus result. Convenience may remove punctuation, but it
+must not create a second model of calling, binding, or control.
 
 ## Normal Form
 
@@ -322,6 +366,35 @@ For Nomi, this should grow from explicit values, block policies, and future
 capability scopes. Do not add implicit parameters as function sugar before the
 capability and explanation model exists.
 
+## Research Coverage And Gaps
+
+The current research coverage is broad enough to guide the primary surface:
+
+- explicit long forms from Python, Go, Java, C#, Swift, Kotlin, Rust, and Ruby;
+- expression and equation forms from ML-family languages, Haskell, Elm, F#,
+  Roc, and Gleam;
+- callback ergonomics from JavaScript/TypeScript, Kotlin, Swift, Ruby, Elixir,
+  Scala, Clojure, and Julia;
+- pipeline/composition pressure from F#, Elixir, Gleam, R, Julia, Unix shells,
+  and functional programming;
+- beginner-facing lessons from Python, Racket, BASIC, Scratch, Logo, Elm, and
+  Swift Playgrounds;
+- specialist warnings from array and concatenative languages, where compact
+  function notation can become powerful but non-local.
+
+Remaining gaps should be closed only when they touch the universal surface:
+
+- exact teaching order for `func`, equations, `=>`, holes, and composition;
+- final composition spelling and precedence relative to pipeline;
+- diagnostics for generated placeholder parameters and piecewise clauses;
+- how return constraints, examples, and explanation traces appear on each
+  function form;
+- how extension functions and method calls fit data/module design without
+  becoming a second dispatch system.
+
+Do not expand this doc around niche function families until one of those gaps
+forces the issue.
+
 ## Synthesis Decisions
 
 | Candidate | Status | Decision |
@@ -350,6 +423,8 @@ capability and explanation model exists.
 
 Add a new function convenience only if all answers are yes:
 
+- Does it improve a pervasive, day-to-day programming surface rather than a
+  narrow style, framework, or domain?
 - Can it be shown as a normal `func`, equation, or `=>` expansion?
 - Does it reuse the same parameter binding and constraint semantics?
 - Does it improve a common call site without hiding effects or control flow?

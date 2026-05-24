@@ -7,10 +7,37 @@
 > (8-system survey: SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q),
 > [array_languages_deep_dive.md](../research/array_languages_deep_dive.md),
 > [scientific_languages_r_matlab_julia.md](../research/scientific_languages_r_matlab_julia.md),
+> [modern_language_feature_survey.md](../research/modern_language_feature_survey.md),
+> [csharp_java_dart_modern_features.md](../research/csharp_java_dart_modern_features.md),
+> [beam_languages_erlang_elixir_gleam.md](../research/beam_languages_erlang_elixir_gleam.md),
+> [standard_library_design_comparative.md](../research/standard_library_design_comparative.md),
 > [structured_collections_query_language.md](../features/structured_collections_query_language.md).
 >
 > Interaction map: [interaction_map.md](interaction_map.md) connects flow to
 > function holes, pattern filters, result collection, decode, and explanation.
+>
+> Primary surface: collections are unavoidable. Most programs move through
+> lists, maps, sets, ranges, slices, rows, decoded records, and result lists
+> before they ever reach specialized query systems.
+
+## Design Pressure
+
+Collection design is a daily-use surface, not a data-engine feature first.
+Users need to:
+
+- build, index, slice, destructure, and combine ordinary collections;
+- transform values with readable `where`/`select`/`map`/`fold`-like operations;
+- move between eager values, lazy streams, and materialized results without
+  changing the meaning of their code;
+- collect absence and result values without inventing ad hoc loops;
+- inspect larger flows when they become plans, diagnostics, or performance
+  concerns.
+
+The universal bar is strict. Syntax belongs here only if it improves ordinary
+programs across domains. Table schemas, columnar layout, query planners,
+broadcast rank, parallel execution, and SQL-like blocks are important, but they
+are secondary layers unless they reduce to the same collection and flow normal
+forms.
 
 ## 1. Pipeline
 
@@ -36,46 +63,96 @@ R `%>%`, Nushell `|`.
 
 ## 2. Collection Verbs
 
-Collection transforms are library functions over typed values. The verb
-vocabulary is drawn from cross-language synthesis (SQL, LINQ, dplyr, Polars,
-DuckDB, Nushell, pandas, K/Q) — the full synthesis is in
-[table_and_flow_systems_deep_dive.md](../research/table_and_flow_systems_deep_dive.md).
+Collection transforms are library functions over typed values. The primary
+surface must work for ordinary lists, sets, maps, iterables, generators, and
+decoded records before it specializes into table/query planning.
 
-### Core Verbs
+The cross-language center is wider than SQL-style tables: Python
+comprehensions/`itertools`, JavaScript arrays, Rust iterators, Kotlin/Swift
+collections, C# LINQ, Java streams, Clojure seqs, Elixir `Enum`/`Stream`,
+Haskell lists, R/tidyverse, Polars, DuckDB, pandas, K/Q, and array languages.
+The shared user need is left-to-right value transformation with visible
+functions and predictable materialization.
 
-| Verb | Meaning | Source precedent |
-|------|---------|-----------------|
-| `where` | Keep rows matching a predicate | SQL WHERE, dplyr `filter()`, Polars `.filter()` |
-| `select` | Project or rename columns | SQL SELECT, dplyr `select()`, Polars `.select()` |
-| `derive` | Add computed columns | dplyr `mutate()`, Polars `.with_columns()`, SQL SELECT |
-| `group` / `group_by` | Add grouping metadata for subsequent verbs | dplyr `group_by()`, SQL GROUP BY, Polars `.group_by()` |
-| `summarize` | Aggregate groups into one row each | dplyr `summarize()`, SQL aggregate functions |
-| `join` | Combine two tables on key columns | SQL JOIN, dplyr `*_join()`, Polars `.join()` |
-| `sort` | Order rows by key | SQL ORDER BY, dplyr `arrange()` |
-| `window` | Apply window functions over partitions | SQL OVER, Polars `.over()` |
-| `fold` / `reduce` | Combine values into one | FP fold/reduce, Polars `.fold()` |
-| `take` | Limit rows | SQL LIMIT, dplyr `slice()` |
-| `distinct` | Remove duplicate rows | SQL DISTINCT, dplyr `distinct()` |
-| `explain` | Show the query plan without executing | SQL EXPLAIN, Polars `.explain()`, DuckDB EXPLAIN |
+### Primary Collection Surface
+
+This is the universal everyday layer. Names may have aliases while the language
+settles, but each operation should have one canonical meaning and one reduction
+shape.
+
+| Verb/helper | Meaning | Universal pressure | Initial layer |
+|------|---------|--------------------|---------------|
+| `where` / `filter` | Keep elements matching a predicate. | Python, JS, Rust, LINQ, SQL, dplyr, Elixir | library-first canonical verb |
+| `select` / `map` | Transform each element. | Python, JS, Rust, LINQ, Haskell, Elixir | library-first canonical verb |
+| `flat_map` | Map each element to zero or more outputs and flatten one level. | Rust, Scala, Kotlin, JS, FP libraries | library-first |
+| `fold` / `reduce` | Combine values into one. | FP fold/reduce, Python, JS, Rust, LINQ | library-first |
+| `scan` | Keep intermediate fold states. | Haskell, Rust, Kotlin, array languages | library-first |
+| `sort` | Order values by key. | Python, JS, SQL, LINQ, dplyr | library-first |
+| `take` / `drop` | Limit or skip values. | Rust, LINQ, itertools, streams | library-first |
+| `any` / `all` | Test whether predicates hold. | Python, JS, Rust, SQL | library-first |
+| `find` | Return the first matching element, usually as absence/result. | Python idioms, JS, Rust, LINQ | library-first |
+| `zip` / `enumerate` | Combine parallel collections or attach positions. | Python, Rust, Swift, Kotlin | library-first |
+| `chunk` / `windowed` | Process fixed-size groups or sliding windows. | Kotlin, Rust, itertools, data streams | library-first |
+| `group_by` | Partition elements by a key. | LINQ, Kotlin, Python libraries, SQL/dplyr | library-first; table specialization later |
+| `collect` | Materialize lazy values or plans. | Rust, streams, LINQ, Polars | library-first |
+| `collect_results` | Turn `list[Result[T,E]]` into `Result[list[T], E]`. | Rust `collect`, FP traverse, validation | prototype-ready as library |
+| `tap` / `tee` | Inspect an intermediate pipeline value. | Ruby, Unix, Rx/data pipelines | library + explanation hook |
+
+`where`/`select` remain attractive Nomi names because they can span ordinary
+collections and future table plans. `filter`/`map` are globally familiar names.
+If both spellings survive, aliases must desugar to the canonical operation and
+diagnostics should explain one vocabulary.
+
+### Table And Query Secondary Layer
+
+Structured tables are important enough to design, but they are not the first
+collections story. They should extend the primary verbs with schema, row scope,
+planning, and inspection.
+
+| Table verb | Meaning | Source precedent | Status |
+|------|---------|------------------|--------|
+| `where` | Keep rows matching a predicate. | SQL WHERE, dplyr `filter()`, Polars `.filter()` | shares primary verb |
+| `select` | Project or rename columns. | SQL SELECT, dplyr `select()`, Polars `.select()` | shares primary verb |
+| `derive` | Add computed columns. | dplyr `mutate()`, Polars `.with_columns()` | design-needed |
+| `group_by` | Add grouping metadata for later verbs. | dplyr `group_by()`, SQL GROUP BY, Polars `.group_by()` | library-first/design-needed |
+| `summarize` | Aggregate groups into one row each. | dplyr `summarize()`, SQL aggregate functions | design-needed |
+| `join` | Combine two tables on key columns. | SQL JOIN, dplyr joins, Polars `.join()` | design-needed |
+| `window` | Apply window functions over partitions. | SQL OVER, Polars `.over()` | secondary |
+| `distinct` | Remove duplicate rows. | SQL DISTINCT, dplyr `distinct()` | library-first |
+| `explain` | Show a plan without executing. | SQL EXPLAIN, Polars `.explain()`, DuckDB EXPLAIN | explanation layer |
 
 ### Design Principles
 
-These are settled design decisions (from cross-language synthesis):
+These are direction-level decisions, not a license to hardcode a data engine
+into the language core.
 
 **One verb, one way.** One canonical verb per operation. Convenience aliases
 (e.g., `filter` for `where`, `mutate` for `derive`) must desugar to the
 canonical verb. No `inplace=True` — verbs always return new values.
 
-**Tables are ordinary values.** Table literals, query results, and file loads
-all produce the same `Table` type. Every verb takes a table and returns a
-table. No separate index axis — keys are column metadata.
+**Collections are ordinary values.** Lists, maps, sets, iterables, streams,
+tables, and plans must remain values that can be passed, returned, named,
+patterned, explained, and tested. Avoid collection features that only work as
+statement islands.
+
+**Tables are specialized collection values.** Table literals, query results,
+and file loads may converge on a `Table` value family. Table operations can
+preserve schema and grouping metadata, but that metadata is a specialization of
+collection flow, not a new evaluation model.
 
 **`group_by()` is context, not a separate verb set.** Grouping adds metadata
 to a table; subsequent verbs (`summarize`, `window`, `derive`) automatically
 respect grouping context. No separate "grouped verbs" vocabulary.
 
-**Expressions are structural, not opaque callbacks.** Verb arguments are
-composable expression values, not anonymous functions:
+**Structural expressions are optional power, not the base callback story.**
+Ordinary collection verbs accept ordinary functions:
+
+```nomi
+active = users |> where(_.active) |> select(_.name)
+```
+
+Table/query verbs may additionally accept structural expressions for
+inspection and optimization:
 
 ```nomi
 # Expression captures structure for explain/optimize
@@ -84,13 +161,14 @@ active = users |> where(.active) |> select(.name, .email)
 # Equivalent to: filter by column, project named columns
 ```
 
-The `.field` syntax provides column-name scoping within verb expressions.
-Explicit lambdas (`x => x.field`) are available when needed but are opaque
-to the query planner.
+The `.field` syntax needs a separate spec packet for row scope, ambiguity,
+diagnostics, and fallback to explicit lambdas (`x => x.field`). It should not
+become magic member access for ordinary collections by accident.
 
-**Lazy/eager with identical API.** A lazy data source (CSV file, database
-table) builds a query plan; an eager data source (in-memory table) executes
-immediately. Both use the same verb API:
+**Lazy/eager should preserve meaning.** A lazy source can build a stream or
+query plan; an eager source can execute immediately. The same verb should mean
+the same transformation in both cases, but materialization rules need explicit
+diagnostics and examples:
 
 ```nomi
 # Eager: executes immediately
@@ -102,8 +180,9 @@ csv_file |> where(.score > 50) |> collect()
 
 Materialization triggers: `collect()`, iteration, `explain()`, writing to disk.
 
-**`explain()` is first-class.** Every verb plan supports `explain()` for
-inspection without execution:
+**`explain()` is first-class when a flow becomes inspectable.** Ordinary
+pipelines can explain expansion and intermediate types; query plans can explain
+estimated rows, column schema, operations, and optimization opportunities:
 
 ```nomi
 plan = csv_file |> where(.score > 50) |> group_by(.region) |> summarize(avg_score = .score.mean())
@@ -111,13 +190,15 @@ plan.explain()
 # Shows: estimated rows, column schema, operations, optimization opportunities
 ```
 
-**Schema maintained across all operations.** Every verb preserves and augments
-column-level schema (name, type, constraints). Schema errors are caught at plan
-construction time for lazy sources.
+**Schema belongs to table values and data boundaries.** Table verbs should
+preserve and augment column-level schema when available. Schema errors should
+be caught as early as possible for lazy sources. Ordinary list transforms should
+not pay the conceptual cost of table schemas.
 
-**Columnar layout.** Nomi tables use struct-of-arrays (columnar) memory layout,
-compatible with Apache Arrow. This enables zero-copy interop with Polars,
-DuckDB, and other columnar systems.
+**Storage layout is a backend concern.** Columnar layout and Apache Arrow
+interop are promising implementation targets, not language syntax. They belong
+behind capability tables and backend plans unless user-visible behavior depends
+on them.
 
 ### Query Syntax (Future)
 
@@ -130,27 +211,28 @@ This is the LINQ lesson: query expressions and method chains are two surfaces
 over the same operators (`IQueryable`). Nomi preserves this option by building
 the verb vocabulary first and treating query syntax as syntactic sugar over it.
 
-**Status:** library-first for core verbs; table/query plan verbs are
-design-settled (vocabulary and semantics decided, implementation deferred).
+**Status:** primary collection verbs are library-first; table/query verbs are a
+secondary design packet that must lower to the same flow vocabulary.
 
-### Verb Gaps To Research
+### Collection Gaps To Research
 
-The current verb vocabulary covers the table/query core, but everyday
-collection work also needs small list/stream helpers. Start library-first:
+Close these gaps before promoting more collection features:
 
-| Verb/helper | User need | Initial status |
-| --- | --- | --- |
-| `scan` | Keep intermediate fold states. | library-first |
-| `chunk` / `windowed` | Process fixed-size groups or sliding windows. | library-first |
-| `partition` | Split values by predicate. | library-first |
-| `partition_map` | Split and transform matched/result values in one pass. | library-first |
-| `zip` / `enumerate` | Combine positions or parallel collections. | library-first |
-| `flat_map` | Map each item to zero or more outputs. | library-first |
-| `collect_results` | Turn `list[Result[T,E]]` into `Result[list[T], E]`. | prototype-ready as library |
-| `tap` / `tee` | Inspect an intermediate pipeline value. | prototype-ready as library + explanation hook |
+- canonical naming: whether Nomi teaches `where`/`select`, `filter`/`map`, or
+  one pair with documented aliases;
+- materialization: exact difference between list, stream, iterator, table, and
+  plan values;
+- result collection: `collect_results`, validation accumulation, and failure
+  diagnostics in pipelines;
+- selector scope: whether `.field` is only row/record shorthand, and how it
+  interacts with ordinary member access;
+- flow explanation: what `explain` shows for ordinary pipelines versus query
+  plans;
+- collection patterns: how destructuring, rest captures, and pattern filters
+  compose with flow.
 
-These helpers should not become syntax until diagnostics, laziness, and query
-plans require a stronger surface. See [interaction_map.md](interaction_map.md)
+Helpers should not become syntax until diagnostics, laziness, or plan
+inspection require a stronger surface. See [interaction_map.md](interaction_map.md)
 for the function/pattern/result interactions behind them.
 
 ### Explicit Broadcasting (Future)
@@ -215,7 +297,7 @@ selectively adopt:
 | Explicit broadcasting (Julia `.`) | Design-needed; opt-in with visible marker |
 | Function trains (J forks/hooks) | Partial; `_` holes cover the 80% case |
 | Rank polymorphism | Research-only; future layer |
-| K/Q table operations | Design-settled; see §2 Collection Verbs above |
+| K/Q table operations | Secondary table layer; see §2 Collection Verbs above |
 | Each/over/scan adverbs | Partial; `map`/`reduce` exist; `scan` is library-first |
 
 For deep analysis, see [array_languages_deep_dive.md](../research/array_languages_deep_dive.md).
@@ -226,7 +308,7 @@ For deep analysis, see [array_languages_deep_dive.md](../research/array_language
 |------|----------|
 | Implicit elementwise list arithmetic | Rejected; conflicts with Python list semantics |
 | Dense APL/J/K rank notation | Future layer; start with named shape/rank functions |
-| SQL-like query blocks | Design-settled; must lower to same verb vocabulary as `|>` pipelines |
+| SQL-like query blocks | Secondary/future; must lower to same verb vocabulary as `|>` pipelines |
 | Multiple pipeline spellings | Rejected; keep `|>` as the single flow operator |
 | Implicit broadcasting | Rejected for first layer |
 
@@ -241,13 +323,37 @@ For deep analysis, see [array_languages_deep_dive.md](../research/array_language
 | Spread in literals | partial |
 | Slices | Python-compatible |
 | Collection verbs (map/filter/reduce) | implemented as library functions |
-| Core verb vocabulary (where/select/derive/group/join/sort/window/fold/take/distinct) | design-settled |
-| `explain()` for query plans | design-settled |
-| Lazy/eager with identical API | design-settled |
+| Primary collection vocabulary (`where`/`select`, `fold`, `sort`, `take`, `zip`, etc.) | library-first/design-needed for canonical naming |
+| Table/query vocabulary (`derive`, `group_by`, `summarize`, `join`, `window`, `distinct`) | secondary design packet |
+| `explain()` for ordinary flows and query plans | design-needed in Explanation layer |
+| Lazy/eager materialization rules | design-needed |
 | Lazy collection adapters | library-first |
 | Explicit broadcasting | design-needed |
 
-## 10. Design Context
+## 10. Research Coverage And Universal Bar
+
+The collection surface has enough research to avoid copying any one ecosystem:
+
+- Python gives the baseline for lists, dicts, sets, slices, comprehensions, and
+  explicit iterator helpers;
+- JavaScript/TypeScript, Swift, Kotlin, Java streams, and C# LINQ show the
+  mainstream map/filter/reduce and fluent-chain pressure;
+- Rust iterators show explicit laziness, `collect`, `Result` collection, and
+  type-directed diagnostics;
+- Elixir and Clojure show sequence libraries that keep data transformation
+  regular across collection types;
+- SQL, dplyr, Polars, DuckDB, pandas, Nushell, and K/Q show why table flows need
+  schema, planning, and explainability;
+- APL, J, K, BQN, Uiua, R, MATLAB, and Julia show the power and risk of
+  elementwise and rank-based collection notation.
+
+The Nomi rule is: promote syntax only when it helps the majority of programmers
+write ordinary collection code. Specialized table, array, parallel, and lazy
+planning features should compose from primary flow, functions, patterns,
+absence/result, data boundaries, and explanation before they receive their own
+surface.
+
+## 11. Design Context
 
 This doc covers Nomi's **Flow** normal form. For the broader picture:
 

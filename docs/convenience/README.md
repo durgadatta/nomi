@@ -21,14 +21,17 @@ Every accepted convenience reduces to one of eight normal forms:
 - **Explanation** — semantic events become traces, examples, diagnostics, or `explain` views
 
 Strings are a first-class cross-cutting pillar, not currently a ninth normal
-form. See [strings.md](strings.md) for how string features reduce to Data
-boundary, Pattern, Flow, Absence/result, and Explanation.
+form. Functions/calls and collections/flow are similarly primary user surfaces:
+they already have normal-form owners, but their day-to-day reach means new
+syntax needs the same universal-appeal bar as strings. See
+[strings.md](strings.md), [functions.md](functions.md), and
+[flow_and_collections.md](flow_and_collections.md).
 
-Some other concrete surfaces are similarly vertical across the whole language
+Some other concrete surfaces are also vertical across the whole language
 experience. See [vertical_pillars.md](vertical_pillars.md) for the active
-review of data values, resources/world values, failure values,
-patterns/selectors, blocks/policies, quantities/shape, time values, modules,
-and explanation surfaces.
+review of the primary set plus data values, resources/world values, failure
+values, patterns/selectors, blocks/policies, quantities/shape, time values,
+modules, and explanation surfaces.
 
 ## Documents
 
@@ -48,9 +51,9 @@ and explanation surfaces.
 
 | Doc | Normal form | Status |
 |-----|-------------|--------|
-| [functions.md](functions.md) | Function | implemented (func, `=>`, equations, holes, sections, compose, where); implicit scoping appendix |
+| [functions.md](functions.md) | Function | primary surface review; implemented (func, `=>`, equations, holes, sections, compose, where); secondary forms gated |
 | [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); if-let detail + match-expr challenges appendices |
-| [flow_and_collections.md](flow_and_collections.md) | Flow | implemented (pipeline, ranges, range-step, spread) |
+| [flow_and_collections.md](flow_and_collections.md) | Flow | primary collection surface review; implemented (pipeline, ranges, range-step, spread); table/query secondary |
 | [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-settled |
 | [data_and_types.md](data_and_types.md) | Data boundary | type aliases implemented; data classes + decode + @secret/@pii design-settled |
 | [strings.md](strings.md) | Data boundary + Pattern + Flow + Absence/result + Explanation | interpolation + literals implemented; typed wrappers, regex capture, and Unicode views need spec packets |
@@ -64,10 +67,10 @@ and explanation surfaces.
 | Status | Count | Features |
 |--------|-------|----------|
 | **implemented** | 10+ | `func`, `=>`, equations, piecewise, holes, sections, compose, `where`, `\|>`, ranges, spread, `unless`, if-let, while-let, guard-let, match, or-patterns, `?.`, `??`, try-expr, `defer`, decorators, f-strings, multi-line strings, raw strings, type aliases, imports (Python-compatible) |
-| **design-settled** | 15+ | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), collection verb vocabulary (12 verbs), query plans, `nomi fmt`, Tree-sitter + LSP, domain-name import paths, Display/Debug format |
+| **design-settled** | 13+ | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), `nomi fmt`, Tree-sitter + LSP, domain-name import paths, Display/Debug format |
 | **prototype-ready** | 3 | binding error diagnostics, `BindingTarget`, constrained captures |
-| **design-needed** | 8+ | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, typed string wrappers (`sql""`/`html""`/`re""`/`sh""`), interpolator dispatch, regex capture patterns, Unicode string views |
-| **library-first** | 5+ | command functions, config layering, path values, safe commands, parallel collections |
+| **design-needed** | 10+ | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, canonical collection verb names, query plans/materialization, typed string wrappers (`sql""`/`html""`/`re""`/`sh""`), interpolator dispatch, regex capture patterns, Unicode string views |
+| **library-first** | 5+ | command functions, config layering, path values, safe commands, primary collection helpers, parallel collections |
 | **research-only** | 4+ | macros, symbolic/lazy computation boundaries, channels/actors, pure/read-only blocks |
 
 ### Reference
@@ -101,7 +104,7 @@ Start here based on what you're trying to do:
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
-| **Identify cross-cutting surfaces** | [vertical_pillars.md](vertical_pillars.md) (data values, resources, failure values, patterns/selectors, blocks, quantities, time, modules, explanation) |
+| **Identify cross-cutting surfaces** | [vertical_pillars.md](vertical_pillars.md) (strings, functions/calls, collections/flow, data values, resources, failure values, patterns/selectors, blocks, quantities, time, modules, explanation) |
 | **Integrate symbolic or lazy computation** | [../features/symbolic_structural_computation.md](../features/symbolic_structural_computation.md) → [flow_and_collections.md](flow_and_collections.md) → [meta_testing.md](meta_testing.md) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
 | **Promote a design into the spec** | [../language/spec_readiness_map.md](../language/spec_readiness_map.md) (feature packet + spec conversion matrix) |

@@ -18,6 +18,14 @@ reversible implementation. If the current repo snapshot conflicts with that
 direction, name the drift and update the status/doc/skill instead of rigidly
 aligning new work to stale artifacts.
 
+For broad language-surface work, start from the primary things most programmers
+touch every day: strings/text, functions/calls, collections/flow, data values,
+absence/result, and patterns. New primary constructs need near-universal appeal
+and must improve concrete syntax or interaction for ordinary programs. Narrow
+or domain-specific constructs should begin as libraries, data values, explicit
+functions, block policies, or fenced secondary layers that compose from those
+primary surfaces.
+
 For core/sugar/backend separation work, use
 `docs/language/core_layer_separation_plan.md` as the operational layer map:
 L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
@@ -157,12 +165,17 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/convenience/design_lessons_and_integration.md` — design synthesis,
   systemic cruft patterns, feature interaction analysis.
 - `docs/convenience/absence_and_result.md` — absence, result, error handling.
-- `docs/convenience/flow_and_collections.md` — flow normal form.
+- `docs/convenience/functions.md` — function/call primary surface: `func`,
+  equations, `=>`, holes, composition, `where`, and secondary-function gates.
+- `docs/convenience/flow_and_collections.md` — collection/flow primary surface:
+  pipeline, ordinary collection transforms, ranges, slices, comprehensions, and
+  secondary table/query planning.
 - `docs/convenience/data_and_types.md` — data boundary, types, aliases.
 - `docs/convenience/strings.md` — string pillar: interpolation, literals, typed
   wrappers, pattern matching on strings, Unicode, serialization, security.
-- `docs/convenience/vertical_pillars.md` — concrete cross-cutting surfaces such
-  as data values, resources/world values, failure values, patterns/selectors,
+- `docs/convenience/vertical_pillars.md` — concrete cross-cutting surfaces,
+  starting with strings/text, functions/calls, collections/flow, then data
+  values, resources/world values, failure values, patterns/selectors,
   blocks/policies, quantities/shape, time values, modules, and explanation
   surfaces.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature
