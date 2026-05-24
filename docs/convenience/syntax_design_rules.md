@@ -134,6 +134,36 @@ binding, and guard clauses.  `if` cannot be exhaustive.  `switch` (C-style)
 cannot bind.  `?.` cannot choose between more than two branches.  `match`
 is the general case; everything else is a restriction.
 
+## 3.5 The Dual Statement/Expression Surface Rule
+
+**Derived from:** expression-oriented languages, Python's statement/expression
+split, and [expression_statement_orientation.md](expression_statement_orientation.md).
+
+Some constructs want to appear in both positions. `if`, `match`, `try`, and
+block calls can be statements when the user is performing actions, and
+expressions when the user is choosing or computing a local value.
+
+```
+Rule: A construct may have statement and expression surfaces only when both
+      share one semantic core. The expression surface adds a value contract:
+      all reachable paths must produce a value, and control-transfer behavior
+      must be explicit.
+```
+
+**What this means in practice:**
+
+| Construct | Statement-first role | Expression role | Rule |
+|-----------|----------------------|-----------------|------|
+| `if` | execute branch statements | choose a value by boolean | expression form requires `else` |
+| `match` | dispatch branch actions | choose a value by pattern | expression form requires exhaustiveness/default or specified no-match behavior |
+| `try` | recover around action | recover around value | recovery branch must produce a value |
+| block call | scoped policy/action | policy call returns yielded block values | policy owns block result protocol |
+| `for`/`while` | repeat actions | not first-layer expression | use comprehensions, flow, folds, or explicit block policy |
+
+Do not define user-visible semantics by hidden IIFE lowering. If implementation
+uses an anonymous wrapper as a bridge, `return`, `break`, `continue`, and
+`yield` diagnostics must still match source-level Nomi semantics.
+
 ## 4. The Context-Threading Rule
 
 **Derived from:** The context-thread convergence point (§4.2).

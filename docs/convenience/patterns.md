@@ -268,7 +268,7 @@ one idea and then discover where it appears.
 | --- | --- | --- |
 | Match statements | implemented | Keep as the canonical multi-case pattern form. |
 | Match expression, one expression per case | partially implemented | Keep; document the value-block caveat. |
-| Full statement-suite match expressions | design-needed | Wait for value-producing block semantics. |
+| Full statement-suite match expressions | design-needed | Wait for value-producing block semantics in [expression_statement_orientation.md](expression_statement_orientation.md). |
 | If-let | implemented | Keep as one-case pattern branch. |
 | While-let | implemented | Keep as pattern loop. |
 | Guard-let | implemented; exit diagnostic future | Keep, but require better non-exiting guard diagnostics later. |
@@ -767,12 +767,14 @@ Concrete reasons this does not work yet:
    produces the match expression's value.  Python AST has `ast.Match` as a
    statement, not an expression, so there is no built-in place to store that
    value.
-3. The current lowering uses an IIFE:
+3. The current lowering uses an IIFE as a prototype bridge:
    each expression-valued case becomes `case pattern: return expr`.  For a full
    suite, the transformer would need to convert the selected suite into
    statements that eventually `return` a value, while preserving ordinary
    control flow like `raise`, nested `return`, `break`/`continue` errors, and
-   local bindings.
+   local bindings. This must not define source-level Nomi semantics: the design
+   target is explicit value-producing block nodes where branch values come from
+   branch expressions, while `return` keeps its ordinary meaning.
 4. The statement grammar also matters.  The working assignment/return forms
    have special entries because the inner match block consumes the final
    newline before `_DEDENT`.  Full-suite bodies would add another indentation
@@ -784,13 +786,14 @@ What would be required to make it work:
 1. Add a separate grammar rule for value-producing match suites, probably
    distinct from normal `suite`, so expression-position `match` can parse:
    `case pattern ":" _NEWLINE _INDENT stmt* value_stmt _DEDENT`.
-2. Define Nomi's value-producing block rule.  Options include "last expression
-   wins", explicit `yield`/`return` from expression blocks, or requiring every
-   case body to end with an expression statement.  This must be specified
-   before implementation so diagnostics are coherent.
-3. Lower each selected case suite into IIFE function-body statements ending in
-   `ast.Return(value=...)`.  For example, the first case above would lower to
-   `print("matched one"); return "one"` inside the anonymous function.
+2. Define Nomi's value-producing block rule. The current design direction is
+   "last expression wins" for selected value-producing branches, with
+   `return` reserved for returning from the nearest user-authored function.
+   This must be specified before implementation so diagnostics are coherent.
+3. Add a Nomi-owned surface/core representation for the selected case suite.
+   A Python backend may temporarily lower that node into IIFE function-body
+   statements ending in `ast.Return(value=...)`, but diagnostics and
+   source-level control transfer must remain attached to the Nomi node.
 4. Add validation and diagnostics for non-value-producing cases, mixed
    statement/value branches, and illegal control flow inside match-expression
    suites.

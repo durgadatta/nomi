@@ -658,13 +658,23 @@ boolean.
 
 ### 8.4 Block Values
 
-Some blocks are value-producing: `if` expressions, `match` expressions, and
-caller-side blocks invoked by `yield`.
+Some blocks are value-producing: `if` expressions, `match` expressions,
+selected `try` expressions, and caller-side blocks invoked by `yield`. The
+design doctrine is in
+[Expression And Statement Orientation](../convenience/expression_statement_orientation.md).
 
-The value of a value-producing block is the value of its last expression.
-Assignments, declarations, and loop statements produce `none`. A block used in
-a value position must end with an expression or an explicit `return` from the
-enclosing function.
+The value of a value-producing block is the value of its selected branch's last
+expression. Assignments, declarations, loop statements, `defer`, and other
+statement-only forms produce `none`; they may support a value-producing branch,
+but they cannot be the branch value unless `none` is explicitly intended.
+
+All reachable branches of a value-producing block must produce a value.
+Diagnostics must name branches that do not produce values.
+
+Control transfer keeps source-level meaning. `return` returns from the nearest
+user-authored `func`; `break` and `continue` target the nearest loop; `yield`
+belongs to block-call policy invocation. Hidden IIFE lowering may be used by a
+prototype backend, but it is not Nomi source semantics.
 
 ### 8.5 Absence-Aware Expressions
 

@@ -121,7 +121,10 @@ except ValueError:
     0
 ```
 
-Wraps in an IIFE so it can appear in expression position.
+Current prototype lowering may use an IIFE so it can appear in expression
+position. That is a backend bridge, not the source-level model; see
+[expression_statement_orientation.md](expression_statement_orientation.md) for
+the value-producing block and control-transfer doctrine.
 
 **Source reference:** Kotlin `try { } catch { }`, Scala `try { } catch { }`,
 Rust `unwrap_or`.
@@ -228,7 +231,7 @@ For Zig's `errdefer` (defer only on error), see
 |---------|--------|-------|
 | `?.` optional chain | implemented | attr, call, subscript |
 | `??` null coalesce | implemented | |
-| `try` as expression | implemented | IIFE wrapping |
+| `try` as expression | implemented | IIFE backend bridge; source semantics need value-block doctrine |
 | `guard` pattern | implemented | exit diagnostic future |
 | `defer` | implemented | |
 | `Option[T]` type | design-settled | structural; `none`/`Some`; implementation deferred to Track 4 |

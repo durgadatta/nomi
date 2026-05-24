@@ -172,9 +172,12 @@ the implicit functions appendix).
 
 ### 2.3 Match Expression + Block Call + Try Expression
 
-All three can appear in expression position and all three wrap their
-body in an IIFE (immediately-invoked function expression). If they nest,
-the IIFE stacking could interact with `return`, `yield`, and `break`.
+All three can appear in expression position. The current prototype may lower
+some expression-position blocks through IIFE-like wrappers because Python AST
+has statement/expression boundaries that Nomi is deliberately trying to escape.
+That lowering is a backend tactic, not the source-level control model. If these
+forms nest, the language must specify `return`, `yield`, and `break` in Nomi
+terms, not in terms of hidden wrapper functions.
 
 **Interaction risk:**
 
@@ -184,15 +187,16 @@ result = match each(users) -> user:
     case Err(_): "invalid"
 ```
 
-Three IIFE wrappers nested. Does `return` in the innermost block
-return from the match, the block call, or the outer function?
+Three value boundaries nested. Does `return` in the innermost block return from
+the match, the block call, or the outer function?
 
-**Decision:** Nomi's current behaviour (IIFE wrapping means `return`
-returns from the innermost IIFE, not the enclosing function) is correct
-for expression contexts. But diagnostics must be clear: "`return` inside
-a match expression returns from the match expression's implicit function,
-not from the enclosing function. Use the expression value directly if
-you want the enclosing function to return it."
+**Decision:** Source-level Nomi semantics should not depend on IIFE wrappers.
+`return` returns from the nearest user-authored `func`; `break`/`continue`
+target user-authored loops; `yield` belongs to block-call policy invocation.
+Expression-position blocks should produce values with their branch expression,
+not by teaching users hidden-return semantics. See
+[expression_statement_orientation.md](expression_statement_orientation.md) for
+the full doctrine and implementation implications.
 
 ### 2.4 Optional Chaining + Pipeline + Error Propagation
 

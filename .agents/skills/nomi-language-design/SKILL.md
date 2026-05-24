@@ -34,6 +34,13 @@ boundary, explanation as feedback, and measures as correctness surface. A good
 Nomi feature should let the user climb from first-hour code to sophisticated
 code without switching mental models.
 
+For control syntax, keep Nomi expression-capable and statement-friendly. Before
+adding or promoting `if`, `match`, `try`, loop, recursion, or block-call
+syntax, check `docs/convenience/expression_statement_orientation.md`: statement
+and expression surfaces must share one semantic core, expression forms must
+state their value contract, and hidden IIFE/backend lowering must not define
+source-level `return`, `break`, `continue`, or `yield` behavior.
+
 For core/sugar/backend separation work, use
 `docs/language/core_layer_separation_plan.md` as the operational layer map:
 L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
@@ -173,6 +180,9 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/convenience/design_lessons_and_integration.md` — design synthesis,
   systemic cruft patterns, feature interaction analysis.
 - `docs/convenience/absence_and_result.md` — absence, result, error handling.
+- `docs/convenience/expression_statement_orientation.md` —
+  expression-capable/statement-friendly doctrine for `if`, `match`, `try`,
+  loops, recursion, block calls, and value-producing blocks.
 - `docs/convenience/functions.md` — function/call primary surface: `func`,
   equations, `=>`, holes, composition, `where`, and secondary-function gates.
 - `docs/convenience/flow_and_collections.md` — collection/flow primary surface:

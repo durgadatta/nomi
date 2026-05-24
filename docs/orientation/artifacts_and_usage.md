@@ -375,7 +375,9 @@ playground working without Pyodide's load time.
   reimplements the same scan loop. Bugs fixed in one won't propagate.
 - **Try expressions as IIFEs:** `try EXPR except T: V` is lowered as
   `(function() { try { return EXPR } except { return V } })()` because Core IR
-  only has statement-level Handle nodes.
+  only has statement-level Handle nodes. This is an implementation bridge; the
+  source-level doctrine is tracked in
+  `docs/convenience/expression_statement_orientation.md`.
 - **Pipeline arg ordering heuristic:** Uses a `hasHoleArg` flag to decide
   whether the pipe result goes first or last. Breaks for user functions with
   signatures that don't match filter/map conventions.

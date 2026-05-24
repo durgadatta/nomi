@@ -28,6 +28,7 @@ For the actual Nomi syntax, read the canonical homes below.
 | Binding constraints | Python annotations are mostly advisory at runtime. | Treat assignment, parameters, captures, fields, and decoder slots as checked bindings. | [Binding Constraints Feature](../features/binding_constraints_feature.md) |
 | Argument mapping | Python's positional, keyword, default, vararg, and keyword-only rules are useful but subtle. | Preserve Python-compatible argument mapping where possible; apply constraints after mapping. | [Language Spec](language_spec.md), [Binding Constraints Feature](../features/binding_constraints_feature.md) |
 | Blocks and control policies | Python context managers and decorators solve narrow cases but cannot naturally express retry, transaction, tracing, fixtures, and caller-side block parameters as one model. | Use block calls: an ordinary call with attached caller-side code invoked by `yield`. | [Block Calls As Control Values](../features/block_calls_feature.md) |
+| Statement/expression boundary | Python keeps `if`, `match`, `try`, loops, and function bodies mostly statement-oriented, which preserves readability but causes value-friction and temporary variables. | Be expression-capable and statement-friendly: allow selected value-producing `if`/`match`/`try` forms with explicit branch-value rules, while keeping loops and effects statement/block-policy oriented. | [Expression And Statement Orientation](../convenience/expression_statement_orientation.md), [Language Spec](language_spec.md) |
 | External data | Python dictionaries, dataclasses, Pydantic models, CLI args, env vars, and JSON often use separate validation stories. | Use explicit `Data.decode(...)`, field bindings, constraints, provenance, and explanation. | [Language Foundation](language_foundation.md), [Binding Constraints Feature](../features/binding_constraints_feature.md) |
 | Failure | Python commonly mixes `None`, exceptions, sentinel values, and library-specific result objects. | Keep absence, expected failure, exceptions, pattern non-match, and constraint failure distinct. | [Convenience Review And Roadmap](../convenience/review_and_roadmap.md), future failure taxonomy spec |
 
@@ -55,6 +56,8 @@ Nomi departs from Python when the extra precision is worth teaching:
   or exceptions.
 - Block calls provide a common shape for resource, retry, transaction, trace,
   fixture, and future structured-concurrency policies.
+- Value-producing `if`, `match`, and selected `try` forms remove temporary
+  variables without making every statement into an expression.
 
 ## Non-Goals
 

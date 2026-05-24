@@ -34,6 +34,12 @@ patterns as choice, absence/result as non-success, resources as world contact,
 blocks as scoped policy, modules as growth boundary, explanation as feedback,
 and measures as correctness surface.
 
+The expression/statement boundary is a cross-cutting design pressure rather
+than one feature. See
+[expression_statement_orientation.md](expression_statement_orientation.md) for
+how Nomi should handle `if`, `match`, `try`, block calls, loops, recursion, and
+value-producing blocks.
+
 ## Documents
 
 ### Synthesis & Planning
@@ -43,6 +49,7 @@ and measures as correctness surface.
 | [design_lessons_and_integration.md](design_lessons_and_integration.md) | Systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules |
 | [interaction_map.md](interaction_map.md) | Global/local feature interaction map for coherent synthesis across normal forms |
 | [syntax_design_rules.md](syntax_design_rules.md) | Concrete syntax-design rules derived from the dimensions analysis (primitive budget, axis coherence, elimination form, etc.) |
+| [expression_statement_orientation.md](expression_statement_orientation.md) | Doctrine for expression-capable and statement-friendly control surfaces |
 | [vertical_pillars.md](vertical_pillars.md) | Concrete cross-cutting surfaces and evolution paths from simple programs to sophisticated programs |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
@@ -105,6 +112,7 @@ Start here based on what you're trying to do:
 | **Evaluate a new syntax proposal** | [syntax_design_rules.md](syntax_design_rules.md) → [design_lessons_and_integration.md §9](design_lessons_and_integration.md) (synthesis methodology) |
 | **Understand why a design decision was made** | [design_lessons_and_integration.md](design_lessons_and_integration.md) (cruft patterns, designer regrets, integration rules) → [cross_language_synthesis_master.md](../research/cross_language_synthesis_master.md) (capstone) |
 | **Check feature interactions** | [interaction_map.md](interaction_map.md) (global doctrine, friction patterns, local clusters, promotion targets) |
+| **Resolve statement vs expression tension** | [expression_statement_orientation.md](expression_statement_orientation.md) (`if`, `match`, `try`, loops, recursion, block calls, value-producing blocks) |
 | **Identify high-impact growth paths** | [vertical_pillars.md](vertical_pillars.md) (strings/text, functions/calls, collections/flow, data as shape, patterns as choice, absence/result, resources/world, blocks/policies, modules, explanation, measures) |
 | **Integrate symbolic or lazy computation** | [../features/symbolic_structural_computation.md](../features/symbolic_structural_computation.md) → [flow_and_collections.md](flow_and_collections.md) → [meta_testing.md](meta_testing.md) |
 | **See what's implemented vs. planned** | [review_and_roadmap.md](review_and_roadmap.md) (status spine) |
@@ -118,14 +126,16 @@ Start here based on what you're trying to do:
 ### The Synthesis Docs (read in order)
 
 1. [syntax_design_rules.md](syntax_design_rules.md) — concrete rules for designing surface syntax, derived from the dimensions analysis.  Includes nuance (when rules bend, how conflicts resolve).
-2. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
-3. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
-4. [vertical_pillars.md](vertical_pillars.md) — cross-cutting pillars that span several normal forms and need coherent feature packets.
-5. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
-6. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
+2. [expression_statement_orientation.md](expression_statement_orientation.md) — doctrine for constructs that can be statements or value-producing expressions.
+3. [design_lessons_and_integration.md](design_lessons_and_integration.md) — systemic cruft patterns, feature interactions, community praise/regret, designer quotes, integration rules, and the synthesis methodology (§9).
+4. [interaction_map.md](interaction_map.md) — global/local feature interactions, one-way synthesis choices, and promotion targets.
+5. [vertical_pillars.md](vertical_pillars.md) — cross-cutting pillars that span several normal forms and need coherent feature packets.
+6. [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) — cross-language feature families, semantic differences, and Nomi recommendations.
+7. [review_and_roadmap.md](review_and_roadmap.md) — normal-form status spine and implementation phases.
 
-These six docs form the synthesis stack: rules → lessons → interactions →
-vertical surfaces → comparisons → roadmap.
+These seven docs form the synthesis stack: rules → expression/statement
+orientation → lessons → interactions → vertical surfaces → comparisons →
+roadmap.
 
 ## Consolidation Rules
 

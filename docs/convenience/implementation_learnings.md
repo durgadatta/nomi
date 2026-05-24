@@ -76,6 +76,10 @@ Because the inner block consumes the final newline before `_DEDENT`, assignment
 and return positions need statement-level grammar entries such as
 `target = match_block_expr` and `return match_block_expr`.
 
+Design note: the IIFE is a prototype lowering tactic. It should not define
+source-level `return`, `break`, `continue`, or `yield` behavior; see
+[expression_statement_orientation.md](expression_statement_orientation.md).
+
 Nested match values need a specific case alternative:
 
 ```lark

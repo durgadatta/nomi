@@ -525,6 +525,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ## Track 3: Expression Flow, Pipelines, And Composition
 
+- [ ] Promote expression/statement doctrine from
+  `docs/convenience/expression_statement_orientation.md` into Core IR
+  requirements: value-producing block nodes, branch value checks, and
+  source-level control-transfer diagnostics.
 - [ ] Specify `|>` pipeline semantics, including placeholder `_` and simple
   single-argument shorthand.
 - [ ] Specify `>>` function composition separately from pipeline application.
