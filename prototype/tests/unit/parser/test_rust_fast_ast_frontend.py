@@ -86,6 +86,8 @@ def test_rust_fast_ast_accepts_demo_nomi_payload():
     payload = _rust_payload(rust, repo_root / "scripts" / "demo.nomi")
     statements = tuple(_walk_statements(payload["body"]))
 
+    assert payload["schema"] == "nomi.rust-ast"
+    assert payload["version"] == 1
     assert payload["type"] == "Module"
     assert len(payload["body"]) >= 30
     assert any(
@@ -111,6 +113,8 @@ def test_rust_fast_ast_accepts_guided_tour_demo_payload():
     payload = _rust_payload(rust, repo_root / "samples" / "demo.nomi")
     statements = tuple(_walk_statements(payload["body"]))
 
+    assert payload["schema"] == "nomi.rust-ast"
+    assert payload["version"] == 1
     assert payload["type"] == "Module"
     assert len(payload["body"]) >= 80
     assert any(statement.get("kind") == "WhereAssign" for statement in statements)
@@ -133,6 +137,8 @@ def test_rust_fast_ast_accepts_relative_source_path(monkeypatch):
 
     payload = _rust_payload(rust, Path("samples/demo.nomi"))
 
+    assert payload["schema"] == "nomi.rust-ast"
+    assert payload["version"] == 1
     assert payload["type"] == "Module"
     assert len(payload["body"]) >= 80
 
@@ -148,4 +154,6 @@ def test_rust_fast_ast_accepts_lark_accepted_extra_fixtures(relative_path):
 
     payload = _rust_payload(rust, repo_root / relative_path)
 
+    assert payload["schema"] == "nomi.rust-ast"
+    assert payload["version"] == 1
     assert payload["type"] == "Module"

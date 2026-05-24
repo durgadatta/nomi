@@ -30,6 +30,12 @@ _SECTION_OPERATOR_FACTORIES = {
 
 
 def python_ast_from_rust_payload(payload: dict[str, Any]) -> ast.Module:
+    schema = payload.get("schema", "nomi.rust-ast")
+    version = payload.get("version", 1)
+    if schema != "nomi.rust-ast" or version != 1:
+        raise ValueError(
+            f"unsupported Rust AST payload contract: {schema!r} v{version!r}"
+        )
     if payload.get("type") != "Module":
         raise ValueError(f"unsupported Rust AST payload: {payload.get('type')!r}")
     body = []

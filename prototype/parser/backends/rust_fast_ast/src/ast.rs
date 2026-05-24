@@ -165,6 +165,8 @@ impl Expr {
 }
 pub(crate) fn module_json(body: &[Stmt]) -> String {
     json_object(vec![
+        ("schema", json_string("nomi.rust-ast")),
+        ("version", "1".to_string()),
         ("type", json_string("Module")),
         ("body", json_array(body.iter().map(stmt_json))),
     ])
