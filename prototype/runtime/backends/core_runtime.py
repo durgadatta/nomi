@@ -32,6 +32,7 @@ from prototype.runtime.backends.values import (
     is_truthy,
     unbox_value,
 )
+from prototype.runtime.host_capabilities import validate_host_call_names
 from prototype.syntax.core import (
     BinaryOp,
     Bind,
@@ -661,7 +662,7 @@ class CoreRuntimeEvaluator:
         )
 
     def _default_host_calls(self) -> dict[str, NativeValue]:
-        return {
+        calls = {
             "abs": NativeValue("abs", lambda value: abs(unbox_value(value)), True),
             "bool": NativeValue("bool", lambda value: is_truthy(value), True),
             "Exception": NativeValue(
@@ -684,6 +685,8 @@ class CoreRuntimeEvaluator:
             "str": NativeValue("str", self._host_str, True),
             "sum": NativeValue("sum", lambda value: sum(unbox_value(value)), True),
         }
+        validate_host_call_names("core-runtime", set(calls))
+        return calls
 
     def _host_filter(self, func: Value, sequence: Value) -> SequenceValue:
         kept: list[Value] = []

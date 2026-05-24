@@ -17,6 +17,27 @@ def load_host_capabilities() -> dict[str, Any]:
     return payload
 
 
+def declared_host_capability_names(runtime_name: str) -> frozenset[str]:
+    return frozenset(
+        capability["name"]
+        for capability in load_host_capabilities()["capabilities"]
+        if runtime_name in capability["runtimes"]
+    )
+
+
+def validate_host_call_names(runtime_name: str, names: set[str]) -> None:
+    declared = declared_host_capability_names(runtime_name)
+    missing = declared - names
+    extra = names - declared
+    if missing or extra:
+        parts = []
+        if missing:
+            parts.append(f"missing declared host call(s): {', '.join(sorted(missing))}")
+        if extra:
+            parts.append(f"undeclared host call(s): {', '.join(sorted(extra))}")
+        raise ValueError(f"{runtime_name} host capability mismatch: {'; '.join(parts)}")
+
+
 def render_host_capability_table() -> str:
     rows = [
         "| capability | runtimes | arity | returns | deterministic | effects | pure | prints | may throw | browser |",

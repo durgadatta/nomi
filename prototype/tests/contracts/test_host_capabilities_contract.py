@@ -6,6 +6,10 @@ from pathlib import Path
 import pytest
 
 from prototype.runtime.backends.core_runtime import CoreRuntimeEvaluator
+from prototype.runtime.host_capabilities import (
+    declared_host_capability_names,
+    validate_host_call_names,
+)
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -45,6 +49,23 @@ def _manifest_names_for(runtime_name):
         for capability in payload["capabilities"]
         if runtime_name in capability["runtimes"]
     }
+
+
+def test_declared_host_capability_names_reads_manifest():
+    assert declared_host_capability_names("core-runtime") == _manifest_names_for(
+        "core-runtime"
+    )
+
+
+def test_validate_host_call_names_rejects_manifest_drift():
+    names = set(_manifest_names_for("core-runtime"))
+    names.remove("print")
+
+    with pytest.raises(ValueError, match="missing declared host call"):
+        validate_host_call_names("core-runtime", names)
+
+    with pytest.raises(ValueError, match="undeclared host call"):
+        validate_host_call_names("core-runtime", names | {"print", "mystery"})
 
 
 def test_host_capability_names_are_unique():
