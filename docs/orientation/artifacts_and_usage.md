@@ -307,6 +307,48 @@ python3 scripts/make_web.py --check
 `samples/notebook_intro.nomi`, or another focused sample changes, rerun the
 manifest generator before testing the web editor.
 
+### WASM-JS Pipeline (no-Pyodide path)
+
+The playground also supports a lighter execution path that skips Pyodide entirely:
+Nomi source is parsed by a Rust WASM parser (`nomi_parser.wasm`), lowered to
+Core IR by `web/lower_to_core_ir.js`, and executed by `web/core_runtime.js`.
+This path is the default in the browser playground.
+
+```text
+.nomi source
+-> Rust WASM parser (pest, nomi_parser.wasm) → Rust AST JSON
+-> lower_to_core_ir.js → Core IR JSON
+-> core_runtime.js → stdout, bindings
+```
+
+The Rust parser does shallow structural parsing: function defs, assignments,
+suite/match/try headers are proper AST nodes, but many expressions fall through
+to `Expr::Raw(String)` — the parser serializes the source span via Rust's
+`Display` trait and the JS lowerer re-parses it with regex-based heuristics
+(~800 lines of `lowerRawExpr`). This split was a fast-path spike to get the
+playground working without Pyodide's load time.
+
+**Known tight fits (see `performance_notes.md` for the full list):**
+
+- **Regex expression parsing:** `lowerRawExpr` tries ~20 patterns in priority
+  order with no real precedence climbing. Order-sensitive; adding a new pattern
+  in the wrong position breaks existing constructs.
+- **Rust Display spacing:** The Rust parser adds extra spaces in serialized
+  output (`int ( "bad" )`, `items2 [ 1 : ]`) that the JS side must tolerate.
+  There's no contract between the two sides.
+- **Depth/quote tracking duplicated ~15 times:** Every expression parser
+  reimplements the same scan loop. Bugs fixed in one won't propagate.
+- **Try expressions as IIFEs:** `try EXPR except T: V` is lowered as
+  `(function() { try { return EXPR } except { return V } })()` because Core IR
+  only has statement-level Handle nodes.
+- **Pipeline arg ordering heuristic:** Uses a `hasHoleArg` flag to decide
+  whether the pipe result goes first or last. Breaks for user functions with
+  signatures that don't match filter/map conventions.
+- **String/sequence methods hand-coded:** `evalGetField` has inline switch
+  statements covering ~10 methods. Missing many common methods.
+- **Dual error model:** `callNative` returns boxed `{kind: "error"}` values
+  while other eval methods throw JS exceptions directly.
+
 Known UI issues (side-by-side scrolling, Monaco layout) are tracked in
 `web/web_playground_ui_challenges.md`.
 
