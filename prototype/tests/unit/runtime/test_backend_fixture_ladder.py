@@ -21,6 +21,16 @@ FIXTURES = {
     "04_flow_for_each.nomi": ("total",),
     "05_patterns_errors_blocks.nomi": ("matched", "try_val", "collected"),
     "06_defer_lifo.nomi": ("result",),
+    "07_host_calls.nomi": (
+        "length",
+        "magnitude",
+        "converted",
+        "floaty",
+        "label",
+        "total",
+        "seq",
+        "truth",
+    ),
 }
 
 BACKENDS = ("core-runtime", "js-core-runtime")

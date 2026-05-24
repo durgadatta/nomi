@@ -347,6 +347,10 @@ Goal: turn "demo executes" into "demo behavior is intentionally identical."
 5. ✅ **DONE**: Full stdout parity tests exist across all three backends.
    The backend fixture ladder includes a defer-specific fixture
    (`06_defer_lifo.nomi`).
+6. ✅ **DONE**: The backend fixture ladder includes an explicit host-call
+   fixture (`07_host_calls.nomi`) covering declared direct-runtime host
+   capabilities such as `len`, `abs`, `int`, `float`, `str`, `sum`, `range`,
+   `list`, and `bool`.
 
 ### Workstream B: Core IR Contract Completeness
 

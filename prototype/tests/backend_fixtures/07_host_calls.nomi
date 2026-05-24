@@ -1,0 +1,15 @@
+nums = [-2, -1, 0, 1, 2]
+length = len(nums)
+magnitude = abs(nums[0])
+converted = int("12")
+floaty = float("5.5")
+label = str(converted)
+total = sum(nums)
+seq = list(range(1, 4))
+truth = bool(seq)
+
+print(length)
+print(magnitude)
+print(label)
+print(total)
+print(seq)

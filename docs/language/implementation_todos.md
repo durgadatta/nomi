@@ -405,8 +405,11 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Register `js-core-runtime` as a first-class eval backend wrapper.
 - [x] Move the first fixture ladder into `prototype/tests/backend_fixtures/`
   and compare it across `python-ast`, `core-runtime`, and `js-core-runtime`.
-- [ ] Expand the fixture ladder with host capability, source-map, diagnostic,
+- [~] Expand the fixture ladder with host capability, source-map, diagnostic,
   and resume edge cases.
+  (Partial: `07_host_calls.nomi` covers declared host calls across
+  `python-ast`, `core-runtime`, and `js-core-runtime`; source-map, diagnostic,
+  and resume edge fixtures remain.)
 - [ ] Execute the JS Core Runtime Operational Completion Plan in
   `core_runtime_backend_implementation_notes.md`: exact demo stdout parity,
   Core JSON contract tests, host capability manifest, browser JS execution
