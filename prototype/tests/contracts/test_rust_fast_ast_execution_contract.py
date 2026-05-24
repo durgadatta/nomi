@@ -7,7 +7,7 @@ from prototype.parser.nomi.frontend import get_parser_frontend
 from prototype.runtime import execute
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 def test_rust_fast_ast_core_demo_ast_executes_downstream(capsys):

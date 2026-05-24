@@ -124,7 +124,8 @@ then the broader relevant suite.
 ### Test Layout
 
 - `prototype/tests/unit/` — isolated unit tests (parser desugar passes, utilities).
-- `prototype/tests/functional/` — behaviour-focused tests for specific features.
+- `prototype/tests/functional/` — retired compatibility bucket; do not add new
+  tests here.
 - `prototype/tests/regression/` — snapshot-based regression tests.
   - `test_interpreter.py` runs every ``.nomi`` / ``.py`` file in
     `data/sample_sources/interpreter/` **and** every ``.nomi`` / ``.nomi.nb``

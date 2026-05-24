@@ -28,7 +28,7 @@ Pair this with `nomi-parse` for language syntax decisions and with
 - `prototype/tests/unit/parser/test_rust_fast_ast_lowering_parity.py` — exact
   Rust-vs-Lark Python AST parity for the current lowered slice, including
   `scripts/demo.nomi`.
-- `prototype/tests/functional/parser/test_rust_fast_ast_demo_execution.py` —
+- `prototype/tests/contracts/test_rust_fast_ast_execution_contract.py` —
   downstream execution proof for the Rust-generated core demo AST.
 - `prototype/tests/unit/parser/test_parser_frontend_acceptance.py` — shared
   parse-acceptance gate.
@@ -83,7 +83,7 @@ benchmark.  If it is a Rust subprocess, add its crate metadata to
 3. Run parser frontend tests:
    `pytest prototype/tests/unit/parser/test_rust_fast_ast_frontend.py prototype/tests/unit/parser/test_rust_fast_ast_lowering_parity.py prototype/tests/unit/parser/test_parser_frontend_acceptance.py prototype/tests/unit/parser/test_parser_frontend.py`.
 4. When changing suite/block lowering, also run:
-   `pytest prototype/tests/functional/parser/test_rust_fast_ast_demo_execution.py`.
+   `pytest prototype/tests/contracts/test_rust_fast_ast_execution_contract.py`.
 5. For full parse-acceptance sweeps, compare Rust against files Lark accepts;
    ignore aspirational/scratch files that Lark rejects unless the user names
    them directly.

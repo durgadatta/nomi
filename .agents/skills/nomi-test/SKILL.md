@@ -9,7 +9,7 @@ For the semantic rationale behind tested behavior, see the
 
 ## Test directories
 - `prototype/tests/unit/` — Single module/class tests
-- `prototype/tests/functional/` — Multi-module integration
+- `prototype/tests/functional/` — Retired compatibility bucket; do not add new tests here
 - `prototype/tests/regression/` — Snapshot-based with file_regression fixture
 - `prototype/tests/e2e/` — Full pipeline, CLI, scenarios
 - `prototype/tests/unit/parser/desugar/` — Desugar pass tests (shared conftest.py)

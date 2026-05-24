@@ -58,20 +58,19 @@ Improvement:
   block calls, patterns, errors, safe navigation, pipelines, and ranges.
 - Store intentional differences as named capability gaps with diagnostics.
 
-### 3. The Test Taxonomy Has Drifted
+### 3. The Test Taxonomy Needs Enforcement
 
-`prototype/tests/README.md` says `functional/` is retired, but
-`prototype/tests/functional/parser/test_rust_fast_ast_demo_execution.py` still
-holds an important Rust parser execution proof. Separately,
-`node prototype/runtime/js/test_pipeline.js` is a useful browser-pipeline smoke
-test but is not wrapped by pytest.
+The important Rust parser execution proof now lives under
+`prototype/tests/contracts/test_rust_fast_ast_execution_contract.py`, and the
+Node browser-pipeline smoke has pytest coverage. The remaining risk is
+regression: new tests can still drift back into retired buckets or manual-only
+commands unless the docs and checks stay aligned.
 
 Improvement:
 
-- Move the Rust parser execution proof into `contracts/parser/` or
-  `features/parser_frontends/`.
-- Add a pytest wrapper for `node prototype/runtime/js/test_pipeline.js`, with a
-  skip if Node or the WASM artifact is unavailable.
+- Keep `prototype/tests/functional/` empty of tracked tests.
+- Prefer contract tests for adapter/frontend/backend promises and feature tests
+  for language behavior.
 - Define a dedicated `browser_pipeline` contract bucket for:
   source -> Rust/WASM parser -> JS lowerer -> JS runtime.
 
@@ -143,7 +142,5 @@ Improvement:
 
 1. Add pytest coverage for the Node browser-pipeline smoke test.
 2. Add the first cross-pipeline Core IR JSON parity fixture.
-3. Move the remaining important test out of `prototype/tests/functional/`.
-4. Add WASM package freshness metadata/checking.
-5. Introduce host-aware parser/backend promotion fields without changing
+3. Introduce host-aware parser/backend promotion fields without changing
    default behavior.
