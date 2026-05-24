@@ -35,8 +35,8 @@ def test_inspect_returns_host_capability_table():
 
     assert isinstance(result, InspectionResult)
     assert result.stage == "host_capabilities"
-    assert "| capability | runtimes | arity | pure | prints |" in result.output
-    assert "| print | core-runtime, js-core-runtime | variadic | no | yes |" in result.output
+    assert "| capability | runtimes | arity | returns | deterministic | effects |" in result.output
+    assert "| print | core-runtime, js-core-runtime | variadic | nil | deterministic | stdout | no | yes |" in result.output
 
 
 def test_inspect_returns_resolved_pipeline_table():

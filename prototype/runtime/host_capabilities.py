@@ -19,15 +19,18 @@ def load_host_capabilities() -> dict[str, Any]:
 
 def render_host_capability_table() -> str:
     rows = [
-        "| capability | runtimes | arity | pure | prints | may throw | browser |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "| capability | runtimes | arity | returns | deterministic | effects | pure | prints | may throw | browser |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for capability in load_host_capabilities()["capabilities"]:
         rows.append(
-            "| {name} | {runtimes} | {arity} | {pure} | {prints} | {throws} | {browser} |".format(
+            "| {name} | {runtimes} | {arity} | {returns} | {determinism} | {effects} | {pure} | {prints} | {throws} | {browser} |".format(
                 name=capability["name"],
                 runtimes=", ".join(capability["runtimes"]),
                 arity=capability["arity"],
+                returns=capability["return_shape"],
+                determinism=capability["determinism"],
+                effects=", ".join(capability["side_effects"]) or "-",
                 pure=_mark(capability["pure"]),
                 prints=_mark(capability["may_print"]),
                 throws=_mark(capability["may_throw"]),
