@@ -87,7 +87,10 @@ The research corpus under `docs/research/` is design evidence, not active
 specification. Stable decisions from deep dives should migrate to
 `docs/convenience/` and `docs/language/`. The `.agents/skills/` directory
 contains agent skill definitions — read the relevant skill before working
-in a domain.
+in a domain. Treat `.agents/skills/` as the canonical shared skill source even
+when a tool's native session inventory omits a repo-local skill. In that case,
+read the matching `SKILL.md` directly and say you are using the repository
+fallback instead of reporting the skill as unavailable.
 
 ## Setup Commands
 

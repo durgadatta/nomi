@@ -10,6 +10,11 @@ Use this skill when the task is about making Nomi easier, safer, or more
 repeatable for AI coding agents. This is a meta-skill: it improves the agent
 environment, not the language runtime directly.
 
+If a tool's native session skill list omits `nomi-ai-native` but this file is
+present, treat this file as the canonical repository fallback and use it anyway.
+The native list is a convenience surface; `.agents/skills/nomi-ai-native/SKILL.md`
+is the durable contract for this workflow.
+
 ## Operating Principle
 
 AI-native does not mean "more instructions everywhere." Prefer the smallest

@@ -48,6 +48,8 @@ def run_checks() -> list[CheckResult]:
         check_claude_settings_jsonc(),
         check_hook_scripts_compile(),
         check_skills_frontmatter(),
+        check_skill_discovery_fallback_docs(),
+        check_codex_skill_hint_coverage(),
         check_claude_skill_shims(),
         check_claude_agent_shims(),
         check_claude_command_shims(),
@@ -140,6 +142,51 @@ def check_skills_frontmatter() -> CheckResult:
     if failures:
         return CheckResult("skills-frontmatter", "fail", "; ".join(failures))
     return CheckResult("skills-frontmatter", "pass", f"{len(skill_paths)} skills have basic metadata.")
+
+
+def check_skill_discovery_fallback_docs() -> CheckResult:
+    required_refs = {
+        "AGENTS.md": "repository fallback",
+        ".agents/README.md": "repository fallback",
+        "docs/orientation/ai_collaboration.md": "repository fallback",
+        ".agents/skills/nomi-ai-native/SKILL.md": "canonical repository fallback",
+    }
+    missing = []
+    for rel_path, phrase in required_refs.items():
+        text = normalize_whitespace((ROOT / rel_path).read_text(encoding="utf-8"))
+        if phrase not in text:
+            missing.append(f"{rel_path}: missing {phrase!r}")
+
+    if missing:
+        return CheckResult("skill-discovery-fallback-docs", "fail", "; ".join(missing))
+    return CheckResult(
+        "skill-discovery-fallback-docs",
+        "pass",
+        "Docs explain direct .agents/skills fallback when native skill inventory drifts.",
+    )
+
+
+def check_codex_skill_hint_coverage() -> CheckResult:
+    canonical_skills = sorted(path.parent.name for path in (ROOT / ".agents/skills").glob("*/SKILL.md"))
+    hook_text = (ROOT / ".codex/hooks/user_prompt_submit.py").read_text(encoding="utf-8")
+    session_text = (ROOT / ".codex/hooks/session_start.py").read_text(encoding="utf-8")
+
+    missing_prompt_hints = [skill for skill in canonical_skills if f'"{skill}"' not in hook_text]
+    missing_session_refs = [skill for skill in canonical_skills if f"`{skill}`" not in session_text]
+
+    failures = []
+    if missing_prompt_hints:
+        failures.append("missing prompt hints: " + ", ".join(missing_prompt_hints))
+    if missing_session_refs:
+        failures.append("missing session-start refs: " + ", ".join(missing_session_refs))
+
+    if failures:
+        return CheckResult("codex-skill-hint-coverage", "fail", "; ".join(failures))
+    return CheckResult(
+        "codex-skill-hint-coverage",
+        "pass",
+        f"{len(canonical_skills)} canonical skills are covered by Codex prompt/session hints.",
+    )
 
 
 def check_claude_skill_shims() -> CheckResult:
@@ -285,6 +332,10 @@ def strip_jsonc_comments(text: str) -> str:
         output.append(char)
         index += 1
     return "".join(output)
+
+
+def normalize_whitespace(text: str) -> str:
+    return re.sub(r"\s+", " ", text)
 
 
 def read_frontmatter(path: Path) -> dict[str, str]:

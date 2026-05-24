@@ -70,7 +70,10 @@ clear semantics, tests, examples, and documentation.
   | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
   | `nomi-ai-native` | Improve AI-agent setup: skills, hooks, MCP/RAG, subagents, commands, context hygiene, and workflow audits |
   If an agent has a skill loader, load the matching skill from this directory.
-  If it does not, read the relevant `SKILL.md` directly before working. The
+  If it does not, or if the loader's current session inventory omits a
+  repo-local skill that exists under `.agents/skills/`, read the relevant
+  `SKILL.md` directly before working and state that you are using the repository
+  fallback. The
   `caveman` skill is recommended for deepseek models to keep output minimal.
 - `.claude/skills/`: Claude Code native skill shims. These should stay tiny and
   point back to `.agents/skills/`, which remains the canonical shared skill

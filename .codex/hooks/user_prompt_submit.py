@@ -32,6 +32,11 @@ SKILL_HINTS = (
         "keep grammar, lowering, desugar, feature metadata, and parser tests aligned",
     ),
     (
+        "nomi-rust-parser",
+        re.compile(r"\b(rust parser|wasm parser|tree[- ]?sitter|parser frontend|core json|parse acceptance|parser spike)\b", re.I),
+        "keep Rust/WASM parser frontends, payload contracts, and parse-acceptance parity aligned",
+    ),
+    (
         "nomi-interp",
         re.compile(r"\b(interpreter|runtime|eval|environment|binding|constraint|yield|block call|control flow)\b", re.I),
         "keep Python-compatible behavior separate from deliberate Nomi runtime departures",

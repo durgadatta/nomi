@@ -18,6 +18,13 @@ The canonical skill bodies live here. Tool-specific shims should be thin:
 Claude Code shims under `.claude/skills/*/SKILL.md` only point back to these
 files so the shared skill text does not drift.
 
+Native skill inventories are convenience surfaces, not the source of truth. If
+Codex, Claude, OpenCode, or another tool fails to expose a repo-local skill in
+its current session but the skill exists here, read the canonical
+`.agents/skills/<name>/SKILL.md` directly and use it as the repository fallback.
+This especially matters for `nomi-ai-native`, because it is the skill that
+audits skill discovery, hooks, MCP/RAG, subagents, and agent workflow drift.
+
 Current skills:
 
 - `caveman`: ultra-concise output for low-context or terse models.
