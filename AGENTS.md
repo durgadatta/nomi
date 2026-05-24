@@ -113,6 +113,8 @@ in a domain.
 - Search local RAG context: `python3 -m tools.rag_mcp.cli search "binding constraints"`
 - Regenerate web manifest: `python3 scripts/make_web.py`
 - Check web manifest freshness: `python3 scripts/make_web.py --check`
+- Check web/runtime generated artifacts and focused contracts:
+  `python3 scripts/check_web_runtime.py`
 - Run web playground locally: `python3 scripts/launch_web.py`
 - Run web playground without opening a browser:
   `python3 scripts/launch_web.py --no-browser`

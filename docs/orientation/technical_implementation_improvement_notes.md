@@ -385,6 +385,7 @@ as unknown or no, never silently inferred as yes
 Use these after the next implementation pass:
 
 ```bash
+python3 scripts/check_web_runtime.py
 python3 scripts/make_web.py --check
 scripts/build_wasm.sh --check
 pytest prototype/tests/contracts/test_wasm_js_core_parity_contract.py
@@ -393,4 +394,3 @@ pytest prototype/tests/contracts/test_host_capabilities_contract.py
 pytest prototype/tests/unit/runtime/test_js_core_runtime_backend.py
 python3 .codex/scripts/agent_doctor.py
 ```
-
