@@ -72,7 +72,20 @@ def build_wasm() -> None:
         print("WASM build script not found — skipping WASM build.")
         return
     print("Building WASM parser...")
-    subprocess.run(["bash", str(build_script)], check=True)
+    try:
+        subprocess.run(["bash", str(build_script)], check=True)
+    except FileNotFoundError as exc:
+        raise SystemExit(
+            "Unable to run bash for the WASM build. Install bash or launch with "
+            "--no-wasm to use the committed parser artifacts."
+        ) from exc
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(
+            "WASM parser build failed. Check that Rust, the "
+            "wasm32-unknown-unknown target, and wasm-bindgen are installed, "
+            "or launch with --no-wasm to use committed artifacts. "
+            "Freshness can be checked with: scripts/build_wasm.sh --check"
+        ) from exc
 
 
 def regenerate_manifest() -> None:
