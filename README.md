@@ -137,6 +137,14 @@ manifest directly with:
 python3 scripts/make_web.py
 ```
 
+After changing the Rust parser used by the browser, rebuild and check the
+committed WASM package metadata:
+
+```bash
+scripts/build_wasm.sh
+scripts/build_wasm.sh --check
+```
+
 ## Test Reports
 
 ```bash

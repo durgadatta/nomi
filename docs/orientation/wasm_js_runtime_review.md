@@ -170,16 +170,19 @@ Improvement:
 - Include request ids in user-facing errors when a stale worker replies after
   restart.
 
-### 10. Build And Deployment Boundaries Are Blurry
+### 10. Build And Deployment Boundaries Need Release Discipline
 
 `scripts/launch_web.py` builds WASM by default, then regenerates the web
 manifest and starts `http.server`. That is convenient locally, but static
 deployment depends on committed/generated WASM artifacts already being present.
+The WASM parser package now has `scripts/build_wasm.sh --check` and
+`prototype/runtime/js/pkg/nomi_parser_build.json` to record source freshness;
+the next gap is making that check part of release/CI habit.
 
 Improvement:
 
-- Add `scripts/build_wasm.sh --check` or a small metadata file recording the
-  Rust parser source hash used for `prototype/runtime/js/pkg/*`.
+- Run `scripts/build_wasm.sh --check` wherever web/runtime artifacts are
+  validated.
 - Make `launch_web.py` print a clearer remediation when `wasm-bindgen` or the
   wasm target is missing.
 - Decide whether `prototype/runtime/js/pkg/` is committed release output or a

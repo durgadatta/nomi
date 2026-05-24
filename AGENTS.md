@@ -82,6 +82,8 @@ in a domain.
 - Install development extras: `python3 -m pip install -e '.[dev]'`
 - Rust parser spikes use the root `rust-toolchain.toml` (stable + `rustfmt`).
   With `rustup` installed, Cargo commands will use that project toolchain.
+- Build the browser WASM parser: `scripts/build_wasm.sh`
+- Check browser WASM parser freshness: `scripts/build_wasm.sh --check`
 - Run the CLI: `nomi scripts/demo.nomi`
 - Run without installation: `python3 scripts/cli.py scripts/demo.nomi`
 - Build/run the Dockerized notebook: `python3 scripts/run_nomi_docker.py`

@@ -1,0 +1,18 @@
+{
+  "crate": "prototype/parser/backends/rust_fast_ast",
+  "outputs": [
+    "nomi_parser.js",
+    "nomi_parser_bg.wasm",
+    "nomi_parser_bg.wasm.d.ts",
+    "nomi_parser.d.ts",
+    "nomi_parser_worker.js",
+    "nomi_parser_worker_bg.wasm",
+    "nomi_parser_worker_bg.wasm.d.ts",
+    "nomi_parser_worker.d.ts"
+  ],
+  "schema": "nomi.wasm-parser-build",
+  "source_hash": "35de953aebd8e7f6e1a7707373ed9d40a56767c30a7c9d776d5be1a7e46a6625",
+  "target": "wasm32-unknown-unknown",
+  "version": 1,
+  "wasm_bindgen": "wasm-bindgen 0.2.122"
+}

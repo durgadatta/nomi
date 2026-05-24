@@ -79,13 +79,15 @@ Improvement:
 
 `web/manifest.json` is generated and checked by `scripts/make_web.py --check`.
 The WASM parser package under `prototype/runtime/js/pkg/` is also generated in
-practice, but it lacks an equivalent freshness check or recorded source hash.
-This creates uncertainty for local launch, CI, and static deployment.
+practice. It now has `scripts/build_wasm.sh --check` and
+`prototype/runtime/js/pkg/nomi_parser_build.json`, which records the Rust
+parser source hash and expected outputs. The remaining risk is policy clarity:
+CI and release docs should consistently run the check and explain when generated
+outputs are committed.
 
 Improvement:
 
-- Add `scripts/build_wasm.sh --check` or a small generated metadata file with
-  parser crate hash, wasm-bindgen version, target triple, and output files.
+- Run `scripts/build_wasm.sh --check` in web/runtime CI or release checks.
 - Document whether `prototype/runtime/js/pkg/` is committed release output or
   local build output.
 - Keep `python3 scripts/make_web.py --check` as the manifest gate; no manifest
@@ -145,4 +147,3 @@ Improvement:
 4. Add WASM package freshness metadata/checking.
 5. Introduce host-aware parser/backend promotion fields without changing
    default behavior.
-
