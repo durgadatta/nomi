@@ -49,6 +49,7 @@ class SyntaxFeature:
     backend_requirements: tuple[str, ...] = ()
     docs: tuple[str, ...] = ()
     tests: tuple[str, ...] = ()
+    coverage: FeatureCapabilityAxes | None = None
     grammar_layers: tuple[str, ...] = ()
     layer_transforms: tuple = ()
     lowering_mixins: tuple[str, ...] = ()
@@ -109,6 +110,14 @@ _piecewise_functions = SyntaxFeature(
     reduces_to=("canonical-function", "match-dispatch"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
+    coverage=FeatureCapabilityAxes(
+        parse=True,
+        lower=True,
+        run=True,
+        reduce=True,
+        docs=True,
+        tests=True,
+    ),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
@@ -403,6 +412,14 @@ _block_call_lowering = SyntaxFeature(
     runtime_hooks_allowed="semantic",
     docs=("docs/features/block_calls_feature.md",),
     tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
+    coverage=FeatureCapabilityAxes(
+        parse=True,
+        lower=True,
+        run=True,
+        reduce=True,
+        docs=True,
+        tests=True,
+    ),
     lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
 )
 
@@ -541,6 +558,8 @@ def render_feature_layer_table(features: list[SyntaxFeature] | None = None) -> s
 
 def get_feature_capabilities(feature: SyntaxFeature) -> FeatureCapabilityAxes:
     """Return a conservative capability matrix row for one feature."""
+    if feature.coverage is not None:
+        return feature.coverage
     target_only = feature.status in {"research-only", "design-needed"}
     parse = feature.status not in {"research-only", "rejected-for-now"}
     lower = bool(
