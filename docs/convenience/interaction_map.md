@@ -109,7 +109,7 @@ prefer. Focused docs can add detail, but should not fork these decisions.
 | Result, checked failure, parse/decode errors | `Result` plus pattern matching | A future `?` must expand to `match` and respect return constraints. |
 | Exception, panic, impossible state | Unexpected error | Do not normalize these into ordinary `Result` without an explicit boundary. |
 | Schema, config, CLI/env/JSON/CSV validation | Decode boundary | Boundary diagnostics carry path, source, provenance, and redaction metadata. |
-| String interpolation, template, regex, path, URL, SQL, HTML | Typed string wrappers | f-strings are the one interpolation. `sql""`/`html""`/`re""`/`sh""` produce distinct types with auto-escaping. Paths and URLs are not strings. |
+| String interpolation, template, regex, path, URL, SQL, HTML | Typed string wrappers | f-strings are the one ordinary interpolation. `sql""`/`html""`/`re""`/`sh""` are a design direction for distinct typed values with per-target safety contracts. Paths and URLs are not strings. |
 | Doctest, inline examples, trace, explain, query plan | Explanation event stream | Examples and traces should use the same semantic vocabulary as diagnostics. |
 | Macro, template, quote, rewrite, domain notation | Future fenced reflection | No global syntax mutation in the first language. |
 | Symbolic manipulation, lazy value, query plan, delayed backend execution | Explicit structural boundary | Keep `quote`, `describe`, `lazy`, and `collect` separate; all must feed `explain`. |

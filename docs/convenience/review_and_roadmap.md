@@ -76,7 +76,7 @@ need stale wording removed.
 | Null handling | `??`, safe attr/call/subscript with `?.` | absence-aware access or fallback expression |
 | Error handling | single-line `try` expression, `defer` | expression boundary or exit policy |
 | Collections | ranges, range step with `by`, spread literals, comprehensions, pipelines | collection value plus calls |
-| Strings | interpolation, literals, typed wrappers, pattern matching, Unicode, serialization | string pillar — see [strings.md](strings.md) |
+| Strings | interpolation, literals, typed wrappers, pattern matching, Unicode, serialization | cross-cutting pillar — see [strings.md](strings.md) |
 | Types | type aliases | name binding for constraint/type expression |
 
 ## Consolidated Normal Forms

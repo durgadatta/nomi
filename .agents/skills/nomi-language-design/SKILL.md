@@ -195,12 +195,16 @@ Every accepted convenience should reduce to one or more of these:
 - **Block**: ordinary call plus attached caller-side code invoked by `yield`.
 - **Absence/result**: distinguish missing value, expected failure, and unexpected error.
 - **Data boundary**: external value explicitly decoded into owned data with diagnostics.
-- **String**: construction, interpolation, typed wrappers, pattern matching, Unicode, serialization.
 - **Explanation**: semantic events become traces, examples, diagnostics, or `explain` views.
 
 Each normal form maps to a section in the capstone synthesis
 (`cross_language_synthesis_master.md`) that reconciles cross-language research
 into concrete Nomi design decisions.
+
+Strings are a first-class cross-cutting pillar, not currently a ninth normal
+form. String features should reduce to Data boundary, Pattern, Flow,
+Absence/result, and Explanation unless a future capstone explicitly promotes
+String to a new normal form.
 
 If a candidate cannot reduce to this set, keep it research-only or propose the
 smallest new primitive it would require.
@@ -370,10 +374,11 @@ These are grounded in the cross-language synthesis and deep dive corpus:
   before adding dense syntax.
 - Treat examples, tests, traces, query plans, and decode errors as one
   explanation family.
-- Keep one string interpolation mechanism (f-strings). Do not add `%`, `.format()`,
-  `string.Template`, or heredocs. f-strings are the one way.
-- Typed wrappers (`sql""`, `html""`, `re""`, `sh""`) produce distinct types, not
-  `str`. Auto-escape interpolated values. Prevent injection at the type level.
+- Keep one ordinary string interpolation mechanism (f-strings). Do not add `%`,
+  `.format()`, `string.Template`, or heredocs. f-strings are the one way.
+- Typed wrappers (`sql""`, `html""`, `re""`, `sh""`) are a design direction,
+  not a parser task yet. They must produce distinct types, not `str`, and each
+  target needs a context-specific safety contract.
 - Paths are not strings. URLs are not strings. SQL queries are not strings.
   Each gets a distinct type with explicit `to_str()` conversion.
 - Treat strings as a first-class pillar alongside functions and collections

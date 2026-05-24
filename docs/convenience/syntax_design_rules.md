@@ -273,10 +273,11 @@ docs and `language_spec.md §19` (Diagnostics, Trace, And Explain) is ~50 lines.
 
 ### Data Boundary
 
-`data_and_types.md` covers types and strings.  But the dimensions analysis
-shows that the Data Boundary normal form is where the nominal/structural
-tension is resolved, and where the Expression Problem tradeoff is made
-concrete.
+`data_and_types.md` covers data declarations and type aliases, while
+`strings.md` now covers strings as a cross-cutting pillar. But the dimensions
+analysis shows that the Data Boundary normal form is where the
+nominal/structural tension is resolved, and where the Expression Problem
+tradeoff is made concrete.
 
 **Syntax design needed for:**
 - `Data.decode(source, Decoder)` — explicit boundary crossing with structured diagnostics

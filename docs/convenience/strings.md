@@ -1,11 +1,18 @@
 # Strings
 
-> Normal form: String pillar. Strings are the most universal interface between
-> programs and humans — they span Data boundary (construction, interpolation,
-> serialization), Pattern (matching, regex capture), and Flow (transformation
-> pipelines, collection verbs). This doc elevates strings from a subsection of
-> data-and-types to a first-class pillar alongside functions, collections, and
-> patterns.
+> Pillar, not a new normal form. Strings are the most universal interface
+> between programs and humans, but this document does not expand Nomi's
+> current eight-normal-form spine. String features reduce to existing owners:
+> Data boundary (typed wrappers, serialization, safe construction), Pattern
+> (literal and regex matching), Flow (transformation pipelines and collection
+> verbs), Absence/result (parsing and search failure), and Explanation
+> (display, diagnostics, redaction, source spans).
+>
+> This doc elevates strings from a subsection of data-and-types to a
+> first-class design pillar alongside functions, collections, patterns, and
+> data boundaries. A future capstone pass may decide that String deserves
+> promotion to a ninth normal form, but that would be a language-design event,
+> not a convenience-doc edit.
 >
 > Deep research: this doc is the first synthesis. A dedicated string-systems
 > deep dive is a coverage priority. For now the cross-language survey draws from:
@@ -49,9 +56,10 @@ The design pressures are:
    map over lines, trim, indent, wrap) should compose through the same
    pipeline/collection flow as everything else.
 
-5. **One obvious way.** Python's journey from `%` → `.format()` → f-strings
-   is a cautionary tale. Nomi should have one interpolation syntax that is
-   good enough to prevent alternatives from emerging.
+5. **One obvious ordinary string path.** Python's journey from `%` →
+   `.format()` → f-strings is a cautionary tale. Nomi should have one
+   `str`-producing interpolation syntax that is good enough to prevent
+   alternatives from emerging.
 
 6. **Typed wrappers beat stringly-typed code.** A Path is not a string. A
    URL is not a string. A regex pattern is not a string. These should be
@@ -59,11 +67,32 @@ The design pressures are:
 
 ---
 
+## 0. Normal-Form Ownership
+
+String design crosses several normal forms. The coherence rule is that each
+string feature must name its owner before it moves from research to spec:
+
+| String feature | Normal-form owner | Reduction target |
+|----------------|-------------------|------------------|
+| Literal text and interpolation | Data boundary + Explanation | construct text; preserve expression spans for diagnostics |
+| Typed string wrappers (`Path`, `Url`, `Sql`, `Html`, `Regex`) | Data boundary | decode or construct a trusted value from untrusted text |
+| Regex capture and string destructuring | Pattern | test text, bind captures, preserve match failure vs constraint failure |
+| Split/map/filter/join/lines/wrap | Flow | transform text through ordinary calls and collection verbs |
+| Search, parse, decode, encode | Absence/result | return `none` or `Result`, not sentinel values or hidden exceptions |
+| Display, debug, logging, redaction | Explanation | render structured values without losing secrecy or source context |
+
+The important consequence: **string syntax does not get its own evaluator
+semantics.** Literal sugar, typed interpolation, and regex capture must lower
+to ordinary calls, pattern attempts, typed wrappers, and explanation events.
+
+---
+
 ## 1. String Interpolation
 
 ### 1.1 Canonical Form: Extended f-strings
 
-Nomi inherits Python's f-string syntax as the single interpolation mechanism:
+Nomi inherits Python's f-string syntax as the single ordinary `str`-producing
+interpolation mechanism:
 
 ```nomi
 name = "Nomi"
@@ -80,10 +109,12 @@ Your order #{order.id} has shipped.
 """
 ```
 
-**Design decision: f-string syntax is the one way.** Nomi rejects the
-Python fragmentation where `%`, `.format()`, `f""`, and `string.Template`
-all coexist. f-strings won because the expression is visible at the call
-site. The `f` prefix is learnable and searchable.
+**Design decision: f-string syntax is the one ordinary string interpolation
+way.** Nomi rejects the Python fragmentation where `%`, `.format()`, `f""`,
+and `string.Template` all coexist. f-strings won because the expression is
+visible at the call site. The `f` prefix is learnable and searchable. Typed
+interpolators such as `sql""` are not alternative ways to build `str`; they are
+typed boundary constructors.
 
 **Source reference:** Python f-strings, JavaScript `${expr}`, Kotlin
 `$name ${expr}`, Swift `\(expr)`, Ruby `#{expr}`, C# `$"{expr}"`,
@@ -114,18 +145,18 @@ f"{name:>20}"
 power is design-settled for f-string expressions matching Nomi's expression
 grammar.
 
-### 1.3 Custom Interpolators (Design-Settled)
+### 1.3 Typed Interpolators (Design Direction)
 
 Scala's custom string interpolators (`s"", f"", raw""`) and JavaScript's
 tagged templates show a pattern worth adopting: let the prefix select a
 processing mode. Nomi extends this to typed strings:
 
 ```nomi
-# Built-in prefixes for safe construction
+# Candidate built-in prefixes for safe construction
 sql"SELECT * FROM users WHERE id = {user_id}"     # → Sql literal, not str
 html"<div class={cls}>{content}</div>"             # → Html literal, not str
 re"\d{3}-\d{2}-\d{4}"                             # → Regex pattern, compiled
-sh"tar -czf {archive} {path}"                     # → Shell command, not str
+sh"tar -czf {archive} {path}"                     # → command value, not str
 
 # Each prefix returns a distinct type — not a string
 query: Sql = sql"SELECT ..."
@@ -134,23 +165,33 @@ template: Html = html"<p>{body}</p>"
 
 Each custom prefix:
 - Produces a distinct type (not `str`)
-- Auto-escapes interpolated values for the target context
+- Applies target-specific safe construction
 - Is rejected at compile time if the prefix isn't imported/available
 - Composes with the `Data.decode()` boundary
+
+Target-specific means different things in different domains. SQL interpolation
+should produce a query plus bound parameters, not escaped SQL text. HTML
+interpolation must distinguish text nodes, attributes, URLs, and raw fragments.
+Shell interpolation should prefer structured argument vectors or capability
+scopes over shell-language strings. URL interpolation must encode path segments
+and query parameters differently. The prefix dispatch mechanism can be shared,
+but the safety contract is per target.
 
 **Source reference:** Scala custom interpolators, JavaScript tagged
 templates, Elixir sigils.
 
-**Status:** design-settled for `sql""`, `html""`, `re""`, `sh""`.
-The prefix dispatch mechanism is design-needed.
+**Status:** design-needed as syntax and dispatch. The goal of distinct typed
+wrappers is design-settled; the exact prefix grammar, lookup rules,
+compile-time execution policy, and per-target safety contracts need a feature
+packet before implementation.
 
 ### 1.3.1 The Desugaring Model
 
 The key design insight from Scala and Elixir: **interpolation desugars into
 a function call.** A prefix is not a language keyword — it is a function name:
 
-```
-sql"SELECT * WHERE id = ${id}"
+```text
+sql"SELECT * WHERE id = {id}"
 → StringContext("SELECT * WHERE id = ", "").sql(id)
 ```
 
@@ -166,19 +207,28 @@ Elixir's sigil model is even more general. `~r/pattern/iflags` desugars to
 collide with content. Sigils run at compile time — `~r` compiles the regex
 once. The mechanism is one two-argument function call. Nothing more.
 
-Nomi combines both:
+Nomi should adapt both, but the final spelling is not settled:
 - Prefix-triggered interpolation desugars to a function call (Scala model)
-- Lowercase = interpolated, uppercase = raw (Elixir convention)
-- User-definable via functions following the naming convention
-- Compile-time execution where the prefix function is a known constant
+- Raw/interpolated mode is explicit; uppercase-as-raw is a candidate, not a
+  commitment
+- User-definable processors require an importable name and an inspectable
+  expansion
+- Compile-time execution is allowed only for known-safe processors with a
+  sandboxed or declarative contract
 
 ```nomi
-# Custom processor — user defines fn sigil_json(content: str, flags: list[str]) -> Json
+# Candidate custom processor:
+# user defines string_processor json(parts, values, flags) -> Json
 config = json"{\"key\": {value}}"              # → Json, not str
-
-# Raw mode — uppercase disables interpolation
-raw_json = JSON'{"key": "${NOT_INTERPOLATED}"}'# → Json, literal content
 ```
+
+Open dispatch questions:
+- Is the prefix resolved like an imported function, a method on `StringContext`,
+  or a registered compile-time capability?
+- Which processors may run at compile time, and how are side effects forbidden?
+- How does `explain` display the expansion and the original source spans?
+- How are raw mode, flags, and extended delimiters combined without creating a
+  second mini-language?
 
 ### 1.4 Debug / Development Interpolation
 
@@ -202,13 +252,13 @@ debug"(x, y, z)"  # → "x=1, y=2, z=3"  (design-needed)
 ### 2.1 Multi-Line Strings
 
 ```nomi
-# Triple-quoted — indentation is auto-stripped (Python 3.12+ style)
+# Current prototype: Python-compatible triple-quoted string
 doc = """
     line one
     line two
     """
 
-# Indentation follows the closing """ — same as Python textwrap.dedent
+# Future design target: indentation follows the closing delimiter
 ```
 
 Kotlin's `trimMargin()` and Java's `String.stripIndent()` converge on the
@@ -218,13 +268,14 @@ across non-blank lines, strips it automatically, and the horizontal position
 of the closing `"""` defines the margin. Content to the right of the closing
 delimiter is "essential" indentation. C# 11 uses the same algorithm.
 
-**Design decision: adopt the Java/C# closing-delimiter algorithm.** When
+**Design direction: adopt the Java/C# closing-delimiter algorithm.** When
 the closing `"""` is at indent N, strip N spaces from every non-blank line.
 This eliminates the need for post-hoc `.dedent()` calls and makes multi-line
 strings "just work" in indented code.
 
-**Status:** implemented (Python-compatible triple-quoted strings). The
-auto-indent algorithm (Java/C# model) is design-settled.
+**Status:** implemented only as Python-compatible triple-quoted strings.
+The auto-indent algorithm is design-needed until exact whitespace rules,
+diagnostics, and compatibility with current Python behavior are specified.
 
 ### 2.2 Raw Strings
 
@@ -244,9 +295,9 @@ regex = r"""
 ```
 
 **Status:** implemented (Python-compatible `r""`). Extended delimiters
-(Rust model) are design-settled as a future enhancement.
+(Rust model) are design-needed as a future enhancement.
 
-### 2.3 Extended / Custom Delimiters (Design-Settled)
+### 2.3 Extended / Custom Delimiters (Design Direction)
 
 Python's `r""` has a well-known edge case: `r"\"` is a syntax error because
 a raw string can't end with a backslash. Every Python developer hits this.
@@ -259,13 +310,13 @@ always escalate. Swift's extended delimiters (`#"..."#`) work identically.
 
 ```nomi
 # Rust-style delimiter escalation
-json = #"{"name": "Nomi", "version": "0.1"}"#
+json = r#"{"name": "Nomi", "version": "0.1"}"#
 
-# With interpolation — more # enables interpolation in raw context
-text = ##"{"name": "{name}", "version": "{version}"}"##
+# More # characters let the content contain "# without escaping
+text = r##"This contains "# inside the text"##
 
 # For strings containing "# — add more # delimiters (always works)
-text = ###"This contains "# and ##" delimiters"###
+text = r###"This contains "# and "## delimiters"###
 
 # The general rule: r#...# always works. No edge cases. No backslash standing
 # before closing quote. No "" doubling. Just add more #.
@@ -275,9 +326,12 @@ text = ###"This contains "# and ##" delimiters"###
 (extended delimiters with `\#(expr)` for interpolation), C# 11 raw string
 literals (quote-count escalation).
 
-**Status:** design-settled. Python's `r""` covers many cases already;
+**Status:** design-needed. Python's `r""` covers many cases already;
 Rust-style delimiter escalation is a later priority but is the correct
-long-term design — it eliminates the `r"\"` edge case permanently.
+long-term candidate because it eliminates the `r"\"` edge case permanently.
+Interpolation inside extended delimiters remains an open spelling question
+(Swift uses explicit escaped interpolation; Rust raw strings do not
+interpolate).
 
 ### 2.4 Heredocs (Rejected)
 
@@ -341,25 +395,27 @@ cleaned = text
 
 ### 3.2 Collection Verbs on Strings
 
-Strings are sequences of characters. They should support the same
-collection verbs as lists:
+Strings are text values with multiple useful views: bytes, code points,
+grapheme clusters, lines, words, and display cells. Collection verbs should
+work through an explicit view so the iteration unit is visible:
 
 ```nomi
-# Map over characters
-"hello" |> select(_.upper())   # "HELLO"
+# Map over code points / one-code-point strings
+"hello".code_points() |> select(chr(_).upper()) |> collect(into: str)
 
-# Filter
-"a1b2c3" |> where(_.is_digit())  # "123"
+# Filter through a character-like view
+"a1b2c3".chars() |> where(_.is_digit()) |> collect(into: str)
 
 # Fold/reduce
-"hello" |> fold(0, (acc, ch) -> acc + ord(ch))
+"hello".code_points() |> fold(0, (acc, cp) -> acc + cp)
 
 # Lines as a lazy sequence
 text.lines() |> where(_.starts_with("ERROR"))
 ```
 
 **Status:** basic collection iteration is implemented (Python string
-iteration). Collection verb vocabulary for strings is design-settled.
+iteration). Collection verb vocabulary for strings is design-settled, but
+the default string view for `|> where` / `|> select` is design-needed.
 
 ### 3.3 String Builder (Library-First)
 
@@ -420,7 +476,7 @@ commands, email addresses, phone numbers. This causes:
 
 ### 4.2 Distinct Types
 
-Nomi provides distinct types for common string-like values:
+Nomi's design should provide distinct types for common string-like values:
 
 ```nomi
 # Path — not a string
@@ -436,15 +492,15 @@ api.with_query("page", "2")             # query params, properly encoded
 
 # SQL — not a string
 query: Sql = sql"SELECT * FROM users WHERE id = {user_id}"
-# user_id is auto-escaped; query is a Sql value, not str
+# user_id is bound as a parameter; query is a Sql value, not str
 
 # HTML — not a string
 page: Html = html"<div class={cls}>{content}</div>"
-# content is auto-escaped; page is an Html value, not str
+# content is escaped according to HTML context; page is an Html value, not str
 
 # Regex — not a string
 pattern: Regex = re"\d{3}-\d{2}-\d{4}"
-# Compiled at parse time; captures produce typed match objects
+# Future target: compiled once and captures produce typed match objects
 ```
 
 ### 4.3 Conversion Protocol
@@ -460,9 +516,13 @@ url = Url("https://...")      # from str
 path_str = path.to_str()      # Path → str (platform-native)
 url_str = url.to_str()        # URL → str (encoded)
 
-# Implicit coercion is rejected
-f"The path is {path}"         # Compile error: Path is not str
-f"The path is {path.to_str()}" # Explicit — this is fine
+# Implicit coercion into str-accepting APIs is rejected
+open(path)                   # fine: open expects Path
+write_text(path.to_str())    # explicit extraction when a raw str is required
+
+# Display is not coercion
+f"The path is {path}"         # uses Path.Display
+path_str = path.to_str()      # explicit platform-native string extraction
 ```
 
 This builds on Nomi's Data Boundary normal form: typed wrappers are the
@@ -471,9 +531,10 @@ boundary between untyped string data and typed string values.
 **Source reference:** Python `pathlib.Path`, Rust `Path`/`PathBuf`/`Url`,
 Java `java.nio.Path`, Scala `os.Path`, Go `net/url.URL`.
 
-**Status:** `Path` is design-settled. `Url`, `Sql`, `Html`, `Regex` are
-design-settled as typed wrappers. The custom-interpolator dispatch
-mechanism (`sql""`, `html""`, etc.) is design-needed.
+**Status:** `Path` is design-settled as a standard-library value. `Url`,
+`Sql`, `Html`, `Regex`, and command values are design-needed as a family:
+the wrapper principle is settled, but each type needs construction,
+conversion, display, redaction, and sink contracts before implementation.
 
 ---
 
@@ -489,7 +550,7 @@ match status:
     case "ok": handle_ok()
     case "error": handle_error()
 
-# Match with regex captures (design-settled)
+# Match with regex captures (design-needed)
 match text:
     case re"(\d{3})-(\d{2})-(\d{4})" as area, exchange, subscriber:
         format_ssn(area, exchange, subscriber)
@@ -528,10 +589,11 @@ result = ssn_pattern.replace(text, (m) -> f"***-**-{m[3]}")
 **Source reference:** Python `re` module, Rust `regex` crate, Elixir
 `~r/` sigil, JavaScript regex literals, Scala `.r` method.
 
-**Status:** Python-compatible `re` module is implemented. `re""` typed
-literal and regex capture in `match` are design-settled. Regex as a
-language literal (like JS `/re/`) is rejected — `re""` typed string is
-the Nomi way.
+**Status:** Python-compatible `re` module is implemented. A `Regex` typed
+wrapper and regex capture in `match` are design-needed until the engine policy,
+capture binding form, named-group behavior, failed-match diagnostics, and
+catastrophic-backtracking stance are specified. Regex as a language literal
+(like JS `/re/`) is rejected; typed string construction is the preferred path.
 
 ### 5.3 String Slicing and Indexing
 
@@ -542,17 +604,19 @@ text[0:5]      # first 5 characters
 text[-1]       # last character
 text[::2]      # every other character
 
-# Grapheme-cluster-aware indexing (design-settled)
+# Grapheme-cluster-aware indexing (design-needed)
 text.graphemes()[0]    # first user-perceived character (Swift model)
 ```
 
-**Design fork:** Swift makes `str[5]` O(n) because strings are grapheme
-clusters; Python makes `str[5]` O(1) because strings are code-point arrays
-but breaks on emoji. Nomi keeps Python compatibility for ASCII-range code
-and adds grapheme-cluster access as explicit opt-in.
+**Design fork:** Swift exposes `String` as grapheme clusters, which makes
+integer indexing intentionally unavailable and many index operations O(n).
+Python exposes code-point indexing with an implementation-dependent storage
+layout. Nomi keeps Python-compatible indexing for now and adds grapheme-cluster
+access as explicit opt-in.
 
 **Status:** Python-compatible slicing is implemented. Grapheme-cluster
-access is design-settled (library-first, not default indexing).
+access is design-needed as a library view, including Unicode-version policy
+and indexing complexity guarantees.
 
 ---
 
@@ -656,6 +720,20 @@ The `str` type stores Unicode text. There is no `unicode` vs `str`
 distinction (Python 2's most painful migration). There is no "default
 encoding" that varies by platform.
 
+Nomi should name the text unit being used instead of pretending there is one
+universal "character":
+
+| Unit | Meaning | Typical use |
+|------|---------|-------------|
+| byte | raw octet | files, network, hashing, binary protocols |
+| code point | Unicode scalar value; Python-compatible indexing exposes this as a one-code-point string today | parsing, simple transforms, compatibility |
+| grapheme cluster | user-perceived character | cursor movement, emoji-safe slicing, UI text |
+| display cell | terminal/editor column width | alignment, tables, diagnostics |
+
+The default prototype behavior is Python-compatible. The design target is a
+small set of explicit views (`bytes`, `code_points`, `graphemes`,
+`display_cells`) so correctness-sensitive code can say what it means.
+
 ```nomi
 # Normalization — four Unicode normalization forms (library)
 "café".normalize("NFC")    # → composed (canonical)
@@ -677,8 +755,9 @@ canonical equivalence. Every other language treats these as different
 strings. Nomi follows the majority: `==` compares code-point-by-code-point.
 Canonical equivalence is explicit via `str.nfc_eq(other)`.
 
-The reason: normalization is lossy (multiple precomposed forms can normalize
-identically), culturally variable, and adds runtime cost. Making it explicit
+The reason: normalization changes representation, compatibility
+normalization can be lossy, locale-sensitive comparisons are culturally
+variable, and automatic normalization adds runtime cost. Making it explicit
 keeps string comparison predictable and fast, while still making the correct
 comparison easy to reach.
 
@@ -722,8 +801,9 @@ prioritizes predictability. Make the 99% case easy (grapheme counting,
 emoji-safe substrings) without breaking the 1% case (O(1) code-point
 access for systems programming).
 
-**Status:** Python-compatible code-point indexing is implemented.
-Grapheme-cluster views are design-settled (library-first).
+**Status:** Python-compatible indexing is implemented. Grapheme-cluster views,
+display-cell width, locale-aware case operations, collation, and Unicode
+version pinning are library-first design work.
 
 ---
 
@@ -731,24 +811,26 @@ Grapheme-cluster views are design-settled (library-first).
 
 ### 9.1 Injection Prevention
 
-The primary injection vector in every language is string concatenation
-into a structured context (SQL, HTML, shell, XML, JSON). Nomi's defense:
+The primary injection vector in every language is string concatenation into a
+structured context (SQL, HTML, shell, XML, JSON, CSS, URLs). Nomi's defense is
+not "escape everything"; it is **make the target context explicit and typed**:
 
-1. **Typed wrappers** (`Sql`, `Html`, `Sh`) that auto-escape interpolated
-   values and are NOT subtypes of `str`.
+1. **Typed wrappers** (`Sql`, `Html`, command values) that are NOT subtypes of
+   `str`.
 2. **Custom interpolators** (`sql""`, `html""`) that produce typed wrappers
    via the prefix-dispatch mechanism (see §1.3.1).
 3. **No implicit coercion** — `Sql` doesn't decay to `str`; you must call
    `.to_str()` explicitly.
-4. **Parameterized by default** — `sql"SELECT * WHERE id = {user_id}"` binds
-   `user_id` as a parameter, not through string concatenation. The safe path
-   is the default path.
+4. **Parameterized or context-aware by default** — `sql"..."` binds values as
+   parameters, `html"..."` escapes according to HTML context, URL builders
+   encode path and query segments differently, and command APIs prefer argv
+   values over shell-language strings.
 
 ```nomi
 # Safe: user_id is parameterized, not string-concatenated
 query = sql"SELECT * FROM users WHERE id = {user_id}"
 
-# Compile error: can't use Sql where str is expected
+# Type error: can't use Sql where raw str is expected
 execute(query)  # execute() takes Sql, not str
 
 # Wrong but explicit: raw string construction
@@ -769,10 +851,12 @@ ecosystem (Rails, Rack) never integrated with it. The lesson: **language-level
 taint tracking only works if the entire ecosystem participates.** A new
 language cannot mandate this from day one.
 
-Nomi's approach: **make the safe path the only path that compiles.**
-`execute()` takes `Sql`, not `str`. No amount of framework neglect can
-bypass the type checker. This is cheaper than taint tracking and more
-reliable than framework conventions.
+Nomi's approach: **make safe sinks typed.** `execute()` takes `Sql`, not
+`str`; `render()` takes `Html`, not a raw template string; `run()` takes a
+command value or argv list, not a shell snippet by default. This is cheaper
+than full taint tracking and more reliable than framework conventions, while
+still allowing explicit escape hatches such as `Sql.raw(...)` for migration and
+low-level interop.
 
 **Source reference:** Perl taint mode (comprehensive, ecosystem-ignored),
 Ruby `$SAFE`/`taint`/`untaint` (removed in 2.7-3.0), Rust newtype wrappers
@@ -819,7 +903,30 @@ Features that belong in libraries, not the language:
 
 ---
 
-## 11. Implementation Status
+## 11. Spec Packet Needed
+
+Before typed interpolation or Unicode-aware string views move into the
+implementation queue, they need a feature packet with these decisions:
+
+| Area | Required decision |
+|------|-------------------|
+| Prefix grammar | Which prefixes are legal, how raw/interpolated mode composes with `r""`, `f""`, triple quotes, and extended delimiters |
+| Name lookup | Whether `sql""` resolves as an imported function, a registered processor, a method on a context object, or a standard-prelude form |
+| Lowering | Exact desugaring into parts, values, flags, source spans, and target type |
+| Compile-time execution | Which processors may run at compile time; sandbox, purity, caching, and error reporting rules |
+| Safety contracts | SQL parameterization, HTML context escaping, URL path/query encoding, command argv construction, regex compilation policy |
+| Regex engine | Backtracking vs linear-time engine, flags, Unicode classes, named captures, replacement semantics |
+| Unicode views | Default iteration unit, grapheme library dependency, Unicode version pinning, display-width policy |
+| Conversion | `to_str()`, `Display`, `Debug`, redaction, logging, and serialization contracts for each typed wrapper |
+| Diagnostics | How syntax errors, unsafe raw construction, failed regex compilation, and context-mismatched interpolation are explained |
+| Explainability | Machine-readable expansion events connecting source literal parts to constructed typed values |
+
+This is the bridge from ambitious design to implementation-quality work. Until
+the packet exists, typed string wrappers remain a direction, not a parser task.
+
+---
+
+## 12. Implementation Status
 
 | Feature | Status |
 |---------|--------|
@@ -828,25 +935,25 @@ Features that belong in libraries, not the language:
 | Multi-line triple-quoted strings | implemented |
 | Raw strings (`r""`) | implemented |
 | Python-compatible string methods | implemented |
-| Iterator-returning methods (`split()`, `lines()`) | design-settled |
-| Extended delimiters (`r##"..."##`) | design-settled |
-| Auto-indent stripping (Java/C# closing-delimiter model) | design-settled |
-| `sql""` / `html""` / `re""` / `sh""` typed strings | design-settled |
+| Iterator-returning methods (`split()`, `lines()`) | design-needed |
+| Extended delimiters (`r##"..."##`) | design-needed |
+| Auto-indent stripping (Java/C# closing-delimiter model) | design-needed |
+| `sql""` / `html""` / `re""` / `sh""` typed strings | design-needed |
 | Custom prefix/interpolator dispatch (sigil model) | design-needed |
 | `Path` type (not str) with `/` operator | design-settled |
-| `Url` type (not str) | design-settled |
-| Regex capture in `match` patterns (Scala extractor model) | design-settled |
+| `Url` type (not str) | design-needed |
+| Regex capture in `match` patterns (Scala extractor model) | design-needed |
 | Display vs Debug format (`:?`) | design-settled |
 | `__format__` protocol | implemented (Python) |
-| Collection verbs over strings (pipeline-compatible) | design-settled |
+| Collection verbs over strings (pipeline-compatible) | design-needed for default string view |
 | `build_string` / `StringBuilder` | library-first |
-| Grapheme-cluster access | design-settled (library-first) |
+| Grapheme-cluster access | library-first, design-needed |
 | Unicode normalization / case folding | library-first |
 | Locale-aware case operations | library-first |
 | Canonical equivalence (`nfc_eq`) | library-first |
 | `@secret` field redaction in display | design-settled |
 | `explain --unsafe` | design-settled |
-| Opaque safe string types (injection prevention at type level) | design-settled |
+| Opaque safe string types (injection prevention at type level) | design direction; needs per-sink contracts |
 | Language-level taint tracking | rejected |
 | Heredocs (`<<EOF`) | rejected-for-now |
 | Regex literals (`/pat/`) as grammar-level syntax | rejected |
@@ -854,10 +961,12 @@ Features that belong in libraries, not the language:
 
 ---
 
-## 12. Design Context
+## 13. Design Context
 
-This doc establishes the **String pillar** as a first-class language
-concern alongside functions, collections, patterns, and data boundaries.
+This doc establishes the **String pillar** as a first-class design concern
+alongside functions, collections, patterns, and data boundaries. It is not
+currently a ninth normal form; it is a cross-cutting pillar whose features must
+reduce to existing normal forms before they become syntax.
 For the broader picture:
 
 - [Language Foundation §Primitive Cognitive Acts](../language/language_foundation.md) —
@@ -880,5 +989,6 @@ For the broader picture:
   type, interpolation, literals, conversion.
 - **Coverage priority:** A dedicated `string_systems_deep_dive.md` is
   needed in `docs/research/` covering the full spectrum: interpolation
-  design space, typed strings, regex integration, Unicode policies, and
-  format protocols across 12+ languages.
+  design space, typed strings, regex integration, Unicode policies,
+  display-width/collation/localization, shell and SQL safety, and format
+  protocols across 12+ languages.
