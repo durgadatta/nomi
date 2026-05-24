@@ -144,7 +144,9 @@ Read the smallest relevant set before changing docs or making recommendations.
   systemic cruft patterns, feature interaction analysis.
 - `docs/convenience/absence_and_result.md` — absence, result, error handling.
 - `docs/convenience/flow_and_collections.md` — flow normal form.
-- `docs/convenience/data_and_types.md` — data boundary, types, strings, aliases.
+- `docs/convenience/data_and_types.md` — data boundary, types, aliases.
+- `docs/convenience/strings.md` — string pillar: interpolation, literals, typed
+  wrappers, pattern matching on strings, Unicode, serialization, security.
 - `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature
   families and recommendations.
 - Relevant focused docs under `docs/convenience/` (e.g., `patterns.md`,
@@ -193,6 +195,7 @@ Every accepted convenience should reduce to one or more of these:
 - **Block**: ordinary call plus attached caller-side code invoked by `yield`.
 - **Absence/result**: distinguish missing value, expected failure, and unexpected error.
 - **Data boundary**: external value explicitly decoded into owned data with diagnostics.
+- **String**: construction, interpolation, typed wrappers, pattern matching, Unicode, serialization.
 - **Explanation**: semantic events become traces, examples, diagnostics, or `explain` views.
 
 Each normal form maps to a section in the capstone synthesis
@@ -367,6 +370,14 @@ These are grounded in the cross-language synthesis and deep dive corpus:
   before adding dense syntax.
 - Treat examples, tests, traces, query plans, and decode errors as one
   explanation family.
+- Keep one string interpolation mechanism (f-strings). Do not add `%`, `.format()`,
+  `string.Template`, or heredocs. f-strings are the one way.
+- Typed wrappers (`sql""`, `html""`, `re""`, `sh""`) produce distinct types, not
+  `str`. Auto-escape interpolated values. Prevent injection at the type level.
+- Paths are not strings. URLs are not strings. SQL queries are not strings.
+  Each gets a distinct type with explicit `to_str()` conversion.
+- Treat strings as a first-class pillar alongside functions and collections
+  (see `docs/convenience/strings.md`).
 - Config is a data-boundary problem (see `data_boundary_systems_deep_dive.md`),
   not a second data declaration language.
 - Secrets and sensitive values should be redacted by default in diagnostics and

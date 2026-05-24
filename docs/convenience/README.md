@@ -18,6 +18,7 @@ Every accepted convenience reduces to one of eight normal forms:
 - **Block** — ordinary call plus attached caller-side code invoked by `yield`
 - **Absence/result** — distinguish missing value, expected failure, and unexpected error
 - **Data boundary** — external value explicitly decoded into owned data with diagnostics
+- **String** — construction, interpolation, typed wrappers, pattern matching, Unicode, serialization
 - **Explanation** — semantic events become traces, examples, diagnostics, or `explain` views
 
 ## Documents
@@ -41,7 +42,8 @@ Every accepted convenience reduces to one of eight normal forms:
 | [patterns.md](patterns.md) | Pattern | implemented (match, if-let, while-let, guard-let); if-let detail + match-expr challenges appendices |
 | [flow_and_collections.md](flow_and_collections.md) | Flow | implemented (pipeline, ranges, range-step, spread) |
 | [absence_and_result.md](absence_and_result.md) | Absence/result + Block | implemented (`?.`, `??`, try-expr, guard-let, defer); Result/Option design-settled |
-| [data_and_types.md](data_and_types.md) | Data boundary | type aliases + strings implemented; data classes + decode + @secret/@pii design-settled |
+| [data_and_types.md](data_and_types.md) | Data boundary | type aliases implemented; data classes + decode + @secret/@pii design-settled |
+| [strings.md](strings.md) | String | interpolation + literals implemented; typed wrappers + display/debug + grapheme access design-settled |
 | [scope_context.md](scope_context.md) | Binding + Block | where + block-call DSL implemented; implicit params research-only |
 | [concurrency.md](concurrency.md) | Block + Flow | Python async interop available; structured concurrency design-settled |
 | [meta_testing.md](meta_testing.md) | Explanation + Block | decorators implemented; examples + checks design-settled |
@@ -51,8 +53,8 @@ Every accepted convenience reduces to one of eight normal forms:
 
 | Status | Count | Features |
 |--------|-------|----------|
-| **implemented** | 10+ | `func`, `=>`, equations, piecewise, holes, sections, compose, `where`, `\|>`, ranges, spread, `unless`, if-let, while-let, guard-let, match, or-patterns, `?.`, `??`, try-expr, `defer`, decorators, f-strings, type aliases, imports (Python-compatible) |
-| **design-settled** | 15 | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), collection verb vocabulary (12 verbs), query plans, `nomi fmt`, Tree-sitter + LSP, domain-name import paths |
+| **implemented** | 10+ | `func`, `=>`, equations, piecewise, holes, sections, compose, `where`, `\|>`, ranges, spread, `unless`, if-let, while-let, guard-let, match, or-patterns, `?.`, `??`, try-expr, `defer`, decorators, f-strings, multi-line strings, raw strings, type aliases, imports (Python-compatible) |
+| **design-settled** | 18 | `Result[T,E]`, `Option[T]`, `Data.decode()`, `@secret`/`@pii`, `pub` visibility, re-exports, content-addressed imports, `examples:` blocks, `check:` statements, structured concurrency (block policies), collection verb vocabulary (12 verbs), query plans, `nomi fmt`, Tree-sitter + LSP, domain-name import paths, typed string wrappers (`sql""`/`html""`/`re""`/`sh""`), grapheme-cluster access, Display/Debug format |
 | **prototype-ready** | 3 | binding error diagnostics, `BindingTarget`, constrained captures |
 | **design-needed** | 5 | cancellation semantics, concurrency diagnostics, extension methods, operator overloading, regex capture patterns |
 | **library-first** | 5+ | command functions, config layering, path values, safe commands, parallel collections |

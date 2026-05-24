@@ -209,46 +209,10 @@ Swift operator declarations, Haskell type classes.
 
 ## 3. Strings
 
-### Interpolation
-
-Embed expressions in string literals.
-
-```nomi
-f"Hello {name}, you are {age} years old"
-```
-
-**Source reference:** Python f-strings, JavaScript template literals,
-Kotlin `"$name ${age}"`, Ruby `"#{name}"`, Swift `"\\(name)"`.
-**Status:** implemented (f-string syntax desugars at parse time).
-
-### Multi-Line Strings
-
-Triple-quoted strings with indentation handling.
-
-```nomi
-doc = """
-    line one
-    line two
-    """
-```
-
-**Status:** implemented.
-
-### Raw Strings
-
-No escape processing.
-
-```nomi
-path = r"C:\Users\name\docs"
-```
-
-**Status:** implemented (Python-compatible).
-
-### Regex Literals
-
-**Status:** library-first. Keep regex as a library concern, not
-language syntax. Every language with regex literals (JavaScript, Ruby,
-Perl) has had to add escape-related special cases.
+> Moved to [strings.md](strings.md) — elevated to a first-class pillar
+> alongside functions, collections, and patterns. Covers interpolation,
+> literal forms, string API, typed wrappers, pattern matching, Unicode,
+> serialization, and security.
 
 ---
 
@@ -257,9 +221,6 @@ Perl) has had to add escape-related special cases.
 | Feature | Status |
 |---------|--------|
 | Type aliases (`type X = Y`) | implemented |
-| f-string interpolation | implemented |
-| Triple-quoted strings | implemented |
-| Raw strings (`r"..."`) | implemented |
 | Data class declarations (`data`) | design-settled |
 | Sum types (variants) | design-settled |
 | `Data.decode()` protocol | prototype-ready |
@@ -271,7 +232,7 @@ Perl) has had to add escape-related special cases.
 | Content-addressed imports | design-settled |
 | Extension methods | design-needed |
 | Declarative operator overloading | design-needed |
-| Regex literals | library-first |
+| Strings (interpolation, literals, typed wrappers) | see [strings.md](strings.md) |
 
 ## 5. Design Context
 
@@ -291,5 +252,7 @@ This doc covers Nomi's **Data boundary** normal form. For the broader picture:
 - [Data Boundary Systems Deep Dive](../research/data_boundary_systems_deep_dive.md) —
   full 10-system synthesis (Pydantic, CUE, Nickel, Pkl, Dhall, Terraform,
   JSON Schema, TypeScript, serde, Elm decoders).
+- [Strings](strings.md) — string pillar: interpolation, literals, typed
+  wrappers, pattern matching on strings, Unicode, serialization, security.
 - [Implementation Learnings](../convenience/implementation_learnings.md) —
   grammar and AST interactions for type annotations.
