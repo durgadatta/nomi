@@ -70,6 +70,11 @@ pub(crate) enum Expr {
         value: Box<Expr>,
         slice: Box<Expr>,
     },
+    Slice {
+        start: Option<Box<Expr>>,
+        end: Option<Box<Expr>>,
+        step: Option<Box<Expr>>,
+    },
     Call {
         func: Box<Expr>,
         args: Vec<Expr>,
@@ -335,6 +340,12 @@ fn expr_json(expr: &Expr) -> String {
             ("value", expr_json(value)),
             ("slice", expr_json(slice)),
         ]),
+        Expr::Slice { start, end, step } => json_object(vec![
+            ("type", json_string("Slice")),
+            ("start", optional_child_expr_json(start)),
+            ("end", optional_child_expr_json(end)),
+            ("step", optional_child_expr_json(step)),
+        ]),
         Expr::Call { func, args } => json_object(vec![
             ("type", json_string("Call")),
             ("func", expr_json(func)),
@@ -374,6 +385,13 @@ fn expr_json(expr: &Expr) -> String {
             ("type", json_string("Raw")),
             ("value", json_string(value)),
         ]),
+    }
+}
+
+fn optional_child_expr_json(value: &Option<Box<Expr>>) -> String {
+    match value {
+        Some(value) => expr_json(value),
+        None => json_null(),
     }
 }
 

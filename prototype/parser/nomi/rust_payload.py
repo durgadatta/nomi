@@ -315,6 +315,12 @@ def _expr_from_rust_payload(payload: dict[str, Any]) -> ast.expr:
                 slice=_expr_from_rust_payload(payload["slice"]),
                 ctx=ast.Load(),
             )
+        case "Slice":
+            return ast.Slice(
+                lower=_optional_expr_from_rust_payload(payload["start"]),
+                upper=_optional_expr_from_rust_payload(payload["end"]),
+                step=_optional_expr_from_rust_payload(payload["step"]),
+            )
         case "Call":
             return ast.Call(
                 func=_expr_from_rust_payload(payload["func"]),
@@ -347,6 +353,12 @@ def _expr_from_rust_payload(payload: dict[str, Any]) -> ast.expr:
             return _raw_expr_from_rust_payload(payload["value"])
         case other:
             raise ValueError(f"unsupported Rust AST expression: {other!r}")
+
+
+def _optional_expr_from_rust_payload(payload: dict[str, Any] | None) -> ast.expr | None:
+    if payload is None:
+        return None
+    return _expr_from_rust_payload(payload)
 
 
 def _func_suite_from_rust_payload(payload: dict[str, Any]) -> ast.FunctionDef:

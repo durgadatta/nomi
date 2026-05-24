@@ -144,7 +144,11 @@ function lowerExpr(expr) {
       return mappingLiteral(entries);
     }
     case "Attribute": return getField(lowerExpr(expr.value), expr.attr);
-    case "Subscript": return getItem(lowerExpr(expr.value), lowerExpr(expr.slice));
+    case "Subscript": {
+      const value = lowerExpr(expr.value);
+      if (expr.slice && expr.slice.type === "Slice") return lowerSliceSubscript(value, expr.slice);
+      return getItem(value, lowerExpr(expr.slice));
+    }
     case "Call": {
       const func = lowerExpr(expr.func);
       const args = (expr.args || []).map(lowerExpr);
@@ -1121,6 +1125,13 @@ function lowerSliceExpr(text) {
   if (parts[1]) args[2] = lowerRawExpr(parts[1]);
   if (parts[2]) args[3] = lowerRawExpr(parts[2]);
   return call(load("slice"), args);
+}
+
+function lowerSliceSubscript(value, sliceNode) {
+  const start = sliceNode.start ? lowerExpr(sliceNode.start) : NIL;
+  const end = sliceNode.end ? lowerExpr(sliceNode.end) : NIL;
+  const step = sliceNode.step ? lowerExpr(sliceNode.step) : literal(1, "int");
+  return call(load("slice"), [value, start, end, step]);
 }
 
 function findTopLevelShift(text) {

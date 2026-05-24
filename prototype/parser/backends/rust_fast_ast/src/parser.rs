@@ -569,13 +569,7 @@ impl Parser {
                     attr,
                 };
             } else if self.eat(&TokenKind::LBracket) {
-                let slice = if self.eat(&TokenKind::RBracket) {
-                    Expr::Raw(String::new())
-                } else {
-                    let value = self.parse_expr(0)?;
-                    self.expect(&TokenKind::RBracket)?;
-                    value
-                };
+                let slice = self.parse_subscript_slice()?;
                 expr = Expr::Subscript {
                     value: Box::new(expr),
                     slice: Box::new(slice),
@@ -585,6 +579,34 @@ impl Parser {
             }
         }
         Ok(expr)
+    }
+
+    fn parse_subscript_slice(&mut self) -> Result<Expr, ParseError> {
+        if self.eat(&TokenKind::RBracket) {
+            return Ok(Expr::Raw(String::new()));
+        }
+        let start = self.parse_optional_slice_part()?;
+        if self.eat(&TokenKind::Colon) {
+            let end = self.parse_optional_slice_part()?;
+            let step = if self.eat(&TokenKind::Colon) {
+                self.parse_optional_slice_part()?
+            } else {
+                None
+            };
+            self.expect(&TokenKind::RBracket)?;
+            return Ok(Expr::Slice { start, end, step });
+        }
+        self.expect(&TokenKind::RBracket)?;
+        start
+            .map(|expr| *expr)
+            .ok_or_else(|| ParseError::new("expected subscript expression", self.peek().offset))
+    }
+
+    fn parse_optional_slice_part(&mut self) -> Result<Option<Box<Expr>>, ParseError> {
+        if matches!(self.peek().kind, TokenKind::Colon | TokenKind::RBracket) {
+            return Ok(None);
+        }
+        Ok(Some(Box::new(self.parse_expr(0)?)))
     }
 
     fn parse_primary(&mut self) -> Result<Expr, ParseError> {

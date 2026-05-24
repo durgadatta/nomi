@@ -7,9 +7,9 @@ pub(crate) mod token;
 
 use wasm_bindgen::prelude::*;
 
+use ast::module_json;
 use lexer::lex;
 use parser::Parser;
-use ast::module_json;
 
 pub fn parse_to_json(source: &str) -> Result<String, String> {
     let tokens = lex(source).map_err(|e| e.to_string())?;

@@ -151,6 +151,43 @@ def test_wasm_js_lowerer_rejects_unknown_rust_ast_payload_contract():
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_wasm_js_lowerer_accepts_structured_rust_slice_payload():
+    completed = subprocess.run(
+        [
+            NODE,
+            "-e",
+            (
+                f"const lowerer = require({str(CORE_FROM_SOURCE.parent / 'lower_to_core_ir.js')!r});"
+                "const payload = lowerer.lowerRustAstToCoreIr({"
+                "schema: 'nomi.rust-ast', version: 1, type: 'Module', body: [{"
+                "type: 'Assign', target: 'y', value: {"
+                "type: 'Subscript', value: {type: 'Name', id: 'xs'},"
+                "slice: {type: 'Slice', start: {type: 'Number', value: '1'}, end: {type: 'Number', value: '3'}, step: null}"
+                "}}]});"
+                "process.stdout.write(JSON.stringify(payload));"
+            ),
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["diagnosticCount"] == 0
+    value = payload["root"]["body"][0]["value"]
+    assert value["type"] == "Call"
+    assert value["func"] == {"type": "Load", "name": "slice"}
+    assert [arg["type"] for arg in value["args"]] == [
+        "Load",
+        "Literal",
+        "Literal",
+        "Literal",
+    ]
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
 @pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")
 @pytest.mark.parametrize("name", tuple(EXPECTED_CORE_GAPS), ids=tuple(EXPECTED_CORE_GAPS))
 def test_wasm_js_source_to_core_differences_are_named_capability_gaps(name):

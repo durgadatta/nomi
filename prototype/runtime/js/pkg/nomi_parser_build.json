@@ -11,7 +11,7 @@
     "nomi_parser_worker.d.ts"
   ],
   "schema": "nomi.wasm-parser-build",
-  "source_hash": "691090d36ca211a91b0e1f65076db7e97b9003ba8d0968ba56ad761f40859157",
+  "source_hash": "8989d32d94053605a2293adae585014b8fee302a2fb1cbeef455545a007aa4ad",
   "target": "wasm32-unknown-unknown",
   "version": 1,
   "wasm_bindgen": "wasm-bindgen 0.2.122"

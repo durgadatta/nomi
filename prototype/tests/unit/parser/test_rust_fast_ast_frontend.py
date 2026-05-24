@@ -13,6 +13,7 @@ RUST_FAST_AST_SNIPPETS = {
     "function-equation": "add(a, b) = a + b\n",
     "arrow-assignment": "double = x => x * 2\n",
     "parenthesized-arrow-assignment": "add = (a, b) => a + b\n",
+    "slice-subscript": "xs = [1, 2, 3, 4]\ny = xs[1:3]\n",
 }
 
 RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES = (
@@ -141,6 +142,21 @@ def test_rust_fast_ast_accepts_relative_source_path(monkeypatch):
     assert payload["version"] == 1
     assert payload["type"] == "Module"
     assert len(payload["body"]) >= 80
+
+
+def test_rust_fast_ast_payload_uses_structured_slice_node():
+    rust = get_parser_frontend("rust-fast-ast")
+
+    payload = rust.parse_raw_tree(code="y = xs[1:3]\n")
+
+    value = payload["body"][0]["value"]
+    assert value["type"] == "Subscript"
+    assert value["slice"] == {
+        "type": "Slice",
+        "start": {"type": "Number", "value": "1"},
+        "end": {"type": "Number", "value": "3"},
+        "step": None,
+    }
 
 
 @pytest.mark.parametrize(
