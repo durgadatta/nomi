@@ -65,7 +65,7 @@ async function startRuntimeWorker() {
   _runtimePending.forEach(({ reject }) => reject(new Error("Runtime worker restarted")));
   _runtimePending.clear();
 
-  _runtimeWorker = new Worker("./worker.js?v=3");
+  _runtimeWorker = new Worker("../prototype/runtime/js/worker.js?v=4");
   _runtimeWorker.onmessage = handleRuntimeMessage;
   _runtimeWorker.onerror = (event) => {
     const error = new Error(event.message || "Runtime worker failed");

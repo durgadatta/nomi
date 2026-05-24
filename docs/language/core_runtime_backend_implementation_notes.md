@@ -46,7 +46,7 @@ Core IR Module
 - `prototype/syntax/core_json.py` serializes verified Core IR as a
   backend-neutral JSON payload (`schema: "nomi.core-ir"`, `version: 1`).
   Inspect it with `python3 -m tools.syntax.inspect FILE --stage core-json`.
-- `web/core_runtime.js` is the first non-Python evaluator. It consumes the Core
+- `prototype/runtime/js/core_runtime.js` is the first non-Python evaluator. It consumes the Core
   IR JSON payload directly, dispatches every currently registered CoreNode, and
   is tested against the Python `core-runtime` for fixtures covering bindings,
   functions, calls, operations, sequences, mappings, data fields, match/rest

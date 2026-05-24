@@ -97,7 +97,7 @@ python3 -m tools.syntax.inspect samples/demo.nomi --stage core-json
 ```
 
 The JSON schema helpers live in `prototype/syntax/core_json.py`. The first
-non-Python consumer is `web/core_runtime.js`, a JavaScript Core Runtime that
+non-Python consumer is `prototype/runtime/js/core_runtime.js`, a JavaScript Core Runtime that
 dispatches every currently registered CoreNode and can run session-lowered
 `samples/demo.nomi`. In the playground, try it with
 `web/?backend=js-core-runtime`; Pyodide still handles parsing/lowering while JS
@@ -311,7 +311,7 @@ manifest generator before testing the web editor.
 
 The playground also supports a lighter execution path that skips Pyodide entirely:
 Nomi source is parsed by a Rust WASM parser (`nomi_parser.wasm`), lowered to
-Core IR by `web/lower_to_core_ir.js`, and executed by `web/core_runtime.js`.
+Core IR by `prototype/runtime/js/lower_to_core_ir.js`, and executed by `prototype/runtime/js/core_runtime.js`.
 This path is the default in the browser playground.
 
 ```text

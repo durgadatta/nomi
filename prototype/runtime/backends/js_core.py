@@ -1,6 +1,6 @@
 """JavaScript Core Runtime backend wrapper.
 
-This backend keeps the runtime implementation in ``web/core_runtime.js`` and
+This backend keeps the runtime implementation in ``prototype/runtime/js/core_runtime.js`` and
 uses the backend-neutral Core IR JSON payload as the process boundary.  It is a
 first-class eval backend for tests and opt-in execution, while the JavaScript
 runtime remains the browser implementation target.
@@ -24,14 +24,14 @@ from prototype.syntax.core_json import core_to_json
 
 
 ROOT = Path(__file__).resolve().parents[3]
-JS_RUNTIME_PATH = ROOT / "web" / "core_runtime.js"
+JS_RUNTIME_PATH = ROOT / "prototype" / "runtime" / "js" / "core_runtime.js"
 
 
 JS_CORE_BACKEND_SPEC = EvalBackendSpec(
     name="js-core-runtime",
     status="prototype",
     ir_contract="Core IR JSON (nomi.core-ir v1)",
-    implementation="Node.js wrapper around web/core_runtime.js",
+    implementation="Node.js wrapper around prototype/runtime/js/core_runtime.js",
     output_contract="bindings + optional value + stdout/stderr",
     capabilities=EvalBackendCapabilities(
         evaluates_native_ir=True,

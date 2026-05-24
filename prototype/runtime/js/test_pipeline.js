@@ -12,8 +12,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const WEB_DIR = path.dirname(__filename);
-const ROOT = path.dirname(WEB_DIR);
+const JS_DIR = path.dirname(__filename);
+const ROOT = path.resolve(JS_DIR, "..", "..", "..");
 const SAMPLES_DIR = path.join(ROOT, "samples");
 
 let passed = 0;
@@ -36,14 +36,14 @@ function assert(condition, message) {
 
 // ── Load WASM parser ─────────────────────────────────────────────────────
 
-const wasmBytes = fs.readFileSync(path.join(WEB_DIR, "pkg", "nomi_parser_bg.wasm"));
-const { initSync, parse_nomi } = require(path.join(WEB_DIR, "pkg", "nomi_parser.js"));
+const wasmBytes = fs.readFileSync(path.join(JS_DIR, "pkg", "nomi_parser_bg.wasm"));
+const { initSync, parse_nomi } = require(path.join(JS_DIR, "pkg", "nomi_parser.js"));
 initSync({ module: wasmBytes });
 
 // ── Load lowerer and runtime ──────────────────────────────────────────────
 
-const { lowerRustAstToCoreIr } = require(path.join(WEB_DIR, "lower_to_core_ir.js"));
-const { evaluateCorePayload } = require(path.join(WEB_DIR, "core_runtime.js"));
+const { lowerRustAstToCoreIr } = require(path.join(JS_DIR, "lower_to_core_ir.js"));
+const { evaluateCorePayload } = require(path.join(JS_DIR, "core_runtime.js"));
 
 // ── Helper ────────────────────────────────────────────────────────────────
 

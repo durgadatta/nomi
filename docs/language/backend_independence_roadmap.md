@@ -59,7 +59,7 @@ Concrete path:
    can be inspected with `python3 -m tools.syntax.inspect FILE --stage core-json`.
 2. Implement a TypeScript/JavaScript `CoreRuntime` with the same value/frame/control-flow
    variants as the Python reference.
-   The first non-Python evaluator is `web/core_runtime.js`; it consumes the
+   The first non-Python evaluator is `prototype/runtime/js/core_runtime.js`; it consumes the
    serialized Core IR payload directly, dispatches every currently registered
    CoreNode, and runs `samples/demo.nomi` after Python/Pyodide parsing and
    lowering.
@@ -185,7 +185,7 @@ Backends should graduate through the same fixture ladder:
   tests cover the fixture ladder.
 - Keep serialized Core IR inspection aligned with the executable session
   lowering path.
-- Grow the first JavaScript Core Runtime (`web/core_runtime.js`) from
+- Grow the first JavaScript Core Runtime (`prototype/runtime/js/core_runtime.js`) from
   current CoreNode parity toward default web playground use.
 - Expand the `prototype/tests/backend_fixtures/` corpus so parity tests are not
   tied to Python AST regression fixtures or only `samples/demo.nomi`.

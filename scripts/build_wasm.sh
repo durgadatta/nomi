@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(dirname "$SCRIPT_DIR")"
 CRATE_DIR="$ROOT/prototype/parser/backends/rust_fast_ast"
-OUT_DIR="$ROOT/web/pkg"
+OUT_DIR="$ROOT/prototype/runtime/js/pkg"
 
 mkdir -p "$OUT_DIR"
 

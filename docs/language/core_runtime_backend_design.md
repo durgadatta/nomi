@@ -16,7 +16,7 @@ of those.
 
 The Core Runtime Backend (`core_runtime.py`) is the Python reference
 implementation that defines Nomi-owned abstractions for every runtime concept.
-The JavaScript runtime (`web/core_runtime.js`) is the first non-Python
+The JavaScript runtime (`prototype/runtime/js/core_runtime.js`) is the first non-Python
 implementation of the same Core IR JSON contract. Future native backends
 implement the same abstractions in their host language.
 

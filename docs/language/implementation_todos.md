@@ -208,7 +208,7 @@ boundaries, and package ownership. Keep the detailed plan in
   Nomi-owned Surface/Core IR, not the permanent language IR.
   (Partially done: `prototype/runtime/backends/` exists with `python_ast.py` as
   one backend, `core_runtime.py` as the Python reference runtime,
-  `js_core.py`/`web/core_runtime.js` as the first non-Python backend, and
+  `js_core.py`/`prototype/runtime/js/core_runtime.js` as the first non-Python backend, and
   `NOMI_USE_CORE_IR=1` plus explicit eval-backend selection gating the Core IR
   path.)
 - [x] Add `NOMI-ARCH-019`: introduce a passive Core IR and verifier before any
@@ -392,7 +392,7 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 - [x] Define Core IR JSON payload helpers in `prototype/syntax/core_json.py`.
 - [x] Add `core-json` inspection through `tools.syntax.inspect` and
   `prototype.runtime.inspect()`.
-- [x] Implement `web/core_runtime.js` as a JavaScript evaluator over serialized
+- [x] Implement `prototype/runtime/js/core_runtime.js` as a JavaScript evaluator over serialized
   Core IR JSON.
 - [x] Add fixture-level parity against Python `core-runtime` for bindings,
   function calls, operations, sequences, for-each, and stdout.
