@@ -163,10 +163,12 @@ layers move from docs into implementation.
   auto-derived from `BUILTIN_FEATURES`; dependencies and metadata validated at
   import time; `_check_pass_invariants` validates `removed_node_types` after
   each pass. Dead `precedence.py` removed.)
-- [ ] Add feature-driven test templates that name parse snapshots, lowering
+- [x] Add feature-driven test templates that name parse snapshots, lowering
   snapshots, diagnostics, runtime behavior, reduced-interpreter invariants,
   sample regression coverage, docs references, web playground checks, and
   notebook checks.
+  (Done: `prototype/syntax/features/_template/README.md` defines the expected
+  surfaces and `prototype/tests/unit/syntax/test_features.py` guards it.)
 - [x] Restructure tests according to
   [`test_suite_restructure_plan.md`](test_suite_restructure_plan.md): document
   run tiers first, add markers without changing behavior second, then split

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from prototype.syntax.features import (
     ALLOWED_LAYERS,
     BUILTIN_FEATURES,
@@ -46,3 +48,21 @@ def test_get_features_by_layer_returns_layer_subset():
 
     assert sugar
     assert all(feature.layer == SUGAR_LAYER for feature in sugar)
+
+
+def test_syntax_feature_test_template_names_expected_surfaces():
+    template = Path("prototype/syntax/features/_template/README.md")
+    text = template.read_text(encoding="utf-8")
+
+    for phrase in (
+        "Parse shape",
+        "Lowering or normal form",
+        "Diagnostics",
+        "Runtime behavior",
+        "Reduced invariants",
+        "Regression sample",
+        "Web playground",
+        "Notebook",
+        "Docs/spec",
+    ):
+        assert phrase in text
