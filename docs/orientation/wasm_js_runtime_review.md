@@ -151,10 +151,12 @@ as no output.
 
 Improvement:
 
-- Include `value` and `has_value` in the worker result.
-- Teach the UI to display the value when stdout is empty and `has_value` is
-  true.
-- Add a browser pipeline test for expression-only cells.
+- Done: worker results include `value` and `has_value`.
+- Done: the UI displays the value when stdout is empty and `has_value` is
+  true, with formatter coverage in
+  `prototype/tests/contracts/test_web_runtime_display_contract.py`.
+- Done: `prototype/runtime/js/test_pipeline.js` includes an expression-only
+  source test for the JS/WASM pipeline.
 
 ### 9. Worker Operational Controls Need Promotion Gates
 

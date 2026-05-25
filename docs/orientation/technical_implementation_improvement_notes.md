@@ -103,6 +103,17 @@ all user-facing execution surfaces can display the same diagnostic record
 without parsing exception strings
 ```
 
+Status note:
+
+- Browser worker results now use a structured envelope with `ok`, `bindings`,
+  `value`, `has_value`, `stdout`, `stderr`, `diagnostics`, `timings`, and
+  `pipeline`.
+- Lowering diagnostics now carry structured records for at least the current
+  unsupported-construct path.
+- Remaining: broaden that shared diagnostic envelope across all browser, CLI,
+  notebook, and runtime API failures instead of preserving legacy string
+  fallbacks.
+
 ### 3. Split Promotion Capabilities By Host And Pipeline
 
 `ParserFrontendCapabilities.selectable_for_execution` is truthful for the

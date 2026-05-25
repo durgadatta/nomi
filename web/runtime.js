@@ -227,3 +227,10 @@ window.restartWorker = async function() {
     setControlsDisabled(false);
   }
 };
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    formatRuntimeValue,
+    outputForResult,
+  };
+}
