@@ -88,7 +88,6 @@ background.
 | `spec_readiness_map.md` | Promotion workflow and spec coverage control. | Keep active; use it to avoid broad duplicate planning docs. |
 | `review_and_roadmap.md` | Convenience normal forms and candidate status. | Keep as the convenience spine; do not duplicate its candidate tables elsewhere. |
 | `syntax_synthesis_matrix.md` | Cross-language grouping by feature family. | Use as source evidence for concrete syntax docs. |
-| `expanded_language_research.md` | Broad language-family source notes. | Promote only reduced decisions into focused syntax docs. |
 | `language_family_coverage_map.md` | Research coverage and under-covered dimensions. | Keep source-family status there; avoid copying source catalogues into specs. |
 | `target_program_fixtures.md` | Design tests for everyday programs. | Classify fixture lines through a current capability matrix. |
 

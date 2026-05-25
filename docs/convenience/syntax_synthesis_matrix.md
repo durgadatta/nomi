@@ -11,7 +11,7 @@
 >
 > Consolidation note: keep this as comparison evidence. Stable decisions are
 > folded into `review_and_roadmap.md` and the focused convenience docs. The
-> 23-file deep dive research corpus backs the recommendations.
+> research corpus backs the recommendations.
 
 ## Purpose
 
@@ -22,8 +22,8 @@ every pleasant feature from other languages. The right research move is:
 source language -> user need -> semantic difference -> Nomi normal form
 ```
 
-This matrix complements [review_and_roadmap.md](review_and_roadmap.md) and
-[expanded_language_research.md](expanded_language_research.md). It adds more
+This matrix complements [review_and_roadmap.md](review_and_roadmap.md) and the
+[language family coverage map](../research/language_family_coverage_map.md). It adds more
 coverage from ML-family languages, Lisp-family languages, pragmatic modern
 languages, shells, configuration languages, and numerical languages, then folds
 their ideas back into Nomi's existing normal forms:

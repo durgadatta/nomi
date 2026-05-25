@@ -357,12 +357,10 @@ Consolidation decisions:
 These candidates extend the convenience roadmap while staying inside the
 normal forms above.
 
-For a broader second-pass survey of newer languages and PL research, including
-Gleam, Roc, Unison, Koka, Flix, Zig, Mojo, Hylo, Vale, Verse, ReScript, CUE,
-Nickel, Pkl, Dhall, Darklang, and modern array-language work, see
-[expanded_language_research.md](expanded_language_research.md). That document
-adds source-specific comparisons and keeps the admission decision tied to the
-same normal forms.
+For a broader second-pass survey of newer languages and PL research, start at
+the [language family coverage map](../research/language_family_coverage_map.md).
+The research corpus adds source-specific comparisons while this roadmap keeps
+admission decisions tied to Nomi normal forms.
 
 | Candidate | Status | Normal form | Rationale | Critique |
 | --- | --- | --- | --- | --- |

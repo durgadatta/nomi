@@ -600,7 +600,7 @@ strongly from many language traditions.
 
 This crosswalk should stay aligned with
 [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) and
-[Expanded Language Research](../convenience/expanded_language_research.md).
+[Language Family Coverage Map](../research/language_family_coverage_map.md).
 If those research docs accept or reject a surface form, this tour should show
 the consequence in one coherent program.
 

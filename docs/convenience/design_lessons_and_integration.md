@@ -864,4 +864,4 @@ reduces to Nomi's Y normal form, and here's how it interacts with Z."
 - `docs/research/array_languages_deep_dive.md` — APL, J, K, BQN, Uiua
 - `docs/research/scientific_languages_r_matlab_julia.md` — MATLAB, R, Julia
 - `docs/convenience/syntax_synthesis_matrix.md` — Cross-language feature families
-- `docs/convenience/expanded_language_research.md` — Roc, Gleam, Zig, Unison, CUE, etc.
+- `docs/research/language_family_coverage_map.md` — canonical research index

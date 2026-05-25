@@ -59,7 +59,7 @@ before convenience syntax hardens.
 | [vertical_pillars.md](vertical_pillars.md) | Concrete cross-cutting surfaces and evolution paths from simple programs to sophisticated programs |
 | [review_and_roadmap.md](review_and_roadmap.md) | Normal-form status spine, cross-doc critique, implementation roadmap |
 | [syntax_synthesis_matrix.md](syntax_synthesis_matrix.md) | Cross-language feature families with nuanced differences and Nomi recommendations |
-| [expanded_language_research.md](expanded_language_research.md) | Index to detailed research notes in `docs/research/` |
+| [../research/language_family_coverage_map.md](../research/language_family_coverage_map.md) | Canonical index to detailed research notes and coverage status |
 
 ### Per-Feature Docs
 

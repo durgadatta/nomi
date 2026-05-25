@@ -191,11 +191,11 @@ normal forms so Nomi grows by reduction instead of feature collection.
 - [Convenience Index](convenience/README.md)
 - [Convenience Review And Roadmap](convenience/review_and_roadmap.md) — normal
   forms, overlap critique, new candidates, implementation phases
-- [Expanded Language Research](convenience/expanded_language_research.md) —
-  newer languages, PL research ideas, consolidation decisions
 - [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) —
   cross-language feature families, nuanced differences, and recommendations
   for combining syntax coherently
+- [Language Family Coverage Map](research/language_family_coverage_map.md) —
+  canonical index for detailed research notes and coverage status
 - [Functions](convenience/functions.md) — equation, piecewise, hole lambda, where, operator sections
 - [Flow And Collections](convenience/flow_and_collections.md) — map/filter/reduce, pipelines, ranges, spread
 - [Patterns](convenience/patterns.md) — match, destructuring, if-let, guards
