@@ -38,6 +38,25 @@ fail even if the bridge gaps are addressed.
 | Target examples exist. | Fixtures and the tour keep design pressure grounded in ordinary programs rather than local syntax taste. | `target_program_fixtures.md`, `target_language_tour.md` |
 | Implementation runway is visible. | Feature manifests, syntax inspection, spans, and runtime facade work have explicit plans. | `flexible_syntax_substrate_plan.md`, `syntax_substrate_todo_audit.md`, `architecture_refactoring_plan.md` |
 
+## Current Tree Shape
+
+As of the current consolidation pass, `docs/` has 104 tracked files:
+
+| Folder | File count | Intended role | Consolidation pressure |
+| --- | ---: | --- | --- |
+| `docs/language/` | 30 | Decision surface, spec, architecture, implementation plans. | High: planning docs can compete unless each has one owner. |
+| `docs/convenience/` | 20 | Normal-form syntax synthesis and focused convenience docs. | High: keep `review_and_roadmap.md` as the candidate/status spine. |
+| `docs/research/` | 32 | Source evidence and cross-language research. | Medium: cite it, but do not add active decisions there. |
+| `docs/orientation/` | 10 | Current runtime/tool/process maps. | Medium: keep current-entry docs small and status-tag historical paths. |
+| `docs/features/` | 5 | Focused feature specs and source feature notes. | Medium: promote active pillars; mark speculative notes as source. |
+| `docs/notes/` | 4 | Philosophy, ambition, and risk framing. | Low: keep out of reading order unless context is requested. |
+| `docs/drafts/` | 2 | Scratch/reference material. | Low: do not cite unless promoted. |
+
+The goal is not to make the tree tiny by hiding useful evidence. The goal is
+to make authority obvious: spec/foundation/feature docs decide behavior,
+planning docs decide work order, and research/notes/drafts explain where ideas
+came from.
+
 ## Spec-Blocking Gaps
 
 | Gap | Why it blocks spec quality | Best active home |
@@ -65,6 +84,19 @@ Use these moves before adding new top-level docs:
 | Two docs with similar candidate tables | Keep one table authoritative and link to it. |
 | A historical source note | Add a status block pointing to the active home. |
 | A feature without diagnostics | Keep it design-needed even if the syntax is attractive. |
+
+## Consolidation Queue
+
+Work in this order when cleaning docs:
+
+| Priority | Move | Why |
+| --- | --- | --- |
+| 1 | Keep `research/language_family_coverage_map.md` as the only research index. | Prevents duplicate source catalogues from drifting. |
+| 2 | Make `spec_readiness_map.md` the feature-packet and status vocabulary authority. | Prevents each planning doc from inventing its own readiness model. |
+| 3 | Make `convenience/review_and_roadmap.md` the convenience candidate/status spine. | Prevents candidate tables from multiplying across synthesis docs. |
+| 4 | Fold implementation action items into `implementation_todos.md` or `syntax_substrate_todo_audit.md`. | Keeps plans executable instead of scattered. |
+| 5 | Add status/lifecycle banners to docs that lack them. | Lets readers distinguish active docs from source evidence quickly. |
+| 6 | Promote stable decisions from source notes into feature/spec docs, then link back. | Keeps rationale available without creating parallel specs. |
 
 ## Ingested Archive Material
 
