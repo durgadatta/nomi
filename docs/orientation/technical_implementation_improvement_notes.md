@@ -187,10 +187,10 @@ and tests fail if arity/effect/error metadata is missing
 ### 5. Replace Stringly Cache And Version Identity With Stable Inputs
 
 Parser and runtime cache keys are typed, which is good. Some fields are still
-placeholders, and raw tree caching uses Python's process-local `hash(code)`.
-This is acceptable inside one process today, but it is not a stable identity
-model for feature profiles, docs-only parsing, target-tour parsing, or
-cross-process artifacts.
+placeholders, but raw tree and runtime cache keys now use deterministic BLAKE2
+digests instead of Python's process-local `hash(code)`. The remaining identity
+risk is about future profile/source-version inputs for feature profiles,
+docs-only parsing, target-tour parsing, and cross-process artifacts.
 
 Why this matters:
 
@@ -199,13 +199,20 @@ Why this matters:
 - cache behavior is hard to inspect;
 - raw tree cache keys cannot be compared across processes.
 
-First moves:
+Implemented first moves:
 
-- Replace `hash(code)` in `RawTreeCacheKey` with a deterministic digest such as
-  SHA-256 or a short BLAKE2 digest.
-- Feed real feature profile IDs into `ParserCacheKey` and `RuntimeCacheKey`.
+- `RawTreeCacheKey.source_digest` uses a deterministic BLAKE2 digest and is
+  covered by `prototype/tests/unit/parser/test_parser_cache_keys.py`.
+- `RuntimeCacheKey.source_digest` uses the same deterministic digest strategy
+  and is covered by `prototype/tests/unit/runtime/test_runtime_cache_key.py`.
+- `python3 -m tools.syntax.inspect FILE --stage runtime-cache-key` prints the
+  runtime cache key inputs without exposing full source text.
+
+Remaining moves:
+
+- Feed real feature profile IDs into `ParserCacheKey` and `RuntimeCacheKey`
+  once named profiles become selectable.
 - Include grammar layer content/version metadata, not only layer names.
-- Add a tiny inspection helper that prints cache key inputs for a source file.
 
 Acceptance gate:
 
