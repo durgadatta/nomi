@@ -188,3 +188,45 @@ def test_mcp_server_returns_structured_search_and_readable_resources(tmp_path):
     assert result["ref"] == "docs/language.md:1"
     assert "1: Binding constraints" in result["snippet"]
     assert "Binding constraints validate values" in contents["result"]["contents"][0]["text"]
+
+
+def test_mcp_server_exposes_rag_grounded_prompt(tmp_path):
+    config_path = tmp_path / "rag_sources.json"
+    config_path.write_text(
+        """
+        {
+          "index_path": ".nomi/rag_index.json",
+          "sources": []
+        }
+        """,
+        encoding="utf-8",
+    )
+
+    server = NomiRagMcpServer(str(config_path))
+    initialize = server.handle(
+        {
+            "jsonrpc": "2.0",
+            "id": 0,
+            "method": "initialize",
+            "params": {"protocolVersion": "2025-06-18"},
+        }
+    )
+    prompts = server.handle({"jsonrpc": "2.0", "id": 1, "method": "prompts/list"})
+    prompt = server.handle(
+        {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "prompts/get",
+            "params": {
+                "name": "rag_grounded_answer",
+                "arguments": {"question": "How should binding constraints be checked?"},
+            },
+        }
+    )
+
+    assert "prompts" in initialize["result"]["capabilities"]
+    assert prompts["result"]["prompts"][0]["name"] == "rag_grounded_answer"
+    text = prompt["result"]["messages"][0]["content"]["text"]
+    assert "rag_search" in text
+    assert "How should binding constraints be checked?" in text
+    assert "cite" in text.lower()

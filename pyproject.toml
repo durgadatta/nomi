@@ -45,6 +45,7 @@ markers = [
     "smoke: tiny checkout-alive checks intended for the first local confidence pass",
     "feature: language feature packet tests spanning parse, lowering, diagnostics, runtime, or reduced invariants",
     "contract: public runtime, parser, tooling, or adapter contract tests",
+    "browser_pipeline: source -> Rust/WASM parser -> JS lowerer -> JS runtime browser pipeline contracts",
     "regression: broad output drift checks, usually snapshot-backed",
     "frontend: web, notebook, or other user-facing tooling surface checks",
     "slow: checks that are intentionally outside the fast edit loop",

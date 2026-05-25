@@ -57,6 +57,14 @@ class NomiRagMcpServer:
             if method == "resources/read":
                 params = request.get("params", {})
                 return self.result(request_id, {"contents": [self.read_resource(params.get("uri", ""))]})
+            if method == "prompts/list":
+                return self.result(request_id, {"prompts": self.prompts()})
+            if method == "prompts/get":
+                params = request.get("params", {})
+                return self.result(
+                    request_id,
+                    self.get_prompt(params.get("name"), params.get("arguments", {})),
+                )
             if request_id is None:
                 return None
             return self.error(request_id, -32601, f"Unknown method: {method}")
@@ -73,7 +81,7 @@ class NomiRagMcpServer:
         return {
             "protocolVersion": protocol_version,
             "serverInfo": {"name": "nomi-rag", "version": "0.1.0"},
-            "capabilities": {"tools": {}, "resources": {}},
+            "capabilities": {"tools": {}, "resources": {}, "prompts": {}},
         }
 
     def tools(self) -> list[dict[str, Any]]:
@@ -211,6 +219,52 @@ class NomiRagMcpServer:
             "uri": uri,
             "mimeType": mime_type_for_path(display_path),
             "text": text,
+        }
+
+    def prompts(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "name": "rag_grounded_answer",
+                "title": "RAG-Grounded Nomi Answer",
+                "description": "Answer a Nomi question by searching local RAG first and citing repository paths.",
+                "arguments": [
+                    {
+                        "name": "question",
+                        "description": "The Nomi design, implementation, or tooling question to answer.",
+                        "required": True,
+                    }
+                ],
+            }
+        ]
+
+    def get_prompt(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        if name != "rag_grounded_answer":
+            raise ValueError(f"Unknown prompt: {name}")
+
+        question = str(arguments.get("question") or "").strip()
+        if not question:
+            raise ValueError("rag_grounded_answer requires a non-empty question argument.")
+
+        return {
+            "description": "Use local Nomi RAG as source discovery before answering.",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": {
+                        "type": "text",
+                        "text": (
+                            "Answer this Nomi question using local repository evidence.\n\n"
+                            f"Question: {question}\n\n"
+                            "Workflow:\n"
+                            "1. Call `rag_search` with a narrow phrase from the question.\n"
+                            "2. Read any returned repository files directly before relying on them.\n"
+                            "3. Cite concrete paths or refs in the answer.\n"
+                            "4. If the active docs and implementation disagree, name the drift instead of "
+                            "treating current behavior as final language authority."
+                        ),
+                    },
+                }
+            ],
         }
 
     @staticmethod

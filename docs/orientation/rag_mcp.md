@@ -125,6 +125,12 @@ It also exposes read-only MCP resources for indexed files:
 Search results include text snippets for older MCP clients and
 `structuredContent` for clients that can consume typed tool output.
 
+The server also exposes one prompt wrapper:
+
+- `rag_grounded_answer`: ask a Nomi question with an instruction to run
+  `rag_search`, read returned files directly, cite paths or refs, and name
+  drift when active docs and implementation disagree.
+
 ## OpenCode Configuration
 
 OpenCode supports local MCP servers through the `mcp` config object. Add this
@@ -178,4 +184,4 @@ Good next additions:
 - embeddings and a vector-store backend beside the lexical backend;
 - source priority rules, so active language docs outrank drafts and broad
   research notes;
-- a prompt wrapper that always asks the model to cite `rag_search` results.
+- resource templates for common source groups once a client needs them.

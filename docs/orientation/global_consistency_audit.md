@@ -37,11 +37,12 @@ registry tables look contradictory.
 
 Improvement:
 
-- Split capability fields by host/promotion level:
+- Done: split capability fields by host/promotion level:
   `selectable_for_session_execution`, `selectable_for_browser_experiment`,
-  `default_for_browser_playground`, and eventually `default_for_cli`.
-- Add one inspection table for resolved pipelines, not just parser and eval
-  registries in isolation.
+  `default_for_browser_playground`, `selectable_for_browser_execution`,
+  `default_for_cli`, and `default_for_web`.
+- Done: add one inspection table for resolved pipelines, not just parser and
+  eval registries in isolation.
 
 ### 2. Source-To-Core Parity Is Now More Important Than Runtime Parity
 
@@ -142,7 +143,25 @@ Improvement:
 
 ## Suggested Next Commit Sequence
 
-1. Add pytest coverage for the Node browser-pipeline smoke test.
-2. Add the first cross-pipeline Core IR JSON parity fixture.
-3. Introduce host-aware parser/backend promotion fields without changing
-   default behavior.
+Completed since this audit:
+
+- Node browser-pipeline smoke coverage now lives in
+  `prototype/tests/contracts/test_wasm_js_pipeline_contract.py`.
+- The first source-to-Core parity fixture now lives in
+  `prototype/tests/contracts/test_wasm_js_core_parity_contract.py`, including
+  named capability gaps for known JS lowerer differences.
+- Browser pipeline contracts are selectable with
+  `pytest -m browser_pipeline`.
+- Host-aware parser/backend promotion fields are present in
+  `ParserFrontendCapabilities` and `EvalBackendCapabilities`.
+- Resolved runtime surfaces are inspectable with
+  `python3 -m tools.syntax.inspect --stage resolved-pipelines`.
+
+Current next sequence:
+
+1. Expand cross-pipeline Core IR parity beyond the initial stable slice:
+   `demo_terse.nomi`, `samples/demo.nomi`, block calls, patterns, errors, safe
+   navigation, pipelines, and ranges.
+2. Promote the next completed consistency item from
+   `docs/orientation/technical_implementation_improvement_notes.md` into this
+   audit once it has code and tests.

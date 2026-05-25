@@ -53,6 +53,7 @@ def run_checks() -> list[CheckResult]:
         check_claude_skill_shims(),
         check_claude_agent_shims(),
         check_claude_command_shims(),
+        check_rag_mcp_prompt_surface(),
         check_rag_index_freshness(),
     ]
 
@@ -265,6 +266,39 @@ def check_claude_command_shims() -> CheckResult:
     if failures:
         return CheckResult("claude-command-shims", "fail", "; ".join(failures))
     return CheckResult("claude-command-shims", "pass", f"{len(shim_commands)} Claude command shims mirror .codex/prompts.")
+
+
+def check_rag_mcp_prompt_surface() -> CheckResult:
+    try:
+        from tools.rag_mcp.mcp_server import NomiRagMcpServer
+    except Exception as exc:
+        return CheckResult("rag-mcp-prompts", "warn", f"Could not import MCP server: {exc}")
+
+    try:
+        server = NomiRagMcpServer()
+        initialize = server.handle(
+            {
+                "jsonrpc": "2.0",
+                "id": 0,
+                "method": "initialize",
+                "params": {"protocolVersion": "2025-06-18"},
+            }
+        )
+        prompts = server.handle({"jsonrpc": "2.0", "id": 1, "method": "prompts/list"})
+    except Exception as exc:
+        return CheckResult("rag-mcp-prompts", "fail", f"Could not query prompt surface: {exc}")
+
+    capabilities = initialize["result"].get("capabilities", {})
+    prompt_names = {
+        prompt.get("name")
+        for prompt in prompts["result"].get("prompts", [])
+        if isinstance(prompt, dict)
+    }
+    if "prompts" not in capabilities:
+        return CheckResult("rag-mcp-prompts", "fail", "Initialize result does not advertise prompts.")
+    if "rag_grounded_answer" not in prompt_names:
+        return CheckResult("rag-mcp-prompts", "fail", "Missing rag_grounded_answer prompt.")
+    return CheckResult("rag-mcp-prompts", "pass", "RAG MCP prompt wrapper is advertised.")
 
 
 def check_rag_index_freshness() -> CheckResult:

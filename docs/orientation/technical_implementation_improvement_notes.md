@@ -113,23 +113,26 @@ Why this matters:
 - "runs in browser" and "safe default parser" are different claims;
 - backend promotion cannot be reasoned about without host context.
 
-First moves:
+Implemented first moves:
 
-- Split parser capability flags into host-neutral facts and promotion gates:
+- Parser capability flags are split into host-neutral facts and promotion gates:
   `parse_current_grammar`, `lower_to_python_ast`, `emit_core_json`,
   `source_spans`, `selectable_for_session_execution`,
   `selectable_for_browser_experiment`, `default_for_browser_playground`.
-- Do the same for eval backends:
+- Eval backend capability flags now include:
   `selectable_for_session_execution`, `selectable_for_browser_execution`,
   `default_for_cli`, `default_for_web`, and `requires_host_capabilities`.
-- Add an inspection stage for resolved pipelines, for example:
-  `python-session-default`, `browser-playground-default`, `node-core-test`.
+
+Implemented inspection move:
+
+- `python3 -m tools.syntax.inspect --stage resolved-pipelines` shows
+  `python-session-default`, `browser-playground-default`, and `node-core-test`.
 
 Acceptance gate:
 
 ```text
-inspection can answer "what runs here?" without reading web/app.js,
-runtime/session.py, and frontend.py together
+Done: inspection can answer "what runs here?" without reading web/app.js,
+runtime/session.py, and frontend.py together.
 ```
 
 ### 4. Make Host Capabilities Drive Runtime Wiring

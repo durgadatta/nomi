@@ -11,6 +11,8 @@ NODE = shutil.which("node")
 PIPELINE_SCRIPT = ROOT / "prototype" / "runtime" / "js" / "test_pipeline.js"
 WASM_PARSER = ROOT / "prototype" / "runtime" / "js" / "pkg" / "nomi_parser_bg.wasm"
 
+pytestmark = [pytest.mark.contract, pytest.mark.browser_pipeline]
+
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")
 @pytest.mark.skipif(not WASM_PARSER.exists(), reason="WASM parser artifact is missing")

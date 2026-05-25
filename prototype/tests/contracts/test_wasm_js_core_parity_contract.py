@@ -13,6 +13,8 @@ NODE = shutil.which("node")
 CORE_FROM_SOURCE = ROOT / "prototype" / "runtime" / "js" / "core_from_source.js"
 WASM_PARSER = ROOT / "prototype" / "runtime" / "js" / "pkg" / "nomi_parser_bg.wasm"
 
+pytestmark = [pytest.mark.contract, pytest.mark.browser_pipeline]
+
 
 CORE_PARITY_SNIPPETS = {
     "assignment": "x = 1 + 2\n",
