@@ -227,11 +227,14 @@ Why this matters:
 - the manifest is a file list, not yet a runtime bundle contract;
 - no CI workflow currently enforces these checks.
 
-First moves:
+Implemented first move:
 
-- Add a repo-level check command or script that runs:
+- `python3 scripts/check_web_runtime.py` runs:
   `python3 scripts/make_web.py --check`,
   `scripts/build_wasm.sh --check`, focused contract tests, and agent doctor.
+
+Remaining moves:
+
 - Add bundle metadata beside `web/manifest.json`: schema, version, generated
   by, runtime profile, sample count, file count, and maybe source digest.
 - Make `launch_web.py` fail with remediation instructions when `wasm-bindgen`,
