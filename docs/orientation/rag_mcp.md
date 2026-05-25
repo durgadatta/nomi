@@ -121,6 +121,8 @@ It also exposes read-only MCP resources for indexed files:
 
 - `resources/list`: list indexed source files.
 - `resources/read`: read a listed source file.
+- `resources/templates/list`: list source-specific URI templates such as
+  `nomi-rag://nomi-codebase/{path}`.
 
 Search results include text snippets for older MCP clients and
 `structuredContent` for clients that can consume typed tool output.
@@ -183,5 +185,4 @@ Good next additions:
 - a PDF/EPUB extraction adapter for the programming-books source;
 - embeddings and a vector-store backend beside the lexical backend;
 - source priority rules, so active language docs outrank drafts and broad
-  research notes;
-- resource templates for common source groups once a client needs them.
+  research notes.

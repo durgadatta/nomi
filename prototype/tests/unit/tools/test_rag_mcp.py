@@ -190,6 +190,38 @@ def test_mcp_server_returns_structured_search_and_readable_resources(tmp_path):
     assert "Binding constraints validate values" in contents["result"]["contents"][0]["text"]
 
 
+def test_mcp_server_lists_resource_templates_for_sources(tmp_path):
+    config_path = tmp_path / "rag_sources.json"
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    config_path.write_text(
+        """
+        {
+          "index_path": ".nomi/rag_index.json",
+          "sources": [
+            {
+              "name": "nomi-codebase",
+              "kind": "codebase",
+              "path": ".",
+              "include": ["docs/**/*.md"],
+              "exclude": []
+            }
+          ]
+        }
+        """,
+        encoding="utf-8",
+    )
+
+    server = NomiRagMcpServer(str(config_path))
+    templates = server.handle(
+        {"jsonrpc": "2.0", "id": 1, "method": "resources/templates/list"}
+    )
+
+    template = templates["result"]["resourceTemplates"][0]
+    assert template["uriTemplate"] == "nomi-rag://nomi-codebase/{path}"
+    assert template["name"] == "nomi-codebase-file"
+
+
 def test_mcp_server_exposes_rag_grounded_prompt(tmp_path):
     config_path = tmp_path / "rag_sources.json"
     config_path.write_text(

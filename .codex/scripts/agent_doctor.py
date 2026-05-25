@@ -54,6 +54,7 @@ def run_checks() -> list[CheckResult]:
         check_claude_agent_shims(),
         check_claude_command_shims(),
         check_rag_mcp_prompt_surface(),
+        check_rag_mcp_resource_templates(),
         check_rag_index_freshness(),
     ]
 
@@ -299,6 +300,28 @@ def check_rag_mcp_prompt_surface() -> CheckResult:
     if "rag_grounded_answer" not in prompt_names:
         return CheckResult("rag-mcp-prompts", "fail", "Missing rag_grounded_answer prompt.")
     return CheckResult("rag-mcp-prompts", "pass", "RAG MCP prompt wrapper is advertised.")
+
+
+def check_rag_mcp_resource_templates() -> CheckResult:
+    try:
+        from tools.rag_mcp.mcp_server import NomiRagMcpServer
+    except Exception as exc:
+        return CheckResult("rag-mcp-resource-templates", "warn", f"Could not import MCP server: {exc}")
+
+    try:
+        server = NomiRagMcpServer()
+        response = server.handle(
+            {"jsonrpc": "2.0", "id": 1, "method": "resources/templates/list"}
+        )
+    except Exception as exc:
+        return CheckResult("rag-mcp-resource-templates", "fail", f"Could not query resource templates: {exc}")
+
+    templates = response["result"].get("resourceTemplates", [])
+    if not templates:
+        return CheckResult("rag-mcp-resource-templates", "fail", "No RAG resource templates advertised.")
+    if not any("{path}" in template.get("uriTemplate", "") for template in templates):
+        return CheckResult("rag-mcp-resource-templates", "fail", "RAG resource templates do not expose {path}.")
+    return CheckResult("rag-mcp-resource-templates", "pass", f"{len(templates)} RAG resource templates advertised.")
 
 
 def check_rag_index_freshness() -> CheckResult:

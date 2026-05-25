@@ -57,6 +57,8 @@ class NomiRagMcpServer:
             if method == "resources/read":
                 params = request.get("params", {})
                 return self.result(request_id, {"contents": [self.read_resource(params.get("uri", ""))]})
+            if method == "resources/templates/list":
+                return self.result(request_id, {"resourceTemplates": self.resource_templates()})
             if method == "prompts/list":
                 return self.result(request_id, {"prompts": self.prompts()})
             if method == "prompts/get":
@@ -205,6 +207,18 @@ class NomiRagMcpServer:
             )
         return resources
 
+    def resource_templates(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "uriTemplate": self.resource_uri_template(source.name),
+                "name": f"{source.name}-file",
+                "title": f"{source.name} indexed file",
+                "description": f"Read a text file from the configured {source.name} RAG source.",
+                "mimeType": "text/plain",
+            }
+            for source in self.config.sources
+        ]
+
     def read_resource(self, uri: str) -> dict[str, Any]:
         source_name, display_path = self.parse_resource_uri(uri)
         source = next((item for item in self.config.sources if item.name == source_name), None)
@@ -285,6 +299,10 @@ class NomiRagMcpServer:
     @staticmethod
     def resource_uri(source: str, display_path: str) -> str:
         return f"nomi-rag://{quote(source, safe='')}/{quote(display_path, safe='')}"
+
+    @staticmethod
+    def resource_uri_template(source: str) -> str:
+        return f"nomi-rag://{quote(source, safe='')}/{{path}}"
 
     @staticmethod
     def parse_resource_uri(uri: str) -> tuple[str, str]:
