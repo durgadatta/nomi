@@ -1,5 +1,8 @@
 # Flow & Collections
 
+> Status: active convenience synthesis for pipelines, ranges, spreads,
+> collection verbs, and future table/query plans.
+>
 > Normal form: Flow.  Values passed through calls, functions, collection
 > transforms, or query plans.  Pipeline is the canonical spelling.
 >

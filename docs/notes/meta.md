@@ -1,3 +1,10 @@
+# Notes Meta
+
+> Status: source index.
+>
+> Role: explains the purpose of `docs/notes/`; notes are not specifications
+> unless their decisions are promoted into active language or feature docs.
+
 This folder contains exploratory and reflective notes that live upstream of the current design.
 
 They are not specifications, and they are not yet part of the language proper. Instead, they record ideas, vocabularies, and lines of reasoning that are still being absorbed, stress-tested, and clarified.

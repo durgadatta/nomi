@@ -1,5 +1,8 @@
 # Absence & Result Handling
 
+> Status: active convenience synthesis for absence, expected failure,
+> unexpected errors, and cleanup policy.
+>
 > Normal forms: Absence/result + Block.
 >
 > Three distinct stories that do not collapse into each other:

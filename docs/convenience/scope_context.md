@@ -1,5 +1,8 @@
 # Scope & Context Convenience
 
+> Status: active convenience synthesis for local scope, `where`, block-call
+> DSLs, and future capability scopes.
+>
 > Normal forms: Binding + Block. Where clauses and block-call DSLs are
 > implemented; implicit parameters, scope functions, and capability scopes
 > remain design-needed or research.

@@ -1,5 +1,8 @@
 # Data & Types
 
+> Status: active convenience synthesis for data declarations, type aliases,
+> decode boundaries, and data-adjacent surface questions.
+>
 > Normal form: Data boundary.  Covers type aliases, data declarations,
 > strings, extension methods, and the data-boundary decode protocol.
 > For binding constraints specifically, see

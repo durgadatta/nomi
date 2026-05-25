@@ -1,5 +1,10 @@
 # Convenience Features
 
+> Status: active index for convenience syntax and normal-form synthesis.
+>
+> Role: entry point for `docs/convenience/`; keep this as navigation, not a
+> second roadmap.
+
 Per-feature syntax docs for Nomi convenience forms, backed by comparative
 research.  This folder consolidates more than it expands — prefer enhancing
 an existing doc over adding a new one.

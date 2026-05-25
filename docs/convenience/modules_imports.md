@@ -1,5 +1,8 @@
 # Modules & Imports Convenience
 
+> Status: active convenience synthesis for imports, module boundaries,
+> visibility, and packaging-adjacent syntax.
+>
 > Normal form: Binding. Imports are name bindings; modules are containers of
 > bindings. Python-compatible import syntax is implemented; module visibility
 > and re-exports are design-settled.

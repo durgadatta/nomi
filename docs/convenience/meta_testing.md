@@ -1,5 +1,8 @@
 # Meta-Programming & Testing Convenience
 
+> Status: active convenience synthesis for examples, checks, documentation
+> tests, and explanation surfaces.
+>
 > Normal forms: Explanation + Block. Decorators are implemented; inline tests,
 > examples, and checks are design-settled per the explanation normal form;
 > macros remain research-only.

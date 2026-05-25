@@ -1,5 +1,10 @@
 # Security and Trust: A Deep Dive
 
+> Status: raw comparative research.
+>
+> Role: evidence for capability boundaries, supply-chain integrity, secrets,
+> sandboxing, and redaction. Promote stable decisions into feature/spec docs.
+
 ## Status
 
 Raw research notes. This document surveys how programming languages and their

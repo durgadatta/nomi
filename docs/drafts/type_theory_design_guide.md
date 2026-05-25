@@ -1,5 +1,10 @@
 # From ADTs to Dependent Types
 
+> Status: scratch conceptual draft.
+>
+> Role: source material for construction/elimination thinking; not an active
+> spec or implementation plan.
+
 ## Construction, Elimination, and Pattern Matching
 
 This document is a **stand-alone conceptual note** on how sophisticated programming abstractions arise from a small set of core ideas. It connects algebraic data types, pattern matching, indexed types, guarded sums, and dependent types under a single lens: **construction and elimination**.

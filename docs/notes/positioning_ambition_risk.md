@@ -1,5 +1,10 @@
 # Positioning within Ambition and Risk
 
+> Status: source note.
+>
+> Role: philosophical positioning and risk framing; not an active language
+> specification.
+
 *This document situates Nomi as a historically grounded, philosophically motivated, and technically risky experiment. It neither retreats into apology nor advances a utopian narrative. Programming languages—rare among human artifacts—do not merely expand what we can compute; they reshape how we think about computation itself.*
 
 ---

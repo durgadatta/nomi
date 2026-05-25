@@ -1,5 +1,8 @@
 # Strings
 
+> Status: active design pillar; string-specific decisions reduce to existing
+> normal forms rather than adding a ninth normal form.
+>
 > Pillar, not a new normal form. Strings are the most universal interface
 > between programs and humans, but this document does not expand Nomi's
 > current eight-normal-form spine. String features reduce to existing owners:

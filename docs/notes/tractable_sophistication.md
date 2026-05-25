@@ -1,5 +1,10 @@
 # Design Note: On Building and Understanding Sophistication
 
+> Status: source note.
+>
+> Role: design-philosophy context for layered sophistication; not an active
+> syntax or implementation plan.
+
 Programming is distinguished by its ability to construct highly sophisticated artifacts from seemingly simple elements. This capacity is not unique to programming; nature provides an existence proof in biological evolution, where a small set of mechanical processes—variation and selection—give rise to extraordinary complexity. The lesson here is not to imitate evolution literally, but to recognize that **simple generative rules can support rich, layered structure**.
 
 What evolution lacks, however, is speed and introspection. It operates over immense time scales and offers little leverage for understanding or deliberately reshaping its outcomes. Programming can be seen as an attempt to preserve generativity while drastically compressing time and restoring agency. We seek systems that grow in capability, yet remain *understandable, adaptable, and trustworthy*.

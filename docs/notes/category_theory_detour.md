@@ -1,3 +1,10 @@
+# Category Theory Detour
+
+> Status: source note.
+>
+> Role: philosophical context and vocabulary; not an active language
+> specification.
+
 ## A brief detour: category theory
 
 It has been about a month since the last visible update. The short explanation is straightforward: I returned to category theory after many years and ended up spending far longer there than expected.

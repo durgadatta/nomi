@@ -1,5 +1,10 @@
 # Performance Notes
 
+> Status: active implementation log and performance reference.
+>
+> Role: parser/runtime profiling notes, benchmark commands, and optimization
+> history. Keep user-facing performance claims in current docs conservative.
+
 Tracking file for parsing pipeline optimization attempts, findings, and
 current status.  The pipeline is ~99% parse time; interpreter/eval time
 is negligible for typical source files.

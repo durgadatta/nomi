@@ -1,5 +1,8 @@
 # Concurrency & Async Convenience
 
+> Status: active design note; Python async interop exists, while structured
+> concurrency remains design-settled rather than fully implemented.
+>
 > Normal forms: Block + Flow. The block/yield model is the one control
 > abstraction — async, iteration, resource management, and structured
 > concurrency are all block policies, not separate function colors.

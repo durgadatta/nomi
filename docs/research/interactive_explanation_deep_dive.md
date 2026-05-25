@@ -1,5 +1,11 @@
 # Interactive Explanation Deep Dive
 
+> Status: active comparative research.
+>
+> Role: evidence for REPL, notebook, trace, diagnostics, and explanation
+> design. Promote stable decisions into feature/spec docs before treating them
+> as active language behavior.
+
 ## Status
 
 Active comparative research. This document grounds Nomi's interactive

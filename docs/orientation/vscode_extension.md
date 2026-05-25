@@ -1,5 +1,9 @@
 # VS Code Extension
 
+> Status: current tooling orientation for the local VS Code extension.
+>
+> Role: setup, capability map, and roadmap for `tools/vscode/nomi`.
+
 Nomi has an early VS Code extension under:
 
 ```text
