@@ -51,6 +51,10 @@ First moves:
   four snippets to a feature-owned matrix: expressions, calls, block calls,
   functions with defaults, patterns, data declarations, safe navigation,
   pipelines, ranges, errors, and representative samples.
+  Started: the matrix now covers comparisons, equation functions, arrow
+  functions, default functions, null coalescing, pipeline chains, and named
+  gaps for safe navigation, match, underscore lambdas, ranges, and
+  `samples/demo_terse.nomi`.
 - Add expected-difference fixtures for unsupported browser constructs. A
   difference should have a named capability gap, not just "diagnostic count".
 - Version the Rust AST JSON payload independently from `nomi.core-ir`.

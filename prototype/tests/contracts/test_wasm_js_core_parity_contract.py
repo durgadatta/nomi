@@ -20,12 +20,22 @@ CORE_PARITY_SNIPPETS = {
     "assignment": "x = 1 + 2\n",
     "expression": "1 + 2\n",
     "call": "print(1 + 2)\n",
+    "comparison": "x = 1 < 2\n",
     "function": "func add(a, b):\n    return a + b\nresult = add(1, 2)\n",
     "function-default": "func add(a, b = 1):\n    return a + b\nresult = add(2)\n",
+    "function-default-multiline": (
+        'func greet(name, greeting = "Hi"):\n'
+        '    return greeting + ", " + name\n'
+        'x = greet("Ada")\n'
+    ),
+    "equation-function": "add(a, b) = a + b\nx = add(1, 2)\n",
+    "arrow-function": "double = x => x * 2\nx = double(4)\n",
     "list-literal": "xs = [1, 2, 3]\n",
     "dict-literal": 'm = {"a": 1, "b": 2}\n',
     "if-else": "if True:\n    x = 1\nelse:\n    x = 2\n",
+    "null-coalesce": 'x = None ?? "guest"\n',
     "pipeline": "x = [1, 2, 3] |> sum\n",
+    "pipeline-chain": "x = [1, 2, 3] |> list |> len\n",
 }
 
 
@@ -43,6 +53,41 @@ EXPECTED_CORE_GAPS = {
     "range": {
         "source": "x = 1..5\n",
         "capability": "js-lowerer.range-core-shape",
+        "diagnostic": False,
+    },
+    "range-pipeline": {
+        "source": "x = 1..5 |> list\n",
+        "capability": "js-lowerer.range-core-shape",
+        "diagnostic": False,
+    },
+    "safe-call": {
+        "source": 'x = {"k": 1}?.get("k")\n',
+        "capability": "js-lowerer.safe-navigation-core-shape",
+        "diagnostic": False,
+    },
+    "safe-subscript-chain": {
+        "source": 'x = {"name": "Ada"}?.get("name")?.[0]\n',
+        "capability": "js-lowerer.safe-navigation-core-shape",
+        "diagnostic": False,
+    },
+    "match-inline": {
+        "source": 'x = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"\n',
+        "capability": "js-lowerer.match-core-shape",
+        "diagnostic": False,
+    },
+    "match-statement": {
+        "source": 'x = ""\nmatch 0:\n    case 0:\n        x = "zero"\n    case _:\n        x = "other"\n',
+        "capability": "js-lowerer.match-core-shape",
+        "diagnostic": False,
+    },
+    "underscore-lambda": {
+        "source": "double = _ * 2\nx = double(4)\n",
+        "capability": "js-lowerer.underscore-lambda-core-shape",
+        "diagnostic": False,
+    },
+    "demo-terse": {
+        "source": (ROOT / "samples" / "demo_terse.nomi").read_text(encoding="utf-8"),
+        "capability": "js-lowerer.demo-terse-core-shape",
         "diagnostic": False,
     },
     "with": {

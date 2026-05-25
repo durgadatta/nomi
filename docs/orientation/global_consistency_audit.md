@@ -150,6 +150,10 @@ Completed since this audit:
 - The first source-to-Core parity fixture now lives in
   `prototype/tests/contracts/test_wasm_js_core_parity_contract.py`, including
   named capability gaps for known JS lowerer differences.
+- The parity matrix now covers comparisons, equation functions, arrow
+  functions, default functions, null coalescing, pipeline chains, and named
+  gaps for safe navigation, match, underscore lambdas, ranges, and
+  `samples/demo_terse.nomi`.
 - Browser pipeline contracts are selectable with
   `pytest -m browser_pipeline`.
 - Host-aware parser/backend promotion fields are present in
@@ -159,9 +163,9 @@ Completed since this audit:
 
 Current next sequence:
 
-1. Expand cross-pipeline Core IR parity beyond the initial stable slice:
-   `demo_terse.nomi`, `samples/demo.nomi`, block calls, patterns, errors, safe
-   navigation, pipelines, and ranges.
+1. Continue expanding cross-pipeline Core IR parity beyond the current matrix:
+   `samples/demo.nomi`, block calls, patterns, errors, and any newly promoted
+   Rust AST typed payloads.
 2. Promote the next completed consistency item from
    `docs/orientation/technical_implementation_improvement_notes.md` into this
    audit once it has code and tests.
