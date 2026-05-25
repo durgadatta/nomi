@@ -34,6 +34,14 @@ project is an exploratory language-design initiative, so agent assets should
 push work toward declarative/spec-driven metadata, inspectable reductions, and
 reversible slices rather than fast hardcoded implementation.
 
+## Feature Work Contract
+
+Nomi skills should steer feature work through explicit ownership: feature
+manifest or audit entry, layer/status, normal form or backend target,
+docs/spec surface, focused tests, and inspection command. If a skill teaches an
+implementation path without those checkpoints, update the skill before using it
+as the canonical workflow.
+
 ## Start Here
 
 1. Read `AGENTS.md`, `.agents/README.md`, and
@@ -75,6 +83,8 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
   metadata-driven implementation, or do they reward hardcoded feature work?
 - **Skill coverage:** Is there a skill for each recurring fragile workflow?
   Parser/interpreter/test/web/design/meta should stay separate.
+- **Feature workflow:** Do Nomi skills require owner, status, normal form,
+  docs, tests, and inspection decisions before implementation?
 - **Tool-native discovery:** Can the target agent actually find the asset?
   Shared `.agents/skills/` may need tool-specific shims or hooks.
 - **Hooks:** Are guardrails deterministic, quiet, and tested with sample JSON?

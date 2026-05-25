@@ -23,6 +23,15 @@ operation metadata over private `eval_*` behavior. Read
 `docs/orientation/exploratory_implementation_doctrine.md` before broad runtime
 changes.
 
+## Feature Work Contract
+
+Before adding runtime behavior, identify the feature owner, layer/status,
+normal form or core operation, docs/spec surface, focused tests, and inspection
+surface. Prefer `prototype/syntax/features.py`, backend capability metadata,
+or `docs/language/syntax_substrate_todo_audit.md` as the durable home. If a
+temporary `eval_*` path is needed, name the metadata or Core IR target it should
+migrate to.
+
 ## Eval backend registry
 `prototype/runtime/backends/` mirrors the parser frontend/backend pattern:
 - `__init__.py` — `EvalBackendSpec`, `EvalBackendCapabilities`, registry

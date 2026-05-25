@@ -8,6 +8,13 @@ For the interactive experience design rationale, see
 `docs/research/interactive_explanation_deep_dive.md` and
 `docs/research/ai_readable_semantics_deep_dive.md`.
 
+## Feature Work Contract
+
+When exposing syntax or runtime behavior in the playground, connect it to the
+feature owner, layer/status, normal form or backend target, docs/spec surface,
+focused tests, and inspection surface. Future feature toggles should come from
+feature profiles or capability metadata, not one-off browser-only switches.
+
 ## Files
 - `web/index.html` — Monaco Editor shell and notebook controls
 - `web/app.js` — starts the browser worker and wires runtime request/response

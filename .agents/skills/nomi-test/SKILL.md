@@ -19,6 +19,15 @@ Before reorganizing existing tests, read
 planning-only target for feature packets, contract tests, smoke tests,
 regression snapshots, and e2e tiers.
 
+## Feature Work Contract
+
+When testing a syntax/runtime feature, connect the test to a feature owner,
+layer/status, normal form or core target, docs/spec surface, and inspection
+surface. Prefer adding coverage where the feature manifest or
+`docs/language/syntax_substrate_todo_audit.md` says it belongs: parse shape,
+lowering/expansion, diagnostics, runtime, reduced invariants, web/notebook, or
+regression snapshots.
+
 ## Feature coverage direction
 Future syntax work should be feature-driven rather than only file-driven. For
 each non-trivial feature, plan coverage for:

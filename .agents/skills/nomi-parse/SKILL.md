@@ -21,6 +21,15 @@ inspectable surface/core artifacts over hardcoded parser/lowering branches.
 Read `docs/orientation/exploratory_implementation_doctrine.md` before broad
 parser or frontend changes.
 
+## Feature Work Contract
+
+Before implementing or extending syntax, record the feature owner in
+`prototype/syntax/features.py` or `docs/language/syntax_substrate_todo_audit.md`.
+Name its layer/status, normal form or core target, docs/spec surface, focused
+tests, and inspection command (`tools.syntax.inspect`, parse snapshots,
+expansions, or capability matrix). If any of those are intentionally missing,
+say why before writing parser code.
+
 ## Key files
 - `prototype/grammar/layers/*.lark` — layered Lark grammar (assembled at runtime)
 - `prototype/parser/nomi/ast_.py` — NomiToPythonAST transformer

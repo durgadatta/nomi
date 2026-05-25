@@ -7,6 +7,15 @@ compatibility: deepseek
 Pair this with `nomi-parse` for language syntax decisions and with
 `nomi-test` when changing acceptance or parity coverage.
 
+## Feature Work Contract
+
+Rust parser work must preserve the same feature-owner contract as the Lark
+path: each promoted syntax slice needs layer/status, normal form or backend
+target, docs/spec surface, focused tests, and inspection/parity artifacts.
+Record those in `prototype/syntax/features.py`,
+`docs/language/syntax_substrate_todo_audit.md`, or the Rust frontend README
+before treating a parser-specific acceptance slice as language behavior.
+
 ## Current Rust Spike
 
 - `prototype/parser/backends/rust_fast_ast/README.md` — status, promotion gates, and

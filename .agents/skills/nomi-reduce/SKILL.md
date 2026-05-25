@@ -12,6 +12,14 @@ should make syntax easier to change by declaring feature ownership, status,
 layer, normal form, diagnostics, and inspection behavior in metadata where
 possible.
 
+## Feature Work Contract
+
+Every reduction should name its feature owner, layer/status, input surface,
+normal-form output, docs/spec surface, focused tests, and inspection command.
+Put that metadata on the desugar pass and feature manifest when practical; use
+`docs/language/syntax_substrate_todo_audit.md` for gaps that must remain
+planning-only.
+
 ## Files you will touch
 1. `prototype/parser/nomi/desugar/<name>.py` — new desugarer class
 2. `prototype/parser/nomi/desugar/pipeline.py` — add to chain

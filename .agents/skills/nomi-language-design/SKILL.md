@@ -64,6 +64,11 @@ prototype shape when a feature packet, manifest field, Surface/Core node,
 runtime result contract, semantic event record, feature profile, or frontend
 adapter would preserve more optionality.
 
+For design-to-implementation handoff, name the feature owner, layer/status,
+normal form or core target, docs/spec surface, test surfaces, and inspection
+artifact before recommending code. Implementation agents should be able to
+open the manifest or substrate audit and see what they are proving.
+
 For modern implementation-tool choices, use
 `docs/language/modern_language_implementation_artifacts.md`. Map tools such as
 LLVM, MLIR, Tree-sitter, LSP, Wasm/WASI, Cranelift, formatters, and runtime
