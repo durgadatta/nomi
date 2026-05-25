@@ -49,6 +49,7 @@ class SyntaxFeature:
     backend_requirements: tuple[str, ...] = ()
     docs: tuple[str, ...] = ()
     tests: tuple[str, ...] = ()
+    soft_keywords: tuple[str, ...] = ()
     coverage: FeatureCapabilityAxes | None = None
     grammar_layers: tuple[str, ...] = ()
     layer_transforms: tuple = ()
@@ -293,7 +294,19 @@ _type_alias = SyntaxFeature(
     reduces_to=("binding",),
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_type_alias_runtime.py",),
+    soft_keywords=("type",),
     lowering_mixins=("prototype.parser.nomi.lowering.type_alias.TypeAliasMixin",),
+)
+
+_range_expressions = SyntaxFeature(
+    name="range-expressions",
+    description="Lower inclusive/exclusive range expressions and optional by-step to range()",
+    layer=SUGAR_LAYER,
+    semantic_forms=("collection",),
+    reduces_to=("range-call",),
+    docs=("docs/convenience/flow_and_collections.md",),
+    tests=("prototype/tests/features/flow/test_range_runtime.py",),
+    soft_keywords=("by",),
 )
 
 _if_let = SyntaxFeature(
@@ -303,6 +316,7 @@ _if_let = SyntaxFeature(
     semantic_forms=("pattern", "match", "branch"),
     reduces_to=("match-statement",),
     docs=("docs/convenience/patterns.md",),
+    soft_keywords=("guard",),
     lowering_mixins=("prototype.parser.nomi.lowering.if_let.IfLetMixin",),
 )
 
@@ -324,6 +338,7 @@ _match_expr = SyntaxFeature(
     semantic_forms=("match", "pattern"),
     reduces_to=("match-statement", "function-call"),
     docs=("docs/convenience/patterns.md",),
+    soft_keywords=("match", "case"),
     lowering_mixins=("prototype.parser.nomi.lowering.match_expr.MatchExprMixin",),
 )
 
@@ -432,6 +447,7 @@ _data_decl_lowering = SyntaxFeature(
     runtime_hooks_allowed="backend-compat",
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_declarations_runtime.py",),
+    soft_keywords=("data",),
     lowering_mixins=("prototype.parser.nomi.lowering.data_decl.DataDeclMixin",),
 )
 
@@ -455,6 +471,7 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     # ── lowering mixins (order: grammar rule order in statements.lark / expressions.lark) ──
     _implicit_mul,
     _type_alias,
+    _range_expressions,
     _if_let,
     _try_expr,
     _match_expr,
@@ -512,6 +529,18 @@ def get_extra_grammar_layers() -> list[str]:
     for feature in BUILTIN_FEATURES:
         extra.extend(feature.grammar_layers)
     return extra
+
+
+def get_declared_soft_keywords(
+    features: list[SyntaxFeature] | None = None,
+) -> tuple[str, ...]:
+    """Return feature-owned soft keywords in deterministic registry order."""
+    keywords = []
+    for feature in features or BUILTIN_FEATURES:
+        for keyword in feature.soft_keywords:
+            if keyword not in keywords:
+                keywords.append(keyword)
+    return tuple(keywords)
 
 
 def get_desugar_passes(

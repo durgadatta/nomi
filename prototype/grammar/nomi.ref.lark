@@ -270,9 +270,10 @@ dotted_as_names: dotted_as_name ("," dotted_as_name)*
 dotted_name: name ("." name)*
 
 // -- compound statements ----------------------------------------------
-// TODO(NOMI-SUBSTRATE-012): New language words should remain soft keywords
-// unless a feature manifest proves they must be reserved globally. Add
-// ambiguity tests whenever this list grows.
+// Soft keyword policy: new language words should remain soft unless a feature
+// manifest proves they must be reserved globally. If a word is added to
+// terminals.lark's name rule, declare it in SyntaxFeature.soft_keywords and
+// extend the ambiguity tests.
 ?compound_stmt: if_stmt | guard_stmt | unless_stmt | while_stmt | for_stmt | try_stmt | match_stmt
               | with_stmt | funcdef | classdef | decorated | async_stmt | data_decl
 async_stmt: "async" (funcdef | with_stmt | for_stmt)
