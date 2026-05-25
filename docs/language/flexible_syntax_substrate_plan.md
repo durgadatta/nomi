@@ -401,8 +401,9 @@ Small, low-risk changes:
 2. Add a `tools.syntax.inspect` command that prints raw Lark tree and current
    Python AST for a file.
 3. Add parse snapshots for representative samples and target fixtures.
-4. Regenerate `prototype/grammar/nomi.ref.lark` through a command rather than
-   manual Python snippets.
+4. Regenerate `prototype/grammar/nomi.ref.lark` with
+   `python3 -m tools.syntax.grammar_ref` and check it with
+   `python3 -m tools.syntax.grammar_ref --check`.
 
 Exit gate:
 

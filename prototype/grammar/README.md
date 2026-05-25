@@ -43,11 +43,17 @@ for:
 * **Tooling** — IDEs, linters, syntax highlighters can consume it
 * **Debugging** — compare against what the layered assembly produces
 
-Regenerate it with::
+Regenerate it with:
 
-    from prototype.grammar.assemble import assemble_grammar
-    text = assemble_grammar()
-    Path("prototype/grammar/nomi.ref.lark").write_text(text)
+```bash
+python3 -m tools.syntax.grammar_ref
+```
+
+Check whether it is current with:
+
+```bash
+python3 -m tools.syntax.grammar_ref --check
+```
 
 ## Parse-Tree vs AST Transforms
 
