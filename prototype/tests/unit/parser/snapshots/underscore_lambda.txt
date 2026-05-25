@@ -1,0 +1,27 @@
+# underscore_lambda
+source:
+  inc = _ + 1
+
+raw-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	inc
+        bin_expr
+          var
+            name	_
+          +
+          number	1
+
+transformed-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	inc
+        bin_expr
+          var
+            name	_
+          +
+          number	1

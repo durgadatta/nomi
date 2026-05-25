@@ -1,0 +1,42 @@
+# block_call
+source:
+  retry(3):
+      value = compute()
+
+raw-tree:
+  file_input
+    block_call_stmt
+      funccall
+        var
+          name	retry
+        arguments
+          number	3
+      None
+      suite
+        assign_stmt
+          assign
+            var
+              name	value
+            funccall
+              var
+                name	compute
+              None
+
+transformed-tree:
+  file_input
+    block_call_stmt
+      funccall
+        var
+          name	retry
+        arguments
+          number	3
+      None
+      suite
+        assign_stmt
+          assign
+            var
+              name	value
+            funccall
+              var
+                name	compute
+              None

@@ -82,7 +82,7 @@ to   "open one feature package and follow its declared lowering path"
 | NOMI-SUBSTRATE-011 | Binding target model | ⬜ pending | Assignment, parameters, patterns, fields, and block params do not yet share one node model. | Create one `BindingTarget` and `Constraint` representation reused across all name-introduction sites. | Prototype for annotated assignment first, then parameters and patterns. |
 | NOMI-SUBSTRATE-012 | Soft keyword policy | ✅ done | ~~Soft keyword behavior exists in places, but the policy is not encoded.~~ | Feature manifests declare soft keywords and ambiguity tests. | `SyntaxFeature.soft_keywords` owns the current soft words; parser tests assert they still bind as names outside feature positions. |
 | NOMI-SUBSTRATE-013 | Syntax islands | ⬜ pending | Future fenced notation must either fail parse or be implemented early. | Parse `quote:`, `use units:`, and future DSL regions as island nodes with raw text and spans. | Add one disabled/experimental island feature that parses but cannot run. |
-| NOMI-SUBSTRATE-014 | Grammar conflict review | ⬜ pending | Lark can accept grammar growth that later becomes hard to reason about. | Feature tests include ambiguity/conflict fixtures and parse snapshots. | Add a `prototype/tests/unit/parser/snapshots/` harness for selected source snippets. |
+| NOMI-SUBSTRATE-014 | Grammar conflict review | ✅ done | ~~Lark can accept grammar growth that later becomes hard to reason about.~~ | Feature tests include ambiguity/conflict fixtures and parse snapshots. | `prototype/tests/unit/parser/test_parse_snapshots.py` snapshots representative raw/transformed parse shapes under `prototype/tests/unit/parser/snapshots/`. |
 | NOMI-SUBSTRATE-015 | Diagnostics contract | ⬜ pending | Parse/lowering errors often fall through as generic Python/Lark errors. | Each feature declares common mistakes and Nomi-worded diagnostic messages. | Start with pipeline stage errors, block-call body errors, and placeholder-scope errors. |
 | NOMI-SUBSTRATE-016 | Target tour parsing mode | ⬜ pending | Aspirational examples cannot be partially parsed or inspected yet. | Syntax labs can parse target-tour subsets in explicit experimental modes. | Add `nomi --features data,block,trace --parse-only target.nomi`. |
 | NOMI-SUBSTRATE-017 | Feature lifecycle statuses | ✅ done | ~~Docs have statuses, code does not.~~ | Code-level feature manifests use `implemented`, `prototype-ready`, `design-needed`, `research-only`, `rejected-for-now`. | `SyntaxFeature.status` with documented lifecycle states; used in `BUILTIN_FEATURES`. |
@@ -262,8 +262,8 @@ Tasks:
 - Add `tools.syntax.inspect`.
 - Print raw Lark tree and transformed Lark tree.
 - Print current Python AST.
-- Add one snapshot fixture for pipeline, match, where, block call, and
-  underscore lambda.
+- Snapshot fixtures cover pipeline, match, where, block call, and underscore
+  lambda.
 - Add `--check` mode later.
 
 Risks:

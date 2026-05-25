@@ -1,0 +1,55 @@
+# where
+source:
+  result = x + y where:
+      x = 1
+      y = 2
+
+raw-tree:
+  file_input
+    assign_where
+      assign_stmt
+        assign
+          var
+            name	result
+          bin_expr
+            var
+              name	x
+            +
+            var
+              name	y
+      suite
+        assign_stmt
+          assign
+            var
+              name	x
+            number	1
+        assign_stmt
+          assign
+            var
+              name	y
+            number	2
+
+transformed-tree:
+  file_input
+    assign_where
+      assign_stmt
+        assign
+          var
+            name	result
+          bin_expr
+            var
+              name	x
+            +
+            var
+              name	y
+      suite
+        assign_stmt
+          assign
+            var
+              name	x
+            number	1
+        assign_stmt
+          assign
+            var
+              name	y
+            number	2

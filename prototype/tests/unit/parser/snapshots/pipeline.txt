@@ -1,0 +1,41 @@
+# pipeline
+source:
+  result = 1..5 |> list |> sum
+
+raw-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	result
+        pipe_expr
+          range_inclusive
+            number	1
+            ..
+            number	5
+            None
+          |>
+          var
+            name	list
+          |>
+          var
+            name	sum
+
+transformed-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	result
+        pipe_expr
+          range_inclusive
+            number	1
+            ..
+            number	5
+            None
+          |>
+          var
+            name	list
+          |>
+          var
+            name	sum

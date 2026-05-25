@@ -1,0 +1,41 @@
+# match
+source:
+  label = match value: case 1 => 'one'; case _ => 'many'
+
+raw-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	label
+        match_inline
+          var
+            name	value
+          case_expr
+            literal_pattern
+              number	1
+            None
+            string	'one'
+          case_expr
+            capture_pattern	_
+            None
+            string	'many'
+
+transformed-tree:
+  file_input
+    assign_stmt
+      assign
+        var
+          name	label
+        match_inline
+          var
+            name	value
+          case_expr
+            literal_pattern
+              number	1
+            None
+            string	'one'
+          case_expr
+            capture_pattern	_
+            None
+            string	'many'
