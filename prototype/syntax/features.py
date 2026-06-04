@@ -14,7 +14,7 @@ expressed through this order.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -27,6 +27,15 @@ SUGAR_LAYER = "L4"
 DEFAULT_DESUGAR_PROFILE = "default"
 REDUCED_DESUGAR_PROFILE = "reduced"
 ALLOWED_DESUGAR_PROFILES = (DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE)
+
+SAMPLE_BLOCK = "samples/block.nomi"
+SAMPLE_COLLECTIONS = "samples/collections.nomi"
+SAMPLE_COMPREHENSIVE = "samples/comprehensive.nomi"
+SAMPLE_CONSTRAINT = "samples/constraint.nomi"
+SAMPLE_DEMO = "samples/demo.nomi"
+SAMPLE_DEMO_TERSE = "samples/demo_terse.nomi"
+SAMPLE_DEMO_VERBOSE = "samples/demo_verbose.nomi"
+SAMPLE_OTHERS = "samples/others.nomi"
 
 
 @dataclass(frozen=True)
@@ -49,6 +58,7 @@ class SyntaxFeature:
     backend_requirements: tuple[str, ...] = ()
     docs: tuple[str, ...] = ()
     tests: tuple[str, ...] = ()
+    sample_files: tuple[str, ...] = ()
     soft_keywords: tuple[str, ...] = ()
     coverage: FeatureCapabilityAxes | None = None
     grammar_layers: tuple[str, ...] = ()
@@ -133,6 +143,7 @@ _piecewise_functions = SyntaxFeature(
     reduces_to=("canonical-function", "match-dispatch"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
@@ -149,6 +160,14 @@ _where_clauses = SyntaxFeature(
     reduces_to=("local-binding-rewrite",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_where_runtime.py",),
+    sample_files=(
+        SAMPLE_DEMO,
+        SAMPLE_DEMO_TERSE,
+        SAMPLE_DEMO_VERBOSE,
+        SAMPLE_OTHERS,
+        "prototype/tests/data/sample_sources/interpreter/func_styles.nomi",
+        SAMPLE_COMPREHENSIVE,
+    ),
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.where_clause.WhereClause",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
@@ -165,6 +184,7 @@ _underscore_lambdas = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.underscore_lambda.UnderscoreLambda",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
@@ -181,6 +201,7 @@ _positional_holes = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.positional_hole.PositionalHole",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
@@ -275,6 +296,7 @@ _unless_lowering = SyntaxFeature(
     reduces_to=("branch", "boolean-negation"),
     docs=("docs/convenience/syntax_design_rules.md",),
     tests=("prototype/tests/features/flow/test_conditionals_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
 )
 
@@ -315,6 +337,7 @@ _type_alias = SyntaxFeature(
     reduces_to=("binding",),
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_type_alias_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_CONSTRAINT, SAMPLE_COMPREHENSIVE),
     soft_keywords=("type",),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.type_alias.TypeAliasMixin",),
@@ -328,6 +351,7 @@ _range_expressions = SyntaxFeature(
     reduces_to=("range-call",),
     docs=("docs/convenience/flow_and_collections.md",),
     tests=("prototype/tests/features/flow/test_range_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_COLLECTIONS, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     soft_keywords=("by",),
     coverage=implemented_coverage(docs=True, tests=True),
 )
@@ -339,6 +363,7 @@ _if_let = SyntaxFeature(
     semantic_forms=("pattern", "match", "branch"),
     reduces_to=("match-statement",),
     docs=("docs/convenience/patterns.md",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_CONSTRAINT, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     soft_keywords=("guard",),
     coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.if_let.IfLetMixin",),
@@ -352,6 +377,7 @@ _try_expr = SyntaxFeature(
     reduces_to=("try-statement", "function-call"),
     docs=("docs/convenience/absence_and_result.md",),
     tests=("prototype/tests/features/absence_result/test_try_expr_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.try_expr.TryExprMixin",),
 )
@@ -363,6 +389,7 @@ _match_expr = SyntaxFeature(
     semantic_forms=("match", "pattern"),
     reduces_to=("match-statement", "function-call"),
     docs=("docs/convenience/patterns.md",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_CONSTRAINT, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     soft_keywords=("match", "case"),
     coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.match_expr.MatchExprMixin",),
@@ -376,6 +403,14 @@ _where_clause_lowering = SyntaxFeature(
     reduces_to=("local-binding-rewrite",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_where_runtime.py",),
+    sample_files=(
+        SAMPLE_DEMO,
+        SAMPLE_DEMO_TERSE,
+        SAMPLE_DEMO_VERBOSE,
+        SAMPLE_OTHERS,
+        "prototype/tests/data/sample_sources/interpreter/func_styles.nomi",
+        SAMPLE_COMPREHENSIVE,
+    ),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.where_clause.WhereClauseMixin",),
 )
@@ -388,6 +423,7 @@ _positional_hole_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.positional_hole.PositionalHoleMixin",),
 )
@@ -400,6 +436,7 @@ _compose_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal", "nested-call"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_composition_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_COLLECTIONS, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.compose.ComposeMixin",),
 )
@@ -412,6 +449,7 @@ _defer_lowering = SyntaxFeature(
     reduces_to=("function-body-cleanup-policy",),
     docs=("docs/convenience/absence_and_result.md", "docs/features/block_calls_feature.md"),
     tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.defer.DeferMixin",),
 )
@@ -424,6 +462,7 @@ _func_equation_lowering = SyntaxFeature(
     reduces_to=("canonical-function", "match-dispatch"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_TERSE, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.func_equation.FuncEquationMixin",),
 )
@@ -436,6 +475,7 @@ _section_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_composition_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_DEMO_VERBOSE, SAMPLE_OTHERS, SAMPLE_COMPREHENSIVE),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.sections.SectionMixin",),
 )
@@ -447,6 +487,15 @@ _func_expr_lowering = SyntaxFeature(
     semantic_forms=("function",),
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
+    sample_files=(
+        SAMPLE_DEMO,
+        SAMPLE_DEMO_TERSE,
+        SAMPLE_COLLECTIONS,
+        SAMPLE_CONSTRAINT,
+        SAMPLE_DEMO_VERBOSE,
+        "prototype/tests/data/sample_sources/interpreter/functions.nomi",
+        SAMPLE_COMPREHENSIVE,
+    ),
     coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.func_expr.FuncExprMixin",),
 )
@@ -460,6 +509,13 @@ _block_call_lowering = SyntaxFeature(
     runtime_hooks_allowed="semantic",
     docs=("docs/features/block_calls_feature.md",),
     tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
+    sample_files=(
+        SAMPLE_BLOCK,
+        SAMPLE_DEMO,
+        SAMPLE_DEMO_VERBOSE,
+        "prototype/tests/data/sample_sources/interpreter/blocks.nomi",
+        SAMPLE_COMPREHENSIVE,
+    ),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
 )
@@ -473,6 +529,7 @@ _data_decl_lowering = SyntaxFeature(
     runtime_hooks_allowed="backend-compat",
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_declarations_runtime.py",),
+    sample_files=(SAMPLE_DEMO, SAMPLE_CONSTRAINT, SAMPLE_DEMO_VERBOSE, SAMPLE_COMPREHENSIVE),
     soft_keywords=("data",),
     coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.data_decl.DataDeclMixin",),
@@ -615,7 +672,7 @@ def render_feature_layer_table(features: list[SyntaxFeature] | None = None) -> s
 def get_feature_capabilities(feature: SyntaxFeature) -> FeatureCapabilityAxes:
     """Return a conservative capability matrix row for one feature."""
     if feature.coverage is not None:
-        return feature.coverage
+        return replace(feature.coverage, samples=bool(feature.sample_files))
     target_only = feature.status in {"research-only", "design-needed"}
     parse = feature.status not in {"research-only", "rejected-for-now"}
     lower = bool(
@@ -634,7 +691,7 @@ def get_feature_capabilities(feature: SyntaxFeature) -> FeatureCapabilityAxes:
         explain=False,
         docs=bool(feature.docs),
         tests=bool(feature.tests),
-        samples=False,
+        samples=bool(feature.sample_files),
         web=False,
         notebook=False,
     )

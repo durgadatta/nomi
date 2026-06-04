@@ -37,6 +37,7 @@ def test_builtin_feature_capabilities_have_separate_axes():
     feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
 
     piecewise = get_feature_capabilities(feature_by_name["piecewise-functions"])
+    implicit_mul = get_feature_capabilities(feature_by_name["implicit-multiplication"])
     block_call = get_feature_capabilities(feature_by_name["block-call-lowering"])
 
     assert isinstance(piecewise, FeatureCapabilityAxes)
@@ -46,13 +47,15 @@ def test_builtin_feature_capabilities_have_separate_axes():
     assert piecewise.reduce
     assert piecewise.docs
     assert piecewise.tests
+    assert piecewise.samples
+    assert not implicit_mul.samples
 
     assert block_call.parse
     assert block_call.lower
     assert block_call.run
     assert block_call.docs
-    assert feature_by_name["piecewise-functions"].coverage == piecewise
-    assert feature_by_name["block-call-lowering"].coverage == block_call
+    assert feature_by_name["piecewise-functions"].coverage is not None
+    assert feature_by_name["block-call-lowering"].coverage is not None
 
 
 def test_user_facing_features_declare_explicit_capabilities():
@@ -83,8 +86,8 @@ def test_feature_capability_table_is_stable_and_human_readable():
     table = render_feature_capability_table()
 
     assert table.startswith("| feature | target-only | parse | lower |")
-    assert "| piecewise-functions | no | yes | yes | yes | yes | no | yes | yes |" in table
-    assert "| block-call-lowering | no | yes | yes | yes | yes | no | yes | yes |" in table
+    assert "| piecewise-functions | no | yes | yes | yes | yes | no | yes | yes | yes |" in table
+    assert "| block-call-lowering | no | yes | yes | yes | yes | no | yes | yes | yes |" in table
 
 
 def test_feature_declared_docs_and_tests_exist():
@@ -93,3 +96,16 @@ def test_feature_declared_docs_and_tests_exist():
             assert Path(doc_path).exists(), f"{feature.name} doc missing: {doc_path}"
         for test_path in feature.tests:
             assert Path(test_path).exists(), f"{feature.name} test missing: {test_path}"
+
+
+def test_feature_declared_samples_exist_and_drive_sample_axis():
+    sampled_features = []
+    for feature in BUILTIN_FEATURES:
+        capabilities = get_feature_capabilities(feature)
+        assert capabilities.samples == bool(feature.sample_files), feature.name
+        for sample_path in feature.sample_files:
+            sampled_features.append(feature.name)
+            assert Path(sample_path).exists(), f"{feature.name} sample missing: {sample_path}"
+
+    assert "piecewise-functions" in sampled_features
+    assert "block-call-lowering" in sampled_features

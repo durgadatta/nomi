@@ -154,8 +154,9 @@ layers move from docs into implementation.
   parse-only, lowerable, runnable, explainable, documented, sample-covered,
   web-exposed, and notebook-exposed features.
   (`render_feature_capability_table()` and `inspect(stage="capabilities")`
-  expose the first derived matrix. Remaining: make reduced-mode, samples, web,
-  notebook, and docs/spec status explicit instead of derived/defaulted.)
+  expose the first derived matrix. Sample coverage is now explicit through
+  `SyntaxFeature.sample_files`. Remaining: make reduced-mode, web, notebook,
+  and docs/spec status explicit instead of derived/defaulted.)
 - [~] Split `SyntaxFeature.status` into machine-readable capability axes so
   parser support, lowering, runtime, reduced-mode support, diagnostics,
   docs/spec status, samples, web, and notebook exposure cannot be collapsed
