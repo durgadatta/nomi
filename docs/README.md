@@ -174,6 +174,9 @@ Planning and process:
   project-wide gate for feature ownership, explicit capability axes,
   Surface/Core authority, runtime result contracts, frontend parity, test
   matrices, and reversible implementation.
+- [Current Capability Matrix](language/current_capability_matrix.md):
+  live inspection route for parse, lower, run, reduce, explain, docs, tests,
+  samples, web, and notebook capability axes.
 - [Design Proposal Template](language/design_proposal_template.md): proposal
   process for new syntax, features, and promoted research ideas.
 - [Architecture Refactoring Plan](language/architecture_refactoring_plan.md):
@@ -344,6 +347,7 @@ duplicate material.
 - [Core Layer Separation Plan](language/core_layer_separation_plan.md)
 - [Core Runtime Backend Design](language/core_runtime_backend_design.md)
 - [Core Runtime Backend Implementation Notes](language/core_runtime_backend_implementation_notes.md)
+- [Current Capability Matrix](language/current_capability_matrix.md)
 - [Delta On Python](language/delta_on_python.md)
 - [Design Proposal Template](language/design_proposal_template.md)
 - [Docs Eagle Eye Review](language/docs_eagle_eye_review.md)

@@ -312,7 +312,7 @@ This order keeps the spec grounded in the highest-reuse pieces first.
 | Failure | Well researched. | Split across absence, error, patterns, constraints, and blocks. |
 | Standard library | Direction exists. | Needs a concrete first prelude and ordinary-task examples. |
 | Teaching | Target examples exist. | First-hour path still missing. |
-| Implementation status | Backlog is detailed. | Needs a capability matrix that is easier to scan than TODO prose. |
+| Implementation status | Backlog is detailed. | [Current Capability Matrix](current_capability_matrix.md) points to the live generated table; remaining risk is explicit feature-owned axis data. |
 
 ## Definition Of Spec-Ready
 

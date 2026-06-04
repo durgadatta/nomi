@@ -61,7 +61,7 @@ came from.
 
 | Gap | Why it blocks spec quality | Best active home |
 | --- | --- | --- |
-| Current capability matrix | Readers need to know what is implemented, partial, target-only, and rejected. | `spec_readiness_map.md`, then a focused matrix if needed. |
+| Current capability matrix | Readers need to know what is implemented, partial, target-only, and rejected. | [Current Capability Matrix](current_capability_matrix.md) plus `spec_readiness_map.md`. |
 | Decision ledger | Accepted and rejected choices are repeated across docs and can be reopened by accident. | `spec_readiness_map.md`, `language_direction_and_gap_map.md`. |
 | Decode boundary spec | External values are central to everyday usefulness, but provenance/defaults/redaction policy is not yet one feature packet. | future `docs/features/data_decode_boundary_feature.md`. |
 | Failure taxonomy | `none`, `Result`, exceptions, pattern non-match, and constraint failure need one teaching model. | `absence_and_result.md`, then a focused failure feature if needed. |

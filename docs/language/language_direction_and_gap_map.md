@@ -183,7 +183,7 @@ sections or focused feature specs rather than another broad synthesis doc.
 
 | Coverage area | Everyday pressure | Normal form | Best home |
 | --- | --- | --- | --- |
-| Current capability matrix | Users need to know what syntax works today. | explanation | Start in `docs/language/spec_readiness_map.md`; split to `current_capability_matrix.md` only if it grows too large. |
+| Current capability matrix | Users need to know what syntax works today. | explanation | [Current Capability Matrix](current_capability_matrix.md) |
 | Decode/config/provenance | JSON, CSV, CLI, env, HTTP, and config need checked conversion. | data boundary + binding + explanation | [Data Decode Boundary Feature](../features/data_decode_boundary_feature.md) |
 | Failure taxonomy | `none`, `Result`, exceptions, pattern failure, and constraint failure must not blur. | absence/result + pattern | [Failure Taxonomy Feature](../features/failure_taxonomy_feature.md) |
 | Explanation/trace | Failed constraints, decode, match, pipelines, and blocks need one diagnostic contract. | explanation | [Explanation And Trace Feature](../features/explanation_trace_feature.md) |
@@ -269,7 +269,7 @@ design-decision gaps.
 | Gap | Why it matters | Existing anchors | Needed next artifact |
 | --- | --- | --- | --- |
 | First-hour learning path | Broad adoption starts with the first useful program. | `README.md`, `language_foundation.md` | A tiny "first hour of Nomi" teaching note with only values, bindings, functions, calls, and diagnostics. |
-| Current capability map | Users and agents need to know what is implemented, partial, target-only, or rejected. | `implementation_todos.md`, `target_program_fixtures.md` | A current capability matrix with parser, lowering, runtime, tests, samples, docs, and status columns. |
+| Current capability map | Users and agents need to know what is implemented, partial, target-only, or rejected. | `implementation_todos.md`, `target_program_fixtures.md` | [Current Capability Matrix](current_capability_matrix.md) points to the live generated table with parser, lowering, runtime, tests, samples, docs, and status columns. |
 | Decision ledger | Stable choices are repeated across docs and can be accidentally reopened. | `language_foundation.md`, `syntax_synthesis_matrix.md`, `docs_eagle_eye_review.md`, `spec_readiness_map.md` | A design decision ledger for accepted, rejected, deferred, and revisit-later choices. |
 | Standard library shape | Python succeeded partly because ordinary tasks are immediately available. | `language_spec.md` prelude section | [Prelude And Standard Library Plan](prelude_and_standard_library_plan.md) covers files, paths, text, JSON, CSV, HTTP, time, process, tables, and tests. |
 | Data boundary doctrine | Scripts and services spend much of their life cleaning external input. | `binding_constraints_feature.md`, `syntax_synthesis_matrix.md` | [Data Decode Boundary Feature](../features/data_decode_boundary_feature.md) now owns provenance, defaults, optional fields, redaction, and source paths. |
