@@ -14,6 +14,10 @@ For the design-only steering layer above this backlog, see
 document names adoption, documentation, teaching, standard library, and
 coherence gaps before they become implementation tasks.
 
+For the adversarial post-HCI admission gates that should shape new feature
+packets, see
+[Adversarial Language Design Enhancement Notes 2026-06-04](adversarial_language_design_enhancement_notes_2026_06_04.md).
+
 For a staged execution plan with gates, caveats, risks, and recommended next
 work packages, see [Forward Implementation Plan](forward_implementation_plan.md).
 

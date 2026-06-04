@@ -54,6 +54,8 @@ Start with these files before broad design or implementation changes:
   irreducible axes of variation and where languages converge.
 - `docs/language/language_degrees_of_freedom.md`: core/sugar/library/scoped
   freedom framework.
+- `docs/language/adversarial_language_design_enhancement_notes_2026_06_04.md`:
+  sharp post-HCI critique, enhancement queue, and feature-admission gates.
 - `docs/language/adversarial_exploratory_implementation_critique.md`:
   skeptical critique of implementation choices that could prematurely freeze
   the language design.

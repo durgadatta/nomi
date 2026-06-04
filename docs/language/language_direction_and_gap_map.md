@@ -21,6 +21,9 @@ Nomi's docs already contain a strong semantic spine:
   for hidden bridge gaps, duplicated pressure, and planning priorities.
 - [Adversarial Design Critique](adversarial_design_critique.md) stress-tests
   the global design and names feature-level failure modes.
+- [Adversarial Language Design Enhancement Notes 2026-06-04](adversarial_language_design_enhancement_notes_2026_06_04.md)
+  turns the expanded interface/HCI research into stricter feature-admission
+  gates.
 - [Syntax Synthesis Matrix](../convenience/syntax_synthesis_matrix.md) groups
   cross-language syntax ideas by normal form.
 - [Language Degrees Of Freedom](language_degrees_of_freedom.md) classifies how

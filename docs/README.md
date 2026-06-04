@@ -94,7 +94,7 @@ general reading order.
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Work on symbolic/lazy computation | [Symbolic, Lazy, And Structural Computation](features/symbolic_structural_computation.md), [Flow And Collections](convenience/flow_and_collections.md), [Meta & Testing](convenience/meta_testing.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md) |
 | Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
-| Critique design coherence | [Adversarial Design Critique](language/adversarial_design_critique.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
+| Critique design coherence | [Adversarial Design Critique](language/adversarial_design_critique.md), [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
 | Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
 
 ## Language
@@ -130,6 +130,8 @@ Planning and process:
   for hidden bridge gaps and next synthesis moves.
 - [Adversarial Design Critique](language/adversarial_design_critique.md):
   hostile review of feature and global-language failure modes.
+- [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md):
+  sharp post-HCI critique, enhancement queue, and feature-admission gates.
 - [Spec Readiness Map](language/spec_readiness_map.md): promotion workflow and
   coverage map for converting research, convenience notes, feature docs, and
   implementation plans into a future language specification.
