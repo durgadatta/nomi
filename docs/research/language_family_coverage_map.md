@@ -265,8 +265,43 @@ The next phase is consolidation into design artifacts:
 4. **Revisit capstone synthesis** — update `cross_language_synthesis_master.md`
    with insights from the new deep dives.
 
+## Additional Feature Harvest: 2026-06-04
+
+This pass checked newer-language pressure against the existing Nomi normal
+forms. The goal is not to add another catalogue; it is to turn outside ideas
+into concrete integration comments.
+
+| Source | Feature pressure | Nomi normal form | Integration comment |
+| --- | --- | --- | --- |
+| Unison abilities | Ordinary syntax can perform IO, parsing, exceptions, streams, or distributed work when the required ability is present; `handle` supplies an ability context. | state/capability + block + explanation | Adopt the visibility principle, not the full type system first. Nomi should start with capability values and block policies, then explain what authority was touched. |
+| Effekt effect handlers | User-defined effects can model exceptions, generators, nondeterminism, and resumable control; handlers can resume the original call site. | block + failure taxonomy + explanation | Treat as future-layer pressure for block/yield/resume. First Nomi should make `yield`, retry, cancellation, and cleanup explainable before adding algebraic effect syntax. |
+| Effekt captures/capabilities | Capabilities should not escape the scope that introduces them. | state/capability + diagnostics | Add escaped-resource diagnostics later: a file, transaction, network client, or secret handle returned from its policy block should be visible and usually rejected. |
+| Roc platforms | Applications get I/O primitives from an explicit platform, not from an ambient all-powerful standard library. | state/capability + data boundary | Nomi should make world contact explicit with `world`, host capabilities, and block-scoped resources. It should still keep Python interop as a bootstrap boundary. |
+| Roc `expect`/`dbg` | Development checks and debug output are not production error handling. | explanation + examples | `examples:` and `check:` should be development/test/explanation producers, not replacement validation. `dbg` belongs as a trace helper over semantic events. |
+| Roc `Try`/recoverable errors | Recoverable errors are ordinary data; crash is for unreachable or unrecoverable situations. | failure taxonomy | Reinforces `Result`/`Err` as expected failure and exceptions/errors as unexpected failure. |
+| Pkl configuration | Configuration wants rich validation, templating, tools, code generation, and embedding. | data boundary + binding + explanation | Adopt config-as-boundary: `Config.decode(...)`, provenance, defaults, merge policy, redaction, and generated output. Refuse a separate config sublanguage in the first layer. |
+
+Stable outcomes from this harvest have been folded into:
+
+- [Data Decode Boundary Feature](../features/data_decode_boundary_feature.md)
+- [Failure Taxonomy Feature](../features/failure_taxonomy_feature.md)
+- [Explanation And Trace Feature](../features/explanation_trace_feature.md)
+- [State And Capability Model](../features/state_and_capability_model.md)
+
 ## Source Links
 
+- Unison abilities and handlers:
+  <https://www.unison-lang.org/docs/language-reference/abilities-and-ability-handlers/>
+- Effekt effect handlers:
+  <https://effekt-lang.org/docs/concepts/effect-handlers>
+- Effekt captures:
+  <https://effekt-lang.org/tour/captures>
+- Roc platforms:
+  <https://www.roc-lang.org/platforms>
+- Roc tutorial:
+  <https://www.roc-lang.org/tutorial>
+- Pkl user manual:
+  <https://pkl-lang.org/main/current/index.html>
 - Dart null safety: <https://dart.dev/null-safety>
 - Dart patterns: <https://dart.dev/language/patterns>
 - Dart pattern types: <https://dart.dev/language/pattern-types>

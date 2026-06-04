@@ -249,14 +249,14 @@ Use this table when deciding where a durable decision should land.
 
 | Normal form | Primary spec sections | Source docs to mine | Bridge still needed |
 | --- | --- | --- | --- |
-| Binding | 6. Bindings And Scope; 7. Constraints; 9.2 Parameters | `language_foundation.md`, `binding_constraints_feature.md`, `scope_context.md` | Central `BindingTarget`/diagnostic contract. |
+| Binding | 6. Bindings And Scope; 7. Constraints; 9.2 Parameters | `language_foundation.md`, `binding_constraints_feature.md`, `scope_context.md`, `explanation_trace_feature.md` | Central `BindingTarget`/diagnostic contract. |
 | Function | 8. Expressions; 9. Functions And Calls | `functions.md`, `syntax_synthesis_matrix.md` | Clear status split for holes, sections, equations, and composition. |
-| Pattern | 11. Patterns And Match; 10.3 Sum Data | `patterns.md`, `pattern_matching_synthesis.md` | Pattern failure versus constraint failure examples across assignment, match, and guard. |
+| Pattern | 11. Patterns And Match; 10.3 Sum Data | `patterns.md`, `pattern_matching_synthesis.md`, `failure_taxonomy_feature.md` | Pattern failure versus constraint failure examples across assignment, match, and guard. |
 | Flow | 12. Collections And Repetition; 18. Standard Prelude | `flow_and_collections.md`, `structured_collections_query_language.md`, `table_and_flow_systems_deep_dive.md` | Stable collection/table verb vocabulary and explainable plan model. |
-| Block | 13. Blocks And Yield | `block_calls_feature.md`, `absence_and_result.md`, `block_calls_feature.md` design context | One block-policy spec for `using`, `retry`, `transaction`, `trace`, `test`. |
-| Absence/result | 8.5 Absence-Aware Expressions; 14. Errors | `absence_and_result.md`, `error_handling.md`, error/resource deep dive | Focused failure taxonomy spanning `none`, `Result`, exceptions, pattern failure, and constraint failure. |
-| Data boundary | 10. Data Declarations; 18. Standard Prelude | `data_and_types.md`, `data_boundary_systems_deep_dive.md`, `binding_constraints_feature.md` | Focused decode boundary spec covering provenance, defaults, optional fields, extra fields, redaction. |
-| Explanation | 15. Examples; 19. Diagnostics, Trace, And Explain; 23. Conformance | `meta_testing.md`, diagnostics and interactive deep dives | Event model shared by binding, call, match, decode, pipeline, blocks, and examples. |
+| Block | 13. Blocks And Yield | `block_calls_feature.md`, `absence_and_result.md`, `state_and_capability_model.md` | One block-policy spec for `using`, `retry`, `transaction`, `trace`, `test`. |
+| Absence/result | 8.5 Absence-Aware Expressions; 14. Errors | `absence_and_result.md`, `failure_taxonomy_feature.md`, error/resource deep dive | Propagation and conversion rules for future `?`. |
+| Data boundary | 10. Data Declarations; 18. Standard Prelude | `data_and_types.md`, `data_decode_boundary_feature.md`, `data_boundary_systems_deep_dive.md`, `binding_constraints_feature.md` | Implementation slices for decode errors, provenance, and redaction. |
+| Explanation | 15. Examples; 19. Diagnostics, Trace, And Explain; 23. Conformance | `explanation_trace_feature.md`, `meta_testing.md`, diagnostics and interactive deep dives | Concrete terminal/web/notebook renderers for shared event records. |
 
 The `language_spec.md` sections should become more normative only after their
 source docs have converged on the same normal form, status, diagnostics, and

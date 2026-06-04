@@ -549,9 +549,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ### Data Boundary Decoding
 
-- [ ] Create a focused `data_decode_boundary_feature.md` spec covering
+- [x] Create a focused `data_decode_boundary_feature.md` spec covering
   provenance, defaults, optional fields, extra fields, redaction, source paths,
   nested decoders, and `explain`.
+  (Created: [`data_decode_boundary_feature.md`](../features/data_decode_boundary_feature.md).)
 - [ ] Follow `language_foundation.md`: do not add a first-layer `shape`
   keyword as a peer to `data`.
 - [ ] Specify explicit `Data.decode(value)` conversion for external mappings
@@ -593,9 +594,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ## Track 4: Algebraic Data, Results, And Pattern Matching
 
-- [ ] Create a focused `failure_taxonomy_feature.md` that distinguishes
+- [x] Create a focused `failure_taxonomy_feature.md` that distinguishes
   absence, expected failure, exceptions, pattern non-match, and constraint
   failure.
+  (Created: [`failure_taxonomy_feature.md`](../features/failure_taxonomy_feature.md).)
 - [ ] Specify `data` declarations for product and sum types.
 - [ ] Define constructor, field access, equality, display, and destructuring
   behavior.
@@ -630,9 +632,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ## Track 7: Effects, Worlds, Capabilities, And Policies
 
-- [ ] Create a practical `state_and_capability_model.md` focused on rebinding,
+- [x] Create a practical `state_and_capability_model.md` focused on rebinding,
   mutation, `with:` updates, transactions, `world`, and traceable authority
   before any advanced effect typing.
+  (Created: [`state_and_capability_model.md`](../features/state_and_capability_model.md).)
 - [ ] Specify capability scopes for filesystem, network, time, randomness,
   subprocesses, and environment access.
 - [ ] Explore `world` values for simulation, test isolation, and replay.
@@ -644,9 +647,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ## Track 8: Examples, Tests, Explanation, And Trace
 
-- [ ] Create a focused `explanation_trace_feature.md` spec with an explanation
+- [x] Create a focused `explanation_trace_feature.md` spec with an explanation
   contract for binding, decode, match, pipeline, block policy, examples, query
   plans, and symbolic rewrites.
+  (Created: [`explanation_trace_feature.md`](../features/explanation_trace_feature.md).)
 - [ ] Specify `examples:` blocks inside functions and data declarations.
 - [ ] Let examples serve as tests, documentation, and behavioral anchors.
 - [ ] Add `explain(expr)` or equivalent runtime explanation hooks.

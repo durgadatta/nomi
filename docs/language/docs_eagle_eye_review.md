@@ -159,7 +159,9 @@ The next highest-leverage docs pass should do this:
 3. Start `data_decode_boundary_feature.md` using the feature packet, because
    decode combines binding, data, diagnostics, security, and everyday adoption.
 4. Extract a compact failure taxonomy from `absence_and_result.md`,
-   `error_handling.md`, pattern docs, and constraint docs.
+   [absence_and_result.md](../convenience/absence_and_result.md),
+   [failure_taxonomy_feature.md](../features/failure_taxonomy_feature.md),
+   pattern docs, and constraint docs.
 5. Add a shared explanation-event vocabulary before implementing more
    feature-specific diagnostics.
 6. Use `implementation_evolvability_gap_review.md` before broad implementation

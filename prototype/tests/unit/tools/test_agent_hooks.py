@@ -80,3 +80,16 @@ def test_agent_doctor_has_no_failing_checks():
     results = json.loads(completed.stdout)
     assert results
     assert {result["status"] for result in results} <= {"pass", "warn"}
+
+
+def test_agent_doctor_checks_generated_state_ignore_policy():
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / ".codex/scripts/agent_doctor.py"), "--json"],
+        text=True,
+        capture_output=True,
+        check=True,
+        cwd=ROOT,
+    )
+
+    results = {result["name"]: result for result in json.loads(completed.stdout)}
+    assert results["generated-agent-state-ignored"]["status"] == "pass"

@@ -91,6 +91,9 @@ Keep implementation work focused on these concrete seams:
   before each feature invents a private failure shape;
 - expand the WASM/JS parity matrix by feature packet and replace raw-string
   Rust payload clusters with typed payload nodes;
+- keep generated agent/tooling state ignored and checked through
+  `agent_doctor.py`, rather than reopening cache clutter as a recurring
+  backlog item;
 - keep dated scans as evidence only, with durable tasks folded into
   `implementation_todos.md`.
 
@@ -116,7 +119,7 @@ Keep implementation work focused on these concrete seams:
 | Runtime cache identity | `RuntimeSession` now uses `RuntimeCacheKey`, but parser/profile versioning is still mostly placeholder data. | Future feature profiles must update the key rather than bypassing it. | `NOMI-ARCH-015` |
 | Call-frame ownership | Function calls shallow-copy environments. | Future constraints, capabilities, and block policies need explicit ownership and faster frame setup. | `NOMI-ARCH-016` |
 | Performance budgets | Manual performance notes are strong but not automated. | Flexibility work can quietly erase LALR/session-cache gains. | `NOMI-ARCH-017` |
-| Agent artifact hygiene | `.codex/hooks/**` is intentionally unignored, which can re-include generated Python caches unless explicitly blocked. | AI-tooling artifacts can leak into review noise or commits. | `NOMI-AGENT-001` |
+| Agent artifact hygiene | Resolved: `.gitignore` ignores generated Codex state, Python caches, logs, sessions, and the derived RAG index; `agent_doctor.py` now checks representative generated paths with `git check-ignore`. | Low residual risk: add new generated agent paths to both `.gitignore` and the doctor check when new tooling appears. | `NOMI-AGENT-001` |
 
 ## Inline TODO Anchors Added
 
@@ -137,7 +140,7 @@ Keep implementation work focused on these concrete seams:
 | `NOMI-ARCH-017` | `docs/orientation/performance_notes.md` | Performance budgets should protect parse/lower/desugar/eval/session paths. |
 | `NOMI-ARCH-023` | `scripts/cli.py` | CLI should use the public runtime facade and structured result contract. |
 | `NOMI-ARCH-024` | `web/nomi_web.py`, `tools/jupyter/nomi_kernel.py` | Frontends should adapt one `ExecutionResult` diagnostics/events/output shape. |
-| `NOMI-AGENT-001` | `.gitignore` | Re-ignore generated hook caches after the tracked `.codex/hooks/**` allowlist. |
+| `NOMI-AGENT-001` | `.gitignore`, `.codex/scripts/agent_doctor.py` | Resolved: generated hook caches and other agent runtime state are ignored and covered by a doctor check. |
 
 ## Subsystem Notes
 

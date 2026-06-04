@@ -831,8 +831,8 @@ data_decode_boundary_feature.md
 failure_taxonomy_feature.md
 explanation_trace_feature.md
 state_and_capability_model.md
-prelude_and_standard_library_plan.md
-first_hour_nomi.md
+[Prelude And Standard Library Plan](prelude_and_standard_library_plan.md)
+[First-Hour Nomi](first_hour_nomi.md)
 ```
 
 Each focused spec should use this shape:

@@ -366,7 +366,7 @@ Implementation slices:
 
 Likely files:
 
-- `docs/features/data_boundary_decode_feature.md`
+- `docs/features/data_decode_boundary_feature.md`
 - `docs/convenience/data_and_types.md`
 - `docs/language/target_program_fixtures.md`
 - `prototype/runtime/diagnostics.py`

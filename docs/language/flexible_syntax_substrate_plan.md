@@ -124,7 +124,7 @@ prototype/syntax/features/
         grammar.lark
         nodes.py
         lower.py
-        diagnostics.md
+        runtime diagnostics
     block_call/
         feature.py
         grammar.lark

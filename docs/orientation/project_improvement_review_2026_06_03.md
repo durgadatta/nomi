@@ -45,6 +45,43 @@ Observed validation state:
 | Diagnostics and explanation are the product gap; binding constraints now have the first structured producer, while full `explain` coverage remains tracked. | `implementation_todos.md`, runtime/result contract items. |
 | The docs are strong but heavy; future scans should fold actions into existing backlogs instead of becoming permanent planning spines. | `docs/README.md`, `implementation_todos.md`. |
 
+## Docs Consolidation Follow-Up: 2026-06-04
+
+The follow-up consolidation pass made [`docs/README.md`](../README.md) the
+complete documentation map instead of a partial reading guide. It now directly
+links every Markdown document under `docs/`, adds a canonical ownership ledger
+for overlapping planning and critique docs, and keeps research/deep-dive files
+as source evidence rather than active specs.
+
+Do not create another broad "all docs synthesis" unless it retires an existing
+action surface. The 2026-06-04 follow-up completed the first smaller
+consolidation move: stable claims from source/evidence docs were folded into
+the canonical homes below, and missing feature-packet homes were created
+instead of leaving prose references dangling.
+
+| Duplicate pressure | Canonical home |
+| --- | --- |
+| Backlog and action items from dated scans | `docs/language/implementation_todos.md` |
+| Implementation gates and risk framing | `docs/language/implementation_evolvability_gap_review.md` |
+| Code seams and TODO anchors | `docs/language/implementation_codebase_audit.md` |
+| Syntax readiness and promotion workflow | `docs/language/spec_readiness_map.md` |
+| Convenience normal forms and candidate status | `docs/convenience/review_and_roadmap.md` |
+| Research source coverage | `docs/research/language_family_coverage_map.md` |
+
+Feature packets created during this follow-up:
+
+- [Data Decode Boundary Feature](../features/data_decode_boundary_feature.md)
+- [Failure Taxonomy Feature](../features/failure_taxonomy_feature.md)
+- [Explanation And Trace Feature](../features/explanation_trace_feature.md)
+- [State And Capability Model](../features/state_and_capability_model.md)
+
+The added cross-language harvest covers Unison abilities, Effekt effect
+handlers/captures, Roc platforms/`expect`/recoverable failures, and Pkl
+configuration. Its stable integration comments now live in
+[`language_family_coverage_map.md`](../research/language_family_coverage_map.md),
+[`review_and_roadmap.md`](../convenience/review_and_roadmap.md), and the four
+feature packets above.
+
 ## AI-Slop And Workspace Hygiene
 
 This scan did not find severe tracked AI-slop. Follow-up cleanup on

@@ -12,6 +12,7 @@ from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 from typing import Any
 
@@ -53,6 +54,7 @@ def run_checks() -> list[CheckResult]:
         check_claude_skill_shims(),
         check_claude_agent_shims(),
         check_claude_command_shims(),
+        check_generated_agent_state_ignored(),
         check_rag_mcp_prompt_surface(),
         check_rag_mcp_resource_templates(),
         check_rag_index_freshness(),
@@ -267,6 +269,50 @@ def check_claude_command_shims() -> CheckResult:
     if failures:
         return CheckResult("claude-command-shims", "fail", "; ".join(failures))
     return CheckResult("claude-command-shims", "pass", f"{len(shim_commands)} Claude command shims mirror .codex/prompts.")
+
+
+def check_generated_agent_state_ignored() -> CheckResult:
+    generated_paths = [
+        ".codex/hooks/__pycache__/hook_utils.cpython-999.pyc",
+        ".codex/scripts/__pycache__/agent_doctor.cpython-999.pyc",
+        ".codex/history.jsonl",
+        ".codex/log/codex-tui.log",
+        ".codex/logs_999.sqlite",
+        ".codex/sessions/example.jsonl",
+        ".codex/state_999.sqlite",
+        ".nomi/rag_index.json",
+    ]
+    failures = []
+    for rel_path in generated_paths:
+        try:
+            completed = subprocess.run(
+                ["git", "check-ignore", "--quiet", "--", rel_path],
+                cwd=ROOT,
+                check=False,
+            )
+        except OSError as exc:
+            return CheckResult("generated-agent-state-ignored", "warn", f"Could not run git: {exc}")
+
+        if completed.returncode == 1:
+            failures.append(rel_path)
+        elif completed.returncode != 0:
+            return CheckResult(
+                "generated-agent-state-ignored",
+                "fail",
+                f"`git check-ignore` failed for {rel_path} with exit {completed.returncode}.",
+            )
+
+    if failures:
+        return CheckResult(
+            "generated-agent-state-ignored",
+            "fail",
+            "Generated agent files are not ignored: " + ", ".join(failures),
+        )
+    return CheckResult(
+        "generated-agent-state-ignored",
+        "pass",
+        f"{len(generated_paths)} representative generated agent paths are ignored.",
+    )
 
 
 def check_rag_mcp_prompt_surface() -> CheckResult:
