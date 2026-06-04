@@ -45,33 +45,20 @@ For test-suite organization before moving files or adding markers, see
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 
-## Current Consolidated Priority: 2026-06-03
+## Resolved Consolidated Priority: 2026-06-03
 
 The latest full-repo improvement scan is preserved as dated evidence in
 [`project_improvement_review_2026_06_03.md`](../orientation/project_improvement_review_2026_06_03.md).
-Do not treat that review as a second backlog. Fold durable actions here and use
-this section as the next implementation queue until these items are absorbed
-into their normal tracks.
+Do not treat that review as a second backlog. Its concrete follow-up queue has
+been absorbed into the normal tracks below.
 
-| Priority | Work package | Why now | Home track |
-| --- | --- | --- | --- |
-| 1 | Capability matrix truth pass | `inspect --stage capabilities` exists, but many user-facing axes are still derived/defaulted rather than explicit feature facts. | Track 0A |
-| 2 | Passive `BindingTarget` surface slice | Binding is the shared pressure behind assignments, parameters, data fields, pattern captures, imports, and block params. | Track 0A |
-| 3 | First real diagnostic/event family | `ExecutionResult`, diagnostics, and events exist, but every feature still reports `explain: no`; binding constraints are the best first producer. | Track 0B |
-| 4 | Browser parity expansion | The web default uses Rust/WASM plus JS Core Runtime, so typed payload parity must keep it from becoming a second language. | Track 0D |
-| 5 | Setup and agent hygiene polish | Only low-grade slop remains: unanchored setup TODOs, local generated clutter, and RAG rebuild habit after doc/code edits. | Track 10 |
-
-Acceptance for the next pass:
-
-- promoted features do not rely on defaulted capability axes for docs, samples,
-  web, notebook, diagnostics, or spec status;
-- at least one name-introduction path can be represented through a passive
-  `BindingTarget` without changing broad runtime behavior;
-- one binding-constraint failure emits structured diagnostic/event data rather
-  than only exception text;
-- browser parity gaps are named capability gaps, not anonymous lowerer misses;
-- new dated reviews either retire an older review or fold actions back into
-  this backlog.
+| Review work package | Resolution | Durable home |
+| --- | --- | --- |
+| Capability matrix truth pass | Explicit coverage rows now include docs, tests, sample files, and conservative false values for explanation/web/notebook exposure. Remaining axes are tracked in `NOMI-SUBSTRATE-021` / `NOMI-SUBSTRATE-035`. | Track 0A |
+| Passive `BindingTarget` surface slice | `DataDecl -> DataField -> BindingTarget` exists as the first passive name-introduction path. Non-data producers remain in `NOMI-SUBSTRATE-011`. | Track 0A |
+| First real diagnostic/event family | Binding-constraint failures now emit `NOMI-BINDING-CONSTRAINT` diagnostics and `semantic.binding.constraint_failed` events when runtime callers return structured errors. | Track 0B |
+| Browser parity expansion | Browser parity gaps are named through the typed fixture ladder, JS lowerer diagnostics, and backend capability contracts. Remaining source-map/diagnostic/resume fixtures stay in Track 0D. | Track 0D |
+| Setup and agent hygiene polish | Loose setup/sample `#TODO:` comments from the review were removed or anchored; Docker/setup follow-ups remain only as Track 10 backlog items. | Track 10 |
 
 ## Track 0: First Principles, Vision, And Design Fixtures
 
@@ -238,8 +225,9 @@ boundaries, and package ownership. Keep the detailed plan in
   (`ExecutionResult` exists with bindings, timings, exception, optional value,
   stdout, stderr, diagnostics, and events. `execute()` captures stdout/stderr;
   `RuntimeSession.run()` can opt into capture. No-op semantic event families
-  are declared. Remaining: real diagnostic/event producers and detailed stage
-  artifacts.)
+  are declared, and binding-constraint failures now emit the first real
+  diagnostic/event family. Remaining: detailed stage artifacts and additional
+  feature-specific producers.)
 - [x] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
   lowering, interpreter class, status, and host support are declared as data.
 - [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility

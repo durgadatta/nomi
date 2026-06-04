@@ -20,6 +20,7 @@ from prototype.runtime.diagnostics import (
     Diagnostic,
     RuntimeEvent,
     RuntimeEventCollector,
+    record_runtime_exception,
 )
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import (
@@ -157,6 +158,12 @@ def execute(
         timings = {"total": perf_counter() - started}
         if raise_on_error:
             raise
+        record_runtime_exception(
+            collector,
+            exc,
+            frontend=pipeline.parser_frontend,
+            backend=pipeline.eval_backend,
+        )
         result_diagnostics, result_events = collector.snapshot()
         return ExecutionResult(
             mode=mode,

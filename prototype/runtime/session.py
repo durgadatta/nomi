@@ -22,7 +22,7 @@ from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
 from prototype.runtime.api import ExecutionResult
 from prototype.runtime.backends import get_eval_backend
 from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
-from prototype.runtime.diagnostics import RuntimeEventCollector
+from prototype.runtime.diagnostics import RuntimeEventCollector, record_runtime_exception
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
 from prototype.syntax.core import lower_python_ast_to_core, verify_core
 from prototype.syntax.core_json import core_to_json
@@ -150,6 +150,12 @@ class RuntimeSession:
             timings["total"] = perf_counter() - started
             if raise_on_error:
                 raise
+            record_runtime_exception(
+                collector,
+                exc,
+                frontend=self.pipeline.parser_frontend,
+                backend=self.pipeline.eval_backend,
+            )
             diagnostics, events = collector.snapshot()
             return ExecutionResult(
                 mode=self.mode,

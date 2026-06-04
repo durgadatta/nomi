@@ -410,7 +410,7 @@ as unknown or no, never silently inferred as yes
 
 ## Quick Check Commands
 
-Use these after the next implementation pass:
+Use these after implementation passes that touch browser/runtime parity:
 
 ```bash
 python3 scripts/check_web_runtime.py

@@ -42,27 +42,27 @@ Observed validation state:
 | Capability honesty is the next highest-leverage fix; many user-facing axes are still derived/defaulted. | `implementation_todos.md`, Track 0A. |
 | Source-to-meaning has two live roads: Python/session default and browser Rust/WASM -> JS Core Runtime. | `implementation_codebase_audit.md`, browser/runtime parity items. |
 | Surface/Core authority is still aspirational where `DataDecl`, `MatchExpr`, `PipeExpr`, and `BindingTarget` lower through Python AST paths. | `implementation_codebase_audit.md`, Surface/Core findings. |
-| Diagnostics and explanation are the product gap; every feature still reports `explain: no`. | `implementation_todos.md`, runtime/result contract items. |
+| Diagnostics and explanation are the product gap; binding constraints now have the first structured producer, while full `explain` coverage remains tracked. | `implementation_todos.md`, runtime/result contract items. |
 | The docs are strong but heavy; future scans should fold actions into existing backlogs instead of becoming permanent planning spines. | `docs/README.md`, `implementation_todos.md`. |
 
 ## AI-Slop And Workspace Hygiene
 
-This scan did not find severe tracked AI-slop. The remaining issues are
-ordinary but worth cleaning before the next wave of agent work.
+This scan did not find severe tracked AI-slop. Follow-up cleanup on
+2026-06-04 resolved the concrete loose notes from this section.
 
-| Signal | Evidence | Severity | Action |
+| Signal | Evidence | Severity | Resolution |
 | --- | --- | --- | --- |
-| Unanchored TODOs | `Dockerfile:1`, `scripts/run_nomi_docker.py:5`, `prototype/tests/data/sample_sources/interpreter/blocks.nomi:51` | low | Convert to `NOMI-*` anchors or remove if stale. |
-| Stale RAG index | Warning appeared during scan, then cleared after `python3 -m tools.rag_mcp.cli build` | resolved | Rebuild after large docs/code edits when `agent_doctor.py` warns. |
-| Local cache clutter | Many `__pycache__`, `.pytest_cache`, `.codex/*.sqlite`, logs, and reports exist locally | low | No tracked risk; optional cleanup before handoff screenshots or packaging. |
-| Capability defaults | Most feature exposure is inferred, not declared | medium | Promote explicit axes before feature promotion. |
-| Runtime placeholders | `prototype/runtime/diagnostics.py` and semantic events are placeholder-shaped | medium | Wire one real event family before adding more diagnostics prose. |
-| Docker/setup TODO wording | Dockerfile and macOS setup TODO are informal and misspelled | low | Tighten or anchor during setup/tooling pass. |
+| Unanchored TODOs | `Dockerfile:1`, `scripts/run_nomi_docker.py:5`, `prototype/tests/data/sample_sources/interpreter/blocks.nomi:51` | low | Resolved: Docker/setup reminders live only in Track 10; the block fixture points to `NOMI-SUBSTRATE-011`. |
+| Stale RAG index | Warning appeared during scan, then cleared after `python3 -m tools.rag_mcp.cli build` | resolved | No tracked action remains; rebuild after large docs/code edits when `agent_doctor.py` warns. |
+| Local cache clutter | Many `__pycache__`, `.pytest_cache`, `.codex/*.sqlite`, logs, and reports exist locally | low | No tracked risk; ignored local state is not a backlog item. |
+| Capability defaults | Most feature exposure is inferred, not declared | medium | Partially resolved: docs/tests/sample coverage is explicit; remaining web/notebook/spec axes live in `NOMI-SUBSTRATE-021` and `NOMI-SUBSTRATE-035`. |
+| Runtime diagnostics/events | `prototype/runtime/diagnostics.py` and semantic events needed a first producer | medium | Resolved for the first family: binding-constraint failures now emit structured diagnostics and semantic events. |
+| Docker/setup note wording | Dockerfile and macOS setup reminders needed durable ownership | low | Resolved: loose comments removed; durable setup work remains only in Track 10. |
 
 ## Review Bottom Line
 
 Nomi's main risk is no longer "AI wrote careless code." The current risk is
 more subtle: enough good infrastructure now exists that derived tables,
 partial Core IR, browser success, and polished docs can sound more authoritative
-than they are. The next pass should make the existing truth surfaces stricter,
-not add another layer of vision.
+than they are. The 2026-06-04 follow-up made the existing truth surfaces
+stricter instead of adding another planning spine.

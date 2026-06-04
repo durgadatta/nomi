@@ -100,7 +100,7 @@ general reading order.
 ## Language
 
 Canonical or near-canonical language direction. These are the decision surface
-for the next implementation pass.
+for implementation sequencing.
 
 Core direction:
 

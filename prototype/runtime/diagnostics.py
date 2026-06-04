@@ -148,3 +148,78 @@ class RuntimeEventCollector:
 
     def snapshot(self) -> tuple[tuple[Diagnostic, ...], tuple[RuntimeEvent, ...]]:
         return tuple(self.diagnostics), tuple(self.events)
+
+
+def record_binding_error(
+    collector: RuntimeEventCollector,
+    error: Exception,
+    *,
+    phase: str = "eval",
+    frontend: str | None = None,
+    backend: str | None = None,
+) -> None:
+    """Record the first real structured runtime diagnostic/event family."""
+    details = {
+        "name": error.name,
+        "value_repr": repr(error.value),
+        "binding_kind": error.binding_kind,
+        "constraint_expr": error.constraint_expr,
+    }
+    collector.diagnostic(
+        str(error),
+        phase=phase,
+        code="NOMI-BINDING-CONSTRAINT",
+        node_type="BindingError",
+        capability="binding.constraints",
+        frontend=frontend,
+        backend=backend,
+        details=details,
+    )
+    collector.semantic_event(
+        "binding",
+        "constraint_failed",
+        feature="binding-constraints",
+        payload=details,
+    )
+
+
+def record_runtime_exception(
+    collector: RuntimeEventCollector,
+    error: Exception,
+    *,
+    phase: str = "eval",
+    frontend: str | None = None,
+    backend: str | None = None,
+) -> None:
+    """Record structured diagnostics for exceptions with known Nomi semantics."""
+    known_error = _known_semantic_error(error)
+    if _is_binding_error(known_error):
+        record_binding_error(
+            collector,
+            known_error,
+            phase=phase,
+            frontend=frontend,
+            backend=backend,
+        )
+
+
+def _known_semantic_error(error: Exception) -> Exception:
+    """Return the first known Nomi semantic error in an exception chain."""
+    seen: set[int] = set()
+    current: BaseException | None = error
+    while isinstance(current, Exception) and id(current) not in seen:
+        seen.add(id(current))
+        if _is_binding_error(current):
+            return current
+        current = current.__cause__ or current.__context__
+    return error
+
+
+def _is_binding_error(error: Exception) -> bool:
+    return (
+        type(error).__name__ == "BindingError"
+        and hasattr(error, "name")
+        and hasattr(error, "value")
+        and hasattr(error, "binding_kind")
+        and hasattr(error, "constraint_expr")
+    )

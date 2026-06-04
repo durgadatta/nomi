@@ -123,6 +123,48 @@ def test_execute_preserves_output_on_returned_exception():
     assert result.exception is not None
 
 
+def test_execute_records_binding_constraint_failure_diagnostic_and_event():
+    result = execute(
+        source="age: int, age > 0 = -1\n",
+        mode="nomi",
+        raise_on_error=False,
+    )
+
+    assert not result.ok
+    assert result.exception is not None
+    assert len(result.diagnostics) == 1
+    diagnostic = result.diagnostics[0]
+    assert diagnostic.code == "NOMI-BINDING-CONSTRAINT"
+    assert diagnostic.phase == "eval"
+    assert diagnostic.capability == "binding.constraints"
+    assert diagnostic.details["name"] == "age"
+    assert diagnostic.details["binding_kind"] == "assignment"
+    assert diagnostic.details["constraint_expr"] is None
+
+    assert len(result.events) == 1
+    event = result.events[0]
+    assert event.name == "semantic.binding.constraint_failed"
+    assert event.payload["kind"] == "binding"
+    assert event.payload["action"] == "constraint_failed"
+    assert event.payload["feature"] == "binding-constraints"
+    assert event.payload["name"] == "age"
+
+
+def test_session_records_binding_constraint_failure_diagnostic_and_event():
+    session = create_session(mode="nomi")
+
+    result = session.run(
+        source="score: int, score >= 0 else \"score must be non-negative\" = -2\n",
+        raise_on_error=False,
+    )
+
+    assert not result.ok
+    assert len(result.diagnostics) == 1
+    assert result.diagnostics[0].code == "NOMI-BINDING-CONSTRAINT"
+    assert "score must be non-negative" in result.diagnostics[0].message
+    assert result.events[0].name == "semantic.binding.constraint_failed"
+
+
 def test_session_can_opt_into_output_capture():
     session = create_session(mode="nomi")
 

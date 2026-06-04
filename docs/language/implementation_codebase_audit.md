@@ -81,13 +81,13 @@ risk is authority drift. Existing infrastructure can sound more complete than
 it is when derived capability rows, partial Core IR, browser execution, and
 polished docs are read as proof of language readiness.
 
-Keep the next implementation pass focused on these concrete seams:
+Keep implementation work focused on these concrete seams:
 
 - make `FeatureCapabilityAxes` explicit for promoted/user-facing features
   instead of relying on lifecycle-derived defaults;
 - move `BindingTarget`, `DataDecl`, `MatchExpr`, and `PipeExpr` toward passive
   Surface nodes before adding richer syntax;
-- wire one real diagnostic/event family, starting with binding constraints,
+- extend the first real diagnostic/event family beyond binding constraints
   before each feature invents a private failure shape;
 - expand the WASM/JS parity matrix by feature packet and replace raw-string
   Rust payload clusters with typed payload nodes;
@@ -173,12 +173,13 @@ reuse it for parameters and data fields.
 ### Runtime API And Frontends
 
 `prototype/runtime/api.py` and `RuntimeSession` are good facade starts.
-`ExecutionResult` now carries stdout/stderr plus passive diagnostics/events,
+`ExecutionResult` now carries stdout/stderr plus diagnostics/events,
 `execute()` captures stdout/stderr, `RuntimeSession.run()` can opt into output
-capture, `RuntimeEventCollector` provides a no-op sink, and the CLI plus web
-bridge consume the shared runtime facade. Notebook execution still streams
-through kernel redirects, and real diagnostic/event producers are not wired
-yet.
+capture, `RuntimeEventCollector` provides no-op semantic event hooks, binding
+constraint failures emit the first real diagnostic/event family, and the CLI
+plus web bridge consume the shared runtime facade. Notebook execution still
+streams through kernel redirects, and non-binding feature producers are not
+wired yet.
 
 Next move: migrate notebook output display once the result contract can
 preserve Jupyter streaming expectations, then route parser/lowering/runtime
