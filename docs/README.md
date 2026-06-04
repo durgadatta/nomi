@@ -132,6 +132,10 @@ Planning and process:
   hostile review of feature and global-language failure modes.
 - [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md):
   sharp post-HCI critique, enhancement queue, and feature-admission gates.
+- [Adversarial Enhancement Implementation Plan 2026-06-04](language/adversarial_enhancement_implementation_plan_2026_06_04.md):
+  staged implementation route for the adversarial gates: events, capabilities,
+  data boundary, command values, projections, agents, first-hour docs, and
+  stdlib baseline.
 - [Spec Readiness Map](language/spec_readiness_map.md): promotion workflow and
   coverage map for converting research, convenience notes, feature docs, and
   implementation plans into a future language specification.

@@ -18,6 +18,11 @@ For the adversarial post-HCI admission gates that should shape new feature
 packets, see
 [Adversarial Language Design Enhancement Notes 2026-06-04](adversarial_language_design_enhancement_notes_2026_06_04.md).
 
+For the staged implementation route through proposal gates, runtime events,
+feature capability axes, data boundaries, command values, projections, agent
+surfaces, first-hour docs, and stdlib capabilities, see
+[Adversarial Enhancement Implementation Plan 2026-06-04](adversarial_enhancement_implementation_plan_2026_06_04.md).
+
 For a staged execution plan with gates, caveats, risks, and recommended next
 work packages, see [Forward Implementation Plan](forward_implementation_plan.md).
 

@@ -206,6 +206,10 @@ Read the smallest relevant set before changing docs or making recommendations.
 - `docs/language/language_spec.md` — draft concrete language specification.
 - `docs/language/adversarial_language_design_enhancement_notes_2026_06_04.md`
   — sharp post-HCI critique, enhancement queue, and feature-admission gates.
+- `docs/language/adversarial_enhancement_implementation_plan_2026_06_04.md`
+  — staged implementation plan for those gates across events, capabilities,
+  data boundaries, command values, projections, agents, first-hour docs, and
+  stdlib capability baseline.
 - `docs/language/forward_implementation_plan.md` — staged implementation plan
   with gates, caveats, risks, open questions.
 - `docs/language/implementation_todos.md` — staged design and implementation

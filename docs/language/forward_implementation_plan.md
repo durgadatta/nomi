@@ -24,6 +24,7 @@ Nomi now has a richer design spine:
 - [Architecture Refactoring Plan](architecture_refactoring_plan.md)
 - [Implementation Evolvability Gap Review](implementation_evolvability_gap_review.md)
 - [Language Feature Todos](implementation_todos.md)
+- [Adversarial Enhancement Implementation Plan 2026-06-04](adversarial_enhancement_implementation_plan_2026_06_04.md)
 
 This plan answers a narrower question:
 

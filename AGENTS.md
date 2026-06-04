@@ -56,6 +56,10 @@ Start with these files before broad design or implementation changes:
   freedom framework.
 - `docs/language/adversarial_language_design_enhancement_notes_2026_06_04.md`:
   sharp post-HCI critique, enhancement queue, and feature-admission gates.
+- `docs/language/adversarial_enhancement_implementation_plan_2026_06_04.md`:
+  staged implementation plan for those gates across events, capabilities,
+  data boundaries, command values, projections, agents, first-hour docs, and
+  stdlib capability baseline.
 - `docs/language/adversarial_exploratory_implementation_critique.md`:
   skeptical critique of implementation choices that could prematurely freeze
   the language design.

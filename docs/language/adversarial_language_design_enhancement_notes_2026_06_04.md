@@ -11,6 +11,9 @@
 > is not another vision document. It names where Nomi's current synthesis can
 > still fail and what enhancement notes should be absorbed into feature packets,
 > specs, tests, and implementation metadata.
+>
+> Implementation path:
+> [Adversarial Enhancement Implementation Plan 2026-06-04](adversarial_enhancement_implementation_plan_2026_06_04.md).
 
 ## Position
 
@@ -483,4 +486,3 @@ That is a block policy.
 That is an explanation event.
 That does not belong in the language.
 ```
-
