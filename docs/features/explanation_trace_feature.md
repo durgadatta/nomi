@@ -1,7 +1,7 @@
 # Explanation And Trace Feature
 
-> Status: active feature packet; design-settled direction, implementation
-> partial.
+> Status: active feature packet; Runtime Event Schema V1 implemented, feature
+> producers still partial.
 >
 > Normal form: explanation.
 >
@@ -99,9 +99,10 @@ has to cover successful execution, not only errors.
 
 ## Implementation Slice
 
-1. Extend runtime diagnostics with the event fields above.
+1. [x] Extend runtime diagnostics with the event fields above.
+   (`RuntimeEvent.to_record()` now exposes V1 fields and
+   `RuntimeEventCollector` assigns stable event IDs.)
 2. Add source-span propagation for more surface nodes.
 3. Produce decode events from `Data.decode`.
 4. Produce match and pipeline events after their normal forms stabilize.
 5. Add `explain` rendering for terminal, notebook, and web playground.
-

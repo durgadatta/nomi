@@ -101,6 +101,12 @@ Purpose: replace placeholder semantic events with a stable inspectable record
 that can support diagnostics, decode, command execution, UI projection, agent
 logs, and replay.
 
+Status: implemented for the runtime record shape and first binding producer.
+`RuntimeEvent` now has a V1 `to_record()` shape, generated event IDs,
+parent links, phase/feature/operation/capability/failure/redaction/next-step
+slots, and binding-constraint failures populate those fields. Future phases
+still need additional event producers and renderers.
+
 Current basis:
 
 - [runtime diagnostics](../../prototype/runtime/diagnostics.py) already defines
@@ -162,7 +168,7 @@ Exit gate:
 - Binding-constraint failures remain the first real event family and now use
   the same event schema future features will use.
 
-Recommended commits:
+Completed commit shape:
 
 ```text
 Add structured runtime event records

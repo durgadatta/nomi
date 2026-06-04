@@ -81,6 +81,57 @@ def test_execute_uses_runtime_event_collector_snapshot():
     assert result.events == (event,)
 
 
+def test_runtime_event_exposes_v1_record_shape():
+    event = RuntimeEvent(
+        name="semantic.binding.constraint_failed",
+        payload={"name": "age"},
+        id="event-1",
+        parent_id="event-0",
+        phase="eval",
+        kind="binding",
+        action="constraint_failed",
+        feature="binding-constraints",
+        operation="constraint_failed",
+        source_span={"line": 1, "column": 1},
+        subject="age",
+        value_summary="-1",
+        capability="binding.constraints",
+        failure_kind="constraint",
+        redaction={"paths": []},
+        next_step="Adjust the value.",
+    )
+
+    assert event.to_record() == {
+        "id": "event-1",
+        "parent_id": "event-0",
+        "name": "semantic.binding.constraint_failed",
+        "phase": "eval",
+        "kind": "binding",
+        "action": "constraint_failed",
+        "feature": "binding-constraints",
+        "operation": "constraint_failed",
+        "span": {"line": 1, "column": 1},
+        "subject": "age",
+        "value_summary": "-1",
+        "capability": "binding.constraints",
+        "failure_kind": "constraint",
+        "redaction": {"paths": []},
+        "next_step": "Adjust the value.",
+        "payload": {"name": "age"},
+    }
+
+
+def test_runtime_event_collector_assigns_stable_event_ids_and_parent_links():
+    collector = RuntimeEventCollector()
+
+    first = collector.event("runtime.first")
+    second = collector.event("runtime.second", parent_id=first.id)
+
+    assert first.id == "event-1"
+    assert second.id == "event-2"
+    assert second.parent_id == "event-1"
+
+
 def test_runtime_event_collector_has_stable_semantic_hook_families():
     collector = RuntimeEventCollector()
 
@@ -96,6 +147,9 @@ def test_runtime_event_collector_has_stable_semantic_hook_families():
         "action": "observe",
         "feature": "test-feature",
     }
+    assert events[0].to_record()["id"] == "event-1"
+    assert events[0].to_record()["kind"] == "binding"
+    assert events[0].to_record()["operation"] == "observe"
 
 
 def test_runtime_event_collector_rejects_unknown_semantic_event_kind():
@@ -148,6 +202,14 @@ def test_execute_records_binding_constraint_failure_diagnostic_and_event():
     assert event.payload["action"] == "constraint_failed"
     assert event.payload["feature"] == "binding-constraints"
     assert event.payload["name"] == "age"
+    assert event.feature == "binding-constraints"
+    assert event.phase == "eval"
+    assert event.operation == "constraint_failed"
+    assert event.capability == "binding.constraints"
+    assert event.failure_kind == "constraint"
+    assert event.subject == "age"
+    assert event.value_summary == "-1"
+    assert event.to_record()["next_step"]
 
 
 def test_session_records_binding_constraint_failure_diagnostic_and_event():

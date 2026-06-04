@@ -204,9 +204,12 @@ layers move from docs into implementation.
 - [x] Add no-op semantic event hooks before feature-specific tracing so
   binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
   each invent a private explanation format.
-  (`RuntimeEventCollector.semantic_event()` now validates those seven event
-  families and records `semantic.<kind>.<action>` events. Remaining event work
-  belongs under the first real producer: binding constraints.)
+  (`RuntimeEventCollector.semantic_event()` now validates the shared event
+  families and records `semantic.<kind>.<action>` events. Runtime Event Schema
+  V1 is implemented through `RuntimeEvent.to_record()`, generated event IDs,
+  parent links, and binding-constraint V1 event fields. Remaining event work
+  belongs to additional feature producers: decode, match, pipeline, block,
+  query, example, capability, and rewrite.)
 - [ ] Keep symbolic/lazy computation behind explicit boundaries from
   [`symbolic_structural_computation.md`](../features/symbolic_structural_computation.md):
   `quote`, `describe`, `lazy`, query plans, rewrite rules, `collect`, and
@@ -234,9 +237,10 @@ boundaries, and package ownership. Keep the detailed plan in
   (`ExecutionResult` exists with bindings, timings, exception, optional value,
   stdout, stderr, diagnostics, and events. `execute()` captures stdout/stderr;
   `RuntimeSession.run()` can opt into capture. No-op semantic event families
-  are declared, and binding-constraint failures now emit the first real
-  diagnostic/event family. Remaining: detailed stage artifacts and additional
-  feature-specific producers.)
+  are declared, `RuntimeEvent` exposes a V1 record shape, and
+  binding-constraint failures now emit the first real diagnostic/event family.
+  Remaining: detailed stage artifacts and additional feature-specific
+  producers.)
 - [x] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
   lowering, interpreter class, status, and host support are declared as data.
 - [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility
