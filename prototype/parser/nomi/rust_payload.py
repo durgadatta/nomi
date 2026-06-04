@@ -13,10 +13,7 @@ from typing import Any
 
 from lark import Token
 
-from .lowering.data_decl import DataDeclMixin
-
-
-_DATA_DECL_BUILDER = DataDeclMixin()
+from prototype.syntax.surface import BindingTarget, DataDecl, DataField
 _SECTION_OPERATOR_FACTORIES = {
     "+": ast.Add,
     "-": ast.Sub,
@@ -580,41 +577,52 @@ def _ann_assign_from_rust_payload(payload: dict[str, Any]) -> ast.AnnAssign:
 
 def _data_suite_from_rust_payload(payload: dict[str, Any]) -> ast.ClassDef:
     class_name = payload["head"]
-    field_specs = [_data_field_spec_from_rust_payload(item) for item in payload["body"]]
-    body = [_DATA_DECL_BUILDER._make_init(class_name, field_specs)]
-    if field_specs:
-        body.append(_DATA_DECL_BUILDER._make_repr(class_name, field_specs))
-        body.append(_DATA_DECL_BUILDER._make_eq(class_name, field_specs))
-    return ast.ClassDef(
+    decl = DataDecl(
         name=class_name,
-        bases=[],
-        keywords=[],
-        body=body,
-        decorator_list=[],
+        fields=[_data_field_spec_from_rust_payload(item) for item in payload["body"]],
     )
+    lowered = decl.lower()
+    if not isinstance(lowered, ast.ClassDef):
+        raise TypeError(f"DataDecl.lower returned {type(lowered).__name__}")
+    return lowered
 
 
-def _data_field_spec_from_rust_payload(payload: dict[str, Any]):
+def _data_field_spec_from_rust_payload(payload: dict[str, Any]) -> DataField:
     name = payload["head"]
     if payload.get("kind") != "BlockCall" or not payload.get("body"):
-        return (name, None, None)
+        return _data_field(name)
     field_body = payload["body"]
     if len(field_body) != 1 or field_body[0].get("type") != "Expr":
-        return (name, None, None)
+        return _data_field(name)
     field_expr = field_body[0]["value"]
     if field_expr.get("type") == "Raw":
         return _data_field_spec_from_raw(name, field_expr["value"])
-    return (name, _expr_from_rust_payload(field_expr), None)
+    return _data_field(name, annotation=_expr_from_rust_payload(field_expr))
 
 
-def _data_field_spec_from_raw(name: str, raw: str):
+def _data_field_spec_from_raw(name: str, raw: str) -> DataField:
     type_text, separator, constraint_text = raw.partition(" where ")
     if not separator:
-        return (name, _expr_from_python_source(raw), None)
-    return (
+        return _data_field(name, annotation=_expr_from_python_source(raw))
+    return _data_field(
         name,
-        _expr_from_python_source(type_text.strip()),
-        _expr_from_python_source(constraint_text.strip()),
+        annotation=_expr_from_python_source(type_text.strip()),
+        constraint=_expr_from_python_source(constraint_text.strip()),
+    )
+
+
+def _data_field(
+    name: str,
+    annotation: ast.expr | None = None,
+    constraint: ast.expr | None = None,
+) -> DataField:
+    return DataField(
+        target=BindingTarget(
+            name=name,
+            role="data-field",
+            annotation=annotation,
+            constraint=constraint,
+        )
     )
 
 

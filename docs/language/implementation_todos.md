@@ -181,8 +181,9 @@ layers move from docs into implementation.
 - [~] Add Nomi-owned surface nodes for new or awkward forms before lowering
   them to Python AST. Start with `BlockCall`, `BindingTarget`, `PipeExpr`,
   `MatchExpr`, and `DataDecl`.
-  (`BlockCall` and `lower_surface_to_python` done; `BindingTarget`, `PipeExpr`,
-  `MatchExpr`, `DataDecl` pending.)
+  (`BlockCall`, `DataDecl`, and passive data-field `BindingTarget`s are done
+  through `lower_surface_to_python`; `PipeExpr`, `MatchExpr`, and non-data
+  binding producers are pending.)
 - [x] Add declarative pass metadata for existing desugar passes: pass name,
   feature owner, dependencies, input nodes, removed nodes, produced nodes,
   normal forms, and inspection output.

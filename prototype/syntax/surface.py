@@ -14,22 +14,19 @@ Adding a new Nomi construct:
 3. The ``lower_surface_to_python`` walker will call ``.lower()`` on it.
 
 Next migration markers:
-- ``DataDecl`` should preserve class name plus raw field specs before its
-  current ``ClassDef`` backend lowering. First producer:
-  ``prototype/parser/nomi/lowering/data_decl.py``.
 - ``MatchExpr`` should preserve subject plus cases before its current IIFE
   backend lowering. First producer:
   ``prototype/parser/nomi/lowering/match_expr.py``.
 - ``BindingTarget`` should start as a passive representation shared by
-  annotated assignment, parameter binding, data fields, and pattern captures
-  before changing constraint semantics.
+  annotated assignment, parameter binding, and pattern captures before
+  changing constraint semantics. Data fields are the first passive producer.
 """
 
 from __future__ import annotations
 
 import ast
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List
 
 
 # ── SourceSpan ────────────────────────────────────────────────────────
@@ -172,6 +169,213 @@ class BlockCall(SurfaceNode):
         block = Block(body=lowered_body, params=self.block_params)
         call.keywords.append(ast.keyword(arg=BLOCK_KWARG, value=block))
         return ast.Expr(value=call)
+
+
+# ── BindingTarget / DataDecl ─────────────────────────────────────────
+
+@dataclass(slots=True)
+class BindingTarget:
+    """A passive description of a name-introduction site.
+
+    This is intentionally smaller than a future binding/constraint system.  It
+    records the shared surface shape for data fields, parameters, pattern
+    captures, and assignments before those paths grow feature-specific
+    diagnostics or Core IR lowering.
+    """
+
+    name: str
+    role: str
+    annotation: ast.expr | None = None
+    constraint: ast.expr | None = None
+    default: ast.expr | None = None
+    span: SourceSpan | None = None
+
+
+@dataclass(slots=True)
+class DataField:
+    """A field in a ``data`` declaration backed by a binding target."""
+
+    target: BindingTarget
+
+    @property
+    def name(self) -> str:
+        return self.target.name
+
+    @property
+    def annotation(self) -> ast.expr | None:
+        return self.target.annotation
+
+    @property
+    def constraint(self) -> ast.expr | None:
+        return self.target.constraint
+
+
+@dataclass(slots=True)
+class DataDecl(SurfaceNode):
+    """A Nomi ``data`` declaration before backend class generation."""
+
+    name: str
+    fields: List[DataField] = field(default_factory=list)
+
+    def lower(self) -> ast.AST:
+        body = [self._make_init()]
+        if self.fields:
+            body.append(self._make_repr())
+            body.append(self._make_eq())
+
+        return ast.ClassDef(
+            name=self.name,
+            bases=[],
+            keywords=[],
+            body=body,
+            decorator_list=[],
+        )
+
+    def _make_init(self):
+        args = [ast.arg(arg="self")]
+        body = []
+        checks = []
+
+        for field in self.fields:
+            args.append(ast.arg(arg=field.name, annotation=field.annotation))
+            body.append(
+                ast.Assign(
+                    targets=[
+                        ast.Attribute(
+                            value=ast.Name(id="self", ctx=ast.Load()),
+                            attr=field.name,
+                            ctx=ast.Store(),
+                        )
+                    ],
+                    value=ast.Name(id=field.name, ctx=ast.Load()),
+                )
+            )
+            if field.constraint is not None:
+                checks.append(field)
+
+        for field in checks:
+            constraint_src = ast.unparse(field.constraint)
+            body.append(
+                ast.If(
+                    test=ast.UnaryOp(op=ast.Not(), operand=field.constraint),
+                    body=[
+                        ast.Raise(
+                            exc=ast.Call(
+                                func=ast.Name(id="TypeError", ctx=ast.Load()),
+                                args=[
+                                    ast.Constant(
+                                        value=(
+                                            f"Constraint violation for field {field.name!r}"
+                                            f" of {self.name!r}: {constraint_src}"
+                                        )
+                                    )
+                                ],
+                                keywords=[],
+                            ),
+                            cause=None,
+                        )
+                    ],
+                    orelse=[],
+                )
+            )
+
+        return ast.FunctionDef(
+            name="__init__",
+            args=ast.arguments(
+                posonlyargs=[],
+                args=args,
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[],
+            ),
+            body=body,
+            decorator_list=[],
+            returns=None,
+        )
+
+    def _make_repr(self):
+        field_names = [field.name for field in self.fields]
+        parts = [f"{name}={{0.{name}!r}}" for name in field_names]
+        fmt = f"{self.name}({', '.join(parts)})"
+
+        return ast.FunctionDef(
+            name="__repr__",
+            args=ast.arguments(
+                posonlyargs=[],
+                args=[ast.arg(arg="self")],
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[],
+            ),
+            body=[
+                ast.Return(
+                    value=ast.Call(
+                        func=ast.Attribute(
+                            value=ast.Constant(value=fmt),
+                            attr="format",
+                            ctx=ast.Load(),
+                        ),
+                        args=[ast.Name(id="self", ctx=ast.Load())],
+                        keywords=[],
+                    )
+                )
+            ],
+            decorator_list=[],
+            returns=None,
+        )
+
+    def _make_eq(self):
+        comparisons = []
+        for field in self.fields:
+            comparisons.append(
+                ast.Compare(
+                    left=ast.Attribute(
+                        value=ast.Name(id="self", ctx=ast.Load()),
+                        attr=field.name,
+                        ctx=ast.Load(),
+                    ),
+                    ops=[ast.Eq()],
+                    comparators=[
+                        ast.Attribute(
+                            value=ast.Name(id="other", ctx=ast.Load()),
+                            attr=field.name,
+                            ctx=ast.Load(),
+                        )
+                    ],
+                )
+            )
+
+        if len(comparisons) == 1:
+            combined = comparisons[0]
+        else:
+            combined = ast.BoolOp(op=ast.And(), values=comparisons)
+
+        return ast.FunctionDef(
+            name="__eq__",
+            args=ast.arguments(
+                posonlyargs=[],
+                args=[ast.arg(arg="self"), ast.arg(arg="other")],
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[],
+            ),
+            body=[
+                ast.If(
+                    test=ast.Call(
+                        func=ast.Name(id="isinstance", ctx=ast.Load()),
+                        args=[
+                            ast.Name(id="other", ctx=ast.Load()),
+                            ast.Name(id=self.name, ctx=ast.Load()),
+                        ],
+                        keywords=[],
+                    ),
+                    body=[ast.Return(value=combined)],
+                    orelse=[ast.Return(value=ast.Constant(value=NotImplemented))],
+                )
+            ],
+            decorator_list=[],
+            returns=None,
+        )
 
 
 # ── surface → Python lowering walker ──────────────────────────────────

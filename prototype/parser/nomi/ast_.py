@@ -12,10 +12,10 @@ _SHOULD_LOG_UNHANDLED = os.environ.get(
     "NOMI_LOG_UNHANDLED_RULES", ""
 ).lower() in ("1", "true", "yes")
 
-# TODO(NOMI-SUBSTRATE-005): Extend the Surface AST layer to cover data
-# declarations, match expressions, constraints, and syntax islands.
-# BlockCall already preserves source shape via surface node; the same
-# pattern should apply to the remaining constructs.
+# TODO(NOMI-SUBSTRATE-005): Extend the Surface AST layer to cover match
+# expressions, constraints, and syntax islands. BlockCall and DataDecl already
+# preserve source shape via surface nodes; the same pattern should apply to the
+# remaining constructs.
 # TODO(NOMI-SUBSTRATE-004): SourceSpan now flows through BlockCall lowering
 # via captures_span (visit_wrapper). Apply @captures_span to remaining
 # lowering methods that produce SurfaceNodes, and wire SourceSpan through
