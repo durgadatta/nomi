@@ -51,7 +51,7 @@ adoption-facing steering layer, see
 
 ## Deep Dive Index
 
-Individual-language and cross-cutting deep dives (May 2026 research expansion):
+Individual-language, cross-cutting, and orthogonal research notes:
 
 | File | Coverage | Lines |
 |------|----------|-------|
@@ -79,24 +79,29 @@ Individual-language and cross-cutting deep dives (May 2026 research expansion):
 | [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction | ~1934 |
 | [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing | ~1826 |
 | [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, editions, migration, governance, localization | ~250 |
+| [orthogonal_language_feature_coverage.md](orthogonal_language_feature_coverage.md) | Cross-cutting feature surfaces: formatting, diagnostics, accessibility, observability, packages, capabilities, secrets, serialization, interop, migration, governance, conformance, editor UX | ~216 |
 
 ## Under-Covered Dimensions
 
-The current docs have strong coverage of syntax, constraints, blocks, patterns,
-error handling, diagnostics, null safety, pattern matching, and stdlib design.
-The following dimensions still need more focused research:
+The original eight under-covered dimensions are now researched. The corpus also
+has follow-up coverage for surrounding process and tooling concerns:
+Unicode/source text, accessibility, compatibility, migration, governance,
+localization, formatting, observability, package trust, host capabilities,
+interop, conformance, editor UX, notebook reactivity, and deployment profiles.
 
-All eight previously under-covered dimensions are now researched (May 2026).
-The deep dive index above covers the original matrix. A later follow-up pass
-identified surrounding process/tooling dimensions that were still under-weighted:
-Unicode/source text, accessibility, compatibility, migration, governance, and
-localization. See
-[overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md).
+Use [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md)
+for source text, accessibility, compatibility, migration, governance, and
+localization. Use
+[orthogonal_language_feature_coverage.md](orthogonal_language_feature_coverage.md)
+when a proposed feature touches source text, formatting, diagnostics,
+accessibility, observability, packages, host capabilities, secrets, interop,
+serialization, compatibility, governance, conformance, editor UX, notebook
+reactivity, or deployment.
 
-New research themes should be driven by implementation needs, not coverage
-gaps. Stable decisions from overlooked dimensions should fold into
-`language_spec.md`, `design_proposal_template.md`, the explanation-event spec,
-and tooling checks.
+New research themes should now be driven by concrete design blockers, not by a
+desire to fill a coverage table. Stable decisions should fold into
+`language_spec.md`, `design_proposal_template.md`, focused feature docs, the
+explanation-event spec, or tooling checks.
 
 ## Family Notes
 

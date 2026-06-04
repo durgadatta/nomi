@@ -140,12 +140,19 @@ answer this packet in one place:
 | Semantic reduction | What smaller operations explain the feature? |
 | Diagnostics | What failure does the user see, with source spans and vocabulary? |
 | Interactions | How does it combine with constraints, patterns, blocks, results, imports, and examples? |
+| Orthogonal impact | Does it affect source text, formatting, diagnostics/events, accessibility, security/redaction, compatibility/migration, tooling/frontend, package/docs, or host capabilities? |
 | Rejected alternatives | Which attractive spellings or models are refused, and why? |
 | Implementation slice | What parser, lowering, runtime, test, docs, and sample work is needed? |
 | Current status | Is it implemented, partial, prototype-ready, design-needed, library-first, future, research-only, or rejected? |
 
 If a proposed feature cannot fill this packet, keep it in research or in a
 target fixture until the missing piece is known.
+
+For cross-cutting costs, use
+[Orthogonal Language Feature Coverage](../research/orthogonal_language_feature_coverage.md).
+Small features may answer "none" for most orthogonal rows, but promoted syntax
+should not leave diagnostics, formatting, migration, security, or frontend
+exposure implicit.
 
 ## Cognitive Act Map
 

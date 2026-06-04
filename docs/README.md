@@ -66,6 +66,9 @@ Concrete project, process, and tooling docs.
 - [Technical Implementation Improvement Notes](orientation/technical_implementation_improvement_notes.md):
   current high-impact scan across parser, runtime, web, contracts, host
   capabilities, and generated artifacts.
+- [Project Improvement Review 2026-06-03](orientation/project_improvement_review_2026_06_03.md):
+  dated evidence from the latest full-repo scan; durable action items are
+  folded into [Implementation Todos](language/implementation_todos.md).
 - [VS Code Extension](orientation/vscode_extension.md): local extension
   surface and roadmap.
 - [RAG MCP Context](orientation/rag_mcp.md): local retrieval and MCP scaffold
@@ -219,6 +222,7 @@ seed focused syntax sections. When a research idea becomes stable, fold it into
 | [Research Notes Synthesis](research/research_notes_synthesis.md), [Spec Readiness Map](language/spec_readiness_map.md) | Layering and promotion history. | [Implementation Todos](language/implementation_todos.md), focused feature docs |
 | [Language Family Coverage Map](research/language_family_coverage_map.md), [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md), [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md) | Cross-language comparison. | [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md), focused convenience docs |
 | [Overlooked Language Design Dimensions](research/overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, migration, governance, localization. | [Language Specification](language/language_spec.md), [Design Proposal Template](language/design_proposal_template.md), explanation-event feature |
+| [Orthogonal Language Feature Coverage](research/orthogonal_language_feature_coverage.md) | Cross-cutting design surfaces: formatting, diagnostics, accessibility, observability, packages, capabilities, secrets, interop, migration, governance, conformance, editor UX. | Feature-packet orthogonal impact rows, explanation-event feature, package/tooling docs |
 | [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md), [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md) | Rejected/deferred pressure and simplification ideas. | [Convenience Review And Roadmap](convenience/review_and_roadmap.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
 
 ## Notes

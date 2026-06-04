@@ -80,6 +80,88 @@ When they produce a stable decision, fold that decision into a foundation,
 spec, feature, or convenience syntax doc, then leave the source document as
 background.
 
+## Forward Design Coherence Review: 2026-06-03
+
+Nomi's forward design should now be judged less by whether each proposed
+feature is attractive and more by whether the whole language feels like one
+remembered instrument. The promising center is clear:
+
+```text
+values enter -> names and constraints make them local -> data gives them
+shape -> patterns choose by shape -> functions transform -> flow composes
+transforms -> blocks manage time and authority -> explanation shows what
+happened
+```
+
+The language should not optimize for maximum syntactic charm. It should
+optimize for a calm climb:
+
+```text
+first-hour script
+-> checked script
+-> small domain model
+-> external data boundary
+-> readable transformation
+-> expected failure handling
+-> explainable policy blocks
+```
+
+This climb is the forward-looking design test. A feature is harmonious when it
+makes one rung easier without forcing the user to switch mental models.
+
+### Feature-Family Review
+
+| Family | Forward role | Harmonious integration comment |
+| --- | --- | --- |
+| Binding and constraints | The language's local truth surface. | This should be the first design pillar to harden. If assignment, parameters, data fields, pattern captures, imports, and block params do not feel like one operation, every later feature will fork the language. |
+| Data and decode | The bridge from messy world values to owned program meaning. | `data` should remain owned-domain data, while `decode` owns external provenance, defaults, redaction, and field paths. Avoid a peer schema/config language unless it visibly reduces to data plus binding. |
+| Patterns and match | The choice surface for structure. | Patterns should recognize shape and bind names; they should not become hidden function calls or validation engines. Constraint failure and pattern failure may both skip a case, but explanation must remember which happened. |
+| Functions and calls | The everyday transformation model. | `func`, arrows, equations, holes, composition, and sections must form a teaching ladder, not a menu. First-hour Nomi should show `func` and simple arrows; convenience forms belong after the reader already understands calls. |
+| Flow and collections | The readable path through many values. | Pipelines are safe because they are visible calls. Table/query syntax should wait until row, group, aggregate, laziness, and plan explanation are designed as binding and explanation problems, not as clever punctuation. |
+| Absence, result, and exceptions | The non-success taxonomy. | Keep `none`, `Result`, pattern non-match, constraint failure, decode failure, and exceptions distinct in the user's vocabulary. Collapsing them behind one operator would be convenient locally and harmful globally. |
+| Blocks and policies | The model for time-shaped behavior. | A block is caller-side code attached to a call. `using`, `retry`, `transaction`, `trace`, `test`, and future concurrency should feel like policies over the same block mechanism, not unrelated control keywords. |
+| Explanation and examples | The language's trust surface. | Explanation should be designed as core product behavior. Diagnostics, examples, traces, decode paths, query plans, and AI-readable events need one vocabulary with source spans, values, rules, and redaction. |
+| Modules, packages, and interop | The growth boundary. | Nomi's first ecosystem advantage is Python interop, but interop should be a boundary, not a semantic escape hatch. Imports, exports, package layout, and foreign calls should preserve Nomi's binding and diagnostic story. |
+| Advanced layers | The future power surface. | Quote/rewrite, dense array notation, effects, capabilities, scoped notation, and symbolic computation can be valuable only if fenced. They should not change the visual culture of ordinary programs. |
+
+### Harmonic Design Tests
+
+Before a forward-looking feature becomes spec-ready, ask these questions:
+
+1. Does it help the small-script-to-domain-model climb?
+2. Which normal form owns it, and can a beginner recognize that owner?
+3. What names does it introduce, and where are they visible?
+4. What failure kind can happen, and is it distinct from nearby failures?
+5. Can `explain` show the user's concept rather than implementation machinery?
+6. Does it remove a repeated everyday burden, or only make an expert example
+   prettier?
+7. Does it compose with `data`, `match`, pipelines, block policies, and
+   examples without adding a second local dialect?
+8. Can it begin as a library function, data value, policy, or plan before
+   syntax is admitted?
+
+If the answer is unclear, keep the idea as a target fixture or design-needed
+feature. Nomi's forward design should preserve possibility without letting
+possibility masquerade as language shape.
+
+### Most Important Design Packets
+
+The next design work should be feature packets, not another broad synthesis.
+Write these in this order:
+
+1. **Failure taxonomy:** one teaching model for `none`, `Result`, exceptions,
+   pattern failure, constraint failure, and decode failure.
+2. **Data decode boundary:** provenance, defaults, optional fields, extra
+   fields, redaction, merge policy, and collect-all-errors versus fail-fast.
+3. **Explanation event model:** the record shape shared by diagnostics,
+   examples, traces, decode, match, pipelines, blocks, and tooling.
+4. **Collection/table vocabulary:** ordinary verbs and plan values before row
+   shorthand or query syntax.
+5. **Block policy prelude:** `using`, `retry`, `transaction`, `trace`, and
+   `test` as one family with explicit body/policy/cleanup failure behavior.
+6. **First-hour Nomi:** the tiny teaching path that proves the language can be
+   learned before the full normal-form map appears.
+
 ### Docs To Consolidate First
 
 | Current source | Keep as | Consolidate into |

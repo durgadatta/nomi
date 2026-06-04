@@ -72,6 +72,28 @@ findings below as an evolvability contract:
 Use the evolvability review as the project-wide gate; use this audit for the
 concrete code seams and TODO anchors.
 
+## Consolidation Refresh: 2026-06-03
+
+A full repo scan confirmed that the implementation is green and not suffering
+from severe tracked AI-slop: full pytest passed, web/runtime checks passed,
+agent infrastructure passed, and generated/local state is ignored. The sharper
+risk is authority drift. Existing infrastructure can sound more complete than
+it is when derived capability rows, partial Core IR, browser execution, and
+polished docs are read as proof of language readiness.
+
+Keep the next implementation pass focused on these concrete seams:
+
+- make `FeatureCapabilityAxes` explicit for promoted/user-facing features
+  instead of relying on lifecycle-derived defaults;
+- move `BindingTarget`, `DataDecl`, `MatchExpr`, and `PipeExpr` toward passive
+  Surface nodes before adding richer syntax;
+- wire one real diagnostic/event family, starting with binding constraints,
+  before each feature invents a private failure shape;
+- expand the WASM/JS parity matrix by feature packet and replace raw-string
+  Rust payload clusters with typed payload nodes;
+- keep dated scans as evidence only, with durable tasks folded into
+  `implementation_todos.md`.
+
 ## High-Priority Findings
 
 | Area | Finding | Risk | Central TODO |

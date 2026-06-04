@@ -726,10 +726,11 @@ These raw clusters are rich enough to deserve dedicated notes later:
   description logic, resolution, unification.
 - Array-language line: APL/J/K/Q/Shakti, rank, shape, function-level style.
 
-## Deep Dive Index (May 2026)
+## Deep Dive Index
 
-Cross-language comparative research added in the May 2026 expansion. Each file
-focuses on synthesis across languages rather than single-language catalogues:
+Cross-language comparative research added in the May 2026 expansion and later
+follow-up passes. Each file focuses on synthesis across languages or
+cross-cutting dimensions rather than single-language catalogues:
 
 - [array_languages_deep_dive.md](array_languages_deep_dive.md) — APL, J, K, Q, BQN, Uiua: rank polymorphism, trains, combinators, tacit programming.
 - [beam_languages_erlang_elixir_gleam.md](beam_languages_erlang_elixir_gleam.md) — Erlang/Elixir/Gleam: OTP, supervision trees, let-it-crash, pattern matching, `use` expression.
@@ -751,8 +752,12 @@ focuses on synthesis across languages rather than single-language catalogues:
 - [deployment_and_operations_deep_dive.md](deployment_and_operations_deep_dive.md) — 10-system deployment survey: Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew.
 - [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) — 10-dimension security survey: Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction.
 - [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) — 10-system toolability survey: LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing.
+- [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md) — source text, accessibility, compatibility, governance, localization, and docs versioning.
+- [orthogonal_language_feature_coverage.md](orthogonal_language_feature_coverage.md) — cross-cutting feature surfaces that constrain normal forms: formatting, diagnostics, observability, packages, capabilities, secrets, interop, migration, governance, conformance, editor UX.
 
-For the updated coverage status, see
+For the updated coverage status, use
+[language_family_coverage_map.md](language_family_coverage_map.md) as the
+canonical index.
 
 ## Guardrail Against Rabbit Holes
 

@@ -45,6 +45,34 @@ For test-suite organization before moving files or adding markers, see
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 
+## Current Consolidated Priority: 2026-06-03
+
+The latest full-repo improvement scan is preserved as dated evidence in
+[`project_improvement_review_2026_06_03.md`](../orientation/project_improvement_review_2026_06_03.md).
+Do not treat that review as a second backlog. Fold durable actions here and use
+this section as the next implementation queue until these items are absorbed
+into their normal tracks.
+
+| Priority | Work package | Why now | Home track |
+| --- | --- | --- | --- |
+| 1 | Capability matrix truth pass | `inspect --stage capabilities` exists, but many user-facing axes are still derived/defaulted rather than explicit feature facts. | Track 0A |
+| 2 | Passive `BindingTarget` surface slice | Binding is the shared pressure behind assignments, parameters, data fields, pattern captures, imports, and block params. | Track 0A |
+| 3 | First real diagnostic/event family | `ExecutionResult`, diagnostics, and events exist, but every feature still reports `explain: no`; binding constraints are the best first producer. | Track 0B |
+| 4 | Browser parity expansion | The web default uses Rust/WASM plus JS Core Runtime, so typed payload parity must keep it from becoming a second language. | Track 0D |
+| 5 | Setup and agent hygiene polish | Only low-grade slop remains: unanchored setup TODOs, local generated clutter, and RAG rebuild habit after doc/code edits. | Track 10 |
+
+Acceptance for the next pass:
+
+- promoted features do not rely on defaulted capability axes for docs, samples,
+  web, notebook, diagnostics, or spec status;
+- at least one name-introduction path can be represented through a passive
+  `BindingTarget` without changing broad runtime behavior;
+- one binding-constraint failure emits structured diagnostic/event data rather
+  than only exception text;
+- browser parity gaps are named capability gaps, not anonymous lowerer misses;
+- new dated reviews either retire an older review or fold actions back into
+  this backlog.
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the

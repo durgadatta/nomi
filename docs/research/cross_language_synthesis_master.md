@@ -1,10 +1,11 @@
 # Cross-Language Synthesis: The Capstone
 
-> Status: capstone research synthesis.  This document draws on all 13 research
-> files in `docs/research/` and the active Nomi design docs to produce a single
-> decision surface.  It names what every language family converges on, what
-> genuinely cannot be unified, what breaks when features combine, and how Nomi
-> resolves each tension into a coherent design.
+> Status: capstone research synthesis.  This document draws on the research
+> corpus and the active Nomi design docs to produce a single decision surface.
+> It names what language families converge on, what genuinely cannot be
+> unified, what breaks when features combine, and how Nomi resolves each
+> tension into a coherent design. For the current file-by-file coverage map,
+> see [Language Family Coverage Map](language_family_coverage_map.md).
 >
 > Companion docs: [Language Foundation](../language/language_foundation.md)
 > (canonical design), [Language Design Dimensions](../language/language_design_dimensions.md)

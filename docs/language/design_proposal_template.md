@@ -90,6 +90,10 @@ Compare at least three nearby precedents when possible.
 
 Use [Language Family Coverage Map](../research/language_family_coverage_map.md)
 to avoid missing an obvious tradition.
+Use [Orthogonal Language Feature Coverage](../research/orthogonal_language_feature_coverage.md)
+when the proposal touches source text, formatting, diagnostics, accessibility,
+observability, packages, host capabilities, secrets, interop, compatibility,
+governance, conformance, editor UX, notebooks, or deployment profiles.
 
 If the proposal revives an idea from `docs/drafts/` or a large research note,
 answer this promotion checklist:
@@ -211,7 +215,27 @@ Include at least:
 - [ ] Does not make the larger
       [Target Language Tour](target_language_tour.md) less coherent.
 
-## 11. Documentation Changes
+## 11. Orthogonal Impact
+
+Most proposals should have small answers here. The point is to catch hidden
+global costs before local syntax hardens.
+
+```text
+Source text / Unicode:
+Formatter:
+Diagnostics / events:
+Accessibility:
+Security / redaction:
+Compatibility / migration:
+Tooling / frontend:
+Package / docs:
+Host capabilities:
+```
+
+If any row needs a substantial answer, link the relevant source note, feature
+packet, or acceptance check.
+
+## 12. Documentation Changes
 
 List docs that would need updates:
 
@@ -223,7 +247,7 @@ List docs that would need updates:
 - `docs/language/target_language_tour.md`
 - examples or samples, only after implementation
 
-## 12. Acceptance Bar
+## 13. Acceptance Bar
 
 Choose one:
 
@@ -257,6 +281,8 @@ Status:
 ## Degree Of Freedom
 
 ## Diagnostics
+
+## Orthogonal Impact
 
 ## Alternatives
 

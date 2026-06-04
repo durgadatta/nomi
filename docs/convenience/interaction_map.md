@@ -59,6 +59,78 @@ The practical test is whether a feature can answer these six questions:
 5. Can `explain` show the expansion and source path?
 6. What attractive alternative is rejected to preserve coherence?
 
+## Harmonious Integration Notes
+
+Nomi's feature families should relate like a small set of chords, not like a
+catalogue of favorite language moments. Each family should give the next one a
+stable handoff:
+
+```text
+binding gives names to data
+data gives structure to patterns
+patterns give choices to functions
+functions give stages to flow
+flow gives context to results
+results give cases to patterns
+blocks give policy to calls
+explanation gives trust to all of them
+```
+
+The desired effect is not minimalism for its own sake. It is memorability. A
+programmer should be able to leave Nomi for a month, return to a medium-sized
+program, and recover the meaning by asking the same few questions everywhere:
+
+```text
+What value is this?
+Where is it bound?
+What was checked?
+What shape was recognized?
+What transform ran?
+What policy owns this block?
+What kind of failure is this?
+What can explain it?
+```
+
+### Integration Comments By Pillar
+
+| Pillar | What it should harmonize with | Comment |
+| --- | --- | --- |
+| Binding | Data, patterns, imports, block params, examples | Binding is the keystone. Every feature that introduces a name should reuse tentative bind, check, commit, diagnose. Special binding rules are the fastest way to make Nomi feel like multiple languages. |
+| Data boundary | Binding, result, explanation, security | Decode should be the visible crossing from outside mess to inside meaning. Provenance and redaction are not optional polish; they are what make data boundaries trustworthy. |
+| Pattern | Binding, result, data, flow | Pattern matching should be structural choice, not disguised exception handling. It can route `Ok`/`Err`, destructure data, and filter collections, but explanation must preserve why a case did or did not apply. |
+| Function | Binding, pattern, flow | Function convenience must be tiered. `func` and arrows teach the model; holes and equations compress obvious cases; composition is for reusable transforms. Do not teach all forms at once. |
+| Flow | Function, collection, result, explanation | Flow should stay a readable sequence of ordinary transformations. Query/table power should grow from verbs and plan values before it grows new syntax. |
+| Absence/result | Pattern, flow, decode, blocks | Absence is not expected failure, expected failure is not exception, and pattern non-match is not a failed constraint. The language can offer shortcuts only after those distinctions are teachable. |
+| Block | Function, result, capability, explanation | Block policies are powerful because they keep time-shaped behavior local. They become dangerous if cancellation, cleanup, retry, and authority are hidden behind pleasant syntax. |
+| Explanation | All feature families | Explanation is the integration layer. A feature that cannot emit a source-spanned event with rule, value summary, failure kind, and redaction policy is not yet harmonious. |
+
+### Cross-Feature Pressure Points
+
+| Pressure point | Why it is delicate | Harmonious path |
+| --- | --- | --- |
+| `data` plus `decode` plus `Result` | Boundary code wants construction, validation, provenance, and failure all at once. | Decode returns `Result` with structured diagnostics; data constructors stay about owned values. |
+| `match` plus constraints | A case can structurally match while a captured value fails a constraint. | The control surface may skip the case, but explanation records shape-match versus constraint-reject. |
+| Pipelines plus placeholders | `_` is pleasant until it hides scope or fights row/group binding. | Allow `_` for one obvious receiver; require named parameters or named row scopes once transforms get domain meaning. |
+| Blocks plus errors | Body, policy, cleanup, retry, and cancellation can each fail. | Block-policy specs must name which failure wins and how suppressed/secondary failures are explained. |
+| Query/table syntax plus plans | Lazy/eager behavior, optimization, grouping, and row scope are easy to hide. | Start with explicit verbs and plan values; add syntax only when explanation can show row/group bindings. |
+| Examples plus IO/time/randomness | Examples are most useful when executable, but real programs touch unstable sources. | Examples need fixture/capability policy and redaction, not a separate doctest mini-language. |
+
+### Refusal Notes
+
+These refusals protect harmony even when the rejected idea is attractive:
+
+- Do not add a second validation or schema language beside `data`, constraints,
+  patterns, and decode.
+- Do not let one `?`-shaped family blur absence, expected failure, exceptions,
+  pattern failure, and constraint failure.
+- Do not add row shorthand until row and group binding are explicit.
+- Do not promote symbolic or macro-like power without an expansion view and a
+  scope fence.
+- Do not teach holes, equations, sections, composition, and point-free style in
+  the first-hour path.
+- Do not let block calls become a basket for every control idea without a
+  shared failure and cancellation model.
+
 ## Friction Patterns To Watch
 
 These are the recurring conflicts that should trigger extra review before a
