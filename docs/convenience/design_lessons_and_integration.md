@@ -857,8 +857,9 @@ reduces to Nomi's Y normal form, and here's how it interacts with Z."
 
 ## 10. Combining Interface And Advanced Feature Notes
 
-The three newest research passes cover one shared design problem from three
-angles: world contact, internal abstraction, and representation boundaries.
+The four newest research passes cover one shared design problem from four
+angles: world contact, internal abstraction, representation boundaries, and
+human-facing interaction surfaces.
 
 - [Everyday Interface Languages](../research/everyday_interface_languages_deep_dive.md)
   studies computation at world boundaries: shells, spreadsheets, Make, jq, CSS
@@ -871,11 +872,19 @@ angles: world contact, internal abstraction, and representation boundaries.
   studies representation boundaries: f-strings, tagged templates, Jinja,
   Terraform/HCL, TOML, YAML, JSON, JSON Schema, Protobuf, Avro, and adjacent
   schema/code generation systems.
+- [Human-Computer Interface Languages](../research/human_computer_interface_languages_deep_dive.md)
+  studies forms, menus, command palettes, direct manipulation, notebooks,
+  visual editors, design canvases, accessibility APIs, chat/agent panes,
+  gestures, and workflow UIs.
 
 They should not become separate feature tracks. The useful combination is:
 
 ```text
-world boundary
+human intention
+  -> text/UI/agent affordance
+  -> command or binding value
+  -> preview/accessibility rendering
+  -> world boundary
   -> capability
   -> representation source/sink
   -> codec/template policy
@@ -897,6 +906,7 @@ The combined model has one main path:
 
 | Step | Interface pressure | Advanced feature pressure | Nomi combination |
 | --- | --- | --- | --- |
+| Human affordance | forms, menus, gestures, palettes, chat prompts, notebooks | command values, accessibility, undo/replay, agent planning | UI as projection over bindings, commands, capabilities, and events |
 | World contact | files, commands, URLs, cells, targets | capabilities, effects, Go context | capability-marked world values |
 | Representation | JSON, YAML, TOML, templates, commands, SQL, protobuf, Avro | typed sinks, codecs, schema export, code generation | typed sinks and codec registry |
 | Boundary contract | OpenAPI, GraphQL schema, Excel table, JSON Schema, JSON path | contracts, property wrappers, opaque values | `decode` plus constraints and provenance |
@@ -909,8 +919,9 @@ The combined model has one main path:
 | Reuse | workbook functions, OpenAPI clients, tasks | modules, macros/derive, protocols | modules plus fenced derivation |
 
 The important design choice: interface features enter through **world contact
-and data boundaries**, while advanced features enter through **explicit
-policies and reusable plans**. Neither path gets to bypass explanation.
+and data boundaries**, UI features enter through **commands, bindings, and
+events**, while advanced features enter through **explicit policies and
+reusable plans**. No path gets to bypass explanation.
 
 ### 10.2 A Single Example Pipeline
 
@@ -1039,6 +1050,23 @@ OpenAPI, protobuf, Avro, GraphQL SDL, and database schemas can generate adapters
 but the adapter should end at `decode`, `encode`, constraints, and explainable
 module exports.
 
+**UI controls + commands + accessibility**
+
+Human-facing interfaces should be projections over the semantic core. Forms,
+menus, command palettes, gestures, notebooks, visual graphs, and agent panes
+should produce binding values, command values, capability requests, and
+semantic events.
+
+```text
+UI affordance -> command/binding value -> capability/constraint -> event
+event -> text | JSON | notebook | visual graph | accessibility tree
+```
+
+This keeps useful direct manipulation and chat interaction without creating a
+hidden UI-only language. A shortcut is an alias for a command. A slider is a
+bound value. A visual graph is a view of a flow plan. An agent prompt proposes
+explicit artifacts; it is not itself the committed program.
+
 **Selectors + patterns + paths**
 
 CSS selectors, jq paths, GraphQL selections, and active patterns all name parts
@@ -1123,17 +1151,21 @@ Use these rules when turning the research notes into feature packets:
    Raw strings are acceptable only for plain text. HTML, SQL, shell commands,
    URLs, JSON, YAML, TOML, CSV, HTTP bodies, and binary wire formats need a
    named sink or codec policy before interpolation is accepted.
-5. **Implicit context waits for explanation.**
+5. **UI is a projection, not a private semantics layer.**
+   Forms, menus, command palettes, gestures, notebooks, visual graphs, and
+   agent panes must reduce to bindings, commands, capabilities, and events.
+   Every visual affordance needs a text/keyboard/accessibility equivalent.
+6. **Implicit context waits for explanation.**
    No hidden dependency resolution until the event model can show what was
    required, where it came from, and why ambiguity failed.
-6. **No feature owns a private failure vocabulary.**
+7. **No feature owns a private failure vocabulary.**
    Process failure, decode failure, blocked output, contract failure,
    cancellation, timeout, missing path, and HTTP failure are distinct members
    of one taxonomy.
-7. **Advanced power is fenced by profile and expansion.**
+8. **Advanced power is fenced by profile and expansion.**
    Macros, scoped notation, protocol derivation, effect handlers, module
    functors, and dense flow plans require explicit status and inspection.
-8. **The long form remains teachable.**
+9. **The long form remains teachable.**
    Every accepted short form must reduce to a form a first-year Nomi user can
    read: binding, function call, pattern, flow, block policy, or data boundary.
 
@@ -1156,22 +1188,30 @@ The combined notes point to this implementation/design sequence:
    - typed sinks for HTML, SQL, shell commands, URLs, and HTTP bodies;
    - config layering from defaults, files, env, CLI, and secrets;
    - schema import/export for JSON Schema, OpenAPI, protobuf, and Avro.
-4. **Flow and selector packet**
+4. **Command and UI projection packet**
+   - command values with names, inputs, capabilities, preview, run, and event
+     schema;
+   - form/control bindings that decode and validate through normal data
+     boundaries;
+   - command-palette and shortcut aliases over commands;
+   - accessible text/JSON/event renderings for every explanation surface;
+   - agent plan/preview/replay contracts.
+5. **Flow and selector packet**
    - shared verbs;
    - selectors/projections over structured values;
    - cardinality and materialization rules.
-5. **Block policy prelude**
+6. **Block policy prelude**
    - `using`, `retry`, `timeout`, `transaction`, `parallel`, `trace`;
    - cleanup, cancellation, and `Result` interaction.
-6. **Extension/module packet**
+7. **Extension/module packet**
    - receiver-call sugar;
    - module-owned extension functions;
    - import/export visibility;
    - future protocol hooks.
-7. **Derivation/macro gate**
+8. **Derivation/macro gate**
    - built-in derivations first;
    - user macros only after expansion/source-map tooling.
-8. **Flow plans and package-scale reuse**
+9. **Flow plans and package-scale reuse**
    - reusable transformations;
    - task graphs;
    - OpenAPI-generated clients;
@@ -1189,6 +1229,7 @@ normal form before syntax hardens.
 - `docs/research/everyday_interface_languages_deep_dive.md` — Unix shell, PowerShell, Excel, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI
 - `docs/research/remaining_language_feature_gap_survey.md` — traits/protocols, context, effects/capabilities, state, contracts, macros, modules, structured concurrency, flow plans
 - `docs/research/interpolation_config_serialization_deep_dive.md` — f-strings, tagged templates, Jinja, Terraform/HCL, TOML, YAML, JSON, JSON Schema, Protobuf, Avro
+- `docs/research/human_computer_interface_languages_deep_dive.md` — forms, menus, command palettes, direct manipulation, notebooks, visual editors, accessibility APIs, chat/agent panes, gestures, workflow UIs
 - `docs/research/concatenative_languages.md` — Forth, Factor, Joy, Kitten, Cat
 - `docs/research/array_languages_deep_dive.md` — APL, J, K, BQN, Uiua
 - `docs/research/scientific_languages_r_matlab_julia.md` — MATLAB, R, Julia

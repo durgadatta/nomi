@@ -79,16 +79,17 @@ language definition.
 
 ## Research Corpus (May/June 2026)
 
-The project has a substantial cross-language research corpus — 26 deep-dive
-files surveying 70+ languages and systems across 16 language families,
-interface surfaces, representation boundaries, and 8 cross-cutting dimensions.
+The project has a substantial cross-language research corpus — 27 deep-dive
+files surveying 80+ languages and systems across 16 language families,
+interface surfaces, representation boundaries, human-computer interaction
+surfaces, and 8 cross-cutting dimensions.
 Before doing new research, check whether the question is already answered here.
 
 **Navigation entry points:**
 
 - `docs/research/language_family_coverage_map.md` — the index of indices. Use
   this FIRST when starting any research task. It contains: the coverage table
-  (16 families with lessons, Nomi use, caveats), the deep dive index (26 files
+  (16 families with lessons, Nomi use, caveats), the deep dive index (27 files
   with line counts), and coverage priorities (what's done, what's next).
 - `docs/research/cross_language_synthesis_master.md` — the capstone synthesis.
   8 universal convergences, 8 genuine design forks, 7 hidden incompatibilities,
@@ -129,6 +130,7 @@ Adopt/Refuse/Adapt tables):
 | Everyday interfaces | `everyday_interface_languages_deep_dive.md` | Unix shell, PowerShell, Excel formulas, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI |
 | Remaining feature gaps | `remaining_language_feature_gap_survey.md` | Rust, Swift, Kotlin, Scala 3, OCaml, Racket, Clojure, Koka, Go, Java, Pony |
 | Representation boundaries | `interpolation_config_serialization_deep_dive.md` | Python f-strings, JavaScript templates, Jinja, Terraform/HCL, JSON, YAML, TOML, JSON Schema, Protocol Buffers, Avro |
+| Human-computer interfaces | `human_computer_interface_languages_deep_dive.md` | Forms, menus, command palettes, direct manipulation, notebooks, visual editors, accessibility APIs, chat/agent panes, gestures, workflow UIs |
 
 **How to use the research corpus:**
 
@@ -269,7 +271,7 @@ Read the smallest relevant set before changing docs or making recommendations.
 
 **Research corpus (use before doing new research):**
 - `docs/research/language_family_coverage_map.md` — START HERE: index of all
-  26 deep dives, coverage table, remaining gaps.
+  27 deep dives, coverage table, remaining gaps.
 - `docs/research/cross_language_synthesis_master.md` — capstone synthesis:
   convergences, forks, incompatibilities, Nomi resolution per normal form.
 - `docs/research/research_notes_synthesis.md` — earlier synthesis with

@@ -73,9 +73,10 @@ Start with these files before broad design or implementation changes:
 - `docs/convenience/design_lessons_and_integration.md`: design synthesis, systemic patterns, and integration critique.
 - `docs/convenience/absence_and_result.md`: absence, result, and error handling design.
 - `docs/research/language_family_coverage_map.md`: index of the full research
-  corpus — 26 deep dives across 16 language families, interface surfaces,
-  representation boundaries, and cross-cutting dimensions. Start here before
-  doing new cross-language research.
+  corpus — 27 deep dives across 16 language families, interface surfaces,
+  representation boundaries, human-computer interaction surfaces, and
+  cross-cutting dimensions. Start here before doing new cross-language
+  research.
 - `docs/research/cross_language_synthesis_master.md`: capstone synthesis —
   8 convergences, 8 design forks, 7 hidden incompatibilities, Nomi resolution
   per normal form.

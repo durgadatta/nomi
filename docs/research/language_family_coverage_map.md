@@ -45,6 +45,7 @@ adoption-facing steering layer, see
 | Concatenative / stack languages | Forth, Factor, Joy, Kitten, Cat | Point-free composition, stack effect declarations, combinators (dip/dup/swap/bi), quotations | pipeline `\|>` and composition `>>` operators, block values, where: bindings | Stack shuffling as a daily programming model is too cognitive-load heavy. See [concatenative_languages.md](concatenative_languages.md) for full survey. |
 | Numerical/scientific languages | Julia, R, MATLAB, Mathematica | Notebooks, broadcasting, multiple dispatch, symbolic/math workflows, formula interfaces | data notebooks, dispatch research, explicit symbolic boundaries, table column-name scoping | Domain power may conflict with general-purpose readability. See also [scientific_languages_r_matlab_julia.md](scientific_languages_r_matlab_julia.md) for R formulas, tidy eval, Julia broadcasting, MATLAB array model. |
 | Shell/workflow/interface/representation languages | Bash, PowerShell, Nushell, Make, Just, Excel, jq, CSS selectors, GraphQL, HTTP/OpenAPI, templates, config, codecs | Process orchestration, structured pipelines, grid formulas, selectors, dependency graphs, API boundaries, typed sinks, codecs | CLI/process standard library, structured flow, task fixtures, API/data boundary design, serialization/config policy | Interface convenience often relies on stringly or hidden boundaries. See [everyday_interface_languages_deep_dive.md](everyday_interface_languages_deep_dive.md) and [interpolation_config_serialization_deep_dive.md](interpolation_config_serialization_deep_dive.md). |
+| Human-computer interface languages | Forms, menus, command palettes, direct manipulation, notebooks, visual editors, accessibility trees, chat/agent panes, gestures, workflow UIs | Affordance, feedback, reversibility, accessibility, state visibility, command discovery, UI-as-projection | command registry, explain/event renderers, UI controls as bindings, accessible diagnostics, agent preview/replay | UI can become a hidden second language unless every action reduces to command values, bindings, capabilities, and events. See [human_computer_interface_languages_deep_dive.md](human_computer_interface_languages_deep_dive.md). |
 | Configuration languages | CUE, Nickel, Pkl, Dhall, Nix, Terraform/HCL, JSON Schema | Declarative data, constraints, defaults, merge, provenance, reproducibility | explicit decode, config merge, field paths, redaction, package/build lessons | Config can become a separate field language unless folded into `data` and boundaries. |
 | Proof/research languages | Coq, Lean, Idris, Agda, Koka, Eff, Flix, Unison | Effects, proofs, algebraic handlers, abilities, totality, typed holes | future capability/effect layer, examples as checks, explanation discipline | Proof and effect machinery must not be required for ordinary scripts. |
 | Educational languages | Logo, Scratch, Racket teaching languages, BASIC, Pascal | First-hour success, visible state, simple errors, pedagogy | first-hour Nomi path and beginner diagnostics | Simplicity can become a ceiling if not layered. |
@@ -81,6 +82,7 @@ Individual-language, cross-cutting, and orthogonal research notes:
 | [everyday_interface_languages_deep_dive.md](everyday_interface_languages_deep_dive.md) | Unix shell, PowerShell, Excel formulas, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI -- interface-bound computation, world contact, pipelines, schemas, dependency graphs | ~766 |
 | [remaining_language_feature_gap_survey.md](remaining_language_feature_gap_survey.md) | Rust, Swift, Kotlin, Scala 3, OCaml, Racket, Clojure, Koka, Go, Java, Pony -- extension/protocol dispatch, context, effects/capabilities, state, contracts, macros, module values, structured concurrency, flow plans | ~775 |
 | [interpolation_config_serialization_deep_dive.md](interpolation_config_serialization_deep_dive.md) | Python f-strings, JavaScript templates, Jinja, Terraform/HCL, JSON, YAML, TOML, JSON Schema, Protocol Buffers, Avro -- typed sinks, config layering, codecs, schemas, representation boundaries | ~487 |
+| [human_computer_interface_languages_deep_dive.md](human_computer_interface_languages_deep_dive.md) | Forms, menus, command palettes, direct manipulation, notebooks, visual programming, design canvases, accessibility APIs, chat/agent interfaces, gestures -- UI as projection over commands, bindings, capabilities, and events | ~859 |
 | [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, editions, migration, governance, localization | ~250 |
 | [orthogonal_language_feature_coverage.md](orthogonal_language_feature_coverage.md) | Cross-cutting feature surfaces: formatting, diagnostics, accessibility, observability, packages, capabilities, secrets, serialization, interop, migration, governance, conformance, editor UX | ~216 |
 
@@ -247,9 +249,10 @@ should carry this work.
 ## Coverage Priorities
 
 Completed (May 2026, refreshed June 2026): All 8 priority dimensions are now
-researched. The research corpus spans 26 deep-dive files covering language
+researched. The research corpus spans 27 deep-dive files covering language
 families, cross-cutting design dimensions, interface/representation languages,
-and synthesis across 70+ language/system sources.
+human-computer interaction surfaces, and synthesis across 80+ language/system
+sources.
 
 The next phase is consolidation into design artifacts:
 

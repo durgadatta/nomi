@@ -101,10 +101,11 @@ before convenience syntax hardens.
 
 ## Research Sources
 
-The cross-language research corpus lives in `../research/` — 26 deep-dive files
-surveying 70+ languages/systems across 16 language families, interface
-surfaces, representation boundaries, and cross-cutting dimensions. Each deep
-dive includes a cross-language synthesis and a Nomi Adopt/Refuse/Adapt table.
+The cross-language research corpus lives in `../research/` — 27 deep-dive files
+surveying 80+ languages/systems across 16 language families, interface
+surfaces, representation boundaries, human-computer interaction surfaces, and
+cross-cutting dimensions. Each deep dive includes a cross-language synthesis
+and a Nomi Adopt/Refuse/Adapt table.
 
 Start with the index: [../research/language_family_coverage_map.md](../research/language_family_coverage_map.md)
 
