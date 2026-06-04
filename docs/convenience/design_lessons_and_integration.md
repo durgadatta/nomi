@@ -855,11 +855,340 @@ Language X — it's whether it works *with Nomi's specific primitives and
 existing features*.  Fix: replace "X does this" with "X does this, which
 reduces to Nomi's Y normal form, and here's how it interacts with Z."
 
-## 10. References
+## 10. Combining Interface And Advanced Feature Notes
+
+The three newest research passes cover one shared design problem from three
+angles: world contact, internal abstraction, and representation boundaries.
+
+- [Everyday Interface Languages](../research/everyday_interface_languages_deep_dive.md)
+  studies computation at world boundaries: shells, spreadsheets, Make, jq, CSS
+  selectors, GraphQL, HTTP, and OpenAPI.
+- [Remaining Language Feature Gap Survey](../research/remaining_language_feature_gap_survey.md)
+  studies internal language power: traits/protocols, context parameters,
+  capabilities/effects, state, contracts, macros, module values, structured
+  concurrency, and flow plans.
+- [Interpolation, Config, And Serialization Languages](../research/interpolation_config_serialization_deep_dive.md)
+  studies representation boundaries: f-strings, tagged templates, Jinja,
+  Terraform/HCL, TOML, YAML, JSON, JSON Schema, Protobuf, Avro, and adjacent
+  schema/code generation systems.
+
+They should not become separate feature tracks. The useful combination is:
+
+```text
+world boundary
+  -> capability
+  -> representation source/sink
+  -> codec/template policy
+  -> decode/contract
+  -> owned data
+  -> pattern/selector
+  -> flow plan
+  -> block policy
+  -> explanation event
+  -> reusable module/API
+```
+
+That sequence lets Nomi absorb practical interface work and advanced language
+ideas without adding a second local dialect.
+
+### 10.1 The Combined Normal Form
+
+The combined model has one main path:
+
+| Step | Interface pressure | Advanced feature pressure | Nomi combination |
+| --- | --- | --- | --- |
+| World contact | files, commands, URLs, cells, targets | capabilities, effects, Go context | capability-marked world values |
+| Representation | JSON, YAML, TOML, templates, commands, SQL, protobuf, Avro | typed sinks, codecs, schema export, code generation | typed sinks and codec registry |
+| Boundary contract | OpenAPI, GraphQL schema, Excel table, JSON Schema, JSON path | contracts, property wrappers, opaque values | `decode` plus constraints and provenance |
+| Owned shape | rows, JSON objects, API responses | `data`, protocols, module signatures | owned `data` values and explicit exports |
+| Selection | jq paths, CSS selectors, GraphQL fields | active patterns, pattern synonyms | patterns/selectors with path provenance |
+| Transformation | shell pipes, PowerShell objects, jq filters | transducers, reducers, extension methods | flow verbs and reusable flow plans |
+| Policy | Make recipes, HTTP retries, transactions | block policies, structured concurrency | block-call prelude over effects |
+| Failure | exit status, `#SPILL!`, HTTP status, missing path | `Result`, exceptions, contracts, cancellation | plural failure taxonomy |
+| Explanation | dependency graph, API schema, query plan | macro expansion, contracts, task tree | one event schema for `explain` |
+| Reuse | workbook functions, OpenAPI clients, tasks | modules, macros/derive, protocols | modules plus fenced derivation |
+
+The important design choice: interface features enter through **world contact
+and data boundaries**, while advanced features enter through **explicit
+policies and reusable plans**. Neither path gets to bypass explanation.
+
+### 10.2 A Single Example Pipeline
+
+The combined design should make a program like this feel ordinary:
+
+```nomi
+data User:
+    id: str, len(id) > 0
+    email: str, contains(email, "@")
+    active: bool = true
+
+data AppConfig:
+    api_schema: path
+    output: path = "active-users.csv"
+    domain: str = "example.com"
+
+config =
+    AppConfig.defaults
+    |> merge(toml("app.toml"), optional: true)
+    |> merge(env(prefix: "APP_"))
+    |> decode AppConfig
+
+with network, clock, secrets:
+    client = Api.from_openapi(config.api_schema)
+
+    users =
+        client.users.list(active: true)
+        |> decode list[User]
+        |> where _.email.ends_with("@" + config.domain)
+        |> select { id: _.id, email: _.email }
+
+    report =
+        users
+        |> sort _.email
+        |> encode csv
+
+    write_file(config.output, report)
+```
+
+This example combines the notes without requiring new hard syntax:
+
+- OpenAPI is a boundary description, not a second language.
+- TOML and environment variables are configuration representations with
+  provenance, not ambient program state.
+- `network`, `clock`, and `secrets` are capabilities in a scoped block.
+- `decode` owns provenance, defaults, and validation.
+- `data` owns the program's local shape.
+- `where`, `select`, and `sort` are flow verbs, not a separate query syntax.
+- `encode csv` is a typed representation sink, not string concatenation.
+- `write_file` is world contact and should appear in explanation events.
+
+If later Nomi adds flow plans, the same program can grow without changing its
+mental model:
+
+```nomi
+plan active_example_users =
+    where _.active
+    |> where _.email.ends_with("@example.com")
+    |> select { id: _.id, email: _.email }
+```
+
+The plan is a named transformation value. It should not introduce a separate
+transducer DSL.
+
+### 10.3 How Feature Families Should Merge
+
+**Capabilities + context parameters + block policies**
+
+Context should begin as explicit capability values supplied by block policies.
+Only after diagnostics can show provider, scope, and selected value should Nomi
+consider implicit context parameters.
+
+```text
+with network:
+    fetch(url)
+```
+
+reduces to:
+
+```text
+block policy extends context with Network capability
+fetch requires Network
+explain records provider and call
+```
+
+**Contracts + decode + data constraints**
+
+Contracts should not become a peer DSL. Function preconditions, data field
+constraints, module export contracts, and decode validation should share one
+constraint vocabulary.
+
+```text
+external value -> decode -> data constructor -> constraint events
+```
+
+That lets a CSV row, HTTP response, GraphQL result, or CLI argument all fail
+with the same diagnostic shape.
+
+**Interpolation + typed sinks + codecs**
+
+Interpolation should be split by sink. Plain interpolation produces a string.
+Typed sinks such as HTML, SQL, shell commands, URLs, JSON, YAML, TOML, CSV, and
+HTTP bodies should use sink-specific escaping, structure, and diagnostics.
+
+```text
+value -> typed sink/codec policy -> representation + provenance
+representation -> parser/codec -> external value -> decode
+```
+
+This keeps convenience without making raw text the universal boundary type.
+Tagged templates, f-string-like syntax, command construction, and serializers
+all reduce to the same representation policy surface.
+
+**Config + serialization + schemas**
+
+Configuration is layered external data, not a privileged language mode. Defaults,
+files, environment variables, CLI arguments, secrets, deployment metadata, and
+remote config should merge as explicit values with source provenance.
+
+```text
+defaults -> file/env/cli/secrets -> merge -> decode Config -> capability setup
+```
+
+Serialization schemas should be import/export boundary artifacts. JSON Schema,
+OpenAPI, protobuf, Avro, GraphQL SDL, and database schemas can generate adapters,
+but the adapter should end at `decode`, `encode`, constraints, and explainable
+module exports.
+
+**Selectors + patterns + paths**
+
+CSS selectors, jq paths, GraphQL selections, and active patterns all name parts
+of structured values. Nomi should preserve path provenance:
+
+```text
+selector/path -> pattern/projection -> focused value + source path
+```
+
+Priority systems such as CSS specificity should remain outside ordinary
+pattern matching.
+
+**Pipelines + transducers + query plans**
+
+Pipelines are the everyday surface. Transducers and query planners are advanced
+ways to reuse and optimize those transformations. Therefore:
+
+```text
+pipeline now -> flow plan later -> optimizer/backend optionally
+```
+
+Users should learn `where/select/derive/group/fold` once. Reusable plans and
+backend lowering should be visible through `explain`, not new syntax families.
+
+**Extension methods + modules + protocols**
+
+Receiver-first call spelling can arrive before a protocol system:
+
+```text
+value.method(arg) -> method(value, arg)
+```
+
+Extension methods should be imported module bindings, not global hidden
+behavior. Protocol/trait constraints belong later, when module coherence and
+typed diagnostics exist.
+
+**Macros + derivation + feature profiles**
+
+Built-in derivations can reduce boilerplate before general macros exist. User
+macros require:
+
+- syntax values with source spans;
+- role-limited expansion;
+- generated-name declarations;
+- expansion display;
+- capability restrictions;
+- fixture tests.
+
+Macros should extend the language only through fenced profiles, never by
+quietly changing ordinary files.
+
+**Structured concurrency + cancellation + Result**
+
+Structured concurrency should combine with block policies:
+
+```text
+parallel:
+    ...
+```
+
+is not a new function color. It is a block policy that owns child task
+lifetime, cancellation, cleanup, join policy, and failure aggregation.
+
+Cancellation should produce explanation events with cause and source. Expected
+child failure should use `Result`; unexpected failure remains exceptional.
+
+### 10.4 Combination Rules
+
+Use these rules when turning the research notes into feature packets:
+
+1. **World contact always names a capability.**
+   Files, network, time, random, subprocesses, secrets, transactions, and
+   external schemas must be visible to `explain`.
+2. **External shape always crosses a boundary.**
+   JSON, CSV, HTTP, environment, CLI, GraphQL, Excel, TOML, YAML, HCL,
+   protobuf, Avro, and config data become owned Nomi values through `decode`,
+   pattern projection, codecs, or explicit adapters.
+3. **Reusable cleverness starts as a value.**
+   Commands, API operations, selectors, flow plans, tasks, modules, and macros
+   should first be inspectable values before gaining syntax.
+4. **Representation boundaries are typed.**
+   Raw strings are acceptable only for plain text. HTML, SQL, shell commands,
+   URLs, JSON, YAML, TOML, CSV, HTTP bodies, and binary wire formats need a
+   named sink or codec policy before interpolation is accepted.
+5. **Implicit context waits for explanation.**
+   No hidden dependency resolution until the event model can show what was
+   required, where it came from, and why ambiguity failed.
+6. **No feature owns a private failure vocabulary.**
+   Process failure, decode failure, blocked output, contract failure,
+   cancellation, timeout, missing path, and HTTP failure are distinct members
+   of one taxonomy.
+7. **Advanced power is fenced by profile and expansion.**
+   Macros, scoped notation, protocol derivation, effect handlers, module
+   functors, and dense flow plans require explicit status and inspection.
+8. **The long form remains teachable.**
+   Every accepted short form must reduce to a form a first-year Nomi user can
+   read: binding, function call, pattern, flow, block policy, or data boundary.
+
+### 10.5 Packet Sequence
+
+The combined notes point to this implementation/design sequence:
+
+1. **Capability and world-contact packet**
+   - file/network/process/time/secret capabilities;
+   - host permission metadata;
+   - redaction;
+   - basic `explain` events.
+2. **Decode, constraints, and provenance packet**
+   - source paths;
+   - defaults and optional fields;
+   - accumulated errors;
+   - data constraints and contract-like blame.
+3. **Representation boundary packet**
+   - codec registry for JSON, CSV, YAML, TOML, and binary formats;
+   - typed sinks for HTML, SQL, shell commands, URLs, and HTTP bodies;
+   - config layering from defaults, files, env, CLI, and secrets;
+   - schema import/export for JSON Schema, OpenAPI, protobuf, and Avro.
+4. **Flow and selector packet**
+   - shared verbs;
+   - selectors/projections over structured values;
+   - cardinality and materialization rules.
+5. **Block policy prelude**
+   - `using`, `retry`, `timeout`, `transaction`, `parallel`, `trace`;
+   - cleanup, cancellation, and `Result` interaction.
+6. **Extension/module packet**
+   - receiver-call sugar;
+   - module-owned extension functions;
+   - import/export visibility;
+   - future protocol hooks.
+7. **Derivation/macro gate**
+   - built-in derivations first;
+   - user macros only after expansion/source-map tooling.
+8. **Flow plans and package-scale reuse**
+   - reusable transformations;
+   - task graphs;
+   - OpenAPI-generated clients;
+   - package manifests and capability declarations.
+
+This order keeps daily usefulness ahead of advanced power. It also prevents
+the second-mini-language trap by forcing every feature through an inspectable
+normal form before syntax hardens.
+
+## 11. References
 
 - `docs/research/error_handling_defer_resource_cleanup_notes.md` — Zig, Hylo, Odin, Gleam, Roc
 - `docs/research/modern_language_feature_survey.md` — Mojo, Jai, Darklang, Unison, CUE/Nickel/Pkl/Dhall, Wren, Janet, Lobster, D
 - `docs/research/deep_language_feature_survey.md` — Haskell, OCaml, Agda/Idris, Swift, Kotlin, Scala 3, F#
+- `docs/research/everyday_interface_languages_deep_dive.md` — Unix shell, PowerShell, Excel, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI
+- `docs/research/remaining_language_feature_gap_survey.md` — traits/protocols, context, effects/capabilities, state, contracts, macros, modules, structured concurrency, flow plans
+- `docs/research/interpolation_config_serialization_deep_dive.md` — f-strings, tagged templates, Jinja, Terraform/HCL, TOML, YAML, JSON, JSON Schema, Protobuf, Avro
 - `docs/research/concatenative_languages.md` — Forth, Factor, Joy, Kitten, Cat
 - `docs/research/array_languages_deep_dive.md` — APL, J, K, BQN, Uiua
 - `docs/research/scientific_languages_r_matlab_julia.md` — MATLAB, R, Julia

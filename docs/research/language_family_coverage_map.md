@@ -44,7 +44,7 @@ adoption-facing steering layer, see
 | Array languages | APL, J, K, Q, BQN, Uiua, Julia broadcasting | Whole-data thinking, rank/shape, dense transformation | future rank/shape functions, readable whole-array operations | Glyph density and tacit code are not the default Nomi style. See also [array_languages_deep_dive.md](array_languages_deep_dive.md) for rank polymorphism, trains, BQN combinators, Uiuia model. |
 | Concatenative / stack languages | Forth, Factor, Joy, Kitten, Cat | Point-free composition, stack effect declarations, combinators (dip/dup/swap/bi), quotations | pipeline `\|>` and composition `>>` operators, block values, where: bindings | Stack shuffling as a daily programming model is too cognitive-load heavy. See [concatenative_languages.md](concatenative_languages.md) for full survey. |
 | Numerical/scientific languages | Julia, R, MATLAB, Mathematica | Notebooks, broadcasting, multiple dispatch, symbolic/math workflows, formula interfaces | data notebooks, dispatch research, explicit symbolic boundaries, table column-name scoping | Domain power may conflict with general-purpose readability. See also [scientific_languages_r_matlab_julia.md](scientific_languages_r_matlab_julia.md) for R formulas, tidy eval, Julia broadcasting, MATLAB array model. |
-| Shell/workflow languages | Bash, PowerShell, Nushell, Make, Just | Process orchestration, structured pipelines, tabular shell data | CLI/process standard library, structured flow, task fixtures | Shell convenience often relies on weak typing and stringly boundaries. |
+| Shell/workflow/interface/representation languages | Bash, PowerShell, Nushell, Make, Just, Excel, jq, CSS selectors, GraphQL, HTTP/OpenAPI, templates, config, codecs | Process orchestration, structured pipelines, grid formulas, selectors, dependency graphs, API boundaries, typed sinks, codecs | CLI/process standard library, structured flow, task fixtures, API/data boundary design, serialization/config policy | Interface convenience often relies on stringly or hidden boundaries. See [everyday_interface_languages_deep_dive.md](everyday_interface_languages_deep_dive.md) and [interpolation_config_serialization_deep_dive.md](interpolation_config_serialization_deep_dive.md). |
 | Configuration languages | CUE, Nickel, Pkl, Dhall, Nix, Terraform/HCL, JSON Schema | Declarative data, constraints, defaults, merge, provenance, reproducibility | explicit decode, config merge, field paths, redaction, package/build lessons | Config can become a separate field language unless folded into `data` and boundaries. |
 | Proof/research languages | Coq, Lean, Idris, Agda, Koka, Eff, Flix, Unison | Effects, proofs, algebraic handlers, abilities, totality, typed holes | future capability/effect layer, examples as checks, explanation discipline | Proof and effect machinery must not be required for ordinary scripts. |
 | Educational languages | Logo, Scratch, Racket teaching languages, BASIC, Pascal | First-hour success, visible state, simple errors, pedagogy | first-hour Nomi path and beginner diagnostics | Simplicity can become a ceiling if not layered. |
@@ -78,6 +78,9 @@ Individual-language, cross-cutting, and orthogonal research notes:
 | [deployment_and_operations_deep_dive.md](deployment_and_operations_deep_dive.md) | Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew | ~1303 |
 | [security_and_trust_deep_dive.md](security_and_trust_deep_dive.md) | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction | ~1934 |
 | [ai_readable_semantics_deep_dive.md](ai_readable_semantics_deep_dive.md) | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display, gradual typing | ~1826 |
+| [everyday_interface_languages_deep_dive.md](everyday_interface_languages_deep_dive.md) | Unix shell, PowerShell, Excel formulas, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI -- interface-bound computation, world contact, pipelines, schemas, dependency graphs | ~766 |
+| [remaining_language_feature_gap_survey.md](remaining_language_feature_gap_survey.md) | Rust, Swift, Kotlin, Scala 3, OCaml, Racket, Clojure, Koka, Go, Java, Pony -- extension/protocol dispatch, context, effects/capabilities, state, contracts, macros, module values, structured concurrency, flow plans | ~775 |
+| [interpolation_config_serialization_deep_dive.md](interpolation_config_serialization_deep_dive.md) | Python f-strings, JavaScript templates, Jinja, Terraform/HCL, JSON, YAML, TOML, JSON Schema, Protocol Buffers, Avro -- typed sinks, config layering, codecs, schemas, representation boundaries | ~487 |
 | [overlooked_language_design_dimensions.md](overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, editions, migration, governance, localization | ~250 |
 | [orthogonal_language_feature_coverage.md](orthogonal_language_feature_coverage.md) | Cross-cutting feature surfaces: formatting, diagnostics, accessibility, observability, packages, capabilities, secrets, serialization, interop, migration, governance, conformance, editor UX | ~216 |
 
@@ -243,9 +246,10 @@ should carry this work.
 
 ## Coverage Priorities
 
-Completed (May 2026): All 8 priority dimensions are now researched. The research
-corpus spans 23 deep-dive files covering language families, cross-cutting
-design dimensions, and synthesis across 60+ language/system sources.
+Completed (May 2026, refreshed June 2026): All 8 priority dimensions are now
+researched. The research corpus spans 26 deep-dive files covering language
+families, cross-cutting design dimensions, interface/representation languages,
+and synthesis across 70+ language/system sources.
 
 The next phase is consolidation into design artifacts:
 

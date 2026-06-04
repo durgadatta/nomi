@@ -77,18 +77,18 @@ semantic events, source maps, fixture ladders, host capabilities, and frontend
 contracts. Tool adoption should make iteration easier, not make the tool the
 language definition.
 
-## Research Corpus (May 2026)
+## Research Corpus (May/June 2026)
 
-The project has a substantial cross-language research corpus — 23 deep-dive
-files surveying 60+ languages and systems across 16 language families and 8
-cross-cutting dimensions. Before doing new research, check whether the question
-is already answered here.
+The project has a substantial cross-language research corpus — 26 deep-dive
+files surveying 70+ languages and systems across 16 language families,
+interface surfaces, representation boundaries, and 8 cross-cutting dimensions.
+Before doing new research, check whether the question is already answered here.
 
 **Navigation entry points:**
 
 - `docs/research/language_family_coverage_map.md` — the index of indices. Use
   this FIRST when starting any research task. It contains: the coverage table
-  (16 families with lessons, Nomi use, caveats), the deep dive index (23 files
+  (16 families with lessons, Nomi use, caveats), the deep dive index (26 files
   with line counts), and coverage priorities (what's done, what's next).
 - `docs/research/cross_language_synthesis_master.md` — the capstone synthesis.
   8 universal convergences, 8 genuine design forks, 7 hidden incompatibilities,
@@ -126,6 +126,9 @@ Adopt/Refuse/Adapt tables):
 | Deployment | `deployment_and_operations_deep_dive.md` | Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew |
 | Security | `security_and_trust_deep_dive.md` | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction |
 | AI toolability | `ai_readable_semantics_deep_dive.md` | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display |
+| Everyday interfaces | `everyday_interface_languages_deep_dive.md` | Unix shell, PowerShell, Excel formulas, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI |
+| Remaining feature gaps | `remaining_language_feature_gap_survey.md` | Rust, Swift, Kotlin, Scala 3, OCaml, Racket, Clojure, Koka, Go, Java, Pony |
+| Representation boundaries | `interpolation_config_serialization_deep_dive.md` | Python f-strings, JavaScript templates, Jinja, Terraform/HCL, JSON, YAML, TOML, JSON Schema, Protocol Buffers, Avro |
 
 **How to use the research corpus:**
 
@@ -266,7 +269,7 @@ Read the smallest relevant set before changing docs or making recommendations.
 
 **Research corpus (use before doing new research):**
 - `docs/research/language_family_coverage_map.md` — START HERE: index of all
-  23 deep dives, coverage table, remaining gaps.
+  26 deep dives, coverage table, remaining gaps.
 - `docs/research/cross_language_synthesis_master.md` — capstone synthesis:
   convergences, forks, incompatibilities, Nomi resolution per normal form.
 - `docs/research/research_notes_synthesis.md` — earlier synthesis with
