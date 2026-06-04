@@ -1,5 +1,3 @@
-#TODO: update to 3.14 or the later images 
-
 FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \

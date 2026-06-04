@@ -687,6 +687,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 These items came from a fresh scan of the prototype and tooling. They are
 intentionally small, file-specific hints for the next cleanup pass.
 
+- [x] Convert loose setup/sample `#TODO:` comments from the 2026-06-03
+  improvement review into durable backlog entries or anchored notes.
+  (Done: Docker image and macOS setup reminders live in this Track 10 list;
+  the block-parameter fixture now points to `NOMI-SUBSTRATE-011`.)
 - [ ] Update [`Dockerfile`](../../Dockerfile) to a newer Python base image once
   the runtime and notebook stack are verified on that image.
 - [ ] Split the macOS-specific Docker/Colima bootstrap out of

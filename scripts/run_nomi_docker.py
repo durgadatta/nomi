@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """Build and run the portable Nomi Jupyter Docker image."""
 
-
-#TODO: later the macos depdnency should be isolated out; there should be a install/setup process that abstracts out the os
-
 from __future__ import annotations
 
 import argparse
