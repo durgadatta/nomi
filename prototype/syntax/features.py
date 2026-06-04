@@ -82,6 +82,28 @@ class FeatureCapabilityAxes:
     notebook: bool = False
 
 
+def implemented_coverage(
+    *,
+    docs: bool = False,
+    tests: bool = False,
+    samples: bool = False,
+    web: bool = False,
+    notebook: bool = False,
+) -> FeatureCapabilityAxes:
+    """Return explicit coverage for implemented current-runtime features."""
+    return FeatureCapabilityAxes(
+        parse=True,
+        lower=True,
+        run=True,
+        reduce=True,
+        docs=docs,
+        tests=tests,
+        samples=samples,
+        web=web,
+        notebook=notebook,
+    )
+
+
 # ── expression-precedence ────────────────────────────────────────────
 # Not a user-visible "feature" but a parse-tree transform that the
 # ExpressionLayer applies.  Registered as a feature so the layer-transform
@@ -111,14 +133,7 @@ _piecewise_functions = SyntaxFeature(
     reduces_to=("canonical-function", "match-dispatch"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
-    coverage=FeatureCapabilityAxes(
-        parse=True,
-        lower=True,
-        run=True,
-        reduce=True,
-        docs=True,
-        tests=True,
-    ),
+    coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
@@ -134,6 +149,7 @@ _where_clauses = SyntaxFeature(
     reduces_to=("local-binding-rewrite",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_where_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.where_clause.WhereClause",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
@@ -149,6 +165,7 @@ _underscore_lambdas = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.underscore_lambda.UnderscoreLambda",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
@@ -164,6 +181,7 @@ _positional_holes = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.positional_hole.PositionalHole",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
 )
@@ -257,6 +275,7 @@ _unless_lowering = SyntaxFeature(
     reduces_to=("branch", "boolean-negation"),
     docs=("docs/convenience/syntax_design_rules.md",),
     tests=("prototype/tests/features/flow/test_conditionals_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
 )
 
 _postfix_conditionals = SyntaxFeature(
@@ -267,6 +286,7 @@ _postfix_conditionals = SyntaxFeature(
     reduces_to=("branch",),
     docs=("docs/convenience/review_and_roadmap.md",),
     tests=("prototype/tests/features/flow/test_conditionals_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
 )
 
 
@@ -283,6 +303,7 @@ _implicit_mul = SyntaxFeature(
     reduces_to=("binary-multiplication",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/math/test_implicit_mul_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.implicit_multiplication.ImplicitMulMixin",),
 )
 
@@ -295,6 +316,7 @@ _type_alias = SyntaxFeature(
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_type_alias_runtime.py",),
     soft_keywords=("type",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.type_alias.TypeAliasMixin",),
 )
 
@@ -307,6 +329,7 @@ _range_expressions = SyntaxFeature(
     docs=("docs/convenience/flow_and_collections.md",),
     tests=("prototype/tests/features/flow/test_range_runtime.py",),
     soft_keywords=("by",),
+    coverage=implemented_coverage(docs=True, tests=True),
 )
 
 _if_let = SyntaxFeature(
@@ -317,6 +340,7 @@ _if_let = SyntaxFeature(
     reduces_to=("match-statement",),
     docs=("docs/convenience/patterns.md",),
     soft_keywords=("guard",),
+    coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.if_let.IfLetMixin",),
 )
 
@@ -328,6 +352,7 @@ _try_expr = SyntaxFeature(
     reduces_to=("try-statement", "function-call"),
     docs=("docs/convenience/absence_and_result.md",),
     tests=("prototype/tests/features/absence_result/test_try_expr_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.try_expr.TryExprMixin",),
 )
 
@@ -339,6 +364,7 @@ _match_expr = SyntaxFeature(
     reduces_to=("match-statement", "function-call"),
     docs=("docs/convenience/patterns.md",),
     soft_keywords=("match", "case"),
+    coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.match_expr.MatchExprMixin",),
 )
 
@@ -350,6 +376,7 @@ _where_clause_lowering = SyntaxFeature(
     reduces_to=("local-binding-rewrite",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_where_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.where_clause.WhereClauseMixin",),
 )
 
@@ -361,6 +388,7 @@ _positional_hole_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_holes_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.positional_hole.PositionalHoleMixin",),
 )
 
@@ -372,6 +400,7 @@ _compose_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal", "nested-call"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_composition_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.compose.ComposeMixin",),
 )
 
@@ -383,6 +412,7 @@ _defer_lowering = SyntaxFeature(
     reduces_to=("function-body-cleanup-policy",),
     docs=("docs/convenience/absence_and_result.md", "docs/features/block_calls_feature.md"),
     tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.defer.DeferMixin",),
 )
 
@@ -394,6 +424,7 @@ _func_equation_lowering = SyntaxFeature(
     reduces_to=("canonical-function", "match-dispatch"),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_equations_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.func_equation.FuncEquationMixin",),
 )
 
@@ -405,6 +436,7 @@ _section_lowering = SyntaxFeature(
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
     tests=("prototype/tests/features/functions/test_composition_runtime.py",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.sections.SectionMixin",),
 )
 
@@ -415,6 +447,7 @@ _func_expr_lowering = SyntaxFeature(
     semantic_forms=("function",),
     reduces_to=("canonical-function-literal",),
     docs=("docs/convenience/functions.md",),
+    coverage=implemented_coverage(docs=True),
     lowering_mixins=("prototype.parser.nomi.lowering.func_expr.FuncExprMixin",),
 )
 
@@ -427,14 +460,7 @@ _block_call_lowering = SyntaxFeature(
     runtime_hooks_allowed="semantic",
     docs=("docs/features/block_calls_feature.md",),
     tests=("prototype/tests/features/block_calls/test_defer_runtime.py",),
-    coverage=FeatureCapabilityAxes(
-        parse=True,
-        lower=True,
-        run=True,
-        reduce=True,
-        docs=True,
-        tests=True,
-    ),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.block_call.BlockCallMixin",),
 )
 
@@ -448,6 +474,7 @@ _data_decl_lowering = SyntaxFeature(
     docs=("docs/convenience/data_and_types.md",),
     tests=("prototype/tests/features/data/test_declarations_runtime.py",),
     soft_keywords=("data",),
+    coverage=implemented_coverage(docs=True, tests=True),
     lowering_mixins=("prototype.parser.nomi.lowering.data_decl.DataDeclMixin",),
 )
 

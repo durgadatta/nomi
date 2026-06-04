@@ -8,6 +8,31 @@ from prototype.syntax.features import (
 )
 
 
+FEATURES_REQUIRING_EXPLICIT_COVERAGE = {
+    "piecewise-functions",
+    "where-clauses",
+    "underscore-lambdas",
+    "positional-holes",
+    "unless-lowering",
+    "postfix-conditionals-lowering",
+    "implicit-multiplication",
+    "type-alias-lowering",
+    "range-expressions",
+    "if-let-lowering",
+    "try-expr-lowering",
+    "match-expr-lowering",
+    "where-clause-lowering",
+    "positional-hole-lowering",
+    "compose-lowering",
+    "defer-lowering",
+    "func-equation-lowering",
+    "sections-lowering",
+    "func-expr-lowering",
+    "block-call-lowering",
+    "data-decl-lowering",
+}
+
+
 def test_builtin_feature_capabilities_have_separate_axes():
     feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
 
@@ -28,6 +53,30 @@ def test_builtin_feature_capabilities_have_separate_axes():
     assert block_call.docs
     assert feature_by_name["piecewise-functions"].coverage == piecewise
     assert feature_by_name["block-call-lowering"].coverage == block_call
+
+
+def test_user_facing_features_declare_explicit_capabilities():
+    feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
+
+    assert FEATURES_REQUIRING_EXPLICIT_COVERAGE <= set(feature_by_name)
+    for name in FEATURES_REQUIRING_EXPLICIT_COVERAGE:
+        feature = feature_by_name[name]
+        assert feature.coverage is not None, name
+        assert feature.coverage.parse, name
+        assert feature.coverage.lower, name
+        assert feature.coverage.run, name
+        assert feature.coverage.reduce, name
+
+
+def test_explicit_capabilities_do_not_overstate_explanation_or_frontends():
+    feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
+
+    for name in FEATURES_REQUIRING_EXPLICIT_COVERAGE:
+        coverage = feature_by_name[name].coverage
+        assert coverage is not None
+        assert not coverage.explain, name
+        assert not coverage.web, name
+        assert not coverage.notebook, name
 
 
 def test_feature_capability_table_is_stable_and_human_readable():
