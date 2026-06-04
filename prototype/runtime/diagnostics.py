@@ -6,6 +6,17 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
+SEMANTIC_EVENT_KINDS = (
+    "binding",
+    "call",
+    "block",
+    "match",
+    "decode",
+    "pipeline",
+    "rewrite",
+)
+
+
 @dataclass(frozen=True, slots=True)
 class Diagnostic:
     """Structured diagnostic placeholder shared by runtime adapters."""
@@ -106,6 +117,34 @@ class RuntimeEventCollector:
         event = RuntimeEvent(name=name, payload=payload or {}, span=span)
         self.add_event(event)
         return event
+
+    def semantic_event(
+        self,
+        kind: str,
+        action: str = "observe",
+        *,
+        payload: dict[str, Any] | None = None,
+        span: Any | None = None,
+        feature: str | None = None,
+    ) -> RuntimeEvent:
+        """Record a no-op semantic event in the shared explanation vocabulary."""
+        if kind not in SEMANTIC_EVENT_KINDS:
+            allowed = ", ".join(SEMANTIC_EVENT_KINDS)
+            raise ValueError(
+                f"Unknown semantic event kind {kind!r}; expected one of: {allowed}"
+            )
+
+        event_payload = {
+            "kind": kind,
+            "action": action,
+            "feature": feature,
+            **(payload or {}),
+        }
+        return self.event(
+            f"semantic.{kind}.{action}",
+            payload=event_payload,
+            span=span,
+        )
 
     def snapshot(self) -> tuple[tuple[Diagnostic, ...], tuple[RuntimeEvent, ...]]:
         return tuple(self.diagnostics), tuple(self.events)

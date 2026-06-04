@@ -205,9 +205,12 @@ layers move from docs into implementation.
   large functional feature clusters one migration commit at a time.
   (Done: `functional/` is drained; feature, contract, regression, smoke, and
   e2e buckets are documented in `prototype/tests/README.md`.)
-- [ ] Add no-op semantic event hooks before feature-specific tracing so
+- [x] Add no-op semantic event hooks before feature-specific tracing so
   binding, call, block, match, decode, pipeline, and rewrite diagnostics do not
   each invent a private explanation format.
+  (`RuntimeEventCollector.semantic_event()` now validates those seven event
+  families and records `semantic.<kind>.<action>` events. Remaining event work
+  belongs under the first real producer: binding constraints.)
 - [ ] Keep symbolic/lazy computation behind explicit boundaries from
   [`symbolic_structural_computation.md`](../features/symbolic_structural_computation.md):
   `quote`, `describe`, `lazy`, query plans, rewrite rules, `collect`, and
@@ -234,8 +237,9 @@ boundaries, and package ownership. Keep the detailed plan in
   diagnostics, events, timings, and exception fields.
   (`ExecutionResult` exists with bindings, timings, exception, optional value,
   stdout, stderr, diagnostics, and events. `execute()` captures stdout/stderr;
-  `RuntimeSession.run()` can opt into capture. Remaining: real diagnostic/event
-  producers and detailed stage artifacts.)
+  `RuntimeSession.run()` can opt into capture. No-op semantic event families
+  are declared. Remaining: real diagnostic/event producers and detailed stage
+  artifacts.)
 - [x] Add mode metadata for `python`, `nomi`, and `reduced` so parser,
   lowering, interpreter class, status, and host support are declared as data.
 - [ ] Keep old `prototype.interpreter.*.usage` modules as compatibility

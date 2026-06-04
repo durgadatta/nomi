@@ -6,6 +6,7 @@ from prototype.runtime import (
     Diagnostic,
     RuntimeEvent,
     RuntimeEventCollector,
+    SEMANTIC_EVENT_KINDS,
     create_session,
     execute,
 )
@@ -78,6 +79,35 @@ def test_execute_uses_runtime_event_collector_snapshot():
     assert result.diagnostics[0].to_record()["phase"] == "eval"
     assert result.diagnostics[0].to_record()["capability"] == "runtime.test"
     assert result.events == (event,)
+
+
+def test_runtime_event_collector_has_stable_semantic_hook_families():
+    collector = RuntimeEventCollector()
+
+    for kind in SEMANTIC_EVENT_KINDS:
+        collector.semantic_event(kind, "observe", feature="test-feature")
+
+    _, events = collector.snapshot()
+    assert tuple(event.name for event in events) == tuple(
+        f"semantic.{kind}.observe" for kind in SEMANTIC_EVENT_KINDS
+    )
+    assert events[0].payload == {
+        "kind": "binding",
+        "action": "observe",
+        "feature": "test-feature",
+    }
+
+
+def test_runtime_event_collector_rejects_unknown_semantic_event_kind():
+    collector = RuntimeEventCollector()
+
+    try:
+        collector.semantic_event("private-dialect")
+    except ValueError as exc:
+        assert "Unknown semantic event kind" in str(exc)
+        assert "binding" in str(exc)
+    else:
+        raise AssertionError("unknown semantic event kind should fail")
 
 
 def test_execute_preserves_output_on_returned_exception():
