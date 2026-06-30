@@ -278,7 +278,10 @@ Immediate commit sequence:
    (`BindingCommit` now names the validate-then-commit path for current
    assignment and parameter constraint checks, with no-mutation regressions for
    failed checks.)
-5. [ ] Add decode error and event skeleton.
+5. [x] Add decode error and event skeleton.
+   (`DecodeError` and `DecodeErrorList` now preserve passive field-path,
+   source, redaction, repair, and event payload data; real `Data.decode`
+   helpers remain pending.)
 6. [ ] Prepare match captures for shared binding targets.
 7. [ ] Add flow step metadata plan contracts.
 8. [ ] Add passive collection plan value shapes.

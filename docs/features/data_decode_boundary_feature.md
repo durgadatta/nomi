@@ -147,10 +147,12 @@ merge, provenance, redaction, and precise paths.
 
 ## Implementation Slice
 
-1. Add `DecodeError` and `DecodeErrorList` value shapes.
-2. Add field-path and source-provenance data structures.
-3. Route decoded fields through the shared binding constraint engine.
-4. Return structured `Result` from decode helpers.
-5. Emit explanation events for field success/failure.
-6. Add fixtures for JSON, CSV, env, CLI, and TOML-like mappings.
-
+1. [x] Add `DecodeError` and `DecodeErrorList` value shapes.
+   (`prototype.runtime.decode` now preserves source identity, field path,
+   expected rule, raw value summary, redaction, next step, and record output.)
+2. [x] Add field-path and source-provenance data structures.
+3. [x] Add decode event payload skeleton through `record_decode_event`.
+4. Route decoded fields through the shared binding constraint engine.
+5. Return structured `Result` from decode helpers.
+6. Emit explanation events for field success/failure from real decode helpers.
+7. Add fixtures for JSON, CSV, env, CLI, and TOML-like mappings.
