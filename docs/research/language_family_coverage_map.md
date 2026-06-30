@@ -254,7 +254,13 @@ families, cross-cutting design dimensions, interface/representation languages,
 human-computer interaction surfaces, and synthesis across 80+ language/system
 sources.
 
-The next phase is consolidation into design artifacts:
+The next phase is competitor-oriented consolidation into design artifacts. Use
+[Competitive Language Research Plan 2026-06-30](competitive_language_research_plan_2026_06_30.md)
+as the campaign map for judging Nomi against Python, Julia, Ruby, Mathematica,
+Scheme/Racket, SQL/data systems, shell/workflow languages, mainstream safety
+languages, and scientific/notebook ecosystems.
+
+The consolidation priorities are:
 
 1. **Fold decisions into convenience docs** — stable Adopt/Refuse/Adapt
    conclusions should migrate to `docs/convenience/` as design specs.
@@ -264,6 +270,9 @@ The next phase is consolidation into design artifacts:
    data boundaries first, then flow/pipeline, then interactive tooling.
 4. **Revisit capstone synthesis** — update `cross_language_synthesis_master.md`
    with insights from the new deep dives.
+5. **Competitive gates** — for each competitor surface, name what Nomi must
+   beat, match, refuse, or defer, then move the outcome into a feature packet,
+   target fixture, first-hour doc, prelude plan, or implementation gate.
 
 ## Additional Feature Harvest: 2026-06-04
 

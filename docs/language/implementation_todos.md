@@ -187,6 +187,42 @@ After each commit, review:
 - whether the next slice still preserves feature ownership, capability honesty,
   and reversible implementation.
 
+## Current Competitive Language Research Phase: 2026-06-30
+
+This phase responds to the product ambition that Nomi should be a serious
+competitor to Python, Julia, Ruby, Mathematica, Scheme/Racket, and adjacent
+high-level systems. It is documentation and research consolidation first; no
+syntax or runtime behavior should be promoted until the feature owner, normal
+form, diagnostics, capability axes, and test/sample gate are visible.
+
+- [x] Create a competitor-oriented research campaign map:
+  [`competitive_language_research_plan_2026_06_30.md`](../research/competitive_language_research_plan_2026_06_30.md).
+- [x] Index the plan from the docs map and research coverage map.
+- [x] Link the older research synthesis to the new competitive campaign.
+- [ ] Run Stream 1: Everyday Python-competitive core.
+  Outputs: first-hour rewrite pass, Python migration/interop note, boring-task
+  fixture set.
+- [ ] Run Stream 2: Scientific, array, table, and notebook power.
+  Outputs: collection/table vocabulary packet, notebook/data fixture ladder,
+  refusal table for dense or hidden data syntax.
+- [ ] Run Stream 3: Blocks, policies, resources, and humane control.
+  Outputs: block policy prelude packet and resource/capability diagnostic
+  table.
+- [ ] Run Stream 4: Symbolic, reflective, and language-building power.
+  Outputs: quote/syntax-values packet, rewrite/unification boundary note, and
+  scoped-notation admission guide.
+- [ ] Run Stream 5: Explanation, diagnostics, and AI-readable semantics.
+  Outputs: semantic event producer map and explain output shape.
+- [ ] Run Stream 6: Adoption infrastructure as language design.
+  Outputs: formatter doctrine, package/project manifest note, deployment and
+  trust checklist.
+
+Validation for the research-planning slice:
+
+```bash
+python3 .codex/scripts/agent_doctor.py
+```
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the

@@ -726,6 +726,18 @@ These raw clusters are rich enough to deserve dedicated notes later:
   description logic, resolution, unification.
 - Array-language line: APL/J/K/Q/Shakti, rank, shape, function-level style.
 
+## Current Competitive Research Plan
+
+The next consolidation phase is
+[Competitive Language Research Plan 2026-06-30](competitive_language_research_plan_2026_06_30.md).
+Use it to turn the raw clusters above into competitor-oriented passes against
+Python, Julia, Ruby, Mathematica, Scheme/Racket, R, SQL/data systems,
+shell/workflow languages, mainstream safety languages, and scientific/notebook
+ecosystems.
+
+That plan is the campaign map. Durable outcomes still belong in active
+language, feature, convenience, target-fixture, and implementation docs.
+
 ## Deep Dive Index
 
 Cross-language comparative research added in the May 2026 expansion and later
