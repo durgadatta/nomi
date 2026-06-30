@@ -628,9 +628,11 @@ Boundary focus: quote + pattern + rewrite + trace.
 
 ## Next Consolidation Work
 
-1. Turn the binding/data/pattern packet into a single focused feature
-   refinement: binding target, tentative capture, constraint failure, decode
-   diagnostics, and examples.
+1. [Started] Turn the binding/data/pattern packet into a single focused
+   feature refinement: binding target, tentative capture, constraint failure,
+   decode diagnostics, and examples.
+   See
+   [Binding, Data, And Pattern Integration Feature](../features/binding_data_pattern_integration_feature.md).
 2. Turn flow/table/rank into a concrete collection/table vocabulary packet
    with target examples and refusal rules.
 3. Turn block policy into a prelude packet: `using`, `retry`, `transaction`,

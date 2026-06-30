@@ -228,9 +228,11 @@ form, diagnostics, capability axes, and test/sample gate are visible.
 - [ ] Run Stream 6: Adoption infrastructure as language design.
   Outputs: formatter doctrine, package/project manifest note, deployment and
   trust checklist.
-- [ ] Use the cognitive integration plan to produce the next feature-packet
+- [~] Use the cognitive integration plan to produce the next feature-packet
   sequence: binding/data/pattern, collection/table/rank, block policy,
   quote/rewrite, and semantic events.
+  (Started: the binding/data/pattern packet now lives in
+  [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md).)
 
 Validation for the research-planning slice:
 
@@ -646,6 +648,12 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 ## Track 1: Binding, Constraints, And Data Boundaries
 
+- [~] Use
+  [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md)
+  as the cross-feature contract for shared `BindingTarget`, tentative binding,
+  constraint metadata, decode diagnostics, constrained pattern captures, and
+  explanation events. The local binding/decode/pattern docs remain the detailed
+  syntax homes.
 - [ ] Introduce a runtime `BindingError` type with fields for name, value,
   failed constraint, source span when available, binding kind, and optional
   human message.

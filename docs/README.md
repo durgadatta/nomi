@@ -113,7 +113,7 @@ general reading order.
 | Critique implementation flexibility/performance | [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md), [Adversarial Exploratory Implementation Critique](language/adversarial_exploratory_implementation_critique.md), [Adversarial Implementation Critique](language/adversarial_implementation_critique.md), [Performance Notes](orientation/performance_notes.md), [Implementation Codebase Audit](language/implementation_codebase_audit.md), [Modern Language Implementation Artifacts](language/modern_language_implementation_artifacts.md) |
 | Plan Python-independent backends | [Modern Language Implementation Artifacts](language/modern_language_implementation_artifacts.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
-| Design binding or decode | [Binding Constraints Feature](features/binding_constraints_feature.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
+| Design binding, decode, or pattern captures | [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md), [Binding Constraints Feature](features/binding_constraints_feature.md), [Data Decode Boundary Feature](features/data_decode_boundary_feature.md), [Pattern Convenience](convenience/patterns.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Work on symbolic/lazy computation | [Symbolic, Lazy, And Structural Computation](features/symbolic_structural_computation.md), [Flow And Collections](convenience/flow_and_collections.md), [Meta & Testing](convenience/meta_testing.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md) |
@@ -231,6 +231,7 @@ spine.
 
 | Doc | Role |
 | --- | --- |
+| [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md) | Active integration packet for shared `BindingTarget`, tentative capture, constraints, decode diagnostics, pattern captures, and explanation events. |
 | [Binding Constraints Feature](features/binding_constraints_feature.md) | Active syntax/semantics for constrained bindings. |
 | [Block Calls As Control Values](features/block_calls_feature.md) | Active syntax/semantics for caller-side blocks, `yield`, and policy blocks. |
 | [Command Values Feature](features/command_values_feature.md) | Active feature packet for structured commands, previews, subprocess results, and agent/UI replay. |
@@ -381,6 +382,7 @@ duplicate material.
 
 ### Features
 
+- [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md)
 - [Binding Constraints Feature](features/binding_constraints_feature.md)
 - [Block Calls As Control Values](features/block_calls_feature.md)
 - [Command Values Feature](features/command_values_feature.md)
