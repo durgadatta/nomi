@@ -4,11 +4,8 @@ const DEMOS = {
   demo: {
     title: "demo.nomi", desc: "Guided tour from samples/demo.nomi.",
     source: "samples/demo.nomi",
-    code: `func greet(name):
-    return f"Hello, {name}!"
-
-result = greet("World")
-print(result)`
+    code: `add(a, b) = a + b
+print("add(3, 4) = " + str(add(3, 4)))`
   },
   "notebook-intro": {
     title: "notebook_intro.nomi.nb", desc: "Notebook cells example.",
@@ -29,10 +26,27 @@ for name in names:
 print(clean_names)`
   },
   terse: {
-    title: "demo_terse.nomi", desc: "Compact syntax tour from samples/demo_terse.nomi.",
+    title: "demo_terse.nomi", desc: "Browser-safe quick tour: functions, flow, records, match, and output.",
     source: "samples/demo_terse.nomi",
-    code: `func greet(name): return "Hello, " + name
-print(greet("Nomi"))`
+    code: `priority(ticket) = ticket["impact"] * ticket["urgency"]
+is_hot = priority(_) >= 80
+label(score) when score >= 90 = "critical"
+label(score) when score >= 70 = "watch"
+label(_) = "steady"
+
+tickets = [{"service": "checkout", "impact": 10, "urgency": 9}, {"service": "search", "impact": 6, "urgency": 8}, {"service": "billing", "impact": 8, "urgency": 10}]
+scores = list(map(priority, tickets))
+hot = list(filter(is_hot, tickets))
+winner = hot[0]
+winner_score = priority(winner)
+action = match label(winner_score): case "critical" => "page now"; case "watch" => "assign owner"; case _ => "monitor"
+range_total = 1..5 |> list |> sum
+
+print("Nomi triage")
+print("scores = " + str(scores))
+print("hot tickets = " + str(len(hot)))
+print(winner["service"] + " -> " + str(winner_score) + " / " + action)
+print("range total = " + str(range_total))`
   },
   collections: {
     title: "collections.nomi", desc: "Collection examples from samples/collections.nomi.",
@@ -87,7 +101,7 @@ print(collected)`
 
 const SAMPLE_DESCRIPTIONS = {
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
-  "samples/demo_terse.nomi": "Compact syntax tour from samples/demo_terse.nomi.",
+  "samples/demo_terse.nomi": "Browser-safe quick tour: functions, flow, records, match, and output.",
   "samples/collections.nomi": "Collection examples from samples/collections.nomi.",
   "samples/notebook_intro.nomi.nb": "Notebook cells example."
 };

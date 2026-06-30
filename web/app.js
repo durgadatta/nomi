@@ -7,7 +7,7 @@ let _runtimeGeneration = 0;
 let _runFn = null;
 let _resetFn = null;
 let _ready = false;
-let _currentSample = "demo";
+let _currentSample = "terse";
 let _cellEditors = [];
 let _executionCounter = 0;
 let _activeCellIndex = 0;
@@ -170,7 +170,7 @@ async function init() {
   // Defer by two frames so the browser lays out editor containers
   // before Monaco measures them — avoids 0-height editors on first load.
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => loadFile("demo"));
+    requestAnimationFrame(() => loadFile("terse"));
   });
   console.log("[web] Ready");
 }

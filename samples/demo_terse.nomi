@@ -1,29 +1,23 @@
-# Nomi by Example — Terse
+# Nomi Quick Tour — triage a tiny operations queue
 
-# Functions
-func greet(name): return "Hello, " + name
-square = x => x * x
-add(a, b) = a + b
-double = _ * 2
-fact(1) = 1; fact(n) = fact(n - 1) * n
-area = pi * r * r where: pi = 3.14159; r = 5
+priority(ticket) = ticket["impact"] * ticket["urgency"]
+is_hot = priority(_) >= 80
 
-# Control
-unless 1 > 10: label = "ok"
-size_label = match 2: case 1 => "one"; case 2 => "two"; case _ => "many"
+label(score) when score >= 90 = "critical"
+label(score) when score >= 70 = "watch"
+label(_) = "steady"
 
-# Null
-name = None ?? "anonymous"
-v1 = {"k": 1}?.get("k")
-v2 = None?.get("k")
+tickets = [{"service": "checkout", "impact": 10, "urgency": 9}, {"service": "search", "impact": 6, "urgency": 8}, {"service": "billing", "impact": 8, "urgency": 10}]
 
-# Collections
-1..5 |> list             # [1,2,3,4,5]
-1..<5 |> list            # [1,2,3,4]
-1..10 |> list |> sum     # 55
+scores = list(map(priority, tickets))
+hot = list(filter(is_hot, tickets))
+winner = hot[0]
+winner_score = priority(winner)
+action = match label(winner_score): case "critical" => "page now"; case "watch" => "assign owner"; case _ => "monitor"
+range_total = 1..5 |> list |> sum
 
-print(greet("Nomi"))
-print(fact(5))
-print(size_label)
-print(name)
-print(1..10 |> sum)
+print("Nomi triage")
+print("scores = " + str(scores))
+print("hot tickets = " + str(len(hot)))
+print(winner["service"] + " -> " + str(winner_score) + " / " + action)
+print("range total = " + str(range_total))

@@ -85,11 +85,11 @@ console.log("\nEval correctness:");
 test("demo_terse.nomi eval", () => {
   const result = evaluateCorePayload(demoCoreIr, { displayLastExpr: true });
   const lines = result.stdout.trim().split("\n");
-  assert(lines[0] === "Hello, Nomi", `line 0: ${lines[0]}`);
-  assert(lines[1] === "120", `line 1: ${lines[1]}`);
-  assert(lines[2] === "two", `line 2: ${lines[2]}`);
-  assert(lines[3] === "anonymous", `line 3: ${lines[3]}`);
-  assert(lines[4] === "55", `line 4: ${lines[4]}`);
+  assert(lines[0] === "Nomi triage", `line 0: ${lines[0]}`);
+  assert(lines[1] === "scores = [90, 48, 80]", `line 1: ${lines[1]}`);
+  assert(lines[2] === "hot tickets = 2", `line 2: ${lines[2]}`);
+  assert(lines[3] === "checkout -> 90 / page now", `line 3: ${lines[3]}`);
+  assert(lines[4] === "range total = 15", `line 4: ${lines[4]}`);
 });
 
 test("expression-only source returns display value", () => {

@@ -104,6 +104,7 @@
     "prototype/runtime/backends/js_core.py",
     "prototype/runtime/backends/python_ast.py",
     "prototype/runtime/backends/values.py",
+    "prototype/runtime/decode.py",
     "prototype/runtime/diagnostics.py",
     "prototype/runtime/host_capabilities.py",
     "prototype/runtime/modes.py",

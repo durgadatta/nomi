@@ -1,21 +1,55 @@
 {
-  "greet": "greet:class=<class 'function'>",
-  "square": "func:class=<class 'function'>",
-  "add": "add:class=<class 'function'>",
-  "double": "func:class=<class 'function'>",
-  "fact": "fact:class=<class 'function'>",
-  "area": 78.53975,
-  "label": "ok",
-  "size_label": "two",
-  "name": "anonymous",
-  "v1": 1,
-  "v2": null,
+  "priority": "priority:class=<class 'function'>",
+  "is_hot": "func:class=<class 'function'>",
+  "label": "label:class=<class 'function'>",
+  "tickets": [
+    {
+      "service": "checkout",
+      "impact": 10,
+      "urgency": 9
+    },
+    {
+      "service": "search",
+      "impact": 6,
+      "urgency": 8
+    },
+    {
+      "service": "billing",
+      "impact": 8,
+      "urgency": 10
+    }
+  ],
+  "scores": [
+    90,
+    48,
+    80
+  ],
+  "hot": [
+    {
+      "service": "checkout",
+      "impact": 10,
+      "urgency": 9
+    },
+    {
+      "service": "billing",
+      "impact": 8,
+      "urgency": 10
+    }
+  ],
+  "winner": {
+    "service": "checkout",
+    "impact": 10,
+    "urgency": 9
+  },
+  "winner_score": 90,
+  "action": "page now",
+  "range_total": 15,
   "stdout": [
-    "Hello, Nomi",
-    "120",
-    "two",
-    "anonymous",
-    "55",
+    "Nomi triage",
+    "scores = [90, 48, 80]",
+    "hot tickets = 2",
+    "checkout -> 90 / page now",
+    "range total = 15",
     ""
   ]
 }
