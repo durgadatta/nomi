@@ -27,6 +27,23 @@ gap is consistency. These seams must become truthful enough that a person or
 agent can add a feature by filling a packet, not by discovering private parser,
 lowering, runtime, frontend, and test conventions one file at a time.
 
+## Validation Snapshot: 2026-06-30
+
+The current project-review implementation phase starts from this checked
+baseline:
+
+| Check | Result | Signal |
+| --- | --- | --- |
+| Full pytest | `1213 passed, 76 skipped, 10 warnings` | Regression, e2e, contract, smoke, and unit coverage are healthy. |
+| Web/runtime gate | manifest fresh, WASM parser fresh, 55 browser/runtime contract tests passed | Generated browser artifacts and the Rust/WASM -> JS runtime path are checkable. |
+| Agent doctor | all checks passed after rebuilding the derived RAG index | Shared skills, hooks, shims, prompts, subagents, and ignore policy are coherent. |
+| Capability inspection | generated successfully | Feature capability truth has one inspectable command. |
+| Pipeline inspection | parser frontends, eval backends, and resolved pipelines generated successfully | The Python/session and browser-default roads are visible as data. |
+
+This is not evidence that the language surface is complete. It is evidence
+that the current review should focus on truthfulness and consistency rather
+than basic project repair.
+
 ## Evolvability Thesis
 
 Every feature should become:
@@ -58,14 +75,15 @@ adds hidden debt.
 | --- | --- | --- | --- |
 | Feature ownership | `BUILTIN_FEATURES` names syntax features and drives grammar layers, transforms, passes, and capability inspection. | Several axes are derived or defaulted rather than explicit: reduced mode, docs/spec status, samples, web, notebook, diagnostics, and explanation. | Make capability axes explicit per feature before large syntax promotion. |
 | Layer separation | L0-L7 vocabulary and feature layer metadata exist. | Python AST still does too much semantic work for several source forms. | Make Surface -> Core authoritative for the tiny stable subset before relying on Core for diagnostics or backend claims. |
-| Surface representation | `SurfaceNode`, spans, and `BlockCall` prove the path. | `DataDecl`, `MatchExpr`, `PipeExpr`, and `BindingTarget` still need owned surface nodes. | Add passive nodes first, then migrate lowering one feature at a time. |
-| Core IR and backends | Core IR, verifier, Core Runtime, Core JSON, and JS runtime exist with growing parity fixtures. | Some Core lowering still projects backward from Python AST, so the source language is not fully represented before backend lowering. | Promote small Surface -> Core paths and mark unsupported forms honestly. |
-| Runtime result contract | `ExecutionResult`, stdout/stderr capture, runtime sessions, and passive diagnostics/events exist. | Real diagnostics, semantic events, and detailed stage artifacts are sparse; notebook still has a separate streaming shape. | Wire no-op-to-real event producers gradually and migrate notebook once streaming semantics are clear. |
-| Frontend consistency | CLI and web have moved toward the runtime facade. | Web, notebook, CLI, tests, and future REPL do not yet consume one complete diagnostic/event/output contract. | Treat frontend adapters as contract tests for the runtime API. |
+| Surface representation | `SurfaceNode`, spans, `BlockCall`, and the passive `DataDecl -> DataField -> BindingTarget` path prove the approach. | `MatchExpr`, `PipeExpr`, and non-data `BindingTarget` producers still need stronger owned surface representation. | Add passive nodes first, then migrate lowering one feature at a time. |
+| Core IR and backends | Core IR, verifier, Core Runtime, Core JSON, JS runtime, and backend fixture parity are healthy enough to support incremental migration. | Some Core lowering still projects backward from Python AST, so the source language is not fully represented before backend lowering. | Promote small Surface -> Core paths and mark unsupported forms honestly. |
+| Runtime result contract | `ExecutionResult`, stdout/stderr capture, runtime sessions, passive diagnostics/events, and the first binding-constraint producer exist. | Real diagnostics, semantic events, and detailed stage artifacts are sparse; notebook still has a separate streaming shape. | Wire no-op-to-real event producers gradually and migrate notebook once streaming semantics are clear. |
+| Frontend consistency | CLI and web have moved toward runtime facades; the browser-default Rust/WASM -> JS path has contract tests. | Web, notebook, CLI, tests, and future REPL do not yet consume one complete diagnostic/event/output contract. | Treat frontend adapters as contract tests for the runtime API. |
 | Feature profiles | Parser/cache keys have typed placeholders for profile, parser, grammar, source identity, and span mode. | Named profiles such as `default`, `lab`, `target-tour`, and `docs-only` are not fully selectable. | Add profile selection without changing default behavior, then use it for target fixtures. |
-| Tests | Multi-interpreter regression and backend fixture parity are strong. | Feature-owned test templates are not yet mandatory across parse, lower, runtime, reduced, backend, docs, web, and notebook. | Add a template and require each promoted feature to declare what it covers and what remains target-only. |
-| Diagnostics and explanation | The docs have a strong explanation direction and passive event records. | Binding, match, decode, pipeline, block, and backend errors can still invent private failure shapes. | Define one semantic event vocabulary before adding feature-specific explanations. |
+| Tests | Full pytest, browser/runtime contracts, multi-interpreter regression, agent hook tests, and backend fixture parity are strong. | Feature-owned test templates are not yet mandatory across parse, lower, runtime, reduced, backend, docs, web, and notebook. | Add a template and require each promoted feature to declare what it covers and what remains target-only. |
+| Diagnostics and explanation | The docs have a strong explanation direction, passive event records, and binding constraints as the first real producer. | Match, decode, pipeline, block, query, example, capability, and backend errors can still invent private failure shapes. | Extend one semantic event vocabulary through feature producers one at a time. |
 | Performance | Manual performance notes and cache work are visible. | Budgets are not automated enough to protect LALR, postlex, session-cache, and Pyodide gains. | Add loose opt-in budget checks before richer parser profiles and frontends increase variance. |
+| Agent infrastructure | Shared skills, Codex hooks, Claude shims, prompt templates, subagents, RAG/MCP scaffolding, and `agent_doctor.py` are healthy. | Project-wide reviews still need a disciplined workflow so broad scans update existing action surfaces instead of spawning new planning spines. | Keep `nomi-ai-native` aligned with this review workflow and validate with agent-doctor plus hook tests. |
 
 ## Leverage Gap Map
 
@@ -84,6 +102,29 @@ adds hidden debt.
 | Soft keyword and postlexer contract | Contextual syntax is powerful but can turn into invisible grammar policy. | Token rewrites have owner metadata, fixtures, conflict review, and performance notes. | Keep token-stream contract tests near every new soft keyword or virtual token. |
 | Host capability boundary | Browser, CLI, notebook, Docker, and future backends should not learn different language meanings. | Host adapters declare filesystem, stdout, timing, package loading, cancellation, secrets, network, and artifact access. | Treat the web manifest as the first runtime artifact bundle contract. |
 | Agent workflow contract | AI tools can overfit to stale implementation mechanics unless the workflow says what is prototype residue. | Skills and docs require feature-owned, status-honest, layer-aware, inspectable changes. | Link this review from the language-design skill and TODO index. |
+
+## Current Highest-Leverage Gaps: 2026-06-30
+
+1. **Capability axes:** the generated matrix is useful, but feature-owned
+   `explain`, `web`, `notebook`, diagnostics, reduced-mode, and docs/spec axes
+   still need to become explicit facts rather than defaults.
+2. **Frontend result contract:** CLI, web, notebook, tests, and future REPL
+   surfaces should converge on one `ExecutionResult` diagnostic/event/output
+   shape.
+3. **Source-to-Core authority:** keep moving source forms into Nomi-owned
+   Surface/Core representation before backend, diagnostic, or explanation work
+   depends on them.
+4. **Semantic event producers:** binding constraints prove the path; decode,
+   match, pipeline, block, query, examples, capability, and rewrite need
+   producers without inventing private formats.
+5. **Cross-pipeline parity:** continue expanding Lark/Python session versus
+   Rust/WASM/JS source-to-Core fixtures before claiming broader browser
+   language completeness.
+6. **Feature profiles:** make `default`, `lab`, `target-tour`, and `docs-only`
+   selectable only after profile identity is threaded through parser/runtime
+   cache keys and inspection output.
+7. **Agent review discipline:** broad project scans should refresh these
+   action surfaces and skills, not create another permanent synthesis doc.
 
 ## Feature Packet Gate
 

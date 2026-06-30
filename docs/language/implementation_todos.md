@@ -88,10 +88,11 @@ below and leave dated review notes as evidence.
 
 ### Slice 1: Planning And Consolidation Commit
 
-- [ ] Document this plan before broader implementation work.
-- [ ] Commit the planning-only docs slice separately.
-- [ ] Keep `project_improvement_review_2026_06_03.md` as source evidence and
+- [x] Document this plan before broader implementation work.
+- [x] Commit the planning-only docs slice separately.
+- [x] Keep `project_improvement_review_2026_06_03.md` as source evidence and
   point readers here for the active execution queue.
+  (Committed as `dbc88ab`.)
 
 Validation for this slice:
 
@@ -101,20 +102,21 @@ python3 .codex/scripts/agent_doctor.py
 
 ### Slice 2: Project Review Truth Surfaces
 
-- [ ] Refresh
+- [x] Refresh
   [`implementation_evolvability_gap_review.md`](implementation_evolvability_gap_review.md)
   so its scorecard reflects the current validated state: strong tests,
   healthy web/runtime contracts, healthy agent infrastructure, and remaining
   gaps around capability honesty, Surface/Core authority, diagnostics/events,
   frontend result contracts, feature profiles, and parity.
-- [ ] Refresh
+- [x] Refresh
   [`current_capability_matrix.md`](current_capability_matrix.md)
   with the current generated read: parse/lower/run/reduce are broadly
   available, while `explain`, `web`, and `notebook` remain deliberately
   conservative.
-- [ ] Refresh dated orientation notes only as source evidence. Do not create
+- [x] Refresh dated orientation notes only as source evidence. Do not create
   another broad "whole project synthesis" unless it retires an existing action
   surface.
+  (The June 3 project review now points to this active June 30 plan.)
 
 Validation for this slice:
 
