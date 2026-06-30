@@ -69,6 +69,118 @@ been absorbed into the normal tracks below.
 | Browser parity expansion | Browser parity gaps are named through the typed fixture ladder, JS lowerer diagnostics, and backend capability contracts. Remaining source-map/diagnostic/resume fixtures stay in Track 0D. | Track 0D |
 | Setup and agent hygiene polish | Loose setup/sample `#TODO:` comments from the review were removed or anchored; Docker/setup follow-ups remain only as Track 10 backlog items. | Track 10 |
 
+## Current Consolidated Implementation Plan: 2026-06-30
+
+This plan starts the next implementation phase from a clean validation
+baseline:
+
+| Check | Result |
+| --- | --- |
+| Full pytest | `1213 passed, 76 skipped, 10 warnings` |
+| Web/runtime gate | manifest fresh, WASM parser fresh, 55 browser/runtime contract tests passed |
+| Agent doctor | all checks passed |
+| Feature capability inspection | current matrix generated successfully |
+| Parser/frontend/backend inspection | parser frontends, eval backends, and resolved pipelines generated successfully |
+
+Treat this section as the current execution plan, not as a new permanent
+planning spine. As each slice lands, fold durable status into the normal tracks
+below and leave dated review notes as evidence.
+
+### Slice 1: Planning And Consolidation Commit
+
+- [ ] Document this plan before broader implementation work.
+- [ ] Commit the planning-only docs slice separately.
+- [ ] Keep `project_improvement_review_2026_06_03.md` as source evidence and
+  point readers here for the active execution queue.
+
+Validation for this slice:
+
+```bash
+python3 .codex/scripts/agent_doctor.py
+```
+
+### Slice 2: Project Review Truth Surfaces
+
+- [ ] Refresh
+  [`implementation_evolvability_gap_review.md`](implementation_evolvability_gap_review.md)
+  so its scorecard reflects the current validated state: strong tests,
+  healthy web/runtime contracts, healthy agent infrastructure, and remaining
+  gaps around capability honesty, Surface/Core authority, diagnostics/events,
+  frontend result contracts, feature profiles, and parity.
+- [ ] Refresh
+  [`current_capability_matrix.md`](current_capability_matrix.md)
+  with the current generated read: parse/lower/run/reduce are broadly
+  available, while `explain`, `web`, and `notebook` remain deliberately
+  conservative.
+- [ ] Refresh dated orientation notes only as source evidence. Do not create
+  another broad "whole project synthesis" unless it retires an existing action
+  surface.
+
+Validation for this slice:
+
+```bash
+python3 -m tools.syntax.inspect --stage capabilities
+python3 -m tools.syntax.inspect --stage resolved-pipelines
+python3 .codex/scripts/agent_doctor.py
+```
+
+### Slice 3: AI-Native Workflow Update
+
+- [ ] Update `.agents/skills/nomi-ai-native/SKILL.md` with a project-review
+  workflow for full-project scans: validate first, inspect capability and
+  pipeline tables, choose existing action surfaces, patch narrowly, and commit
+  logical slices.
+- [ ] Update `.agents/README.md` or
+  [`ai_collaboration.md`](../orientation/ai_collaboration.md) only if the
+  skill change creates a new shared contract that those entrypoints must
+  advertise.
+- [ ] Keep Claude/Codex shims thin and canonical-source-driven.
+
+Validation for this slice:
+
+```bash
+python3 .codex/scripts/agent_doctor.py
+pytest prototype/tests/unit/tools/test_agent_hooks.py
+```
+
+### Slice 4: Optional Guardrail Follow-Up
+
+Add code only after the docs and skill surfaces are aligned.
+
+- [ ] Consider extending `.codex/scripts/agent_doctor.py` with a lightweight
+  check that the project-review workflow remains discoverable from
+  `nomi-ai-native`.
+- [ ] Add or update focused tests only if the new guardrail checks deterministic
+  repository state and does not make agent startup noisy.
+
+Validation for this slice:
+
+```bash
+python3 .codex/scripts/agent_doctor.py
+pytest prototype/tests/unit/tools/test_agent_hooks.py
+```
+
+### Slice 5: Broader Regression Gate
+
+Run broader checks after the docs/skill/guardrail slices, or before switching
+from project-review infrastructure into parser, runtime, web, or notebook
+behavior.
+
+```bash
+python3 scripts/check_web_runtime.py
+pytest -q
+```
+
+### Review Rule Between Slices
+
+After each commit, review:
+
+- whether the change updated an existing action surface instead of creating a
+  competing backlog;
+- whether any generated artifact or local agent state appeared in `git status`;
+- whether the next slice still preserves feature ownership, capability honesty,
+  and reversible implementation.
+
 ## Track 0: First Principles, Vision, And Design Fixtures
 
 - [ ] Maintain the first-principles programming model as the main spine of the

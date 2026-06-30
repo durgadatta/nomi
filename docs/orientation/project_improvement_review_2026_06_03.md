@@ -8,6 +8,18 @@
 > and [`implementation_codebase_audit.md`](../language/implementation_codebase_audit.md#consolidation-refresh-2026-06-03).
 > Keep this file as evidence, not as a second backlog.
 
+## Active Follow-Up Plan: 2026-06-30
+
+The next implementation phase is planned in
+[`implementation_todos.md`](../language/implementation_todos.md#current-consolidated-implementation-plan-2026-06-30).
+That section is the active execution queue for the project-review
+consolidation, AI-native workflow update, optional guardrail work, and
+validation gates.
+
+Keep this June 3 review as source evidence. When a future scan finds a durable
+action, fold it into the current action surfaces instead of extending this file
+into a second backlog.
+
 ## Scan Evidence
 
 Commands run during this pass:
