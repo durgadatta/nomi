@@ -33,6 +33,11 @@ For a medium-sized script-shaped target, read
 because it uses aspirational syntax. Move pieces into runnable samples only
 after the implementation and regression snapshots support them.
 
+For a broader competitiveness target, read
+[Serious Language Target Demo](serious_language_target_demo.nomi). It is a
+target-only pressure test for numeric arrays, units, symbolic computation,
+multiple dispatch, capability boundaries, and explanation.
+
 Each fixture should answer:
 
 ```text

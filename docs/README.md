@@ -145,6 +145,9 @@ Target programs:
   aspirational task-sized programs.
 - [Target Demo Script](language/demo_target.nomi): compact target-only
   `.nomi` script for the future operational spec; not expected to parse today.
+- [Serious Language Target Demo](language/serious_language_target_demo.nomi):
+  ambitious target-only `.nomi` script for evaluating Nomi against Python,
+  Julia, Mathematica, Haskell, R, and notebooks; not expected to parse today.
 - [Target Language Tour](language/target_language_tour.md): large whole-program
   coherence target.
 - [First-Hour Nomi](language/first_hour_nomi.md): smallest teaching path for

@@ -37,6 +37,12 @@ uses the same design choices as this tour, but keeps to ordinary language
 cases: config, data boundaries, functions, flow, result handling, block
 policies, request decoding, and explanation.
 
+For a more ambitious competitiveness target against Python, Julia,
+Mathematica, Haskell, R, and notebooks, see
+[Serious Language Target Demo](serious_language_target_demo.nomi). That file
+is intentionally broader: it pressures numeric arrays, units, multiple
+dispatch, symbolic computation, capabilities, and explanation in one script.
+
 The goal is not to stack syntax from many languages. The goal is to synthesize
 the useful pressures behind Python, ML-family languages, Rust/Swift/Gleam,
 Ruby/Kotlin/Julia blocks, SQL/dataframe flow, CUE/Pkl/Pydantic boundaries,
