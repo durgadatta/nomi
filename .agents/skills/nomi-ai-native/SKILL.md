@@ -117,6 +117,46 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
    `docs/orientation/ai_collaboration.md`, or the local hook/skill docs if the
    workflow changed.
 
+## Project Review Workflow
+
+Use this workflow when asked to review the whole project, do gap analysis,
+consolidate docs, or update agent skills after a broad scan.
+
+1. **Start from evidence, not vibes.** Run or read the current validation
+   surfaces before writing recommendations:
+   - `git status --short`
+   - `python3 -m tools.syntax.inspect --stage capabilities`
+   - `python3 -m tools.syntax.inspect --stage resolved-pipelines`
+   - `python3 scripts/check_web_runtime.py`, when web/runtime truth matters
+   - `python3 .codex/scripts/agent_doctor.py`
+2. **Use existing action surfaces.** Prefer updating:
+   - `docs/language/implementation_todos.md` for the active execution queue;
+   - `docs/language/implementation_evolvability_gap_review.md` for
+     cross-project implementation gates;
+   - `docs/language/current_capability_matrix.md` for generated capability
+     reads;
+   - dated orientation reviews only as source evidence.
+3. **Avoid duplicate synthesis docs.** Do not create another "whole project
+   review" unless it retires an existing action surface. Fold durable findings
+   into the canonical docs and leave old reviews as evidence.
+4. **Name the highest-leverage gaps.** For Nomi, broad scans should check
+   capability honesty, Surface/Core authority, runtime result contracts,
+   semantic event producers, frontend parity, feature profiles, generated
+   artifact freshness, and agent workflow drift.
+5. **Commit logical slices.** Make a planning-only docs commit before broader
+   implementation. Then commit review docs, skill updates, guardrails, and
+   runtime/parser changes separately.
+6. **Reflect between slices.** After each commit, check `git status --short`,
+   verify no generated local state is staged, and ask whether the next change
+   still preserves feature ownership, capability honesty, and reversibility.
+7. **Refresh derived context.** After docs edits, rebuild the ignored RAG index
+   with `python3 -m tools.rag_mcp.cli build` if `agent_doctor.py` reports
+   staleness.
+
+When reporting the result, include the commits made, checks run, next planned
+slice, and any remaining risk. Keep the answer short enough that another agent
+or human can resume from the committed docs rather than from chat memory.
+
 ## Nomi-Specific Next Candidates
 
 Consider these as future improvements, not requirements for every task:

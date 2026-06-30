@@ -128,15 +128,19 @@ python3 .codex/scripts/agent_doctor.py
 
 ### Slice 3: AI-Native Workflow Update
 
-- [ ] Update `.agents/skills/nomi-ai-native/SKILL.md` with a project-review
+- [x] Update `.agents/skills/nomi-ai-native/SKILL.md` with a project-review
   workflow for full-project scans: validate first, inspect capability and
   pipeline tables, choose existing action surfaces, patch narrowly, and commit
   logical slices.
-- [ ] Update `.agents/README.md` or
+- [x] Update `.agents/README.md` or
   [`ai_collaboration.md`](../orientation/ai_collaboration.md) only if the
   skill change creates a new shared contract that those entrypoints must
   advertise.
-- [ ] Keep Claude/Codex shims thin and canonical-source-driven.
+  (No entrypoint change was needed; the Claude skill shim remains a thin
+  pointer to the canonical skill.)
+- [x] Keep Claude/Codex shims thin and canonical-source-driven.
+  (Confirmed `.claude/skills/nomi-ai-native/SKILL.md` is still a minimal
+  pointer to `.agents/skills/nomi-ai-native/SKILL.md`.)
 
 Validation for this slice:
 
