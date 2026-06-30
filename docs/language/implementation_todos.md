@@ -219,9 +219,12 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   The collection/table/rank integration packet now lives in
   [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).
   Remaining: notebook/data fixture ladder and executable/target fixture split.)
-- [ ] Run Stream 3: Blocks, policies, resources, and humane control.
+- [~] Run Stream 3: Blocks, policies, resources, and humane control.
   Outputs: block policy prelude packet and resource/capability diagnostic
   table.
+  (Started: [`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md)
+  now consolidates `using`, `retry`, `timeout`, `transaction`, `trace`, `test`,
+  `world`, cleanup, cancellation, capabilities, and policy events.)
 - [ ] Run Stream 4: Symbolic, reflective, and language-building power.
   Outputs: quote/syntax-values packet, rewrite/unification boundary note, and
   scoped-notation admission guide.
@@ -236,7 +239,9 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   (Started: the binding/data/pattern packet now lives in
   [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md);
   the collection/table/rank packet now lives in
-  [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).)
+  [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md);
+  the block policy packet now lives in
+  [`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md).)
 
 Validation for the research-planning slice:
 
@@ -753,6 +758,11 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
 
 - [ ] Use `../features/block_calls_feature.md` as the canonical focused feature
   spec.
+- [~] Use
+  [`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md)
+  as the prelude-policy contract for `using`, `retry`, `timeout`,
+  `transaction`, `trace`, `test`, `world`, `on_error`, cleanup, cancellation,
+  capability denial, and policy events.
 - [ ] Specify block calls as calls with attached caller-side code and explicit
   `yield` points.
 - [ ] Define block scoping: which names are read, rebound, shadowed, and
@@ -821,6 +831,10 @@ Files: `prototype/runtime/backends/values.py`, `core_runtime.py`
   mutation, `with:` updates, transactions, `world`, and traceable authority
   before any advanced effect typing.
   (Created: [`state_and_capability_model.md`](../features/state_and_capability_model.md).)
+- [~] Keep capability and world-contact policy aligned with
+  [`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md):
+  capabilities should be values or block-policy grants, and denial/escape
+  diagnostics should emit the same semantic event vocabulary.
 - [ ] Specify capability scopes for filesystem, network, time, randomness,
   subprocesses, and environment access.
 - [ ] Explore `world` values for simulation, test isolation, and replay.

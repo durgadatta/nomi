@@ -114,7 +114,7 @@ general reading order.
 | Plan Python-independent backends | [Modern Language Implementation Artifacts](language/modern_language_implementation_artifacts.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md), [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md), [Architecture Refactoring Plan](language/architecture_refactoring_plan.md), [Flexible Syntax Substrate Plan](language/flexible_syntax_substrate_plan.md) |
 | Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
 | Design binding, decode, or pattern captures | [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md), [Binding Constraints Feature](features/binding_constraints_feature.md), [Data Decode Boundary Feature](features/data_decode_boundary_feature.md), [Pattern Convenience](convenience/patterns.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
-| Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
+| Work on blocks/control/resources | [Block Policy Prelude Feature](features/block_policy_prelude_feature.md), [Block Calls As Control Values](features/block_calls_feature.md), [State And Capability Model](features/state_and_capability_model.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query/rank | [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md), [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Work on symbolic/lazy computation | [Symbolic, Lazy, And Structural Computation](features/symbolic_structural_computation.md), [Flow And Collections](convenience/flow_and_collections.md), [Meta & Testing](convenience/meta_testing.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md) |
 | Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
@@ -233,6 +233,7 @@ spine.
 | --- | --- |
 | [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md) | Active integration packet for shared `BindingTarget`, tentative capture, constraints, decode diagnostics, pattern captures, and explanation events. |
 | [Binding Constraints Feature](features/binding_constraints_feature.md) | Active syntax/semantics for constrained bindings. |
+| [Block Policy Prelude Feature](features/block_policy_prelude_feature.md) | Active integration packet for `using`, `retry`, `timeout`, `transaction`, `trace`, `test`, `world`, cleanup, cancellation, capabilities, and policy events. |
 | [Block Calls As Control Values](features/block_calls_feature.md) | Active syntax/semantics for caller-side blocks, `yield`, and policy blocks. |
 | [Command Values Feature](features/command_values_feature.md) | Active feature packet for structured commands, previews, subprocess results, and agent/UI replay. |
 | [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md) | Active integration packet for ordinary collection flow, table values, row/group contexts, lazy plans, materialization, shape/rank operations, and query syntax admission. |
@@ -385,6 +386,7 @@ duplicate material.
 
 - [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md)
 - [Binding Constraints Feature](features/binding_constraints_feature.md)
+- [Block Policy Prelude Feature](features/block_policy_prelude_feature.md)
 - [Block Calls As Control Values](features/block_calls_feature.md)
 - [Command Values Feature](features/command_values_feature.md)
 - [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md)

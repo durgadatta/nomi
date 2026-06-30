@@ -637,8 +637,10 @@ Boundary focus: quote + pattern + rewrite + trace.
    packet with target examples and refusal rules.
    See
    [Collection, Table, And Rank Integration Feature](../features/collection_table_rank_integration_feature.md).
-3. Turn block policy into a prelude packet: `using`, `retry`, `transaction`,
-   `trace`, `test`, cancellation, cleanup, and capability denial.
+3. [Started] Turn block policy into a prelude packet: `using`, `retry`,
+   `transaction`, `trace`, `test`, cancellation, cleanup, and capability
+   denial.
+   See [Block Policy Prelude Feature](../features/block_policy_prelude_feature.md).
 4. Turn quote/rewrite into a future-layer packet with source spans, expansion
    display, rewrite strategies, and redaction.
 5. Update `target_program_fixtures.md` and `demo_target.nomi` only after these

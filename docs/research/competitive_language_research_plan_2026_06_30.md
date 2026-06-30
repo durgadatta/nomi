@@ -45,6 +45,8 @@ The first focused integration artifact from that plan is
 [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md).
 The second is
 [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).
+The third is
+[`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md).
 
 ## Competitive Thesis
 
@@ -303,7 +305,7 @@ These are the immediate design notes this plan should preserve:
 | Python competitiveness | Nomi needs boring-task confidence before exotic syntax. | `first_hour_nomi.md`, `prelude_and_standard_library_plan.md`, `delta_on_python.md` |
 | CUE/Pydantic/Elm decoder competitiveness | External data should become owned program values through one binding, constraint, decode, and explanation story. | `binding_data_pattern_integration_feature.md`, `data_decode_boundary_feature.md`, `binding_constraints_feature.md` |
 | Julia/R/Mathematica competitiveness | Whole-data and symbolic power must be designed as flow, plan, rank/shape, quote, rewrite, and explanation, not patched onto scalar Python. | `collection_table_rank_integration_feature.md`, `structured_collections_query_language.md`, `symbolic_structural_computation.md` |
-| Ruby competitiveness | Block calls are a major differentiator, but only if policies are inspectable and not magical DSLs. | `block_calls_feature.md`, `state_and_capability_model.md` |
+| Ruby/Zig/Python resource-control competitiveness | Block calls are a major differentiator, but only if policies, cleanup, capabilities, retry, and cancellation are inspectable rather than magical DSLs. | `block_policy_prelude_feature.md`, `block_calls_feature.md`, `state_and_capability_model.md` |
 | Scheme/Racket competitiveness | Small-core clarity matters more than macro power. Expansion must be visible and fenced. | `language_foundation.md`, future quote/syntax packet |
 | SQL/Polars competitiveness | Query syntax should wait for stable verbs and plan values. | collection/table vocabulary packet |
 | AI-era competitiveness | Source-to-meaning and semantic events are product features. | `explanation_trace_feature.md`, `current_capability_matrix.md` |
@@ -319,6 +321,8 @@ These are the immediate design notes this plan should preserve:
    (Done:
    [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).)
 5. Write the block policy prelude packet.
+   (Done:
+   [`block_policy_prelude_feature.md`](../features/block_policy_prelude_feature.md).)
 6. Write the quote/syntax-values and rewrite boundary plan.
 7. Write the semantic event producer map.
 8. Refresh target fixtures and `demo_target.nomi` only after the design
