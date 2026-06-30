@@ -266,7 +266,10 @@ Immediate commit sequence:
    (`binding-data-pattern-integration`, `collection-table-rank-integration`,
    and `block-policy-prelude` now appear as explicit target-only docs rows in
    feature capability inspection.)
-2. [ ] Add shared semantic event producer helpers.
+2. [x] Add shared semantic event producer helpers.
+   (`record_decode_event`, `record_match_event`, `record_pipeline_event`,
+   `record_block_policy_event`, and `record_capability_event` now share the
+   runtime semantic event shape; concrete producers remain pending.)
 3. [ ] Add shared binding target constraint metadata.
 4. [ ] Route constrained bindings through tentative commit.
 5. [ ] Add decode error and event skeleton.

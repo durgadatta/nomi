@@ -9,6 +9,11 @@ from prototype.runtime import (
     SEMANTIC_EVENT_KINDS,
     create_session,
     execute,
+    record_block_policy_event,
+    record_capability_event,
+    record_decode_event,
+    record_match_event,
+    record_pipeline_event,
 )
 
 
@@ -162,6 +167,110 @@ def test_runtime_event_collector_rejects_unknown_semantic_event_kind():
         assert "binding" in str(exc)
     else:
         raise AssertionError("unknown semantic event kind should fail")
+
+
+def test_feature_event_helpers_use_shared_semantic_vocabulary():
+    collector = RuntimeEventCollector()
+
+    decode = record_decode_event(
+        collector,
+        "failed",
+        subject="Person.age",
+        value_summary="'unknown'",
+        failure_kind="decode",
+        redaction={"paths": ["token"]},
+        next_step="Provide an integer age.",
+        payload={"field_path": "age", "expected": "int"},
+    )
+    match = record_match_event(
+        collector,
+        "skipped",
+        subject="case adult",
+        failure_kind="guard",
+        payload={"pattern": "Person(age >= 18)"},
+    )
+    pipeline = record_pipeline_event(
+        collector,
+        "stage_completed",
+        subject="where",
+        value_summary="12 rows",
+        payload={"stage": 2},
+    )
+    block = record_block_policy_event(
+        collector,
+        "yielded",
+        subject="using(open(path))",
+        payload={"policy": "using"},
+    )
+    capability = record_capability_event(
+        collector,
+        "denied",
+        subject="network",
+        failure_kind="capability-denial",
+        next_step="Grant the network capability.",
+    )
+
+    _, events = collector.snapshot()
+
+    assert events == (decode, match, pipeline, block, capability)
+    assert tuple(event.name for event in events) == (
+        "semantic.decode.failed",
+        "semantic.match.skipped",
+        "semantic.pipeline.stage_completed",
+        "semantic.block.yielded",
+        "semantic.capability.denied",
+    )
+    assert decode.to_record() == {
+        "id": "event-1",
+        "parent_id": None,
+        "name": "semantic.decode.failed",
+        "phase": "eval",
+        "kind": "decode",
+        "action": "failed",
+        "feature": "data-decode",
+        "operation": "failed",
+        "span": None,
+        "subject": "Person.age",
+        "value_summary": "'unknown'",
+        "capability": "data.decode",
+        "failure_kind": "decode",
+        "redaction": {"paths": ["token"]},
+        "next_step": "Provide an integer age.",
+        "payload": {
+            "kind": "decode",
+            "action": "failed",
+            "feature": "data-decode",
+            "field_path": "age",
+            "expected": "int",
+        },
+    }
+    assert match.feature == "pattern-matching"
+    assert match.capability == "pattern.match"
+    assert pipeline.feature == "collection-flow"
+    assert pipeline.capability == "flow.pipeline"
+    assert block.kind == "block"
+    assert block.feature == "block-policy"
+    assert block.capability == "block.policy"
+    assert capability.kind == "capability"
+    assert capability.feature == "state-capability"
+    assert capability.capability == "host.capability"
+
+
+def test_feature_event_helpers_preserve_parent_links():
+    collector = RuntimeEventCollector()
+
+    parent = record_pipeline_event(collector, "entered", subject="people")
+    child = record_decode_event(
+        collector,
+        "failed",
+        subject="people[3].age",
+        parent_id=parent.id,
+    )
+
+    assert parent.id == "event-1"
+    assert child.id == "event-2"
+    assert child.parent_id == "event-1"
+    assert child.to_record()["parent_id"] == "event-1"
 
 
 def test_execute_preserves_output_on_returned_exception():

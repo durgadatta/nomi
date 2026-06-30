@@ -252,6 +252,166 @@ class RuntimeEventCollector:
         return event_id
 
 
+def record_decode_event(
+    collector: RuntimeEventCollector,
+    action: str,
+    *,
+    phase: str = "eval",
+    feature: str = "data-decode",
+    subject: str | None = None,
+    value_summary: str | None = None,
+    capability: str = "data.decode",
+    failure_kind: str | None = None,
+    redaction: dict[str, Any] | None = None,
+    next_step: str | None = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: str | None = None,
+) -> RuntimeEvent:
+    """Record a decode semantic event using the shared explanation shape."""
+    return collector.semantic_event(
+        "decode",
+        action,
+        phase=phase,
+        feature=feature,
+        subject=subject,
+        value_summary=value_summary,
+        capability=capability,
+        failure_kind=failure_kind,
+        redaction=redaction,
+        next_step=next_step,
+        payload=payload,
+        parent_id=parent_id,
+    )
+
+
+def record_match_event(
+    collector: RuntimeEventCollector,
+    action: str,
+    *,
+    phase: str = "eval",
+    feature: str = "pattern-matching",
+    subject: str | None = None,
+    value_summary: str | None = None,
+    capability: str = "pattern.match",
+    failure_kind: str | None = None,
+    redaction: dict[str, Any] | None = None,
+    next_step: str | None = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: str | None = None,
+) -> RuntimeEvent:
+    """Record a match semantic event using the shared explanation shape."""
+    return collector.semantic_event(
+        "match",
+        action,
+        phase=phase,
+        feature=feature,
+        subject=subject,
+        value_summary=value_summary,
+        capability=capability,
+        failure_kind=failure_kind,
+        redaction=redaction,
+        next_step=next_step,
+        payload=payload,
+        parent_id=parent_id,
+    )
+
+
+def record_pipeline_event(
+    collector: RuntimeEventCollector,
+    action: str,
+    *,
+    phase: str = "eval",
+    feature: str = "collection-flow",
+    subject: str | None = None,
+    value_summary: str | None = None,
+    capability: str = "flow.pipeline",
+    failure_kind: str | None = None,
+    redaction: dict[str, Any] | None = None,
+    next_step: str | None = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: str | None = None,
+) -> RuntimeEvent:
+    """Record a pipeline semantic event using the shared explanation shape."""
+    return collector.semantic_event(
+        "pipeline",
+        action,
+        phase=phase,
+        feature=feature,
+        subject=subject,
+        value_summary=value_summary,
+        capability=capability,
+        failure_kind=failure_kind,
+        redaction=redaction,
+        next_step=next_step,
+        payload=payload,
+        parent_id=parent_id,
+    )
+
+
+def record_block_policy_event(
+    collector: RuntimeEventCollector,
+    action: str,
+    *,
+    phase: str = "eval",
+    feature: str = "block-policy",
+    subject: str | None = None,
+    value_summary: str | None = None,
+    capability: str = "block.policy",
+    failure_kind: str | None = None,
+    redaction: dict[str, Any] | None = None,
+    next_step: str | None = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: str | None = None,
+) -> RuntimeEvent:
+    """Record a block-policy semantic event using the shared explanation shape."""
+    return collector.semantic_event(
+        "block",
+        action,
+        phase=phase,
+        feature=feature,
+        subject=subject,
+        value_summary=value_summary,
+        capability=capability,
+        failure_kind=failure_kind,
+        redaction=redaction,
+        next_step=next_step,
+        payload=payload,
+        parent_id=parent_id,
+    )
+
+
+def record_capability_event(
+    collector: RuntimeEventCollector,
+    action: str,
+    *,
+    phase: str = "eval",
+    feature: str = "state-capability",
+    subject: str | None = None,
+    value_summary: str | None = None,
+    capability: str = "host.capability",
+    failure_kind: str | None = None,
+    redaction: dict[str, Any] | None = None,
+    next_step: str | None = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: str | None = None,
+) -> RuntimeEvent:
+    """Record a capability semantic event using the shared explanation shape."""
+    return collector.semantic_event(
+        "capability",
+        action,
+        phase=phase,
+        feature=feature,
+        subject=subject,
+        value_summary=value_summary,
+        capability=capability,
+        failure_kind=failure_kind,
+        redaction=redaction,
+        next_step=next_step,
+        payload=payload,
+        parent_id=parent_id,
+    )
+
+
 def record_binding_error(
     collector: RuntimeEventCollector,
     error: Exception,

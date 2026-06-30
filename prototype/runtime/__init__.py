@@ -6,6 +6,11 @@ from .diagnostics import (
     Diagnostic,
     RuntimeEvent,
     RuntimeEventCollector,
+    record_block_policy_event,
+    record_capability_event,
+    record_decode_event,
+    record_match_event,
+    record_pipeline_event,
 )
 from .pipeline import PipelineSpec, build_pipeline_spec
 from .session import RuntimeCacheKey, RuntimeSession
@@ -24,4 +29,9 @@ __all__ = [
     "create_session",
     "execute",
     "inspect",
+    "record_block_policy_event",
+    "record_capability_event",
+    "record_decode_event",
+    "record_match_event",
+    "record_pipeline_event",
 ]

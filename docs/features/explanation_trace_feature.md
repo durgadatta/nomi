@@ -102,7 +102,11 @@ has to cover successful execution, not only errors.
 1. [x] Extend runtime diagnostics with the event fields above.
    (`RuntimeEvent.to_record()` now exposes V1 fields and
    `RuntimeEventCollector` assigns stable event IDs.)
-2. Add source-span propagation for more surface nodes.
-3. Produce decode events from `Data.decode`.
-4. Produce match and pipeline events after their normal forms stabilize.
-5. Add `explain` rendering for terminal, notebook, and web playground.
+2. [x] Add shared helper functions for planned producer families.
+   (`record_decode_event`, `record_match_event`, `record_pipeline_event`,
+   `record_block_policy_event`, and `record_capability_event` now wrap the
+   shared semantic event shape; concrete feature producers remain pending.)
+3. Add source-span propagation for more surface nodes.
+4. Produce decode events from `Data.decode`.
+5. Produce match and pipeline events after their normal forms stabilize.
+6. Add `explain` rendering for terminal, notebook, and web playground.
