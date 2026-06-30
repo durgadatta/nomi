@@ -38,6 +38,10 @@ What feature packet, target fixture, sample, test, or implementation slice
 would prove it?
 ```
 
+For the current consolidation of integration boundaries, syntax variants,
+tradeoffs, and target examples, see
+[`cognitive_integration_boundary_plan.md`](../language/cognitive_integration_boundary_plan.md).
+
 ## Competitive Thesis
 
 Nomi's plausible competitive position is:

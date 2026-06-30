@@ -117,8 +117,8 @@ general reading order.
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
 | Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Work on symbolic/lazy computation | [Symbolic, Lazy, And Structural Computation](features/symbolic_structural_computation.md), [Flow And Collections](convenience/flow_and_collections.md), [Meta & Testing](convenience/meta_testing.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md) |
-| Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
-| Critique design coherence | [Adversarial Design Critique](language/adversarial_design_critique.md), [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
+| Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
+| Critique design coherence | [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md), [Adversarial Design Critique](language/adversarial_design_critique.md), [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
 | Make samples or demos | [Target Program Fixtures](language/target_program_fixtures.md), [Target Language Tour](language/target_language_tour.md), [Language Specification](language/language_spec.md) |
 
 ## Language
@@ -177,6 +177,9 @@ Planning and process:
 - [Current Capability Matrix](language/current_capability_matrix.md):
   live inspection route for parse, lower, run, reduce, explain, docs, tests,
   samples, web, and notebook capability axes.
+- [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md):
+  active consolidation surface for source-language lessons, integration
+  boundaries, syntax variants, tradeoffs, and whole-language target examples.
 - [Design Proposal Template](language/design_proposal_template.md): proposal
   process for new syntax, features, and promoted research ideas.
 - [Architecture Refactoring Plan](language/architecture_refactoring_plan.md):
@@ -292,6 +295,7 @@ seed focused syntax sections. When a research idea becomes stable, fold it into
 | [Research Notes Synthesis](research/research_notes_synthesis.md), [Spec Readiness Map](language/spec_readiness_map.md) | Layering and promotion history. | [Implementation Todos](language/implementation_todos.md), focused feature docs |
 | [Language Family Coverage Map](research/language_family_coverage_map.md), [High-Level Language Usability Syntax Notes](research/high_level_language_usability_syntax_notes.md), [Python Syntax Stretch Feature Atlas](research/python_syntax_stretch_feature_atlas.md) | Cross-language comparison. | [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md), focused convenience docs |
 | [Competitive Language Research Plan 2026-06-30](research/competitive_language_research_plan_2026_06_30.md) | Intense competitor-oriented research plan across Python, Julia, Ruby, Mathematica, Scheme/Racket, SQL/data, shell, and mainstream safety languages. | Feature packets, target fixtures, first-hour docs, stdlib/prelude docs, and implementation gates |
+| [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md) | Integration boundaries, syntax variants, tradeoff tables, and target examples that consolidate research into one language shape. | Feature packets, `demo_target.nomi`, target fixtures, and language-spec sections |
 | [Overlooked Language Design Dimensions](research/overlooked_language_design_dimensions.md) | Unicode/source text, accessibility, compatibility, migration, governance, localization. | [Language Specification](language/language_spec.md), [Design Proposal Template](language/design_proposal_template.md), explanation-event feature |
 | [Orthogonal Language Feature Coverage](research/orthogonal_language_feature_coverage.md) | Cross-cutting design surfaces: formatting, diagnostics, accessibility, observability, packages, capabilities, secrets, interop, migration, governance, conformance, editor UX. | Feature-packet orthogonal impact rows, explanation-event feature, package/tooling docs |
 | [Everyday Fallback Simplification Ideas](research/everyday_fallback_simplification_ideas.md), [Python Language Changes Deferred By Complexity](research/python_changes_deferred_by_complexity.md) | Rejected/deferred pressure and simplification ideas. | [Convenience Review And Roadmap](convenience/review_and_roadmap.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md) |
@@ -345,6 +349,7 @@ duplicate material.
 - [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md)
 - [Architecture Refactoring Plan](language/architecture_refactoring_plan.md)
 - [Backend Independence Roadmap](language/backend_independence_roadmap.md)
+- [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md)
 - [Core Layer Separation Plan](language/core_layer_separation_plan.md)
 - [Core Runtime Backend Design](language/core_runtime_backend_design.md)
 - [Core Runtime Backend Implementation Notes](language/core_runtime_backend_implementation_notes.md)

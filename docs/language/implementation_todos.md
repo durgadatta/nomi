@@ -199,6 +199,10 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   [`competitive_language_research_plan_2026_06_30.md`](../research/competitive_language_research_plan_2026_06_30.md).
 - [x] Index the plan from the docs map and research coverage map.
 - [x] Link the older research synthesis to the new competitive campaign.
+- [x] Create an active cognitive integration consolidation surface:
+  [`cognitive_integration_boundary_plan.md`](cognitive_integration_boundary_plan.md).
+  It captures integration boundaries, source-language lessons, syntax
+  variants, tradeoffs, target examples, and consolidation decisions.
 - [~] Run Stream 1: Everyday Python-competitive core.
   Outputs: first-hour rewrite pass, Python migration/interop note, boring-task
   fixture set.
@@ -224,6 +228,9 @@ form, diagnostics, capability axes, and test/sample gate are visible.
 - [ ] Run Stream 6: Adoption infrastructure as language design.
   Outputs: formatter doctrine, package/project manifest note, deployment and
   trust checklist.
+- [ ] Use the cognitive integration plan to produce the next feature-packet
+  sequence: binding/data/pattern, collection/table/rank, block policy,
+  quote/rewrite, and semantic events.
 
 Validation for the research-planning slice:
 
