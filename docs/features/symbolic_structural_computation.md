@@ -106,6 +106,36 @@ global evaluation mode:
 | table/query plan | Build logical dataflow. | on `collect`, write, or iteration | logical plan/schema | Flow, data boundary, explanation |
 | rewrite rule | Transform a quoted/computation value. | transforms structure, not runtime values | match + replacement trace | Pattern, function, explanation |
 
+## Competitive Symbolic Boundary: 2026-06-30
+
+Mathematica, Scheme/Racket, Julia macros, R formulas, Polars plans, JAX traces,
+and SQL optimizers all teach the same deep lesson: serious languages eventually
+need values that describe computation, not only values produced by computation.
+
+Nomi should accept that ambition, but fence it:
+
+| Power | Competitive source | Nomi boundary |
+| --- | --- | --- |
+| symbolic expression | Mathematica, Lisp, Scheme | `quote:` creates syntax values with spans. |
+| syntax transformation | Racket macros, Julia macros | scoped expansion with an expansion trace; no global invisible rewrite. |
+| data formula/context | R formulas, tidy eval | explicit scoped context or data mask; no ambient name rebinding. |
+| lazy query plan | Polars, SQL, Spark | plan value with schema, capability, `collect()`, and `explain()`. |
+| traced computation | JAX, TensorFlow, MLIR | described computation IR with unsupported-host-behavior diagnostics. |
+| rewrite/normalization | Mathematica, e-graphs | explicit rules and strategies over quoted or described values. |
+
+The everyday rule:
+
+```text
+ordinary code stays eager and local
+structural code crosses an explicit boundary
+every boundary can explain expansion, provenance, and execution
+```
+
+This is the main refusal line against copying Mathematica or macro-heavy
+languages too early. Nomi should be able to grow symbolic power, but only after
+source spans, Surface/Core artifacts, semantic events, and frontend explain
+views are strong enough to make that power inspectable.
+
 ## Source Scan For This Integration
 
 - Wolfram Language exposes symbolic transformation rules over expressions and

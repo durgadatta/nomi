@@ -39,6 +39,32 @@ The goal is a language surface that is:
 This is not "add SQL as a string." It is "make structured collection
 transformation part of the language core."
 
+## Competitive Data/Scientific Gate: 2026-06-30
+
+Nomi should be credible for people who currently reach for Julia, R, pandas,
+Polars, SQL, DuckDB, Mathematica, MATLAB, or APL-family tools. That does not
+mean copying their surface syntax. It means preserving the durable user jobs:
+
+| Competitor pressure | User job | Nomi response |
+| --- | --- | --- |
+| Julia broadcasting and generic math | Apply transformations across many values without ceremony. | Start with ordinary collection verbs and later add shape/rank-aware library functions before syntax. |
+| R/dplyr data frames | Filter, derive, group, summarize, and join data with readable verbs. | Make the verb vocabulary canonical and explain row/group context explicitly. |
+| pandas | Work with labeled mixed data quickly. | Preserve labels and schema where present, but avoid hidden index semantics as the center of meaning. |
+| Polars/DuckDB | Build lazy plans, optimize them, and inspect before execution. | Treat plans as values with `collect()` and `explain()` rather than as opaque method chains or strings. |
+| SQL | Express relational transformations and let backends optimize. | Lower any future query syntax to the same flow verbs and plan values. |
+| Mathematica/APL | Think in whole structures, shapes, and transformations. | Keep whole-data power, but refuse dense glyphs and ambient symbolic evaluation in the everyday layer. |
+
+The gate for promotion is:
+
+```text
+ordinary collection -> table value -> lazy plan -> explainable backend
+```
+
+Each step must preserve the same normal forms: flow, binding, pattern, data
+boundary, absence/result, and explanation. If a table/query feature needs a new
+row scope, group scope, rank rule, or symbolic expression boundary, that scope
+must be explicit and inspectable before syntax hardens.
+
 ## Reference Pressure
 
 ### SQL

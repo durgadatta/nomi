@@ -42,6 +42,34 @@ broadcast rank, parallel execution, and SQL-like blocks are important, but they
 are secondary layers unless they reduce to the same collection and flow normal
 forms.
 
+## Competitive Flow Ladder: 2026-06-30
+
+Nomi's data-flow surface should grow in this order:
+
+```text
+list/iterator verbs
+-> record/table verbs
+-> grouped/windowed table plans
+-> shape/rank-aware array helpers
+-> symbolic or backend-specific plans
+```
+
+This order matters. Julia, R, Mathematica, SQL, and APL all show real power,
+but they also show how quickly data syntax can become a second language. Nomi
+should make the lower rungs excellent before adding higher-rung syntax.
+
+| Rung | Competitive source | Nomi rule |
+| --- | --- | --- |
+| list/iterator verbs | Python, Rust, Kotlin, Elixir | Ordinary functions first; pipeline is call spelling. |
+| record/table verbs | dplyr, pandas, LINQ, SQL | Same `where`/`select`/`derive` vocabulary over schema-aware values. |
+| grouped/windowed plans | SQL, Polars, DuckDB | Grouping is metadata on a plan, not a parallel verb universe. |
+| shape/rank helpers | Julia, APL, J, BQN | Begin as named functions with shape diagnostics, not dense syntax. |
+| symbolic/backend plans | Mathematica, Polars, SQL engines | Explicit plan or quote boundary; `explain` before execution. |
+
+Promotion rule: if a collection feature cannot explain its input type,
+materialization behavior, missing-value/result policy, and source path for
+diagnostics, keep it library-first or design-needed.
+
 ## 1. Pipeline
 
 Pipeline is the main value-flow operator:

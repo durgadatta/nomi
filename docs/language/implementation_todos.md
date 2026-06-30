@@ -206,9 +206,13 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   `prelude_and_standard_library_plan.md` now include Python-competitive gates
   and the boring-task ladder. Remaining: fixture set and runnable/target-only
   sample split.)
-- [ ] Run Stream 2: Scientific, array, table, and notebook power.
+- [~] Run Stream 2: Scientific, array, table, and notebook power.
   Outputs: collection/table vocabulary packet, notebook/data fixture ladder,
   refusal table for dense or hidden data syntax.
+  (Started: `structured_collections_query_language.md`,
+  `flow_and_collections.md`, and `symbolic_structural_computation.md` now
+  capture the competitive flow ladder, table/query gate, and symbolic boundary.
+  Remaining: notebook/data fixture ladder and concrete collection/table packet.)
 - [ ] Run Stream 3: Blocks, policies, resources, and humane control.
   Outputs: block policy prelude packet and resource/capability diagnostic
   table.
