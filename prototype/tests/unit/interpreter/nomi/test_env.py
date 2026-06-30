@@ -2,6 +2,7 @@ import pytest
 from typing import Any, Callable
 
 from prototype.interpreter.nomi.env import Environment
+from prototype.syntax.surface import BindingTarget
 
 class MockInterpreter:
     def __init__(self):
@@ -99,6 +100,7 @@ class TestEnvironmentConstraints:
         env.set("value", {"nested": "object"})
         
         assert env.get("value") == {"nested": "object"}
+        assert env.get_constraint_target("value") is None
     
     def test_shadowed_variables_can_have_different_constraints(self, interpreter):
         """Child can shadow a parent variable with a different constraint."""
@@ -113,3 +115,26 @@ class TestEnvironmentConstraints:
         
         assert child.get("id") == "user_1"
         assert parent.get("id") == 1
+
+    def test_constraint_target_metadata_is_preserved(self, env):
+        """Constraint metadata is stored beside the runtime predicate."""
+        target = BindingTarget(
+            name="age",
+            role="assignment",
+            constraint=None,
+        )
+
+        env.set_constraint("age", lambda v: isinstance(v, int), target=target)
+
+        assert env.get_constraint_target("age") is target
+        assert env.copy().get_constraint_target("age") is target
+
+    def test_child_environment_can_read_parent_constraint_target(self, interpreter):
+        """Inherited constraints expose inherited target metadata too."""
+        parent = Environment(interpreter)
+        target = BindingTarget(name="port", role="assignment")
+        parent.set_constraint("port", lambda v: isinstance(v, int), target=target)
+
+        child = Environment(interpreter, parent)
+
+        assert child.get_constraint_target("port") is target

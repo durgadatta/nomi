@@ -10,12 +10,12 @@ class BlockFunctionMixin:
         name, annotation = node.name, node.annotation
         
         # eval AnnAssign so that the constraints are set properly
-        self.eval(
-            ast.AnnAssign(
-                target=ast.Name(id=name, ctx=ast.Store()),
-                annotation=annotation
-            )
+        ann_assign = ast.AnnAssign(
+            target=ast.Name(id=name, ctx=ast.Store()),
+            annotation=annotation,
         )
+        ann_assign._nomi_binding_role = "parameter"
+        self.eval(ann_assign)
 
         # this is handled generically in Python's interpreter
         return self.eval(node)
@@ -38,6 +38,7 @@ class BlockFunctionMixin:
                     value=None,
                     simple=1
                 )
+                ann_assign._nomi_binding_role = "parameter"
                 with self.this_env(env):
                     self.eval_AnnAssign(ann_assign)
 

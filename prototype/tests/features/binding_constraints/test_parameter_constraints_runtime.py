@@ -10,6 +10,25 @@ def test_parameter_constraint_group_accepts_valid_argument(nomi_mode):
     assert bindings["result"] == 14
 
 
+def test_parameter_constraints_preserve_binding_target_metadata(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="func gate(age:(int, age >= 13)):\n    return age\n")
+
+    target = bindings["gate"].func_env.get_constraint_target("age")
+
+    assert target.name == "age"
+    assert target.role == "parameter"
+    assert len(target.constraints) == 2
+    assert [constraint.source for constraint in target.constraints] == [
+        "int",
+        "age >= 13",
+    ]
+    assert [constraint.subject for constraint in target.constraints] == [
+        "age",
+        "age",
+    ]
+
+
 def test_parameter_constraint_group_rejects_invalid_argument(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
 

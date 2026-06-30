@@ -8,6 +8,9 @@ See ``binding_error.py`` for the diagnostic type raised on failure.
 import ast
 from functools import cached_property
 from typing import Any, List, Callable
+
+from prototype.syntax.surface import BindingTarget, Constraint
+
 from .binding_error import BindingError
 
 
@@ -18,7 +21,9 @@ class Annotation:
     '''
     def __init__(self, var_name, ann, interpreter):
         self.var_name = var_name
-        self.ann, self.message = self._unwrap_message(ann)
+        self.constraint = Constraint.from_expr(ann, subject=var_name)
+        self.ann = self.constraint.expression
+        self.message = self.constraint.message
         self.interpreter = interpreter
         if not isinstance(self.ann, ast.AST):
             raise TypeError(
@@ -27,20 +32,7 @@ class Annotation:
                 f"in the parser — a Lark Tree leaked into the annotation AST. "
                 f"Raw annotation: {ann!r}"
             )
-        self._source = ast.unparse(self.ann)
-
-    @staticmethod
-    def _unwrap_message(ann):
-        if (
-            isinstance(ann, ast.Call)
-            and isinstance(ann.func, ast.Name)
-            and ann.func.id == "__constraint_message__"
-            and len(ann.args) == 2
-            and isinstance(ann.args[1], ast.Constant)
-            and isinstance(ann.args[1].value, str)
-        ):
-            return ann.args[0], ann.args[1].value
-        return ann, None
+        self._source = self.constraint.source or ast.unparse(self.ann)
 
     @property
     def source(self) -> str:
@@ -151,11 +143,13 @@ class Annotation:
 
 
 class Annotations:
-    def __init__(self, items: List[Annotation]):
+    def __init__(self, name: str, items: List[Annotation], *, role: str):
+        self.name = name
         self.items = items
+        self.role = role
 
     @classmethod
-    def from_node(cls, node: ast.AnnAssign, interpreter):
+    def from_node(cls, node: ast.AnnAssign, interpreter, *, role: str = "assignment"):
         '''
         directly from the parser
         '''
@@ -168,7 +162,15 @@ class Annotations:
         else:
             annotations = (annotations,)
         annotations = [Annotation(name, ann, interpreter) for ann in annotations]
-        return cls(annotations)
+        return cls(name, annotations, role=role)
+
+    @property
+    def binding_target(self) -> BindingTarget:
+        return BindingTarget(
+            name=self.name,
+            role=self.role,
+            constraints=tuple(annotation.constraint for annotation in self.items),
+        )
 
     @property
     def predicate(self) -> Callable[[Any], bool]:
@@ -214,8 +216,13 @@ class ConstraintBindingMixin:
         #     the same public message before broadening to params/data fields.
         # Always set constraints from the annotation
         if isinstance(node.target, ast.Name):
-            predicate = Annotations.from_node(node, self).predicate
-            self.current_env.set_constraint(node.target.id, predicate)
+            role = getattr(node, "_nomi_binding_role", "assignment")
+            annotations = Annotations.from_node(node, self, role=role)
+            self.current_env.set_constraint(
+                node.target.id,
+                annotations.predicate,
+                target=annotations.binding_target,
+            )
 
         # If there's a value, assign it (constraints will be checked in Environment.set)
         super().eval_AnnAssign(node)

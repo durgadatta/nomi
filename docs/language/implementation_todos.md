@@ -270,7 +270,10 @@ Immediate commit sequence:
    (`record_decode_event`, `record_match_event`, `record_pipeline_event`,
    `record_block_policy_event`, and `record_capability_event` now share the
    runtime semantic event shape; concrete producers remain pending.)
-3. [ ] Add shared binding target constraint metadata.
+3. [x] Add shared binding target constraint metadata.
+   (`Constraint` and richer `BindingTarget` metadata now back data fields,
+   annotated assignment constraints, and parameter constraint declarations
+   without changing runtime enforcement semantics.)
 4. [ ] Route constrained bindings through tentative commit.
 5. [ ] Add decode error and event skeleton.
 6. [ ] Prepare match captures for shared binding targets.

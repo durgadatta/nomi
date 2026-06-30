@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import ast
 from dataclasses import dataclass, field
-from typing import List
+from typing import Any, List
 
 
 # ── SourceSpan ────────────────────────────────────────────────────────
@@ -173,22 +173,132 @@ class BlockCall(SurfaceNode):
 
 # ── BindingTarget / DataDecl ─────────────────────────────────────────
 
-@dataclass(slots=True)
+def _unwrap_constraint_message(
+    expression: ast.expr | None,
+) -> tuple[ast.expr | None, str | None]:
+    if (
+        isinstance(expression, ast.Call)
+        and isinstance(expression.func, ast.Name)
+        and expression.func.id == "__constraint_message__"
+        and len(expression.args) == 2
+        and isinstance(expression.args[1], ast.Constant)
+        and isinstance(expression.args[1].value, str)
+    ):
+        return expression.args[0], expression.args[1].value
+    return expression, None
+
+
+@dataclass(frozen=True, slots=True)
+class Constraint:
+    """Passive metadata for one binding constraint.
+
+    Runtime predicates still own enforcement today.  This record preserves the
+    user-facing constraint shape so assignments, parameters, data fields,
+    patterns, and block params can converge on one metadata contract.
+    """
+
+    expression: ast.expr | None
+    source: str | None = None
+    kind: str = "expression"
+    subject: str | None = None
+    message: str | None = None
+    span: SourceSpan | None = None
+    redaction: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_expr(
+        cls,
+        expression: ast.expr | None,
+        *,
+        kind: str = "expression",
+        subject: str | None = None,
+        message: str | None = None,
+        span: SourceSpan | None = None,
+        redaction: dict[str, Any] | None = None,
+    ) -> "Constraint":
+        expression, marker_message = _unwrap_constraint_message(expression)
+        if message is None:
+            message = marker_message
+        return cls(
+            expression=expression,
+            source=ast.unparse(expression) if expression is not None else None,
+            kind=kind,
+            subject=subject,
+            message=message,
+            span=span,
+            redaction=redaction or {},
+        )
+
+
+@dataclass(init=False, slots=True)
 class BindingTarget:
     """A passive description of a name-introduction site.
 
-    This is intentionally smaller than a future binding/constraint system.  It
-    records the shared surface shape for data fields, parameters, pattern
-    captures, and assignments before those paths grow feature-specific
-    diagnostics or Core IR lowering.
+    This record is richer than the first data-field seed but remains passive:
+    it does not enforce constraints.  The current interpreter stores it next to
+    the existing predicate so future data, pattern, parameter, and block paths
+    can share one checked-binding shape.
     """
 
     name: str
     role: str
     annotation: ast.expr | None = None
-    constraint: ast.expr | None = None
+    constraints: tuple[Constraint, ...] = field(default_factory=tuple)
     default: ast.expr | None = None
+    target_kind: str = "name"
+    capture_names: tuple[str, ...] = field(default_factory=tuple)
+    structural_requirement: Any | None = None
+    redaction: dict[str, Any] = field(default_factory=dict)
+    message: str | None = None
     span: SourceSpan | None = None
+
+    def __init__(
+        self,
+        name: str,
+        role: str,
+        *,
+        annotation: ast.expr | None = None,
+        constraint: ast.expr | None = None,
+        constraints: tuple[Constraint, ...] | None = None,
+        default: ast.expr | None = None,
+        target_kind: str = "name",
+        capture_names: tuple[str, ...] = (),
+        structural_requirement: Any | None = None,
+        redaction: dict[str, Any] | None = None,
+        message: str | None = None,
+        span: SourceSpan | None = None,
+    ) -> None:
+        if constraints is None:
+            constraints = ()
+        if constraint is not None:
+            constraints = (
+                *constraints,
+                Constraint.from_expr(
+                    constraint,
+                    subject=name,
+                    message=message,
+                    span=span,
+                    redaction=redaction,
+                ),
+            )
+        self.name = name
+        self.role = role
+        self.annotation = annotation
+        self.constraints = tuple(constraints)
+        self.default = default
+        self.target_kind = target_kind
+        self.capture_names = tuple(capture_names)
+        self.structural_requirement = structural_requirement
+        self.redaction = redaction or {}
+        self.message = message
+        self.span = span
+
+    @property
+    def constraint(self) -> ast.expr | None:
+        """Return the first constraint expression for legacy data-field users."""
+        if not self.constraints:
+            return None
+        return self.constraints[0].expression
 
 
 @dataclass(slots=True)
@@ -208,6 +318,10 @@ class DataField:
     @property
     def constraint(self) -> ast.expr | None:
         return self.target.constraint
+
+    @property
+    def constraints(self) -> tuple[Constraint, ...]:
+        return self.target.constraints
 
 
 @dataclass(slots=True)

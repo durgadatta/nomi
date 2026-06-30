@@ -67,7 +67,12 @@ Relevant implementation points:
   `ast.AnnAssign`.
 - `prototype/interpreter/nomi/binding.py` turns annotations into predicates.
 - `prototype/interpreter/nomi/env.py` stores and checks constraints on
-  assignment.
+  assignment, and now also preserves passive `BindingTarget` / `Constraint`
+  metadata beside the predicate for annotated assignments and parameter
+  declarations.
+- `prototype/syntax/surface.py` owns the shared passive metadata shape used by
+  data fields, assignments, and parameters before broader pattern/block
+  routing lands.
 - `prototype/tests/e2e/test_nomi_scenarios.py` has an end-to-end constrained
   binding scenario.
 
