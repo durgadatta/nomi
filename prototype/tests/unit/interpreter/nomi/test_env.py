@@ -31,6 +31,22 @@ class TestEnvironmentConstraints:
         
         with pytest.raises(TypeError, match="does not satisfy constraint"):
             env.set("x", "not an int")
+        assert env.get("x") == 42
+
+    def test_binding_commit_prepares_without_mutating(self, env):
+        """Preparing a checked binding does not write until commit."""
+        target = BindingTarget(name="x", role="assignment")
+        env.set_constraint("x", lambda v: isinstance(v, int), target=target)
+
+        commit = env._prepare_binding_commit("x", 42)
+
+        assert "x" not in env.bindings
+        assert commit.name == "x"
+        assert commit.value == 42
+        assert commit.target is target
+
+        env._commit_binding(commit)
+        assert env.get("x") == 42
     
     def test_new_type_annotation_replaces_constraint(self, env):
         """New type annotation completely replaces old constraint."""
@@ -44,6 +60,7 @@ class TestEnvironmentConstraints:
         
         with pytest.raises(TypeError):
             env.set("x", 20)
+        assert env.get("x") == "hello"
     
     def test_constraints_only_checked_in_local_scope(self, interpreter):
         """Constraints are only checked in the scope where set() is called."""

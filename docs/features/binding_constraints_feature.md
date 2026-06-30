@@ -69,7 +69,8 @@ Relevant implementation points:
 - `prototype/interpreter/nomi/env.py` stores and checks constraints on
   assignment, and now also preserves passive `BindingTarget` / `Constraint`
   metadata beside the predicate for annotated assignments and parameter
-  declarations.
+  declarations. Current assignment and parameter checks use an explicit
+  validate-then-commit path so failed checks do not replace visible bindings.
 - `prototype/syntax/surface.py` owns the shared passive metadata shape used by
   data fields, assignments, and parameters before broader pattern/block
   routing lands.

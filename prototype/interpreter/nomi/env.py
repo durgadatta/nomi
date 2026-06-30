@@ -1,9 +1,20 @@
+from dataclasses import dataclass
 from typing import Any, Dict, Callable, Optional
 
 from prototype.syntax.surface import BindingTarget
 
 from ..python.env import Environment as PyEnvironment
 from .binding_error import BindingError
+
+
+@dataclass(frozen=True, slots=True)
+class BindingCommit:
+    """A validated binding write ready to commit to its owner environment."""
+
+    env: "Environment"
+    name: str
+    value: Any
+    target: BindingTarget | None = None
 
 
 class Environment(PyEnvironment):
@@ -52,16 +63,26 @@ class Environment(PyEnvironment):
         new_env.constraint_targets = self.constraint_targets.copy()
         return new_env
 
-    def _assignment_constraint(self, name: str):
-        env = self._assignment_env(name)
-        return env.constraints.get(name)
-
-    def set(self, name: str, value: Any):
-        constraint = self._assignment_constraint(name)
+    def _prepare_binding_commit(self, name: str, value: Any) -> BindingCommit:
+        assignment_env = self._assignment_env(name)
+        constraint = assignment_env.constraints.get(name)
+        target = assignment_env.constraint_targets.get(name)
         if constraint is not None and not constraint(value):
             raise BindingError(
                 name, value,
                 message=f"value {value!r} does not satisfy constraint",
                 binding_kind="assignment",
             )
-        super().set(name, value)
+        return BindingCommit(
+            env=assignment_env,
+            name=name,
+            value=value,
+            target=target,
+        )
+
+    def _commit_binding(self, commit: BindingCommit) -> None:
+        commit.env.bindings[commit.name] = commit.value
+
+    def set(self, name: str, value: Any):
+        commit = self._prepare_binding_commit(name, value)
+        self._commit_binding(commit)

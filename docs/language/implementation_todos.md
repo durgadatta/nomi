@@ -274,7 +274,10 @@ Immediate commit sequence:
    (`Constraint` and richer `BindingTarget` metadata now back data fields,
    annotated assignment constraints, and parameter constraint declarations
    without changing runtime enforcement semantics.)
-4. [ ] Route constrained bindings through tentative commit.
+4. [x] Route constrained bindings through tentative commit.
+   (`BindingCommit` now names the validate-then-commit path for current
+   assignment and parameter constraint checks, with no-mutation regressions for
+   failed checks.)
 5. [ ] Add decode error and event skeleton.
 6. [ ] Prepare match captures for shared binding targets.
 7. [ ] Add flow step metadata plan contracts.

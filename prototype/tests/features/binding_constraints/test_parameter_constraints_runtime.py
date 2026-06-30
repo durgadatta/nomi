@@ -29,6 +29,18 @@ def test_parameter_constraints_preserve_binding_target_metadata(nomi_mode):
     ]
 
 
+def test_failed_parameter_constraint_does_not_commit_parameter_binding(nomi_mode):
+    run = get_run_eval_loop(nomi_mode)
+    bindings = run(code="func gate(age:(int, age >= 13)):\n    return age\n")
+    gate = bindings["gate"]
+
+    with pytest.raises(Exception, match="Constraint 'age >= 13' failed"):
+        gate(12)
+
+    assert "age" not in gate.func_env.bindings
+    assert gate(14) == 14
+
+
 def test_parameter_constraint_group_rejects_invalid_argument(nomi_mode):
     run = get_run_eval_loop(nomi_mode)
 
