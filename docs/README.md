@@ -170,6 +170,9 @@ Planning and process:
 - [Forward Implementation Plan](language/forward_implementation_plan.md):
   staged implementation sequence and gates.
 - [Implementation Todos](language/implementation_todos.md): staged backlog.
+- [Operational Implementation Plan 2026-06-30](language/operational_implementation_plan_2026_06_30.md):
+  active slice-by-slice implementation plan for the current binding/data/pattern,
+  collection/table/rank, and block-policy feature packets.
 - [Implementation Evolvability Gap Review](language/implementation_evolvability_gap_review.md):
   project-wide gate for feature ownership, explicit capability axes,
   Surface/Core authority, runtime result contracts, frontend parity, test
@@ -372,6 +375,7 @@ duplicate material.
 - [Nomi Language Foundation](language/language_foundation.md)
 - [Nomi Language Specification](language/language_spec.md)
 - [Modern Language Implementation Artifacts](language/modern_language_implementation_artifacts.md)
+- [Operational Implementation Plan 2026-06-30](language/operational_implementation_plan_2026_06_30.md)
 - [Parser Frontend Decoupling Plan](language/parser_frontend_decoupling_plan.md)
 - [Prelude And Standard Library Plan](language/prelude_and_standard_library_plan.md)
 - [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md)

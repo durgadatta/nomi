@@ -54,6 +54,11 @@ For test-suite organization before moving files or adding markers, see
 For the promotion workflow from design material to spec-ready language sections,
 see [Spec Readiness Map](spec_readiness_map.md).
 
+For the current operational slice plan that turns the binding/data/pattern,
+collection/table/rank, and block-policy feature packets into implementation
+work, see
+[Operational Implementation Plan 2026-06-30](operational_implementation_plan_2026_06_30.md).
+
 ## Resolved Consolidated Priority: 2026-06-03
 
 The latest full-repo improvement scan is preserved as dated evidence in
@@ -248,6 +253,35 @@ Validation for the research-planning slice:
 ```bash
 python3 .codex/scripts/agent_doctor.py
 ```
+
+## Current Operational Implementation Phase: 2026-06-30
+
+The active implementation spine is now
+[`operational_implementation_plan_2026_06_30.md`](operational_implementation_plan_2026_06_30.md).
+Use it as the ordered execution plan for the next programming phase.
+
+Immediate commit sequence:
+
+1. [ ] Declare integration packet capability rows.
+2. [ ] Add shared semantic event producer helpers.
+3. [ ] Add shared binding target constraint metadata.
+4. [ ] Route constrained bindings through tentative commit.
+5. [ ] Add decode error and event skeleton.
+6. [ ] Prepare match captures for shared binding targets.
+7. [ ] Add flow step metadata plan contracts.
+8. [ ] Add passive collection plan value shapes.
+9. [ ] Add block policy metadata and events.
+10. [ ] Add capability grant diagnostic skeleton.
+11. [ ] Add target fixtures for integrated feature packets.
+12. [ ] Refresh capability matrix after integrated feature planning.
+
+Review between every slice:
+
+- Did the implementation update capability truth rather than optimistic prose?
+- Did the feature stay owned by an active packet?
+- Did diagnostics/events use the shared runtime record shape?
+- Did target-only syntax stay outside runnable samples?
+- Did focused tests and `agent_doctor` pass before committing?
 
 ## Track 0: First Principles, Vision, And Design Fixtures
 
