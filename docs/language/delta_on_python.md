@@ -20,6 +20,26 @@ What Python pressure caused Nomi to choose a different spelling or model?
 
 For the actual Nomi syntax, read the canonical homes below.
 
+## Competitive Python Bridge
+
+Nomi should be easy for a Python programmer to try without pretending Python's
+current model is enough. The bridge is:
+
+```text
+familiar reading shape -> explicit boundaries -> better diagnostics
+```
+
+Preserve Python when it makes ordinary code obvious. Depart from Python when a
+small Nomi primitive removes a repeated source of fragility.
+
+| Python strength to preserve | Python pain to improve | Nomi competitive test |
+| --- | --- | --- |
+| Low ceremony scripts | Validation scattered across comments, annotations, runtime checks, and libraries | A small script can check a value at the binding site with a useful error. |
+| Readable calls and names | `None`, exceptions, sentinels, and ad hoc result objects blur failure | A user can tell absence, expected failure, exception, pattern non-match, and constraint failure apart. |
+| Batteries and ecosystem | External data arrives as dicts, strings, env vars, CLI args, and JSON with weak provenance | `Data.decode(...)` can explain source paths, defaults, redaction, and failed fields. |
+| Notebooks and REPL culture | Successful execution and failed execution have different explanation paths | `explain` and semantic events can serve terminal, notebook, web, tests, and agents. |
+| Interop with existing packages | Python interop can become an escape hatch that bypasses Nomi semantics | Interop calls should cross visible capability and data-boundary surfaces. |
+
 ## Canonical Homes
 
 | Area | Python pressure | Nomi direction | Canonical doc |

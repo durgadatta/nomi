@@ -199,9 +199,13 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   [`competitive_language_research_plan_2026_06_30.md`](../research/competitive_language_research_plan_2026_06_30.md).
 - [x] Index the plan from the docs map and research coverage map.
 - [x] Link the older research synthesis to the new competitive campaign.
-- [ ] Run Stream 1: Everyday Python-competitive core.
+- [~] Run Stream 1: Everyday Python-competitive core.
   Outputs: first-hour rewrite pass, Python migration/interop note, boring-task
   fixture set.
+  (Started: `first_hour_nomi.md`, `delta_on_python.md`, and
+  `prelude_and_standard_library_plan.md` now include Python-competitive gates
+  and the boring-task ladder. Remaining: fixture set and runnable/target-only
+  sample split.)
 - [ ] Run Stream 2: Scientific, array, table, and notebook power.
   Outputs: collection/table vocabulary packet, notebook/data fixture ladder,
   refusal table for dense or hidden data syntax.
