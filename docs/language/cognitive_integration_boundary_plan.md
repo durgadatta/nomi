@@ -633,8 +633,10 @@ Boundary focus: quote + pattern + rewrite + trace.
    decode diagnostics, and examples.
    See
    [Binding, Data, And Pattern Integration Feature](../features/binding_data_pattern_integration_feature.md).
-2. Turn flow/table/rank into a concrete collection/table vocabulary packet
-   with target examples and refusal rules.
+2. [Started] Turn flow/table/rank into a concrete collection/table vocabulary
+   packet with target examples and refusal rules.
+   See
+   [Collection, Table, And Rank Integration Feature](../features/collection_table_rank_integration_feature.md).
 3. Turn block policy into a prelude packet: `using`, `retry`, `transaction`,
    `trace`, `test`, cancellation, cleanup, and capability denial.
 4. Turn quote/rewrite into a future-layer packet with source spans, expansion

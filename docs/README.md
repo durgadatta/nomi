@@ -115,7 +115,7 @@ general reading order.
 | Restructure tests | [Test Suite Restructure Plan](language/test_suite_restructure_plan.md), [Syntax Substrate TODO Audit](language/syntax_substrate_todo_audit.md), [Forward Implementation Plan](language/forward_implementation_plan.md) |
 | Design binding, decode, or pattern captures | [Binding, Data, And Pattern Integration Feature](features/binding_data_pattern_integration_feature.md), [Binding Constraints Feature](features/binding_constraints_feature.md), [Data Decode Boundary Feature](features/data_decode_boundary_feature.md), [Pattern Convenience](convenience/patterns.md), [Language Foundation](language/language_foundation.md), [Target Program Fixtures](language/target_program_fixtures.md) |
 | Work on blocks/control | [Block Calls As Control Values](features/block_calls_feature.md), [Concurrency](convenience/concurrency.md) |
-| Work on collections/query | [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
+| Work on collections/query/rank | [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md), [Structured Collections And Query Language](features/structured_collections_query_language.md), [Flow And Collections](convenience/flow_and_collections.md), [Syntax Synthesis Matrix](convenience/syntax_synthesis_matrix.md) |
 | Work on symbolic/lazy computation | [Symbolic, Lazy, And Structural Computation](features/symbolic_structural_computation.md), [Flow And Collections](convenience/flow_and_collections.md), [Meta & Testing](convenience/meta_testing.md), [Python Independence And Compiler Backend Plan](language/python_independence_and_compiler_backend_plan.md) |
 | Improve design docs | [Spec Readiness Map](language/spec_readiness_map.md), [Language Direction And Gap Map](language/language_direction_and_gap_map.md), [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md), [Docs Eagle Eye Review](language/docs_eagle_eye_review.md), [Language Family Coverage Map](research/language_family_coverage_map.md) |
 | Critique design coherence | [Cognitive Integration Boundary Plan](language/cognitive_integration_boundary_plan.md), [Adversarial Design Critique](language/adversarial_design_critique.md), [Adversarial Language Design Enhancement Notes 2026-06-04](language/adversarial_language_design_enhancement_notes_2026_06_04.md), [Global Feature Interaction Map](convenience/interaction_map.md), [Spec Readiness Map](language/spec_readiness_map.md) |
@@ -235,6 +235,7 @@ spine.
 | [Binding Constraints Feature](features/binding_constraints_feature.md) | Active syntax/semantics for constrained bindings. |
 | [Block Calls As Control Values](features/block_calls_feature.md) | Active syntax/semantics for caller-side blocks, `yield`, and policy blocks. |
 | [Command Values Feature](features/command_values_feature.md) | Active feature packet for structured commands, previews, subprocess results, and agent/UI replay. |
+| [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md) | Active integration packet for ordinary collection flow, table values, row/group contexts, lazy plans, materialization, shape/rank operations, and query syntax admission. |
 | [Data Decode Boundary Feature](features/data_decode_boundary_feature.md) | Active feature packet for external data, config, provenance, defaults, redaction, and decode diagnostics. |
 | [Failure Taxonomy Feature](features/failure_taxonomy_feature.md) | Active feature packet for absence, expected failure, exceptions, pattern non-match, constraint failure, decode failure, capability denial, and cancellation. |
 | [Explanation And Trace Feature](features/explanation_trace_feature.md) | Active feature packet for shared semantic events, diagnostics, traces, examples, and `explain`. |
@@ -386,6 +387,7 @@ duplicate material.
 - [Binding Constraints Feature](features/binding_constraints_feature.md)
 - [Block Calls As Control Values](features/block_calls_feature.md)
 - [Command Values Feature](features/command_values_feature.md)
+- [Collection, Table, And Rank Integration Feature](features/collection_table_rank_integration_feature.md)
 - [Data Decode Boundary Feature](features/data_decode_boundary_feature.md)
 - [Declarative Implementation Plan](features/declarative_implementation_plan.md)
 - [Explanation And Trace Feature](features/explanation_trace_feature.md)

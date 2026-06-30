@@ -216,7 +216,9 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   (Started: `structured_collections_query_language.md`,
   `flow_and_collections.md`, and `symbolic_structural_computation.md` now
   capture the competitive flow ladder, table/query gate, and symbolic boundary.
-  Remaining: notebook/data fixture ladder and concrete collection/table packet.)
+  The collection/table/rank integration packet now lives in
+  [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).
+  Remaining: notebook/data fixture ladder and executable/target fixture split.)
 - [ ] Run Stream 3: Blocks, policies, resources, and humane control.
   Outputs: block policy prelude packet and resource/capability diagnostic
   table.
@@ -232,7 +234,9 @@ form, diagnostics, capability axes, and test/sample gate are visible.
   sequence: binding/data/pattern, collection/table/rank, block policy,
   quote/rewrite, and semantic events.
   (Started: the binding/data/pattern packet now lives in
-  [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md).)
+  [`binding_data_pattern_integration_feature.md`](../features/binding_data_pattern_integration_feature.md);
+  the collection/table/rank packet now lives in
+  [`collection_table_rank_integration_feature.md`](../features/collection_table_rank_integration_feature.md).)
 
 Validation for the research-planning slice:
 
