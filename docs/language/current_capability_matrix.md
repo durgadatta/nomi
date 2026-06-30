@@ -49,9 +49,14 @@ frontend exposure decisions, and a reversible implementation story.
 
 The current generated table gives a useful, deliberately conservative picture:
 
-- every listed feature is currently `target-only: no`;
-- every listed feature currently reports `parse`, `lower`, `run`, and
-  `reduce` as `yes`;
+- implemented surface features currently report `target-only: no` and generally
+  report `parse`, `lower`, `run`, and `reduce` as `yes`;
+- the three new integration packet rows are deliberately target-only:
+  `binding-data-pattern-integration`,
+  `collection-table-rank-integration`, and `block-policy-prelude`;
+- those integration rows currently report `parse`, `lower`, `run`, `reduce`,
+  `explain`, `tests`, `samples`, `web`, and `notebook` as `no`, while `docs`
+  reports `yes`;
 - `docs`, `tests`, and `samples` vary by feature and are now useful review
   signals;
 - `explain`, `web`, and `notebook` currently report `no` across the generated
@@ -83,6 +88,10 @@ check:
 2. The capability table does not overstate parser/lowering/runtime support.
 3. Tests or samples prove the intended current behavior.
 4. Missing axes are explicit, especially explain/web/notebook.
+
+The integration-packet rows are not implementation claims. They are planning
+anchors that keep target syntax visible while preventing parser, runtime,
+frontend, or sample support from being overstated.
 
 ## When To Split Further
 

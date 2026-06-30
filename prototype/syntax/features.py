@@ -114,6 +114,11 @@ def implemented_coverage(
     )
 
 
+def target_only_coverage(*, docs: bool = False) -> FeatureCapabilityAxes:
+    """Return explicit coverage for docs-owned target/design feature packets."""
+    return FeatureCapabilityAxes(target_only=True, docs=docs)
+
+
 # ── expression-precedence ────────────────────────────────────────────
 # Not a user-visible "feature" but a parse-tree transform that the
 # ExpressionLayer applies.  Registered as a feature so the layer-transform
@@ -536,6 +541,51 @@ _data_decl_lowering = SyntaxFeature(
 )
 
 
+# ── integration feature packets ──────────────────────────────────────
+
+_binding_data_pattern_integration = SyntaxFeature(
+    name="binding-data-pattern-integration",
+    description=(
+        "Target integration contract for shared BindingTarget, constraints, "
+        "decode diagnostics, pattern captures, and explanation events"
+    ),
+    status="design-needed",
+    layer="L2",
+    semantic_forms=("binding", "data-boundary", "pattern", "absence-result", "explanation"),
+    runtime_hooks_allowed="semantic",
+    docs=("docs/features/binding_data_pattern_integration_feature.md",),
+    coverage=target_only_coverage(docs=True),
+)
+
+_collection_table_rank_integration = SyntaxFeature(
+    name="collection-table-rank-integration",
+    description=(
+        "Target integration contract for collection flow, table values, "
+        "plans, row/group contexts, shape/rank, and query admission"
+    ),
+    status="design-needed",
+    layer="L5",
+    semantic_forms=("flow", "data-boundary", "pattern", "absence-result", "explanation"),
+    runtime_hooks_allowed="semantic",
+    docs=("docs/features/collection_table_rank_integration_feature.md",),
+    coverage=target_only_coverage(docs=True),
+)
+
+_block_policy_prelude = SyntaxFeature(
+    name="block-policy-prelude",
+    description=(
+        "Target prelude contract for using, retry, timeout, transaction, "
+        "trace, test, world, cleanup, capabilities, and policy events"
+    ),
+    status="design-needed",
+    layer="L5",
+    semantic_forms=("block", "binding", "absence-result", "capability", "explanation"),
+    runtime_hooks_allowed="semantic",
+    docs=("docs/features/block_policy_prelude_feature.md",),
+    coverage=target_only_coverage(docs=True),
+)
+
+
 # ── registry ─────────────────────────────────────────────────────────
 
 BUILTIN_FEATURES: list[SyntaxFeature] = [
@@ -568,6 +618,9 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     _func_expr_lowering,
     _block_call_lowering,
     _data_decl_lowering,
+    _binding_data_pattern_integration,
+    _collection_table_rank_integration,
+    _block_policy_prelude,
 ]
 
 

@@ -32,6 +32,12 @@ FEATURES_REQUIRING_EXPLICIT_COVERAGE = {
     "data-decl-lowering",
 }
 
+TARGET_ONLY_INTEGRATION_PACKETS = {
+    "binding-data-pattern-integration",
+    "collection-table-rank-integration",
+    "block-policy-prelude",
+}
+
 
 def test_builtin_feature_capabilities_have_separate_axes():
     feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
@@ -71,6 +77,26 @@ def test_user_facing_features_declare_explicit_capabilities():
         assert feature.coverage.reduce, name
 
 
+def test_integration_packets_are_target_only_capability_rows():
+    feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
+
+    assert TARGET_ONLY_INTEGRATION_PACKETS <= set(feature_by_name)
+    for name in TARGET_ONLY_INTEGRATION_PACKETS:
+        feature = feature_by_name[name]
+        capabilities = get_feature_capabilities(feature)
+
+        assert feature.coverage is not None, name
+        assert capabilities.target_only, name
+        assert capabilities.docs, name
+        assert not capabilities.parse, name
+        assert not capabilities.lower, name
+        assert not capabilities.run, name
+        assert not capabilities.reduce, name
+        assert not capabilities.explain, name
+        assert not capabilities.web, name
+        assert not capabilities.notebook, name
+
+
 def test_explicit_capabilities_do_not_overstate_explanation_or_frontends():
     feature_by_name = {feature.name: feature for feature in BUILTIN_FEATURES}
 
@@ -88,6 +114,9 @@ def test_feature_capability_table_is_stable_and_human_readable():
     assert table.startswith("| feature | target-only | parse | lower |")
     assert "| piecewise-functions | no | yes | yes | yes | yes | no | yes | yes | yes |" in table
     assert "| block-call-lowering | no | yes | yes | yes | yes | no | yes | yes | yes |" in table
+    assert "| binding-data-pattern-integration | yes | no | no | no | no | no | yes | no | no | no | no |" in table
+    assert "| collection-table-rank-integration | yes | no | no | no | no | no | yes | no | no | no | no |" in table
+    assert "| block-policy-prelude | yes | no | no | no | no | no | yes | no | no | no | no |" in table
 
 
 def test_feature_declared_docs_and_tests_exist():
