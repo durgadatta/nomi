@@ -318,6 +318,14 @@ Essays and detours that frame Nomi's philosophy, risk, or design context.
 - [Category Theory Detour](notes/category_theory_detour.md)
 - [Notes Meta](notes/meta.md)
 
+## Reviews
+
+Dated project reviews are evidence snapshots, not competing specifications or
+backlogs. Fold accepted actions into the canonical language and implementation
+documents.
+
+- [Project Review 2026-07-16](review/2026-07-16.md)
+
 ## Drafts
 
 Raw draft material. Treat these as scratch/reference input unless a task points
@@ -475,6 +483,10 @@ duplicate material.
 - [Notes Meta](notes/meta.md)
 - [Positioning within Ambition and Risk](notes/positioning_ambition_risk.md)
 - [Design Note: On Building and Understanding Sophistication](notes/tractable_sophistication.md)
+
+### Reviews
+
+- [Project Review 2026-07-16](review/2026-07-16.md)
 
 ### Drafts
 
