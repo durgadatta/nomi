@@ -7,12 +7,13 @@ from tools.rag_mcp.mcp_server import NomiRagMcpServer
 
 def make_config(tmp_path: Path) -> RagConfig:
     docs = tmp_path / "docs"
+    design = docs / "design"
     books = tmp_path / "Local_Programming_Books"
-    docs.mkdir()
+    design.mkdir(parents=True)
     books.mkdir()
-    (docs / "language.md").write_text(
+    (design / "syntax.md").write_text(
         "Binding constraints validate values at binding time.\n"
-        "Yield to block models controlled resumable execution.\n",
+        "Resource scopes and structured tasks make control visible.\n",
         encoding="utf-8",
     )
     (books / "lambda.txt").write_text(
@@ -47,7 +48,7 @@ def test_rag_index_searches_multiple_sources(tmp_path):
     code_results = index.search("binding constraints", source="nomi-codebase")
     book_results = index.search("lambda calculus", source="programming-books")
 
-    assert code_results[0].chunk.path == "docs/language.md"
+    assert code_results[0].chunk.path == "docs/design/syntax.md"
     assert code_results[0].chunk.source == "nomi-codebase"
     assert book_results[0].chunk.source == "programming-books"
     assert "Lambda calculus" in book_results[0].highlights[0]
@@ -55,11 +56,11 @@ def test_rag_index_searches_multiple_sources(tmp_path):
 
 def test_rag_index_applies_configured_path_boosts(tmp_path):
     docs = tmp_path / "docs"
-    language = docs / "language"
+    design = docs / "design"
     research = docs / "research"
-    language.mkdir(parents=True)
+    design.mkdir(parents=True)
     research.mkdir()
-    (language / "binding.md").write_text("Binding constraints explain values.\n", encoding="utf-8")
+    (design / "syntax.md").write_text("Binding constraints explain values.\n", encoding="utf-8")
     (research / "binding.md").write_text("Binding constraints explain values.\n", encoding="utf-8")
 
     config = RagConfig(
@@ -71,14 +72,14 @@ def test_rag_index_applies_configured_path_boosts(tmp_path):
                 kind="codebase",
                 path=tmp_path,
                 include=("docs/**/*.md",),
-                path_boosts=(("docs/language/**", 2.0), ("docs/research/**", 0.5)),
+                path_boosts=(("docs/design/**", 2.0), ("docs/research/**", 0.5)),
             ),
         ),
     )
 
     results = RagIndex.build(config).search("binding constraints", limit=2)
 
-    assert results[0].chunk.path == "docs/language/binding.md"
+    assert results[0].chunk.path == "docs/design/syntax.md"
 
 
 def test_rag_index_round_trips_to_disk(tmp_path):
@@ -88,7 +89,7 @@ def test_rag_index_round_trips_to_disk(tmp_path):
     index.save(config.index_path)
     loaded = RagIndex.load(config.index_path)
 
-    assert loaded.search("resumable execution")[0].chunk.ref == "docs/language.md:1"
+    assert loaded.search("structured tasks")[0].chunk.ref == "docs/design/syntax.md:1"
 
 
 def test_mcp_server_lists_tools_and_sources(tmp_path):

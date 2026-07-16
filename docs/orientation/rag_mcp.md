@@ -59,10 +59,9 @@ Rename that path in `config/rag_sources.json` when the real folder is known, or
 replace it with an absolute path outside the repo.
 
 Sources may include `path_boosts` to steer lexical ranking. The default
-configuration boosts `AGENTS.md`, `README.md`, `docs/language/`, and
-`docs/features/`, while damping `docs/research/`. This matches the repo rule:
-research is evidence, active language and feature docs are closer to current
-intent.
+configuration gives the strongest document boost to `docs/design/`, a smaller
+boost to current implementation orientation, and lower boosts to research and
+dated reviews. This matches the authority order in `docs/README.md`.
 
 ## Local Commands
 

@@ -21,8 +21,8 @@ Workflow:
 1. Search with `rg` for exact repo terms.
 2. Use `python3 -m tools.rag_mcp.cli search "<query>"` when terminology is
    broad or scattered.
-3. Prefer active docs under `docs/language/`, `docs/features/`, and
-   `docs/convenience/` over raw research.
+3. Prefer canonical target docs under `docs/design/` over research,
+   orientation, dated reviews, and prototype behavior.
 4. Treat `docs/research/` as evidence, not specification.
 5. Read returned files directly before summarizing.
 

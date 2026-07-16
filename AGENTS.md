@@ -7,11 +7,13 @@ for that subtree.
 
 ## Project Overview
 
-Nomi is an experimental programming language built around a small, coherent
-core: values, bindings, functions, calls, blocks, constraints, and controlled
-evaluation. The current implementation is a Python-hosted prototype, using
-Lark for parsing, Python AST as a transitional semantic substrate, and custom
-interpreter layers for Python-compatible and Nomi-specific behavior.
+Nomi is an experimental general-purpose programming language targeting
+Python-like cognitive ease with explicit types, data boundaries, failure,
+effects, concurrency, diagnostics, and package-scale contracts. The current
+implementation is a Python-hosted prototype, using Lark for parsing, Python AST
+as a transitional semantic substrate, and custom interpreter layers for
+Python-compatible and Nomi-specific behavior. A separate Rust/WASM-to-JavaScript
+path runs the browser playground.
 
 The important design pressure is not feature accumulation. Nomi should grow by
 making small semantic primitives combine into richer forms while preserving
@@ -24,81 +26,42 @@ hardcoded wiring. Treat current substrates (Python AST, Lark, Rust/WASM, JS,
 Pyodide, Core IR) as replaceable laboratory tools, not as the language
 definition.
 
-Because the project is fast-moving, current code and docs are evidence, not
-final authority. They may be inconsistent, stale, or narrower than the intended
-language. Agents should follow Nomi's direction and spirit: small coherent
-primitives, inspectable reductions, readable everyday syntax, explicit
-boundaries, and reversible implementation. When today's artifacts conflict,
-name the conflict, prefer the path that preserves the long-term design, and
-update the relevant docs or status labels instead of rigidly conforming to a
-stale snapshot.
+Because the project is fast-moving, current code and tests describe supported
+prototype behavior but do not define the target language. `docs/design/` is the
+target authority. When implementation and target conflict, name the conflict,
+preserve runnable surfaces during migration, and move toward the target rather
+than weakening it to match a stale mechanism.
 
 ## Canonical Reading Order
 
 Start with these files before broad design or implementation changes:
 
-- `README.md`: user-facing project vision, usage, current status, and examples.
-- `docs/orientation/artifacts_and_usage.md`: current runtime pipeline and artifact
-  map.
-- `docs/orientation/implementation_guideline.md`: implementation posture and AI
-  tool history.
-- `docs/orientation/ai_collaboration.md`: AI collaboration doctrine, accepted use
-  cases, and checkpoint workflow.
-- `docs/orientation/exploratory_implementation_doctrine.md`: doctrine for
-  flexible, declarative, reversible implementation while Nomi is exploratory.
-- `docs/README.md`: docs map and current design spine.
-- `docs/language/language_foundation.md`: canonical foundation for the next
-  design pass.
-- `docs/language/language_spec.md`: draft concrete language specification.
-- `docs/language/language_design_dimensions.md`: design-space analysis — the
-  irreducible axes of variation and where languages converge.
-- `docs/language/language_degrees_of_freedom.md`: core/sugar/library/scoped
-  freedom framework.
-- `docs/language/adversarial_language_design_enhancement_notes_2026_06_04.md`:
-  sharp post-HCI critique, enhancement queue, and feature-admission gates.
-- `docs/language/adversarial_enhancement_implementation_plan_2026_06_04.md`:
-  staged implementation plan for those gates across events, capabilities,
-  data boundaries, command values, projections, agents, first-hour docs, and
-  stdlib capability baseline.
-- `docs/language/adversarial_exploratory_implementation_critique.md`:
-  skeptical critique of implementation choices that could prematurely freeze
-  the language design.
-- `docs/language/implementation_evolvability_gap_review.md`: project-wide gate
-  for feature ownership, capability honesty, Surface/Core authority, runtime
-  result contracts, frontend parity, test matrices, and reversible
-  implementation.
-- `docs/language/implementation_todos.md`: staged design and
-  implementation tasks.
-- `docs/features/binding_constraints_feature.md`: constrained
-  binding feature pillar.
-- `docs/features/block_calls_feature.md`: yield-to-block and
-  block-call control design.
-- `docs/language/delta_on_python.md`: rationale for Nomi changes relative to
-  Python.
-- `docs/features/block_calls_feature.md`: resumable-control and block-call design.
-- `docs/convenience/design_lessons_and_integration.md`: design synthesis, systemic patterns, and integration critique.
-- `docs/convenience/absence_and_result.md`: absence, result, and error handling design.
-- `docs/research/language_family_coverage_map.md`: index of the full research
-  corpus — 27 deep dives across 16 language families, interface surfaces,
-  representation boundaries, human-computer interaction surfaces, and
-  cross-cutting dimensions. Start here before doing new cross-language
-  research.
-- `docs/research/cross_language_synthesis_master.md`: capstone synthesis —
-  8 convergences, 8 design forks, 7 hidden incompatibilities, Nomi resolution
-  per normal form.
-- `docs/research/research_notes_synthesis.md`: earlier synthesis with
-  progressive-reification spine and design tensions.
-- `docs/orientation/vscode_extension.md` and `tools/jupyter/README.md`: tooling
+- `README.md`: user-facing project posture, setup, and current runnable
   surfaces.
+- `docs/README.md`: documentation authority and task routes.
+- `docs/design/README.md`: canonical product and language target.
+- `docs/design/syntax.md`: accepted target source forms and notation budget.
+- `docs/design/semantics.md`: implementation-independent behavior.
+- `docs/design/industrial.md`: package, effect, concurrency, security, tooling,
+  deployment, and conformance target.
+- `docs/design/decisions.md`: accepted, rejected, deferred, and open choices.
+- `docs/design/target.nomi`: aspirational coherence fixture; not expected to run
+  today.
+- `docs/research/convergences.md`: consolidated cross-language evidence.
+- `docs/research/open_questions.md`: bounded experiments; start here before new
+  research.
+- `docs/review/2026-07-16.md`: current design judgment and ordered actions.
+- `docs/orientation/artifacts_and_usage.md`: current runtime pipeline and
+  artifact map.
+- `docs/orientation/exploratory_implementation_doctrine.md`: reversible
+  implementation posture.
 
-The research corpus under `docs/research/` is design evidence, not active
-specification. Stable decisions from deep dives should migrate to
-`docs/convenience/` and `docs/language/`. The `.agents/skills/` directory
-contains agent skill definitions — read the relevant skill before working
-in a domain. Treat `.agents/skills/` as the canonical shared skill source even
-when a tool's native session inventory omits a repo-local skill. In that case,
-read the matching `SKILL.md` directly and say you are using the repository
-fallback instead of reporting the skill as unavailable.
+Research under `docs/research/` is evidence, not specification. The previous
+deep-dive corpus remains in Git history at `08f2aad`; do not restore it as
+parallel authority. Read the relevant `.agents/skills/*/SKILL.md` before domain
+work. Treat repo-local skills as canonical even when a tool's native inventory
+omits them. In that case, use the repository fallback: read the matching
+`SKILL.md` directly and say which repo-local skill is guiding the work.
 
 ## Setup Commands
 
@@ -206,8 +169,9 @@ then the broader relevant suite.
   OpenCode, deepseek-tui, Claude Code, and other agents that can read a
   `SKILL.md`. See `docs/orientation/ai_collaboration.md` for the full list and
   usage.
-- `docs/language/`, `docs/features/`, and `docs/research/`: active language
-  design workspace grouped by concreteness.
+- `docs/design/`: canonical target language and industrial contracts.
+- `docs/research/`: consolidated evidence and bounded open questions.
+- `docs/review/`: dated evidence; decisions must be promoted to `docs/design/`.
 - `docs/orientation/ai_collaboration.md`: process note for AI-assisted design,
   implementation, critique, and checkpointing.
 - `local/` and `PLAY/`: scratch/reference material; do not treat as canonical
@@ -215,21 +179,23 @@ then the broader relevant suite.
 
 ## Development Posture
 
-- Preserve Python parity where Nomi intentionally follows Python; make
-  deliberate semantic departures explicit in tests and docs.
+- Preserve current prototype behavior only while it remains a supported
+  migration surface. Target changes may deliberately break Python parity and
+  existing Nomi syntax; update tests when semantics intentionally change.
 - Treat the current prototype as a laboratory snapshot, not a finished
   contract. Do not overfit new work to stale mechanics when the active design
   direction points elsewhere; record the mismatch and keep the implementation
   reversible.
 - Keep parser, lowering, and interpreter changes aligned. A syntax change often
   needs grammar coverage, AST lowering, runtime behavior, and regression tests.
-- Treat binding, constraints, and resumable control as high-risk areas. Read the
-  active design docs before changing them.
+- Treat binding, constraints, data boundaries, failure propagation, resource
+  cleanup, effects, and concurrency as high-risk areas. Read the target syntax
+  and semantics before changing them.
 - Prefer small, reversible implementation steps over broad rewrites.
 - Prefer declarative/spec-driven extension points. A new syntax or runtime
-  feature should name its owner, status, normal form, layer, reduction/core
-  target, diagnostics, tests, and inspection surface before the implementation
-  becomes hard to unwind.
+  feature should name its user pressure, layer, semantic owner, diagnostics,
+  formatting, tests, inspection surface, and removal criteria before the
+  implementation becomes hard to unwind.
 - Use metadata/config/registries to drive grammar, lowering, desugar, runtime
   capabilities, host capabilities, diagnostics, tests, and generated artifacts
   whenever practical. Manual wiring is acceptable for a fenced spike, but name

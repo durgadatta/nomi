@@ -1,0 +1,206 @@
+# Open Research Questions
+
+> Status: active, bounded research agenda.
+>
+> These are genuine design forks. They should be answered with focused
+> prototypes and representative programs, not by reopening the full language
+> survey.
+
+## Experiment Protocol
+
+Every experiment should produce:
+
+- at least three programs: beginner, ordinary production, and failure-heavy;
+- two or more syntax/semantic candidates;
+- formatted source at realistic widths;
+- diagnostics and explanation output;
+- interactions with types, patterns, Result, effects, async, and modules;
+- a removal criterion;
+- a recommendation recorded in the decision ledger.
+
+An experiment can conclude that no syntax is needed.
+
+## 1. Constraint Surface
+
+**Question:** Does `name: Type where predicate note "message" = value` remain
+readable across local bindings, parameters, fields, and cross-field rules?
+
+**Current hypothesis:** one `where` vocabulary is better than tuple-like
+annotations, decorators, contract blocks, or refinement-type punctuation.
+
+**Test:** format constrained signatures and nested data from finance, API input,
+configuration, and scientific domains. Measure whether readers can distinguish
+type, predicate, value, and diagnostic note without rereading.
+
+## 2. Progressive Type Boundary
+
+**Question:** Which declarations require annotations, and how much local
+inference remains predictable?
+
+**Current hypothesis:** exported package APIs are explicit; scripts and private
+locals infer; no implicit `Any`; constraint predicates retain runtime meaning.
+
+**Test:** separate compilation, recursive local functions, generic collection
+helpers, dynamic host interop, editor latency, and public API diffing.
+
+## 3. Protocol And Method Model
+
+**Question:** How do generic behavior, owned methods, and third-party extension
+methods coexist without invisible dispatch?
+
+**Current hypothesis:** nominal protocols, explicit conformance, owned methods,
+and imported extensions only. Free functions remain canonical for many
+algorithms.
+
+**Test:** numeric types, collection iteration, display/redaction, decoding,
+HTTP adapters, and two libraries that define colliding extensions.
+
+## 4. Effect Taxonomy
+
+**Question:** What belongs in a public `uses` set, and at what granularity?
+
+**Current hypothesis:** stable categories such as `ConsoleWrite`, `FileRead`,
+`FileWrite`, `Network`, `Clock`, `Random`, `Process`, `Database`, and
+`UnsafeHost`; handles carry narrower runtime authority.
+
+**Test:** CLI, web service, notebook, browser/Wasm, deterministic test, and
+embedded host. Avoid path/URL-level types in function signatures unless the
+complexity pays for itself.
+
+## 5. Resource Scope And Async Cleanup
+
+**Question:** Can exactly-once `with`, `async with`, and `defer` cover resource
+lifetime without hidden control or duplicate cleanup mechanisms?
+
+**Current hypothesis:** yes, if cleanup outcomes, cancellation, suppressed
+errors, return, and break semantics are specified before implementation.
+
+**Test:** nested files, transaction commit/rollback, async stream, cancellation
+during enter/body/exit, and simultaneous body/cleanup failure.
+
+## 6. Error Conversion
+
+**Question:** Is explicit `.map_error(...)` too repetitive in layered services?
+
+**Current hypothesis:** keep conversion explicit until real programs prove a
+small, locally discoverable protocol is worthwhile.
+
+**Test:** a five-layer CLI/service with IO, decode, database, and domain errors.
+Compare explicit mapping, declared conversion protocols, open error sets, and
+exception-like propagation.
+
+## 7. Generator And Stream Semantics
+
+**Question:** Do synchronous and asynchronous generators need `yield` syntax,
+or are explicit iterator/stream builders clearer?
+
+**Current hypothesis:** reserve `yield`; do not reuse it for resource policy or
+concurrency. Admit it only with defined final values, errors, cancellation,
+cleanup, reentrancy, and typing.
+
+**Test:** file lines, parser tokens, tree traversal, infinite sequences,
+bidirectional coroutines, and async events.
+
+## 8. Tables And Query Plans
+
+**Question:** When do `map`/`filter`/`group_by` stop being adequate for tables?
+
+**Current hypothesis:** typed table values and ordinary verbs first; explicit
+lazy plan type; syntax only if joins, windows, projections, and row scopes stay
+materially awkward.
+
+**Test:** in-memory CSV cleanup, SQL pushdown, dataframe analysis, distributed
+aggregation, null policy, and `explain` output. Compare ordinary calls, named
+expression objects, and a scoped query form.
+
+## 9. Numeric And Scientific Model
+
+**Question:** What are the default integer, decimal, float, overflow, unit,
+shape, and broadcasting rules?
+
+**Current hypothesis:** ordinary numeric protocols with explicit array/shape
+types; checked or well-specified overflow; units and rank library-first; dense
+notation scoped later.
+
+**Test:** finance, statistics, image kernels, linear algebra, physical units,
+automatic differentiation, and native/Wasm performance.
+
+## 10. Generic Dispatch
+
+**Question:** Are protocols and ordinary functions enough, or does scientific
+and data code need explainable multiple dispatch?
+
+**Current hypothesis:** do not add multiple dispatch until conflicting library
+extensions and numeric algorithms demonstrate a clear need.
+
+**Test:** arithmetic across user numeric types, serialization formats, table
+backends, and geometry. Require deterministic ambiguity diagnostics and a
+locally inspectable candidate set.
+
+## 11. Structural Openness And Versioned Data
+
+**Question:** How does strict closed decode coexist with forward-compatible APIs
+and stored-data evolution?
+
+**Current hypothesis:** closed by default, explicit rest/unknown-field policy,
+versioned decoders, and migrations as ordinary functions with provenance.
+
+**Test:** rolling service deployment, config typo detection, event replay,
+client/server skew, and schema export limitations.
+
+## 12. Metaprogramming Boundary
+
+**Question:** Which capabilities justify syntax generation, and what is the
+smallest safe mechanism?
+
+**Current hypothesis:** typed hygienic Surface transformations in a sandbox,
+scoped invocation, full source maps, no ambient authority, and expansion visible
+through tooling. Many use cases should remain code generation or protocols.
+
+**Test:** deriving equality/codec, route tables, parser declarations, symbolic
+math, and eliminating boilerplate in data APIs.
+
+## 13. Package Identity And Federation
+
+**Question:** How should organization/domain identity, mirrors, offline use,
+signatures, and transparency logs combine?
+
+**Current hypothesis:** scoped identity plus content hash; registry location is
+not identity; exact lockfile; immutable releases; pure fetch.
+
+**Test:** domain loss, package transfer, private registries, air-gapped builds,
+forks, compromised signing keys, and dependency confusion.
+
+## 14. Edition And Migration Model
+
+**Question:** How can source syntax evolve after stability without splitting
+runtime semantics or ecosystem tooling?
+
+**Current hypothesis:** package-scoped editions normalize to versioned Surface
+and Core artifacts; formatter/compiler provide automated migration and semantic
+diffs.
+
+**Test:** one deliberately breaking syntax change and one semantic-default
+change across a multi-package dependency graph.
+
+## 15. Backend-Neutral Determinism
+
+**Question:** Which observable behaviors must be fixed across interpreter,
+native, JavaScript, and Wasm profiles?
+
+**Current hypothesis:** evaluation order, integer behavior, text encoding,
+collection ordering, diagnostics, decode, effects, and task outcomes are fixed;
+platform differences require explicit APIs.
+
+**Test:** differential execution of randomized conformance programs and
+failure/cancellation/resource scenarios across every backend.
+
+## Research Stop Rule
+
+Do not add another open question merely because a language has an interesting
+feature. Add one only when:
+
+1. a target program exposes a concrete deficiency;
+2. two credible Nomi-compatible answers remain;
+3. the choice would alter source, semantics, or an industrial contract;
+4. a bounded experiment can distinguish them.

@@ -8,8 +8,8 @@ files.
 
 - `prototype/syntax/features.py`: `SyntaxFeature` entry with `name`, `layer`,
   `semantic_forms`, `reduces_to`, `docs`, `tests`, and `coverage`.
-- `docs/language/syntax_substrate_todo_audit.md`: TODO row updated if the
-  feature opens or closes an architectural seam.
+- `docs/design/decisions.md`: target status or experiment updated if the
+  feature changes language direction.
 
 ## Expected Coverage
 
@@ -23,7 +23,8 @@ files.
 | Regression sample | `prototype/tests/data/sample_sources/interpreter/<feature>.nomi` or `samples/<feature>.nomi` |
 | Web playground | `prototype/tests/contracts/` or `prototype/tests/e2e/` when browser-visible |
 | Notebook | `prototype/tests/contracts/test_notebook_kernel_contract.py` or `prototype/tests/e2e/` when notebook-visible |
-| Docs/spec | `docs/features/`, `docs/language/`, or `docs/convenience/` |
+| Target docs | `docs/design/` |
+| Research evidence | `docs/research/` when a bounded question changes |
 
 ## Validation
 

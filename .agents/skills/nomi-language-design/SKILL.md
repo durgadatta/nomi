@@ -1,634 +1,262 @@
 ---
 name: nomi-language-design
-description: Refine Nomi language design and syntax by researching other languages, grouping similar features, extracting user needs, reducing candidates to Nomi normal forms, and updating docs. Use for convenience-syntax research, philosophical design synthesis, feature admission decisions, and recommendations for how Nomi should combine ideas from other languages.
+description: Refine Nomi's target language through syntax-first whole-program design, consolidated cross-language evidence, bounded experiments, explicit tradeoffs, and canonical docs updates. Use for language semantics, syntax admission, research synthesis, target programs, and design reviews.
 compatibility: codex, opencode, deepseek-tui, claude-code
 ---
 
 # Nomi Language Design
 
-Use this skill when the task is about Nomi's language direction, syntax
-research, convenience features, design philosophy, or translating ideas from
-other languages into a coherent Nomi surface.
+Use this skill for target-language choices, syntax/semantic reviews,
+cross-language synthesis, feature admission, and aspirational programs.
 
-Nomi is fast-evolving and exploratory. Treat existing docs, tests, parser
-behavior, and prototype mechanics as design evidence, not immutable law. The
-goal is to follow the idea and spirit of Nomi: small semantic primitives,
-readable expression, explicit boundaries, inspectable reductions, and
-reversible implementation. If the current repo snapshot conflicts with that
-direction, name the drift and update the status/doc/skill instead of rigidly
-aligning new work to stale artifacts.
+## Authority
 
-For broad language-surface work, start from the primary things most programmers
-touch every day: strings/text, functions/calls, collections/flow, data values,
-absence/result, and patterns. New primary constructs need near-universal appeal
-and must improve concrete syntax or interaction for ordinary programs. Narrow
-or domain-specific constructs should begin as libraries, data values, explicit
-functions, block policies, or fenced secondary layers that compose from those
-primary surfaces.
+Read in this order:
 
-When the task is broad or product-facing, think in evolution paths rather than
-feature buckets: text as interface, functions as glue, collections as
-one-to-many, data as shape, patterns as choice, absence/result as non-success,
-resources as world contact, blocks as scoped policy, modules as growth
-boundary, explanation as feedback, and measures as correctness surface. A good
-Nomi feature should let the user climb from first-hour code to sophisticated
-code without switching mental models.
+1. `docs/design/README.md` - product promise and language shape.
+2. `docs/design/syntax.md` - canonical target source forms.
+3. `docs/design/semantics.md` - behavior independent of backends.
+4. `docs/design/industrial.md` - package, effect, concurrency, security,
+   tooling, and deployment contracts.
+5. `docs/design/decisions.md` - accepted, rejected, deferred, and open choices.
+6. `docs/design/target.nomi` - whole-language pressure fixture.
+7. `docs/research/convergences.md` - consolidated evidence.
+8. `docs/research/open_questions.md` - bounded experiments.
 
-For control syntax, keep Nomi expression-capable and statement-friendly. Before
-adding or promoting `if`, `match`, `try`, loop, recursion, or block-call
-syntax, check `docs/convenience/expression_statement_orientation.md`: statement
-and expression surfaces must share one semantic core, expression forms must
-state their value contract, and hidden IIFE/backend lowering must not define
-source-level `return`, `break`, `continue`, or `yield` behavior.
+Current code and tests describe prototype behavior. They do not define the
+target. The old deep-dive corpus is available in Git history at `08f2aad`; use
+it only when an open question needs detail that the consolidated research does
+not retain.
 
-For broad syntax or special-form review, use
-`docs/convenience/syntax_special_forms_quality_review.md` as the audit gate.
-It inventories accepted and risky surfaces, and requires everyday pressure,
-normal-form reduction, library-first comparison, diagnostics, `explain`,
-formatter behavior, status honesty, and first-hour UX before syntax hardens.
+## Core Posture
 
-For core/sugar/backend separation work, use
-`docs/language/core_layer_separation_plan.md` as the operational layer map:
-L0 runtime substrate, L1 implementation core IR, L2 semantic core, L3
-canonical surface, L4 sugar reductions, L5 library conventions, L6 scoped
-extensions, and L7 backend targets. The most important implementation rule is:
-L4 sugar should reduce before eval; do not grant sugar permanent evaluator
-semantics.
+Design Nomi as a new language. There is no current source-compatibility
+obligation.
 
-For implementation-gap or architecture-evolvability passes, use
-`docs/language/implementation_evolvability_gap_review.md` as the gate. A
-proposal should make features feature-owned, capability-honest,
-layer-classified, inspectably reduced, test-matrix-backed, frontend-consistent,
-and reversible while experimental. Do not overfit tool work to the current
-prototype shape when a feature packet, manifest field, Surface/Core node,
-runtime result contract, semantic event record, feature profile, or frontend
-adapter would preserve more optionality.
+Prefer:
 
-For design-to-implementation handoff, name the feature owner, layer/status,
-normal form or core target, docs/spec surface, test surfaces, and inspection
-artifact before recommending code. Implementation agents should be able to
-open the manifest or substrate audit and see what they are proving.
+- one recognition path per common cognitive act;
+- visible mutation, failure, authority, cleanup, and suspension;
+- explicit boundaries between structural external values and nominal owned
+  data;
+- inferred local code and explicit public contracts;
+- ordinary functions/values before grammar;
+- libraries before scoped notation, scoped notation before global extension;
+- whole-program coherence over isolated snippet beauty;
+- formatter, diagnostics, tooling, and migration as part of syntax design.
 
-For modern implementation-tool choices, use
-`docs/language/modern_language_implementation_artifacts.md`. Map tools such as
-LLVM, MLIR, Tree-sitter, LSP, Wasm/WASI, Cranelift, formatters, and runtime
-bundles to concrete Nomi artifacts: CST, Surface IR, Core IR, verifier, dumps,
-semantic events, source maps, fixture ladders, host capabilities, and frontend
-contracts. Tool adoption should make iteration easier, not make the tool the
-language definition.
+Do not preserve an implemented feature merely because it has tests. Do preserve
+runnable CLI/web behavior honestly during migration.
 
-## Research Corpus (May/June 2026)
+## Design Model
 
-The project has a substantial cross-language research corpus — 27 deep-dive
-files surveying 80+ languages and systems across 16 language families,
-interface surfaces, representation boundaries, human-computer interaction
-surfaces, and 8 cross-cutting dimensions.
-Before doing new research, check whether the question is already answered here.
-
-**Navigation entry points:**
-
-- `docs/research/language_family_coverage_map.md` — the index of indices. Use
-  this FIRST when starting any research task. It contains: the coverage table
-  (16 families with lessons, Nomi use, caveats), the deep dive index (27 files
-  with line counts), and coverage priorities (what's done, what's next).
-- `docs/research/cross_language_synthesis_master.md` — the capstone synthesis.
-  8 universal convergences, 8 genuine design forks, 7 hidden incompatibilities,
-  8 Nomi synthesis sections (one per normal form), 23-row Design Decision
-  Record table, 5 structural risks, 7 open questions. Read this when making a
-  cross-cutting design decision.
-- `docs/research/research_notes_synthesis.md` — earlier synthesis with
-  progressive-reification spine, major research pressures, design tensions, and
-  the guardrail against rabbit holes.
-
-**Deep dives by domain** (each ~800-2200 lines, comparative, with
-Adopt/Refuse/Adapt tables):
-
-| Domain | File | Systems surveyed |
-|--------|------|------------------|
-| Pattern matching | `pattern_matching_synthesis.md` | Rust, Swift, Kotlin, Scala 3, OCaml, Haskell, F#, Elixir, Gleam, Racket |
-| Error/defer/resource | `error_handling_defer_resource_cleanup_notes.md` | Zig, Hylo, Odin, Gleam, Roc, Swift, Kotlin, Scala, Java, Python, C++, Haskell |
-| Diagnostics | `diagnostics_and_explanations_comparative.md` | Rust, Elm, Racket, Swift, Scala 3, Clojure, Zig, TypeScript, Gleam, Python |
-| Stdlib design | `standard_library_design_comparative.md` | Go, Rust, Python, Kotlin, Swift, Elixir, Zig, C#, Haskell, Racket |
-| Type systems | `typescript_type_system_deep_dive.md` | TypeScript (narrowing, structural typing, conditional types, `satisfies`) |
-| Go philosophy | `go_design_philosophy_deep_dive.md` | Go (simplicity, interfaces, goroutines, defer, zero values) |
-| C#/Java/Dart | `csharp_java_dart_modern_features.md` | C#, Java, Dart (records, pattern matching, null safety, async) |
-| BEAM platform | `beam_languages_erlang_elixir_gleam.md` | Erlang, Elixir, Gleam (OTP, supervisors, pipe, `use`) |
-| Array languages | `array_languages_deep_dive.md` | APL, J, K, Q, BQN, Uiua (rank polymorphism, trains, combinators) |
-| Concatenative | `concatenative_languages.md` | Forth, Factor, Joy, Kitten, Cat (stack effects, combinators) |
-| Scientific | `scientific_languages_r_matlab_julia.md` | R, MATLAB, Julia (formulas, tidy eval, broadcasting) |
-| Modern languages | `modern_language_feature_survey.md` | Mojo, Gleam, Roc, Hylo, Odin, Darklang, Verse, Koka, Unison |
-| First-hour pedagogy | `first_hour_pedagogy_deep_dive.md` | Python, Go, Dart, Racket, Scratch, Logo, BASIC, Elm, Khan Academy, Swift Playgrounds |
-| Packaging | `packaging_and_project_structure_deep_dive.md` | Python, Cargo, Go modules, Mix, npm, NuGet, Nix flakes, Maven |
-| Data boundaries | `data_boundary_systems_deep_dive.md` | Pydantic, CUE, Nickel, Pkl, Dhall, Terraform, JSON Schema, TypeScript, serde, Elm decoders |
-| Table/flow | `table_and_flow_systems_deep_dive.md` | SQL, LINQ, dplyr, Polars, DuckDB, Nushell, pandas, K/Q |
-| Interactive | `interactive_explanation_deep_dive.md` | Jupyter, Pluto, Darklang, Smalltalk, Racket, Light Table, Observable, Swift Playgrounds, Bret Victor, Elm debugger |
-| Formatting | `formatting_and_style_deep_dive.md` | gofmt, Black, Rustfmt, Prettier, elm-format, clang-format, Ormolu, dart format, zig fmt, ocamlformat |
-| Package docs | `package_docs_and_examples_deep_dive.md` | Rustdoc, ExDoc, Julia, Sphinx, Scribble, Go, Javadoc, TypeDoc, Literate Programming, Diataxis |
-| Deployment | `deployment_and_operations_deep_dive.md` | Go, Python, Node/Deno/Bun, Docker, Serverless, Rust, Java/JVM, Nix/NixOS, Wasm, Homebrew |
-| Security | `security_and_trust_deep_dive.md` | Nix, capabilities, secrets, supply-chain, sandboxing, memory safety, IFC, crypto hygiene, auth, redaction |
-| AI toolability | `ai_readable_semantics_deep_dive.md` | LSP, typed ASTs, Tree-sitter, semantic tokens, code actions, proof traces, design fixtures, notebooks, expansion display |
-| Everyday interfaces | `everyday_interface_languages_deep_dive.md` | Unix shell, PowerShell, Excel formulas, Make, jq, CSS selectors, GraphQL, HTTP/OpenAPI |
-| Remaining feature gaps | `remaining_language_feature_gap_survey.md` | Rust, Swift, Kotlin, Scala 3, OCaml, Racket, Clojure, Koka, Go, Java, Pony |
-| Representation boundaries | `interpolation_config_serialization_deep_dive.md` | Python f-strings, JavaScript templates, Jinja, Terraform/HCL, JSON, YAML, TOML, JSON Schema, Protocol Buffers, Avro |
-| Human-computer interfaces | `human_computer_interface_languages_deep_dive.md` | Forms, menus, command palettes, direct manipulation, notebooks, visual editors, accessibility APIs, chat/agent panes, gestures, workflow UIs |
-
-**How to use the research corpus:**
-
-1. Start every research task by reading `language_family_coverage_map.md` to
-   see if the topic is already covered and which deep dive covers it.
-2. If a deep dive exists, read it before proposing new syntax. The
-   Adopt/Refuse/Adapt tables already encode synthesis decisions.
-3. If the topic is new, use the deep dive format: Status/Purpose, system
-   surveys with philosophy/what-worked/what-failed/insight, cross-language
-   synthesis (invariants, forks, anti-patterns), Nomi Adopt/Refuse/Adapt table.
-4. After writing a new deep dive, update both index files:
-   `language_family_coverage_map.md` (deep dive index + coverage priorities)
-   and `research_notes_synthesis.md` (deep dive index section).
-5. Stable Adopt decisions from deep dives should eventually migrate to
-   `docs/convenience/` as design specs and to `docs/language/` as feature docs.
-   Research files are source material, not active specification.
-
-## Core Rule
-
-Do not copy syntax because it is attractive elsewhere. Extract the durable user
-need, compare close relatives, reduce the idea to a Nomi normal form, then
-recommend one coherent spelling.
-
-Also do not copy Nomi's current prototype shape merely because it exists. The
-current implementation is a laboratory snapshot; the design target is the
-coherent language it is helping reveal. Use current behavior to find
-constraints, regressions, and examples, then decide whether it represents
-active direction, bootstrap residue, or stale documentation.
+Use these eight recurring user acts as orientation, not a rigid IR taxonomy:
 
 ```text
-source language -> user need -> semantic difference -> Nomi normal form -> surface syntax
+name
+transform
+model
+choose
+repeat
+fail
+touch the world
+understand
 ```
 
-Never:
+Classify a proposal into one of four layers:
+
+1. core surface;
+2. standard mechanically reducible convenience;
+3. ordinary library/protocol;
+4. explicitly scoped language tool.
+
+If the feature does not need source syntax, stop at layer 3.
+
+## Syntax-First Review
+
+For each proposal, inspect the code shape before abstract virtues.
+
+1. Write the explicit long form.
+2. Write the proposed form in a beginner example, production function, and
+   failure-heavy example.
+3. Identify every reused keyword and punctuation mark.
+4. State the semantic fact each token makes visible.
+5. Compare interactions with binding, types, data, match, Result, effects,
+   resources, async, modules, and formatting.
+6. Sketch at least one diagnostic and one formatter rendering.
+7. Put the form into `docs/design/target.nomi` or a focused target fragment.
+8. Prefer deletion when two forms ask the reader to recognize the same act.
+
+Desugarability is necessary but insufficient. A shorthand that lowers cleanly
+can still damage the source language by multiplying recognition paths.
+
+## Current Notation Discipline
+
+Treat these as strong target constraints:
 
 ```text
-source language -> copied syntax -> explanation after the fact
+_      pattern wildcard only
+where  constraints only
+->     function result type only
+=>     explicit input/pattern to expression
+|>     first-argument call insertion only
+?      Option/Result propagation only
+?. ??  Option handling only
+with   exactly-once resource scope only
 ```
 
-## Start Here
-
-Read the smallest relevant set before changing docs or making recommendations.
-
-**Foundation and direction:**
-- `docs/language/language_foundation.md` — canonical design foundation.
-- `docs/orientation/exploratory_implementation_doctrine.md` — implementation
-  doctrine for keeping early language work flexible, declarative, and
-  reversible.
-- `docs/language/core_layer_separation_plan.md` — operational hierarchy for
-  implementation core, semantic core, canonical surface, sugar, libraries,
-  scoped extensions, eval separation, and backend targets.
-- `docs/language/implementation_evolvability_gap_review.md` — project-wide
-  gate for feature ownership, explicit capability axes, Surface/Core
-  authority, runtime result contracts, frontend parity, test matrices, and
-  reversible implementation.
-- `docs/language/modern_language_implementation_artifacts.md` — grounded
-  survey of real language implementation artifacts and tools, including LLVM,
-  MLIR, Tree-sitter, LSP, Rust/Swift/GHC IR layers, WebAssembly/WIT,
-  Cranelift, Roslyn, and TypeScript compiler APIs.
-- `docs/language/spec_readiness_map.md` — promotion workflow for turning
-  research, convenience notes, feature docs, target fixtures, and
-  implementation plans into spec-ready language sections.
-- `docs/language/language_direction_and_gap_map.md` — adoption-oriented gaps
-  and next design artifacts.
-- `docs/language/docs_eagle_eye_review.md` — active distilled scan for hidden
-  bridge gaps, obsolete/source-only lanes, and planning priorities.
-- `docs/language/language_degrees_of_freedom.md` — strict core vs sugar,
-  library-first, scoped extension, future layer, rejection framework.
-- `docs/language/language_design_dimensions.md` — irreducible axes of
-  variation and where languages converge.
-
-**Specification and planning:**
-- `docs/language/language_spec.md` — draft concrete language specification.
-- `docs/language/adversarial_language_design_enhancement_notes_2026_06_04.md`
-  — sharp post-HCI critique, enhancement queue, and feature-admission gates.
-- `docs/language/adversarial_enhancement_implementation_plan_2026_06_04.md`
-  — staged implementation plan for those gates across events, capabilities,
-  data boundaries, command values, projections, agents, first-hour docs, and
-  stdlib capability baseline.
-- `docs/language/forward_implementation_plan.md` — staged implementation plan
-  with gates, caveats, risks, open questions.
-- `docs/language/implementation_todos.md` — staged design and implementation
-  tasks.
-- `docs/language/target_program_fixtures.md` — aspirational everyday programs
-  for testing design coherence.
-- `docs/language/demo_target.nomi` — compact target-only script showing the
-  desired future language across ordinary cases. It is not expected to parse
-  today and must stay outside `samples/` until implemented and tested.
-- `docs/language/target_language_tour.md` — aspirational Nomi program showing
-  preferred syntax composing into one memorable whole.
-
-**Convenience docs (normal-form design):**
-- `docs/convenience/review_and_roadmap.md` — normal forms and feature status.
-- `docs/convenience/design_lessons_and_integration.md` — design synthesis,
-  systemic cruft patterns, feature interaction analysis.
-- `docs/convenience/absence_and_result.md` — absence, result, error handling.
-- `docs/convenience/expression_statement_orientation.md` —
-  expression-capable/statement-friendly doctrine for `if`, `match`, `try`,
-  loops, recursion, block calls, and value-producing blocks.
-- `docs/convenience/syntax_special_forms_quality_review.md` — whole-language
-  syntax/special-form audit, promotion gates, UX bar, and gap review.
-- `docs/convenience/functions.md` — function/call primary surface: `func`,
-  equations, `=>`, holes, composition, `where`, and secondary-function gates.
-- `docs/convenience/flow_and_collections.md` — collection/flow primary surface:
-  pipeline, ordinary collection transforms, ranges, slices, comprehensions, and
-  secondary table/query planning.
-- `docs/convenience/data_and_types.md` — data boundary, types, aliases.
-- `docs/convenience/strings.md` — string pillar: interpolation, literals, typed
-  wrappers, pattern matching on strings, Unicode, serialization, security.
-- `docs/convenience/vertical_pillars.md` — concrete cross-cutting surfaces and
-  evolution paths, starting with strings/text, functions/calls,
-  collections/flow, then data as shape, patterns as choice, absence/result,
-  resources/world values, blocks/policies, modules, measures, and explanation
-  surfaces.
-- `docs/convenience/syntax_synthesis_matrix.md` — cross-language feature
-  families and recommendations.
-- Relevant focused docs under `docs/convenience/` (e.g., `patterns.md`,
-  `functions.md`, `error_handling.md`, `null_handling.md`, `types.md`).
-
-**Feature pillars:**
-- `docs/features/binding_constraints_feature.md` — constrained binding.
-- `docs/features/block_calls_feature.md` — yield-to-block and block-call design.
-- `docs/features/structured_collections_query_language.md` — query/table verbs.
-
-**Architecture and substrate:**
-- `docs/language/adversarial_exploratory_implementation_critique.md` — hostile
-  reading of how implementation convenience can prematurely freeze language
-  design.
-- `docs/language/core_layer_separation_plan.md` — read first when the task
-  touches core-vs-sugar boundaries, eval dispatch, Core IR, reduced mode,
-  feature layer metadata, or backend portability.
-- `docs/language/architecture_refactoring_plan.md` — runtime API, pipeline,
-  package, host, and frontend adapter refactoring.
-- `docs/language/implementation_evolvability_gap_review.md` — cross-project
-  implementation-gap review for evolvability, capability honesty, and
-  frontend/backend consistency.
-- `docs/language/modern_language_implementation_artifacts.md` — actual
-  toolchain/artifact lessons for parser frontends, IRs, verifier/pass
-  pipelines, compiler backends, LSP, Wasm, host capabilities, and fixtures.
-- `docs/language/flexible_syntax_substrate_plan.md` — parser, grammar,
-  lowering, and interpreter architecture.
-- `docs/language/syntax_substrate_todo_audit.md` — central critique and TODO
-  index for parser/grammar/lowering.
-
-**Research corpus (use before doing new research):**
-- `docs/research/language_family_coverage_map.md` — START HERE: index of all
-  27 deep dives, coverage table, remaining gaps.
-- `docs/research/cross_language_synthesis_master.md` — capstone synthesis:
-  convergences, forks, incompatibilities, Nomi resolution per normal form.
-- `docs/research/research_notes_synthesis.md` — earlier synthesis with
-  progressive-reification spine and design tensions.
-- Individual deep dives as listed in the Research Corpus section above.
-
-For philosophical framing, use `docs/research/` as source material, then
-reconcile claims back into the active docs listed above. The research corpus
-is design evidence, not active specification.
-
-## Nomi Normal Forms
-
-Every accepted convenience should reduce to one or more of these:
-
-- **Binding**: receive value, tentatively bind, check constraints, commit or diagnose.
-- **Function**: parameters are bindings, body evaluates, result may be checked.
-- **Pattern**: test structure, bind captures, check constraints, choose body.
-- **Flow**: pass a value through calls, functions, collection transforms, or plans.
-- **Block**: ordinary call plus attached caller-side code invoked by `yield`.
-- **Absence/result**: distinguish missing value, expected failure, and unexpected error.
-- **Data boundary**: external value explicitly decoded into owned data with diagnostics.
-- **Explanation**: semantic events become traces, examples, diagnostics, or `explain` views.
-
-Each normal form maps to a section in the capstone synthesis
-(`cross_language_synthesis_master.md`) that reconciles cross-language research
-into concrete Nomi design decisions.
-
-Strings are a first-class cross-cutting pillar, not currently a ninth normal
-form. String features should reduce to Data boundary, Pattern, Flow,
-Absence/result, and Explanation unless a future capstone explicitly promotes
-String to a new normal form.
-
-Other concrete cross-cutting surfaces may deserve string-level review without
-becoming new normal forms. Use `docs/convenience/vertical_pillars.md` to
-classify these surfaces and to choose the next focused design packet.
-
-If a candidate cannot reduce to this set, keep it research-only or propose the
-smallest new primitive it would require.
-
-## Core/Sugar Layer Workflow
-
-Use this when the task mentions core, sugar, special forms, eval, backend
-portability, Core IR, scoped extension, or Python independence.
-
-1. Read `docs/language/core_layer_separation_plan.md` before proposing code.
-2. Classify the feature or syntax:
-   `L0 runtime substrate`, `L1 implementation core IR`, `L2 semantic core`,
-   `L3 canonical surface`, `L4 sugar`, `L5 library convention`,
-   `L6 scoped extension`, or `L7 backend`.
-3. State the normal form and the reduction target. If it is L4 sugar, name the
-   L2/L3 concept it expands to and avoid adding eval semantics.
-4. If it is L2/L3 semantic core, plan both the user concept and the eventual
-   L1 operations it lowers to.
-5. If it is L6, require an explicit fence, inspectable expansion, and no
-   meaning changes outside the scope.
-6. If it is L7, require backend capability flags and avoid making backend
-   limitations part of the language definition.
-7. Update feature docs, `core_layer_separation_plan.md`, or
-   `implementation_todos.md` when the classification changes.
+The rejected syntax table in `docs/design/decisions.md` is deliberate. Do not
+reintroduce equation functions, hole lambdas, operator sections, local `where`,
+`unless`, postfix conditionals, pattern shortcut statements, collection aliases,
+composition operators, or universal block/yield control without new evidence.
 
 ## Research Workflow
 
-1. **Check existing research first.** Read `language_family_coverage_map.md`
-   to see if the topic is already covered. If a deep dive exists, read its
-   Adopt/Refuse/Adapt table before proposing anything new.
-2. Identify whether current repo artifacts reflect active direction,
-   transitional implementation, or stale residue. Do not force the proposal to
-   match stale state; record the drift and update the relevant status labels.
-3. Identify the everyday programming pressure: readability, boundary safety,
-   callback flattening, pattern choice, failure handling, data transformation,
-   configuration, testing, explanation, or another concrete need.
-4. Compare at least three nearby source-language forms (use the existing deep
-   dives when they cover the languages — don't re-research from scratch).
-5. Group almost-same features and name the nuance that actually matters.
-6. Decide the Nomi normal form and whether the idea is:
-   `implemented`, `prototype-ready`, `design-needed`, `library-first`,
-   `research-only`, or `rejected-for-now`.
-7. Recommend one Nomi path. Prefer library-first and docs-first when semantics,
-   diagnostics, or interactions are not yet clear.
-8. Update docs with a consolidation table, examples, status, and rationale.
-9. If the research is genuinely new (not in the corpus), write a deep dive
-   following the existing format, then update both index files.
-10. For broad syntax/semantics planning, update
-   `docs/language/syntax_substrate_todo_audit.md`,
-   `docs/language/implementation_todos.md`, or
-   `docs/language/forward_implementation_plan.md`.
-11. Avoid implementation unless the user explicitly asks for it or the task is
-    already scoped as implementation work.
+Start with `docs/research/families.md` and
+`docs/research/convergences.md`. Ask whether the question is already answered.
 
-## Spec-Editor Workflow
+Do new research only when:
 
-Use this when the user asks to consolidate docs, improve coherence, mark stale
-material, or make the language easier to turn into a specification.
+- a concrete target program exposes a deficiency;
+- two credible Nomi-compatible choices remain;
+- the choice changes syntax, semantics, or an industrial contract;
+- a bounded experiment can distinguish them.
 
-1. Read `language_foundation.md`, `language_spec.md`,
-   `spec_readiness_map.md`, and `docs_eagle_eye_review.md` before editing.
-2. Identify whether each touched doc is `active`, `source`, `historical`,
-   `obsolete`, or `scratch`. Add or sharpen the status block when unclear.
-3. Promote decisions, not essays. Move stable conclusions into the spec,
-   feature docs, or convenience docs; leave research or draft files as
-   evidence.
-4. Keep the operational spec convergence loop explicit:
-   research evidence -> interaction map -> focused feature packet -> target
-   demo or fixture -> `language_spec.md` -> implementation slice -> runnable
-   sample and tests.
-5. For each promoted feature, require the feature packet from
-   `spec_readiness_map.md`: everyday pressure, user syntax, normal form,
-   reduction, diagnostics, interactions, rejected alternatives, implementation
-   slice, current status.
-6. Separate doc modes: tutorial, how-to, reference/spec, explanation,
-   planning, source research. Do not let one page pretend to be all of them.
-7. Make comments operational: name the next file to edit, the status to assign,
-   the decision to preserve, the test/sample gate, or the reason to reject.
-8. If the user asks for new research or "search", use current external sources
-   and prefer official language references, specs, tours, or framework docs.
-   Reconcile external lessons into Nomi normal forms instead of copying
-   catalogues.
-9. Update `docs/language/demo_target.nomi` when a global syntax decision
-   changes the intended whole-language feel. Keep target-only syntax out of
-   `samples/*.nomi` until parser, runtime, tests, and snapshots agree.
-10. Update `docs/README.md`, `docs/convenience/README.md`, relevant feature
-   docs, and this skill when the workflow itself changes.
-11. Do not leave broken active links. If a doc is purged or demoted to drafts,
-   update the active index or add an active distilled replacement.
+Research unit:
 
-## Iterative Convenience Refinement
+```text
+user pressure
+-> semantic mechanism
+-> genuine fork
+-> interaction cost
+-> Nomi candidates
+-> experiment or decision
+```
 
-Use this when the user asks for high-quality convenience syntax across
-languages, especially functions, patterns, and collections.
+When external research is required, prefer official language specifications,
+official documentation, standards, and primary papers. Extract decisions, not
+tour notes. Update `docs/research/open_questions.md`; do not recreate one deep
+dive per language.
 
-Work in checkpointed passes:
+## Feature Admission Packet
 
-1. **Checkpoint first.** If there is already finished work, commit it before
-   starting a new research pass.
-2. **Local consolidation pass.** Read `docs/convenience/README.md`,
-   `functions.md`, `patterns.md`, `flow_and_collections.md`,
-   `interaction_map.md`, `syntax_synthesis_matrix.md`, and
-   `review_and_roadmap.md`. Tighten interactions, stale statuses, caveats, and
-   next-pass notes.
-3. **External research pass.** Search current official language references,
-   standard library docs, or mature ecosystem docs for uncovered ideas. Prefer
-   primary sources. Fold only durable user needs back into Nomi normal forms.
-4. **Intersection pass.** For each candidate, decide whether it belongs to
-   function, pattern, flow, block, result, data boundary, or explanation.
-   Record caveats where the candidate crosses boundaries.
-5. **Spec-shaping pass.** Convert accepted ideas into feature packets:
-   everyday pressure, syntax, normal form, reduction, diagnostics,
-   interactions, rejected alternatives, implementation slice, status.
-6. **Target coherence pass.** If the decision affects more than one normal
-   form, update `docs/convenience/interaction_map.md` and
-   `docs/language/demo_target.nomi` before touching runnable samples.
-7. **Commit after each pass.** Leave the repo in a coherent state with notes
-   for the next exact pass.
+Before accepting a feature, provide:
 
-## Vertical Surface Workflow
+- user need and representative programs;
+- long form and shorthand, if any;
+- parse/name/type/constraint/effect/runtime semantics;
+- control-transfer and async behavior;
+- failure taxonomy and cleanup behavior;
+- formatter output;
+- terminal/editor/machine diagnostics;
+- inspectable lowering or expansion;
+- interaction matrix with neighboring forms;
+- rejected alternatives;
+- conformance fixtures independent of implementation;
+- removal or rollback criteria;
+- target demo update.
 
-Use this when the user asks what concrete aspects cut across the whole language
-experience, or asks for string-level review of tangible surfaces such as data
-values, resources, failure values, patterns/selectors, blocks, quantities,
-time, modules, or explanation surfaces.
+The proposal owns the burden of proof.
 
-1. Read `docs/convenience/vertical_pillars.md`, `interaction_map.md`,
-   `review_and_roadmap.md`, and the relevant existing focused docs.
-2. Treat the surface as cross-cutting, not automatically as a new normal form.
-   Name the normal-form owners it reduces to.
-3. Check the research corpus before adding external research. Start with
-   `language_family_coverage_map.md`, then the deep dives cited by the pillar.
-4. For the selected surface, write or update a string-style packet:
-   user surface, design pressure, normal-form ownership, cross-language
-   evidence, Nomi direction, status table, spec packet needed, rejected
-   alternatives, and next implementation/research steps.
-5. Keep the exploratory posture explicit. If current artifacts are stale or
-   too narrow, mark the drift instead of forcing the pillar to match them.
-6. Update `docs/convenience/README.md`, `vertical_pillars.md`, and this skill
-   when the pillar list or workflow changes.
+## High-Risk Design Areas
 
-For function/pattern/collection work, always check:
+### Binding And Constraints
 
-- Does piecewise function syntax remain just pattern dispatch?
-- Does collection flow use ordinary function values or named verbs first?
-- Does row/group syntax introduce new binding rules?
-- Does a pattern candidate diagnose shape failure versus constraint failure?
-- Does a pipeline candidate explain intermediate values and source paths?
+Keep binding creation distinct from mutation. Preserve atomic tentative bind,
+check, and commit. Separate internal contract violations from expected external
+decode errors. Test the exact `where` surface across locals, parameters, fields,
+and cross-field constraints.
 
-## Coherence Checks
+### Functions And Calls
 
-Before accepting a new surface form, ask:
+Keep one named form and one explicit anonymous expression form. Avoid automatic
+currying, partial application, generated parameters, and equation dispatch.
+Parameters are bindings; public results and effects are contracts.
 
-- Does it reuse binding, function, pattern, flow, block, data boundary, or
-  explanation semantics?
-- Is it already analyzed in an existing deep dive? What does the
-  Adopt/Refuse/Adapt table say?
-- Does it duplicate an existing spelling with only a small aesthetic change?
-- Can tooling show the desugared form?
-- Can diagnostics speak in normal-form vocabulary rather than private sugar?
-- Does it preserve Python parity where Nomi intentionally follows Python?
-- Does it make common code clearer at the call site?
-- Does it introduce another mini-language for validation, records, patterns,
-  queries, callbacks, or testing?
-- Can it be represented as a feature-owned manifest/profile instead of a
-  scattered grammar, transformer, interpreter, and test patch?
+### Data And Boundaries
 
-Reject or defer features that add a second validation language, a second
-placeholder family, a generic propagation operator for both absence and errors,
-dense glyph notation as everyday syntax, global macros, or systems-language
-ownership syntax in the first layer.
+Use nominal immutable `data` for owned concepts. Use `Unknown`/`Value`,
+structural patterns, and explicit decoders for received values. Decode returns
+typed accumulated path errors; constructors do not silently coerce.
 
-## Preferred Recommendations
+### Patterns
 
-These are grounded in the cross-language synthesis and deep dive corpus:
+`match` is the structural choice form. Preserve the distinctions among shape
+non-match, guard rejection, and constraint failure. Closed variants should be
+exhaustive. Avoid one-case pattern aliases until real code proves a need.
 
-- Keep one binding/constraint story for assignments, parameters, fields,
-  imports, block parameters, pattern captures, and decoder fields.
-- Keep `data` for owned program values; use `Data.decode(...)`, patterns, and
-  constraints for external structures.
-- Keep pattern matching as the basis for `match`, if-let, guard-let, variants,
-  mapping/list patterns, and destructuring.
-- Keep `|>` as the main value-flow operator; use `_` when the piped value
-  belongs somewhere other than the first argument.
-- Keep composition separate from pipeline: pipeline applies a value now;
-  composition builds a function for later.
-- Keep one block-call story for resources, retry, transaction, fixtures,
-  tracing, and future policy blocks.
-- Treat `?.` and `??` as absence-only. Use `Result` plus `match` for expected
-  failure before considering `?`.
-- Start query/table/rank/shape work as named library functions and plan values
-  before adding dense syntax.
-- Treat examples, tests, traces, query plans, and decode errors as one
-  explanation family.
-- Keep one ordinary string interpolation mechanism (f-strings). Do not add `%`,
-  `.format()`, `string.Template`, or heredocs. f-strings are the one way.
-- Typed wrappers (`sql""`, `html""`, `re""`, `sh""`) are a design direction,
-  not a parser task yet. They must produce distinct types, not `str`, and each
-  target needs a context-specific safety contract.
-- Paths are not strings. URLs are not strings. SQL queries are not strings.
-  Each gets a distinct type with explicit `to_str()` conversion.
-- Treat strings as a first-class pillar alongside functions and collections
-  (see `docs/convenience/strings.md`).
-- Config is a data-boundary problem (see `data_boundary_systems_deep_dive.md`),
-  not a second data declaration language.
-- Secrets and sensitive values should be redacted by default in diagnostics and
-  `explain` output (see `security_and_trust_deep_dive.md`).
-- Nomi should ship a canonical formatter from day one, no configuration (see
-  `formatting_and_style_deep_dive.md`).
-- Dependency resolution should use content-addressed integrity, domain-name
-  import paths, and no code execution during fetch (see
-  `packaging_and_project_structure_deep_dive.md` and
-  `security_and_trust_deep_dive.md`).
+### Failure
+
+Keep `Option`, `Result`, panic, and cancellation distinct. `?.`/`??` are absence
+only; `?` is typed propagation only. Error conversion must stay inspectable.
+
+### Resources And Concurrency
+
+Do not infer shared semantics from similar indentation. `with` is exactly-once
+acquire/use/release; retry receives a function; loops repeat; generators remain
+an open design; async functions and task groups own suspension and child
+lifetime.
+
+### Effects And Capabilities
+
+Public effect declarations aid local review. Runtime capability handles grant
+actual authority. Check both static ergonomics and host/test/browser behavior.
+
+### Collections And Tables
+
+Use one verb family. Keep strict collections, streams, and table plans distinct
+in types. A pipeline inserts a call argument and nothing else. Query notation
+must be earned by table-specific programs.
+
+## Whole-Language Test
+
+After any global decision:
+
+1. update `docs/design/syntax.md` and/or `semantics.md`;
+2. update `docs/design/decisions.md`;
+3. update `docs/design/target.nomi`;
+4. scan the target for punctuation or constructs that now conflict;
+5. update `docs/research/open_questions.md` if an experiment closed;
+6. update `docs/README.md` only if the document topology changed;
+7. map implementation work only after the target reads coherently.
+
+Keep target-only code outside `samples/`. Runnable samples are product fixtures
+and require parser/runtime/tests/web agreement.
 
 ## Documentation Style
 
-When editing design docs:
+- Put target decisions only under `docs/design/`.
+- Put consolidated evidence and bounded unknowns under `docs/research/`.
+- Put current implementation maps under `docs/orientation/`.
+- Put dated judgments under `docs/review/`; promote durable decisions.
+- Label implemented, target, experimental, deferred, and rejected explicitly.
+- Prefer tables for comparisons and prose for semantics/tradeoffs.
+- Do not preserve duplicate essays as archives; Git history is the archive.
+- Avoid claims of inevitability when the evidence shows a genuine fork.
 
-- Distinguish implemented behavior, prototype-ready syntax, design-needed
-  questions, library-first ideas, research-only notes, and rejected-for-now
-  ideas.
-- Prefer `active`, `source`, `historical`, `obsolete`, and `scratch` labels for
-  document status. If a doc is obsolete, say exactly what replaced it.
-- Prefer comparative tables for overlapping features.
-- Prefer spec-shaped sections over essays: syntax, reduction, diagnostics,
-  status, rejected alternatives, tests/samples, open questions.
-- Include small Nomi examples only when they clarify the recommended normal
-  form.
-- Keep target-only examples in `target_program_fixtures.md` or
-  `target_language_tour.md`; do not move them into runnable samples until
-  parser, lowering, runtime, tests, and snapshots agree.
-- Point to source-language docs or existing Nomi docs (especially the research
-  deep dives) instead of duplicating large explanations.
-- Update `docs/README.md`, `docs/convenience/README.md`, and both research
-  index files when adding a new durable design document.
+## Implementation Handoff
 
-## Substrate Planning
+When a design is accepted, hand it to parser/runtime work as conformance rather
+than prose alone:
 
-When the user asks for major future syntax, semantics, or faster
-experimentation:
+- accepted/rejected source fixtures;
+- expected typed Surface and Core shapes;
+- values, output, effects, diagnostics, events, cleanup, and cancellation;
+- frontend/backend capability expectations;
+- migration disposition for old syntax;
+- target demo slice that can eventually move to `samples/`.
 
-- Treat `docs/language/implementation_evolvability_gap_review.md` as the
-  project-wide gate for implementation-gap passes and broad substrate changes.
-- Treat `docs/language/modern_language_implementation_artifacts.md` as the
-  grounded tool-choice note before recommending LLVM, MLIR, Tree-sitter, LSP,
-  Wasm/WASI, Cranelift, formatter, source-map, or runtime-bundle work.
-- Treat `docs/language/flexible_syntax_substrate_plan.md` and
-  `docs/language/syntax_substrate_todo_audit.md` as the bridge from language
-  design to syntax implementation.
-- Treat `docs/language/architecture_refactoring_plan.md` as the bridge from
-  language design to runtime/tool/package architecture.
-- Prefer plans that make features declarative: status, normal form, feature
-  owner, grammar, surface/core node, lowering, diagnostics, tests, docs, and
-  tool exposure.
-- Preserve optionality. For broad proposals, state what current implementation
-  substrate remains replaceable and what design choice the proposal could make
-  harder later.
-- Add or update inline `NOMI-SUBSTRATE-*` TODOs only at real architectural
-  seams, and keep the central audit in sync.
-- Keep target-only syntax out of runnable samples until parser/lowering/tests
-  prove the intended status.
+Use `docs/orientation/implementation_guideline.md` for the current engineering
+workflow and the parser/interpreter/test/web skills for implementation.
 
-## Useful Source Families
+## Stop Conditions
 
-When new research IS needed (not already in the corpus), consult these
-families. Each now maps to the deep dive where it is comprehensively surveyed:
+Stop and keep a proposal open when:
 
-- **ML-family** (OCaml, F#, Haskell, Elm, Roc, ReScript) — see `pattern_matching_synthesis.md`, `error_handling_defer_resource_cleanup_notes.md`
-- **Pattern/result family** (Rust, Swift, Gleam, Zig) — see `pattern_matching_synthesis.md`, `error_handling_defer_resource_cleanup_notes.md`
-- **Block/callback family** (Ruby, Kotlin, Swift, Julia, Gleam, Python context managers) — see `beam_languages_erlang_elixir_gleam.md` (Gleam `use`), `csharp_java_dart_modern_features.md`
-- **Flow/table family** (Elixir, F#, Clojure, Nushell, SQL, dplyr, Polars, LINQ) — see `table_and_flow_systems_deep_dive.md`
-- **Boundary/config family** (CUE, Nickel, Pkl, Dhall, Nix, Terraform, JSON Schema, Pydantic) — see `data_boundary_systems_deep_dive.md`
-- **Array/symbolic family** (APL, J, K, Q, BQN, Uiua, Julia, Mathematica) — see `array_languages_deep_dive.md`, `scientific_languages_r_matlab_julia.md`
-- **Ownership/systems family** (Rust, Zig, Odin, Hylo, Mojo) — see `error_handling_defer_resource_cleanup_notes.md`, `go_design_philosophy_deep_dive.md`
-- **Concatenative family** (Forth, Factor, Joy, Kitten, Cat) — see `concatenative_languages.md`
-- **Scientific/notebook family** (MATLAB, R, Julia, Jupyter) — see `scientific_languages_r_matlab_julia.md`, `interactive_explanation_deep_dive.md`
-- **Macro/research family** (Lisp, Scheme, Racket, Nim, Scala, Koka, Eff, Flix, Unison, Darklang) — see `modern_language_feature_survey.md`
-- **Pedagogy/onboarding** — see `first_hour_pedagogy_deep_dive.md`
-- **Tooling/IDE/AI collaboration** — see `ai_readable_semantics_deep_dive.md`, `diagnostics_and_explanations_comparative.md`
-- **Packaging/deployment** — see `packaging_and_project_structure_deep_dive.md`, `deployment_and_operations_deep_dive.md`
-- **Security/trust** — see `security_and_trust_deep_dive.md`
-- **Documentation** — see `package_docs_and_examples_deep_dive.md`
-- **Formatting/style** — see `formatting_and_style_deep_dive.md`
-- **Stdlib design** — see `standard_library_design_comparative.md`
-
-Before consulting any source family, read its corresponding deep dive first —
-it already synthesizes 8-16 languages on that topic.
-
-## Syntax Substrate Extension Path
-
-When implementing new syntax in the prototype, follow the current extension
-path (documented in `CLAUDE.md`):
-
-1. **Grammar** — add a rule to the appropriate layer in
-   `prototype/grammar/layers/`. Verify with `tools.syntax.inspect --stage raw-tree`.
-
-2. **Lowering** — create a module in `prototype/parser/nomi/lowering/`
-   with a mixin class. Mix it into `FunctionsMixin` in
-   `prototype/parser/nomi/functions.py`.
-
-3. **Desugar** (optional) — if the syntax needs an AST-level transform,
-   create a pass in `prototype/parser/nomi/desugar/` and add an entry
-   to `BUILTIN_FEATURES` in `prototype/syntax/features.py`.
-
-4. **Surface node** (optional) — if Python AST cannot naturally represent
-   the construct, define a `SurfaceNode` subclass in
-   `prototype/syntax/surface.py` and emit it from the lowering step.
-   The `lower_surface_to_python()` walker handles the lowering.
-
-5. **Tests** — parser unit tests, functional tests, and regression
-   snapshot regeneration.
-
-Key substrate files:
-- `prototype/syntax/features.py` — current feature manifest registry
-- `prototype/syntax/surface.py` — surface node base + `lower_surface_to_python`
-- `prototype/parser/nomi/lowering/` — per-feature Lark→AST lowering modules
-- `prototype/parser/nomi/desugar/pipeline.py` — desugar pass chain (derived from features)
-- `prototype/grammar/assemble.py` — grammar assembly (derived from features)
-- `tools/syntax/inspect.py` — pipeline stage inspection CLI
+- its best argument is fewer keystrokes;
+- it reuses punctuation with an unrelated meaning;
+- it hides invocation count, failure, authority, mutation, or suspension;
+- its diagnostics require backend implementation vocabulary;
+- it works in a snippet but makes the target program less coherent;
+- ordinary functions or data have not been tried;
+- more research would only add examples rather than distinguish choices.

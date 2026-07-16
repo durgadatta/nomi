@@ -1,5 +1,5 @@
 '''
-Detailed notes at docs/features/yield_to_block.md
+Implemented compatibility behavior; target block decisions are in docs/design/decisions.md
 '''
 
 

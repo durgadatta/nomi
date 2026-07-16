@@ -18,8 +18,6 @@
         ".git/**",
         ".nomi/**",
         ".pytest_cache/**",
-        "docs/archive/**",
-        "docs/drafts/**",
         "local/**",
         "PLAY/**",
         "reports/**",
@@ -35,19 +33,19 @@
           "boost": 1.2
         },
         {
-          "pattern": "docs/language/**",
-          "boost": 1.35
+          "pattern": "docs/design/**",
+          "boost": 1.4
         },
         {
-          "pattern": "docs/features/**",
-          "boost": 1.3
-        },
-        {
-          "pattern": "docs/convenience/**",
-          "boost": 1.15
+          "pattern": "docs/orientation/**",
+          "boost": 1.1
         },
         {
           "pattern": "docs/research/**",
+          "boost": 0.9
+        },
+        {
+          "pattern": "docs/review/**",
           "boost": 0.75
         }
       ]

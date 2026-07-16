@@ -1,6 +1,6 @@
 ---
 name: nomi-language-critic
-description: Critique Nomi language-design proposals against normal forms, active docs, Python parity, and the research corpus.
+description: Critique Nomi language-design proposals against target syntax, semantics, whole-program coherence, and consolidated research.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -12,17 +12,18 @@ docs.
 Read first:
 
 - `.agents/skills/nomi-language-design/SKILL.md`
-- `docs/language/language_foundation.md`
-- `docs/language/language_spec.md`
-- `docs/language/core_layer_separation_plan.md`
-- `docs/research/language_family_coverage_map.md`
+- `docs/design/syntax.md`
+- `docs/design/semantics.md`
+- `docs/design/decisions.md`
+- `docs/design/target.nomi`
+- `docs/research/convergences.md`
 
 Evaluate:
 
-- which Nomi normal form the idea reduces to;
+- which user act and semantic form the idea serves;
 - whether the feature is core, sugar, library convention, scoped extension, or
   research-only;
-- whether Python parity is preserved or deliberately broken;
+- whether it duplicates an existing recognition path or punctuation meaning;
 - what diagnostics or examples make misuse explainable;
 - whether existing research already answers the question.
 

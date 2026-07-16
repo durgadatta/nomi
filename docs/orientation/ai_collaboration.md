@@ -99,9 +99,10 @@ clear semantics, tests, examples, and documentation.
 - `implementation_guideline.md`: records the early use of
   ChatGPT, Grok, DeepSeek, Gemini, and Claude for parser/evaluator
   infrastructure and syntax-layer exploration.
-- `../language/`, `../features/`, and `../research/`: active synthesis layers
-  where AI-generated and human-written ideas must be reconciled into one
-  coherent direction.
+- `../design/`: canonical target decisions where AI-generated and human-written
+  ideas must be reconciled into one language.
+- `../research/`: consolidated evidence and bounded open experiments, not a
+  second specification.
 - `artifacts_and_usage.md`: artifact map, now including the AI
   agent entrypoint.
 
@@ -195,8 +196,9 @@ than making it runtime behavior.
 - Keep `opencode.json` in sync with the project toolchain (model, LSP,
   formatter) and uncomment sections as the project adopts new tooling.
 - Put broader AI process notes here.
-- Put canonical language direction in `../language/`.
-- Put temporary or superseded AI synthesis in `../drafts/` only when it is
-  still useful as source material; promote durable decisions into active docs.
+- Put canonical language direction in `../design/`.
+- Keep temporary synthesis in the active task or Git history. Add a repository
+  document only when it owns a durable information type that the consolidated
+  docs cannot hold cleanly.
 - Mention AI provenance when a document is primarily AI-generated or
   AI-synthesized.

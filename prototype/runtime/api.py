@@ -1,8 +1,9 @@
 """Small public facade over today's interpreter runners.
 
-This module is the first top-down architecture step from
-``docs/language/architecture_refactoring_plan.md``.  It intentionally wraps the
-existing runners instead of moving parser or interpreter internals yet.
+This module is a top-down facade around the experimental runtimes described in
+``docs/orientation/implementation_guideline.md``. It intentionally wraps the
+existing runners instead of making one parser or interpreter the language
+boundary.
 """
 
 from __future__ import annotations

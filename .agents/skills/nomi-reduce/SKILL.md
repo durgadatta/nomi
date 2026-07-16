@@ -5,8 +5,8 @@ compatibility: deepseek
 ---
 
 Before adding a reduction, check the `nomi-language-design` skill. Each
-reduction should target a specific Nomi normal form and be grounded in the
-cross-language research corpus (`docs/research/language_family_coverage_map.md`).
+reduction should target a specific accepted semantic form in
+`docs/design/syntax.md` and `docs/design/semantics.md`.
 Also read `docs/orientation/exploratory_implementation_doctrine.md`: reductions
 should make syntax easier to change by declaring feature ownership, status,
 layer, normal form, diagnostics, and inspection behavior in metadata where
@@ -17,8 +17,9 @@ possible.
 Every reduction should name its feature owner, layer/status, input surface,
 normal-form output, docs/spec surface, focused tests, and inspection command.
 Put that metadata on the desugar pass and feature manifest when practical; use
-`docs/language/syntax_substrate_todo_audit.md` for gaps that must remain
-planning-only.
+`docs/design/decisions.md` for target status and
+`docs/orientation/implementation_guideline.md` for reusable implementation
+gaps.
 
 ## Files you will touch
 1. `prototype/parser/nomi/desugar/<name>.py` — new desugarer class
@@ -33,9 +34,8 @@ NOMI_VERIFY_CORE=1 pytest prototype/tests/unit/parser/desugar/test_<name>.py
 The `NOMI_VERIFY_CORE=1` gate catches forms that the reduced interpreter
 would also reject, via the shared `verify_core(strict=True)` verifier.
 
-For larger syntax reductions, also update the planned feature manifest or
-`docs/language/syntax_substrate_todo_audit.md` with the feature owner, normal
-form, status, pass metadata, diagnostics, and inspection expectations.
+For larger syntax reductions, also update the feature manifest with the owner,
+target status, reduction metadata, diagnostics, and inspection expectations.
 Avoid one-off reduction wiring that cannot be discovered from feature metadata.
 
 ## Pattern

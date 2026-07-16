@@ -1,301 +1,192 @@
 # Nomi
 
-**A Minimal, Systematic, and Intuitive Programming Language**
+Nomi is an experimental general-purpose programming language exploring a
+simple question: can a language keep Python's cognitive ease while making
+types, data boundaries, failure, effects, concurrency, diagnostics, and
+packages coherent enough for large systems?
 
-Nomi is an experimental programming language built on a **small, coherent core**: variables, function definitions, and function applications. Inspired by functional programming and guided by cognitive principles, it emphasizes **clarity, coherence, and human-centered reasoning**.
+The project is intentionally willing to break everything before stability.
+Current implementations are laboratories; the target language is defined in
+[docs/design](docs/design/README.md).
 
-Rather than piling on features, Nomi focuses on a unified core where expressiveness emerges naturally. This minimalism encourages intuitive composition and sharp mental models, aligning programming with how humans reason about processes and abstractions.
+> **Try the current prototype:**
+> [durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/)
 
-> **Try it live:** [durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/) —
-> a browser playground with Monaco editor, a Rust/WASM parser, a JavaScript
-> Core Runtime, and interactive samples.
+## Two Truths
 
----
+Nomi distinguishes:
 
-# Usage
+- **Target design:** the language being designed, independent of current
+  parser/runtime limitations. Start with [Syntax](docs/design/syntax.md),
+  [Semantics](docs/design/semantics.md), and the aspirational
+  [target program](docs/design/target.nomi).
+- **Current prototype:** runnable syntax implemented through Python/Lark and a
+  browser Rust/WASM-to-JavaScript path. Runnable examples live in `samples/`
+  and are covered by regression and web checks.
 
-Nomi programs are executed through a Python-based runner that parses Nomi source files using **Lark**, lowers them into a **Python AST**, and evaluates them via a layered interpreter. Python serves as the semantic baseline, with Nomi features introduced through explicit AST reduction and carefully scoped semantic extensions.
+Do not assume target-only syntax runs today. Do not assume implemented syntax
+will remain in the target.
 
-## Option 1: Install as a package (recommended for regular use)
+## Target Shape
 
-```bash
-# Install in editable mode from source
-python3 -m pip install -e .
-
-# Run Nomi programs
-nomi demo.nomi
-nomi script.py
-nomi --help
-```
-
-(This anticipates `nomi` becoming a general pip-installable PyPI package.)
-
-## Option 2: Direct execution (no installation required)
-
-```bash
-# Run directly from the source directory
-python3 scripts/cli.py [filename]  # defaults to demo.nomi
-```
-
-## Option 3: Jupyter Notebook Kernel
-
-Install the notebook dependencies and register the local Nomi kernel:
-
-```bash
-python3 tools/jupyter/launch_nomi_notebook.py
-```
-
-Then choose the `Nomi` kernel in Jupyter. The kernel keeps one Nomi interpreter
-alive per notebook, so definitions and bindings persist across cells. It also
-supports `%run scripts/demo.nomi`, `%who`, `%reset`, and `%ast`.
-
-Start with [notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb)
-for a notebook covering the syntax currently implemented in the prototype, or
-open the minimal smoke notebook with:
-
-```bash
-python3 tools/jupyter/launch_nomi_notebook.py --skip-install --minimal
-```
-
-More details are in [tools/jupyter/README.md](tools/jupyter/README.md).
-
-## Option 4: Dockerized Jupyter Notebook
-
-For the most portable demo path, use the host launcher:
-
-```bash
-python3 scripts/run_nomi_docker.py
-```
-
-On first run, the launcher checks for Docker. On macOS, if Docker is not ready,
-it can install the Docker CLI and Colima through Homebrew, start Colima, build
-`nomi:jupyter`, start the local container, and open the syntax tour notebook
-with the `Nomi` kernel selected. Later runs reuse the existing image and running
-container when possible. The default URL is:
+The current design direction favors:
 
 ```text
-http://127.0.0.1:8888/lab/tree/notebooks/nomi_syntax_tour.ipynb?token=nomi
+direct scripts and inferred local code
+explicit typed public APIs
+immutable names and data by default
+nominal data with explicit external decode
+one named function form and one match form
+Option, Result, and panic as separate failure stories
+visible mutation, effects, resources, and suspension
+structured concurrency
+shared structured diagnostics
+reproducible, content-addressed packages and builds
 ```
 
-Use `--minimal` for the smoke notebook, `--port 8890` if port 8888 is already
-busy, `--rebuild` after dependency changes, and `--no-browser` on headless
-systems.
+The full rationale and action sequence are in the
+[2026-07-16 language-design review](docs/review/2026-07-16.md).
 
-On macOS, the launcher works with either Docker Desktop or a Docker-compatible
-Colima daemon.
+## Quick Start
 
-## Option 5: VS Code Extension
-
-An early VS Code extension scaffold lives at [tools/vscode/nomi](tools/vscode/nomi).
-It registers `.nomi` files, provides syntax highlighting, snippets, run commands,
-document symbols, hover notes, and first-pass go to definition support.
-
-For the easiest local install and activation without publishing, run:
+Install the current Python-hosted prototype in editable mode:
 
 ```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
+python3 -m pip install -e .
+nomi samples/demo.nomi
 ```
 
-For active development, run:
+Run without installation:
 
 ```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
+python3 scripts/cli.py samples/demo.nomi
 ```
 
-Then press `F5` in VS Code to launch an Extension Development Host.
-See [VS Code Extension](docs/orientation/vscode_extension.md) for the current tooling
-roadmap and packaging notes.
+The current runtime parses source with Lark, lowers through Python AST and
+Nomi-owned artifacts, and evaluates it with layered interpreters. Python is a
+bootstrap substrate, not the future language definition.
 
-## Option 6: Web Playground
+## Web Playground
 
-A live instance runs at **[durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/)**.
+The live playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
+runtime. Its sample list is generated from runnable files under `samples/`.
 
-To run locally, the playground lives at [web](web/). It uses Monaco for editing
-and defaults to a lightweight Rust/WASM parser plus JavaScript Core Runtime.
-The older Pyodide bridge remains in the tree for compatibility work. The sample
-list is generated from `samples/*.nomi` and `samples/*.nomi.nb`, so sample
-files stay in sync with the web editor.
-
-The editor also supports lightweight notebook-style cells. Mark cells with
-`# %%`, use `Shift+Enter` to run the current cell in a persistent browser
-session, use `Run All` to restart the session and evaluate cells top to bottom,
-and use `Run File` or `Ctrl+Enter` for a normal full-file run.
+Run it locally:
 
 ```bash
 python3 scripts/launch_web.py
 ```
 
-The launcher builds the WASM parser, regenerates `web/manifest.json`, chooses a
-local port, starts a static server, and opens `http://127.0.0.1:8080/web/` by
-default. Use `--no-browser` for headless use, `--no-wasm` when the generated
-WASM artifacts are already fresh, or `--port 8090` if the default port is busy.
-
-After adding or removing runtime files or sample `.nomi` files, regenerate the
-manifest directly with:
+Useful variants:
 
 ```bash
-python3 scripts/make_web.py
-```
-
-After changing the Rust parser used by the browser, rebuild and check the
-committed WASM package metadata:
-
-```bash
-scripts/build_wasm.sh
+python3 scripts/launch_web.py --no-browser
+python3 scripts/launch_web.py --port 8090
+python3 scripts/make_web.py --check
 scripts/build_wasm.sh --check
+python3 scripts/check_web_runtime.py
 ```
 
-## Test Reports
+Notebook-style cells use `# %%`. `Shift+Enter` runs the current cell in a
+persistent browser session; `Run All` restarts and evaluates top to bottom.
+
+## Jupyter
+
+Install and launch the current Nomi kernel:
 
 ```bash
-python3 scripts/test_report.py
+python3 tools/jupyter/launch_nomi_notebook.py
 ```
 
-Open `reports/index.html` from VS Code after the command finishes. It links to the pytest HTML report and the line-by-line coverage report.
+The kernel preserves definitions between cells and supports `%run`, `%who`,
+`%reset`, and `%ast`. Start with
+[notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb).
 
-> **Note on contributions:** Nomi is in an early, fast-moving stage. Broad public contributions may be premature. Contribution guidelines will be added as the core stabilizes. Interested readers are encouraged to follow the notes and documentation, or reach out for discussion and feedback.
+For the Dockerized notebook path:
 
-See [Artifacts and Usage](docs/orientation/artifacts_and_usage.md) for more details.
-
----
-
-# Vision
-
-Programming today is fragmented across **frontend, backend, data science, AI, systems, embedded devices, cloud, deployment, testing, and configuration**, each with its own languages, libraries, and mental models. Developers constantly switch paradigms, while mainstream languages often emphasize **implementation details**—memory, optimization, and platform quirks—leaving abstraction, readability, and usability underdeveloped.
-
-**Nomi takes a different path:**
-
-* Built on a **minimal, coherent core** rooted in **Lambda Calculus**, favoring **expression and composition over machinery and incidental complexity**.
-* Domain-specific features and libraries **layer naturally** without breaking the underlying model.
-* Small core, large reach: usable across domains without conceptual fragmentation.
-
-Performance is secondary; **readability, composability, and human-centered expression guide design**.
-
----
-
-## AI Complementarity
-
-AI dominates technical conversation, shaping how we think about software and computation. Nomi is not an AI system, but it exists in an AI-saturated world—and takes that reality seriously.
-
-AI expands semantic possibility by exploring alternatives and accelerating synthesis. Programming languages, by contrast, reduce entropy: they crystallize intention into durable, composable structures that stabilize and accumulate thought.
-
-* **AI** broadens the search frontier.
-* **Languages** condense it into lasting form.
-
-Nomi sits deliberately at the compressive pole. AI accelerates design exploration, critique, and synthesis, while Nomi provides semantics and constraints that preserve legibility, stability, and editability.
-
-See [AI Collaboration](docs/orientation/ai_collaboration.md) and [AGENTS.md](AGENTS.md)
-for the repository's AI-assisted development workflow and agent operating
-guide.
-
----
-
-# Context
-
-To understand Nomi's approach, it helps to see the programming journey that shaped it. My experience spans:
-
-**C** – revealed low-level control and cognitive burden.
-**Python** – highlighted readability and expressive power.
-**Tcl** – introduced language as craft rather than mere tool.
-
-Exploration continued through **Java, JavaScript, Scala, Julia, Lisp/Scheme, ALGOL, Haskell, PowerShell, Bash, Mathematica (Wolfram Language), R, and APL**, each contributing insights into abstraction, notation, and usability.
-
-In 2015, I published an early [blog post](https://dindefi.wordpress.com/2015/09/08/programming-languages-pl/) capturing fragments of this vision. Nomi is a consolidation of these insights—minimal at its core, expansive in reach.
-
----
-
-# Current Status
-
-Nomi refines Python’s **function, binding, and control flow** foundations into a more **systematic, expression-oriented model**.
-
-## Functions
-
-`def` becomes **`func`** for semantic clarity, while **arrow syntax** enables concise, expression-level functions:
-
-```python
-@decorator
-func greet(name):
-    print("Hello", name)
+```bash
+python3 scripts/run_nomi_docker.py
 ```
 
-```python
-(x, y) => x + y
-(x:int) => x^2
-() => print("no args")
+See [tools/jupyter/README.md](tools/jupyter/README.md) for details.
+
+## VS Code
+
+The local extension provides `.nomi` registration, syntax highlighting,
+snippets, run commands, symbols, hover information, and first-pass navigation.
+
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 ```
 
-## Binding and Validation
+For extension development:
 
-All bindings—assignments, parameters, loops—can carry **type and predicate constraints** that are validated automatically:
-
-```python
-is_pos = (a) => a > 0
-a:int, is_pos, a > 20 = 19  # Raises TypeError
+```bash
+python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
 ```
 
-```python
-func f(a:int, b:(int, b > 20)): pass
-f(1, 30)   # OK
-f(1, 10)   # Fails
+See [VS Code Extension](docs/orientation/vscode_extension.md).
+
+## Tests
+
+Install development dependencies and run the full suite:
+
+```bash
+python3 -m pip install -e '.[dev]'
+pytest
 ```
 
-## Generator Blocks and Unified Control
+Useful focused checks:
 
-Python’s **generators** are a specialized form of **coroutines**. Nomi generalizes generators, extending them to block-structured control patterns via the **yield-to-block** construct:
-
-```python
-func retry(max_times):
-    for i in range(max_times):
-        try:
-            yield
-            print(f"success on attempt {i+1}")
-            return
-        except Exception:
-            print(f"failed attempt {i+1}")
+```bash
+pytest --interpreter-modes reduced
+python3 scripts/check_web_runtime.py
+python3 -m tools.jupyter.check_nomi_kernel
+python3 .codex/scripts/agent_doctor.py
 ```
 
-```python
-retry(3):
-    1 / 0
-```
+The default pytest configuration uses parallel workers. Runnable sample files
+participate in regression tests; changing them may require snapshot
+regeneration.
 
-This bridges **statements and expressions**, **functions and blocks**, and **decorators and context managers**, exposing the latent generality of Python’s `yield`.
+## Repository Map
 
-> See [Delta on Python](docs/language/delta_on_python.md) for detailed rationale and examples.
+- `docs/design/`: canonical target language.
+- `docs/research/`: consolidated evidence and bounded open questions.
+- `docs/orientation/`: current implementation and collaboration maps.
+- `docs/review/`: dated evidence and decisions awaiting promotion.
+- `prototype/grammar/`: current Lark grammars.
+- `prototype/parser/`: parser and lowering experiments.
+- `prototype/interpreter/`: Python-compatible, Nomi, and reduced interpreters.
+- `prototype/syntax/`: feature metadata, Surface artifacts, and Core IR.
+- `prototype/runtime/`: runtime sessions, result contracts, and backend APIs.
+- `prototype/tests/`: unit, regression, e2e, and conformance-oriented tests.
+- `samples/`: runnable user-facing programs used by regression and web checks.
+- `web/`: browser playground and JavaScript runtime.
+- `tools/jupyter/`: notebook kernel.
+- `tools/vscode/nomi/`: editor extension.
+- `tools/rag_mcp/`: local retrieval/indexing tools.
+- `.agents/skills/`: repository-local agent workflows.
 
----
+See [Artifacts And Usage](docs/orientation/artifacts_and_usage.md) for the
+current pipeline and [AGENTS.md](AGENTS.md) for engineering guidance.
 
-# Future Direction
+## Research And AI Collaboration
 
-> *Dedicated to **Peter Landin**, who revealed the prose within computation and championed abstraction as a bridge for human thought.*
+The design research compares everyday, functional, typed, systems,
+concurrent, data, scientific, pedagogical, security, and deployment traditions.
+It is now consolidated under [docs/research](docs/research/README.md); the old
+deep-dive corpus remains available in Git history at `08f2aad`.
 
-Nomi has a functional, self-hosted Python interpreter—an extensible substrate incorporating emerging Nomi syntax and semantics. The primary work ahead is foundational: constructing a **principled, coherent design** for the language itself.
+AI systems are used for exploration, critique, synthesis, implementation, and
+validation. Their output is design material, not authority. Repository code,
+tests, target decisions, and human judgment remain the checks. See
+[AI Collaboration](docs/orientation/ai_collaboration.md).
 
-Its lineage traces from Leibniz’s *characteristica universalis*, through Boole’s algebra of logic, to Church’s Lambda Calculus. The goal is **synthetic**: uniting the compositional clarity of foundational models (Lisp, ALGOL) with the cognitive usability and simplicity of Python.
+## Project Posture
 
-The vision is a language that is **industrial in capability** and **natural in expression**—prioritizing clear mental models over accidental complexity. Key design principles:
-
-* Avoid over-formalization that sacrifices usability.
-* Avoid abstraction that obscures clarity.
-* Avoid ad-hoc growth that erodes conceptual unity.
-
-The construct cycle remains: **primitive → combination → abstraction → new primitive**, scaling to unbounded complexity while preserving transparency.
-
-This effort draws on:
-
-* **Foundational rigor**: ALGOL, Landin, Strachey, Scott, Hoare
-* **Modern synthesis**: Scala, Rust, Julia
-
-The challenge is to distill decades of theoretical and practical insight into a **formally sound, semantically compositional, and human-intuitive language**.
-
----
-
-# Ambition and Attrition
-
-Nomi is experimental, guided by curiosity and long-term thinking. History shows many well-designed languages struggle to gain adoption due to **tooling, education, platforms, and social momentum**. Nomi may evolve slowly, change form, or even fade regardless of its internal merits. This is not failure—it is the **normal evolutionary pressure** of ambitious ideas.
-
-Evaluation of a programming language is inherently long-term, shaped by debates between **theory and practice, academia and industry**. Progress emerges through **independence, perseverance, and continuous feedback**.
-
-Rather than aiming for sweeping claims, the focus here is on **concrete tools, real-world grounding, and careful iteration**, anchored in Python as a baseline. Historical perspective and persistent questioning guide refinement toward **coherence, orthogonality, and long-term clarity**.
-
-For a deeper look at the **intellectual lineage, design risks, and context of Nomi**, see [Positioning Within Ambition and Risk](docs/notes/positioning_ambition_risk.md).
+Nomi is early, ambitious, and explicitly unstable. There is no current source
+compatibility promise. The near-term goal is not feature count: it is one
+coherent target, a small trustworthy implementation, a good first hour, and
+tooling that tells the truth across CLI, notebook, browser, and future native
+backends.

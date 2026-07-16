@@ -130,12 +130,10 @@ consolidate docs, or update agent skills after a broad scan.
    - `python3 scripts/check_web_runtime.py`, when web/runtime truth matters
    - `python3 .codex/scripts/agent_doctor.py`
 2. **Use existing action surfaces.** Prefer updating:
-   - `docs/language/implementation_todos.md` for the active execution queue;
-   - `docs/language/implementation_evolvability_gap_review.md` for
-     cross-project implementation gates;
-   - `docs/language/current_capability_matrix.md` for generated capability
-     reads;
-   - dated orientation reviews only as source evidence.
+   - `docs/design/decisions.md` for target choices and bounded experiments;
+   - `docs/research/open_questions.md` for unresolved research forks;
+   - `docs/orientation/artifacts_and_usage.md` for current implementation truth;
+   - `docs/review/` only for dated evidence, then promote durable decisions.
 3. **Avoid duplicate synthesis docs.** Do not create another "whole project
    review" unless it retires an existing action surface. Fold durable findings
    into the canonical docs and leave old reviews as evidence.

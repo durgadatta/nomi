@@ -4,9 +4,8 @@ description: Work with the Nomi web playground — Rust/WASM parser worker, JS r
 compatibility: deepseek
 ---
 
-For the interactive experience design rationale, see
-`docs/research/interactive_explanation_deep_dive.md` and
-`docs/research/ai_readable_semantics_deep_dive.md`.
+For the interactive experience target, see `docs/design/industrial.md` and the
+diagnostic/explanation convergence in `docs/research/convergences.md`.
 
 ## Feature Work Contract
 

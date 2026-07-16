@@ -14,17 +14,15 @@ For the semantic rationale behind tested behavior, see the
 - `prototype/tests/e2e/` — Full pipeline, CLI, scenarios
 - `prototype/tests/unit/parser/desugar/` — Desugar pass tests (shared conftest.py)
 
-Before reorganizing existing tests, read
-`docs/language/test_suite_restructure_plan.md`. That plan is the current
-planning-only target for feature packets, contract tests, smoke tests,
-regression snapshots, and e2e tiers.
+Before reorganizing existing tests, read `prototype/tests/README.md` and the
+conformance model in `docs/design/industrial.md`.
 
 ## Feature Work Contract
 
 When testing a syntax/runtime feature, connect the test to a feature owner,
 layer/status, normal form or core target, docs/spec surface, and inspection
-surface. Prefer adding coverage where the feature manifest or
-`docs/language/syntax_substrate_todo_audit.md` says it belongs: parse shape,
+surface. Prefer adding coverage where the feature manifest and
+`docs/orientation/implementation_guideline.md` say it belongs: parse shape,
 lowering/expansion, diagnostics, runtime, reduced invariants, web/notebook, or
 regression snapshots.
 
@@ -90,7 +88,7 @@ pytest prototype/tests/unit/runtime/test_backend_fixture_ladder.py  # python/cor
 - Add new tests for new functionality
 - One test class per desugar pass
 - `conftest.py` has shared helpers: `find_node`, `is_store`, `is_load`
-- When adding a feature-profile or manifest test path, update
-  `docs/language/syntax_substrate_todo_audit.md` so the matrix stays visible.
+- When adding a feature-profile or manifest test path, update the feature
+  registry and its capability tests so the matrix stays visible.
 - During test-suite restructure work, move one semantic cluster per commit and
   preserve behavior separately from semantic changes.

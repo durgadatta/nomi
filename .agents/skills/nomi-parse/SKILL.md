@@ -4,16 +4,17 @@ description: Modify the Nomi parser — grammar rules, AST lowering, desugar pip
 compatibility: deepseek
 ---
 
-Before adding new syntax, check the `nomi-language-design` skill and the
-research corpus (`docs/research/language_family_coverage_map.md`) for design
-rationale and cross-language precedent. Syntax changes should be driven by
-design decisions, not the other way around.
+Before adding new syntax, check the `nomi-language-design` skill,
+`docs/design/syntax.md`, and `docs/design/decisions.md`. Consult
+`docs/research/convergences.md` and `open_questions.md` only when the target
+choice remains open. Syntax changes should be driven by design decisions, not
+the other way around.
 
-For core/sugar separation, read
-`docs/language/core_layer_separation_plan.md`. Every syntax feature should
-declare whether it is L2/L3 semantic core, L4 sugar, L5 library convention,
-L6 scoped extension, or L7 backend-facing. L4 syntax must have an inspectable
-reduction target and should not require a final evaluator hook.
+For core/sugar separation, read `docs/design/README.md` and
+`docs/orientation/implementation_guideline.md`. Every syntax feature should
+declare whether it is core surface, standard convenience, library/protocol, or
+scoped language tool. Convenience syntax needs an inspectable reduction target
+and should not require a final evaluator hook.
 
 Because Nomi is still exploratory, parser work should preserve optionality.
 Prefer declarative feature metadata, versioned payload/schema contracts, and
@@ -24,7 +25,7 @@ parser or frontend changes.
 ## Feature Work Contract
 
 Before implementing or extending syntax, record the feature owner in
-`prototype/syntax/features.py` or `docs/language/syntax_substrate_todo_audit.md`.
+`prototype/syntax/features.py` and the target decision in `docs/design/`.
 Name its layer/status, normal form or core target, docs/spec surface, focused
 tests, and inspection command (`tools.syntax.inspect`, parse snapshots,
 expansions, or capability matrix). If any of those are intentionally missing,
@@ -59,9 +60,10 @@ With opt-in Core IR path (`NOMI_USE_CORE_IR=1`):
 Target architecture for new work:
 ```
 .nomi source → feature-selected parser/profile → raw/transformed tree
-    → Nomi-owned surface AST with SourceSpan
-    → core normal forms
-    → Python AST backend or direct runtime backend
+    → Nomi-owned Surface AST with SourceSpan
+    → name/type/constraint/effect analysis and typed Surface
+    → Core IR
+    → Python AST compatibility backend or direct runtime backend
 ```
 
 Parser frontend work must stay parser-family neutral. Lark, Rust fast AST,
@@ -72,25 +74,14 @@ Nomi; internal CSTs can differ, observable accepted source and lowered
 artifacts cannot.
 
 Before adding broad syntax, read:
-- `docs/language/language_foundation.md` — the design target.
-- `docs/language/core_layer_separation_plan.md` — layer vocabulary and eval
-  separation rules.
-- `docs/language/language_degrees_of_freedom.md` — core/sugar/library/scoped/rejected framework.
-- `docs/language/flexible_syntax_substrate_plan.md`
-- `docs/language/parser_frontend_decoupling_plan.md` when work touches Lark,
-  Tree-sitter/Rust parser candidates, parser frontend selection, or the
-  Python AST backend boundary.
-- `docs/language/adversarial_exploratory_implementation_critique.md` when a
-  parser change could make one frontend's mechanics define the language.
-- `docs/language/python_independence_and_compiler_backend_plan.md` when syntax
-  work affects the future split between Surface IR, Core IR, Python AST, MLIR,
-  LLVM, or Wasm backends.
-- `docs/language/syntax_substrate_todo_audit.md`
-- `docs/language/architecture_refactoring_plan.md` when the syntax work also
-  changes public runtime APIs, inspection tools, web, notebook, or package
-  boundaries.
-- `docs/research/language_family_coverage_map.md` — check if cross-language
-  research already covers the syntax domain.
+- `docs/design/syntax.md` - target source forms and punctuation discipline.
+- `docs/design/semantics.md` - source-level control and behavior.
+- `docs/design/decisions.md` - rejected forms and open experiments.
+- `docs/design/industrial.md` - target artifacts and conformance.
+- `docs/orientation/implementation_guideline.md` - current migration road.
+- `docs/orientation/performance_notes.md` - current parser constraints.
+- `docs/research/open_questions.md` - whether the syntax question is actually
+  open.
 
 ## Grammar rules
 - Uses Lark LALR parser with `NomiPostLexer`
@@ -127,11 +118,11 @@ Follow the current extension path (5 steps, documented in `CLAUDE.md`):
    and regression snapshots as appropriate.
 
 Before starting any syntax addition:
-- Identify the Nomi normal form and confirm the feature status in
-  `docs/convenience/review_and_roadmap.md`.
-- Check the research corpus for cross-language precedent on this syntax domain.
+- Identify the user act and confirm the target status in
+  `docs/design/decisions.md`.
+- Check consolidated research only when the decision is still open.
 - Prefer a feature-owned manifest/profile plan (`prototype/syntax/features.py`)
   when the syntax is more than a small Python-parity extension.
 - Check soft-keyword and ambiguity implications before editing grammar layers.
-- Update `docs/language/syntax_substrate_todo_audit.md` when the change exposes
-  a new architectural seam.
+- Update `docs/orientation/implementation_guideline.md` only when the change
+  exposes a reusable architectural seam.

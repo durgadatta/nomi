@@ -1,9 +1,9 @@
 """Passive Nomi Core IR skeleton.
 
-This module defines the first L1 implementation-core artifacts from
-``docs/language/core_layer_separation_plan.md``.  Nothing in the runtime
-depends on these nodes yet; they exist so inspection, verification, and future
-direct evaluation can grow against Nomi-owned artifacts instead of Python AST.
+This module defines experimental implementation-core artifacts on the path
+described in ``docs/design/industrial.md``. Nothing in the target language is
+defined by these node shapes; they let inspection, verification, and direct
+evaluation grow against Nomi-owned artifacts instead of Python AST.
 """
 
 from __future__ import annotations

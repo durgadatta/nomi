@@ -2,9 +2,10 @@
 
 > Status: current operating map.
 >
-> The phase migration in `docs/language/test_suite_restructure_plan.md` has
-> drained the old `functional/` bucket. Add new tests directly to the bucket
-> that owns the behavior.
+> The old `functional/` bucket has been drained. Add new tests directly to the
+> bucket that owns the behavior. Target-language conformance should follow
+> `docs/design/industrial.md`; current regression tests describe prototype
+> support and may change during intentional semantic migration.
 
 ## Current Buckets
 

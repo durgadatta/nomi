@@ -5,15 +5,16 @@ import re
 DOCS_ROOT = Path("docs")
 
 
-CANONICAL_PACKET_DOCS = [
-    "docs/features/command_values_feature.md",
-    "docs/features/data_decode_boundary_feature.md",
-    "docs/features/explanation_trace_feature.md",
-    "docs/features/failure_taxonomy_feature.md",
-    "docs/features/state_and_capability_model.md",
-    "docs/language/first_hour_nomi.md",
-    "docs/language/prelude_and_standard_library_plan.md",
-    "docs/language/stdlib_capability_baseline.md",
+CANONICAL_DESIGN_DOCS = [
+    "docs/design/README.md",
+    "docs/design/syntax.md",
+    "docs/design/semantics.md",
+    "docs/design/industrial.md",
+    "docs/design/decisions.md",
+    "docs/research/README.md",
+    "docs/research/families.md",
+    "docs/research/convergences.md",
+    "docs/research/open_questions.md",
 ]
 
 
@@ -60,11 +61,11 @@ def test_docs_readme_complete_inventory_links_every_doc():
     assert sorted(expected - linked_docs) == []
 
 
-def test_canonical_packet_docs_exist_and_are_indexed():
+def test_canonical_design_docs_exist_and_are_indexed():
     readme_text = (DOCS_ROOT / "README.md").read_text(encoding="utf-8")
     missing = []
     unindexed = []
-    for rel_path in CANONICAL_PACKET_DOCS:
+    for rel_path in CANONICAL_DESIGN_DOCS:
         path = Path(rel_path)
         if not path.exists():
             missing.append(rel_path)

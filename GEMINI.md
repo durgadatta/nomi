@@ -3,24 +3,32 @@
 This file provides Gemini-specific instructions for working on the Nomi project. These instructions take precedence over general defaults.
 
 ## Project Overview
-Nomi is an experimental programming language built around a small, coherent core: values, bindings, functions, calls, blocks, constraints, and controlled evaluation. It is currently implemented as a Python-hosted prototype.
+Nomi is an experimental general-purpose language targeting Python-like
+cognitive ease with explicit types, data boundaries, failure, effects,
+concurrency, and industrial tooling. It is currently implemented as a
+Python-hosted prototype plus a Rust/WASM-to-JavaScript browser path.
 
 - **Parsing**: Uses Lark with layered grammar (`prototype/grammar/layers/`).
 - **AST**: Lowers to Python AST where possible, with custom Nomi AST for specific features.
 - **Interpreter**: Custom layers for Python-compatible and Nomi-specific behavior.
 
 ## Core Mandates & Principles
-1. **Python Parity**: Preserve Python parity where Nomi intentionally follows Python. Explicit semantic departures MUST be documented and verified with tests.
-2. **High-Risk Areas**: Binding, constraints, and resumable control (yield-to-block) are high-risk. ALWAYS read relevant docs in `docs/features/` before modifying these.
+1. **Target Authority**: `docs/design/` defines the language target. Preserve
+   current prototype behavior only while it remains a supported migration
+   surface; intentional target changes may break Python parity and existing
+   Nomi syntax.
+2. **High-Risk Areas**: Binding, constraints, data boundaries, Result
+   propagation, resources, effects, and concurrency are high-risk. Read
+   `docs/design/syntax.md` and `docs/design/semantics.md` before modifying them.
 3. **Small Primitives**: Favour small semantic primitives that combine into richer forms over feature accumulation.
 4. **Verification**: NEVER assume success. A task is only complete when behavioral correctness is verified with tests (usually `pytest`).
 
 ## Documentation Precedence
 1. `AGENTS.md`: The primary agent entrypoint and repository map.
 2. `README.md`: User-facing vision and examples.
-3. `docs/language/` & `docs/features/`: Active design workspace and specs.
-4. `docs/orientation/`: Implementation guidelines and AI collaboration doctrine.
-5. `docs/archive/`: Historical material (not canonical specification).
+3. `docs/design/`: Canonical target language and industrial contracts.
+4. `docs/research/`: Consolidated evidence and bounded open questions.
+5. `docs/orientation/`: Current implementation and collaboration guidance.
 
 ## Recommended Workflows
 1. **Research & Strategy**:

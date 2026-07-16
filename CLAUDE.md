@@ -11,13 +11,13 @@ The current focus is making syntax experimentation fast: the extension
 path for new syntax is now 3-4 isolated steps instead of editing 5-7
 files across the codebase.
 
-For language design decisions, start with the research corpus:
-`docs/research/language_family_coverage_map.md` (index of 23 deep dives
-covering 60+ languages across 16 families). Each deep dive has a
-cross-language synthesis and a Nomi Adopt/Refuse/Adapt table. The
-capstone synthesis is at `docs/research/cross_language_synthesis_master.md`.
-The `.agents/skills/nomi-language-design/SKILL.md` skill has the full
-research workflow.
+For language design decisions, start with `docs/design/README.md`, then read
+`docs/design/syntax.md`, `docs/design/semantics.md`, and
+`docs/design/decisions.md`. Consolidated evidence lives in
+`docs/research/convergences.md`; unresolved forks are bounded in
+`docs/research/open_questions.md`. The old deep-dive corpus is Git history, not
+active authority. The `.agents/skills/nomi-language-design/SKILL.md` skill has
+the design workflow.
 
 ## Adding new syntax (the current extension path)
 
@@ -63,12 +63,12 @@ Valid stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`
 | `prototype/interpreter/runner.py` | Shared `make_runner` for all interpreter modes |
 | `prototype/runtime/modes.py` | Mode registry (python, nomi, reduced) |
 | `tools/syntax/inspect.py` | Pipeline stage inspection CLI |
-| `docs/language/language_design_dimensions.md` | Design-space dimensions, convergence points, axis analysis |
-| `docs/convenience/design_lessons_and_integration.md` | Design synthesis: cruft patterns, interactions, designer quotes |
-| `docs/convenience/absence_and_result.md` | Absence/result normal form |
-| `docs/convenience/flow_and_collections.md` | Flow normal form |
-| `docs/convenience/data_and_types.md` | Data boundary: types, strings, type aliases |
-| `docs/convenience/README.md` | Convenience docs index and consolidation rules |
+| `docs/design/README.md` | Canonical target-language overview |
+| `docs/design/syntax.md` | Target source forms and notation budget |
+| `docs/design/semantics.md` | Implementation-independent behavior |
+| `docs/design/industrial.md` | Package, effect, concurrency, tooling, and deployment target |
+| `docs/design/decisions.md` | Accepted, rejected, deferred, and open choices |
+| `docs/design/target.nomi` | Aspirational whole-language fixture; not runnable today |
 
 ## Commit style
 

@@ -1,0 +1,323 @@
+# Aspirational Nomi target program.
+#
+# Status: design fixture; it is not expected to parse or run in the current
+# prototype. Runnable examples stay under samples/ and remain web-tested.
+#
+# This one file shows individual features inside one coherent program: a small
+# customer-import service reads untrusted records, decodes owned data, performs
+# concurrent enrichment, writes a report, and exposes executable examples.
+
+from std.collections import filter, group_by, map, map_values, sort_by
+from std.config import ConfigError, config
+from std.console import ConsoleWrite
+from std.csv import CsvError, csv
+from std.data import DecodeErrors, Value
+from std.files import FileRead, FileWrite, IoError, Path, files
+from std.http import HttpError, Network, Url, http
+from std.result import collect_results
+from std.secret import Secret
+from std.task import TaskGroup, retry
+from std.time import Clock, Instant, clock
+
+
+# ---------------------------------------------------------------------------
+# 1. Owned values are nominal, immutable, and constrained.
+# ---------------------------------------------------------------------------
+
+pub data CustomerId:
+    value: Text where value != ""
+
+
+pub data Email:
+    value: Text where value.contains("@") note "an email must contain @"
+
+
+pub data Customer:
+    id: CustomerId
+    name: Text where name.trim() != "" note "a customer name is required"
+    email: Email
+    age: Int where age >= 0
+    joined_at: Instant
+    tags: List[Text] = []
+    manager: Option[Email] = none
+
+
+pub data CustomerProfile:
+    customer_id: CustomerId
+    risk_score: Int where 0 <= risk_score and risk_score <= 100
+    segment: Text
+
+
+pub data ImportConfig:
+    input: Path
+    output: Path
+    profile_service: Url
+    api_key: Secret[Text]
+    minimum_age: Int where minimum_age >= 0 = 13
+    concurrency: Int where 1 <= concurrency and concurrency <= 64 = 8
+
+
+# Boundary data is decoded and checked before it becomes a domain value.
+data CustomerInput:
+    id: Text where id.trim() != "" note "a customer id is required"
+    name: Text where name.trim() != "" note "a customer name is required"
+    email: Text where email.trim().contains("@") note "an email must contain @"
+    age: Int where age >= 0
+    joined_at: Instant
+    tags: List[Text] = []
+    manager: Option[Text] = none
+    where manager?.trim().contains("@") ?? true note "a manager email must contain @"
+
+
+pub data ImportError:
+    ConfigSource(cause: ConfigError)
+    Configuration(errors: DecodeErrors)
+    InputFile(path: Path, cause: IoError)
+    InputFormat(path: Path, cause: CsvError)
+    Rows(errors: DecodeErrors)
+    Profile(customer_id: CustomerId, cause: HttpError)
+    OutputFile(path: Path, cause: IoError)
+
+
+pub data ImportedCustomer:
+    customer: Customer
+    profile: CustomerProfile
+
+
+pub data ImportReport:
+    received: Int where received >= 0
+    accepted: Int where accepted >= 0
+    rejected: Int where rejected >= 0
+    by_segment: Map[Text, Int]
+    output: Path
+    generated_at: Instant
+    where accepted + rejected == received
+
+
+# ---------------------------------------------------------------------------
+# 2. Functions have one named form and one explicit anonymous form.
+# ---------------------------------------------------------------------------
+
+func normalize_email(text: Text) -> Text:
+    return text.trim().lower()
+
+
+func row_to_customer(raw: Value) -> Result[Customer, DecodeErrors]:
+    input = CustomerInput.decode(raw)?
+    manager = input.manager.map((text) => Email(
+        value=normalize_email(text),
+    ))
+
+    return Ok(Customer(
+        id=CustomerId(value=input.id.trim()),
+        name=input.name.trim(),
+        email=Email(value=normalize_email(input.email)),
+        age=input.age,
+        joined_at=input.joined_at,
+        tags=input.tags,
+        manager=manager,
+    ))
+
+
+# ---------------------------------------------------------------------------
+# 3. Decode is the visible transition from external structure to owned data.
+# ---------------------------------------------------------------------------
+
+pub func load_config(raw: Value) -> Result[ImportConfig, ImportError]:
+    return ImportConfig.decode(raw).map_error(ImportError.Configuration)
+
+
+func load_rows(path: Path) -> Result[List[Value], ImportError]
+uses FileRead:
+    resource = files.open(path, mode="read")
+        .map_error((error) => ImportError.InputFile(
+            path=path,
+            cause=error,
+        ))?
+
+    with resource as file:
+        return csv.read(file)
+            .map_error((error) => ImportError.InputFormat(
+                path=path,
+                cause=error,
+            ))
+
+
+# ---------------------------------------------------------------------------
+# 4. Collection flow uses one pipeline and one verb family.
+# ---------------------------------------------------------------------------
+
+func eligible_customers(
+    rows: List[Value],
+    minimum_age: Int,
+) -> Result[List[Customer], DecodeErrors]:
+    if rows.length == 0:
+        return Ok([])
+
+    customers = rows
+        |> map(row_to_customer)
+        |> collect_results()?
+
+    eligible = customers
+        |> filter((customer) => customer.age >= minimum_age)
+        |> sort_by((customer) => customer.name)
+    return Ok(eligible)
+
+
+# ---------------------------------------------------------------------------
+# 5. Expected failure is Result; postfix ? is the only propagation shorthand.
+# ---------------------------------------------------------------------------
+
+async func fetch_profile(
+    customer: Customer,
+    config: ImportConfig,
+) -> Result[CustomerProfile, ImportError]
+uses Network:
+    request = () => http.get(
+        config.profile_service.join("customers/{customer.id.value}"),
+        bearer=config.api_key,
+    )
+
+    attempted = await retry(
+        request,
+        attempts=3,
+        retry_if=(error) => error.is_transient,
+    )
+    response = attempted
+        .map_error((error) => ImportError.Profile(
+            customer_id=customer.id,
+            cause=error,
+        ))?
+
+    return CustomerProfile.decode(response.json)
+        .map_error((errors) => ImportError.Profile(
+            customer_id=customer.id,
+            cause=HttpError.InvalidResponse(errors),
+        ))
+
+
+# ---------------------------------------------------------------------------
+# 6. Concurrency is structured; every child belongs to the task group.
+# ---------------------------------------------------------------------------
+
+async func enrich_customers(
+    customers: List[Customer],
+    config: ImportConfig,
+) -> Result[List[ImportedCustomer], ImportError]
+uses Network:
+    async with TaskGroup(limit=config.concurrency) as tasks:
+        pending = customers |> map((customer) => (
+            customer,
+            tasks.start(fetch_profile(customer, config)),
+        ))
+
+        var enriched: List[ImportedCustomer] = []
+        for (customer, task) in pending:
+            outcome = await task
+            profile = outcome?
+            item = ImportedCustomer(
+                customer=customer,
+                profile=profile,
+            )
+            set enriched = enriched + [item]
+
+        return Ok(enriched)
+
+
+# ---------------------------------------------------------------------------
+# 7. Resource lifetime and world authority are visible in the signature/body.
+# ---------------------------------------------------------------------------
+
+func write_report(
+    imported: List[ImportedCustomer],
+    received: Int,
+    output: Path,
+) -> Result[ImportReport, ImportError]
+uses Clock, FileWrite:
+    by_segment = imported
+        |> group_by((item) => item.profile.segment)
+        |> map_values((items) => items.length)
+
+    report = ImportReport(
+        received=received,
+        accepted=imported.length,
+        rejected=received - imported.length,
+        by_segment=by_segment,
+        output=output,
+        generated_at=clock.now(),
+    )
+
+    resource = files.open(output, mode="write")
+        .map_error((error) => ImportError.OutputFile(
+            path=output,
+            cause=error,
+        ))?
+    with resource as file:
+        file.write_json(report)
+            .map_error((error) => ImportError.OutputFile(
+                path=output,
+                cause=error,
+            ))?
+
+    return Ok(report)
+
+
+# ---------------------------------------------------------------------------
+# 8. One public workflow exposes types, failure, async, and effects together.
+# ---------------------------------------------------------------------------
+
+pub async func import_customers(
+    config: ImportConfig,
+) -> Result[ImportReport, ImportError]
+uses Clock, FileRead, FileWrite, Network:
+    rows = load_rows(config.input)?
+    customers = eligible_customers(rows, config.minimum_age)
+        .map_error(ImportError.Rows)?
+    imported = await enrich_customers(customers, config)?
+    return write_report(imported, rows.length, config.output)
+
+
+# ---------------------------------------------------------------------------
+# 9. Examples are ordinary declarations with structured checks.
+# ---------------------------------------------------------------------------
+
+example "normalizes email text":
+    check normalize_email(" ADA@EXAMPLE.COM ") == "ada@example.com"
+
+
+example "absence is distinct from failure":
+    decoded = CustomerInput.decode({
+        "id": "42",
+        "name": "Ada",
+        "email": "ada@example.com",
+        "age": 36,
+        "joined_at": "2026-07-16T12:00:00Z",
+    })
+    check decoded.map((input) => input.manager) == Ok(none)
+
+
+example "match is exhaustive over domain variants":
+    error = ImportError.Configuration(errors=DecodeErrors.empty())
+    label = match error:
+        ImportError.ConfigSource(_) => "configuration source"
+        ImportError.Configuration(_) => "configuration"
+        ImportError.InputFile(_, _) => "input"
+        ImportError.InputFormat(_, _) => "input format"
+        ImportError.Rows(_) => "rows"
+        ImportError.Profile(_, _) => "profile"
+        ImportError.OutputFile(_, _) => "output"
+    check label == "configuration"
+
+
+# ---------------------------------------------------------------------------
+# 10. Entry points stay direct. A host grants the declared capabilities.
+# ---------------------------------------------------------------------------
+
+pub async func main(args: List[Text]) -> Result[Unit, ImportError]
+uses Clock, ConsoleWrite, FileRead, FileWrite, Network:
+    raw_config = config.load(args).map_error(ImportError.ConfigSource)?
+    settings = load_config(raw_config)?
+    report = await import_customers(settings)?
+    print("Imported {report.accepted}/{report.received} customers")
+    print("Report: {report.output}")
+    return Ok(())

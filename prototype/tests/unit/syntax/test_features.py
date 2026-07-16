@@ -63,6 +63,7 @@ def test_syntax_feature_test_template_names_expected_surfaces():
         "Regression sample",
         "Web playground",
         "Notebook",
-        "Docs/spec",
+        "Target docs",
+        "Research evidence",
     ):
         assert phrase in text

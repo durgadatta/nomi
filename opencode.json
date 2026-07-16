@@ -134,9 +134,10 @@
 
   "instructions": [
     "docs/README.md",
-    "docs/language/implementation_todos.md"
-    // "docs/language/language_foundation.md",
-    // "docs/features/binding_constraints_feature.md",
+    "docs/design/README.md",
+    "docs/design/decisions.md"
+    // "docs/design/syntax.md",
+    // "docs/design/semantics.md",
     // "CONTRIBUTING.md",
     // ".cursor/rules/*.md",
     // "https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"

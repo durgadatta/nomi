@@ -4,17 +4,16 @@ description: Modify the Nomi interpreter — add/change runtime behavior, evalua
 compatibility: deepseek
 ---
 
-For semantic design rationale behind interpreter behavior, see the
-`nomi-language-design` skill and the research corpus
-(`docs/research/language_family_coverage_map.md`). Each Nomi runtime
-departure from Python should trace to a normal form and a design
-decision grounded in cross-language research.
+For target semantics, see the `nomi-language-design` skill,
+`docs/design/semantics.md`, and `docs/design/decisions.md`. Each Nomi runtime
+departure should trace to a target decision; Python behavior is not the default
+authority.
 
-For core/sugar/eval separation, read
-`docs/language/core_layer_separation_plan.md` before adding evaluator behavior.
-Classify the form as L0-L7. L4 sugar must reduce before eval; L2/L3 semantic
-core belongs in the future core evaluator; L7 backend special cases belong in
-backend code, not language semantics.
+For surface/convenience/library/eval separation, read
+`docs/orientation/implementation_guideline.md` before adding evaluator behavior.
+Target conveniences must reduce before eval; semantic core belongs in common
+Core operations; backend special cases belong in backend code, not language
+meaning.
 
 Because Nomi is early and exploratory, runtime work should avoid freezing a
 prototype substrate into the language definition. Prefer backend specs,
@@ -28,7 +27,7 @@ changes.
 Before adding runtime behavior, identify the feature owner, layer/status,
 normal form or core operation, docs/spec surface, focused tests, and inspection
 surface. Prefer `prototype/syntax/features.py`, backend capability metadata,
-or `docs/language/syntax_substrate_todo_audit.md` as the durable home. If a
+and `docs/design/` as the durable homes. If a
 temporary `eval_*` path is needed, name the metadata or Core IR target it should
 migrate to.
 
@@ -52,7 +51,8 @@ Inspect backend-neutral Core IR JSON with:
 
 ## Adding a new eval backend
 
-Read `docs/language/core_runtime_backend_design.md` before writing a new backend.
+Read `docs/design/industrial.md` and
+`docs/orientation/implementation_guideline.md` before writing a new backend.
 Every backend must:
 
 1. Define a `spec: EvalBackendSpec` with capability flags.
@@ -70,8 +70,8 @@ registered CoreNode. `prototype/runtime/backends/js_core.py` registers it as
 path uses the Rust/WASM parser plus `prototype/runtime/js/lower_to_core_ir.js`
 before evaluating in the same JS runtime; the older Pyodide bridge remains as a
 legacy compatibility path. Future Rust/Wasm/LLVM backends implement the same
-abstractions in their host language. The Python reference stays as the test
-oracle.
+abstractions in their host language. The Python path remains a compatibility
+oracle until backend-independent conformance replaces it.
 
 ## Key files
 - `prototype/interpreter/python/interpreter.py` — Central dispatch, exception handling, environment setup
@@ -105,8 +105,8 @@ oracle.
 
 ## Semantic substrate direction
 - Treat eval as the last place a surface feature should appear. Before adding
-  an `eval_*` method, ask whether the construct is L4 sugar that should lower
-  away, L2/L3 semantic core that needs a core operation, or an L7 backend
+  an `eval_*` method, ask whether the construct is convenience that should
+  lower away, semantic core that needs a Core operation, or a backend
   workaround.
 - If evaluator behavior is added as a spike, name the declarative home it
   should migrate to: feature metadata, operation registry, backend capability,
@@ -118,23 +118,21 @@ oracle.
   diagnostics, trace/explain fields, and reduced-interpreter invariant.
 - Keep Python-compatible behavior in `prototype/interpreter/python/`; place
   deliberate Nomi departures in `prototype/interpreter/nomi/`.
-- If a runtime change depends on new syntax, make sure the parser/lowering path
-  is visible in `docs/language/syntax_substrate_todo_audit.md` or a feature
-  spec before implementing.
+- If a runtime change depends on new syntax, make sure it is accepted in
+  `docs/design/syntax.md` and visible in feature metadata before implementing.
 - For broad runtime/API/tooling refactors, read
-  `docs/language/architecture_refactoring_plan.md` and prefer facade-first
+  `docs/orientation/implementation_guideline.md` and prefer facade-first
   changes that keep existing `run_eval_loop` imports working.
-- For the layer hierarchy and preparatory Core IR work, read
-  `docs/language/core_layer_separation_plan.md`. Keep reduced-mode guardrails
-  aligned with declared L4 reductions and future L1 verifier behavior.
+- For target artifacts and preparatory Core IR work, read
+  `docs/design/industrial.md`. Keep reduced-mode guardrails aligned with
+  declared reductions and Core verifier behavior.
 - For Python-independence, native backend, MLIR, LLVM, Wasm, or ABI questions,
-  read `docs/language/python_independence_and_compiler_backend_plan.md`.
-  Treat Python as the bootstrap/backend path while Core IR and direct runtime
-  semantics are being introduced.
+  read `docs/design/industrial.md`. Treat Python as a bootstrap/backend path
+  while Core IR and direct runtime semantics are introduced.
 - For semantic design decisions (e.g., how pattern matching exhaustiveness
   should work, how absence should propagate, how data boundaries should handle
-  errors), consult the relevant deep dive in `docs/research/` — the
-  cross-language synthesis already compares 10-16 languages on these topics.
+  errors), consult `docs/research/convergences.md` and the bounded questions in
+  `docs/research/open_questions.md` before doing new research.
 
 ## Interpreter dispatch (eval method)
 ```

@@ -12,26 +12,28 @@ nodes and Python AST, and execution is handled by layered Python-hosted
 interpreters.
 
 Python is the host and bootstrap backend, not the intended semantic boundary.
-For the current layer plan, read
-[`core_layer_separation_plan.md`](../language/core_layer_separation_plan.md).
-That plan defines:
+The target artifact separation is defined in
+[Industrial Model](../design/industrial.md):
 
 ```text
-L0 runtime substrate
-L1 implementation core IR
-L2 semantic core
-L3 canonical surface
-L4 sugar reductions
-L5 library conventions
-L6 scoped extensions
-L7 backend targets
+lossless CST
+Surface AST
+typed Surface
+Core IR
+module interfaces
+diagnostics/events
+package/build graph
 ```
 
-The immediate implementation pressure is eval separation: L4 sugar should
-reduce before evaluation, L2/L3 semantic core should lower toward L1
-operations, and Python AST should become one L7 backend.
+The immediate implementation pressure is semantic separation: target
+conveniences should reduce before backend evaluation, core forms should lower
+to backend-independent operations, and Python AST should remain one bootstrap
+backend.
 
-Parsing and evaluation can now be modified with substantial granularity, though the resumable-control subsystem (generator/coroutine–based) remains one of the more delicate components—functional, tested, but documented with caveats.
+Parsing and evaluation can now be modified with substantial granularity. The
+implemented resumable-control subsystem remains delicate and tested, but the
+target language no longer treats yield-to-block as its universal control or
+concurrency model.
 
 ## Current Execution Entry Points
 
@@ -210,8 +212,7 @@ Current buckets:
 - `e2e/` — user-facing CLI, notebook, report, and scenario surfaces;
 - `smoke/` — tiny checkout-alive checks.
 
-See `prototype/tests/README.md` and
-[`test_suite_restructure_plan.md`](../language/test_suite_restructure_plan.md).
+See `prototype/tests/README.md` for the current layout.
 
 ## Implementation Direction
 
@@ -345,9 +346,9 @@ Nomi source is parsed by a Rust WASM parser (`nomi_parser.wasm`), lowered to
 Core IR by `prototype/runtime/js/lower_to_core_ir.js`, and executed by `prototype/runtime/js/core_runtime.js`.
 This path is the default in the browser playground. See
 [`wasm_js_runtime_review.md`](wasm_js_runtime_review.md) for the current
-architecture review and promotion risks, and
-[`global_consistency_audit.md`](global_consistency_audit.md) for repo-wide
-follow-up notes.
+architecture review and promotion risks, and the
+[`2026-07-16 design review`](../review/2026-07-16.md) for the current
+project-wide follow-up plan.
 
 ```text
 .nomi source
@@ -376,8 +377,7 @@ playground working without Pyodide's load time.
 - **Try expressions as IIFEs:** `try EXPR except T: V` is lowered as
   `(function() { try { return EXPR } except { return V } })()` because Core IR
   only has statement-level Handle nodes. This is an implementation bridge; the
-  source-level doctrine is tracked in
-  `docs/convenience/expression_statement_orientation.md`.
+  target source semantics are defined in `docs/design/semantics.md`.
 - **Pipeline arg ordering heuristic:** Uses a `hasHoleArg` flag to decide
   whether the pipe result goes first or last. Breaks for user functions with
   signatures that don't match filter/map conventions.
