@@ -1,0 +1,175 @@
+# Aspirational pattern-matching pressure fixture.
+#
+# Pass packet:
+# - docs/research/pattern_matching.md
+# - docs/design/pattern_matching.md
+# - docs/design/pattern_matching_target.nomi
+# - docs/review/2026-07-16-pattern-matching.md
+#
+# This file specifies target source. It is intentionally outside samples/
+# until parser, typed Surface/Core, runtimes, diagnostics, and web agree.
+
+
+data JobState:
+    Queued
+    Running(started_at: Instant)
+    Failed(error: JobError)
+    Finished(report: Report)
+
+
+func describe(state: JobState) -> Text:
+    return match state:
+        JobState.Queued => "queued"
+        JobState.Running(started_at) => "running since {started_at}"
+        JobState.Failed(error) => "failed: {error.summary}"
+        JobState.Finished(report) => "finished {report.name}"
+
+
+data Event:
+    Created(item: Item)
+    Renamed(id: ItemId, name: Text)
+    Deleted(id: ItemId)
+    Stopped
+
+
+func apply(event: Event, index: Index, audit: Audit) -> Unit:
+    match event:
+        Event.Created(item):
+            index.add(item)
+            audit.record(event)
+        Event.Renamed(id, name):
+            index.rename(id, name)
+            audit.record(event)
+        Event.Deleted(id):
+            index.remove(id)
+            audit.record(event)
+        Event.Stopped:
+            audit.record(event)
+
+
+data Expr:
+    Number(value: Int)
+    Add(left: Expr, right: Expr)
+    Negate(value: Expr)
+
+
+func evaluate(expression: Expr) -> Int:
+    return match expression:
+        Expr.Number(value) => value
+        Expr.Add(left, right) => evaluate(left) + evaluate(right)
+        Expr.Negate(value) => -evaluate(value)
+
+
+data Command:
+    Read(path: Path)
+    Write(path: Path)
+    Stop
+
+
+data Access:
+    Allowed(command: Command)
+    Denied(path: Path)
+    StopAllowed
+
+
+func authorize(command: Command, principal: Principal) -> Access:
+    return match command:
+        (
+            Command.Read(path)
+            | Command.Write(path)
+        ) as request when principal.can_access(path) =>
+            Access.Allowed(request)
+        Command.Read(path) | Command.Write(path) => Access.Denied(path)
+        Command.Stop => Access.StopAllowed
+
+
+data ParsedCommand:
+    Run(name: Text, arguments: List[Text])
+    Help
+    Empty
+    Invalid(parts: List[Text])
+
+
+func parse_command(parts: List[Text]) -> ParsedCommand:
+    return match parts:
+        [] => ParsedCommand.Empty
+        ["help"] => ParsedCommand.Help
+        ["run", name, ..arguments] => ParsedCommand.Run(
+            name=name,
+            arguments=arguments,
+        )
+        _ as invalid => ParsedCommand.Invalid(invalid)
+
+
+data Route:
+    Health
+    User(id: Text)
+    Batch(metadata: Map[Text, Value])
+    Unknown
+
+
+func route(payload: Map[Text, Value]) -> Route:
+    return match payload:
+        {"kind": Value.Text("health")} => Route.Health
+        {"kind": Value.Text("user"), "id": Value.Text(id), ..} => Route.User(id)
+        {"kind": Value.Text("batch"), ..metadata} => Route.Batch(metadata)
+        _ => Route.Unknown
+
+
+data VersionedInput:
+    V1(value: LegacyInput)
+    V2(value: CurrentInput)
+
+
+func decode_versioned(value: Value) -> Result[VersionedInput, DecodeErrors]:
+    return match value:
+        Value.Map({"version": Value.Number(2), ..}) =>
+            CurrentInput.decode(value).map(VersionedInput.V2)
+        Value.Map({"version": Value.Number(1), ..}) =>
+            LegacyInput.decode(value).map(VersionedInput.V1)
+        _ => Err(DecodeErrors.expected("versioned map", value))
+
+
+func same_pair(pair: Pair[Int, Int]) -> Bool:
+    return match pair:
+        Pair(left, right) when left == right => true
+        Pair(_, _) => false
+
+
+example "tuple binding is statically irrefutable":
+    point: (Int, Int) = (3, 4)
+    (x, y) = point
+    check x + y == 7
+
+
+example "map openness is visible":
+    check route({"kind": Value.Text("health")}) == Route.Health
+    check route({
+        "kind": Value.Text("user"),
+        "id": Value.Text("42"),
+        "trace": Value.Text("abc"),
+    }) == Route.User("42")
+
+
+# Rejected source fixtures:
+#
+# [head, ..tail] = items
+# ^ RefutableBindingPattern: a list may be empty; use exhaustive match.
+#
+# if Some(value) = optional:
+#     use(value)
+# ^ `if let` is not a Nomi form; structural choice uses match.
+#
+# match state:
+#     JobState.Queued => "queued"
+# ^ NonExhaustiveMatch: Running(_), Failed(_), and Finished(_) are missing.
+#
+# match pair:
+#     Pair(value, value) => value
+#     _ => 0
+# ^ DuplicatePatternCapture: write two captures and compare them in `when`.
+#
+# match text:
+#     ParseInt(value) => value
+#     _ => 0
+# ^ User extractors are not patterns; call Int.parse(text), then match Result.

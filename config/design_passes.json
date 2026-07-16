@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "passes": [
+    {
+      "id": "pattern-matching",
+      "topic": "Pattern matching",
+      "owner": "language-design",
+      "status": "design-accepted",
+      "last_reviewed": "2026-07-16",
+      "keywords": [
+        "pattern",
+        "patterns",
+        "pattern matching",
+        "match",
+        "destructuring",
+        "exhaustive",
+        "exhaustiveness",
+        "match guard",
+        "or-pattern"
+      ],
+      "artifacts": {
+        "research": "docs/research/pattern_matching.md",
+        "design": "docs/design/pattern_matching.md",
+        "target": "docs/design/pattern_matching_target.nomi",
+        "bridge": "docs/review/2026-07-16-pattern-matching.md"
+      },
+      "canonical_updates": [
+        "docs/design/syntax.md",
+        "docs/design/semantics.md",
+        "docs/design/decisions.md",
+        "docs/design/target.nomi",
+        "docs/research/open_questions.md"
+      ],
+      "validation": [
+        "python3 -m tools.design_passes check",
+        "pytest prototype/tests/unit/tools/test_design_passes.py prototype/tests/unit/tools/test_agent_hooks.py prototype/tests/unit/tools/test_docs_lifecycle.py",
+        "python3 .codex/scripts/agent_doctor.py",
+        "python3 scripts/check_web_runtime.py"
+      ],
+      "next_actions": [
+        "Introduce lossless Surface Pattern nodes and target-syntax parser fixtures.",
+        "Make pattern attempts transactional and captures arm-scoped in every runtime.",
+        "Add usefulness and exhaustiveness analysis before promoting target syntax to runnable samples.",
+        "Migrate editor, Rust/WASM, web, and regression fixtures in one capability-gated slice."
+      ]
+    }
+  ]
+}

@@ -63,8 +63,10 @@ evaluate source once
 -> commit all names or commit none
 ```
 
-Destructuring is atomic. If one nested pattern or constraint fails, no capture
-becomes visible.
+Destructuring is atomic and its pattern must be statically irrefutable for the
+source type. If a constraint fails, or unchecked foreign corruption violates
+the proven structural shape, no capture becomes visible. Refutable
+decomposition belongs in exhaustive `match`.
 
 An immutable name cannot be rebound in the same lexical scope. Shadowing in a
 nested scope is allowed but receives a lint when it obscures a public or long-
@@ -155,27 +157,36 @@ encoding, or decode rules without an explicit protocol implementation.
 
 ## Patterns And Choice
 
-A pattern attempt has three ordered stages:
+A pattern attempt has four ordered stages:
 
 ```text
-test structure
--> tentatively bind captures
--> evaluate optional guard
+test the already-evaluated subject structurally
+-> accumulate tentative captures without mutating scope
+-> evaluate one optional pure Bool guard
+-> commit captures to a fresh arm scope or discard all of them
 ```
 
-Structural non-match and guard rejection select the next branch. A failed
-constraint inside an ordinary pattern also rejects that branch, but trace data
-keeps the distinction. At a decode boundary, the same constraint failure is an
-error to report, not a branch to skip silently.
+Structural non-match and guard rejection select the next arm. Constraints are
+not patterns: `where` defines valid bindings and data, while decode reports
+external validity failures. A guard only refines whether a structurally valid
+arm applies.
 
 Patterns never mutate the value they inspect. Captures are immutable and scoped
 to their branch. Alternative patterns must bind the same names with compatible
-types.
+types. Structural matching is pure, non-consuming, and limited to compiler-known
+nominal values and strict structural values; it never invokes a user extractor
+or iteration protocol.
 
 `if` accepts only `Bool`. `match` chooses the first successful pattern in
-source order. A value-producing match must be exhaustive. A statement-position
-open structural match may omit `_`; tooling can still warn when no branch is
-likely to match.
+source order, and every match is exhaustive. Guards are deterministic,
+effect-free, evaluated once, and ignored as proof of coverage. Typed usefulness
+analysis rejects wholly unreachable arms and reports witness patterns for
+missing space. A value-producing match also unifies all reachable arm result
+types.
+
+The focused [Pattern Matching](pattern_matching.md) design specifies the
+accepted pattern category, collection openness, transactional attempt model,
+coverage, diagnostics, and Surface/Core contract.
 
 ## Collections, Streams, And Tables
 

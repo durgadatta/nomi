@@ -9,12 +9,15 @@ CANONICAL_DESIGN_DOCS = [
     "docs/design/README.md",
     "docs/design/syntax.md",
     "docs/design/semantics.md",
+    "docs/design/pattern_matching.md",
     "docs/design/industrial.md",
     "docs/design/decisions.md",
     "docs/research/README.md",
     "docs/research/families.md",
     "docs/research/convergences.md",
+    "docs/research/pattern_matching.md",
     "docs/research/open_questions.md",
+    "docs/orientation/design_pass_workflow.md",
 ]
 
 

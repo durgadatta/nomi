@@ -13,25 +13,31 @@ For language design, read:
 1. [Target Design](design/README.md)
 2. [Syntax](design/syntax.md)
 3. [Semantics](design/semantics.md)
-4. [Industrial Model](design/industrial.md)
-5. [Decision Ledger](design/decisions.md)
-6. [Target Program](design/target.nomi)
+4. [Pattern Matching](design/pattern_matching.md)
+5. [Industrial Model](design/industrial.md)
+6. [Decision Ledger](design/decisions.md)
+7. [Target Program](design/target.nomi)
+8. [Pattern Target](design/pattern_matching_target.nomi)
 
 For the evidence and unresolved forks behind those choices, read:
 
 1. [Research Overview](research/README.md)
 2. [Language Families](research/families.md)
 3. [Design Convergences](research/convergences.md)
-4. [Open Questions](research/open_questions.md)
+4. [Pattern Matching Research](research/pattern_matching.md)
+5. [Open Questions](research/open_questions.md)
 
 For the current repository and runtime, read:
 
 1. [Artifacts And Usage](orientation/artifacts_and_usage.md)
 2. [Implementation Guideline](orientation/implementation_guideline.md)
 3. [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
+4. [Design Pass Workflow](orientation/design_pass_workflow.md)
 
 The [2026-07-16 Language Design Review](review/2026-07-16.md) records why the
 old design corpus was consolidated and gives the concrete action sequence.
+The [Pattern Matching Design Pass](review/2026-07-16-pattern-matching.md) is the
+first registered research-to-target-to-bridge packet.
 
 ## Authority
 
@@ -49,9 +55,10 @@ current user decision
 Tests remain authoritative for what a supported implementation does today.
 They are not a veto over a new target-language decision.
 
-Target-only source belongs in `docs/design/target.nomi`. Files under `samples/`
-are runnable product fixtures and must remain aligned with parser, runtime,
-tests, generated web manifest, and browser execution.
+Target-only source belongs under `docs/design/`, in `target.nomi` or a
+registered focused target. Files under `samples/` are runnable product fixtures
+and must remain aligned with parser, runtime, tests, generated web manifest,
+and browser execution.
 
 ## Documentation Types
 
@@ -68,6 +75,10 @@ cannot hold cleanly.
 
 ## Design Change Workflow
 
+For a registered cross-cutting feature, use the complete
+[Design Pass Workflow](orientation/design_pass_workflow.md) and update
+`config/design_passes.json`.
+
 1. Start with a failing or awkward program, not a borrowed feature.
 2. Check [Open Questions](research/open_questions.md) and existing research
    convergence before doing new broad research.
@@ -81,6 +92,8 @@ cannot hold cleanly.
 
 - [AI Collaboration](orientation/ai_collaboration.md): repository doctrine for
   AI-assisted design, implementation, critique, and checkpoints.
+- [Design Pass Workflow](orientation/design_pass_workflow.md): linked research,
+  target, bridge, validation, retrospective, and topic-routing contract.
 - [Artifacts And Usage](orientation/artifacts_and_usage.md): current execution
   pipelines, runtime artifacts, samples, and validation commands.
 - [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md):
@@ -99,6 +112,8 @@ cannot hold cleanly.
 
 - [Language Design Review 2026-07-16](review/2026-07-16.md): syntax-first reset,
   research consolidation, target language, and ordered actions.
+- [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md):
+  focused research, accepted target, implementation delta, and bridge.
 
 ## Complete Markdown Inventory
 
@@ -109,6 +124,7 @@ This list is intentionally complete and is checked by tests.
 - [Target Design](design/README.md)
 - [Syntax](design/syntax.md)
 - [Semantics](design/semantics.md)
+- [Pattern Matching](design/pattern_matching.md)
 - [Industrial Model](design/industrial.md)
 - [Decision Ledger](design/decisions.md)
 
@@ -117,11 +133,13 @@ This list is intentionally complete and is checked by tests.
 - [Research Overview](research/README.md)
 - [Language Families](research/families.md)
 - [Design Convergences](research/convergences.md)
+- [Pattern Matching Research](research/pattern_matching.md)
 - [Open Questions](research/open_questions.md)
 
 ### Orientation
 
 - [AI Collaboration](orientation/ai_collaboration.md)
+- [Design Pass Workflow](orientation/design_pass_workflow.md)
 - [Artifacts And Usage](orientation/artifacts_and_usage.md)
 - [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
 - [Implementation Guideline](orientation/implementation_guideline.md)
@@ -133,3 +151,4 @@ This list is intentionally complete and is checked by tests.
 ### Reviews
 
 - [Language Design Review 2026-07-16](review/2026-07-16.md)
+- [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md)

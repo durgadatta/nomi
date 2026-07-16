@@ -31,7 +31,7 @@ A newline ends a statement unless the expression or declaration is visibly
 incomplete. Continuation is allowed:
 
 - inside `()`, `[]`, or `{}`;
-- after `=`, a comma, or an infix operator;
+- after `=`, `=>`, a comma, or an infix operator;
 - on a more-indented line beginning with `.` or `|>`;
 - before a declaration's final `uses` clause and `:`.
 
@@ -99,11 +99,14 @@ search the scope to learn whether a line creates meaning or changes history.
 Destructuring uses the same binding rule:
 
 ```nomi
-(first, second) = point
-[head, *tail] = items
+(first, second) = point.as_tuple()
+UserId(raw) = known_user_id
 ```
 
-A destructuring binding must match or produces a structured pattern error.
+A destructuring binding must be statically irrefutable for the source type.
+Tuple and single-case product decomposition qualify; a list head, literal, or
+one case of a multi-variant type does not. Refutable structural choice uses an
+exhaustive `match`, so ordinary binding never hides a pattern-failure path.
 
 ## Constraints
 
@@ -287,22 +290,39 @@ match event:
         log.debug("ignored event")
 ```
 
-When a `match` is used as a value, every reachable branch must produce a
-compatible value. Closed variant matches must be exhaustive. `_` is only a
-pattern wildcard; it never generates a function parameter.
+Every `match` is exhaustive, including statement-position matches. A value
+match also requires every reachable arm to produce a compatible value. Closed
+variants are covered by their declared cases; open or unknown spaces require a
+structural partition the checker can prove or an explicit catch-all. `_` is
+only a pattern wildcard; it never generates a function parameter.
 
 Patterns include literals, captures, wildcards, variants, tuples, lists,
-mappings, alternatives, and guards:
+mappings, alternatives, and whole-value `as` bindings. An arm may add a
+`when` guard after its complete pattern:
 
 ```nomi
 match value:
     0 => "zero"
     1 | 2 => "small"
-    [head, *tail] => "head={head}, rest={tail.length}"
-    {"kind": "user", "id": id} => "user:{id}"
+    [head, ..tail] => "head={head}, rest={tail.length}"
+    {"kind": "user", "id": id, ..} => "user:{id}"
     count when count > 100 => "large"
     _ => "other"
 ```
+
+Captures are tentative, immutable, and scoped to the selected arm. Structural
+failure or a false guard discards all of them. `when` requires a pure `Bool`
+and runs once after structural success. Alternative patterns bind the same
+names and compatible types.
+
+Lists and maps are exact unless one pattern-only remainder marker is present.
+`..` accepts unmentioned elements or entries; `..rest` captures them. Matching
+operates on strict language values and never consumes an iterator or calls a
+user extractor.
+
+The complete pattern set, precedence, coverage rules, formatting, and
+diagnostics are specified in [Pattern Matching](pattern_matching.md), with
+pressure examples in [the focused target](pattern_matching_target.nomi).
 
 There is no separate `if let`, `guard let`, `while let`, or piecewise function
 syntax. A one-case structural decision remains a small `match`; repeated
@@ -526,6 +546,7 @@ feature.
 | `=>` | explicit input/pattern maps to one expression |
 | `|>` | pass a value to a call stage |
 | `|` | alternatives in patterns |
+| `..` | remaining list elements or map entries in patterns only |
 | `?` | propagate `Option` or `Result` only |
 | `?.`, `??` | navigate or default `Option` only |
 

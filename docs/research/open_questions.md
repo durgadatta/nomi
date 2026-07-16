@@ -195,6 +195,22 @@ platform differences require explicit APIs.
 **Test:** differential execution of randomized conformance programs and
 failure/cancellation/resource scenarios across every backend.
 
+## 16. Pattern Ergonomics After The Core Decision
+
+**Question:** Does real Nomi code validate the accepted positional nominal
+patterns, exact-by-default maps, missing-witness detail, and left-biased
+or-pattern captures?
+
+**Current hypothesis:** keep the closed transactional core in
+[Pattern Matching](../design/pattern_matching.md). Permit only local syntax or
+diagnostic refinements; do not reopen choice aliases or user extractors.
+
+**Test:** format and compare domain variants, evolving protocol maps, nested
+missing cases, and overlapping capture alternatives from
+`docs/design/pattern_matching_target.nomi`. Record comprehension errors and
+compiler-complexity pressure in `docs/research/pattern_matching.md` before
+changing the focused target.
+
 ## Research Stop Rule
 
 Do not add another open question merely because a language has an interesting

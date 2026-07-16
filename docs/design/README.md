@@ -13,16 +13,21 @@
    shape.
 2. [Syntax](syntax.md) - the canonical source forms and notation budget.
 3. [Semantics](semantics.md) - the behavior behind those forms.
-4. [Industrial Model](industrial.md) - packages, effects, concurrency,
+4. [Pattern Matching](pattern_matching.md) - the first registered focused
+   design pass and its complete pattern contract.
+5. [Industrial Model](industrial.md) - packages, effects, concurrency,
    security, tooling, deployment, and conformance.
-5. [Decision Ledger](decisions.md) - accepted, rejected, deferred, and open
+6. [Decision Ledger](decisions.md) - accepted, rejected, deferred, and open
    choices.
-6. [Target Program](target.nomi) - one aspirational program that pressures the
+7. [Target Program](target.nomi) - one aspirational program that pressures the
    design as a whole.
+8. [Pattern Target](pattern_matching_target.nomi) - focused pressure cases for
+   pattern syntax, scope, coverage, and boundaries.
 
 The research behind these decisions is consolidated under
 [Research](../research/README.md). The dated rationale and action sequence are
-in the [2026-07-16 review](../review/2026-07-16.md).
+in the [2026-07-16 review](../review/2026-07-16.md). Registered focused passes
+follow the [design-pass workflow](../orientation/design_pass_workflow.md).
 
 ## Product Promise
 

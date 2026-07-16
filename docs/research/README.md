@@ -69,6 +69,12 @@ Each finding is classified as one of:
 Research is strongest when it narrows the language. A list of attractive
 features is not synthesis.
 
+Registered focused passes may add one topic document when a cross-cutting
+contract needs more evidence than the consolidated files can hold cleanly.
+[Pattern Matching Research](pattern_matching.md) is the first such packet; it
+links directly to canonical design, focused target source, and an implementation
+bridge through the [design-pass workflow](../orientation/design_pass_workflow.md).
+
 ## Evidence Policy
 
 The earlier corpus mixed primary documentation, comparative notes, design
@@ -92,4 +98,3 @@ language-design traditions.
 The source URLs and longer bibliographies remain available in repository
 history. Restore a deep dive only when a concrete open question needs its
 detail; do not restore the old documentation topology.
-

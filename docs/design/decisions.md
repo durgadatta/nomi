@@ -34,7 +34,7 @@ They matter only after a target choice survives this review.
 | Functions | `func` for named behavior; `(args) => expr` for anonymous behavior | One long form and one explicit value form. |
 | Data | Immutable nominal product and closed variant `data` | Durable domain identity plus exhaustiveness. |
 | External structure | `Unknown`/`Value` plus explicit decode | Structural convenience stays at visible trust boundaries. |
-| Choice | `if` for Bool; `match` for structure | Two genuinely different questions, no aliases. |
+| Choice | `if` for Bool; exhaustive `match` for structure | Two genuinely different questions, no aliases or silent unmatched statements. |
 | Collections | Loops plus `map`/`filter`/`fold` family and one `|>` | Familiar verbs, readable left-to-right flow. |
 | Absence | `Option`, `?.`, `??` | Absence is not error or general truthiness. |
 | Expected failure | `Result` and postfix `?` | Typed and concise at the call site. |
@@ -66,6 +66,10 @@ to recognize the same act.
 | Postfix conditional | Reject | inline or block `if` |
 | `if let`, `guard let`, `while let` | Reject | `match`, loops, and small helper functions |
 | `case` keyword inside `match` | Reject | indentation already establishes pattern-arm context |
+| Refutable patterns on the left of `=` | Reject | statically irrefutable destructuring or exhaustive `match` |
+| User extractors, view/active patterns, and match macros | Reject from the initial core | visible normalization/parsing call followed by closed patterns |
+| Non-exhaustive statement `match` | Reject | explicit complete cases or catch-all arm |
+| Open map patterns by default | Reject | exact maps; spell openness with `..` or `..rest` |
 | `select`/`where` collection aliases | Reject | `map`/`filter` |
 | Augmented assignment such as `count += 1` | Reject | `set count = count + 1` |
 | Implicit multiplication such as `2x` | Reject | `2 * x`; scoped scientific notation may be proposed later |
@@ -95,6 +99,7 @@ The target deliberately narrows overloaded punctuation:
 - `??` and `?.` mean absence handling only.
 - `|>` means call insertion only, never lazy, parallel, fallible, or query
   execution.
+- `..` means structural remainder in list/map patterns, never a range.
 - `=` creates a binding or supplies a named/default value, never equality or a
   function equation.
 
@@ -113,7 +118,9 @@ value rules in arbitrary statement suites.
 Accepted because structural choice is pervasive. `=>` arms are single
 expressions. Colon arms are statement-only and make the enclosing match a
 statement. Multi-step value logic moves into a small function, avoiding an
-implicit final-expression rule for blocks.
+implicit final-expression rule for blocks. Every match is exhaustive; captures
+are transactional and arm-scoped; pure `when` guards do not prove coverage.
+The full contract is in [Pattern Matching](pattern_matching.md).
 
 ### Pipeline
 

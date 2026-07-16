@@ -42,7 +42,9 @@ exhaustiveness.
 
 **Nomi choice:** nominal, closed `data` for owned concepts; explicit structural
 patterns and decoders for received values. `match` is the sole multi-way
-structural choice.
+structural choice. The focused evidence, including capture transactionality,
+coverage, guards, and extractor tradeoffs, is in
+[Pattern Matching Research](pattern_matching.md).
 
 ## 4. Types And Runtime Constraints Solve Different Problems
 
@@ -251,4 +253,3 @@ a user or implementation experiment
 
 Another broad survey should be rejected unless it answers an open question the
 current corpus cannot.
-

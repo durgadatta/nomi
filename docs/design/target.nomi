@@ -296,6 +296,8 @@ example "absence is distinct from failure":
     check decoded.map((input) => input.manager) == Ok(none)
 
 
+# Focused pattern syntax and failure fixtures live in
+# docs/design/pattern_matching_target.nomi.
 example "match is exhaustive over domain variants":
     error = ImportError.Configuration(errors=DecodeErrors.empty())
     label = match error:
