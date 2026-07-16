@@ -19,6 +19,11 @@ For language design decisions, start with `docs/design/README.md`, then read
 active authority. The `.agents/skills/nomi-language-design/SKILL.md` skill has
 the design workflow.
 
+Before creating a focused design note, check `config/design_passes.json` and
+`docs/orientation/design_pass_workflow.md`. Use
+`python3 -m tools.design_passes show <id>` to load a matching research/design/
+target/bridge packet and update its validation, next action, and retrospective.
+
 ## Adding new syntax (the current extension path)
 
 1. **Grammar** — add a rule to the appropriate layer in
@@ -66,9 +71,11 @@ Valid stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`
 | `docs/design/README.md` | Canonical target-language overview |
 | `docs/design/syntax.md` | Target source forms and notation budget |
 | `docs/design/semantics.md` | Implementation-independent behavior |
+| `docs/design/pattern_matching.md` | Canonical focused pattern contract |
 | `docs/design/industrial.md` | Package, effect, concurrency, tooling, and deployment target |
 | `docs/design/decisions.md` | Accepted, rejected, deferred, and open choices |
 | `docs/design/target.nomi` | Aspirational whole-language fixture; not runnable today |
+| `config/design_passes.json` | Focused-pass status, artifacts, checks, and next actions |
 
 ## Commit style
 

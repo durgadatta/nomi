@@ -7,6 +7,9 @@ compatibility: deepseek
 Before adding a reduction, check the `nomi-language-design` skill. Each
 reduction should target a specific accepted semantic form in
 `docs/design/syntax.md` and `docs/design/semantics.md`.
+If the feature is registered, run `python3 -m tools.design_passes show <id>`
+and make the reduction/inspection work satisfy its target fixture and bridge
+gate.
 Also read `docs/orientation/exploratory_implementation_doctrine.md`: reductions
 should make syntax easier to change by declaring feature ownership, status,
 layer, normal form, diagnostics, and inspection behavior in metadata where

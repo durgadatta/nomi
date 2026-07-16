@@ -7,6 +7,11 @@ compatibility: deepseek
 Pair this with `nomi-parse` for language syntax decisions and with
 `nomi-test` when changing acceptance or parity coverage.
 
+For a registered feature, run `python3 -m tools.design_passes show <id>` and
+consume its lossless Surface, accepted/rejected fixture, parity, and bridge
+requirements. Text reconstruction is not sufficient when the packet requires
+a versioned structural payload.
+
 ## Feature Work Contract
 
 Rust parser work must preserve the same feature-owner contract as the Lark

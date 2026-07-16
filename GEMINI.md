@@ -30,6 +30,11 @@ Python-hosted prototype plus a Rust/WASM-to-JavaScript browser path.
 4. `docs/research/`: Consolidated evidence and bounded open questions.
 5. `docs/orientation/`: Current implementation and collaboration guidance.
 
+Before adding a focused design document, inspect `config/design_passes.json`
+and follow `docs/orientation/design_pass_workflow.md`. Resume a matching packet
+and finish its validation plus retrospective instead of creating parallel
+research, target, or migration notes.
+
 ## Recommended Workflows
 1. **Research & Strategy**:
    - Read `AGENTS.md` and relevant design notes.
@@ -43,6 +48,7 @@ Python-hosted prototype plus a Rust/WASM-to-JavaScript browser path.
    - Run focused tests: `pytest prototype/tests/path/to/test.py`.
    - Run full suite: `pytest`.
    - Update documentation if behavior or design changes.
+   - Run `python3 -m tools.design_passes check` for registered design work.
 
 ## Code & Style Guidelines
 - **Python Style**: Match surrounding code; prioritize readability.

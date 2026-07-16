@@ -16,6 +16,11 @@ import subprocess
 import sys
 from typing import Any
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 can still run the other checks.
+    tomllib = None
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -45,6 +50,10 @@ def main() -> None:
 def run_checks() -> list[CheckResult]:
     return [
         check_required_files(),
+        check_design_pass_registry(),
+        check_design_pass_agent_integration(),
+        check_codex_config_toml(),
+        check_opencode_jsonc(),
         check_codex_hooks_json(),
         check_claude_settings_jsonc(),
         check_hook_scripts_compile(),
@@ -70,13 +79,119 @@ def check_required_files() -> CheckResult:
         ".codex/hooks.json",
         ".claude/settings.json",
         "docs/orientation/ai_collaboration.md",
+        "docs/orientation/design_pass_workflow.md",
         "docs/orientation/rag_mcp.md",
         "config/rag_sources.json",
+        "config/design_passes.json",
     ]
     missing = [path for path in required if not (ROOT / path).exists()]
     if missing:
         return CheckResult("required-files", "fail", "Missing: " + ", ".join(missing))
     return CheckResult("required-files", "pass", f"{len(required)} expected agent files are present.")
+
+
+def check_design_pass_registry() -> CheckResult:
+    try:
+        from tools.design_passes import load_registry, validate_registry
+    except Exception as exc:
+        return CheckResult("design-pass-registry", "fail", f"Could not import validator: {exc}")
+
+    errors = validate_registry(ROOT)
+    if errors:
+        return CheckResult("design-pass-registry", "fail", "; ".join(errors))
+    count = len(load_registry(ROOT / "config/design_passes.json").get("passes", []))
+    return CheckResult(
+        "design-pass-registry",
+        "pass",
+        f"{count} registered design pass packet(s) are coherent.",
+    )
+
+
+def check_design_pass_agent_integration() -> CheckResult:
+    required_refs = {
+        "AGENTS.md": ("config/design_passes.json", "design_pass_workflow.md"),
+        "CLAUDE.md": ("config/design_passes.json", "design_pass_workflow.md"),
+        "GEMINI.md": ("config/design_passes.json", "design_pass_workflow.md"),
+        ".agents/README.md": ("config/design_passes.json", "design_pass_workflow.md"),
+        ".agents/skills/nomi-ai-native/SKILL.md": (
+            "config/design_passes.json",
+            "design_pass_workflow.md",
+        ),
+        ".agents/skills/nomi-language-design/SKILL.md": (
+            "config/design_passes.json",
+            "design_pass_workflow.md",
+        ),
+        ".codex/hooks/hook_utils.py": ("config/design_passes.json",),
+        ".codex/prompts/design-pass.md": (
+            "config/design_passes.json",
+            "design_pass_workflow.md",
+        ),
+        "docs/orientation/ai_collaboration.md": (
+            "config/design_passes.json",
+            "design_pass_workflow.md",
+        ),
+    }
+    missing = []
+    for rel_path, references in required_refs.items():
+        path = ROOT / rel_path
+        if not path.is_file():
+            missing.append(f"{rel_path}: file is missing")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for reference in references:
+            if reference not in text:
+                missing.append(f"{rel_path}: missing {reference}")
+
+    if missing:
+        return CheckResult("design-pass-agent-integration", "fail", "; ".join(missing))
+    return CheckResult(
+        "design-pass-agent-integration",
+        "pass",
+        f"{len(required_refs)} agent surfaces route through the design-pass contract.",
+    )
+
+
+def check_codex_config_toml() -> CheckResult:
+    path = ROOT / ".codex/config.toml"
+    if tomllib is None:
+        return CheckResult(
+            "codex-config-toml",
+            "warn",
+            "Python 3.11+ is required for the stdlib TOML parser.",
+        )
+    try:
+        tomllib.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return CheckResult("codex-config-toml", "fail", str(exc))
+    return CheckResult("codex-config-toml", "pass", "Codex project config parsed.")
+
+
+def check_opencode_jsonc() -> CheckResult:
+    path = ROOT / "opencode.json"
+    try:
+        data = parse_jsonc(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return CheckResult("opencode-jsonc", "fail", str(exc))
+
+    instructions = data.get("instructions")
+    if not isinstance(instructions, list):
+        return CheckResult("opencode-jsonc", "fail", "Missing instructions list.")
+    required = {
+        "docs/orientation/design_pass_workflow.md",
+        "config/design_passes.json",
+    }
+    missing = required - set(instructions)
+    if missing:
+        return CheckResult(
+            "opencode-jsonc",
+            "fail",
+            "Missing design-pass instructions: " + ", ".join(sorted(missing)),
+        )
+    return CheckResult(
+        "opencode-jsonc",
+        "pass",
+        "OpenCode config parsed and routes registered design passes.",
+    )
 
 
 def check_codex_hooks_json() -> CheckResult:
@@ -99,7 +214,7 @@ def check_codex_hooks_json() -> CheckResult:
 def check_claude_settings_jsonc() -> CheckResult:
     path = ROOT / ".claude/settings.json"
     try:
-        data = json.loads(strip_jsonc_comments(path.read_text(encoding="utf-8")))
+        data = parse_jsonc(path.read_text(encoding="utf-8"))
     except Exception as exc:
         return CheckResult("claude-settings-jsonc", "fail", str(exc))
 
@@ -435,6 +550,40 @@ def strip_jsonc_comments(text: str) -> str:
         output.append(char)
         index += 1
     return "".join(output)
+
+
+def strip_jsonc_trailing_commas(text: str) -> str:
+    output = []
+    in_string = False
+    escape = False
+    for index, char in enumerate(text):
+        if in_string:
+            output.append(char)
+            if escape:
+                escape = False
+            elif char == "\\":
+                escape = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+            output.append(char)
+            continue
+
+        if char == ",":
+            lookahead = index + 1
+            while lookahead < len(text) and text[lookahead].isspace():
+                lookahead += 1
+            if lookahead < len(text) and text[lookahead] in "}]":
+                continue
+        output.append(char)
+    return "".join(output)
+
+
+def parse_jsonc(text: str) -> Any:
+    return json.loads(strip_jsonc_trailing_commas(strip_jsonc_comments(text)))
 
 
 def normalize_whitespace(text: str) -> str:

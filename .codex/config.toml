@@ -49,8 +49,9 @@ verbosity = 3
 
 # Repo-local lifecycle hooks live in `.codex/hooks.json` with scripts under
 # `.codex/hooks/`. They are intentionally advisory by default:
-#   - session-start context reminds Codex to use AGENTS.md, skills, docs, and RAG;
-#   - prompt-submit context suggests likely `.agents/skills/*/SKILL.md` files;
+#   - session-start context reminds Codex to use AGENTS.md, skills, docs, RAG,
+#     and open entries from `config/design_passes.json`;
+#   - prompt-submit context suggests likely skills and matching design packets;
 #   - pre-tool shell policy blocks only obviously destructive commands.
 #
 # Hooks are enabled by default in current Codex releases. Use `/hooks` inside

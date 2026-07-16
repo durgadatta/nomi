@@ -48,7 +48,7 @@
   //
   // Nomi's project hooks are intentionally advisory:
   //   - SessionStart injects compact repo workflow context.
-  //   - UserPromptSubmit suggests likely `.agents/skills/*/SKILL.md` files.
+  //   - UserPromptSubmit suggests likely skills and matching design packets.
   //   - PreToolUse blocks only obviously destructive Bash commands and adds
   //     a few reminders for tests/snapshots/generated artifacts.
   //

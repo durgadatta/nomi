@@ -135,7 +135,9 @@
   "instructions": [
     "docs/README.md",
     "docs/design/README.md",
-    "docs/design/decisions.md"
+    "docs/design/decisions.md",
+    "docs/orientation/design_pass_workflow.md",
+    "config/design_passes.json"
     // "docs/design/syntax.md",
     // "docs/design/semantics.md",
     // "CONTRIBUTING.md",

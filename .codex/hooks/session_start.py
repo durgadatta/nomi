@@ -7,7 +7,13 @@ trusted local session starts or resumes.
 
 from __future__ import annotations
 
-from hook_utils import emit_additional_context, read_event, repo_root
+from hook_utils import (
+    design_pass_lines,
+    emit_additional_context,
+    open_design_passes,
+    read_event,
+    repo_root,
+)
 
 
 def main() -> None:
@@ -31,6 +37,25 @@ Choose relevant skills from `.agents/skills/` before editing:
 
 Use local RAG/MCP only as source discovery; read returned files directly before
 editing. Keep parser, lowering, interpreter, docs, and focused tests aligned."""
+
+    design_passes = open_design_passes(root)
+    if design_passes:
+        lines = [
+            "Open registered design passes (routing indexes, not specifications):"
+        ]
+        visible_passes = design_passes[:5]
+        for design_pass in visible_passes:
+            lines.extend(design_pass_lines(design_pass))
+        if len(design_passes) > len(visible_passes):
+            lines.append(
+                f"- {len(design_passes) - len(visible_passes)} more; run "
+                "`python3 -m tools.design_passes list`."
+            )
+        lines.append(
+            "Read `docs/orientation/design_pass_workflow.md` and the matching "
+            "packet before creating another design note."
+        )
+        context += "\n\n" + "\n".join(lines)
 
     emit_additional_context("SessionStart", context)
 

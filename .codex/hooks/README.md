@@ -17,9 +17,11 @@ config beside the project `.codex/` layer. Claude calls the same scripts through
 
 - `session_start.py` adds a compact startup reminder: read `AGENTS.md`, choose
   relevant `.agents/skills/*/SKILL.md`, use RAG/MCP as source discovery, and
-  keep parser/interpreter/docs/tests aligned.
+  keep parser/interpreter/docs/tests aligned. It also lists open entries from
+  `config/design_passes.json`.
 - `user_prompt_submit.py` maps prompt wording to likely Nomi skills and returns
-  model-visible context. It is advisory only.
+  model-visible context. Matching design-pass keywords route the agent to the
+  linked research/design/target/bridge packet. It is advisory only.
 - `pre_tool_use_policy.py` blocks a few obviously destructive shell commands and
   adds reminders for snapshot regeneration and broad pytest runs.
 
@@ -39,6 +41,7 @@ Run the broader agent setup check:
 
 ```bash
 python3 .codex/scripts/agent_doctor.py
+python3 -m tools.design_passes check
 ```
 
 ```bash

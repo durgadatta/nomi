@@ -9,13 +9,24 @@ from __future__ import annotations
 
 import re
 
-from hook_utils import emit_additional_context, read_event, skill_line
+from hook_utils import (
+    design_pass_lines,
+    emit_additional_context,
+    matching_design_passes,
+    read_event,
+    repo_root,
+    skill_line,
+)
 
 
 SKILL_HINTS = (
     (
         "nomi-language-design",
-        re.compile(r"\b(design|syntax|language|spec|research|convenience|normal form|feature admission)\b", re.I),
+        re.compile(
+            r"\b(design|syntax|language|spec|research|convenience|normal form|"
+            r"feature admission|pattern matching|exhaustive(?:ness)?)\b",
+            re.I,
+        ),
         "read active language docs and reduce ideas to Nomi normal forms before implementation",
     ),
     (
@@ -83,6 +94,7 @@ DOC_HINTS = (
 def main() -> None:
     event = read_event()
     prompt = event.get("prompt") or ""
+    root = repo_root(event)
 
     skill_matches = [
         skill_line(name, reason)
@@ -90,8 +102,9 @@ def main() -> None:
         if pattern.search(prompt)
     ]
     doc_matches = [hint for pattern, hint in DOC_HINTS if pattern.search(prompt)]
+    pass_matches = matching_design_passes(root, prompt)
 
-    if not skill_matches and not doc_matches:
+    if not skill_matches and not doc_matches and not pass_matches:
         return
 
     sections = []
@@ -99,6 +112,18 @@ def main() -> None:
         sections.append("Likely Nomi skills for this prompt:\n" + "\n".join(skill_matches))
     if doc_matches:
         sections.append("Relevant Nomi docs/tooling notes:\n" + "\n".join(f"- {hint}" for hint in doc_matches))
+
+    if pass_matches:
+        lines = [
+            "Registered design-pass packet(s) for this topic:",
+        ]
+        for design_pass in pass_matches:
+            lines.extend(design_pass_lines(design_pass))
+        lines.append(
+            "Read the packet and its current-to-target bridge before adding "
+            "parallel notes or implementing the feature."
+        )
+        sections.append("\n".join(lines))
 
     sections.append(
         "These are hints only. User instructions and local code context still decide the actual workflow."

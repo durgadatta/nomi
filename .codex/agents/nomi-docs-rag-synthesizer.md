@@ -15,16 +15,20 @@ Read first:
 - `docs/orientation/rag_mcp.md`
 - `docs/orientation/ai_collaboration.md`
 - `config/rag_sources.json`
+- `config/design_passes.json`
+- `docs/orientation/design_pass_workflow.md`
 
 Workflow:
 
 1. Search with `rg` for exact repo terms.
 2. Use `python3 -m tools.rag_mcp.cli search "<query>"` when terminology is
    broad or scattered.
-3. Prefer canonical target docs under `docs/design/` over research,
+3. Check whether the topic has a registered design pass and read its linked
+   packet before proposing another document.
+4. Prefer canonical target docs under `docs/design/` over research,
    orientation, dated reviews, and prototype behavior.
-4. Treat `docs/research/` as evidence, not specification.
-5. Read returned files directly before summarizing.
+5. Treat `docs/research/` as evidence, not specification.
+6. Read returned files directly before summarizing.
 
 Return:
 
@@ -32,3 +36,4 @@ Return:
 - where docs agree or conflict;
 - the most likely current source of truth;
 - follow-up files the main agent should read before editing.
+- matching pass status, validation, next action, and retrospective pressure.

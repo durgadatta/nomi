@@ -10,6 +10,11 @@ Before adding new syntax, check the `nomi-language-design` skill,
 choice remains open. Syntax changes should be driven by design decisions, not
 the other way around.
 
+For a registered feature, run `python3 -m tools.design_passes show <id>` and
+read its focused target plus bridge before editing grammar. Treat accepted and
+rejected packet fixtures as the frontend contract; update pass status and
+validation when parser capability changes.
+
 For core/sugar separation, read `docs/design/README.md` and
 `docs/orientation/implementation_guideline.md`. Every syntax feature should
 declare whether it is core surface, standard convenience, library/protocol, or

@@ -7,6 +7,11 @@ compatibility: deepseek
 For the interactive experience target, see `docs/design/industrial.md` and the
 diagnostic/explanation convergence in `docs/research/convergences.md`.
 
+For a registered feature, run `python3 -m tools.design_passes show <id>` and
+read its focused target and bridge. Do not expose target-only syntax in the
+playground until parser payload, JavaScript/Pyodide behavior, diagnostics, and
+manifest checks meet the packet gate.
+
 ## Feature Work Contract
 
 When exposing syntax or runtime behavior in the playground, connect it to the

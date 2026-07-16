@@ -42,6 +42,29 @@ docs/spec surface, focused tests, and inspection command. If a skill teaches an
 implementation path without those checkpoints, update the skill before using it
 as the canonical workflow.
 
+## Design Pass Contract
+
+Language-design work uses the declarative registry at
+`config/design_passes.json` and the packet lifecycle in
+`docs/orientation/design_pass_workflow.md`. The registry routes agents to one
+research document, one canonical focused design, one target fixture, one
+current-to-target bridge, validations, and exact next actions. It is not a
+second specification.
+
+Keep this loop operational:
+
+```text
+prompt keyword -> registered packet -> evidence/decision/target/bridge
+-> deterministic validation -> retrospective -> smallest durable improvement
+```
+
+Agent hooks may inject packet paths, but they must fail quietly and stay
+advisory. `python3 -m tools.design_passes check` and
+`python3 .codex/scripts/agent_doctor.py` enforce packet shape and cross-links.
+Every completed pass records evidence that changed the design, workflow
+friction, one justified durable improvement (or why none), and the exact next
+pass.
+
 ## Start Here
 
 1. Read `AGENTS.md`, `.agents/README.md`, and
@@ -53,6 +76,8 @@ as the canonical workflow.
    - Claude: `.claude/settings.json`
    - OpenCode: `opencode.json`
    - RAG/MCP: `docs/orientation/rag_mcp.md`, `tools/rag_mcp/`
+   - Design passes: `config/design_passes.json`,
+     `docs/orientation/design_pass_workflow.md`, `tools/design_passes.py`
 3. Check whether the request is about agent behavior, repo structure, safety,
    context retrieval, workflow repeatability, or documentation drift.
 4. Make a small plan before editing; AI-infrastructure changes can get noisy
@@ -101,6 +126,8 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
   and MCP/tool trust boundaries explicit?
 - **Handoff:** Can another agent resume from notes, tests, and git status
   without relying on chat memory?
+- **Design-pass continuity:** Can a topic prompt discover one linked packet,
+  its status, registered checks, next action, and prior retrospective?
 
 ## Improvement Workflow
 
@@ -116,6 +143,8 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
 6. **Document the contract:** Update `.agents/README.md`,
    `docs/orientation/ai_collaboration.md`, or the local hook/skill docs if the
    workflow changed.
+7. **Reflect:** For registered design work, update the bridge retrospective and
+   promote only repeated friction into durable agent infrastructure.
 
 ## Project Review Workflow
 
@@ -170,6 +199,8 @@ Consider these as future improvements, not requirements for every task:
   snapshot-regeneration handoff.
 - Extend the RAG/MCP server with prompts or resource templates once a real
   client need appears.
+- Register the next focused design pass only when it owns a durable
+  cross-cutting contract; reuse the existing packet otherwise.
 - Periodically trim `AGENTS.md` and route detailed procedures into skills or
   docs to protect context budget.
 

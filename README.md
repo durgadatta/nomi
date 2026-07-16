@@ -142,6 +142,7 @@ Useful focused checks:
 pytest --interpreter-modes reduced
 python3 scripts/check_web_runtime.py
 python3 -m tools.jupyter.check_nomi_kernel
+python3 -m tools.design_passes check
 python3 .codex/scripts/agent_doctor.py
 ```
 
@@ -166,6 +167,7 @@ regeneration.
 - `tools/jupyter/`: notebook kernel.
 - `tools/vscode/nomi/`: editor extension.
 - `tools/rag_mcp/`: local retrieval/indexing tools.
+- `config/design_passes.json`: linked research/design/target/bridge pass registry.
 - `.agents/skills/`: repository-local agent workflows.
 
 See [Artifacts And Usage](docs/orientation/artifacts_and_usage.md) for the
@@ -181,7 +183,10 @@ deep-dive corpus remains available in Git history at `08f2aad`.
 AI systems are used for exploration, critique, synthesis, implementation, and
 validation. Their output is design material, not authority. Repository code,
 tests, target decisions, and human judgment remain the checks. See
-[AI Collaboration](docs/orientation/ai_collaboration.md).
+[AI Collaboration](docs/orientation/ai_collaboration.md). Cross-cutting
+language work uses the linked packet and retrospective contract in the
+[Design Pass Workflow](docs/orientation/design_pass_workflow.md); inspect the
+current passes with `python3 -m tools.design_passes list`.
 
 ## Project Posture
 

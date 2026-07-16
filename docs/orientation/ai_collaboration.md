@@ -18,6 +18,8 @@ optimize for flexible, reversible implementation: declare intent in metadata,
 keep reductions inspectable, and avoid turning the current prototype substrate
 into the de facto language specification. See
 [`exploratory_implementation_doctrine.md`](exploratory_implementation_doctrine.md).
+Focused language work follows the linked packet and retrospective contract in
+[`design_pass_workflow.md`](design_pass_workflow.md).
 
 ## Vision Over Snapshot
 
@@ -67,6 +69,7 @@ clear semantics, tests, examples, and documentation.
   | `nomi-interp` | Modify interpreter runtime behavior |
   | `nomi-test` | Write tests with multi-interpreter patterns |
   | `nomi-web` | Work with the web playground and Monaco editor |
+  | `nomi-rust-parser` | Maintain Rust/Wasm parser frontends, structural payload contracts, and parity |
   | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
   | `nomi-ai-native` | Improve AI-agent setup: skills, hooks, MCP/RAG, subagents, commands, context hygiene, and workflow audits |
   If an agent has a skill loader, load the matching skill from this directory.
@@ -83,7 +86,7 @@ clear semantics, tests, examples, and documentation.
 - `.claude/agents/`: Claude Code native subagent shims that point back to the
   `.codex/agents/` prompts.
 - `.codex/prompts/`: canonical reusable prompt templates for task start,
-  checkpoints, review, and snapshot regeneration.
+  registered design passes, checkpoints, review, and snapshot regeneration.
 - `.claude/commands/`: Claude Code command shims that point back to
   `.codex/prompts/`.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
@@ -91,7 +94,8 @@ clear semantics, tests, examples, and documentation.
   sandbox, approval policy, and reusable profiles.
 - `.codex/hooks.json` and `.codex/hooks/`: repo-local Codex lifecycle hooks
   that inject compact Nomi context, suggest relevant skills from prompt text,
-  and block a few obviously destructive shell commands. Review them with
+  route registered design-pass packets, and block a few obviously destructive
+  shell commands. Review them with
   `/hooks` in Codex before trusting changed hook scripts.
 - `.claude/settings.json`: tracked Claude Code defaults, permissions, and
   project hooks. Claude calls the same hook scripts under `.codex/hooks/` so
@@ -103,6 +107,9 @@ clear semantics, tests, examples, and documentation.
   ideas must be reconciled into one language.
 - `../research/`: consolidated evidence and bounded open experiments, not a
   second specification.
+- `../../config/design_passes.json`, `design_pass_workflow.md`, and
+  `../../tools/design_passes.py`: declarative topic routing, packet lifecycle,
+  deterministic cross-link checks, validations, and retrospectives.
 - `artifacts_and_usage.md`: artifact map, now including the AI
   agent entrypoint.
 
@@ -142,6 +149,17 @@ For substantial work, prefer a loop that leaves durable traces:
 5. Run focused checks.
 6. Checkpoint what changed, what passed, and what remains.
 7. Continue from the checkpoint instead of relying on chat memory.
+
+For language design, first check `config/design_passes.json`. Resume a matching
+packet rather than creating parallel notes. The packet preserves a more useful
+trace than chat alone:
+
+```text
+research -> canonical design -> focused target -> implementation bridge
+-> registered checks -> retrospective -> next exact action
+```
+
+Run `python3 -m tools.design_passes check` whenever packet artifacts change.
 
 This is especially useful for parser, interpreter, constraint, and
 yield-to-block changes, where a half-remembered intent can easily become a
@@ -186,6 +204,8 @@ it can answer these questions:
 - What failure or diagnostic should exist when the idea is misused?
 - What future design choice would this implementation make harder?
 - How does this move the current snapshot toward Nomi's intended direction?
+- If this is registered design work, what did the previous retrospective say
+  and which packet validation proves the new state?
 
 If those answers are not clear, keep the idea in notes or design review rather
 than making it runtime behavior.
@@ -197,6 +217,8 @@ than making it runtime behavior.
   formatter) and uncomment sections as the project adopts new tooling.
 - Put broader AI process notes here.
 - Put canonical language direction in `../design/`.
+- Use the design-pass registry for durable cross-cutting feature packets; keep
+  status, checks, next actions, and retrospective current.
 - Keep temporary synthesis in the active task or Git history. Add a repository
   document only when it owns a durable information type that the consolidated
   docs cannot hold cleanly.

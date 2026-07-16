@@ -36,6 +36,8 @@ def test_session_start_hook_mentions_meta_skill():
 
     assert "AGENTS.md" in hook_context(payload)
     assert "nomi-ai-native" in hook_context(payload)
+    assert "pattern-matching" in hook_context(payload)
+    assert "docs/design/pattern_matching.md" in hook_context(payload)
 
 
 def test_user_prompt_hook_routes_ai_native_work():
@@ -50,6 +52,23 @@ def test_user_prompt_hook_routes_ai_native_work():
 
     assert "nomi-ai-native" in hook_context(payload)
     assert "subagents" in hook_context(payload)
+
+
+def test_user_prompt_hook_routes_registered_design_pass():
+    payload = run_hook(
+        ".codex/hooks/user_prompt_submit.py",
+        {
+            "hook_event_name": "UserPromptSubmit",
+            "prompt": "Review pattern matching exhaustiveness and guard scope.",
+            "cwd": str(ROOT),
+        },
+    )
+
+    context = hook_context(payload)
+    assert "nomi-language-design" in context
+    assert "pattern-matching" in context
+    assert "docs/research/pattern_matching.md" in context
+    assert "docs/review/2026-07-16-pattern-matching.md" in context
 
 
 def test_pre_tool_hook_blocks_destructive_git_reset():
@@ -93,3 +112,19 @@ def test_agent_doctor_checks_generated_state_ignore_policy():
 
     results = {result["name"]: result for result in json.loads(completed.stdout)}
     assert results["generated-agent-state-ignored"]["status"] == "pass"
+
+
+def test_agent_doctor_checks_design_pass_registry():
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / ".codex/scripts/agent_doctor.py"), "--json"],
+        text=True,
+        capture_output=True,
+        check=True,
+        cwd=ROOT,
+    )
+
+    results = {result["name"]: result for result in json.loads(completed.stdout)}
+    assert results["design-pass-registry"]["status"] == "pass"
+    assert results["design-pass-agent-integration"]["status"] == "pass"
+    assert results["codex-config-toml"]["status"] == "pass"
+    assert results["opencode-jsonc"]["status"] == "pass"

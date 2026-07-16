@@ -33,8 +33,31 @@ Current skills:
 - `nomi-language-design`: language design synthesis and syntax critique.
 - `nomi-parse`: parser, grammar, and AST lowering changes.
 - `nomi-reduce`: syntactic reduction/desugar work.
+- `nomi-rust-parser`: Rust/Wasm parser frontends, payload contracts, and parity.
 - `nomi-test`: test authoring and multi-interpreter test patterns.
 - `nomi-web`: web playground and Monaco editor work.
+
+## Registered Design Passes
+
+`config/design_passes.json` routes a bounded language topic to one linked
+research document, canonical focused design, target fixture, implementation
+bridge, validation list, and exact next actions. The process contract is
+`docs/orientation/design_pass_workflow.md`; the registry is navigation, not a
+language specification.
+
+Inspect it with:
+
+```bash
+python3 -m tools.design_passes list
+python3 -m tools.design_passes show pattern-matching
+python3 -m tools.design_passes check
+```
+
+Codex/Claude hooks inject open or prompt-matched packets. Other agents should
+check the registry before creating another design note. Every pass ends with a
+retrospective that promotes repeated reasoning into skills/prompts and
+deterministic invariants into checks, while avoiding instruction growth from
+one-off observations.
 
 ## Subagents
 
@@ -43,5 +66,6 @@ native shims under `.claude/agents/*.md` point back to those prompts.
 
 ## Prompt Templates
 
-Reusable prompt templates are canonical under `.codex/prompts/*.md`. Claude
+Reusable prompt templates, including the registered design-pass loop, are
+canonical under `.codex/prompts/*.md`. Claude
 Code command shims under `.claude/commands/*.md` point back to those templates.

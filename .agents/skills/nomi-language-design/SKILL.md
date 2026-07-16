@@ -20,8 +20,11 @@ Read in this order:
    tooling, and deployment contracts.
 5. `docs/design/decisions.md` - accepted, rejected, deferred, and open choices.
 6. `docs/design/target.nomi` - whole-language pressure fixture.
-7. `docs/research/convergences.md` - consolidated evidence.
-8. `docs/research/open_questions.md` - bounded experiments.
+7. `config/design_passes.json` - registered focused-pass routing and status.
+8. `docs/orientation/design_pass_workflow.md` - packet and retrospective
+   contract.
+9. `docs/research/convergences.md` - consolidated evidence.
+10. `docs/research/open_questions.md` - bounded experiments.
 
 Current code and tests describe prototype behavior. They do not define the
 target. The old deep-dive corpus is available in Git history at `08f2aad`; use
@@ -100,6 +103,7 @@ where  constraints only
 ->     function result type only
 =>     explicit input/pattern to expression
 |>     first-argument call insertion only
+..     remaining list/map structure in patterns only
 ?      Option/Result propagation only
 ?. ??  Option handling only
 with   exactly-once resource scope only
@@ -137,6 +141,27 @@ When external research is required, prefer official language specifications,
 official documentation, standards, and primary papers. Extract decisions, not
 tour notes. Update `docs/research/open_questions.md`; do not recreate one deep
 dive per language.
+
+## Registered Design Passes
+
+Before creating a topic note, run:
+
+```bash
+python3 -m tools.design_passes list
+python3 -m tools.design_passes show <id>
+```
+
+Resume the registered packet when one matches. Its research, canonical focused
+design, target fixture, and implementation bridge must link one another and
+remain consistent with the broad design spine. New focused documents are
+justified only when a cross-cutting feature contract no longer fits cleanly in
+the consolidated files.
+
+At the end of every pass, update status, validation, exact next actions, and
+the bridge retrospective required by
+`docs/orientation/design_pass_workflow.md`. Promote repeated reasoning into a
+skill or prompt and deterministic invariants into checks; do not grow agent
+instructions for one-off observations.
 
 ## Feature Admission Packet
 
@@ -218,7 +243,9 @@ After any global decision:
 4. scan the target for punctuation or constructs that now conflict;
 5. update `docs/research/open_questions.md` if an experiment closed;
 6. update `docs/README.md` only if the document topology changed;
-7. map implementation work only after the target reads coherently.
+7. update the matching design-pass packet and registry when one exists;
+8. run `python3 -m tools.design_passes check`;
+9. map implementation work only after the target reads coherently.
 
 Keep target-only code outside `samples/`. Runnable samples are product fixtures
 and require parser/runtime/tests/web agreement.

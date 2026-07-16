@@ -42,11 +42,15 @@ Start with these files before broad design or implementation changes:
 - `docs/design/README.md`: canonical product and language target.
 - `docs/design/syntax.md`: accepted target source forms and notation budget.
 - `docs/design/semantics.md`: implementation-independent behavior.
+- `docs/design/pattern_matching.md`: first registered focused design contract.
 - `docs/design/industrial.md`: package, effect, concurrency, security, tooling,
   deployment, and conformance target.
 - `docs/design/decisions.md`: accepted, rejected, deferred, and open choices.
 - `docs/design/target.nomi`: aspirational coherence fixture; not expected to run
   today.
+- `config/design_passes.json` and
+  `docs/orientation/design_pass_workflow.md`: registered topic packets,
+  validation, migration status, and retrospective loop.
 - `docs/research/convergences.md`: consolidated cross-language evidence.
 - `docs/research/open_questions.md`: bounded experiments; start here before new
   research.
@@ -98,6 +102,9 @@ omits them. In that case, use the repository fallback: read the matching
   `python3 -m tools.jupyter.check_nomi_kernel`
 - Build local RAG context: `python3 -m tools.rag_mcp.cli build`
 - Search local RAG context: `python3 -m tools.rag_mcp.cli search "binding constraints"`
+- List registered design passes: `python3 -m tools.design_passes list`
+- Validate design-pass packets: `python3 -m tools.design_passes check`
+- Check the tracked agent setup: `python3 .codex/scripts/agent_doctor.py`
 - Regenerate web manifest: `python3 scripts/make_web.py`
 - Check web manifest freshness: `python3 scripts/make_web.py --check`
 - Check web/runtime generated artifacts and focused contracts:
@@ -165,6 +172,8 @@ then the broader relevant suite.
 - `config/rag_sources.json`: tracked RAG source map. It points at this repo and
   a placeholder `Local_Programming_Books` folder that can later be replaced by
   the real programming-books path.
+- `config/design_passes.json` and `tools/design_passes.py`: declarative
+  language-design packet registry, inspection CLI, and coherence validator.
 - `.agents/skills/`: generic AI assistant skill definitions shared by Codex,
   OpenCode, deepseek-tui, Claude Code, and other agents that can read a
   `SKILL.md`. See `docs/orientation/ai_collaboration.md` for the full list and
@@ -174,6 +183,8 @@ then the broader relevant suite.
 - `docs/review/`: dated evidence; decisions must be promoted to `docs/design/`.
 - `docs/orientation/ai_collaboration.md`: process note for AI-assisted design,
   implementation, critique, and checkpointing.
+- `docs/orientation/design_pass_workflow.md`: research-to-target-to-bridge loop
+  and evidence-driven self-improvement contract.
 - `local/` and `PLAY/`: scratch/reference material; do not treat as canonical
   unless the user points there directly.
 

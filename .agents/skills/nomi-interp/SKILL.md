@@ -9,6 +9,11 @@ For target semantics, see the `nomi-language-design` skill,
 departure should trace to a target decision; Python behavior is not the default
 authority.
 
+For a registered feature, run `python3 -m tools.design_passes show <id>` and
+read its semantics, target fixture, and bridge before editing runtime behavior.
+The packet's result, scope, diagnostic, and cross-backend expectations outrank
+the current evaluator shape.
+
 For surface/convenience/library/eval separation, read
 `docs/orientation/implementation_guideline.md` before adding evaluator behavior.
 Target conveniences must reduce before eval; semantic core belongs in common

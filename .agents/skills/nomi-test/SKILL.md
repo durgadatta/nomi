@@ -7,6 +7,11 @@ compatibility: deepseek
 For the semantic rationale behind tested behavior, see the
 `nomi-language-design` skill and the research corpus.
 
+For a registered feature, run `python3 -m tools.design_passes show <id>` and
+derive coverage from its accepted/rejected target cases and bridge gates.
+Update registered validation commands when a new conformance surface becomes
+durable.
+
 ## Test directories
 - `prototype/tests/unit/` — Single module/class tests
 - `prototype/tests/functional/` — Retired compatibility bucket; do not add new tests here
