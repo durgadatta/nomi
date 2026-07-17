@@ -147,6 +147,22 @@ function loadCode(code) {
 }
 
 function loadPlain(code) {
+  const existingPlain = byId("nb-cells").classList.contains("plain-mode")
+    && _cellEditors.length === 1
+    && document.querySelector(".nb-cell.plain");
+  if (existingPlain) {
+    byId("run-all-btn").onclick = runPlainCode;
+    setRunButtonLabel("Run");
+    byId("add-cell-btn").style.display = "none";
+    _cellEditors[0].setValue(code);
+    _executionCounter = 0;
+    resetResultPanel(0);
+    _cellEditors[0].focus();
+    layoutAllEditorsSoon();
+    updateFooter();
+    return;
+  }
+
   disposeAllCells();
   byId("run-all-btn").onclick = runPlainCode;
   setRunButtonLabel("Run");
@@ -340,6 +356,7 @@ function deleteCell(idx) {
   byId("nb-scroll").classList.toggle("single-cell", single);
   byId("nb-cells").classList.toggle("single-cell", single);
   _activeCellIndex = Math.max(0, Math.min(idx, _cellEditors.length - 1));
+  setActiveCell(_activeCellIndex);
   layoutAllEditorsSoon();
   saveCurrentDraft(false);
   updateFooter();

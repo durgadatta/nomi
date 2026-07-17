@@ -255,15 +255,6 @@ window.copyCurrentCode = function() {
   copyText(currentDocumentCode(), "Source copied");
 };
 
-// Monaco rejects pending editor work with its sentinel when a document is
-// disposed during sample switches. That cancellation is expected, not a run error.
-addEventListener("unhandledrejection", (event) => {
-  const reason = event.reason;
-  if (reason && (reason.name === "Canceled" || reason.message === "Canceled")) {
-    event.preventDefault();
-  }
-});
-
 document.addEventListener("keydown", (event) => {
   const command = event.metaKey || event.ctrlKey;
   if (command && event.key.toLowerCase() === "s") {
