@@ -1,28 +1,35 @@
-// Nomi Web Playground — cell execution, run all, restart
+// Nomi Web Playground - execution and structured result rendering
 
 function formatTiming(timing, elapsed) {
-  if (!timing) return `last run ${elapsed} ms`;
+  if (!timing) return `${elapsed} ms`;
   const total = Math.max(1, Math.round(timing.total_ms || elapsed));
   if (timing.cache_hit) {
     const cache = Math.max(1, Math.round(timing.cache_ms || 0));
     const evalMs = Math.max(1, Math.round(timing.eval_ms || 0));
-    return `last run ${total} ms · cached ${cache} · eval ${evalMs}`;
+    return `${total} ms total, ${cache} ms cached, ${evalMs} ms eval`;
   }
-  const parse = Math.max(1, Math.round(timing.parse_ms || 0));
-  const desugar = Math.max(1, Math.round(timing.desugar_ms || 0));
-  const evalMs = Math.max(1, Math.round(timing.eval_ms || 0));
-  return `last run ${total} ms · parse ${parse} · desugar ${desugar} · eval ${evalMs}`;
+  const parse = Math.max(0, Math.round(timing.parse_ms || 0));
+  const lower = Math.max(0, Math.round(timing.lower_ms ?? timing.desugar_ms ?? 0));
+  const evalMs = Math.max(0, Math.round(timing.eval_ms || 0));
+  return `${total} ms total, ${parse} ms parse, ${lower} ms lower, ${evalMs} ms eval`;
 }
 
 function runtimeLabel(result) {
-  if (result.backend === "python-ast") return "Pyodide Runtime";
-  return "WASM + JS Runtime";
+  if (result.backend === "python-ast") return "Pyodide";
+  return "WASM + JS";
 }
 
 function formatRuntimeValue(value) {
   if (typeof value === "string") return value;
   if (value === null || value === undefined) return "None";
   if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function formatInspectableValue(value) {
+  if (typeof value === "string") return JSON.stringify(value);
+  if (value === null || value === undefined) return "None";
+  if (typeof value === "object") return JSON.stringify(value, null, 2);
   return String(value);
 }
 
@@ -33,13 +40,206 @@ function outputForResult(result) {
   return "(no output)";
 }
 
+function bindingEntries(result) {
+  return Object.entries((result && result.bindings) || {})
+    .sort(([left], [right]) => left.localeCompare(right));
+}
+
+function diagnosticsForResult(result) {
+  const diagnostics = Array.isArray(result && result.diagnostics) ? result.diagnostics : [];
+  if (diagnostics.length) return diagnostics;
+  if (result && result.error) {
+    return [{ phase: "runtime", severity: "error", message: result.error }];
+  }
+  return [];
+}
+
+function timingEntries(result, elapsed) {
+  const timing = (result && (result.timings || result.timing)) || {};
+  return [
+    ["Parse", timing.parse_ms || 0],
+    ["Lower", timing.lower_ms ?? timing.desugar_ms ?? 0],
+    ["Evaluate", timing.eval_ms || 0],
+  ].map(([label, value]) => [label, Math.max(0, Math.round(Number(value) || 0))]);
+}
+
+function emptyResultMarkup(icon, label) {
+  return `<div class="empty-result"><div class="empty-result-inner"><i data-lucide="${icon}"></i><span>${esc(label)}</span></div></div>`;
+}
+
+function renderBindings(view, entries) {
+  view.innerHTML = "";
+  if (!entries.length) {
+    view.innerHTML = emptyResultMarkup("braces", "No public bindings");
+    return;
+  }
+  const table = document.createElement("div");
+  table.className = "binding-table";
+  entries.forEach(([name, value]) => {
+    const key = document.createElement("div");
+    key.className = "binding-name";
+    key.textContent = name;
+    const rendered = document.createElement("div");
+    rendered.className = "binding-value";
+    rendered.textContent = formatInspectableValue(value);
+    table.append(key, rendered);
+  });
+  view.appendChild(table);
+}
+
+function diagnosticMeta(diagnostic) {
+  const parts = [];
+  if (diagnostic.phase) parts.push(diagnostic.phase);
+  if (diagnostic.span && typeof diagnostic.span === "object") {
+    const line = diagnostic.span.line || diagnostic.span.start_line;
+    const column = diagnostic.span.column || diagnostic.span.start_column;
+    if (line) parts.push(`line ${line}${column ? `:${column}` : ""}`);
+  }
+  if (diagnostic.capability) parts.push(diagnostic.capability);
+  return parts.join(" · ");
+}
+
+function renderDiagnostics(view, diagnostics) {
+  view.innerHTML = "";
+  if (!diagnostics.length) {
+    view.innerHTML = emptyResultMarkup("circle-check", "No diagnostics");
+    return;
+  }
+  const list = document.createElement("div");
+  list.className = "diagnostic-list";
+  diagnostics.forEach((diagnostic) => {
+    const severity = diagnostic.severity === "warning" ? "warning" : "error";
+    const item = document.createElement("article");
+    item.className = `diagnostic ${severity}`;
+    const icon = document.createElement("span");
+    icon.className = "diagnostic-icon";
+    icon.innerHTML = `<i data-lucide="${severity === "warning" ? "triangle-alert" : "circle-x"}"></i>`;
+    const content = document.createElement("div");
+    const message = document.createElement("div");
+    message.className = "diagnostic-message";
+    message.textContent = diagnostic.message || "Unknown diagnostic";
+    content.appendChild(message);
+    const metaText = diagnosticMeta(diagnostic);
+    if (metaText) {
+      const meta = document.createElement("div");
+      meta.className = "diagnostic-meta";
+      meta.textContent = metaText;
+      content.appendChild(meta);
+    }
+    if (diagnostic.source_excerpt) {
+      const excerpt = document.createElement("div");
+      excerpt.className = "diagnostic-meta";
+      excerpt.textContent = diagnostic.source_excerpt;
+      content.appendChild(excerpt);
+    }
+    item.append(icon, content);
+    list.appendChild(item);
+  });
+  view.appendChild(list);
+}
+
+function renderPipeline(view, result, elapsed) {
+  view.innerHTML = "";
+  const pipeline = result.pipeline || {};
+  const fields = [
+    ["Frontend", pipeline.parser_frontend || (result.backend === "python-ast" ? "lark-python" : "rust-fast-ast-wasm")],
+    ["Lowerer", pipeline.lowerer || (result.backend === "python-ast" ? "python-ast" : "js-core-lowerer")],
+    ["Backend", pipeline.eval_backend || result.backend || "unknown"],
+    ["Host", pipeline.host || "browser-worker"],
+  ];
+  const grid = document.createElement("div");
+  grid.className = "pipeline-grid";
+  fields.forEach(([name, value]) => {
+    const key = document.createElement("div");
+    key.className = "pipeline-key";
+    key.textContent = name;
+    const rendered = document.createElement("div");
+    rendered.className = "pipeline-value";
+    rendered.textContent = value;
+    grid.append(key, rendered);
+  });
+  view.appendChild(grid);
+
+  const timings = document.createElement("div");
+  timings.className = "timing-strip";
+  timingEntries(result, elapsed).forEach(([label, value]) => {
+    const segment = document.createElement("div");
+    segment.className = "timing-segment";
+    const name = document.createElement("span");
+    name.textContent = label;
+    const duration = document.createElement("strong");
+    duration.textContent = `${value} ms`;
+    segment.append(name, duration);
+    timings.appendChild(segment);
+  });
+  view.appendChild(timings);
+}
+
+function renderResult(idx, result, elapsed) {
+  const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (!outer) return;
+  const pane = outer.querySelector(".nb-cell-output");
+  const outputView = pane.querySelector('[data-result-view="output"]');
+  const outputPre = outputView.querySelector("pre");
+  const empty = outputView.querySelector(".empty-result");
+  const bindings = bindingEntries(result);
+  const diagnostics = diagnosticsForResult(result);
+
+  _cellResults[idx] = result;
+  outputPre.hidden = false;
+  outputPre.textContent = outputForResult(result);
+  if (empty) empty.hidden = true;
+  pane.classList.add("show");
+  pane.classList.toggle("error", Boolean(result.error));
+  pane.querySelector('[data-result-count="bindings"]').textContent = String(bindings.length);
+  pane.querySelector('[data-result-count="diagnostics"]').textContent = String(diagnostics.length);
+  renderBindings(pane.querySelector('[data-result-view="bindings"]'), bindings);
+  renderDiagnostics(pane.querySelector('[data-result-view="diagnostics"]'), diagnostics);
+  renderPipeline(pane.querySelector('[data-result-view="pipeline"]'), result, elapsed);
+  activateResultTab(idx, result.error ? "diagnostics" : "output");
+  refreshIcons(pane);
+  layoutAllEditorsSoon();
+
+  const timing = result.timings || result.timing;
+  byId("runtime-detail").textContent = `${runtimeLabel(result)} · ${formatTiming(timing, elapsed)}`;
+}
+
+function resetResultPanel(idx) {
+  const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (!outer) return;
+  const pane = outer.querySelector(".nb-cell-output");
+  pane.classList.remove("show", "error");
+  const output = pane.querySelector('[data-result-view="output"]');
+  const pre = output.querySelector("pre");
+  const empty = output.querySelector(".empty-result");
+  pre.hidden = true;
+  pre.textContent = "";
+  if (empty) empty.hidden = false;
+  pane.querySelector('[data-result-view="bindings"]').innerHTML = emptyResultMarkup("braces", "No public bindings");
+  pane.querySelector('[data-result-view="diagnostics"]').innerHTML = emptyResultMarkup("circle-check", "No diagnostics");
+  pane.querySelector('[data-result-view="pipeline"]').innerHTML = emptyResultMarkup("waypoints", "No pipeline result");
+  pane.querySelector('[data-result-count="bindings"]').textContent = "0";
+  pane.querySelector('[data-result-count="diagnostics"]').textContent = "0";
+  activateResultTab(idx, "output");
+  refreshIcons(pane);
+  _cellResults[idx] = null;
+}
+
+function setCellRunning(outer, running) {
+  const button = outer && outer.querySelector(".nb-cell-run");
+  if (!button) return;
+  button.classList.toggle("running", running);
+  const label = button.querySelector("span");
+  if (label) label.textContent = running ? "Running" : "Run";
+}
+
 async function runCell(idx, advance, options) {
-  if (!_ready || !_runFn) return;
+  if (!_ready || !_runFn) return { ok: false };
   const manageControls = !(options && options.batch);
   const editor = _cellEditors[idx];
-  if (!editor) return;
-  const code = editor.getValue().trim();
-  if (!code) return;
+  if (!editor) return { ok: false };
+  const code = editor.getValue();
+  if (!code.trim()) return { ok: true };
 
   if (manageControls) {
     setControlsDisabled(true);
@@ -47,56 +247,40 @@ async function runCell(idx, advance, options) {
   }
 
   const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
-  const runBtn = outer.querySelector(".nb-cell-run");
-  const timeEl = outer.querySelector(".nb-cell-time");
-  const outDiv = outer.querySelector(".nb-cell-output");
-  const outNum = outDiv.querySelector(".out-num");
-  const outPre = outDiv.querySelector("pre");
-  runBtn.classList.add("running");
-  runBtn.textContent = "...";
-
+  const time = outer.querySelector(".nb-cell-time");
+  setCellRunning(outer, true);
   const start = performance.now();
+  let ok = false;
+
   try {
-    const r = await _runFn(code);
+    const result = await _runFn(code);
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    const error = r.error || "";
-    const output = outputForResult(r);
-
     _executionCounter++;
     outer.dataset.execCount = _executionCounter;
     outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
-    timeEl.textContent = `${elapsed} ms`;
-    outNum.textContent = _executionCounter;
-    outPre.textContent = output;
-    outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
-    layoutAllEditorsSoon();
-
-    if (r.session) {
-      byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
+    time.textContent = `${elapsed} ms`;
+    renderResult(idx, result, elapsed);
+    ok = !result.error;
+  } catch (error) {
+    const elapsed = Math.max(1, Math.round(performance.now() - start));
+    _executionCounter++;
+    outer.dataset.execCount = _executionCounter;
+    outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
+    time.textContent = `${elapsed} ms`;
+    renderResult(idx, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed);
+  } finally {
+    setCellRunning(outer, false);
+    if (manageControls) {
+      setControlsDisabled(false);
+      setStatus(ok ? "ready" : "error", ok ? "ready" : "error");
     }
-  } catch (e) {
-    const elapsed = Math.max(1, Math.round(performance.now() - start));
-    _executionCounter++;
-    outer.dataset.execCount = _executionCounter;
-    outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
-    timeEl.textContent = `${elapsed} ms`;
-    outNum.textContent = _executionCounter;
-    outPre.textContent = String(e);
-    outDiv.className = "nb-cell-output error show";
-    layoutAllEditorsSoon();
   }
 
-  runBtn.classList.remove("running");
-  runBtn.innerHTML = "&#9654; Run";
-  if (manageControls) {
-    setControlsDisabled(false);
-    setStatus("ready", "ready");
-  }
-
-  if (advance) {
+  if (advance && ok) {
     const nextIdx = idx + 1;
     if (nextIdx < _cellEditors.length) {
       setActiveCell(nextIdx);
+      _cellEditors[nextIdx].focus();
       document.querySelector(`.nb-cell[data-index="${nextIdx}"]`).scrollIntoView({ behavior: "smooth", block: "center" });
     } else {
       addCell("");
@@ -104,6 +288,7 @@ async function runCell(idx, advance, options) {
       scrollToBottom();
     }
   }
+  return { ok };
 }
 
 async function runAllCells() {
@@ -111,76 +296,66 @@ async function runAllCells() {
   setControlsDisabled(true);
   setStatus("running", "running");
   _executionCounter = 0;
-  document.querySelectorAll(".nb-cell").forEach(el => {
-    el.dataset.execCount = "";
-    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
-  });
-  await _resetFn();
+  clearNotebookOutputs();
 
-  for (let i = 0; i < _cellEditors.length; i++) {
-    await runCell(i, false, { batch: true });
-    const outDiv = document.querySelector(`.nb-cell-output[data-idx="${i}"]`);
-    if (outDiv && outDiv.classList.contains("error")) {
-      setStatus("error", "error");
-      setControlsDisabled(false);
-      gotoCell(i);
-      return;
+  try {
+    await _resetFn();
+    for (let idx = 0; idx < _cellEditors.length; idx++) {
+      const result = await runCell(idx, false, { batch: true });
+      if (!result.ok) {
+        setStatus("error", "error");
+        gotoCell(idx);
+        return;
+      }
     }
+    setStatus("ready", "ready");
+  } catch (error) {
+    byId("runtime-detail").textContent = String(error);
+    setStatus("error", "error");
+  } finally {
+    setControlsDisabled(false);
   }
-  setStatus("ready", "ready");
-  setControlsDisabled(false);
 }
 
 async function runPlainCode() {
-  if (!_ready || !_runFn) return;
+  if (!_ready || !_runFn || !_resetFn) return;
   const editor = _cellEditors[0];
-  if (!editor) return;
-  const code = editor.getValue().trim();
-  if (!code) return;
-
+  if (!editor || !editor.getValue().trim()) return;
   setControlsDisabled(true);
   setStatus("running", "running");
 
-  const outDiv = document.querySelector(".nb-cell-output[data-idx='0']");
-  const outPre = outDiv.querySelector("pre");
-
   const start = performance.now();
+  let ok = false;
   try {
-    const r = await _runFn(code);
+    await _resetFn();
+    const result = await _runFn(editor.getValue());
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    const error = r.error || "";
-    const output = outputForResult(r);
-
-    outPre.textContent = output;
-    outDiv.className = error ? "nb-cell-output error show" : "nb-cell-output show";
-    layoutAllEditorsSoon();
-
-    if (r.session) {
-      byId("runtime-detail").textContent = `${runtimeLabel(r)} · session ${r.session} · ${formatTiming(r.timing, elapsed)}`;
-    }
-  } catch (e) {
-    outPre.textContent = String(e);
-    outDiv.className = "nb-cell-output error show";
-    layoutAllEditorsSoon();
+    renderResult(0, result, elapsed);
+    ok = !result.error;
+  } catch (error) {
+    const elapsed = Math.max(1, Math.round(performance.now() - start));
+    renderResult(0, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed);
+  } finally {
+    setControlsDisabled(false);
+    setStatus(ok ? "ready" : "error", ok ? "ready" : "error");
   }
-
-  setControlsDisabled(false);
-  setStatus("ready", "ready");
 }
 
 function gotoCell(idx) {
-  const el = document.querySelector(`.nb-cell[data-index="${idx}"]`);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  const cell = document.querySelector(`.nb-cell[data-index="${idx}"]`);
+  if (cell) cell.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function clearNotebookOutputs() {
   _executionCounter = 0;
-  document.querySelectorAll(".nb-cell").forEach(el => {
-    el.dataset.execCount = "";
-    el.querySelector(".nb-cell-index").textContent = "In[ ]:";
+  document.querySelectorAll(".nb-cell").forEach((cell, idx) => {
+    cell.dataset.execCount = "";
+    const index = cell.querySelector(".nb-cell-index");
+    if (index) index.textContent = "In[ ]:";
+    const time = cell.querySelector(".nb-cell-time");
+    if (time) time.textContent = "";
+    resetResultPanel(idx);
   });
-  document.querySelectorAll(".nb-cell-output").forEach(d => d.className = "nb-cell-output");
-  document.querySelectorAll(".nb-cell-time").forEach(d => d.textContent = "");
 }
 
 window.resetRuntime = async function() {
@@ -188,9 +363,9 @@ window.resetRuntime = async function() {
   setControlsDisabled(true);
   setStatus("running", "running");
   try {
-    const result = await _resetFn();
+    await _resetFn();
     clearNotebookOutputs();
-    byId("runtime-detail").textContent = "Runtime reset";
+    byId("runtime-detail").textContent = "Runtime state reset";
     setStatus("ready", "ready");
   } catch (error) {
     byId("runtime-detail").textContent = String(error);
@@ -203,7 +378,7 @@ window.resetRuntime = async function() {
 window.cancelRun = async function() {
   if (!_ready) return;
   setStatus("running", "running");
-  byId("runtime-detail").textContent = "Cancelling runtime request...";
+  byId("runtime-detail").textContent = "Cancelling runtime request";
   await cancelRuntime("Runtime request cancelled by user");
 };
 
@@ -211,13 +386,13 @@ window.restartWorker = async function() {
   if (!_ready) return;
   setControlsDisabled(true);
   setStatus("running", "running");
-  byId("runtime-detail").textContent = "Restarting runtime...";
+  byId("runtime-detail").textContent = "Restarting runtime";
   try {
     _ready = false;
     await startRuntimeWorker();
     _ready = true;
     clearNotebookOutputs();
-    byId("runtime-detail").textContent = "Runtime restarted";
+    byId("runtime-detail").textContent = "Runtime worker restarted";
     setStatus("ready", "ready");
   } catch (error) {
     _ready = false;
@@ -230,7 +405,10 @@ window.restartWorker = async function() {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
+    bindingEntries,
+    diagnosticsForResult,
     formatRuntimeValue,
     outputForResult,
+    timingEntries,
   };
 }

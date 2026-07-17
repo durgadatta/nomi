@@ -106,6 +106,8 @@ const SAMPLE_DESCRIPTIONS = {
   "samples/notebook_intro.nomi.nb": "Notebook cells example."
 };
 
+let _draftSaveTimer = null;
+
 function sampleKey(path) {
   return path.replace(/^samples\//,"").replace(/\.nomi(\.nb)?$/,"").replace(/_/g,"-");
 }
@@ -115,6 +117,7 @@ function isNotebookSource(code) {
 }
 
 async function loadSampleSources() {
+  restoreScratchDocuments();
   try {
     const resp = await fetch("./manifest.json");
     if (!resp.ok) return;
@@ -131,32 +134,187 @@ async function loadSampleSources() {
   } catch (e) { console.warn("[web] Could not load samples from manifest", e); }
 }
 
+function restoreScratchDocuments() {
+  const scratchDocs = _workbenchState.scratchDocs || {};
+  for (const [key, item] of Object.entries(scratchDocs)) {
+    DEMOS[key] = {
+      title: item.title || `${key}.nomi`,
+      desc: "Local browser draft.",
+      code: "",
+      local: true,
+    };
+  }
+}
+
+function documentCode(name) {
+  if (Object.prototype.hasOwnProperty.call(_workbenchState.drafts, name)) {
+    return _workbenchState.drafts[name];
+  }
+  return DEMOS[name] ? DEMOS[name].code : "";
+}
+
+function hasDocumentDraft(name) {
+  const demo = DEMOS[name];
+  if (!demo) return false;
+  if (!Object.prototype.hasOwnProperty.call(_workbenchState.drafts, name)) return false;
+  return demo.local || _workbenchState.drafts[name] !== demo.code;
+}
+
 function buildFileList() {
   const list = byId("file-list");
   list.innerHTML = "";
   const entries = Object.entries(DEMOS);
   byId("sample-count").textContent = `${entries.length} files`;
-  for (const [name, demo] of entries) {
+  const groups = [
+    ["Local", entries.filter(([, demo]) => demo.local)],
+    ["Examples", entries.filter(([, demo]) => !demo.local)],
+  ];
+
+  for (const [label, groupEntries] of groups) {
+    if (!groupEntries.length) continue;
+    const heading = document.createElement("span");
+    heading.className = "sample-group-label";
+    heading.dataset.sampleGroup = label.toLowerCase();
+    heading.textContent = label;
+    list.appendChild(heading);
+
+    for (const [name, demo] of groupEntries) {
     const el = document.createElement("button");
-    el.type = "button"; el.className = "sample"; el.dataset.sample = name;
+    el.type = "button";
+    el.className = "sample";
+    el.dataset.sample = name;
+    el.dataset.search = `${demo.title} ${demo.desc}`.toLowerCase();
     el.onclick = () => loadFile(name);
-    el.innerHTML = `<span class="sample-name">${esc(demo.title)}</span><span class="sample-meta">${lineCount(demo.code)} lines</span><span class="sample-desc">${esc(demo.desc)}</span>`;
+    el.classList.toggle("has-draft", hasDocumentDraft(name));
+    el.innerHTML = `<span class="sample-icon"><i data-lucide="${demo.local ? "file-pen-line" : "file-code-2"}"></i></span><span class="sample-name">${esc(demo.title)}</span><span class="sample-meta">${lineCount(documentCode(name))} lines</span><span class="sample-desc">${esc(demo.desc)}</span>`;
     list.appendChild(el);
+    }
+  }
+
+  const empty = document.createElement("div");
+  empty.className = "sample-empty";
+  empty.id = "sample-empty";
+  empty.hidden = true;
+  empty.textContent = "No matching samples";
+  list.appendChild(empty);
+  refreshIcons(list);
+  updateSampleSelection();
+}
+
+function updateSampleSelection() {
+  document.querySelectorAll(".sample").forEach((el) => {
+    el.classList.toggle("active", el.dataset.sample === _currentSample);
+    el.classList.toggle("has-draft", hasDocumentDraft(el.dataset.sample));
+    const meta = el.querySelector(".sample-meta");
+    if (meta) meta.textContent = `${lineCount(documentCode(el.dataset.sample))} lines`;
+  });
+}
+
+window.filterSamples = function(value) {
+  const query = String(value || "").trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll(".sample").forEach((el) => {
+    const matches = !query || el.dataset.search.includes(query);
+    el.classList.toggle("hidden", !matches);
+    if (matches) visible++;
+  });
+  document.querySelectorAll(".sample-group-label").forEach((heading) => {
+    let sibling = heading.nextElementSibling;
+    let groupVisible = false;
+    while (sibling && !sibling.classList.contains("sample-group-label")) {
+      if (sibling.classList.contains("sample") && !sibling.classList.contains("hidden")) groupVisible = true;
+      sibling = sibling.nextElementSibling;
+    }
+    heading.hidden = !groupVisible;
+  });
+  byId("sample-empty").hidden = visible !== 0;
+  byId("sample-count").textContent = query ? `${visible} found` : `${Object.keys(DEMOS).length} files`;
+};
+
+function updateDocumentState() {
+  const demo = DEMOS[_currentSample];
+  if (!demo) return;
+  const dirty = hasDocumentDraft(_currentSample);
+  const state = byId("document-state");
+  state.textContent = demo.local ? "Local" : dirty ? "Draft" : "Sample";
+  state.classList.toggle("dirty", dirty);
+  byId("revert-btn").disabled = demo.local ? !currentDocumentCode().trim() : !dirty;
+  byId("document-kind").textContent = _notebookMode ? "Notebook" : "Program";
+  byId("document-lines").textContent = `${lineCount(currentDocumentCode())} lines`;
+  updateSampleSelection();
+}
+
+function saveCurrentDraft(immediate) {
+  if (_documentLoading || !_cellEditors.length || !DEMOS[_currentSample]) return;
+  const demo = DEMOS[_currentSample];
+  const code = currentDocumentCode();
+  if (!demo.local && code === demo.code) {
+    delete _workbenchState.drafts[_currentSample];
+  } else {
+    _workbenchState.drafts[_currentSample] = code;
+  }
+  updateDocumentState();
+
+  if (_draftSaveTimer) clearTimeout(_draftSaveTimer);
+  if (immediate) {
+    persistWorkbenchState();
+  } else {
+    _draftSaveTimer = setTimeout(persistWorkbenchState, 250);
   }
 }
 
-window.loadFile = function(name) {
+window.newScratch = function() {
+  saveCurrentDraft(true);
+  const scratchDocs = _workbenchState.scratchDocs || {};
+  let number = Object.keys(scratchDocs).length + 1;
+  let key = `scratch-${number}`;
+  while (DEMOS[key]) {
+    number++;
+    key = `scratch-${number}`;
+  }
+  const title = `scratch-${number}.nomi`;
+  _workbenchState.scratchDocs = { ...scratchDocs, [key]: { title } };
+  _workbenchState.drafts[key] = "";
+  DEMOS[key] = { title, desc: "Local browser draft.", code: "", local: true };
+  buildFileList();
+  persistWorkbenchState();
+  loadFile(key);
+};
+
+window.revertCurrentDocument = function() {
+  const demo = DEMOS[_currentSample];
+  if (!demo || !hasDocumentDraft(_currentSample)) return;
+  if (!window.confirm(`Discard local changes to ${demo.title}?`)) return;
+  if (demo.local) {
+    _workbenchState.drafts[_currentSample] = "";
+  } else {
+    delete _workbenchState.drafts[_currentSample];
+  }
+  persistWorkbenchState();
+  loadFile(_currentSample, { skipSave: true });
+  showToast("Local changes discarded");
+};
+
+window.loadFile = function(name, options) {
   if (!DEMOS[name]) return;
+  if (!options || !options.skipSave) saveCurrentDraft(true);
   _currentSample = name;
   const demo = DEMOS[name];
   byId("current-file").textContent = demo.title;
-  document.querySelectorAll(".sample").forEach(el => el.classList.toggle("active", el.dataset.sample === name));
+  const code = documentCode(name);
 
-  const nb = demo.title.endsWith(".nomi.nb") || isNotebookSource(demo.code);
+  const nb = demo.title.endsWith(".nomi.nb") || isNotebookSource(code);
   _notebookMode = nb;
+  _documentLoading = true;
   if (nb) {
-    loadCode(demo.code);
+    loadCode(code);
   } else {
-    loadPlain(demo.code);
+    loadPlain(code);
   }
+  _documentLoading = false;
+  _workbenchState.active = name;
+  persistWorkbenchState();
+  updateDocumentState();
+  updateSampleSelection();
+  if (matchMedia("(max-width: 980px)").matches) toggleSidebar(false);
 };

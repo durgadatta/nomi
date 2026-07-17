@@ -284,12 +284,22 @@ tree for compatibility work. It is a static site: sample programs are loaded
 from `samples/*.nomi`, and the legacy Python-hosted bridge loads prototype
 files listed in `web/manifest.json`.
 
-The playground has two execution modes. `Run File` and `Ctrl+Enter` evaluate
-the current editor contents from a clean interpreter session. `# %%` comments
-split a file into lightweight cells; `Run Cell` and `Shift+Enter` evaluate the
-current cell against the browser session, while `Run All` restarts that session
-and evaluates all cells in order. The `Cells` result tab keeps a compact
-input/output history beside the plain output and bindings views.
+The playground has two execution modes. `Run` and `Ctrl+Enter` evaluate the
+current program from a clean runtime session. `# %%` comments split a file into lightweight cells;
+`Ctrl+Enter` evaluates the active cell against the browser session,
+`Shift+Enter` evaluates and advances, and `Run all` restarts that session before
+evaluating the cells in order. Each notebook cell keeps its own result record.
+
+The browser workbench exposes the runtime result record directly. Each run has
+`Output`, `Bindings`, `Diagnostics`, and `Pipeline` views; the last view names
+the parser/lowerer/backend/host path and reports parse, lower, and evaluation
+timings. Samples are searchable, editor/result and sample panes are resizable,
+and the sidebar becomes a dismissible drawer on narrow screens.
+
+Edits are kept as browser-local drafts per sample. `New scratch` creates a
+local-only Nomi file, while the revert action returns a tracked sample to its
+manifest source. These drafts are convenience state, not repository artifacts
+or a persistence API.
 
 Use the launcher for local testing:
 

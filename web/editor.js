@@ -79,12 +79,12 @@ async function initMonaco() {
           { token: "", foreground: "eef3ef" },
         ],
         colors: {
-          "editor.background": "#181c1a", "editor.foreground": "#eef3ef",
+          "editor.background": "#171c19", "editor.foreground": "#eef3ef",
           "editor.lineHighlightBackground": "#202621", "editor.selectionBackground": "#405146",
           "editor.inactiveSelectionBackground": "#2d3530", "editorCursor.foreground": "#a7d67a",
           "editorLineNumber.foreground": "#657168", "editorLineNumber.activeForeground": "#c8d2cc",
           "editorIndentGuide.background1": "#2d3530", "editorIndentGuide.activeBackground1": "#526259",
-          "editorGutter.background": "#181c1a", "editorWidget.background": "#1f2321", "editorWidget.border": "#3c443f",
+          "editorGutter.background": "#171c19", "editorWidget.background": "#1f2321", "editorWidget.border": "#3c443f",
         },
       });
       resolve();

@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171a19">
 <title>Nomi Playground</title>
+<link rel="icon" href="data:,">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-<div class="app">
+<div class="app" id="app-shell">
   <div class="loading-overlay" id="loading">
-    <div class="loading-card">
+    <div class="loading-card" role="status" aria-live="polite">
       <div class="loader-row">
-        <div class="spinner"></div>
+        <div class="spinner" aria-hidden="true"></div>
         <div>
           <strong>Starting Nomi</strong>
           <p id="loading-msg">Loading runtime...</p>
@@ -22,64 +25,127 @@
   </div>
 
   <header class="topbar">
-    <div class="brand">
-      <div class="mark">N</div>
-      <div class="brand-text">
-        <strong>Nomi Playground</strong>
-        <span>Browser notebook</span>
+    <div class="brand-group">
+      <button type="button" class="icon-button sidebar-toggle" id="sidebar-toggle"
+              onclick="toggleSidebar()" title="Toggle sample browser" aria-label="Toggle sample browser"
+              aria-controls="sidebar" aria-expanded="true">
+        <i data-lucide="panel-left"></i>
+      </button>
+      <div class="brand" aria-label="Nomi Playground">
+        <div class="mark" aria-hidden="true">N</div>
+        <div class="brand-text">
+          <strong>Nomi</strong>
+          <span>Playground</span>
+        </div>
       </div>
     </div>
-    <div class="status-pill" id="status-pill">
-      <span class="status-dot"></span>
-      <span id="status">initializing</span>
+
+    <div class="document-title" title="Current document">
+      <i data-lucide="file-code-2" aria-hidden="true"></i>
+      <strong id="current-file">demo_terse.nomi</strong>
+      <span class="document-state" id="document-state">Sample</span>
     </div>
-    <div class="top-actions">
-      <button type="button" onclick="loadFile('terse')">Demo</button>
-      <button type="button" onclick="loadFile('demo')">Tour</button>
-      <button type="button" onclick="loadFile('notebook-intro')">Notebook</button>
-      <button type="button" onclick="loadFile('block')">Blocks</button>
-      <button type="button" onclick="loadFile('constraint')">Constraints</button>
+
+    <div class="topbar-actions">
+      <div class="status-pill" id="status-pill" role="status" aria-live="polite">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="status">initializing</span>
+      </div>
+      <button type="button" class="icon-button cancel-button" id="cancel-btn" disabled
+              onclick="cancelRun()" title="Cancel execution" aria-label="Cancel execution">
+        <i data-lucide="square"></i>
+      </button>
+      <button type="button" class="primary-button" id="run-all-btn" disabled onclick="runAllCells()"
+              title="Run current program" aria-label="Run current program">
+        <i data-lucide="play"></i>
+        <span data-run-label>Run</span>
+      </button>
     </div>
   </header>
 
   <main class="workspace">
     <aside class="sidebar" id="sidebar">
       <div class="panel-heading">
-        <h2>Samples</h2>
-        <span id="sample-count">0</span>
+        <h2>Workspace</h2>
+        <span id="sample-count">0 files</span>
       </div>
-      <div class="sample-list" id="file-list"></div>
+      <div class="sidebar-tools">
+        <label class="search-field" for="sample-search">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input id="sample-search" type="search" placeholder="Find a sample" autocomplete="off"
+                 oninput="filterSamples(this.value)">
+        </label>
+        <button type="button" class="new-scratch-button" onclick="newScratch()"
+                title="Create local scratch file" aria-label="Create local scratch file">
+          <i data-lucide="file-plus-2"></i>
+          <span>New scratch</span>
+        </button>
+      </div>
+      <nav class="sample-list" id="file-list" aria-label="Nomi samples"></nav>
     </aside>
-    <div class="resize-handle" id="resize-l"></div>
-    <div class="nb-scroll" id="nb-scroll">
+    <button type="button" class="sidebar-scrim" id="sidebar-scrim" onclick="toggleSidebar(false)"
+            aria-label="Close sample browser"></button>
+    <div class="resize-handle" id="resize-l" role="separator" aria-orientation="vertical"
+         aria-label="Resize sample browser"></div>
+
+    <section class="workbench" aria-label="Nomi workbench">
       <div class="nb-toolbar">
-        <span class="nb-title" id="current-file">demo.nomi</span>
-        <button type="button" id="reset-btn" disabled onclick="resetRuntime()">Reset</button>
-        <button type="button" id="restart-btn" disabled onclick="restartWorker()">Restart Worker</button>
-        <button type="button" id="cancel-btn" disabled onclick="cancelRun()">Cancel</button>
-        <button type="button" class="run-button" id="run-all-btn" disabled onclick="runAllCells()">Run All</button>
-        <button type="button" id="add-cell-btn" onclick="addCell()">+ Cell</button>
+        <div class="document-meta">
+          <span class="mode-badge" id="document-kind">Program</span>
+          <span id="document-lines">0 lines</span>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" class="icon-button" id="copy-code-btn" onclick="copyCurrentCode()"
+                  title="Copy source" aria-label="Copy source">
+            <i data-lucide="copy"></i>
+          </button>
+          <button type="button" class="icon-button" id="revert-btn" onclick="revertCurrentDocument()"
+                  title="Revert local changes" aria-label="Revert local changes" disabled>
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+          <span class="toolbar-divider" aria-hidden="true"></span>
+          <button type="button" class="icon-button" id="reset-btn" disabled onclick="resetRuntime()"
+                  title="Reset runtime state" aria-label="Reset runtime state">
+            <i data-lucide="eraser"></i>
+          </button>
+          <button type="button" class="icon-button" id="restart-btn" disabled onclick="restartWorker()"
+                  title="Restart runtime worker" aria-label="Restart runtime worker">
+            <i data-lucide="refresh-cw"></i>
+          </button>
+          <button type="button" class="command-button" id="add-cell-btn" onclick="addCell()">
+            <i data-lucide="plus"></i>
+            <span>Cell</span>
+          </button>
+        </div>
       </div>
-      <div class="nb-cells" id="nb-cells"></div>
-    </div>
+      <div class="nb-scroll" id="nb-scroll">
+        <div class="nb-cells" id="nb-cells"></div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <span id="cell-detail">0 cells</span>
+    <span class="runtime-profile"><i data-lucide="cpu" aria-hidden="true"></i>WASM + JS</span>
+    <span class="footer-separator" aria-hidden="true"></span>
+    <span id="runtime-detail">Starting runtime</span>
     <span class="spacer"></span>
-    <span id="runtime-detail">WASM + JS Runtime</span>
+    <span id="cursor-detail">Ln 1, Col 1</span>
+    <span class="footer-separator" aria-hidden="true"></span>
+    <span id="cell-detail">0 cells</span>
   </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
-<script src="app.js"></script>
-<script src="demos.js"></script>
-<script src="cells.js"></script>
-<script src="runtime.js"></script>
-<script src="editor.js"></script>
+<script src="app.js?v=2"></script>
+<script src="demos.js?v=2"></script>
+<script src="cells.js?v=2"></script>
+<script src="runtime.js?v=2"></script>
+<script src="editor.js?v=2"></script>
 <script>
 init().then(() => {
   setupResize(byId("resize-l"), byId("sidebar"));
-  addEventListener("resize", layoutAllEditorsSoon);
+  addEventListener("resize", handleViewportChange);
 }).catch((error) => {
   console.error(error);
   byId("loading-msg").textContent = error && error.message ? error.message : String(error);
