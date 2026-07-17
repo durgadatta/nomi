@@ -3,11 +3,14 @@
 
 export function parse_nomi(source: string): string;
 
+export function parse_nomi_pattern(source: string): string;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly parse_nomi: (a: number, b: number) => [number, number, number, number];
+    readonly parse_nomi_pattern: (a: number, b: number) => [number, number, number, number];
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;

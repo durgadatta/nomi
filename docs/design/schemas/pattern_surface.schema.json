@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nomi-lang.dev/schemas/pattern-surface-v1.json",
+  "title": "Nomi Pattern Surface v1",
+  "description": "Lossless, frontend-neutral target-pattern artifact. Spans are half-open UTF-8 byte offsets into source.",
+  "x-nomi-status": "experimental",
+  "x-nomi-span-unit": "utf-8-byte",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "source", "root", "diagnostics"],
+  "properties": {
+    "schema": {"const": "nomi.pattern-surface"},
+    "version": {"const": 1},
+    "source": {"type": "string"},
+    "root": {},
+    "diagnostics": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/PatternDiagnostic"}
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "root": {"$ref": "#/$defs/Pattern"},
+        "diagnostics": {"maxItems": 0}
+      }
+    },
+    {
+      "properties": {
+        "root": {"type": "null"},
+        "diagnostics": {"minItems": 1}
+      }
+    }
+  ],
+  "$defs": {
+    "Name": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+    },
+    "CaptureName": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9_]*$"
+        },
+        {
+          "not": {
+            "enum": [
+              "actor", "and", "as", "async", "await", "break", "catch",
+              "check", "class", "continue", "data", "defer", "effect",
+              "else", "example", "extend", "false", "for", "from", "func",
+              "generator", "if", "import", "in", "interface", "macro",
+              "match", "none", "not", "note", "or", "panic", "protocol",
+              "pub", "raise", "return", "set", "then", "trait", "true",
+              "type", "uses", "var", "when", "where", "while", "with",
+              "yield"
+            ]
+          }
+        }
+      ]
+    },
+    "PatternSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"type": "integer", "minimum": 0},
+        "end": {"type": "integer", "minimum": 0}
+      }
+    },
+    "PatternDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "span"],
+      "properties": {
+        "code": {
+          "enum": [
+            "InvalidPatternSyntax",
+            "DuplicatePatternCapture",
+            "AlternativeBindingMismatch",
+            "MultiplePatternRemainders",
+            "MapPatternRestNotLast",
+            "DuplicateMapPatternKey"
+          ]
+        },
+        "message": {"type": "string", "minLength": 1},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "PatternRest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capture", "span"],
+      "properties": {
+        "capture": {
+          "oneOf": [
+            {"$ref": "#/$defs/CaptureName"},
+            {"type": "null"}
+          ]
+        },
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "WildcardPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "span"],
+      "properties": {
+        "kind": {"const": "WildcardPattern"},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "CapturePattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "span"],
+      "properties": {
+        "kind": {"const": "CapturePattern"},
+        "name": {"$ref": "#/$defs/CaptureName"},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "LiteralPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "literal_kind", "value", "lexeme", "span"],
+      "properties": {
+        "kind": {"const": "LiteralPattern"},
+        "literal_kind": {
+          "enum": ["none", "boolean", "integer", "text", "bytes"]
+        },
+        "value": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "boolean"},
+            {"type": "string"}
+          ]
+        },
+        "lexeme": {"type": "string", "minLength": 1},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "NominalPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "arguments", "payload_syntax", "span"],
+      "properties": {
+        "kind": {"const": "NominalPattern"},
+        "path": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {"type": "string", "pattern": "^[A-Z][A-Za-z0-9_]*$"}
+          ],
+          "items": {"$ref": "#/$defs/Name"}
+        },
+        "arguments": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Pattern"}
+        },
+        "payload_syntax": {"type": "boolean"},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "TuplePattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "items", "span"],
+      "properties": {
+        "kind": {"const": "TuplePattern"},
+        "items": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Pattern"}
+        },
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "ListPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "prefix", "rest", "suffix", "span"],
+      "properties": {
+        "kind": {"const": "ListPattern"},
+        "prefix": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Pattern"}
+        },
+        "rest": {
+          "oneOf": [
+            {"$ref": "#/$defs/PatternRest"},
+            {"type": "null"}
+          ]
+        },
+        "suffix": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Pattern"}
+        },
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "MapPatternEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "pattern", "span"],
+      "properties": {
+        "key": {"$ref": "#/$defs/LiteralPattern"},
+        "pattern": {"$ref": "#/$defs/Pattern"},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "MapPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "entries", "openness", "rest", "span"],
+      "properties": {
+        "kind": {"const": "MapPattern"},
+        "entries": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/MapPatternEntry"}
+        },
+        "openness": {"enum": ["exact", "open"]},
+        "rest": {
+          "oneOf": [
+            {"$ref": "#/$defs/PatternRest"},
+            {"type": "null"}
+          ]
+        },
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"openness": {"const": "exact"}}},
+          "then": {"properties": {"rest": {"type": "null"}}}
+        },
+        {
+          "if": {"properties": {"openness": {"const": "open"}}},
+          "then": {"properties": {"rest": {"$ref": "#/$defs/PatternRest"}}}
+        }
+      ]
+    },
+    "OrPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "alternatives", "span"],
+      "properties": {
+        "kind": {"const": "OrPattern"},
+        "alternatives": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/Pattern"}
+        },
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "AsPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "pattern", "capture", "capture_span", "span"],
+      "properties": {
+        "kind": {"const": "AsPattern"},
+        "pattern": {"$ref": "#/$defs/Pattern"},
+        "capture": {"$ref": "#/$defs/CaptureName"},
+        "capture_span": {"$ref": "#/$defs/PatternSpan"},
+        "span": {"$ref": "#/$defs/PatternSpan"}
+      }
+    },
+    "Pattern": {
+      "oneOf": [
+        {"$ref": "#/$defs/WildcardPattern"},
+        {"$ref": "#/$defs/CapturePattern"},
+        {"$ref": "#/$defs/LiteralPattern"},
+        {"$ref": "#/$defs/NominalPattern"},
+        {"$ref": "#/$defs/TuplePattern"},
+        {"$ref": "#/$defs/ListPattern"},
+        {"$ref": "#/$defs/MapPattern"},
+        {"$ref": "#/$defs/OrPattern"},
+        {"$ref": "#/$defs/AsPattern"}
+      ]
+    }
+  }
+}

@@ -2,6 +2,7 @@ pub(crate) mod ast;
 mod error;
 pub(crate) mod lexer;
 pub(crate) mod parser;
+mod pattern;
 mod payload;
 pub(crate) mod token;
 
@@ -10,6 +11,7 @@ use wasm_bindgen::prelude::*;
 use ast::module_json;
 use lexer::lex;
 use parser::Parser;
+pub use pattern::parse_pattern_to_json;
 
 pub fn parse_to_json(source: &str) -> Result<String, String> {
     let tokens = lex(source).map_err(|e| e.to_string())?;
@@ -22,4 +24,9 @@ pub fn parse_to_json(source: &str) -> Result<String, String> {
 #[wasm_bindgen]
 pub fn parse_nomi(source: &str) -> Result<String, JsValue> {
     parse_to_json(source).map_err(|e| JsValue::from_str(&e))
+}
+
+#[wasm_bindgen]
+pub fn parse_nomi_pattern(source: &str) -> Result<String, JsValue> {
+    parse_pattern_to_json(source).map_err(|e| JsValue::from_str(&e))
 }

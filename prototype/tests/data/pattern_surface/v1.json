@@ -1,0 +1,434 @@
+{
+  "schema": "nomi.pattern-surface-fixtures",
+  "version": 1,
+  "pattern_surface_schema": "nomi.pattern-surface",
+  "pattern_surface_version": 1,
+  "positive": [
+    {
+      "id": "wildcard",
+      "source": "_",
+      "expected": {
+        "kind": "WildcardPattern",
+        "captures": [],
+        "node_kinds": ["WildcardPattern"],
+        "span": {"start": 0, "end": 1}
+      }
+    },
+    {
+      "id": "capture",
+      "source": "record",
+      "expected": {
+        "kind": "CapturePattern",
+        "captures": ["record"],
+        "node_kinds": ["CapturePattern"],
+        "span": {"start": 0, "end": 6}
+      }
+    },
+    {
+      "id": "literal_tuple",
+      "source": "(none, true, -1_000, \"hé\", b\"ok\")",
+      "expected": {
+        "kind": "TuplePattern",
+        "captures": [],
+        "node_kinds": [
+          "TuplePattern",
+          "LiteralPattern",
+          "LiteralPattern",
+          "LiteralPattern",
+          "LiteralPattern",
+          "LiteralPattern"
+        ],
+        "span": {"start": 0, "end": 34},
+        "checks": {
+          "root.items.0.literal_kind": "none",
+          "root.items.1.value": true,
+          "root.items.2.value": "-1000",
+          "root.items.3.value": "hé",
+          "root.items.4.value": "6f6b"
+        }
+      }
+    },
+    {
+      "id": "supported_literal_escapes",
+      "source": "(\"line\\n\", b\"\\t\")",
+      "expected": {
+        "kind": "TuplePattern",
+        "captures": [],
+        "node_kinds": [
+          "TuplePattern",
+          "LiteralPattern",
+          "LiteralPattern"
+        ],
+        "span": {"start": 0, "end": 17},
+        "checks": {
+          "root.items.0.value": "line\n",
+          "root.items.1.value": "09"
+        }
+      }
+    },
+    {
+      "id": "nominal_name",
+      "source": "Ready",
+      "expected": {
+        "kind": "NominalPattern",
+        "captures": [],
+        "node_kinds": ["NominalPattern"],
+        "span": {"start": 0, "end": 5},
+        "checks": {
+          "root.path": ["Ready"],
+          "root.payload_syntax": false
+        }
+      }
+    },
+    {
+      "id": "nominal_payload",
+      "source": "JobState.Running(started_at)",
+      "expected": {
+        "kind": "NominalPattern",
+        "captures": ["started_at"],
+        "node_kinds": ["NominalPattern", "CapturePattern"],
+        "span": {"start": 0, "end": 28},
+        "checks": {
+          "root.path": ["JobState", "Running"],
+          "root.payload_syntax": true
+        }
+      }
+    },
+    {
+      "id": "empty_tuple",
+      "source": "()",
+      "expected": {
+        "kind": "TuplePattern",
+        "captures": [],
+        "node_kinds": ["TuplePattern"],
+        "span": {"start": 0, "end": 2},
+        "checks": {"root.items": []}
+      }
+    },
+    {
+      "id": "single_tuple",
+      "source": "(left,)",
+      "expected": {
+        "kind": "TuplePattern",
+        "captures": ["left"],
+        "node_kinds": ["TuplePattern", "CapturePattern"],
+        "span": {"start": 0, "end": 7}
+      }
+    },
+    {
+      "id": "grouped_capture",
+      "source": "(left)",
+      "expected": {
+        "kind": "CapturePattern",
+        "captures": ["left"],
+        "node_kinds": ["CapturePattern"],
+        "span": {"start": 0, "end": 6}
+      }
+    },
+    {
+      "id": "exact_list",
+      "source": "[head, last]",
+      "expected": {
+        "kind": "ListPattern",
+        "captures": ["head", "last"],
+        "node_kinds": ["ListPattern", "CapturePattern", "CapturePattern"],
+        "span": {"start": 0, "end": 12},
+        "checks": {"root.rest": null}
+      }
+    },
+    {
+      "id": "ignored_list_rest",
+      "source": "[..]",
+      "expected": {
+        "kind": "ListPattern",
+        "captures": [],
+        "node_kinds": ["ListPattern"],
+        "span": {"start": 0, "end": 4},
+        "checks": {"root.rest.capture": null}
+      }
+    },
+    {
+      "id": "middle_list_rest",
+      "source": "[head, ..middle, last]",
+      "expected": {
+        "kind": "ListPattern",
+        "captures": ["head", "last", "middle"],
+        "node_kinds": ["ListPattern", "CapturePattern", "CapturePattern"],
+        "span": {"start": 0, "end": 22},
+        "checks": {
+          "root.rest.capture": "middle",
+          "root.prefix.0.name": "head",
+          "root.suffix.0.name": "last"
+        }
+      }
+    },
+    {
+      "id": "exact_map",
+      "source": "{\"kind\": \"user\", \"id\": id}",
+      "expected": {
+        "kind": "MapPattern",
+        "captures": ["id"],
+        "node_kinds": [
+          "MapPattern",
+          "LiteralPattern",
+          "CapturePattern",
+          "LiteralPattern",
+          "LiteralPattern"
+        ],
+        "span": {"start": 0, "end": 26},
+        "checks": {"root.openness": "exact", "root.rest": null}
+      }
+    },
+    {
+      "id": "ignored_map_rest",
+      "source": "{\"kind\": kind, ..}",
+      "expected": {
+        "kind": "MapPattern",
+        "captures": ["kind"],
+        "node_kinds": ["MapPattern", "CapturePattern", "LiteralPattern"],
+        "span": {"start": 0, "end": 18},
+        "checks": {"root.openness": "open", "root.rest.capture": null}
+      }
+    },
+    {
+      "id": "captured_map_rest",
+      "source": "{\"kind\": kind, ..rest}",
+      "expected": {
+        "kind": "MapPattern",
+        "captures": ["kind", "rest"],
+        "node_kinds": ["MapPattern", "CapturePattern", "LiteralPattern"],
+        "span": {"start": 0, "end": 22},
+        "checks": {"root.openness": "open", "root.rest.capture": "rest"}
+      }
+    },
+    {
+      "id": "or_and_as",
+      "source": "(Command.Read(path) | Command.Write(path)) as request",
+      "expected": {
+        "kind": "AsPattern",
+        "captures": ["path", "request"],
+        "node_kinds": [
+          "AsPattern",
+          "OrPattern",
+          "NominalPattern",
+          "CapturePattern",
+          "NominalPattern",
+          "CapturePattern"
+        ],
+        "span": {"start": 0, "end": 53},
+        "checks": {"root.capture": "request"}
+      }
+    },
+    {
+      "id": "multiline_trivia",
+      "source": "[\n  head, # first\n  ..tail,\n]",
+      "expected": {
+        "kind": "ListPattern",
+        "captures": ["head", "tail"],
+        "node_kinds": ["ListPattern", "CapturePattern"],
+        "span": {"start": 0, "end": 29},
+        "checks": {"root.rest.capture": "tail"}
+      }
+    }
+  ],
+  "negative": [
+    {
+      "id": "empty",
+      "source": "",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 0}
+      }
+    },
+    {
+      "id": "float_literal",
+      "source": "1.5",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 3}
+      }
+    },
+    {
+      "id": "lowercase_extractor",
+      "source": "extract(value)",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 14}
+      }
+    },
+    {
+      "id": "multiple_list_remainders",
+      "source": "[..left, ..right]",
+      "expected": {
+        "code": "MultiplePatternRemainders",
+        "message": "A collection pattern can contain at most one `..` remainder.",
+        "span": {"start": 9, "end": 16}
+      }
+    },
+    {
+      "id": "multiple_map_remainders",
+      "source": "{..left, ..right}",
+      "expected": {
+        "code": "MultiplePatternRemainders",
+        "message": "A collection pattern can contain at most one `..` remainder.",
+        "span": {"start": 9, "end": 16}
+      }
+    },
+    {
+      "id": "map_remainder_not_last",
+      "source": "{.., 1: x}",
+      "expected": {
+        "code": "MapPatternRestNotLast",
+        "message": "A map `..` remainder must be the final entry.",
+        "span": {"start": 1, "end": 3}
+      }
+    },
+    {
+      "id": "nonliteral_map_key",
+      "source": "{kind: value}",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 13}
+      }
+    },
+    {
+      "id": "duplicate_capture",
+      "source": "(x, x)",
+      "expected": {
+        "code": "DuplicatePatternCapture",
+        "message": "Pattern capture `x` appears more than once.",
+        "span": {"start": 4, "end": 5}
+      }
+    },
+    {
+      "id": "duplicate_rest_capture",
+      "source": "[tail, ..tail]",
+      "expected": {
+        "code": "DuplicatePatternCapture",
+        "message": "Pattern capture `tail` appears more than once.",
+        "span": {"start": 7, "end": 13}
+      }
+    },
+    {
+      "id": "alternative_binding_mismatch",
+      "source": "Some(x) | none",
+      "expected": {
+        "code": "AlternativeBindingMismatch",
+        "message": "Or-pattern alternatives must capture the same names.",
+        "span": {"start": 0, "end": 14}
+      }
+    },
+    {
+      "id": "duplicate_map_key",
+      "source": "{\"x\": a, \"x\": b}",
+      "expected": {
+        "code": "DuplicateMapPatternKey",
+        "message": "Map pattern key \"x\" appears more than once.",
+        "span": {"start": 9, "end": 12}
+      }
+    },
+    {
+      "id": "missing_or_alternative",
+      "source": "left |",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 6}
+      }
+    },
+    {
+      "id": "single_quoted_text",
+      "source": "'text'",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 6}
+      }
+    },
+    {
+      "id": "trailing_numeric_separator",
+      "source": "1_",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 2}
+      }
+    },
+    {
+      "id": "repeated_numeric_separator",
+      "source": "1__0",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 4}
+      }
+    },
+    {
+      "id": "leading_zero_integer",
+      "source": "01",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 2}
+      }
+    },
+    {
+      "id": "unsupported_hex_escape",
+      "source": "\"\\x41\"",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 6}
+      }
+    },
+    {
+      "id": "interpolated_text",
+      "source": "\"hello {name}\"",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 14}
+      }
+    },
+    {
+      "id": "non_ascii_bytes",
+      "source": "b\"é\"",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 5}
+      }
+    },
+    {
+      "id": "reserved_capture",
+      "source": "match",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 5}
+      }
+    },
+    {
+      "id": "reserved_as_capture",
+      "source": "value as true",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 9, "end": 13}
+      }
+    },
+    {
+      "id": "underscore_prefixed_capture",
+      "source": "_hidden",
+      "expected": {
+        "code": "InvalidPatternSyntax",
+        "message": "Pattern source does not conform to Pattern Surface v1.",
+        "span": {"start": 0, "end": 7}
+      }
+    }
+  ]
+}

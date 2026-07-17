@@ -71,6 +71,12 @@ Double-quoted text interpolates braces. `{{` and `}}` produce literal braces.
 Raw text disables escapes and interpolation. There is no parallel `f"..."`
 family.
 
+Decimal digit separators use one `_` between digits; they may not lead,
+trail, or repeat. Ignoring an optional sign, a decimal integer is `0` or starts
+with `1` through `9`, so padded leading zeros are not accepted. Literal
+decoding is one language-owned contract shared by expressions, patterns,
+schemas, and every parser frontend.
+
 The core scalar type names are `Bool`, `Int`, `Float`, `Decimal`, `Text`,
 `Bytes`, and `Unit`. `()` is the sole `Unit` value; it means successful
 completion without a payload. It is distinct from `none`, which means absence
@@ -313,7 +319,14 @@ match value:
 Captures are tentative, immutable, and scoped to the selected arm. Structural
 failure or a false guard discards all of them. `when` requires a pure `Bool`
 and runs once after structural success. Alternative patterns bind the same
-names and compatible types.
+names and compatible types. A capture uses an ordinary non-keyword identifier;
+reserved vocabulary never changes meaning merely because it appears inside a
+pattern.
+
+Literal patterns reuse the canonical scalar spelling and decoder. Text
+interpolation is an expression, so interpolated text is not a literal pattern;
+normalize first or use a pure `when` guard. Pattern context does not introduce
+single-quoted strings or any other context-specific literal dialect.
 
 Lists and maps are exact unless one pattern-only remainder marker is present.
 `..` accepts unmentioned elements or entries; `..rest` captures them. Matching

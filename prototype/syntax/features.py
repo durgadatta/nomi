@@ -18,7 +18,6 @@ from dataclasses import dataclass, replace
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from prototype.grammar.layer import LayerTransform
     from prototype.parser.nomi.desugar.base import BaseDesugarer
 
 
@@ -543,6 +542,32 @@ _data_decl_lowering = SyntaxFeature(
 
 # ── integration feature packets ──────────────────────────────────────
 
+_pattern_surface_schema = SyntaxFeature(
+    name="pattern-surface-schema",
+    description=(
+        "Target-only, versioned Pattern Surface nodes, diagnostics, and "
+        "equivalent Lark/Rust fragment producers"
+    ),
+    status="prototype-ready",
+    layer="L2",
+    semantic_forms=("pattern", "binding", "diagnostic"),
+    reduces_to=("transactional-pattern-core",),
+    docs=(
+        "docs/design/pattern_matching.md",
+        "docs/design/schemas/pattern_surface.schema.json",
+    ),
+    tests=(
+        "prototype/tests/unit/parser/test_pattern_surface_frontend_parity.py",
+    ),
+    coverage=FeatureCapabilityAxes(
+        target_only=True,
+        parse=True,
+        explain=True,
+        docs=True,
+        tests=True,
+    ),
+)
+
 _binding_data_pattern_integration = SyntaxFeature(
     name="binding-data-pattern-integration",
     description=(
@@ -618,6 +643,7 @@ BUILTIN_FEATURES: list[SyntaxFeature] = [
     _func_expr_lowering,
     _block_call_lowering,
     _data_decl_lowering,
+    _pattern_surface_schema,
     _binding_data_pattern_integration,
     _collection_table_rank_integration,
     _block_policy_prelude,

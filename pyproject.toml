@@ -29,6 +29,8 @@ dev = [
     "pytest-html",
     "pytest-regressions",
     "pytest-xdist",
+    "jsonschema",
+    "ruff",
 ]
 
 [tool.setuptools.packages.find]

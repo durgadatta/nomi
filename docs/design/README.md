@@ -24,6 +24,11 @@
 8. [Pattern Target](pattern_matching_target.nomi) - focused pressure cases for
    pattern syntax, scope, coverage, and boundaries.
 
+Versioned frontend-neutral contracts live under [`schemas/`](schemas/). The
+first is [Pattern Surface v1](schemas/pattern_surface.schema.json), a
+target-only fragment artifact used for Lark/Rust conformance before target
+`match` syntax becomes runnable.
+
 The research behind these decisions is consolidated under
 [Research](../research/README.md). The dated rationale and action sequence are
 in the [2026-07-16 review](../review/2026-07-16.md). Registered focused passes

@@ -22,7 +22,7 @@ def test_design_pass_cli_shows_pattern_packet():
         cwd=ROOT,
     )
 
-    assert "pattern-matching [design-accepted]" in completed.stdout
+    assert "pattern-matching [implementing]" in completed.stdout
     assert "docs/design/pattern_matching_target.nomi" in completed.stdout
 
 

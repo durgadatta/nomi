@@ -9,6 +9,19 @@ as real replacement machinery, not as the replacement itself.
 The root `rust-toolchain.toml` pins the project Rust toolchain to stable and
 declares `rustfmt` as a required component for this spike.
 
+The crate also exposes a separate target-only `pattern-json` command and
+`parse_nomi_pattern` Wasm export. They emit Pattern Surface v1 from standalone
+pattern fragments and do not change the current runnable `match` grammar. The
+canonical schema is `docs/design/schemas/pattern_surface.schema.json`; shared
+positive and diagnostic fixtures live in
+`prototype/tests/data/pattern_surface/v1.json` and require exact Lark/Rust
+payload parity.
+
+```bash
+cargo run --manifest-path prototype/parser/backends/rust_fast_ast/Cargo.toml \
+  -- pattern-json path/to/pattern.nomi
+```
+
 `rust-fast-ast` currently supports exact `ast.dump(..., include_attributes=False,
 indent=2)` parity with `lark-lalr` for:
 
@@ -83,6 +96,7 @@ ParserFrontendCapabilities(
     parse_current_grammar=True,
     lower_to_python_ast=True,
     emit_core_json=True,
+    emit_pattern_surface=True,
     selectable_for_session_execution=False,
     selectable_for_browser_experiment=True,
     default_for_browser_playground=True,

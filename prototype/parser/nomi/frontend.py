@@ -9,13 +9,13 @@ interface.
 
 from __future__ import annotations
 
-import json
+import ast
 import hashlib
+import json
 import os
 import shutil
 import subprocess
 import tempfile
-import ast
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -64,6 +64,7 @@ class ParserFrontendCapabilities:
     parse_current_grammar: bool = False
     lower_to_python_ast: bool = False
     emit_core_json: bool = False
+    emit_pattern_surface: bool = False
     source_spans: bool = False
     selectable_for_session_execution: bool = False
     selectable_for_browser_experiment: bool = False
@@ -111,6 +112,7 @@ LARK_FRONTEND_SPEC = ParserFrontendSpec(
     capabilities=ParserFrontendCapabilities(
         parse_current_grammar=True,
         lower_to_python_ast=True,
+        emit_pattern_surface=True,
         source_spans=True,
         selectable_for_session_execution=True,
         selectable_for_execution=True,
@@ -153,6 +155,7 @@ PARSER_FRONTEND_CANDIDATES: tuple[ParserFrontendSpec, ...] = (
             parse_current_grammar=True,
             lower_to_python_ast=True,
             emit_core_json=True,
+            emit_pattern_surface=True,
             selectable_for_browser_experiment=True,
             default_for_browser_playground=True,
         ),
@@ -382,6 +385,16 @@ class LarkParserFrontend:
             indent=2,
         )
 
+    def pattern_surface_payload(self, *, code=None, filename=None) -> dict[str, Any]:
+        """Emit the target-only Pattern Surface artifact for one fragment."""
+        from .pattern_surface import pattern_surface_payload
+
+        if code is None:
+            if filename is None:
+                raise ValueError("code or filename is required")
+            code = Path(filename).read_text(encoding="utf-8")
+        return pattern_surface_payload(code)
+
 
 class TreeSitterParserFrontend:
     """Tree-sitter parser spike for parse-acceptance parity."""
@@ -560,6 +573,28 @@ class RustFastAstParserFrontend(JsonPayloadParserFrontend):
     def _python_ast_from_payload(self, payload: dict[str, Any]) -> ast.Module:
         return python_ast_from_rust_payload(payload)
 
+    def pattern_surface_payload(self, *, code=None, filename=None) -> dict[str, Any]:
+        """Emit the same target-only Pattern Surface artifact as Lark."""
+        if code is None:
+            if filename is None:
+                raise ValueError("code or filename is required")
+            return self._parse_pattern_payload_file(Path(filename))
+        with tempfile.TemporaryDirectory(
+            prefix="nomi-rust-pattern-surface-"
+        ) as temp_dir:
+            path = Path(temp_dir) / "pattern.nomi"
+            path.write_text(code, encoding="utf-8")
+            return self._parse_pattern_payload_file(path)
+
+    def _parse_pattern_payload_file(self, source_path: Path) -> dict[str, Any]:
+        return _run_cargo_json_parser(
+            crate_dir=_RUST_FAST_AST_DIR,
+            command="pattern-json",
+            source_path=source_path,
+            target_name="rust-fast-ast",
+            binary_name="nomi-rust-fast-ast",
+        )
+
 
 class PestReadableCstParserFrontend(JsonPayloadParserFrontend):
     """PEG parser scaffold that emits a serialized CST/debug payload."""
@@ -605,8 +640,8 @@ def render_parser_frontend_table(
     rows = [
         "| frontend | status | full grammar | python AST | core JSON | "
         "session exec | browser exp | browser default | roles | grammar | "
-        "implementation | artifact | output |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "implementation | artifact | output | pattern Surface |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for spec in specs:
         capabilities = spec.capabilities
@@ -614,7 +649,8 @@ def render_parser_frontend_table(
             (
                 "| {name} | {status} | {full} | {python_ast} | {core_json} | "
                 "{session_exec} | {browser_exp} | {browser_default} | {roles} | "
-                "{grammar} | {implementation} | {artifact} | {output} |"
+                "{grammar} | {implementation} | {artifact} | {output} | "
+                "{pattern_surface} |"
             ).format(
                 name=spec.name,
                 status=spec.status,
@@ -629,6 +665,7 @@ def render_parser_frontend_table(
                 implementation=spec.implementation,
                 artifact=spec.cst_artifact,
                 output=spec.output_contract,
+                pattern_surface=_mark(capabilities.emit_pattern_surface),
             )
         )
     return "\n".join(rows)
@@ -689,6 +726,15 @@ def get_python_ast_frontends():
         frontend
         for frontend in _FRONTENDS.values()
         if frontend.spec.capabilities.lower_to_python_ast
+    )
+
+
+def get_pattern_surface_frontends():
+    """Return frontends implementing the versioned target pattern artifact."""
+    return tuple(
+        frontend
+        for frontend in _FRONTENDS.values()
+        if frontend.spec.capabilities.emit_pattern_surface
     )
 
 

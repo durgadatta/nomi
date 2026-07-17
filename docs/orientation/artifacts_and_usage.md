@@ -128,7 +128,11 @@ Useful files:
     registry for grammar layers, parse transforms, lowering mixins, and
     desugar passes.
 -   **Surface nodes:** `prototype/syntax/surface.py` contains early Nomi-owned
-    surface artifacts such as `BlockCall`.
+    Python-lowering artifacts such as `BlockCall`.
+-   **Target Pattern Surface:** `prototype/syntax/pattern_surface.py` and
+    `docs/design/schemas/pattern_surface.schema.json` define the target-only,
+    frontend-neutral fragment artifact. Its Lark and Rust producers are
+    capability-registered but do not feed normal execution.
 -   **Eval backends:** `prototype/runtime/backends/` — eval backend registry
     (`EvalBackendSpec`, `EvalBackendCapabilities`), Python AST backend adapter,
     Core IR direct evaluator, portable Core Runtime reference backend, and

@@ -11,7 +11,7 @@
 - Implementation bridge: `docs/review/2026-07-16-pattern-matching.md`
 
 The packet is registered in `config/design_passes.json` with status
-`design-accepted`.
+`implementing`.
 
 ## Verdict
 
@@ -23,8 +23,10 @@ potentially repeated guards, lossy Core representation, missing exhaustiveness,
 and several convenience syntaxes the target now rejects.
 
 Do not polish the existing `match`/`case` behavior into an accidental
-specification. Introduce dedicated Pattern Surface nodes and conformance data,
-then migrate each frontend and runtime toward the target packet.
+specification. Standalone target patterns now have dedicated Surface nodes and
+conformance data; match containers, typed Core representation, and runtime
+semantics must migrate toward the target packet without routing back through
+Python AST authority.
 
 ## Target Delta
 
@@ -61,6 +63,10 @@ then migrate each frontend and runtime toward the target packet.
 - `prototype/parser/nomi/rust_payload.py` reconstructs patterns from text and
   supports only a partial Python-AST-shaped subset. It is not a lossless
   parser-frontend contract.
+- The separate target-only path now uses
+  `prototype/grammar/pattern_surface.lark`,
+  `prototype/parser/nomi/pattern_surface.py`, and Rust `pattern-json` to emit
+  Pattern Surface v1. It is not connected to default parsing or execution.
 
 ### Runtime and IR
 
@@ -97,12 +103,13 @@ then migrate each frontend and runtime toward the target packet.
 
 ## Critical Semantic Gaps
 
-### 1. There is no authoritative Pattern representation
+### 1. Pattern authority stops at standalone fragments
 
-Python AST is useful host machinery but cannot carry Nomi's exact map openness,
-arm mode, coverage evidence, capture transaction, or diagnostic contract. Core
-IR currently loses even more information. Implementing target syntax directly
-into either representation would harden another transitional substrate.
+Pattern Surface v1 now owns standalone target pattern structure, exact map
+openness, source, spans, and frontend diagnostics. It does not yet represent
+match mode, arms, guards, coverage evidence, capture transactions, or typed
+Core lowering. Python AST and the current general Core nodes remain
+transitional and must not become authority for those missing contracts.
 
 ### 2. Environment mutation precedes success
 
@@ -125,16 +132,26 @@ code. Class patterns and user equality/attribute lookup similarly blur shape
 with calls. Target matching is restricted to compiler-known nominal values and
 strict structural values.
 
-### 5. Frontends disagree by construction
+### 5. Frontend parity stops at the fixture boundary
 
-The Lark/Python path, Rust payload bridge, Core runtime, JavaScript runtime,
-VS Code tooling, and web playground do not share one versioned pattern schema
-or conformance fixture. Text reconstruction in the Rust bridge makes drift
-especially likely.
+Lark and Rust now share one versioned standalone-fragment schema and fixture
+set. That does not yet cover the complete target literal codec, match arms,
+Core/runtime values, VS Code tooling, or the web product. The default Rust
+payload bridge still reconstructs current Python-shaped patterns from text.
 
 ## Ordered Bridge
 
 ### Phase 0: Conformance packet
+
+**Status (2026-07-16): structural fixture framework complete; lexical closure
+pending.** Pattern Surface v1 now has a canonical schema, target-derived
+positive/negative fixtures, structured diagnostics, and exact Lark/Rust
+payload parity for that fixture set. A coherence audit found backend drift for
+escape decoding; schema validation and reserved-name checks are now
+deterministic, while a shared codec and relational span gate remain. Those
+must close before the standalone-fragment gate is considered complete. Arm
+mode, guards, coverage witnesses, values, and scopes remain part of the
+match-container passes below.
 
 1. Treat `docs/design/pattern_matching_target.nomi` as target-only source.
 2. Derive accepted/rejected parse fixtures and diagnostic records from it.
@@ -145,6 +162,12 @@ especially likely.
 without consulting Python AST or an interpreter.
 
 ### Phase 1: Dedicated Surface patterns
+
+**Status (2026-07-16): pattern-node slice complete; match containers
+pending.** Dedicated nodes, UTF-8 spans, fragment grammar, and the Rust
+`pattern-json` producer are in place without changing the default runnable
+grammar. `MatchExpression`, `MatchStatement`, arms, and the no-`case` target
+profile are the next slice.
 
 1. Add lossless Pattern Surface nodes for every accepted target form.
 2. Add `MatchExpression`, `MatchStatement`, and arm nodes with source spans.
@@ -215,13 +238,40 @@ browser smoke snippet all agree on target syntax and semantics.
 
 | Order | Action | Completion evidence |
 | --- | --- | --- |
-| 1 | Define serialized Pattern Surface schema and fixture format. | Schema plus target-derived positive/negative fixtures. |
-| 2 | Parse target statement and expression arms without `case`. | Lark raw/CST/Surface snapshots. |
-| 3 | Add candidate-capture matcher API and arm frame. | Focused rollback/scope tests in both runtimes. |
-| 4 | Add typed constructor-space and usefulness prototype. | Exhaustive, missing-witness, and useless-arm fixtures. |
-| 5 | Add exact/open map and strict list semantics. | No iterable consumption; stable extra-key traces. |
-| 6 | Migrate Rust/Wasm and editor surfaces. | Surface parity and extension tests. |
-| 7 | Switch web examples and remove retired forms. | Browser runtime check and regenerated manifest. |
+| 1 | **Complete:** define serialized Pattern Surface schema and fixture framework. | Canonical schema, two producers, structured fixtures, and capability registration. |
+| 2 | **Partial:** close standalone-fragment coherence. | Schema validation, reserved names, quote spelling, and separator shape are covered; shared scalar codec, complete lexical fixtures, and relational span validation remain. |
+| 3 | Parse target statement and expression arms without `case`. | Lark/Rust Match Surface snapshots with mode, guards, bodies, and spans. |
+| 4 | Add candidate-capture matcher API and arm frame. | Focused rollback/scope tests in both runtimes. |
+| 5 | Add typed constructor-space and usefulness prototype. | Exhaustive, missing-witness, and useless-arm fixtures. |
+| 6 | Add exact/open map and strict list semantics. | No iterable consumption; stable extra-key traces. |
+| 7 | Migrate Rust/Wasm and editor surfaces. | Surface parity and extension tests. |
+| 8 | Switch web examples and remove retired forms. | Browser runtime check and regenerated manifest. |
+
+## Coherence Audit Follow-Up
+
+The post-implementation audit closed stale status/authority language and made
+schema validation, reserved captures, canonical quote spelling, and numeric
+separator shape deterministic. It also identified work that should not be
+hidden inside the match-container implementation:
+
+1. **Shared scalar literal codec:** Pattern Surface currently fences itself to
+   the cross-frontend subset. Replace Python `ast.literal_eval` and the Rust
+   lexer decoder with one specified Nomi escape/interpolation/value contract,
+   then cover ordinary, raw, multiline, bytes, brace escaping, Unicode, and
+   invalid escapes from shared fixtures.
+2. **Relational document validation:** verify root/child/entry/rest/capture span
+   containment, UTF-8 boundaries, map openness/rest consistency, node arity,
+   and diagnostic exclusivity independently of either producer.
+3. **Version/promotion policy:** v1 is experimental while no external consumer
+   depends on it. Declare compatibility rules only when editor, browser, or
+   runtime consumers are admitted; until then change the schema directly.
+4. **Product capability honesty:** the Wasm export proves transport, not web
+   feature support. Keep feature `web`/`notebook` capability false until a
+   user-facing or tooling consumer validates and displays the artifact.
+5. **Target vocabulary ownership:** reserved names are currently mirrored in
+   target docs, JSON Schema, Python, and Rust, with conformance tests catching
+   producer drift. Extract one declarative target-vocabulary artifact before
+   the target grammar grows, then generate or validate every projection.
 
 ## Migration Risks
 
@@ -235,6 +285,8 @@ browser smoke snippet all agree on target syntax and semantics.
   would encourage unsound heuristics.
 - Updating Python tests without JavaScript/web conformance would repeat the
   current frontend split.
+- Treating fixture equality as grammar completeness would preserve hidden
+  Lark/Rust differences in literal values and identifier admission.
 
 ## Pass Retrospective
 
@@ -276,7 +328,9 @@ required retrospective without another parallel index.
 
 ### Next Pass
 
-Implement Phase 0 and Phase 1 as one bounded parser architecture pass: define
-the lossless Pattern Surface schema and target-derived conformance fixtures,
-then make the Lark and Rust frontends emit equivalent payloads. Do not change
-default runnable syntax until the transactional runtime path is ready.
+First complete the bounded standalone-fragment coherence items above, most
+importantly the shared scalar-literal contract and relational validator. Then
+add lossless `MatchExpression`, `MatchStatement`, and arm Surface containers
+and parse target statement/value arms without `case` in an explicitly selected
+target profile. Do not change default runnable syntax or lower target matches
+into Python AST until the transactional matcher exists.

@@ -103,10 +103,18 @@ Float literal patterns are excluded initially because NaN and backend numeric
 representations make equality less obvious. Use a pure `when` comparison when
 classification by a floating value is genuinely required.
 
-Lowercase unqualified names are always captures. User-defined variants are
-qualified, so a reader never has to ask whether `ready` loads a constant or
-creates a name. Prelude `Some`, `Ok`, and `Err` may remain unqualified when type
-inference makes them unambiguous; `none` is the no-payload `Option` case.
+Lowercase unqualified non-keyword identifiers are always captures. Reserved
+vocabulary is never a capture. User-defined variants are qualified, so a
+reader never has to ask whether `ready` loads a constant or creates a name.
+Prelude `Some`, `Ok`, and `Err` may remain unqualified when type inference
+makes them unambiguous; `none` is the no-payload `Option` case.
+
+Primitive literal patterns use the same spelling, escape decoding, and value
+normalization as expression literals. Text containing interpolation is an
+expression and therefore not a literal pattern. Pattern context adds no
+single-quoted or backend-native literal dialect. Frontends must share this
+codec; matching their lexemes while disagreeing on decoded values is a
+conformance failure.
 
 Duplicate captures in one pattern are errors. Nomi does not give repeated names
 an implicit equality meaning:
@@ -337,6 +345,27 @@ MapPattern(entries, openness, rest)
 OrPattern
 AsPattern
 ```
+
+The experimental Pattern Surface v1 shape is pinned by
+[`schemas/pattern_surface.schema.json`](schemas/pattern_surface.schema.json).
+Its envelope carries the exact source, one structural root or structured
+diagnostics, and half-open UTF-8 byte spans. Exact source owns whitespace,
+comments, quoting, and grouping punctuation; grouping widens the enclosed
+node's span instead of introducing a semantic pattern kind. Literal lexemes,
+nominal payload punctuation, list prefix/rest/suffix shape, and exact/open map
+shape remain explicit in the tree.
+
+The v1 producer profile parses one target pattern fragment independently of
+the runnable grammar. Lark and Rust must emit the same payload for the shared
+positive and negative fixtures in
+`prototype/tests/data/pattern_surface/v1.json`. This profile does not admit
+target `match` arms or make target pattern syntax executable.
+
+Fixture parity is a lower bound, not proof that every accepted source spelling
+is equivalent. Before the schema is promoted, conformance must enumerate the
+complete accepted scalar-literal and identifier grammar, validate every
+payload against the JSON Schema, and check relational invariants such as child
+span containment that JSON Schema cannot express directly.
 
 `Match` records statement/value mode, one evaluated subject, ordered arms,
 typed result or `Unit`, source spans, and coverage evidence. Each arm records a

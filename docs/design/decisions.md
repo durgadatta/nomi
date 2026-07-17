@@ -120,6 +120,9 @@ expressions. Colon arms are statement-only and make the enclosing match a
 statement. Multi-step value logic moves into a small function, avoiding an
 implicit final-expression rule for blocks. Every match is exhaustive; captures
 are transactional and arm-scoped; pure `when` guards do not prove coverage.
+Capture names obey the ordinary reserved vocabulary, and primitive patterns
+reuse the scalar literal codec rather than a pattern-only quoting or escape
+dialect. Interpolated text is an expression, not a literal pattern.
 The full contract is in [Pattern Matching](pattern_matching.md).
 
 ### Pipeline

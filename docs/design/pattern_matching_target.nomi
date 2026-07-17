@@ -173,3 +173,13 @@ example "map openness is visible":
 #     ParseInt(value) => value
 #     _ => 0
 # ^ User extractors are not patterns; call Int.parse(text), then match Result.
+#
+# match optional:
+#     Some(match) => match
+#     none => "missing"
+# ^ Reserved vocabulary cannot become a capture in pattern context.
+#
+# match text:
+#     "hello {name}" => name
+#     _ => "other"
+# ^ Interpolated text is an expression, not a literal pattern; use `when`.

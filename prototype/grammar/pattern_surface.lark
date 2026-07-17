@@ -1,0 +1,61 @@
+// Target-only Pattern Surface v1 fragment grammar.
+// Deliberately separate from the current runnable match/case profile.
+
+?start: pattern
+
+?pattern: or_pattern ["as" CAPTURE_NAME] -> as_pattern
+?or_pattern: primary_pattern ("|" primary_pattern)* -> or_pattern
+
+?primary_pattern: wildcard_pattern
+                | literal_pattern
+                | nominal_call_pattern
+                | nominal_name_pattern
+                | tuple_pattern
+                | empty_tuple_pattern
+                | grouped_pattern
+                | list_pattern
+                | map_pattern
+                | capture_pattern
+
+wildcard_pattern: "_"
+capture_pattern: CAPTURE_NAME
+
+?literal_pattern: NONE  -> none_pattern
+                | TRUE  -> true_pattern
+                | FALSE -> false_pattern
+                | INTEGER -> integer_pattern
+                | BYTES -> bytes_pattern
+                | TEXT  -> text_pattern
+
+nominal_path: TYPE_NAME ("." NAME_PART)*
+nominal_name_pattern: nominal_path
+nominal_call_pattern: nominal_path "(" [pattern ("," pattern)* [","]] ")"
+
+empty_tuple_pattern: "(" ")"
+tuple_pattern: "(" pattern "," [pattern ("," pattern)* [","]] ")"
+grouped_pattern: "(" pattern ")"
+
+list_pattern: "[" [list_item ("," list_item)* [","]] "]"
+?list_item: rest_pattern | pattern
+
+map_pattern: "{" [map_item ("," map_item)* [","]] "}"
+?map_item: map_entry | rest_pattern
+map_entry: literal_pattern ":" pattern
+
+rest_pattern: ".." [CAPTURE_NAME]
+
+NONE.4: "none"
+TRUE.4: "true"
+FALSE.4: "false"
+BYTES.3: /[bB]"(?:\\["\\nrt]|[^"\\\r\n])*"/
+TEXT.2: /"(?:\\["\\nrt]|[^"\\\r\n{}])*"/
+INTEGER.2: /-?(?:0|[1-9](?:[0-9]|_[0-9])*)/
+TYPE_NAME.2: /[A-Z][A-Za-z0-9_]*/
+CAPTURE_NAME.2: /[a-z][A-Za-z0-9_]*/
+NAME_PART: /[A-Za-z][A-Za-z0-9_]*/
+
+COMMENT: /#[^\n]*/
+
+%import common.WS
+%ignore WS
+%ignore COMMENT

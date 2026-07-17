@@ -11,6 +11,7 @@
     "prototype/grammar/layers/statements.lark",
     "prototype/grammar/layers/terminals.lark",
     "prototype/grammar/nomi.ref.lark",
+    "prototype/grammar/pattern_surface.lark",
     "prototype/interpreter/__init__.py",
     "prototype/interpreter/constants.py",
     "prototype/interpreter/helpers.py",
@@ -77,6 +78,7 @@
     "prototype/parser/nomi/lowering/try_expr.py",
     "prototype/parser/nomi/lowering/type_alias.py",
     "prototype/parser/nomi/lowering/where_clause.py",
+    "prototype/parser/nomi/pattern_surface.py",
     "prototype/parser/nomi/postlexer.py",
     "prototype/parser/nomi/rust_payload.py",
     "prototype/parser/nomi/usage.py",
@@ -114,6 +116,7 @@
     "prototype/syntax/core.py",
     "prototype/syntax/core_json.py",
     "prototype/syntax/features.py",
+    "prototype/syntax/pattern_surface.py",
     "prototype/syntax/surface.py",
     "prototype/utils/__init__.py",
     "prototype/utils/imports.py"

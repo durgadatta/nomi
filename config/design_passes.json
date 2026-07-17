@@ -5,7 +5,7 @@
       "id": "pattern-matching",
       "topic": "Pattern matching",
       "owner": "language-design",
-      "status": "design-accepted",
+      "status": "implementing",
       "last_reviewed": "2026-07-16",
       "keywords": [
         "pattern",
@@ -33,12 +33,16 @@
       ],
       "validation": [
         "python3 -m tools.design_passes check",
+        "ruff check prototype/syntax/pattern_surface.py prototype/parser/nomi/pattern_surface.py prototype/parser/nomi/frontend.py prototype/tests/unit/parser/test_pattern_surface_frontend_parity.py",
+        "pytest prototype/tests/unit/parser/test_pattern_surface_frontend_parity.py",
+        "cargo test --manifest-path prototype/parser/backends/rust_fast_ast/Cargo.toml",
         "pytest prototype/tests/unit/tools/test_design_passes.py prototype/tests/unit/tools/test_agent_hooks.py prototype/tests/unit/tools/test_docs_lifecycle.py",
         "python3 .codex/scripts/agent_doctor.py",
         "python3 scripts/check_web_runtime.py"
       ],
       "next_actions": [
-        "Introduce lossless Surface Pattern nodes and target-syntax parser fixtures.",
+        "Extract shared target-vocabulary and scalar-literal contracts, replace fenced Pattern Surface decoding, and add relational span/document validation.",
+        "Add lossless MatchExpression, MatchStatement, and arm Surface containers with target-profile fixtures.",
         "Make pattern attempts transactional and captures arm-scoped in every runtime.",
         "Add usefulness and exhaustiveness analysis before promoting target syntax to runnable samples.",
         "Migrate editor, Rust/WASM, web, and regression fixtures in one capability-gated slice."
