@@ -834,6 +834,10 @@ body.sidebar-hidden .resize-handle {
   color: #59655e;
 }
 
+.empty-result[hidden] {
+  display: none;
+}
+
 .empty-result-inner {
   display: grid;
   justify-items: center;

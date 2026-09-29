@@ -1,0 +1,42 @@
+name: Playground problem
+description: Report something broken or confusing in the GitHub Pages playground.
+title: "[playground] "
+labels:
+  - playground
+  - user-facing
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when the browser playground is slow, broken, confusing, or disagrees with the CLI.
+  - type: input
+    id: url
+    attributes:
+      label: Playground URL
+      placeholder: https://durgadatta.github.io/nomi/web/
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome on macOS, Safari on iPhone, Firefox on Linux...
+  - type: textarea
+    id: source
+    attributes:
+      label: Nomi code or sample
+      description: Paste the code, or name the sample selected in the sidebar.
+      render: nomi
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include visible output, diagnostics, console errors, or screenshots if useful.
+  - type: textarea
+    id: cli
+    attributes:
+      label: CLI comparison, if checked
+      description: If you ran the same code locally with `nomi` or `python3 scripts/cli.py`, paste what happened.
+

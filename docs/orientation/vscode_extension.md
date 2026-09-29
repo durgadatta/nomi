@@ -49,6 +49,24 @@ Open the repository root in VS Code and run `Tasks: Run Task`. The root
 `Nomi Extension: Test`, `Nomi Extension: Package`, and
 `Nomi Extension: Enable Local Package`.
 
+The same task menu connects editor work to the GitHub playground:
+
+| Task | Purpose |
+| --- | --- |
+| `Nomi Web: Check Runtime` | Run the same manifest, WASM, runtime, and agent checks as CI. |
+| `Nomi Web: Browser Smoke` | Open Chromium and verify a real sample, pipeline details, and scratch output. |
+| `Nomi Web: Launch Playground` | Check runtime freshness, then open a local server using committed artifacts. Stop the task with Ctrl+C. |
+| `Nomi Agent: Doctor` | Check agent instructions, hooks, skills, and local RAG freshness. |
+
+Install `.[dev]` and Node.js for the runtime checks. Browser smoke also needs
+`.[web-test]` and `python3 -m playwright install chromium`; see the
+[playground setup](../../README.md#web-playground). Tasks run `python3` from the
+workspace root, so its environment must contain these dependencies.
+
+Copilot repository instructions live in `.github/copilot-instructions.md`;
+path-specific instructions in `.github/instructions/` route playground and
+extension work to the canonical `AGENTS.md` and `.agents/skills/` guidance.
+
 The extension folder also has its own `tools/vscode/nomi/.vscode/tasks.json` for
 the narrower workflow where only `tools/vscode/nomi` is opened as the VS Code
 workspace.

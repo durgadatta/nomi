@@ -21,6 +21,7 @@ feature profiles or capability metadata, not one-off browser-only switches.
 
 ## Files
 - `web/index.html` — Monaco Editor shell and notebook controls
+- `web/editor.js` — Monaco setup and Monarch syntax highlighting
 - `web/app.js` — starts the browser worker and wires runtime request/response
 - `prototype/runtime/js/worker.js` — Rust/WASM parser + JS Core Runtime worker
 - `prototype/runtime/js/lower_to_core_ir.js` — Rust AST JSON to Core IR JSON lowerer
@@ -38,6 +39,12 @@ python3 -m http.server 8080 → http://localhost:8080/web/
 # JS/WASM execution is the current browser default.
 ```
 
+Run `python3 scripts/check_web_runtime.py` for artifact freshness and runtime
+contracts. For UI, sample loading, worker wiring, or deployment changes, also
+run `python3 scripts/check_web_browser.py`. Install the optional `web-test`
+extra and Playwright Chromium as documented in `README.md`. Browser evidence
+is written to ignored `reports/web-browser/`; GitHub CI runs both checks.
+
 ## Deployment
 - GitHub Pages: Settings → Pages → main branch → / (root)
 - URL: https://<user>.github.io/nomi/web/
@@ -54,7 +61,7 @@ git add web/manifest.json       # commit the updated manifest
 ```
 
 ## Monaco language config
-The Monarch tokenizer in `index.html` mirrors `tools/vscode/nomi/syntaxes/nomi.tmLanguage.json`.
+The Monarch tokenizer in `web/editor.js` mirrors `tools/vscode/nomi/syntaxes/nomi.tmLanguage.json`.
 To add syntax highlighting to the web IDE, update both:
 1. `tools/vscode/nomi/syntaxes/nomi.tmLanguage.json` (VS Code, TextMate format)
-2. `web/index.html` → `setMonarchTokensProvider("nomi", ...)` (web, Monarch format)
+2. `web/editor.js` → `setMonarchTokensProvider("nomi", ...)` (web, Monarch format)

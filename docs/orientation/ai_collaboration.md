@@ -55,6 +55,11 @@ clear semantics, tests, examples, and documentation.
 
 ## Existing AI-Influenced Artifacts
 
+- `.github/copilot-instructions.md` and `.github/instructions/`: GitHub/VS Code
+  entrypoints that route to `AGENTS.md`, canonical skills, and playground
+  checks. `.github/workflows/playground-ci.yml` executes the runtime and browser
+  checks; `.vscode/tasks.json` exposes the same commands locally. See the
+  [VS Code task map](vscode_extension.md#vs-code-tasks).
 - `opencode.json`: project-level OpenCode config (model, LSP, formatter,
   permissions, instructions, watcher, compaction, and commented-out templates
   for providers, agents, commands, plugins, and MCP servers).

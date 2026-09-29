@@ -11,6 +11,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+web-test = [
+    "playwright>=1.51,<2",
+]
 jupyter = [
     "ipykernel",
     "jupyterlab",

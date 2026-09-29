@@ -90,6 +90,29 @@ python3 scripts/check_web_runtime.py
 Notebook-style cells use `# %%`. `Shift+Enter` runs the current cell in a
 persistent browser session; `Run All` restarts and evaluates top to bottom.
 
+Check the actual browser experience (optional local dependencies):
+
+```bash
+python3 -m pip install -e '.[web-test]'
+python3 -m playwright install chromium
+python3 scripts/check_web_browser.py
+```
+
+The check starts and stops its own local server, selects `demo_terse.nomi`,
+checks its output and Pipeline tab, then types and runs a scratch program.
+It uses the committed WASM files and the same CDN assets as the live site.
+Screenshots, a Playwright trace, and browser logs go to ignored
+`reports/web-browser/`. Add `--headed` to watch it run, or
+`--url https://durgadatta.github.io/nomi/web/` to check the published site.
+Browser installation and CDN loading require network access.
+
+`.github/workflows/playground-ci.yml` runs fast smoke tests, the web/runtime
+gate, and the Chromium check on pull requests and pushes to `main`. Browser
+evidence is uploaded as the `playground-browser` artifact. This workflow checks
+the checkout; publishing to GitHub Pages remains a separate step.
+CI uses Python 3.14 and Node.js 24. Python 3.11 cannot import the current
+interpreter because it lacks `ast.TypeAlias`.
+
 ## Jupyter
 
 Install and launch the current Nomi kernel:

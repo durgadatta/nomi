@@ -2,6 +2,45 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Nomi Web: Check Runtime",
+      "detail": "Check committed manifest, WASM artifacts, runtime contracts, and agent setup.",
+      "type": "process",
+      "command": "python3",
+      "args": ["scripts/check_web_runtime.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Web: Browser Smoke",
+      "detail": "Run a sample in Chromium; requires the web-test extra and Playwright Chromium.",
+      "type": "process",
+      "command": "python3",
+      "args": ["scripts/check_web_browser.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Web: Launch Playground",
+      "detail": "Open the playground using committed artifacts after checking their freshness. Stop with Ctrl+C.",
+      "type": "process",
+      "command": "python3",
+      "args": ["-u", "scripts/launch_web.py", "--no-wasm", "--no-manifest"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Nomi Web: Check Runtime",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nomi Agent: Doctor",
+      "detail": "Check repository agent instructions, hooks, skills, and local context freshness.",
+      "type": "process",
+      "command": "python3",
+      "args": [".codex/scripts/agent_doctor.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
       "label": "Nomi Docker: Open Notebook",
       "detail": "Set up Docker if needed, build/run the image, and open the Nomi syntax tour notebook.",
       "type": "shell",
