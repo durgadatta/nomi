@@ -15,9 +15,11 @@
 2. [Design Convergences](convergences.md) - findings that recur across
    language, tooling, data, security, and pedagogy research.
 3. [Language-Feature Matrix](language_feature_matrix.md),
+   [Transpose](feature_language_matrix.md), [Syntax Matrix](syntax_matrix.md),
+   and [Syntax Forms](syntax_forms.md) alongside
    [Language Reviews](languages/README.md), and [Feature Comparisons](features/README.md) -
-   one feature-by-language synthesis table and its detailed reviews, with primary
-   sources, bounded scope, Nomi costs, and concrete experiments.
+   equivalent semantic views, literal source forms and alternative spellings,
+   with primary sources, bounded scope, Nomi costs, and concrete experiments.
 4. [Open Questions](open_questions.md) - genuine forks that still require
    experiments rather than more broad surveys.
 5. [Resource Experiment](resource_lifetime.md) - executed symbolic comparison

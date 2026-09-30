@@ -30,7 +30,9 @@ For the evidence and unresolved forks behind those choices, read:
 4. [Pattern Matching Research](research/pattern_matching.md)
 5. [Open Questions](research/open_questions.md)
 6. [Language-Feature Matrix](research/language_feature_matrix.md),
-   [Language Reviews](research/languages/README.md), and [Feature Comparisons](research/features/README.md)
+   [Transpose](research/feature_language_matrix.md),
+   [Syntax Matrix](research/syntax_matrix.md), and [Syntax Forms](research/syntax_forms.md)
+   alongside [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
 7. [Cognitive Foundations](research/cognition.md) and
    [Human-Computer Languages](research/interfaces/README.md)
 
@@ -157,6 +159,9 @@ This list is intentionally complete and is checked by tests.
 - [Cognitive Foundations](research/cognition.md)
 - [Language Redesign Frontiers](research/design_frontiers.md)
 - [Language-Feature Synthesis Matrix](research/language_feature_matrix.md)
+- [Feature-Language Transpose](research/feature_language_matrix.md)
+- [Syntax Matrix](research/syntax_matrix.md)
+- [Syntax Forms](research/syntax_forms.md)
 
 ### Interface Threads
 

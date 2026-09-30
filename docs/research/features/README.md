@@ -8,6 +8,9 @@ Packet: `docs/design/synthesis.md`, `docs/design/targets/overall.nomi`,
 Read across a feature row or down a language column in the
 [single synthesis matrix](../language_feature_matrix.md), then follow a feature
 page below or an individual language in [the language index](../languages/README.md).
+The [transpose](../feature_language_matrix.md) preserves every summary;
+the [syntax matrix](../syntax_matrix.md) and [form study](../syntax_forms.md)
+add source fragments, competing spellings and whole-program recognition tasks.
 Linked language pages contain primary citations and version limits.
 Matrices are selective comparisons of
 relevant mechanisms, not claims that omitted languages lack a capability.

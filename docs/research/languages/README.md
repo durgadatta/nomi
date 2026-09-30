@@ -27,7 +27,11 @@ Examples in the linked Nomi suite are proposals, not executed comparisons.
 | Configuration and policy | [CUE](cue.md), [Nickel](nickel.md), [Dhall](dhall.md), [Pkl](pkl.md), [Nix](nix.md), [HCL](hcl.md) |
 
 Read the [single feature-by-language matrix](../language_feature_matrix.md)
-for compact mechanisms and Nomi implications, [feature comparisons](../features/README.md)
+or its [language-row transpose](../feature_language_matrix.md) for compact
+mechanisms and Nomi implications. The [syntax matrix](../syntax_matrix.md)
+and [form study](../syntax_forms.md) compare the actual source users read/write;
+their separately cited syntax evidence extends these bounded mechanism reviews.
+Read [feature comparisons](../features/README.md)
 for detailed comparisons along one axis, then [the synthesis](../../design/synthesis.md)
 to see how they fit together. [Human-computer languages](../interfaces/README.md)
 adds the separate interface dimension, including Excel, keyboard commands,
