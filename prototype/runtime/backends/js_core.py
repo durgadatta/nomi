@@ -8,9 +8,7 @@ runtime remains the browser implementation target.
 
 from __future__ import annotations
 
-import json
 import shutil
-import subprocess
 from pathlib import Path
 
 from prototype.runtime.backends import (
@@ -19,6 +17,7 @@ from prototype.runtime.backends import (
     EvalBackendSpec,
     register_backend,
 )
+from prototype.runtime.backends.json_process import run_json_process
 from prototype.syntax.core import Module, verify_core
 from prototype.syntax.core_json import core_to_json
 
@@ -80,21 +79,12 @@ class JsCoreRuntimeBackend:
         command = [self._node(), str(self._runtime_path)]
         if display_last_expr:
             command.append("--display-last-expr")
-        completed = subprocess.run(
+        payload = run_json_process(
             command,
-            input=core_to_json(core_ir),
-            text=True,
-            capture_output=True,
+            core_to_json(core_ir),
             cwd=ROOT,
-            check=False,
+            label="js-core-runtime",
         )
-        if completed.returncode != 0:
-            detail = completed.stderr.strip() or completed.stdout.strip()
-            raise RuntimeError(
-                "js-core-runtime failed"
-                + (f": {detail}" if detail else "")
-            )
-        payload = json.loads(completed.stdout)
         return EvalBackendResult(
             bindings=dict(payload.get("bindings", {})),
             value=payload.get("value"),
