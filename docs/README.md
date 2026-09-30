@@ -42,6 +42,7 @@ For the current repository and runtime, read:
 2. [Implementation Guideline](orientation/implementation_guideline.md)
 3. [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
 4. [Design Pass Workflow](orientation/design_pass_workflow.md)
+5. [Implementation Layers](orientation/implementation_layers.md)
 
 The [2026-07-16 Language Design Review](review/2026-07-16.md) records why the
 old design corpus was consolidated and gives the concrete action sequence.
@@ -110,6 +111,8 @@ For a registered cross-cutting feature, use the complete
   reversible implementation while semantics are still moving.
 - [Implementation Guideline](orientation/implementation_guideline.md): current
   engineering posture and project history.
+- [Implementation Layers](orientation/implementation_layers.md): readable
+  orchestration, replaceable engines, packaging, and bounded migration gates.
 - [Performance Notes](orientation/performance_notes.md): parser/runtime
   performance experiments and measurements.
 - [RAG MCP Context](orientation/rag_mcp.md): local code/document retrieval
@@ -128,6 +131,10 @@ For a registered cross-cutting feature, use the complete
   user-facing playground and VS Code agent workflow.
 - [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md):
   cross-language evidence, target corrections, and registered continuation.
+- [Implementation Boundary Review 2026-09-30](review/2026-09-30-implementation-boundaries.md):
+  discovery/fix checkpoint preserving the current runtime and playground.
+- [Deferred Test Review 2026-09-30](review/2026-09-30-test-issues.md):
+  test-maintenance findings reserved for a separate pass.
 
 ## Complete Markdown Inventory
 
@@ -257,6 +264,7 @@ This list is intentionally complete and is checked by tests.
 - [Artifacts And Usage](orientation/artifacts_and_usage.md)
 - [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
 - [Implementation Guideline](orientation/implementation_guideline.md)
+- [Implementation Layers](orientation/implementation_layers.md)
 - [Performance Notes](orientation/performance_notes.md)
 - [RAG MCP Context](orientation/rag_mcp.md)
 - [VS Code Extension](orientation/vscode_extension.md)
@@ -271,3 +279,5 @@ This list is intentionally complete and is checked by tests.
 - [Resource Lifetime Experiment 2026-09-29](review/2026-09-29-resource-lifetime.md)
 - [Cognitive And Interface Review 2026-09-30](review/2026-09-30-cognitive-interfaces.md)
 - [Function Contract Checkpoint 2026-09-30](review/2026-09-30-function-contracts.md)
+- [Implementation Boundary Review 2026-09-30](review/2026-09-30-implementation-boundaries.md)
+- [Deferred Test Review 2026-09-30](review/2026-09-30-test-issues.md)

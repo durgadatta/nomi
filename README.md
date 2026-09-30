@@ -50,6 +50,9 @@ The full rationale and action sequence are in the
 
 ## Quick Start
 
+Use Python 3.12 or newer; CI currently verifies Python 3.14. The bootstrap
+interpreter needs `ast.TypeAlias`, which Python 3.11 does not provide.
+
 Install the current Python-hosted prototype in editable mode:
 
 ```bash
@@ -66,6 +69,16 @@ python3 scripts/cli.py samples/demo.nomi
 The current runtime parses source with Lark, lowers through Python AST and
 Nomi-owned artifacts, and evaluates it with layered interpreters. Python is a
 bootstrap substrate, not the future language definition.
+
+For a distributable wheel, run `python3 -m pip wheel --no-deps .`. The package
+includes grammars, host capability data, JavaScript/WASM runtime assets, and
+the default demo. Running `nomi` without arguments uses that packaged demo,
+independent of the current directory. Node.js is only needed for the optional
+`js-core-runtime` backend. Repository development tools (Rust spikes, browser
+launching, and RAG indexing) still need their checkout/configuration.
+
+See [Implementation Layers](docs/orientation/implementation_layers.md) for
+the readable orchestration and replaceable engine boundaries.
 
 ## Web Playground
 
@@ -88,6 +101,10 @@ scripts/build_wasm.sh --check
 python3 scripts/check_web_runtime.py
 ```
 
+The launcher opens the browser only after its HTTP server accepts connections
+and reaps the server on interruption or failed startup. Ports must be 1-65535;
+if a port is busy it selects another unless `--strict-port` is set.
+
 Notebook-style cells use `# %%`. `Shift+Enter` runs the current cell in a
 persistent browser session; `Run All` restarts and evaluates top to bottom.
 
@@ -107,8 +124,10 @@ Screenshots, a Playwright trace, and browser logs go to ignored
 `--url https://durgadatta.github.io/nomi/web/` to check the published site.
 Browser installation and CDN loading require network access.
 
-`.github/workflows/playground-ci.yml` runs fast smoke tests, the web/runtime
-gate, and the Chromium check on pull requests and pushes to `main`. Browser
+`.github/workflows/playground-ci.yml` runs the full Python suite, fast smoke
+tests, the web/runtime gate, and Chromium checks on pull requests and pushes
+to `main`. A separate Python 3.12 job verifies installed-wheel/CLI behavior;
+the full regression corpus runs on Python 3.14. Browser
 evidence is uploaded as the `playground-browser` artifact. This workflow checks
 the checkout; publishing to GitHub Pages remains a separate step.
 CI uses Python 3.14 and Node.js 24. Python 3.11 cannot import the current

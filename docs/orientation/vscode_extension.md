@@ -116,6 +116,28 @@ Then press `F5` in VS Code. In the Extension Development Host:
 
 The extension runner defaults to `auto`: inside this repository it uses `python3 scripts/cli.py`; outside the source repository it falls back to an installed `nomi` command.
 
+Execution uses a VS Code **process task**, with separate executable and argv
+values, rather than sending shell text. Output appears in the task terminal;
+VS Code's task controls can stop it. `nomi.executable` and
+`nomi.pythonExecutable` accept a single executable name or path, not a command
+with flags. Source execution requires Python 3.12+ and the prototype's
+dependencies in that interpreter.
+
+Running code requires workspace trust and at least one opened workspace folder.
+VS Code rejects first process tasks with a non-home cwd in an empty window;
+the extension reports this requirement before launching. `Run File` requires a saved local file
+and aborts when saving a dirty document fails or is cancelled. `Run Selection`
+uses resource-scoped settings and the original document's workspace, even in
+multi-root workspaces; for files outside workspace roots its cwd is the document directory.
+Each selection gets a unique temporary directory, removed when its task ends
+or launch fails. A crashed/reloaded extension host may leave temporary files;
+selection execution is not a sandbox or a persistent notebook session.
+
+`src/runner.js` owns plain-data runner resolution; `src/run_commands.js` owns
+editor/task lifecycle; `src/extension.js` owns activation and navigation.
+Language navigation remains regex-based and supports the prototype, not all
+target-only language forms. Browser-only/virtual workspaces are not supported.
+
 ## Tests
 
 Run:
@@ -124,7 +146,19 @@ Run:
 python3 tools/vscode/nomi/scripts/nomi-vscode.py test
 ```
 
-The test command uses the official VS Code extension test CLI, backed by `@vscode/test-electron`. Current tests cover activation, document symbols, and same-document go to definition.
+The wrapper first runs `npm run test:unit` for runner/lifecycle checks, then
+the official VS Code extension test CLI, backed by `@vscode/test-electron`.
+Host tests cover activation, document symbols, same-document go to definition,
+and file/selection process execution through the source CLI. Set
+`NOMI_TEST_PYTHON` to the Python executable containing Nomi's dependencies for
+the process checks, and launch the host with an opened workspace. Unit tests
+use a VS Code substitute; neither local suite proves every operating system.
+The currently tracked launcher also has a macOS executable-name issue; see the separate
+[test review](../review/2026-09-30-test-issues.md) for deferred coverage work.
+
+The argument-based task API and trust gate follow the official
+[VS Code API](https://code.visualstudio.com/api/references/vscode-api) and
+[Workspace Trust guide](https://code.visualstudio.com/api/extension-guides/workspace-trust).
 
 ## Generated Files
 

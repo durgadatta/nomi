@@ -30,6 +30,9 @@ conveniences should reduce before backend evaluation, core forms should lower
 to backend-independent operations, and Python AST should remain one bootstrap
 backend.
 
+For command/policy/adapter/engine ownership and incremental replacement gates,
+see [Implementation Layers](implementation_layers.md).
+
 Parsing and evaluation can now be modified with substantial granularity. The
 implemented resumable-control subsystem remains delicate and tested, but the
 target language no longer treats yield-to-block as its universal control or
@@ -60,6 +63,13 @@ session = create_session(mode="nomi", cache_size=32)
 
 Compatibility entry points such as `prototype.interpreter.*.usage.run_eval_loop`
 still exist, but new frontend/tool work should prefer `prototype.runtime`.
+
+The CLI and Jupyter now use this facade for supported execution/session
+operations; Jupyter AST/completeness and most `tools.syntax.inspect` stages use
+runtime inspection too. Raw/transformed parser trees and Surface debug views
+remain deliberately parser-specific inspection adapters. The inspection CLI's
+`passes` and `expansions` continue to show the full reduction inventory; runtime
+`inspect(mode="nomi", stage="passes")` still shows the default Nomi profile.
 
 ## Current Pipeline Artifacts
 

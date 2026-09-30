@@ -126,6 +126,22 @@ It also exposes read-only MCP resources for indexed files:
 Search results include text snippets for older MCP clients and
 `structuredContent` for clients that can consume typed tool output.
 
+Resource URI paths are relative to their named source, even when search refs
+are relative to the project or absolute for an external books directory.
+Listing and reads recheck current include/exclude rules through the discovery
+iterator. Symlinks cannot escape a declared source or bypass exclusions on
+their resolved target. This avoids treating a source root as permission to
+read every file beneath it. Broadly configured sources are still broad access;
+this is not a filesystem sandbox. Rebuild old indexes after this change or
+configuration changes: cached search snippets may otherwise retain old content.
+
+Stdio emits newline-delimited JSON only. Invalid JSON receives parse error
+`-32700`; invalid request envelopes receive `-32600`; subsequent valid requests
+continue. Notifications do not receive responses. This is a bounded framing
+improvement, not full SDK/lifecycle/schema conformance. See the
+[MCP stdio contract](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#stdio)
+and [JSON-RPC errors](https://www.jsonrpc.org/specification#error_object).
+
 The server also exposes one prompt wrapper:
 
 - `rag_grounded_answer`: ask a Nomi question with an instruction to run
