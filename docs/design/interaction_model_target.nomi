@@ -55,7 +55,6 @@ data ChangeError:
     Stale(expected: Int, actual: Int)
     UnknownLine(id: Text)
     NegativeQuantity(quantity: Int)
-    InvalidIdentity(id: Text)
 
 func replace_quantity(line: Line, id: Text, quantity: Int) -> Line:
     if line.id == id:
@@ -93,7 +92,7 @@ func apply_edit(model: Model, edit: Edit) -> Result[Model, ChangeError]:
                         invoice=Invoice(lines=updated),
                     ))
                 _:
-                    return Err(ChangeError.InvalidIdentity(id))
+                    panic("owned invoice contains duplicate line IDs")
 
 data SubmissionError:
     Decode(errors: DecodeErrors)

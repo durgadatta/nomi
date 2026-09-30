@@ -40,6 +40,11 @@ typed E, operation, resource identity, and source span. It does not store a raw
 handle or reveal a pending successful return value in default diagnostics.
 Nested heterogeneous failures require explicit mapping to a declared E; neither
 Any nor a magically coercing universal error union is an acceptable fallback.
+The [callback paper audit](function_contracts.md#resource-callback-where-the-derivation-must-stop)
+exposes a further typing gate: non-escape covers the entire completion, including
+E, nested causes, and exported diagnostic/trace payloads, not only Ok(A).
+An error, closure, aggregate or cold task retaining the reader is still an
+escape. Copy owned redacted observations and stable resource IDs instead.
 
 ## Normal Form
 
@@ -118,6 +123,7 @@ and does not demonstrate timeout or real scheduler behavior.
 | --- | --- |
 | Return owned text/bytes read from a handle | Allowed; owned value independent of the lease. |
 | Return the borrowed reader | Reject at return; relate acquisition span. |
+| Return Err with a reader, or export a cause/diagnostic retaining it | Reject whole-completion escape; relate payload/capture and acquisition. |
 | Return a closure capturing the reader | Reject at capture/escape boundary. |
 | Call that closure entirely inside scope | Allow, subject to effects. |
 | Child joins in an inner group before scope exit | Allow only with a safe-sharing protocol. |

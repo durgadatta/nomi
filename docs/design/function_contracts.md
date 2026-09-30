@@ -89,7 +89,7 @@ map_B:
 run_scope:
   resource: Resource[Handle@R, E, EnterEffects, ReleaseEffects]
   body: Function(parameters=[Handle@R], result=Result[A, E], sync,
-                 effects=P, retained=false, result contains no R)
+                 effects=P, retained=false, completion contains no R)
   result: Result[A, ScopeFailure[E]]
   call effects=EnterEffects union P union ReleaseEffects
 ```
@@ -100,12 +100,16 @@ explicitly normalized to the same E or a declared nominal sum; no automatic
 heterogeneous error union. The [resource packet](resource_lifetime.md) owns
 completion/cleanup policy. Async scope has a separate calling convention and
 must join children/cleanup before its completion; this signature does not solve it.
+The no-region condition covers **A, E, every nested cause, and exported diagnostic
+or trace payload**, not only the successful result. Returning `Err` containing
+a reader is still an escape. Stable resource IDs and owned redacted observations
+can survive a scope; a raw handle or closure/task retaining it cannot.
 
 ## Operational Obligations
 
 | Operation | Order and invocation | Ordinary failure |
 | --- | --- | --- |
-| Strict map | Evaluate values/callback once; left-to-right, once per item, no retention | Result-returning callback produces `List[Result[B, E]]`; no automatic propagation. |
+| Strict map | Evaluate values/callback once; left-to-right, once per item on ordinary completion, no retention | Result-returning callback produces `List[Result[B, E]]`; no automatic propagation. |
 | Strict filter | Pure Bool callback, left-to-right; same item order | No truthiness, async test, or hidden decoder call. |
 | Strict fold | Start with initial; one callback per item; empty returns initial | Accumulator type stays S; Result accumulator behavior is explicit. |
 | map_error | Callback once only for Err; Ok payload unchanged | E to F conversion is explicit; preserve cause through an error wrapper. |
@@ -117,6 +121,8 @@ statement bodies; an expression lambda does not acquire a new block/yield
 spelling. Constructor invocation remains ordinary construction; a constructor
 as a first-class callback is **open**. Use `(error) => ErrorKind(error)` in
 active target examples so the unresolved contract is visible rather than assumed.
+Panic or cancellation stops ordinary iteration and follows the enclosing unwind
+contract; it does not promise calls for remaining items. Purity is not totality.
 
 ## Type Compatibility And Inference Questions
 
@@ -203,6 +209,150 @@ scope protocol owns that rule or public generics can express it; neither a
 The callback itself can return a closure/aggregate containing a capture, so
 region tracking must follow results as well as whether the combinator stores
 its callback argument.
+
+### Names, Defaults, And Call Shape
+
+Neither the parameter-list constructor nor the function-type literal above
+specifies named/default argument behavior by itself. Compare two rules before
+choosing syntax:
+
+| Rule | Example | Cost |
+| --- | --- | --- |
+| Exact positional contract initially | A unary callback has exactly one exposed positional parameter; adapt `add(value, tax=2)` with `(value) => add(value, tax=2)` | More explicit adapters; simple separate checking and no implicit partial application. |
+| Compatible callable shape | A function with optional extra parameters can satisfy a smaller required call shape | Arity/default/label subtyping and default evaluation must be preserved in interfaces. |
+
+Named calls through an abstract function value require labels in that contract;
+they cannot rely on the original declaration being discoverable at runtime.
+Parameter defaults still obey call-time evaluation under accepted semantics.
+The initial exact-contract rule is a candidate, not a retroactive restriction
+on ordinary named function calls. A formatter comparison without this rule
+would merely compare typography while leaving the actual call ambiguous.
+
+## Paper Derivations And Unclosed Obligations
+
+These are manual deductions **conditional on proposed library contracts**,
+not output from a typechecker. They expose the remaining proof obligations
+without introducing fake runtime capability flags. `Function` notation below
+is contract metalanguage; no Fn spelling is admitted.
+
+### Invoice: A Closed Local Transformation
+
+For [the invoice fixture](interaction_model_target.nomi), assume ordinary scalar
+operators have the displayed scalar result types, and Text operations used here
+are deterministic. Arithmetic overflow/precision remains a separate profile gate.
+
+| Expression | Substitution/resolved fact | Remaining obligation |
+| --- | --- | --- |
+| `line_total` | Function([Line], Int), sync, no world observations or captured cells | Int multiplication may still fail under an eventual bounded numeric profile. |
+| `map(invoice.lines, line_total)` | A=Line, B=Int; result List[Int] | Specify generic declaration and pure callback eligibility. |
+| `fold(amounts, 0, combine)` | A=Int, S=Int; combine([Int, Int]) produces Int; result Int | Decide accumulator/error law and arithmetic policy. |
+| `unique_line_ids(lines)` | map produces List[Text]; all_unique produces Bool | Resolve equality/Hash protocol and cost policy; do not silently add arbitrary user effects to constraints. |
+| `apply_edit(model, edit)` | Every ordinary return is Result[Model, ChangeError]; impossible duplicate owned IDs panic | Nominal constructor, match coverage and constraint metadata need a real typed producer. |
+
+No callback captures a mutable cell or resource, so region absence is locally
+plausible for this example. That does not prove generic map/fold safe for every
+element/result type. The model change is pure application state; it does not
+grant the ability to edit source or execute external operations. Row identity
+uses an explicit ID, not display order; Text normalization/equality still needs
+its portable scalar contract.
+Duplicate IDs in raw input are expected decode errors. Duplicate IDs inside an
+already-owned Invoice violate its constructor constraint and cannot be quietly
+reclassified as an ordinary edit error. The target's fallback now names that
+broken invariant as panic; structural coverage still requires the fallback
+because arbitrary predicates are not assumed proven by pattern analysis.
+
+### Submission: Typed Conversion, Not A Universal Error Union
+
+Under the proposed generated decoder contract:
+
+```text
+Edit.decode(raw) : Result[Edit, DecodeErrors]
+lambda(errors) = SubmissionError.Decode(errors)
+  : Function([DecodeErrors], SubmissionError), pure
+map_error(decoded, lambda) : Result[Edit, SubmissionError]
+postfix ? : unwrap Edit or return Err(SubmissionError) from submit
+
+apply_edit(model, edit) : Result[Model, ChangeError]
+lambda(error) = SubmissionError.Change(error)
+  : Function([ChangeError], SubmissionError), pure
+map_error(changed, lambda) : Result[Model, SubmissionError]
+```
+
+This conditional derivation is compatible with `submit`'s declared result.
+It needs no first-class constructor value, automatic error coercion, or lambda
+control transfer to a caller. **Unclosed:** generated decoder/protocol signature,
+variant wire representation, accumulated constraint evaluation on partially
+invalid input, and method resolution. Do not run declaration constraints on
+raw malformed fields just to collect another error; the predicate expects
+tentatively decoded field values, not arbitrary transport objects.
+
+### Independent Row Errors: Result Is The Mapped Element
+
+For [the callback fixture](function_contracts_target.nomi), checked_double has
+result Result[Int, RowError]. Explicit map_error changes RowError to ReportError.
+Therefore A=Int and **B=Result[Int, ReportError]** for the enclosing map, yielding
+List[Result[Int, ReportError]]. It does not yield Result[List[Int], ReportError].
+
+The ordinary trace for `[1, -1, 3]` is:
+
+```text
+invoke 1  -> Ok(2)
+invoke -1 -> Err(ReportError.Row(RowError.Negative(-1)))
+invoke 3  -> Ok(6)
+return the three outcomes in input order
+```
+
+By contrast, `publish_names`' loop uses `?` on each request, so a failure ends
+later iteration after required cleanup. Earlier publication is not rolled back.
+An abnormal callback panic would stop map as well; this trace assumes ordinary
+completion. This distinction is a real user-facing diagnostic/hover requirement.
+
+### Resource Callback: Where The Derivation Must Stop
+
+For [the reader program](resource_lifetime_target.nomi), suppose the resource
+supplies Reader in a fresh R, enter/release report IoError, and read_body returns
+Result[Text, IoError] while requiring FileRead. Text and the IoError payloads
+must be region-free. Then A=Text, E=IoError, and the expected ordinary result
+is Result[Text, ScopeFailure[IoError]]. Enter/body/release requirements compose
+under the proposed protocol; an explicit carrier can be mapped by the caller.
+
+**This is not a completed derivation.** Reader's hidden region propagation,
+generation of R, protocol retention, the no-R condition on errors/causes,
+actual release effect requirements, and abnormal unwind policy remain unproven.
+If a resource has a different release error, an ordinary map_error on the body
+does not magically convert it. Compare an explicit resource-error adapter with
+a compound resource protocol; type both against a declared nominal error sum.
+Do not hide this mismatch in Any, an untagged union, or an alleged compiler fact.
+
+### Cold Tasks: Call Requirements Versus Latent Work
+
+A synchronous wrapper returning Task does not automatically qualify for pure map.
+The result type carries latent effects/captures, but construction may also need
+authority or introduce observable temporal identity. Compare a plan-like cold
+description whose authority is checked at start with a task that captures/checks
+authority at construction. The accepted cold-task rule only says no task body
+runs until start/await; it does not decide all authorization timing.
+
+Until that rule is closed, a table must label task-builder purity conditional,
+and an inferred empty execution footprint must not erase declared call
+requirements. Empty input does not bypass a callback's static contract. This
+is a task/callback interface gap, not a reason to make map silently start tasks.
+
+### Negative Contract Facts To Validate Later
+
+| Supplied program fact | Candidate A expectation | Required explanation |
+| --- | --- | --- |
+| Callback reads Clock or Random | Reject pure eligibility | Name observation and declaration/capture span. |
+| Callback updates a captured outer cell | Reject pure eligibility | Name the cell, not a misleading missing Network grant. |
+| Callback returns ordinary Err | Permit pure result if its computation is otherwise pure | Show List[Result], not automatic propagation. |
+| Callback returns Task with borrowed R | Track R through result; reject escape beyond its scope | Relate task capture, acquisition and escape. |
+| Scope returns Err containing a Reader | Reject whole-completion escape | Failure payload is not exempt from lifetime checks. |
+| Diagnostic or cause stores a closure retaining Reader | Reject checked export; revoke at unsafe boundary | Preserve owned explanation without retaining live authority. |
+| Two imported extensions resolve equally | Reject ambiguity | Show both owners and explicit disambiguation route. |
+| Callback has a defaulted extra parameter | Undecided pending call-shape rule | Show adapter versus compatible-shape alternatives. |
+
+These are future positive/negative typing fixtures. Supplied facts are not
+inferred proofs, and doc validation is not a conformance oracle.
 
 ## Source, Formatting, And Diagnostics
 

@@ -71,6 +71,13 @@ pub async func receive(url: Url) -> Result[Bytes, ScopeFailure[IoError]] uses Ne
 # Reject when delayed's returned closure escapes the reader scope; an immediate
 # local use of a capture can be valid.
 #
+# A body returning Err containing Reader, or a diagnostic cause holding a
+# closure/task that captures it, also escapes. This remains invalid even when
+# resource/body error types have been normalized to the same declared E.
+# Keep owned redacted observations/resource IDs, not a raw lease, in failures.
+# No error wrapper, Any erasure, or trace export exempts the completion from
+# the proposed non-escape check; unchecked host aliases require revocation.
+#
 # Resource outer / TaskGroup inner: child joins before release -> potentially valid.
 # TaskGroup outer / Resource inner: escaped child handle -> reject when it can
 # outlive the lease. Safe concurrent-use permission is a separate protocol gate.

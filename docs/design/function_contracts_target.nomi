@@ -76,7 +76,10 @@ example "independent row errors do not skip later rows":
 # - callback updates captured mutable cell: not a pure transform.
 # - callback reads Clock: not deterministic, even if no Network effect.
 # - callback returns borrowed Reader/closure/task beyond run_scope: region escape.
-# - map over a synchronous task-builder returns List[Task[T]], never starts tasks.
+# - Err, nested causes, and diagnostic payloads retaining Reader also escape.
+# - if a task-builder is eligible, map returns List[Task[T]], never starts tasks;
+#   construction authorization and latent work requirements remain separate.
+# - a callback with an extra defaulted parameter needs the call-shape decision.
 # - imported extension collision reports both owners at the call.
 # - passing a variant constructor directly as callback stays explicitly open.
 # - panic/divergence/cancellation are not ordinary RowError or effects inferred

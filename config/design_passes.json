@@ -18,6 +18,9 @@
         "docs/design/syntax.md",
         "docs/design/decisions.md",
         "docs/design/redesign_agenda.md",
+        "docs/design/resource_lifetime.md",
+        "docs/design/resource_lifetime_target.nomi",
+        "docs/design/interaction_model_target.nomi",
         "docs/research/features/effects.md"
       ],
       "validation": [
@@ -27,9 +30,9 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Use function_contracts.md as the live callback contract; compare generic and function-value type spellings before accepting syntax.",
+        "Use function_contracts.md as the live callback contract; select call-shape/default/label rules and compare its three generic/function-value candidates before accepting syntax.",
         "Type map/fold, derived decode and run_scope under pure-only and effect-polymorphic candidates, including mutable capture, retained regions and cold tasks.",
-        "Specify protocol coherence, effect compatibility and encapsulated mutation rules with frontend-neutral positive/negative facts.",
+        "Specify protocol coherence, effect compatibility, encapsulated mutation, whole-completion region export, and cold-task authorization timing with frontend-neutral positive/negative facts.",
         "After design acceptance, implement one gated typed Surface producer/consumer slice and CLI/browser diagnostics before promoting a playground sample."
       ]
     },

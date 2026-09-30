@@ -41,6 +41,9 @@ effect-propagating proposal. Keep signatures open rather than force fake purity.
 The [focused proposal](../../design/function_contracts.md) now owns abstract
 signatures, purity/capture distinctions, order, retention and admission gates.
 Its initial pure-only recommendation remains unaccepted.
+The manual derivation of invoice, submission and row-result calls is conditional
+on proposed APIs. The resource and cold-task derivations deliberately stop at
+region/error payload and authorization-timing gaps; no typechecker ran.
 
 **User-facing gate:** hover and diagnostics must agree with actual calls and
 show callback effects before supported playground promotion.
