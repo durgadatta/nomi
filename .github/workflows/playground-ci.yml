@@ -14,6 +14,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  full-suite:
+    name: Full prototype suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: rustup toolchain install stable --profile minimal --component rustfmt
+      - run: python3 -m pip install -e '.[dev]'
+      - run: python3 -m pytest -q -n 0
+
+  minimum-python:
+    name: Installed runtime on Python 3.12
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: python3 -m pip install -e '.[dev]'
+      - run: python3 -m pytest -q -n 0 prototype/tests/e2e/test_distribution_boundary.py prototype/tests/e2e/test_cli.py
+
   smoke:
     name: Fast smoke
     runs-on: ubuntu-latest
