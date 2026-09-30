@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "reader-return",
+      "resources": [{"name": "reader"}],
+      "body": {"kind": "return"},
+      "expected": {"kind": "return", "typed": "normal", "envelope": "normal", "causes": [], "trace": ["enter:reader", "ready:reader", "body:return", "revoke:reader", "close:reader", "close-done:reader:ok", "observe:normal:return"]}
+    },
+    {
+      "id": "read-error-close-error",
+      "resources": [{"name": "reader", "exit": {"kind": "err", "cause": "close"}}],
+      "body": {"kind": "err", "cause": "read"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "scope-failure", "causes": ["read", "close"], "trace": ["enter:reader", "ready:reader", "body:err", "revoke:reader", "close:reader", "close-done:reader:err", "observe:result:err"]}
+    },
+    {
+      "id": "successful-body-close-error",
+      "resources": [{"name": "reader", "exit": {"kind": "err", "cause": "close"}}],
+      "body": {"kind": "return"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "scope-failure", "causes": ["close"]}
+    },
+    {
+      "id": "staged-second-enter-fails",
+      "resources": [{"name": "outer"}, {"name": "inner", "enter": {"kind": "err", "cause": "acquire-inner"}}],
+      "body": {"kind": "ok"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "result", "causes": ["acquire-inner"], "trace": ["enter:outer", "ready:outer", "enter:inner", "enter-failed:inner", "revoke:outer", "close:outer", "close-done:outer:ok", "observe:result:err"]}
+    },
+    {
+      "id": "staged-enter-and-rollback-fail",
+      "resources": [{"name": "outer", "exit": {"kind": "err", "cause": "rollback"}}, {"name": "inner", "enter": {"kind": "err", "cause": "acquire-inner"}}],
+      "body": {"kind": "ok"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "scope-failure", "causes": ["acquire-inner", "rollback"]}
+    },
+    {
+      "id": "first-enter-fails",
+      "resources": [{"name": "reader", "enter": {"kind": "err", "cause": "open"}}],
+      "defers": [{"name": "unregistered"}],
+      "body": {"kind": "ok"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "result", "causes": ["open"], "trace": ["enter:reader", "enter-failed:reader", "observe:result:err"]}
+    },
+    {
+      "id": "nested-release-failures",
+      "resources": [{"name": "outer", "exit": {"kind": "err", "cause": "outer-close"}}, {"name": "inner", "exit": {"kind": "err", "cause": "inner-close"}}],
+      "body": {"kind": "err", "cause": "body"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "scope-failure", "causes": ["body", "inner-close", "outer-close"]}
+    },
+    {
+      "id": "deferred-failure-keeps-unwinding",
+      "resources": [{"name": "reader"}],
+      "defers": [{"name": "first"}, {"name": "second", "exit": {"kind": "err", "cause": "defer-error"}}],
+      "body": {"kind": "return"},
+      "expected": {"kind": "err", "typed": "result", "envelope": "scope-failure", "causes": ["defer-error"], "trace": ["enter:reader", "ready:reader", "register:first", "register:second", "body:return", "defer:second", "defer-done:second:err", "defer:first", "defer-done:first:ok", "revoke:reader", "close:reader", "close-done:reader:ok", "observe:result:err"]}
+    },
+    {
+      "id": "body-cancel-close-error",
+      "resources": [{"name": "stream", "exit": {"kind": "err", "cause": "close"}}],
+      "body": {"kind": "cancel", "cause": "cancel"},
+      "expected": {"kind": "cancel", "typed": "cancel", "envelope": "cancel", "causes": ["cancel", "close"]}
+    },
+    {
+      "id": "cancel-during-release",
+      "resources": [{"name": "stream", "exit": {"kind": "err", "cause": "close"}}],
+      "cancel_during": ["stream"],
+      "body": {"kind": "return"},
+      "expected": {"kind": "cancel", "typed": "cancel", "envelope": "cancel", "causes": ["cancel", "close"], "trace": ["enter:stream", "ready:stream", "body:return", "revoke:stream", "close:stream", "cancel-request:stream", "close-done:stream:err", "observe:cancel:cancel"]}
+    },
+    {
+      "id": "repeat-cancel-retains-original-read-error",
+      "resources": [{"name": "outer"}, {"name": "inner", "exit": {"kind": "err", "cause": "close"}}],
+      "cancel_during": ["inner", "outer"],
+      "body": {"kind": "err", "cause": "read"},
+      "expected": {"kind": "cancel", "typed": "cancel", "envelope": "cancel", "causes": ["cancel", "read", "close"]}
+    },
+    {
+      "id": "panic-retains-cleanup-errors",
+      "resources": [{"name": "reader", "exit": {"kind": "err", "cause": "close"}}],
+      "body": {"kind": "panic", "cause": "bug"},
+      "expected": {"kind": "panic", "typed": "panic", "envelope": "panic", "causes": ["bug", "close"]}
+    },
+    {
+      "id": "release-panic-not-domain-err",
+      "resources": [{"name": "outer"}, {"name": "inner", "exit": {"kind": "panic", "cause": "close-bug"}}],
+      "body": {"kind": "err", "cause": "read"},
+      "expected": {"kind": "panic", "typed": "panic", "envelope": "panic", "causes": ["close-bug", "read"]}
+    },
+    {
+      "id": "cancel-and-release-panic",
+      "resources": [{"name": "stream", "exit": {"kind": "panic", "cause": "close-bug"}}],
+      "body": {"kind": "cancel", "cause": "cancel"},
+      "expected": {"kind": "panic", "typed": "panic", "envelope": "panic", "causes": ["close-bug", "cancel"]}
+    },
+    {
+      "id": "loop-break",
+      "resources": [{"name": "reader"}],
+      "body": {"kind": "break"},
+      "expected": {"kind": "break", "typed": "normal", "envelope": "normal", "causes": []}
+    },
+    {
+      "id": "loop-continue",
+      "resources": [{"name": "reader"}],
+      "body": {"kind": "continue"},
+      "expected": {"kind": "continue", "typed": "normal", "envelope": "normal", "causes": []}
+    }
+  ],
+  "escapes": [
+    {"id": "return-reader", "via": "return", "lifetime": "outside", "checked": true, "expected": {"static": ["reject", "not-run"], "dynamic": ["allow", "closed-handle"]}},
+    {"id": "return-reader-closure", "via": "capture", "lifetime": "outside", "checked": true, "expected": {"static": ["reject", "not-run"], "dynamic": ["allow", "closed-handle"]}},
+    {"id": "child-outlives-reader", "via": "child", "lifetime": "outside", "checked": true, "expected": {"static": ["reject", "not-run"], "dynamic": ["allow", "closed-handle"]}},
+    {"id": "inner-group-joins-before-close", "via": "child", "lifetime": "inside", "checked": true, "expected": {"static": ["allow", "allowed"], "dynamic": ["allow", "allowed"]}},
+    {"id": "immediate-closure-use", "via": "capture", "lifetime": "inside", "checked": true, "expected": {"static": ["allow", "allowed"], "dynamic": ["allow", "allowed"]}},
+    {"id": "unchecked-host-stashes-reader", "via": "host", "lifetime": "outside", "checked": false, "expected": {"static": ["allow", "closed-handle"], "dynamic": ["allow", "closed-handle"]}},
+    {"id": "return-owned-text", "via": "copy", "lifetime": "inside", "checked": true, "expected": {"static": ["allow", "allowed"], "dynamic": ["allow", "allowed"]}}
+  ]
+}

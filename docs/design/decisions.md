@@ -238,6 +238,11 @@ Additional interaction gates exposed by the whole program remain **open**:
 These gates refine existing open questions; the corpus is not evidence that
 their implementation or semantics are complete.
 
+The [resource completion proposal](resource_lifetime.md) now recommends typed
+scope failure through an explicit library Result carrier and checked non-escape
+with runtime revocation. This is **recommended, not accepted**: the symbolic
+comparison does not typecheck callback/region contracts or test a real scheduler.
+
 Before an open experiment becomes accepted, its proposal must include:
 
 - three representative programs, including one failure-heavy program;

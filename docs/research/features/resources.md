@@ -39,3 +39,8 @@ silent use-after-close.
 **User-facing gate:** explain output must show enter/body/exit and all causes;
 playground promotion waits on the narrow supported contract.
 [Target](../../design/targets/resources.nomi).
+
+Continuation: [focused experiment](../resource_lifetime.md),
+[completion proposal](../../design/resource_lifetime.md), and
+[three pressure programs](../../design/resource_lifetime_target.nomi). The
+symbolic comparison is executed; typed protocol and actual async gates remain.

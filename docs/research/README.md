@@ -19,6 +19,8 @@
    bounded scope, Nomi costs, and concrete experiments.
 4. [Open Questions](open_questions.md) - genuine forks that still require
    experiments rather than more broad surveys.
+5. [Resource Experiment](resource_lifetime.md) - executed symbolic comparison
+   of cleanup carriers and supplied-fact escape policies; not runtime conformance.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The

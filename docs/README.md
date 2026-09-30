@@ -136,6 +136,7 @@ This list is intentionally complete and is checked by tests.
 - [Decision Ledger](design/decisions.md)
 - [Language Synthesis](design/synthesis.md)
 - [Target Suite](design/targets/README.md)
+- [Resource Completion Proposal](design/resource_lifetime.md)
 
 ### Research
 
@@ -144,6 +145,7 @@ This list is intentionally complete and is checked by tests.
 - [Design Convergences](research/convergences.md)
 - [Pattern Matching Research](research/pattern_matching.md)
 - [Open Questions](research/open_questions.md)
+- [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
 
 ### Language Reviews
 
@@ -228,3 +230,4 @@ This list is intentionally complete and is checked by tests.
 - [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md)
 - [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md)
 - [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md)
+- [Resource Lifetime Experiment 2026-09-29](review/2026-09-29-resource-lifetime.md)

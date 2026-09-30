@@ -1,0 +1,79 @@
+# Status: candidate pressure fixture; not runnable or fully typechecked.
+# Packet: docs/research/resource_lifetime.md; docs/design/resource_lifetime.md;
+# docs/review/2026-09-29-resource-lifetime.md
+# These examples use accepted source forms and PROPOSED library types/APIs.
+# ScopeFailure[E], Reader, CopySession, ByteStream, run_scope, async_run_scope,
+# and resource-description factories are not existing standard-library exports.
+# Generic/callback-effect/region declarations remain open. No fallible-with
+# shorthand is accepted by this file.
+
+from std.files import CopySession, FileRead, FileWrite, IoError, Path, Reader, files
+from std.http import ByteStream, Network, Url, http
+from std.resources import ScopeFailure, async_run_scope, run_scope
+
+
+# 1. Beginner: read, return owned text, then observe completion after release.
+func read_body(reader: Reader) -> Result[Text, IoError] uses FileRead:
+    return reader.read_all()
+
+pub func read_text(path: Path) -> Result[Text, ScopeFailure[IoError]] uses FileRead:
+    return run_scope(files.reader_resource(path), read_body)
+
+# Required traces: reader-return, read-error-close-error,
+# successful-body-close-error in docs/design/fixtures/resource_scope_cases.json.
+# Returning Text is not returning the scoped Reader.
+
+
+# 2. Production: a compound session owns staged acquisition and rollback.
+# Enter opens source first, then destination; failed destination enter closes
+# source. A partially entered session must retain rollback failures itself.
+func copy_body(session: CopySession) -> Result[Unit, IoError]
+uses FileRead, FileWrite:
+    return session.copy_text()
+
+pub func copy_text(
+    source: Path,
+    destination: Path,
+) -> Result[Unit, ScopeFailure[IoError]] uses FileRead, FileWrite:
+    return run_scope(files.copy_session(source, destination), copy_body)
+
+# Required traces: staged-second-enter-fails and staged-enter-and-rollback-fail.
+# All operation/release errors here intentionally use IoError. Heterogeneous
+# nested scopes need an explicit E mapping proposal; this example cannot prove it.
+# Publication/crash durability is not implied by a copy-session resource.
+
+
+# 3. Failure-heavy: cancellation during asynchronous release plus close error.
+async func receive_body(stream: ByteStream) -> Result[Bytes, IoError] uses Network:
+    return await stream.receive()
+
+pub async func receive(url: Url) -> Result[Bytes, ScopeFailure[IoError]] uses Network:
+    # Proposed adapter translates its declared expected errors to IoError here;
+    # it may not translate panic/cancellation to an ordinary Err.
+    return await async_run_scope(http.stream_resource(url), receive_body)
+
+# Required trace: cancel-during-release; cancellation remains cancellation and
+# close error stays attached. Cleanup finishes before task completion is observed.
+# The symbolic fixture injects a cancellation event; it does not run this task.
+
+
+# Rejection programs below are deliberately commented. Reader types are assumed
+# scoped by the proposed protocol; no lifetime annotation syntax is invented.
+#
+# func leak(reader: Reader) -> Reader:
+#     return reader
+# At a run_scope boundary, returning this scoped reader would escape its lease.
+# A function forwarding an existing borrowed parameter within its same scope is
+# a distinct region-checking case; the declaration alone is not always invalid.
+#
+# func delayed(reader: Reader):
+#     return () => reader.read_all()
+# Reject when delayed's returned closure escapes the reader scope; an immediate
+# local use of a capture can be valid.
+#
+# Resource outer / TaskGroup inner: child joins before release -> potentially valid.
+# TaskGroup outer / Resource inner: escaped child handle -> reject when it can
+# outlive the lease. Safe concurrent-use permission is a separate protocol gate.
+#
+# Owned copies may be returned; unchecked aliases must be revoked even if close
+# fails. Failed release never restores ordinary authority to the handle.

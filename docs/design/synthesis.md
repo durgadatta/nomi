@@ -90,6 +90,12 @@ Do not answer these with more broad language tours. Use the
 [open experiment agenda](../research/open_questions.md). The per-language
 exercises are candidate evidence, not 44 independent implementation tasks.
 
+The first gate now has an [executed resource experiment](../research/resource_lifetime.md)
+and [focused proposal](resource_lifetime.md): 32 candidate traces and 14
+supplied-fact escape predictions. Recommendation: typed recoverable completion
+and static scoped use backed by revocation. Status remains `designing`;
+generic/callback/region typing and actual asynchronous cleanup are not validated.
+
 ## Action Sequence
 
 Each step owns one reviewable deliverable and a visible user outcome. The

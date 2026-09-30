@@ -90,6 +90,12 @@ for return, callback capture, and child-task transfer. Compare a domain-visible
 cleanup Result with a separate composed abnormal envelope. Require body and
 release causes to survive cancellation. See [resources](features/resources.md).
 
+**Executed:** [the focused resource comparison](resource_lifetime.md) preserves
+causes under both carriers. Prefer typed recoverable completion and static scoped
+use with revocation, subject to callback/error/region typing. Next test binding
+failure after successful enter, in-flight operations, and actual async cleanup
+with deadlines; supplied lifetime facts are not checker evidence.
+
 ## 6. Error Conversion
 
 **Question:** Is explicit `.map_error(...)` too repetitive in layered services?

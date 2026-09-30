@@ -27,11 +27,44 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Settle cleanup outcome carrier and resource escape policy with reader, staged acquisition, and cancellation/failed-release programs and event traces.",
+        "Use the resource-lifetime packet's executed candidate comparison; next close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Specify callback effect types, minimal generics/protocols, and scoped task-handle contracts before claiming the overall target is fully typeable.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
         "Specify strict indexed decoding/encoding and numeric golden vectors across CLI and browser hosts.",
         "Promote only a completed category contract through Surface/Core, diagnostics, formatter, runtime conformance, supported samples, and GitHub playground smoke coverage."
+      ]
+    },
+    {
+      "id": "resource-lifetime",
+      "topic": "Typed resource completion and scoped handle escape",
+      "owner": "language-design",
+      "status": "designing",
+      "last_reviewed": "2026-09-29",
+      "keywords": ["resource lifetime", "cleanup outcome", "scope failure", "handle escape", "resource completion", "cleanup cancellation"],
+      "artifacts": {
+        "research": "docs/research/resource_lifetime.md",
+        "design": "docs/design/resource_lifetime.md",
+        "target": "docs/design/resource_lifetime_target.nomi",
+        "bridge": "docs/review/2026-09-29-resource-lifetime.md"
+      },
+      "canonical_updates": [
+        "docs/design/synthesis.md",
+        "docs/design/decisions.md",
+        "docs/research/open_questions.md",
+        "docs/design/targets/resources.nomi"
+      ],
+      "validation": [
+        "python3 -m tools.design_passes check",
+        "python3 -m tools.resource_scope_experiment",
+        "pytest -n 0 prototype/tests/unit/tools/test_resource_scope_experiment.py prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
+        "ruff check tools/resource_scope_experiment.py prototype/tests/unit/tools/test_resource_scope_experiment.py",
+        "python3 .codex/scripts/agent_doctor.py"
+      ],
+      "next_actions": [
+        "Specify Resource/callback/error/region metadata and type the three programs, including explicit heterogeneous nested error mapping.",
+        "Add binding failure after successful enter, lexical defer/capture timing, in-flight concurrent use, and cleanup timeout cases.",
+        "Validate actual event-controlled async cancellation and cleanup join before accepting any fallible-with shorthand.",
+        "Migrate one target-neutral scope/lease backend slice with typed diagnostics and CLI/browser conformance before promoting a playground sample."
       ]
     },
     {

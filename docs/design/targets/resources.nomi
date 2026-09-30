@@ -1,5 +1,7 @@
 # Status: target-only category fixture; not runnable today.
 # Comparison: docs/research/features/resources.md
+# Focused proposal: docs/design/resource_lifetime.md
+# Typed completion pressure: docs/design/resource_lifetime_target.nomi
 from std.files import FileRead, IoError, Path, files
 
 # Narrow proposed API: open_reader returns a resource whose release is

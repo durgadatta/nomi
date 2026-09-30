@@ -25,6 +25,8 @@
    pattern syntax, scope, coverage, and boundaries.
 9. [Language Synthesis](synthesis.md) - critical cross-language evidence,
    interaction gaps, and ordered admission gates.
+10. [Resource Completion Proposal](resource_lifetime.md) - designing packet,
+    executed symbolic comparison, and remaining type/runtime admission gates.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly
