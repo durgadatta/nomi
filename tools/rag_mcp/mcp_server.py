@@ -32,8 +32,21 @@ class NomiRagMcpServer:
         for line in sys.stdin:
             if not line.strip():
                 continue
-            request = json.loads(line)
-            response = self.handle(request)
+            try:
+                request = json.loads(line)
+            except json.JSONDecodeError:
+                response = self.error(None, -32700, "Parse error")
+            else:
+                if (
+                    not isinstance(request, dict)
+                    or request.get("jsonrpc") != "2.0"
+                    or not isinstance(request.get("method"), str)
+                ):
+                    response = self.error(None, -32600, "Invalid Request")
+                else:
+                    response = self.handle(request)
+                    if "id" not in request:
+                        response = None
             if response is not None:
                 sys.stdout.write(json.dumps(response) + "\n")
                 sys.stdout.flush()
