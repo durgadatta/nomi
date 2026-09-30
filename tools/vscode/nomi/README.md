@@ -114,7 +114,9 @@ To publish after Marketplace credentials are configured:
 python3 tools/vscode/nomi/scripts/nomi-vscode.py publish
 ```
 
-Before the first public release, update the placeholder publisher/repository metadata and add Marketplace polish such as icon, changelog, and license file.
+Repository metadata matches the project's Git origin. Before the first public
+release, confirm the Marketplace publisher and add an icon, changelog, and
+owner-approved license file. Local packaging does not publish the extension.
 
 Official references:
 
