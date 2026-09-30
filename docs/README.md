@@ -16,8 +16,9 @@ For language design, read:
 4. [Pattern Matching](design/pattern_matching.md)
 5. [Industrial Model](design/industrial.md)
 6. [Decision Ledger](design/decisions.md)
-7. [Target Program](design/target.nomi)
+7. [Target Suite](design/targets/README.md) and [Overall Program](design/targets/overall.nomi)
 8. [Pattern Target](design/pattern_matching_target.nomi)
+9. [Language Synthesis](design/synthesis.md)
 
 For the evidence and unresolved forks behind those choices, read:
 
@@ -26,6 +27,7 @@ For the evidence and unresolved forks behind those choices, read:
 3. [Design Convergences](research/convergences.md)
 4. [Pattern Matching Research](research/pattern_matching.md)
 5. [Open Questions](research/open_questions.md)
+6. [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
 
 For the current repository and runtime, read:
 
@@ -55,8 +57,9 @@ current user decision
 Tests remain authoritative for what a supported implementation does today.
 They are not a veto over a new target-language decision.
 
-Target-only source belongs under `docs/design/`, in `target.nomi` or a
-registered focused target. Files under `samples/` are runnable product fixtures
+Target-only source belongs under `docs/design/targets/` or a registered focused
+target. `design/target.nomi` is a superseded predecessor retained for historical
+links. Files under `samples/` are runnable product fixtures
 and must remain aligned with parser, runtime, tests, generated web manifest,
 and browser execution.
 
@@ -84,7 +87,7 @@ For a registered cross-cutting feature, use the complete
    convergence before doing new broad research.
 3. Compare at least two Nomi surfaces and the explicit long form.
 4. Specify semantics, formatting, diagnostics, effects, and interactions.
-5. Update the [Target Program](design/target.nomi).
+5. Update the [Target Suite](design/targets/README.md) and [Overall Program](design/targets/overall.nomi).
 6. Record the decision or experiment in the [Decision Ledger](design/decisions.md).
 7. Only then map the change onto parser, Surface/Core, runtimes, tests, and web.
 
@@ -114,6 +117,10 @@ For a registered cross-cutting feature, use the complete
   research consolidation, target language, and ordered actions.
 - [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md):
   focused research, accepted target, implementation delta, and bridge.
+- [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md):
+  user-facing playground and VS Code agent workflow.
+- [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md):
+  cross-language evidence, target corrections, and registered continuation.
 
 ## Complete Markdown Inventory
 
@@ -127,6 +134,8 @@ This list is intentionally complete and is checked by tests.
 - [Pattern Matching](design/pattern_matching.md)
 - [Industrial Model](design/industrial.md)
 - [Decision Ledger](design/decisions.md)
+- [Language Synthesis](design/synthesis.md)
+- [Target Suite](design/targets/README.md)
 
 ### Research
 
@@ -135,6 +144,71 @@ This list is intentionally complete and is checked by tests.
 - [Design Convergences](research/convergences.md)
 - [Pattern Matching Research](research/pattern_matching.md)
 - [Open Questions](research/open_questions.md)
+
+### Language Reviews
+
+- [Language Review Index](research/languages/README.md)
+- [Python](research/languages/python.md)
+- [Ruby](research/languages/ruby.md)
+- [JavaScript](research/languages/javascript.md)
+- [TypeScript](research/languages/typescript.md)
+- [Bash](research/languages/bash.md)
+- [PowerShell](research/languages/powershell.md)
+- [Tcl](research/languages/tcl.md)
+- [Scheme](research/languages/scheme.md)
+- [Racket](research/languages/racket.md)
+- [Clojure](research/languages/clojure.md)
+- [OCaml](research/languages/ocaml.md)
+- [F#](research/languages/fsharp.md)
+- [Haskell](research/languages/haskell.md)
+- [Elm](research/languages/elm.md)
+- [Gleam](research/languages/gleam.md)
+- [Roc](research/languages/roc.md)
+- [Rust](research/languages/rust.md)
+- [Go](research/languages/go.md)
+- [Zig](research/languages/zig.md)
+- [Swift](research/languages/swift.md)
+- [Kotlin](research/languages/kotlin.md)
+- [Scala](research/languages/scala.md)
+- [Java](research/languages/java.md)
+- [C#](research/languages/csharp.md)
+- [Dart](research/languages/dart.md)
+- [C](research/languages/c.md)
+- [C++](research/languages/cpp.md)
+- [Erlang](research/languages/erlang.md)
+- [Elixir](research/languages/elixir.md)
+- [SQL](research/languages/sql.md)
+- [R](research/languages/r.md)
+- [MATLAB](research/languages/matlab.md)
+- [Julia](research/languages/julia.md)
+- [APL](research/languages/apl.md)
+- [J](research/languages/j.md)
+- [BQN](research/languages/bqn.md)
+- [Uiua](research/languages/uiua.md)
+- [Wolfram Language](research/languages/wolfram.md)
+- [CUE](research/languages/cue.md)
+- [Nickel](research/languages/nickel.md)
+- [Dhall](research/languages/dhall.md)
+- [Pkl](research/languages/pkl.md)
+- [Nix](research/languages/nix.md)
+- [HCL](research/languages/hcl.md)
+
+### Feature Comparisons
+
+- [Feature Index](research/features/README.md)
+- [Bindings](research/features/binding.md)
+- [Functions](research/features/functions.md)
+- [Types And Data](research/features/types_data.md)
+- [Patterns](research/features/patterns.md)
+- [Failure](research/features/failure.md)
+- [Effects](research/features/effects.md)
+- [Resources](research/features/resources.md)
+- [Concurrency](research/features/concurrency.md)
+- [Collections](research/features/collections.md)
+- [Decoding](research/features/decoding.md)
+- [Numerics](research/features/numerics.md)
+- [Modules And Tooling](research/features/modules_tooling.md)
+- [Metaprogramming](research/features/metaprogramming.md)
 
 ### Orientation
 
@@ -152,3 +226,5 @@ This list is intentionally complete and is checked by tests.
 
 - [Language Design Review 2026-07-16](review/2026-07-16.md)
 - [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md)
+- [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md)
+- [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md)

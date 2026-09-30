@@ -2,6 +2,39 @@
   "schema_version": 1,
   "passes": [
     {
+      "id": "language-coherence",
+      "topic": "Cross-language synthesis and whole-program coherence",
+      "owner": "language-design",
+      "status": "designing",
+      "last_reviewed": "2026-09-29",
+      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence"],
+      "artifacts": {
+        "research": "docs/research/features/README.md",
+        "design": "docs/design/synthesis.md",
+        "target": "docs/design/targets/overall.nomi",
+        "bridge": "docs/review/2026-09-29-language-synthesis.md"
+      },
+      "canonical_updates": [
+        "docs/design/README.md",
+        "docs/design/decisions.md",
+        "docs/research/README.md",
+        "docs/research/open_questions.md"
+      ],
+      "validation": [
+        "python3 -m tools.design_passes check",
+        "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
+        "python3 .codex/scripts/agent_doctor.py",
+        "git diff --check"
+      ],
+      "next_actions": [
+        "Settle cleanup outcome carrier and resource escape policy with reader, staged acquisition, and cancellation/failed-release programs and event traces.",
+        "Specify callback effect types, minimal generics/protocols, and scoped task-handle contracts before claiming the overall target is fully typeable.",
+        "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
+        "Specify strict indexed decoding/encoding and numeric golden vectors across CLI and browser hosts.",
+        "Promote only a completed category contract through Surface/Core, diagnostics, formatter, runtime conformance, supported samples, and GitHub playground smoke coverage."
+      ]
+    },
+    {
       "id": "pattern-matching",
       "topic": "Pattern matching",
       "owner": "language-design",

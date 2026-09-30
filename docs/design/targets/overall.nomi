@@ -1,0 +1,213 @@
+# Status: aspirational whole-program fixture, not runnable or typechecked.
+# Packet: docs/research/features/README.md; docs/design/synthesis.md;
+# docs/review/2026-09-29-language-synthesis.md
+# Category map: docs/design/targets/README.md
+#
+# Story: read a small JSON batch, validate every input before network access,
+# skip valid but ineligible customers, enrich eligible customers concurrently,
+# and publish a report. Any decode or enrichment Err aborts publication.
+#
+# Proposed library contracts, not current exports:
+# files.open_reader -> Result[ReaderResource, IoError], infallible release;
+# reader.read_all -> Result[Text, IoError]; json.parse -> Result[Value, JsonError];
+# json.encode(derived-codec data) -> Result[Text, EncodeError];
+# http.post_text(url, body, bearer) -> cold Task[Result[Text, HttpError]];
+# TaskGroup.start -> scoped typed task handle; CancelSiblings applies to panic,
+# not ordinary returned Err. Group abnormal/cleanup envelopes remain open.
+# files.write_text_atomic -> Result[Unit, IoError]; crash durability is open.
+# Collection callbacks below are pure. No constructor-as-function assumption.
+
+from std.collections import filter, map, sort_by
+from std.data import DecodeErrors, Value
+from std.files import FileRead, FileWrite, IoError, Path, files
+from std.http import HttpError, Network, Url, http
+from std.json import EncodeError, JsonError, json
+from std.secret import Secret
+from std.task import TaskFailurePolicy, TaskGroup
+
+
+pub data CustomerId:
+    value: Text where value.trim() != ""
+
+pub data Customer:
+    id: CustomerId
+    name: Text where name.trim() != ""
+    age: Int where age >= 0
+
+# Input normalization preserves these same nonempty predicates. If a future
+# transform can invalidate a field, it needs a fallible validation step.
+data CustomerInput:
+    id: Text where id.trim() != ""
+    name: Text where name.trim() != ""
+    age: Int where age >= 0
+
+data BatchInput:
+    customers: List[CustomerInput]
+    where customers.length <= 128 note "a batch contains at most 128 customers"
+
+pub data ImportConfig:
+    input: Path
+    output: Path
+    profile_service: Url
+    api_key: Secret[Text]
+    minimum_age: Int where minimum_age >= 0 = 13
+    concurrency: Int where 1 <= concurrency and concurrency <= 16 = 4
+
+data ProfileRequest:
+    customer_id: Text
+
+data ProfileInput:
+    customer_id: Text
+    score: Int where 0 <= score and score <= 100
+
+pub data EnrichedCustomer:
+    customer: Customer
+    score: Int where 0 <= score and score <= 100
+
+pub data ImportReport:
+    received: Int where received >= 0
+    eligible: Int where eligible >= 0
+    skipped_ineligible: Int where skipped_ineligible >= 0
+    customers: List[EnrichedCustomer]
+    where eligible + skipped_ineligible == received and customers.length == eligible
+
+pub data ImportError:
+    InputFile(path: Path, cause: IoError)
+    InputFormat(cause: JsonError)
+    Rows(errors: DecodeErrors)
+    RequestEncoding(customer_id: CustomerId, cause: EncodeError)
+    ProfileTransport(customer_id: CustomerId, cause: HttpError)
+    ProfileFormat(customer_id: CustomerId, cause: JsonError)
+    ProfileFields(customer_id: CustomerId, errors: DecodeErrors)
+    ProfileIdentity(expected: CustomerId, received: Text)
+    ReportEncoding(cause: EncodeError)
+    OutputFile(path: Path, cause: IoError)
+
+
+func normalize(input: CustomerInput) -> Customer:
+    return Customer(
+        id=CustomerId(value=input.id.trim()),
+        name=input.name.trim(),
+        age=input.age,
+    )
+
+func read_input(path: Path) -> Result[Text, ImportError] uses FileRead:
+    resource = files.open_reader(path)
+        .map_error((error) => ImportError.InputFile(path=path, cause=error))?
+    with resource as reader:
+        return reader.read_all()
+            .map_error((error) => ImportError.InputFile(path=path, cause=error))
+
+func decode_batch(text: Text) -> Result[List[Customer], ImportError]:
+    raw = json.parse(text)
+        .map_error((error) => ImportError.InputFormat(error))?
+    batch = BatchInput.decode(raw)
+        .map_error((errors) => ImportError.Rows(errors))?
+    return Ok(map(batch.customers, normalize))
+
+func eligible_customers(
+    customers: List[Customer],
+    minimum_age: Int,
+) -> List[Customer]:
+    return customers
+        |> filter((customer) => customer.age >= minimum_age)
+        |> sort_by((customer) => customer.id.value)
+
+async func enrich(
+    customer: Customer,
+    config: ImportConfig,
+) -> Result[EnrichedCustomer, ImportError] uses Network:
+    body = json.encode(ProfileRequest(customer_id=customer.id.value))
+        .map_error((error) => ImportError.RequestEncoding(
+            customer_id=customer.id,
+            cause=error,
+        ))?
+    response = await http.post_text(
+        config.profile_service,
+        body,
+        bearer=config.api_key,
+    )
+    text = response.map_error((error) => ImportError.ProfileTransport(
+        customer_id=customer.id,
+        cause=error,
+    ))?
+    raw = json.parse(text).map_error((error) => ImportError.ProfileFormat(
+        customer_id=customer.id,
+        cause=error,
+    ))?
+    profile = ProfileInput.decode(raw).map_error((errors) => ImportError.ProfileFields(
+        customer_id=customer.id,
+        errors=errors,
+    ))?
+    if profile.customer_id != customer.id.value:
+        return Err(ImportError.ProfileIdentity(
+            expected=customer.id,
+            received=profile.customer_id,
+        ))
+    return Ok(EnrichedCustomer(customer=customer, score=profile.score))
+
+async func enrich_batch(
+    customers: List[Customer],
+    config: ImportConfig,
+) -> Result[List[EnrichedCustomer], ImportError] uses Network:
+    # At most 128 validated rows: bounded handles here, NOT a streaming API.
+    async with TaskGroup(
+        limit=config.concurrency,
+        failure=TaskFailurePolicy.CancelSiblings,
+    ) as tasks:
+        var pending = []
+        for customer in customers:
+            set pending = pending + [tasks.start(enrich(customer, config))]
+        var enriched: List[EnrichedCustomer] = []
+        for task in pending:
+            outcome = await task
+            item = outcome?
+            set enriched = enriched + [item]
+        return Ok(enriched)
+    # Any parent ? exit must cancel/join remaining children before observation.
+    # Child panic/cancellation is not representable as ImportError by omission.
+
+pub async func run(config: ImportConfig) -> Result[ImportReport, ImportError]
+uses FileRead, FileWrite, Network:
+    text = read_input(config.input)?
+    customers = decode_batch(text)?
+    eligible = eligible_customers(customers, config.minimum_age)
+    outcome = await enrich_batch(eligible, config)
+    enriched = outcome?
+    report = ImportReport(
+        received=customers.length,
+        eligible=eligible.length,
+        skipped_ineligible=customers.length - eligible.length,
+        customers=enriched,
+    )
+    encoded = json.encode(report)
+        .map_error((error) => ImportError.ReportEncoding(error))?
+    files.write_text_atomic(config.output, encoded)
+        .map_error((error) => ImportError.OutputFile(path=config.output, cause=error))?
+    return Ok(report)
+
+
+example "valid but ineligible is not malformed":
+    customers = [
+        Customer(id=CustomerId(value="a"), name="Ada", age=36),
+        Customer(id=CustomerId(value="b"), name="Bea", age=9),
+    ]
+    chosen = eligible_customers(customers, 13)
+    check chosen.length == 1
+    check chosen == [Customer(id=CustomerId(value="a"), name="Ada", age=36)]
+
+example "batch decoding retains row context":
+    raw = Value.Map({"customers": Value.List([
+        Value.Map({"id": Value.Text("a"), "name": Value.Text(""), "age": Value.Number(-1)}),
+    ])})
+    rejected = match BatchInput.decode(raw):
+        Ok(_) => false
+        Err(_) => true
+    check rejected
+    # Required transcript: $.customers[0].name AND $.customers[0].age.
+    # Run rejection -> zero profile requests, zero report writes.
+
+# Review gates: duplicate input identity policy; request/response limits and
+# deadlines; typed generics/task handles; secret-safe encoding and diagnostics;
+# group/cleanup outcomes; actual filesystem publication guarantees; formatter.
+# This is a design pressure fixture, not a production-ready import service.

@@ -6,6 +6,10 @@
 > systems, tooling, pedagogy, security, and deployment. Each section separates
 > broad convergence from the design fork Nomi still had to choose.
 
+The [feature comparisons](features/README.md) deepen these findings along one
+axis; the [language reviews](languages/README.md) expose each language's costs
+and the [active synthesis](../design/synthesis.md) tests their combined shape.
+
 ## 1. Low Floor And High Ceiling Are Different Problems
 
 **Convergence:** successful first experiences produce a visible result with no

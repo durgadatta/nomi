@@ -6,6 +6,10 @@
 > treat language popularity or familiarity as proof that a surface belongs in
 > Nomi.
 
+For source-backed critical detail, use the [language index](languages/README.md)
+and [feature index](features/README.md). This page retains the compact family
+view; recommendations are Nomi judgments, not rankings of the source languages.
+
 ## Everyday Dynamic Languages
 
 ### Python
@@ -260,4 +264,3 @@ Nomi treats package/build/security design as part of the language product from
 the beginning. Friendly syntax cannot compensate for an ecosystem that runs
 install scripts, leaks secrets, silently upgrades dependencies, or builds a
 different artifact in production.
-

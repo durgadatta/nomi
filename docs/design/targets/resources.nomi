@@ -1,0 +1,23 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/resources.md
+from std.files import FileRead, IoError, Path, files
+
+# Narrow proposed API: open_reader returns a resource whose release is
+# infallible. A read failure is IoError. General close failure is NOT settled
+# by this example; see research/open_questions.md question 5.
+pub func read_banner(path: Path) -> Result[Text, IoError] uses FileRead:
+    resource = files.open_reader(path)?
+    with resource as reader:
+        text = reader.read_all()?
+        return Ok(text.trim())
+
+# Required events: acquire, read, release, then observe return.
+# Read failure: acquire, read-error, release, then observe Err.
+# Panic and cancellation must also release, exactly once.
+# Reject an escaped reader used after the lexical with scope.
+# General experiment: body Err(ReadError) plus release Err(CloseError).
+# Which public carrier preserves BOTH? The current target promises retention
+# but does not yet settle that carrier or its interaction with typed Result.
+
+# Rejected interpretation: with may retry its body. A retry API takes an
+# explicit function; it must reacquire a fresh resource on every attempt.

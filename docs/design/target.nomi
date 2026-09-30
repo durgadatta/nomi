@@ -1,4 +1,7 @@
-# Aspirational Nomi target program.
+# Legacy aspirational Nomi target program (2026-07-16).
+# Superseded as the active overall fixture by docs/design/targets/overall.nomi.
+# Read docs/design/synthesis.md for identified gaps in this predecessor.
+# Kept for historical links; not a second active whole-program authority.
 #
 # Status: design fixture; it is not expected to parse or run in the current
 # prototype. Runnable examples stay under samples/ and remain web-tested.

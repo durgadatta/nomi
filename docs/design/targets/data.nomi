@@ -1,0 +1,30 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/types_data.md
+
+pub data TicketId:
+    value: Int where value > 0
+
+pub data Ticket:
+    id: TicketId
+    title: Text where title.trim() != ""
+    owner: Option[Text] = none
+
+pub data TicketState:
+    Queued
+    Assigned(owner: Text)
+    Closed(resolution: Text)
+
+pub func assign(ticket: Ticket, owner: Text) -> Ticket:
+    return Ticket(id=ticket.id, title=ticket.title, owner=Some(owner))
+
+example "updating a value leaves its source intact":
+    original = Ticket(id=TicketId(value=7), title="Repair export")
+    assigned = assign(original, "Ada")
+    check original.owner == none
+    check assigned.owner == Some("Ada")
+    check TicketState.Assigned("Ada") != TicketState.Queued
+
+# Rejected: TicketId(value=0) is an internal contract violation.
+# External input must use decode and receive Result, not catch this violation.
+# Tradeoff: manual reconstruction gets verbose for wide products; immutable
+# update APIs are an open protocol question, not hidden mutation or new syntax.

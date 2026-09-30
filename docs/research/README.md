@@ -14,8 +14,16 @@
    what Nomi should not inherit.
 2. [Design Convergences](convergences.md) - findings that recur across
    language, tooling, data, security, and pedagogy research.
-3. [Open Questions](open_questions.md) - genuine forks that still require
+3. [Language Reviews](languages/README.md) and [Feature Comparisons](features/README.md) -
+   the requested two-dimensional critical review, with primary sources,
+   bounded scope, Nomi costs, and concrete experiments.
+4. [Open Questions](open_questions.md) - genuine forks that still require
    experiments rather than more broad surveys.
+
+The [language synthesis](../design/synthesis.md) links that evidence to category
+targets, the revised overall program, and user-facing playground gates. The
+44 language reviews and 13 feature pages are deliberately indexed evidence,
+not independent specifications or 44 new implementation backlogs.
 
 The decisions drawn from this evidence live in
 [Target Design](../design/README.md), [Syntax](../design/syntax.md), and the
@@ -95,6 +103,7 @@ Schema, Terraform, Cargo, Go Modules, Nix, Deno, and Sigstore documentation;
 and foundational work by Landin, Strachey, Hoare, Milner, Wadler, and related
 language-design traditions.
 
-The source URLs and longer bibliographies remain available in repository
-history. Restore a deep dive only when a concrete open question needs its
-detail; do not restore the old documentation topology.
+The old source URLs and longer bibliographies remain available in repository
+history. The September review adds freshly checked primary references under
+the requested language/feature indexes; it does not restore old competing
+atlases or syntheses. Extend these pages only for a concrete target deficiency.

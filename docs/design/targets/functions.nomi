@@ -1,0 +1,22 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/functions.md
+from std.collections import map
+
+pub func line_total(quantity: Int, unit_price: Int, discount: Int = 0) -> Int:
+    return quantity * unit_price - discount
+
+func normalized_name(text: Text) -> Text:
+    return text.trim().lower()
+
+example "one declaration form and explicit call policy":
+    check line_total(3, 10, discount=2) == 28
+    names = [" ADA ", "Grace"] |> map(normalized_name)
+    check names == ["ada", "grace"]
+    doubled = [1, 2] |> map((value) => value * 2)
+    check doubled == [2, 4]
+
+# Long form of the last pipeline: map([1, 2], (value) => value * 2).
+# `map(callback)` outside a pipeline is not implicit partial application.
+# Rejected: double(x) = x * 2; map(_ * 2); whitespace application.
+# Open: callback effect variables and public generic signature syntax.
+# This example uses pure, concrete calls so it does not silently decide either.

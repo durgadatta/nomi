@@ -220,6 +220,24 @@ These choices are not yet strong enough for permanent syntax:
 
 ## Feature Admission Packet
 
+The [September synthesis](synthesis.md) reaffirms the accepted core without
+admitting new syntax. [Category targets](targets/README.md) and
+[the overall fixture](targets/overall.nomi) replace the legacy program as the
+active coherence suite. API names in those files are explicitly proposals.
+
+Additional interaction gates exposed by the whole program remain **open**:
+
+| Gate | Not yet decided | Concrete evidence route |
+| --- | --- | --- |
+| Resource escape | Static lifetime/non-escape checking versus runtime closed-handle checks | Return, capture, child transfer in [resource comparison](../research/features/resources.md). |
+| Composed outcomes | Typed domain cleanup errors versus an abnormal multi-cause envelope | Body Err plus close Err plus cancellation; preserve every cause. |
+| Callback effects | Pure-only collection verbs versus effect-polymorphic signatures | [Functions](../research/features/functions.md) and [effects](../research/features/effects.md). |
+| Task policy and memory | Abnormal failure policy, observation order, and separate queue bound | [Concurrency comparison](../research/features/concurrency.md). |
+| Derived codec projection | Explicit encoding/decoding signatures and non-projectable predicates | [Decoding comparison](../research/features/decoding.md). |
+
+These gates refine existing open questions; the corpus is not evidence that
+their implementation or semantics are complete.
+
 Before an open experiment becomes accepted, its proposal must include:
 
 - three representative programs, including one failure-heavy program;

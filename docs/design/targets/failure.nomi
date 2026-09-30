@@ -1,0 +1,29 @@
+# Status: target-only category fixture; not runnable today.
+# Proposed library: Int.parse returns Result[Int, ParseError].
+# Comparison: docs/research/features/failure.md
+from std.text import ParseError
+
+data PortError:
+    Syntax(cause: ParseError)
+    OutOfRange(value: Int)
+
+func parse_port(text: Text) -> Result[Int, PortError]:
+    value = Int.parse(text).map_error((error) => PortError.Syntax(error))?
+    if value < 1 or value > 65535:
+        return Err(PortError.OutOfRange(value))
+    return Ok(value)
+
+func require_name(value: Option[Text]) -> Option[Text]:
+    name = value?
+    return Some(name.trim())
+
+example "absence is not a malformed present value":
+    check require_name(none) == none
+    check parse_port("8080") == Ok(8080)
+    check parse_port("0") == Err(PortError.OutOfRange(0))
+    check (none ?? "unknown") == "unknown"
+
+# Long form of ? is a match: Ok(value) continues; Err(error) returns Err(error)
+# from the enclosing function, after every applicable cleanup.
+# Rejected: parse_port("bad") ?? 80; ?? handles only Option.
+# Rejected: convert Option to Result with ? without naming the missing error.

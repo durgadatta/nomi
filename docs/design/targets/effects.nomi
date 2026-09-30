@@ -1,0 +1,23 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/effects.md
+from std.console import ConsoleWrite
+from std.files import FileRead, IoError, Path, files
+from std.secret import Secret
+
+pub func read_message(path: Path) -> Result[Text, IoError] uses FileRead:
+    return files.read_text(path)
+
+pub func announce(message: Text) -> Unit uses ConsoleWrite:
+    print(message)
+    return ()
+
+pub func display_token(token: Secret[Text]) -> Unit uses ConsoleWrite:
+    print("Configured token: {token}")
+    return ()
+
+# Host scenario: grant FileRead only for an uploaded browser file; deny an
+# arbitrary path even though the function has the same static effect set.
+# Required display: Secret redacted, including any failure diagnostic.
+# Rejected: remove uses FileRead from read_message while retaining the call.
+# Open: how callback effect sets and captured resource authority are represented.
+# Declaring FileRead requests authority; it cannot mint a capability from text.

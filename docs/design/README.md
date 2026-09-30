@@ -19,10 +19,16 @@
    security, tooling, deployment, and conformance.
 6. [Decision Ledger](decisions.md) - accepted, rejected, deferred, and open
    choices.
-7. [Target Program](target.nomi) - one aspirational program that pressures the
-   design as a whole.
+7. [Target Suite](targets/README.md) and [Overall Program](targets/overall.nomi) -
+   category programs and one active whole-language pressure fixture.
 8. [Pattern Target](pattern_matching_target.nomi) - focused pressure cases for
    pattern syntax, scope, coverage, and boundaries.
+9. [Language Synthesis](synthesis.md) - critical cross-language evidence,
+   interaction gaps, and ordered admission gates.
+
+[The old target](target.nomi) remains a superseded predecessor, not an active
+specification. Target programs illustrate accepted core syntax and explicitly
+proposed library contracts; they are not runnable conformance claims.
 
 Versioned frontend-neutral contracts live under [`schemas/`](schemas/). The
 first is [Pattern Surface v1](schemas/pattern_surface.schema.json), a

@@ -1,0 +1,24 @@
+# Status: target-only category fixture with proposed numeric APIs.
+# Comparison: docs/research/features/numerics.md
+from std.decimal import DecimalError, Rounding, decimal
+
+data Money:
+    amount: Decimal
+    currency: Text where currency != ""
+
+func divide_amount(
+    text: Text,
+    parts: Int where parts > 0,
+) -> Result[Decimal, DecimalError]:
+    amount = Decimal.parse(text)?
+    return decimal.divide(amount, parts, scale=2, rounding=Rounding.HalfEven)
+
+# Proposed golden vectors for the numeric decision pass:
+# divide_amount("10.00", 4) -> decimal 2.50
+# divide_amount("10.00", 3) -> decimal 3.33, with the explicit rounding above
+# Float NaN comparison, negative zero display, integers beyond 2**53, checked
+# narrowing, non-finite JSON, and fixed-width overflow need cross-backend cases.
+# No assumption here that Decimal is a scaled Float, Int wraps on overflow,
+# array broadcasting is implicit, or a currency string proves unit safety.
+# Array shape mismatch must identify both shapes before evaluating a kernel.
+# Keep arrays/units in libraries until scalar and dispatch contracts are settled.

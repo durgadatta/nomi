@@ -1,0 +1,30 @@
+# Status: target-only category fixture; not runnable today.
+# Proposed TaskGroup API/policy, not a completed runtime contract.
+# Comparison: docs/research/features/concurrency.md
+from std.http import HttpError, Network, Url, http
+from std.task import TaskFailurePolicy, TaskGroup
+
+async func fetch_text(url: Url) -> Result[Text, HttpError] uses Network:
+    return await http.get_text(url)
+
+pub async func fetch_pair(
+    left_url: Url,
+    right_url: Url,
+) -> Result[(Text, Text), HttpError] uses Network:
+    async with TaskGroup(limit=2, failure=TaskFailurePolicy.CancelSiblings) as tasks:
+        left = tasks.start(fetch_text(left_url))
+        right = tasks.start(fetch_text(right_url))
+        left_outcome = await left
+        left_text = left_outcome?
+        right_outcome = await right
+        right_text = right_outcome?
+        return Ok((left_text, right_text))
+
+# Calling fetch_text constructs cold work. tasks.start schedules it.
+# Err(HttpError) is a returned VALUE, not automatically a task crash. The
+# parent's ? exits the group, which must cancel/join unfinished children.
+# CancelSiblings names the illustrative policy for abnormal child failure.
+# Required stress: right fails abnormally while left waits; parent is cancelled
+# during cleanup; both panic; left returns Err while right returns Ok.
+# Open: ErrorGroup shape/order and cleanup envelope. No claim that the ordinary
+# HttpError parameter represents cancellation or panic.

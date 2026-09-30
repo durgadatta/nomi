@@ -1,0 +1,24 @@
+# Status: target-only module fixture; not runnable today.
+# Logical identity: app.pricing, supplied by the package-relative file path.
+# Comparison: docs/research/features/modules_tooling.md
+
+pub data Quote:
+    subtotal: Int where subtotal >= 0
+    discount: Int where 0 <= discount and discount <= subtotal
+
+pub func amount_due(quote: Quote) -> Int:
+    return quote.subtotal - quote.discount
+
+func internal_label(quote: Quote) -> Text:
+    return "due={amount_due(quote)}"
+
+example "a public boundary is usable without private implementation":
+    quote = Quote(subtotal=100, discount=15)
+    check amount_due(quote) == 85
+
+# Consumer spelling (separate file): from app.pricing import Quote, amount_due
+# The interface artifact includes Quote, its constraints, and the pure function
+# signature; internal_label remains private. Import discovery does not run
+# initialization; accepted deterministic initialization is a separate contract.
+# Manifest/lockfile own edition and dependency identity, not import syntax.
+# Open: serialized generic/protocol identity and public default evolution.

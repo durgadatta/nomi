@@ -1,0 +1,34 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/decoding.md
+from std.data import DecodeErrors, Value
+from std.json import JsonError, json
+
+data Signup:
+    name: Text where name.trim() != ""
+    age: Int where age >= 13 note "account holders must be at least 13"
+
+data InputError:
+    Format(cause: JsonError)
+    Fields(errors: DecodeErrors)
+
+func read_signup(text: Text) -> Result[Signup, InputError]:
+    raw = json.parse(text).map_error((error) => InputError.Format(error))?
+    return Signup.decode(raw).map_error((errors) => InputError.Fields(errors))
+
+example "parsing is separate from decoding":
+    raw = Value.Map({
+        "name": Value.Text("Ada"),
+        "age": Value.Number(36),
+    })
+    check Signup.decode(raw) == Ok(Signup(name="Ada", age=36))
+
+example "independent failures remain expected failures":
+    raw = Value.Map({"name": Value.Text(""), "age": Value.Number(9)})
+    rejected = match Signup.decode(raw):
+        Ok(_) => false
+        Err(_) => true
+    check rejected
+
+# Required diagnostic transcript: errors at $.name AND $.age; construct no
+# Signup. Extra key "agge" is rejected; text "36" is not silently Int 36.
+# Value wrappers are explicit here; implicit map-to-Value lifting is not assumed.

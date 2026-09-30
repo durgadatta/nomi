@@ -1,0 +1,34 @@
+# Status: target-only category fixture; not runnable today.
+# Detailed authority: docs/design/pattern_matching.md
+# Detailed conformance pressure: docs/design/pattern_matching_target.nomi
+# Comparison: docs/research/features/patterns.md
+
+data Delivery:
+    Queued
+    Sent(receipt: Text)
+    Failed(reason: Text)
+
+func label(delivery: Delivery) -> Text:
+    return match delivery:
+        Delivery.Queued => "queued"
+        Delivery.Sent(receipt) => "sent: {receipt}"
+        Delivery.Failed(reason) => "failed: {reason}"
+
+func first_positive(values: List[Int]) -> Option[Int]:
+    for value in values:
+        if value > 0:
+            return Some(value)
+    return none
+
+example "guards need an unguarded fallback":
+    values = [4, 8]
+    label_text = match values:
+        [head, ..tail] when head > 0 => "positive head"
+        [head, ..tail] => "other head"
+        [] => "empty"
+    check label_text == "positive head"
+    check first_positive([-1, 3]) == Some(3)
+
+# `head` and `tail` do not exist after their arm.
+# Rejected: omit Delivery.Failed from label; diagnostic gives a missing witness.
+# Rejected: effectful guard, repeated capture, iterable-consuming list pattern.

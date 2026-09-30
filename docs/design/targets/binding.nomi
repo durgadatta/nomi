@@ -1,0 +1,28 @@
+# Status: target-only category fixture; not runnable today.
+# Contract: docs/design/semantics.md#binding
+# Comparison: docs/research/features/binding.md
+
+pub func positive_total(values: List[Int]) -> Int:
+    var total: Int where total >= 0 = 0
+    for value in values:
+        if value > 0:
+            set total = total + value
+    return total
+
+example "updates are visible; input remains unchanged":
+    values = [3, -2, 5]
+    total = positive_total(values)
+    check total == 8
+    check values == [3, -2, 5]
+
+example "irrefutable destructuring creates both names":
+    point = (4, 7)
+    (x, y) = point
+    check x + y == 11
+
+# Rejected: an immutable binding is not a cell.
+# total = 1
+# total = 2
+# Repair: declare var total, then set total = 2.
+# Rejected: [head, ..tail] = values is refutable; use match.
+# Open: collection representation and sharing must not expose mutable aliases.

@@ -1,0 +1,23 @@
+# Status: target-only category fixture; not runnable today.
+# Comparison: docs/research/features/modules_tooling.md
+
+data Interval:
+    start: Int
+    end: Int
+    where end >= start note "end must not precede start"
+
+func duration(interval: Interval) -> Int:
+    return interval.end - interval.start
+
+example "an example is both documentation and an isolated check":
+    interval = Interval(start=3, end=8)
+    check duration(interval) == 5
+
+# Negative fixture, deliberately commented:
+# invalid = Interval(start=8, end=3)
+# Required diagnostic: constraint end >= start, both field spans, related data
+# declaration, note, and safe values. The same record feeds CLI and browser.
+# Another negative: check duration(interval) == 6.
+# Required check diagnostic: expected 6, actual 5, source expression, example
+# name; no Python AST or JS worker stack as the primary user explanation.
+# `nomi explain` is a tool view, not executable source notation.

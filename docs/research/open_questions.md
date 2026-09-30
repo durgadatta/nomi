@@ -55,6 +55,12 @@ algorithms.
 **Test:** numeric types, collection iteration, display/redaction, decoding,
 HTTP adapters, and two libraries that define colliding extensions.
 
+**September pressure:** the target suite assumes map/map_error and typed task
+handles but cannot yet declare their full generic/function-value contracts.
+Compare pure-only collection callbacks with explicit effect-polymorphic types;
+inspect resolved dispatch and errors at the callback argument. See
+[functions](features/functions.md) and [effects](features/effects.md).
+
 ## 4. Effect Taxonomy
 
 **Question:** What belongs in a public `uses` set, and at what granularity?
@@ -77,6 +83,12 @@ errors, return, and break semantics are specified before implementation.
 
 **Test:** nested files, transaction commit/rollback, async stream, cancellation
 during enter/body/exit, and simultaneous body/cleanup failure.
+
+**September pressure:** settle handle escape and the typed outcome carrier
+together. Compare static non-escape checking with runtime closed-handle checks
+for return, callback capture, and child-task transfer. Compare a domain-visible
+cleanup Result with a separate composed abnormal envelope. Require body and
+release causes to survive cancellation. See [resources](features/resources.md).
 
 ## 6. Error Conversion
 
@@ -212,6 +224,15 @@ compiler-complexity pressure in `docs/research/pattern_matching.md` before
 changing the focused target.
 
 ## Research Stop Rule
+
+The [September synthesis](../design/synthesis.md) orders these gates against
+[the overall program](../design/targets/overall.nomi). Task-group policy is a
+specific additional fork exposed there: cancel siblings versus collect all on
+abnormal failure, with ordinary child Err remaining data unless explicitly
+promoted. Use controlled scheduler events and record active/queued bounds,
+cause ordering, parent cancellation, and no children after lexical exit. See
+[concurrency](features/concurrency.md). This does not reopen cold tasks or
+structured lifetime; it closes their currently underspecified library policy.
 
 Do not add another open question merely because a language has an interesting
 feature. Add one only when:
