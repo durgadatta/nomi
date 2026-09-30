@@ -453,6 +453,11 @@ starts or reuses the `nomi:jupyter` container, and opens
 `notebooks/nomi_syntax_tour.ipynb` in Jupyter Lab with the local `Nomi` kernel
 registered inside the container.
 
+Before any Docker/Homebrew setup, the launcher rejects ports outside 1-65535
+and nonpositive wait/Colima resource values. Tokens are URL-encoded as a single
+query value, including when they contain `&`, `#`, `+` or spaces. This does not
+redact tokens from printed launch commands/URLs or change container reuse policy.
+
 The Docker context is bounded by `.dockerignore`, which excludes local scratch
 files, generated reports, installed JavaScript dependencies, Python caches, and
 distribution artifacts while keeping source, notebooks, documentation, and AI

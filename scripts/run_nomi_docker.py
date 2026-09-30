@@ -14,7 +14,7 @@ import urllib.error
 import urllib.request
 import webbrowser
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -222,15 +222,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=60,
         help="How long to wait for Jupyter before opening the URL.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if not 1 <= args.port <= 65535:
+        parser.error("--port must be between 1 and 65535")
+    for option in ("colima_cpu", "colima_memory", "colima_disk", "wait_seconds"):
+        if getattr(args, option) <= 0:
+            parser.error(f"--{option.replace('_', '-')} must be positive")
+    return args
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     notebook = "notebooks/nomi_minimal.ipynb" if args.minimal else args.notebook
     notebook_url = quote(notebook)
-    url = f"http://127.0.0.1:{args.port}/lab/tree/{notebook_url}?token={args.token}"
-    status_url = f"http://127.0.0.1:{args.port}/api/status?token={args.token}"
+    query = urlencode({"token": args.token})
+    url = f"http://127.0.0.1:{args.port}/lab/tree/{notebook_url}?{query}"
+    status_url = f"http://127.0.0.1:{args.port}/api/status?{query}"
 
     if not ensure_docker_runtime(args):
         return 1
