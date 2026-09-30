@@ -220,6 +220,31 @@ See `prototype/tests/README.md` for the current layout.
 
 ## Implementation Direction
 
+### Target Direction Inspection
+
+The feature registry now records `target_direction` separately from prototype
+`status` and execution capabilities:
+
+```bash
+python3 -m tools.syntax.inspect --stage target-alignment
+```
+
+The shared runtime facade also accepts `inspect(stage="target_alignment")`.
+Both render the same registry metadata without parsing or executing supplied
+source. `retain` keeps a target concept, `rework` changes its current mechanism
+or surface, `retire` removes its source form from the target, and `open` leaves
+its representation undecided. Missing metadata renders as `unreviewed`, never
+as accepted. Each reviewed direction links its canonical contract, target
+normal form and rationale.
+
+Directions do **not** select or disable grammar, lowering, desugar passes,
+runtime hooks, or samples. An implemented equation/placeholder form can still
+run while its target direction is `retire`. `retain` does not imply conformance:
+the retained Pattern Surface fragment still has no full-match execution.
+This is migration inspection, not a target compiler or a browser UI feature.
+Future direction changes belong in the existing registry, reviewed against
+the linked design owner; do not add a competing feature list.
+
 Semantic extensions such as constrained binding and yield-to-block are
 currently implemented through Python AST encodings, desugar passes, interpreter
 overrides, and controlled runtime deviations.

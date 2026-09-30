@@ -12,6 +12,7 @@ Usage::
     python3 -m tools.syntax.inspect FILE --stage python-ast
     python3 -m tools.syntax.inspect --stage features
     python3 -m tools.syntax.inspect --stage capabilities
+    python3 -m tools.syntax.inspect --stage target-alignment
     python3 -m tools.syntax.inspect --stage parser-frontends
     python3 -m tools.syntax.inspect --stage eval-backends
     python3 -m tools.syntax.inspect --stage host-capabilities
@@ -48,6 +49,7 @@ from prototype.syntax.core import (
 from prototype.syntax.features import (
     render_feature_capability_table,
     render_feature_layer_table,
+    render_feature_target_table,
 )
 
 
@@ -76,6 +78,9 @@ def main():
         return
     if stage in {"capabilities", "capability-matrix", "capability_matrix"}:
         print(render_feature_capability_table())
+        return
+    if stage in {"target-alignment", "target_alignment"}:
+        print(render_feature_target_table())
         return
     if stage in {"parser-frontends", "parser_frontends", "frontends"}:
         print(render_parser_frontend_table())
@@ -158,7 +163,7 @@ def main():
             f"Unknown stage: {stage!r}. "
             f"Valid: raw-tree, transformed-tree, surface-ast, core, "
             f"core-json, runtime-cache-key, core-verify, core-to-python, backend-lowered, "
-            f"python-ast, features, capabilities, parser-frontends, "
+            f"python-ast, features, capabilities, target-alignment, parser-frontends, "
             f"eval-backends, host-capabilities, resolved-pipelines, passes, expansions"
         )
         sys.exit(1)

@@ -34,6 +34,7 @@ from prototype.syntax.features import (
     DEFAULT_DESUGAR_PROFILE,
     render_feature_capability_table,
     render_feature_layer_table,
+    render_feature_target_table,
 )
 from prototype.parser.nomi.frontend import (
     DEFAULT_FRONTEND,
@@ -236,6 +237,17 @@ def inspect(
             stage=stage,
             output=output,
             timings=timings,
+        )
+
+    if stage in {"target_alignment", "target-alignment"}:
+        output = render_feature_target_table()
+        return InspectionResult(
+            mode=mode,
+            profile=profile,
+            pipeline=pipeline,
+            stage=stage,
+            output=output,
+            timings={"total": perf_counter() - started},
         )
 
     if stage in {"parser_frontends", "parser-frontends", "frontends"}:

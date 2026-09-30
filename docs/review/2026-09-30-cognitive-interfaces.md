@@ -50,7 +50,7 @@ survey. Source editions/dialects matter, especially archived Observable docs.
 | Workflow names legacy target as the broad update destination | Agent routing drift | Name the active suite and preserve historical file only as predecessor. |
 | Research overview says breadth is enough without acknowledging this requested expansion | Scope ambiguity | Link cognition/interfaces and retain bounded admission rules. |
 | Research, dated review, registry and synthesis repeat next steps | Duplication risk | Agenda/synthesis own live order; registry routes; dated review records evidence. |
-| Prototype feature lifecycle says implemented without target disposition | Conflates today's coverage with language acceptance | D0 metadata migration; never disable runtime from target-status data. |
+| Prototype feature lifecycle says implemented without target disposition | Conflates today's coverage with language acceptance | D0 checkpoint adds independent direction metadata; never disables runtime from it. |
 | Generic/protocol/callback and scalar/codec contracts remain incomplete | High design risk | D1/D3 in live agenda; no UI/sample promotion yet. |
 | Bidirectional view/source, draft recovery, run epochs and command identity underspecified | New industrial contract gaps | Interaction proposal and its ordered experiments. |
 | No evidence from accessibility or comprehension trials | Product-design risk | D5 includes manual trials; automated browser tests are not sufficient. |
@@ -77,6 +77,32 @@ source or proposed laws.
 Target sources remain outside `samples/`; no web manifest update is justified.
 The next semantic design pass types map/fold, a derived decoder, and a resource
 callback with their error/effect/region metadata before another syntax proposal.
+
+## D0 Migration Checkpoint
+
+The existing `SyntaxFeature` registry now carries an optional immutable
+`TargetDirection` with direction, canonical contract, normal form and reason.
+Across 32 prototype entries: 18 retire, seven rework, two retain, two open, and
+three unreviewed. These count implementation contributions, not 32 independent
+language features. Expression precedence, assert reduction and pass reduction
+remain unreviewed; no missing metadata is interpreted as target acceptance.
+
+`python3 -m tools.syntax.inspect --stage target-alignment` and the shared
+`inspect(stage="target_alignment")` facade expose the same record-derived table.
+No pipeline selector, capability axis, grammar, runtime semantics, or sample
+changed. Tests compare all current grammar/lowering/desugar selections before
+and after changing directions, including retired forms that still execute.
+The migration is removable by deleting the optional field/inspection stage;
+it introduces no new wire schema, engine, or language keyword.
+
+Final broader validation: 484 targeted tests (including 28 new direction tests)
+and 55 web/runtime contract tests passed; manifest and WASM freshness passed.
+Five registered packets remained coherent and the ignored RAG index was rebuilt
+with 1299 chunks. New test-file lint passed. Full-file
+lint still reports the same 12 pre-existing diagnostics verified against HEAD
+in features.py, runtime/api.py and tools/syntax/inspect.py; unrelated exception,
+annotation and import cleanup is intentionally outside this change.
+The full Python suite and a fresh Playwright browser run were not performed.
 
 ## Pass Retrospective
 
@@ -105,6 +131,8 @@ than introduce another parallel list of language features.
 
 ### Next Pass
 
-Complete D0 inspection metadata without changing prototype execution. Then
-design D1 callback/generic/effect contracts using the three specified functions;
+D0 inspection metadata is implemented without changing prototype execution.
+Continue D1 using the [function packet](../design/function_contracts.md) and
+its three type-spelling candidates; resolve callback/generic/effect contracts
+using the specified functions;
 only after that promote a settled semantic slice toward CLI/browser conformance.

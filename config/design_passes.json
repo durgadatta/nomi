@@ -50,16 +50,19 @@
         "docs/design/README.md",
         "docs/design/decisions.md",
         "docs/design/redesign_agenda.md",
-        "docs/research/open_questions.md"
+        "docs/research/open_questions.md",
+        "docs/orientation/artifacts_and_usage.md"
       ],
       "validation": [
         "python3 -m tools.design_passes check",
+        "python3 -m tools.syntax.inspect --stage target-alignment",
+        "pytest -n 0 prototype/tests/unit/syntax/test_target_direction.py prototype/tests/unit/syntax/test_feature_capabilities.py prototype/tests/unit/syntax/test_desugar_profiles.py",
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "python3 .codex/scripts/agent_doctor.py",
         "git diff --check"
       ],
       "next_actions": [
-        "Use redesign_agenda.md for live closure gates; finish D0 target/prototype disposition inspection without changing execution.",
+        "Use redesign_agenda.md for live closure gates; D0 inspection is implemented independently of execution, with three unreviewed directions remaining.",
         "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
         "Falsify interaction laws using text and read-only invoice projections before editable views or new notation.",
         "Run explicit stale/invalid/denied-capability and keyboard/IME/accessibility trials, then compare text-primary and structured-document alternatives if needed.",

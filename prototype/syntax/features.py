@@ -10,11 +10,15 @@ Feature order matters: it determines the order grammar layers are assembled
 and desugar passes run.  Dependencies between passes (e.g. WhereClause
 needs PiecewiseFunction to have already merged adjacent definitions) are
 expressed through this order.
+
+Target direction is independent docs-owned metadata for migration inspection.
+It never selects grammar, lowering, desugar passes, or runtime coverage.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from pathlib import PurePosixPath
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -35,6 +39,38 @@ SAMPLE_DEMO = "samples/demo.nomi"
 SAMPLE_DEMO_TERSE = "samples/demo_terse.nomi"
 SAMPLE_DEMO_VERBOSE = "samples/demo_verbose.nomi"
 SAMPLE_OTHERS = "samples/others.nomi"
+
+
+@dataclass(frozen=True)
+class TargetDirection:
+    """Docs-owned design direction, independent of prototype execution coverage."""
+
+    disposition: str
+    contract: str
+    normal_form: str
+    reason: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.disposition, str) or self.disposition not in {
+            "retain",
+            "rework",
+            "retire",
+            "open",
+        }:
+            raise ValueError(f"Unknown target disposition: {self.disposition!r}")
+        for name in ("contract", "normal_form", "reason"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"Target direction {name} must be non-empty text")
+        path = PurePosixPath(self.contract.split("#", 1)[0])
+        if (
+            not path.is_relative_to("docs/design")
+            or ".." in path.parts
+            or path.suffix != ".md"
+        ):
+            raise ValueError(
+                "Target direction contract must be a docs/design Markdown path"
+            )
 
 
 @dataclass(frozen=True)
@@ -65,6 +101,7 @@ class SyntaxFeature:
     lowering_mixins: tuple[str, ...] = ()
     desugar_passes: tuple = ()
     desugar_profiles: tuple[str, ...] = ()
+    target_direction: TargetDirection | None = None
 
     # Lifecycle statuses:
     #   implemented      — runs by default, tested
@@ -118,6 +155,15 @@ def target_only_coverage(*, docs: bool = False) -> FeatureCapabilityAxes:
     return FeatureCapabilityAxes(target_only=True, docs=docs)
 
 
+def _retire_target(normal_form: str, reason: str) -> TargetDirection:
+    return TargetDirection(
+        disposition="retire",
+        contract="docs/design/decisions.md#syntax-simplification-decisions",
+        normal_form=normal_form,
+        reason=reason,
+    )
+
+
 # ── expression-precedence ────────────────────────────────────────────
 # Not a user-visible "feature" but a parse-tree transform that the
 # ExpressionLayer applies.  Registered as a feature so the layer-transform
@@ -151,6 +197,10 @@ _piecewise_functions = SyntaxFeature(
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.piecewise.PiecewiseFunction",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
+    target_direction=_retire_target(
+        "func with exhaustive match",
+        "Equation dispatch duplicates canonical function and choice forms.",
+    ),
 )
 
 
@@ -175,6 +225,10 @@ _where_clauses = SyntaxFeature(
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.where_clause.WhereClause",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
+    target_direction=_retire_target(
+        "local binding or local func",
+        "Reserve where for constraints, not postfix helper definitions.",
+    ),
 )
 
 
@@ -192,6 +246,10 @@ _underscore_lambdas = SyntaxFeature(
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.underscore_lambda.UnderscoreLambda",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
+    target_direction=_retire_target(
+        "explicit (argument) => expression",
+        "Underscore remains a pattern wildcard, never a generated parameter.",
+    ),
 )
 
 
@@ -209,6 +267,10 @@ _positional_holes = SyntaxFeature(
     coverage=implemented_coverage(docs=True, tests=True),
     desugar_passes=("prototype.parser.nomi.desugar.positional_hole.PositionalHole",),
     desugar_profiles=(DEFAULT_DESUGAR_PROFILE, REDUCED_DESUGAR_PROFILE),
+    target_direction=_retire_target(
+        "explicit (argument) => expression",
+        "Positional/name holes hide callback inputs.",
+    ),
 )
 
 
@@ -216,6 +278,10 @@ _positional_holes = SyntaxFeature(
 
 _augassign = SyntaxFeature(
     name="aug-assign-desugar",
+    target_direction=_retire_target(
+        "set name = name + value",
+        "Mutation is explicit and distinct from binding creation.",
+    ),
     description="Desugar x += 1 into x = x + 1 in the AST",
     layer=SUGAR_LAYER,
     semantic_forms=("binding",),
@@ -242,6 +308,10 @@ _assert = SyntaxFeature(
 
 _decorator = SyntaxFeature(
     name="decorator-desugar",
+    target_direction=_retire_target(
+        "ordinary declarations, protocols or explicit metadata",
+        "Decorators do not silently define core semantics.",
+    ),
     description="Desugar @d f() into f = d(f) after the function definition",
     layer=SUGAR_LAYER,
     semantic_forms=("function", "call", "binding"),
@@ -268,6 +338,12 @@ _pass = SyntaxFeature(
 
 _with = SyntaxFeature(
     name="with-desugar",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/semantics.md#resources-and-scope",
+        normal_form="exactly-once acquisition, body and lexical cleanup",
+        reason="Host try/exit conventions do not establish target completion semantics.",
+    ),
     description="Desugar with ctx as x: B into try/except/else",
     layer=SUGAR_LAYER,
     semantic_forms=("resource-policy", "branch", "exception"),
@@ -281,6 +357,12 @@ _with = SyntaxFeature(
 
 _fstring = SyntaxFeature(
     name="fstring-desugar",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/syntax.md#literals",
+        normal_form="ordinary quoted interpolation; raw text opts out",
+        reason="Keep interpolation but remove the ordinary-text/f-string syntax split.",
+    ),
     description="Desugar f'{x}' into string concatenation and format() calls",
     layer=SUGAR_LAYER,
     semantic_forms=("string", "call"),
@@ -294,6 +376,10 @@ _fstring = SyntaxFeature(
 
 _unless_lowering = SyntaxFeature(
     name="unless-lowering",
+    target_direction=_retire_target(
+        "if not condition",
+        "One Bool choice form avoids a parallel conditional vocabulary.",
+    ),
     description="Lower unless cond: body to if not cond: body",
     layer=SUGAR_LAYER,
     semantic_forms=("branch",),
@@ -306,6 +392,10 @@ _unless_lowering = SyntaxFeature(
 
 _postfix_conditionals = SyntaxFeature(
     name="postfix-conditionals-lowering",
+    target_direction=_retire_target(
+        "inline or block if",
+        "Conditional control stays in the canonical if form.",
+    ),
     description="Lower flow statements with postfix if/unless guards to branches",
     layer=SUGAR_LAYER,
     semantic_forms=("branch", "flow"),
@@ -323,6 +413,10 @@ _postfix_conditionals = SyntaxFeature(
 
 _implicit_mul = SyntaxFeature(
     name="implicit-multiplication",
+    target_direction=_retire_target(
+        "left * right",
+        "Ordinary modules use explicit multiplication; scoped notation remains separate.",
+    ),
     description="Lower implicit multiplication (2x → 2 * x) in the Lark tree",
     layer=SUGAR_LAYER,
     semantic_forms=("expression",),
@@ -335,6 +429,12 @@ _implicit_mul = SyntaxFeature(
 
 _type_alias = SyntaxFeature(
     name="type-alias-lowering",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/syntax.md#data",
+        normal_form="transparent type alias in the checked interface",
+        reason="An AST assignment alone does not establish target type-alias metadata.",
+    ),
     description="Lower type X = Y to an AST assignment",
     layer="L3",
     semantic_forms=("type-alias", "binding"),
@@ -349,6 +449,10 @@ _type_alias = SyntaxFeature(
 
 _range_expressions = SyntaxFeature(
     name="range-expressions",
+    target_direction=_retire_target(
+        "range(start, end, step=value)",
+        "Range construction is library-owned; remainder punctuation stays in patterns.",
+    ),
     description="Lower inclusive/exclusive range expressions and optional by-step to range()",
     layer=SUGAR_LAYER,
     semantic_forms=("collection",),
@@ -362,6 +466,10 @@ _range_expressions = SyntaxFeature(
 
 _if_let = SyntaxFeature(
     name="if-let-lowering",
+    target_direction=_retire_target(
+        "exhaustive match or loop plus match",
+        "Refutable choice is not a binding shortcut.",
+    ),
     description="Lower if pat = expr: body into a match statement",
     layer=SUGAR_LAYER,
     semantic_forms=("pattern", "match", "branch"),
@@ -375,6 +483,10 @@ _if_let = SyntaxFeature(
 
 _try_expr = SyntaxFeature(
     name="try-expr-lowering",
+    target_direction=_retire_target(
+        "Result, match and explicit propagation",
+        "Expected failure does not borrow host exception-expression control.",
+    ),
     description="Lower try body except E: handler into an IIFE",
     layer=SUGAR_LAYER,
     semantic_forms=("absence-result", "exception"),
@@ -388,6 +500,12 @@ _try_expr = SyntaxFeature(
 
 _match_expr = SyntaxFeature(
     name="match-expr-lowering",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/pattern_matching.md",
+        normal_form="transactional exhaustive match without case keyword",
+        reason="The host match/IIFE encoding is not the accepted Pattern Surface contract.",
+    ),
     description="Lower match value: case pat => expr into an IIFE",
     layer=SUGAR_LAYER,
     semantic_forms=("match", "pattern"),
@@ -401,6 +519,10 @@ _match_expr = SyntaxFeature(
 
 _where_clause_lowering = SyntaxFeature(
     name="where-clause-lowering",
+    target_direction=_retire_target(
+        "local binding or local func",
+        "Reserve where for constraints, not postfix helper definitions.",
+    ),
     description="Lower where: blocks by tagging _nomi_where_body for the desugar pass",
     layer=SUGAR_LAYER,
     semantic_forms=("binding", "function"),
@@ -421,6 +543,10 @@ _where_clause_lowering = SyntaxFeature(
 
 _positional_hole_lowering = SyntaxFeature(
     name="positional-hole-lowering",
+    target_direction=_retire_target(
+        "explicit (argument) => expression",
+        "Positional/name holes hide callback inputs.",
+    ),
     description="Lower $1, $name hole syntax in expressions",
     layer=SUGAR_LAYER,
     semantic_forms=("function",),
@@ -434,6 +560,10 @@ _positional_hole_lowering = SyntaxFeature(
 
 _compose_lowering = SyntaxFeature(
     name="compose-lowering",
+    target_direction=_retire_target(
+        "ordinary compose function or explicit lambda",
+        "Composition does not need additional core operators.",
+    ),
     description="Lower >>> and <<< composition operators",
     layer=SUGAR_LAYER,
     semantic_forms=("function", "call"),
@@ -447,6 +577,12 @@ _compose_lowering = SyntaxFeature(
 
 _defer_lowering = SyntaxFeature(
     name="defer-lowering",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/semantics.md#resources-and-scope",
+        normal_form="lexical LIFO cleanup on every exit",
+        reason="Function-wide defer storage is not the target lexical scope contract.",
+    ),
     description="Lower defer stmt to _nomi_defer attribute on statements",
     layer=SUGAR_LAYER,
     semantic_forms=("block", "resource-policy"),
@@ -460,6 +596,10 @@ _defer_lowering = SyntaxFeature(
 
 _func_equation_lowering = SyntaxFeature(
     name="func-equation-lowering",
+    target_direction=_retire_target(
+        "func; exhaustive match for alternatives",
+        "Equation declarations duplicate the canonical named function form.",
+    ),
     description="Lower f(p)=e equation definitions to FunctionDef",
     layer=SUGAR_LAYER,
     semantic_forms=("function", "pattern", "match"),
@@ -473,6 +613,10 @@ _func_equation_lowering = SyntaxFeature(
 
 _section_lowering = SyntaxFeature(
     name="sections-lowering",
+    target_direction=_retire_target(
+        "explicit (argument) => expression",
+        "Operator sections create another implicit callback form.",
+    ),
     description="Lower (+2), (2*), (+) operator sections to lambdas",
     layer=SUGAR_LAYER,
     semantic_forms=("function",),
@@ -486,6 +630,12 @@ _section_lowering = SyntaxFeature(
 
 _func_expr_lowering = SyntaxFeature(
     name="func-expr-lowering",
+    target_direction=TargetDirection(
+        disposition="retain",
+        contract="docs/design/syntax.md#functions-and-calls",
+        normal_form="explicit (arguments) => expression",
+        reason="Retain the explicit source form; typing/capture conformance remains open.",
+    ),
     description="Lower (x, y) => expr arrow functions to FunctionDef",
     layer="L3",
     semantic_forms=("function",),
@@ -506,6 +656,10 @@ _func_expr_lowering = SyntaxFeature(
 
 _block_call_lowering = SyntaxFeature(
     name="block-call-lowering",
+    target_direction=_retire_target(
+        "with for resources; explicit function for other callbacks",
+        "Universal block policy conflates return, retry, resource and task control.",
+    ),
     description="Lower f(x): body block-call syntax to BlockCall surface node",
     layer="L3",
     semantic_forms=("block", "call"),
@@ -526,6 +680,12 @@ _block_call_lowering = SyntaxFeature(
 
 _data_decl_lowering = SyntaxFeature(
     name="data-decl-lowering",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/semantics.md#data",
+        normal_form="immutable nominal product/variant data with checked construction",
+        reason="Generated host classes do not establish the full target data contract.",
+    ),
     description="Lower data Name: fields... to a ClassDef with __init__, __repr__, __eq__",
     layer="L3",
     semantic_forms=("data", "binding"),
@@ -544,6 +704,12 @@ _data_decl_lowering = SyntaxFeature(
 
 _pattern_surface_schema = SyntaxFeature(
     name="pattern-surface-schema",
+    target_direction=TargetDirection(
+        disposition="retain",
+        contract="docs/design/pattern_matching.md#surface-and-core-contract",
+        normal_form="versioned frontend-neutral Pattern Surface fragment",
+        reason="Retain the fragment boundary without claiming full match execution.",
+    ),
     description=(
         "Target-only, versioned Pattern Surface nodes, diagnostics, and "
         "equivalent Lark/Rust fragment producers"
@@ -570,6 +736,12 @@ _pattern_surface_schema = SyntaxFeature(
 
 _binding_data_pattern_integration = SyntaxFeature(
     name="binding-data-pattern-integration",
+    target_direction=TargetDirection(
+        disposition="open",
+        contract="docs/design/semantics.md#binding",
+        normal_form="shared checked binding/data/pattern metadata",
+        reason="The integration representation remains open despite accepted behavior.",
+    ),
     description=(
         "Target integration contract for shared BindingTarget, constraints, "
         "decode diagnostics, pattern captures, and explanation events"
@@ -584,6 +756,12 @@ _binding_data_pattern_integration = SyntaxFeature(
 
 _collection_table_rank_integration = SyntaxFeature(
     name="collection-table-rank-integration",
+    target_direction=TargetDirection(
+        disposition="open",
+        contract="docs/design/decisions.md#open-experiments",
+        normal_form="typed collections, streams and explicit table/array plans",
+        reason="Rank, protocols and scoped query admission need concrete experiments.",
+    ),
     description=(
         "Target integration contract for collection flow, table values, "
         "plans, row/group contexts, shape/rank, and query admission"
@@ -598,6 +776,12 @@ _collection_table_rank_integration = SyntaxFeature(
 
 _block_policy_prelude = SyntaxFeature(
     name="block-policy-prelude",
+    target_direction=TargetDirection(
+        disposition="rework",
+        contract="docs/design/decisions.md#syntax-simplification-decisions",
+        normal_form="distinct resource, retry, transaction and task contracts",
+        reason="The old unified block-policy agenda must split by semantic owner.",
+    ),
     description=(
         "Target prelude contract for using, retry, timeout, transaction, "
         "trace, test, world, cleanup, capabilities, and policy events"
@@ -816,3 +1000,28 @@ def get_features_by_layer(layer: str) -> list[SyntaxFeature]:
     if layer not in ALLOWED_LAYERS:
         raise ValueError(f"Unknown feature layer: {layer!r}")
     return [feature for feature in BUILTIN_FEATURES if feature.layer == layer]
+
+
+def render_feature_target_table(features: list[SyntaxFeature] | None = None) -> str:
+    """Inspect target intent without selecting or disabling prototype behavior."""
+
+    def cell(value: str) -> str:
+        return value.replace("|", "\\|").replace("\n", "<br>")
+
+    rows = [
+        "| feature | prototype status | target direction | target normal form | contract | reason |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    selected = BUILTIN_FEATURES if features is None else features
+    for feature in selected:
+        target = feature.target_direction
+        values = (
+            feature.name,
+            feature.status,
+            target.disposition if target else "unreviewed",
+            target.normal_form if target else "-",
+            target.contract if target else "-",
+            target.reason if target else "No target direction recorded.",
+        )
+        rows.append("| " + " | ".join(cell(value) for value in values) + " |")
+    return "\n".join(rows)

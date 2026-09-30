@@ -112,6 +112,10 @@ The resource comparison already supplies symbolic evidence for D2, not closure.
 The [function contract proposal](function_contracts.md) narrows D1 with explicit
 callback metadata and pure-only/effect-polymorphic candidates, but does not yet
 admit function-type or generic declaration syntax.
+The first D0 implementation checkpoint adds target-direction metadata to the
+existing feature registry and shared inspection API. It does not change
+prototype coverage or select a new grammar. Three entries remain explicitly
+unreviewed; see [current inspection](../orientation/artifacts_and_usage.md#target-direction-inspection).
 The existing pattern contract is a bounded accepted slice and can continue its
 registered migration without waiting for all 29 dimensions. Do not implement
 open notation merely to keep the repository busy.
