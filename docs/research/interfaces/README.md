@@ -12,6 +12,10 @@ extends the [44 language reviews](../languages/README.md) and
 representations of human computational acts, not as candidate syntax libraries.
 Sources were consulted on 2026-09-29/30. No usability trial was conducted.
 
+The [language-feature matrix](../language_feature_matrix.md) includes Excel and
+keyboard commands beside the 44 language columns, using these thread reviews
+as their evidence links. The other threads retain this separate interface map.
+
 ## Thread Map
 
 | Thread | Representations considered | Pressure on Nomi |

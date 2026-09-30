@@ -5,9 +5,11 @@
 Packet: `docs/design/synthesis.md`, `docs/design/targets/overall.nomi`,
 `docs/review/2026-09-29-language-synthesis.md`.
 
-Read down a feature column here, or across an individual language in
-[the language index](../languages/README.md). Linked language pages contain
-primary citations and version limits. Matrices are selective comparisons of
+Read across a feature row or down a language column in the
+[single synthesis matrix](../language_feature_matrix.md), then follow a feature
+page below or an individual language in [the language index](../languages/README.md).
+Linked language pages contain primary citations and version limits.
+Matrices are selective comparisons of
 relevant mechanisms, not claims that omitted languages lack a capability.
 The Nomi recommendations are judgments; no usability or runtime benchmark was
 performed in this pass.

@@ -29,7 +29,8 @@ For the evidence and unresolved forks behind those choices, read:
 3. [Design Convergences](research/convergences.md)
 4. [Pattern Matching Research](research/pattern_matching.md)
 5. [Open Questions](research/open_questions.md)
-6. [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
+6. [Language-Feature Matrix](research/language_feature_matrix.md),
+   [Language Reviews](research/languages/README.md), and [Feature Comparisons](research/features/README.md)
 7. [Cognitive Foundations](research/cognition.md) and
    [Human-Computer Languages](research/interfaces/README.md)
 
@@ -155,6 +156,7 @@ This list is intentionally complete and is checked by tests.
 - [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
 - [Cognitive Foundations](research/cognition.md)
 - [Language Redesign Frontiers](research/design_frontiers.md)
+- [Language-Feature Synthesis Matrix](research/language_feature_matrix.md)
 
 ### Interface Threads
 

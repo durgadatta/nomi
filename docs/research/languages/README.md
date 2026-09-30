@@ -26,10 +26,12 @@ Examples in the linked Nomi suite are proposals, not executed comparisons.
 | Relational and numerical work | [SQL](sql.md), [R](r.md), [MATLAB](matlab.md), [Julia](julia.md), [APL](apl.md), [J](j.md), [BQN](bqn.md), [Uiua](uiua.md), [Wolfram Language](wolfram.md) |
 | Configuration and policy | [CUE](cue.md), [Nickel](nickel.md), [Dhall](dhall.md), [Pkl](pkl.md), [Nix](nix.md), [HCL](hcl.md) |
 
-Read [feature comparisons](../features/README.md) to compare mechanisms along
-one axis, then [the synthesis](../../design/synthesis.md) to see how they fit
-together. [Human-computer languages](../interfaces/README.md) adds the separate
-interface dimension, including Excel, keyboard commands, forms, and diagrams.
+Read the [single feature-by-language matrix](../language_feature_matrix.md)
+for compact mechanisms and Nomi implications, [feature comparisons](../features/README.md)
+for detailed comparisons along one axis, then [the synthesis](../../design/synthesis.md)
+to see how they fit together. [Human-computer languages](../interfaces/README.md)
+adds the separate interface dimension, including Excel, keyboard commands,
+forms, and diagrams.
 The older [families](../families.md) and
 [convergences](../convergences.md) remain the compact evidence spine. These
 pages deepen that spine at the user's request; they do not revive the old
