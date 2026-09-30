@@ -131,6 +131,11 @@ materially awkward.
 aggregation, null policy, and `explain` output. Compare ordinary calls, named
 expression objects, and a scoped query form.
 
+The [data dossier](data_workflows/README.md) supplies literal comparisons and a
+reconciliation oracle. [DW1-DW3](data_workflows/nomi_candidates.md) first close
+expression/callback contracts, then compare eager rows, schema-bound expression
+data and scoped notation under duplicate keys, missing values and name collisions.
+
 ## 9. Numeric And Scientific Model
 
 **Question:** What are the default integer, decimal, float, overflow, unit,
@@ -142,6 +147,11 @@ notation scoped later.
 
 **Test:** finance, statistics, image kernels, linear algebra, physical units,
 automatic differentiation, and native/Wasm performance.
+
+Use [notation cases 2/3](notation_atlas.md) and
+[DW4/DW5](data_workflows/nomi_candidates.md) for explicit contraction binders,
+axis/unit/frame identity and learned-state boundaries. Equal array lengths must
+not silently establish coordinate compatibility or prevent training leakage.
 
 ## 10. Generic Dispatch
 
@@ -243,6 +253,13 @@ invalid drafts, row reordering, unsupported constructs, comments, denied effects
 and keyboard/screen-reader workflows. The [registered interaction proposal](../design/interaction_model.md)
 owns laws and experiments; the [redesign agenda](../design/redesign_agenda.md)
 owns closure order. No usability study or target execution is claimed.
+
+[Cross-disciplinary notation](notation_atlas.md) broadens the pressure beyond
+invoices: finite-set/Venn membership, tensor binders, chemical graphs,
+reference-coordinate variants and aligned annotation/evidence. DW7 owns the
+local comparison; [workflow evidence](data_workflows/execution_models.md)
+adds partition/attempt/observation identities. This does not turn every diagram
+into the same executable graph or reopen core punctuation by analogy.
 
 ## Research Stop Rule
 

@@ -1,0 +1,28 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Experiment DW5: docs/research/data_workflows/nomi_candidates.md
+from lab.models import FeatureBatch, FittedModel, ModelError, ModelSpec
+from lab.models import PredictionBatch, TrainingSplit, models
+
+func train(
+    spec: ModelSpec,
+    split: TrainingSplit,
+    seed: Int,
+) -> Result[FittedModel, ModelError]:
+    training = models.training_rows(split)
+    identity = models.training_identity(split)
+    return models.fit(spec, training, seed=seed, partition=identity)
+
+func predict(
+    learned: FittedModel,
+    held_out: FeatureBatch,
+) -> Result[PredictionBatch, ModelError]:
+    return models.predict(learned, held_out)
+
+# Proposed synchronous owned-data calls. ModelError unifies schema/fit errors.
+# fit sees training rows, not the complete split; preprocessing learns there too.
+# predict never updates learned state or refits preprocessing.
+# Fitted evidence carries feature schema, training identity, seed and environment.
+# Seed alone is NOT a cross-backend reproducibility guarantee.
+# Required oracle: adding an outlier only to held-out rows cannot change the
+# fitted training scaler; changing feature schema rejects prediction.
+# Choosing a bad temporal split remains a modeling error, not repaired by syntax.

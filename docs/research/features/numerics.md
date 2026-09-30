@@ -5,6 +5,10 @@
 User pressure: obtain deliberate, portable numerical results, not accidental
 host behavior.
 
+The [notation atlas](../notation_atlas.md) deepens bound indices, axes,
+units/frames and algebra laws. [Scientific source forms](../data_workflows/source_forms.md)
+add fit/transform and tracing boundaries; DW4/DW5 own the corresponding experiments.
+
 | Evidence | Mechanism | Nomi consequence |
 | --- | --- | --- |
 | [C](../languages/c.md) | Representation and invalid arithmetic | Specify overflow and checked host narrowing. |

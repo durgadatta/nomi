@@ -35,6 +35,9 @@ For the evidence and unresolved forks behind those choices, read:
    alongside [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
 7. [Cognitive Foundations](research/cognition.md) and
    [Human-Computer Languages](research/interfaces/README.md)
+8. [Data And Workflow Languages](research/data_workflows/README.md) and
+   [Cross-Disciplinary Notation](research/notation_atlas.md): source forms,
+   layered execution models, critical comparisons and bounded Nomi experiments.
 
 For the current repository and runtime, read:
 
@@ -169,6 +172,12 @@ This list is intentionally complete and is checked by tests.
 - [Feature-Language Transpose](research/feature_language_matrix.md)
 - [Syntax Matrix](research/syntax_matrix.md)
 - [Syntax Forms](research/syntax_forms.md)
+- [Data And Workflow Research](research/data_workflows/README.md)
+- [Data Source Forms](research/data_workflows/source_forms.md)
+- [Workflow Execution Models](research/data_workflows/execution_models.md)
+- [Data/Notation Synthesis And Experiments](research/data_workflows/nomi_candidates.md)
+- [Cross-Disciplinary Notation Atlas](research/notation_atlas.md)
+- [Research Pressure Targets](design/targets/research/README.md)
 
 ### Interface Threads
 

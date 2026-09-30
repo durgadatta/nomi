@@ -1,0 +1,35 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Story: validate rows and payment keys, reconcile, preview, separately publish.
+# Evidence: docs/research/data_workflows/README.md
+from lab.sales import Payments, Report, SalesError, SaleRows, sales
+from lab.sales import PlanView
+from std.data import Value
+
+data ReconciliationPreview:
+    report: Report
+    explanation: PlanView
+
+func preview_reconciliation(
+    raw_orders: Value,
+    raw_payments: Value,
+) -> Result[ReconciliationPreview, SalesError]:
+    orders = SaleRows.decode(raw_orders)
+        .map_error((error) => SalesError.DecodeOrders(error))?
+    payments = Payments.decode(raw_payments)
+        .map_error((error) => SalesError.DecodePayments(error))?
+    sales.require_unique_order_ids(orders)?
+    sales.require_unique_payment_order_ids(payments)?
+    plan = sales.plan_reconciliation(orders, payments)?
+    report = sales.evaluate_owned(plan)?
+    explanation = sales.explain(plan)
+    return Ok(ReconciliationPreview(report=report, explanation=explanation))
+
+# Proposed pure owned-data facade: no file/network/engine handle capture.
+# Contract: amounts in checked minor units; absence rejected during decoding;
+# unique order/payment keys; anti-join by order ID; group by customer; sorted report.
+# Arithmetic oracle: total 2100; payment A leaves north=600, south=700.
+# Duplicate payment A returns a key error BEFORE calculating or publishing.
+# Decoders accumulate independent shape errors; domain key checks follow them.
+# A live source needs a separate effectful execute boundary, not this pure facade.
+# Publication is an explicit call to the workflow fixture, never preview side effect.
+# Open: library-generated decoder contracts and generic/effect coherence.

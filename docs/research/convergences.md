@@ -10,6 +10,14 @@ The [feature comparisons](features/README.md) deepen these findings along one
 axis; the [language reviews](languages/README.md) expose each language's costs
 and the [active synthesis](../design/synthesis.md) tests their combined shape.
 
+The [data/workflow evidence](data_workflows/README.md) and
+[notation atlas](notation_atlas.md) add a cross-disciplinary convergence:
+useful notation makes relationships local by omitting recoverable context.
+Its unresolved fork is how much context should be explicit in source versus an
+inspectable model/view. Similar chains/arrows can denote calculation, query,
+training, dependency, replay, constraint or argument; visual resemblance alone
+never establishes interchangeable laws. This is synthesis, not syntax admission.
+
 ## 1. Low Floor And High Ceiling Are Different Problems
 
 **Convergence:** successful first experiences produce a visible result with no

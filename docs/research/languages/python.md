@@ -2,6 +2,10 @@
 
 > Status: comparative evidence; Nomi judgments are hypotheses.
 
+The [data/workflow dossier](../data_workflows/README.md) examines pandas/Polars,
+scientific fit/transform, tracing and orchestration built on Python. Identical
+function-call syntax does not imply identical evaluation phase or ownership.
+
 ## Observe
 
 Python makes suites visually explicit with indentation and gives resource

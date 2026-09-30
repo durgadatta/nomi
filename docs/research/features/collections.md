@@ -4,6 +4,11 @@
 
 User pressure: read data flow while knowing when work runs and how much it holds.
 
+The [data/workflow dossier](../data_workflows/README.md) deepens the table,
+masking, formula, fit/transform, dependency and durable-execution comparisons.
+Its [DW experiments](../data_workflows/nomi_candidates.md) reuse open questions
+8/9/17 rather than treating every framework as another language feature.
+
 | Evidence | Mechanism | Nomi consequence |
 | --- | --- | --- |
 | [Bash](../languages/bash.md) | Process pipes | Separate bytes/processes from value insertion. |

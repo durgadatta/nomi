@@ -12,6 +12,11 @@ the [language synthesis](synthesis.md); it does not replace [syntax](syntax.md),
 [semantics](semantics.md), or [industrial contracts](industrial.md). The
 [redesign agenda](redesign_agenda.md) owns broader unresolved design work.
 
+Further evidence: [data/workflow layers](../research/data_workflows/README.md)
+and [cross-disciplinary notation](../research/notation_atlas.md) test whether
+sets, axes, model references and evidence relations fit this proposal. Their
+[research targets](targets/research/README.md) admit no new grammar or exports.
+
 ## Thesis And A Real Fork
 
 Nomi could be a checked computational medium whose meaning remains inspectable

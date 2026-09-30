@@ -18,6 +18,12 @@ as their evidence links. The other threads retain this separate interface map.
 
 ## Thread Map
 
+The [data/workflow extension](../data_workflows/README.md) and
+[cross-disciplinary notation atlas](../notation_atlas.md) deepen these existing
+threads with primary evidence and shared pressure programs. They are consolidated
+comparisons, not additional independent syntax authorities. The
+[DW experiment order](../data_workflows/nomi_candidates.md) owns their next steps.
+
 | Thread | Representations considered | Pressure on Nomi |
 | --- | --- | --- |
 | [Spreadsheets](spreadsheets.md) | Excel, grids, fill, named columns, pivots | Value/dependency views without coordinate-bound semantics. |

@@ -5,6 +5,10 @@
 User pressure: run independent work together without leaking children or losing
 failures when the parent exits.
 
+Compare [workflow execution models](../data_workflows/execution_models.md)
+before borrowing orchestration APIs: a lexical task group, durable replay,
+asset materialization and an event-time stream have different lifetime laws.
+
 | Evidence | Mechanism | Nomi judgment |
 | --- | --- | --- |
 | [JavaScript](../languages/javascript.md) | Promise chains and detached work | Cold work needs an explicit starting owner. |

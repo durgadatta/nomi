@@ -31,6 +31,11 @@ second pattern specification. [The legacy target](../target.nomi) is retained
 as a superseded predecessor for historical links; this suite owns the active
 overall fixture.
 
+The [research pressure programs](research/README.md) extend category/overall
+comparison for data, workflows and cross-disciplinary notation. They use
+fictional `lab.*` APIs and are explicitly unaccepted research candidates,
+not another canonical overall target or runnable sample collection.
+
 ## What The Source Does And Does Not Claim
 
 Core syntax follows the accepted target. Standard-library APIs below are

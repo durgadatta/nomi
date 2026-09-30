@@ -2,6 +2,11 @@
 
 > Status: comparative evidence; scope is the R language manual.
 
+For the deeper library/formula layer, see [data source forms](../data_workflows/source_forms.md)
+and [targets/workflow comparisons](../data_workflows/execution_models.md).
+Those comparisons distinguish masking, reference mutation and incremental
+evaluation rather than attributing every R ecosystem behavior to the core language.
+
 ## Observe
 
 R uses promise-based argument evaluation and supports vector recycling.

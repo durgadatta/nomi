@@ -106,6 +106,50 @@ The full Python suite and a fresh Playwright browser run were not performed.
 
 ## Pass Retrospective
 
+### Data And Cross-Disciplinary Extension
+
+The requested continuation adds the linked
+[data/workflow dossier](../research/data_workflows/README.md) and
+[notation atlas](../research/notation_atlas.md), with six independent
+[research pressure programs](../design/targets/research/README.md).
+This remains the same cognitive-interface packet, not another target authority.
+
+The new evidence changes the questions, not accepted syntax:
+
+- Similar function-call shapes can construct an Airflow graph, run a Prefect
+  task, build a dataframe expression, or train an estimator. Phase must be part
+  of the public contract, not inferred from a chain or arrow.
+- Set/Venn views need a universe; tensor notation binds indices; coordinate
+  descriptions need a reference/version. These expose context that a short
+  string or pretty graph can conceal.
+- Graphs in chemistry, argumentation, directed dataflow and undirected relations
+  have incompatible edge meanings. A shared renderer isn't a shared evaluator.
+- Workflow partition, materialization and attempt identity differ. Cached work
+  cannot cache authorization; an external-effect acknowledgment can be uncertain.
+- Scientific preprocessing has learned state. Fit/transform/predict and training
+  evidence deserve distinct models even when each uses ordinary call syntax.
+
+The atlas maps 45 families with ten deeper cases. It explicitly marks mathematical
+thought exercises and prior-thread references separately from checked evidence.
+Primary papers support selected mechanisms, not replicated performance claims
+or complete proof reviews. A failed GraphBLAS PDF fetch was not used; the
+semiring discussion is an original finite-mathematics exercise. No Newick,
+Petri-net, quantum-language or engineering-standard conformance was researched.
+
+Syntax pressure programs use fictional lab APIs and remain unparsed/untyped.
+No interpreter, grammar, sample, generated asset, extension or package behavior
+changed. DW1-DW8 in [the synthesis](../research/data_workflows/nomi_candidates.md)
+own local experiment order; D1 function contracts still precede an engine.
+
+Follow-up validation: 17 focused documentation/matrix/packet checks passed;
+full suite 1431 passed, 76 skipped; 55 web/runtime checks and manifest/WASM
+freshness passed. The 12 broad-run warnings are the same three parametrization
+deprecations repeated across four workers, recorded in the separate test review.
+Five registered packets and agent configuration checks passed. No fresh browser
+GUI run, foreign-system execution, accessibility trial or target conformance is
+claimed. These results establish preserved supported surfaces, not research
+correctness or usability.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,

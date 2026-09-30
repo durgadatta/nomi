@@ -9,6 +9,12 @@ Each feature cell shows representative **actual spellings**, not just semantic
 labels. The [form study](syntax_forms.md) expands alternative forms, punctuation
 collisions, complete layouts and the costs of Nomi's corresponding long forms.
 
+For greater domain depth rather than more sparse columns, see
+[data source forms](data_workflows/source_forms.md),
+[workflow forms and execution](data_workflows/execution_models.md), and
+[cross-disciplinary notation](notation_atlas.md). Their literal forms expose
+context, staging, axes and identity; they are research, not extra accepted Nomi forms.
+
 ## Scope And Reading
 
 - `...` stands for omitted source, not a claim that every language accepts an

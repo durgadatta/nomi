@@ -1,0 +1,33 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Evidence: docs/research/notation_atlas.md
+from lab.sets import sets
+from lab.tensor import AxisError, Matrix, tensor
+from lab.chemistry import BalanceError, Reaction, chemistry
+
+example "complement always names its finite universe":
+    universe = sets.from_list(["A", "B", "C", "D"])
+    eligible = sets.from_list(["A", "B", "C"])
+    paid = sets.from_list(["A", "C"])
+    unpaid = sets.difference(eligible, paid)
+    outside = sets.complement(universe, eligible)
+    check sets.equal(unpaid, sets.from_list(["B"]))
+    check sets.equal(outside, sets.from_list(["D"]))
+
+func contract_axes(a: Matrix, b: Matrix) -> Result[Matrix, AxisError]:
+    spec = tensor.contraction(
+        left_axes=["i", "j"],
+        right_axes=["j", "k"],
+        sum_axes=["j"],
+        output_axes=["i", "k"],
+    )?
+    return tensor.contract(a, b, spec)
+
+func validate_reaction(reaction: Reaction) -> Result[Reaction, BalanceError]:
+    chemistry.check_atom_balance(reaction)?
+    return Ok(reaction)
+
+# Set operations are finite immutable values, not infinite predicate sets.
+# A named axis has semantic identity as well as length; no implicit broadcast.
+# check_atom_balance returns Result[Unit, BalanceError]; conservation != kinetics.
+# A reaction model may render domain arrows; -> in Nomi stays a result-type token.
+# No chemistry simulation, proof of truth or biological interpretation is implied.

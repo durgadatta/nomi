@@ -1,0 +1,21 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Experiment DW1/DW2: docs/research/data_workflows/nomi_candidates.md
+# All constructors below return validated Result values under one PlanError.
+from lab.table import Columns, PlanError, PlanView, TablePlan, expressions, tables
+
+func describe_amounts(source: TablePlan) -> Result[PlanView, PlanError]:
+    schema = tables.schema(source)
+    quantity = Columns.int(schema, "quantity")?
+    price = Columns.int(schema, "unit_price_minor")?
+    positive = expressions.greater(quantity, expressions.int_literal(0))?
+    amount = expressions.multiply(quantity, price)?
+    kept = tables.filter(source, positive)?
+    planned = tables.with_column(kept, "amount", amount)?
+    return Ok(tables.explain(planned))
+
+# No uses FileRead/Network: only immutable source descriptions are inspected.
+# Schema identity is part of each expression; same spelling != same column.
+# Explain returns owned redacted metadata, never a reader or engine handle.
+# Collect is deliberately absent. Validation and execution have different errors.
+# Reject missing quantity / non-Int price / expression from another schema.
+# Open: static schema generics versus runtime schema-bound expression values.

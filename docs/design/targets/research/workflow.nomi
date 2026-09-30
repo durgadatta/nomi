@@ -1,0 +1,31 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Experiment DW6: docs/research/data_workflows/nomi_candidates.md
+from lab.publication import AttemptId, PartitionId, PublicationKey
+from lab.publication import PublishError, Receipt, Report, Network, publisher
+
+data PublicationObservation:
+    Confirmed(receipt: Receipt)
+    Rejected(error: PublishError)
+    Uncertain(operation_key: PublicationKey, attempt: AttemptId)
+
+pub func publish_report(
+    report: Report,
+    partition: PartitionId,
+    attempt: AttemptId,
+    key: PublicationKey,
+) -> PublicationObservation uses Network:
+    outcome = publisher.send(report, partition, attempt, key)
+    match outcome:
+        case Ok(receipt):
+            return PublicationObservation.Confirmed(receipt)
+        case Err(PublishError.AcknowledgmentUnknown()):
+            return PublicationObservation.Uncertain(key, attempt)
+        case Err(error):
+            return PublicationObservation.Rejected(error)
+
+# Proposed synchronous facade; retries/reconciliation are NOT implicit.
+# Partition: logical day. Attempt: one try. Key: semantic publish operation.
+# Runtime checks today's capability; the description cannot carry yesterday's grant.
+# Crash after remote send needs durable reconciliation outside this function.
+# No claim that this function alone implements reliable or exactly-once delivery.
+# No cold Task is silently converted into a persistent workflow execution.

@@ -2,6 +2,10 @@
 
 > Status: interface evidence and bounded Nomi hypotheses.
 
+The [data source-form study](../data_workflows/source_forms.md) extends this
+thread into LET/LAMBDA/FILTER, VBA Formula2/events, Power Query M and DAX context.
+It owns those detailed comparisons rather than duplicating them here.
+
 ## Evidence And Pressure
 
 Excel distinguishes relative, absolute, and mixed references when copying a

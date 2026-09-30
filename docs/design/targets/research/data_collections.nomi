@@ -1,0 +1,27 @@
+# Status: target-only research candidate; not runnable or typechecked.
+# Evidence: docs/research/data_workflows/source_forms.md
+# Proposed std collection contracts; numeric overflow remains open.
+from std.collections import filter, fold, map
+
+data Sale:
+    order_id: Text
+    customer: Text
+    quantity: Int where quantity >= 0
+    unit_price_minor: Int where unit_price_minor >= 0
+
+func total(rows: List[Sale]) -> Int:
+    return rows
+        |> filter((row) => row.quantity > 0)
+        |> map((row) => row.quantity * row.unit_price_minor)
+        |> fold(0, (sum, amount) => sum + amount)
+
+example "eager arithmetic before any table planner":
+    rows = [
+        Sale(order_id="A", customer="north", quantity=2, unit_price_minor=400),
+        Sale(order_id="B", customer="south", quantity=1, unit_price_minor=700),
+        Sale(order_id="C", customer="north", quantity=3, unit_price_minor=200),
+    ]
+    check total(rows) == 2100
+
+# Calls evaluate now. |> only inserts the first argument.
+# No assumed SQL translation, laziness, parallelism or callback quotation.

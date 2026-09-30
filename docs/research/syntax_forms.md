@@ -9,6 +9,12 @@ languages; this view shows **competing forms of the same human act**. Its
 foreign fragments use the primary references linked in each language row of
 the syntax matrix. They are illustrative source, not executed translations.
 
+The focused [data source forms](data_workflows/source_forms.md) extend this view
+with R/dataframes, spreadsheet/M/DAX, scientific and unusual relational systems.
+[Execution models](data_workflows/execution_models.md) compare workflow spellings;
+the [notation atlas](notation_atlas.md) explores binders, sets, tensor indices and
+domain/visual forms. These extensions do not alter the 44-language matrix scope.
+
 Nomi judgments below follow [canonical syntax](../design/syntax.md) and
 [the decision ledger](../design/decisions.md). Costs are design hypotheses,
 not measured comprehension results. Syntax is more than punctuation: argument

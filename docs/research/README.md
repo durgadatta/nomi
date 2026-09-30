@@ -29,6 +29,10 @@
    beyond conventional languages, with 18 bounded interface threads.
 7. [Redesign Frontiers](design_frontiers.md) - primary evidence for eight further
    design pressures, from typed incomplete programs to qualified guarantees.
+8. [Data And Workflow Languages](data_workflows/README.md) and
+   [Notation Beyond Programming](notation_atlas.md) - deeper literal forms and
+   execution layers, plus mathematical, scientific and humanistic representations.
+   Their synthesis owns DW1-DW8; no new core syntax is admitted.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The

@@ -43,3 +43,9 @@ Final local result: **1427 passed, 76 skipped, three deprecation warnings**.
 No existing tests or regression snapshots changed. New tests intentionally
 failed first for notebook output/boundaries, launcher lifecycle, inspection
 arguments, and RAG resource/framing failures before their implementation fixes.
+
+Data/notation research follow-up: full suite with four workers reports
+**1431 passed, 76 skipped, 12 warnings**. The warnings repeat the same three
+parametrization deprecations across workers, not twelve new test defects.
+Four new research-navigation/table/target-boundary tests were added; no existing
+tests, skip policies or regression snapshots were edited.
