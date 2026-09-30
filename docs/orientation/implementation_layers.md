@@ -66,7 +66,15 @@ rename or a wrapper around every function would not establish isolation.
   Local validation is not evidence that those hosted jobs have run.
 
 The process helper accepts an already serialized request and requires a JSON
-object response. The adapter, not the helper, owns version/schema validation.
+object response. Request/stdout bytes are explicitly UTF-8; invalid request
+encoding is rejected before launch. Invalid stdout encoding and non-JSON
+`NaN`/`Infinity` tokens become labeled transport errors. Failure logs use
+replacement decoding; successful logs cannot corrupt the protocol response.
+This is a transport rule, not a Nomi floating-point policy. It follows the
+[JSON interchange standard](https://www.rfc-editor.org/rfc/rfc8259), rather than
+[Python's permissive numeric-token default](https://docs.python.org/3/library/json.html#infinite-and-nan-number-values).
+Duplicate-key handling, numeric representation limits and payload schemas are
+not settled by this change. The adapter owns version/schema validation.
 There is one request and response per process; stdout is protocol data and
 stderr is failure detail/logging. Successful stderr is not merged into the
 language result. Timeout is optional and remains unset for the existing Node

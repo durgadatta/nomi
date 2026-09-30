@@ -11,6 +11,10 @@ from pathlib import Path
 from typing import Any
 
 
+def _reject_json_constant(value: str) -> None:
+    raise ValueError(f"Non-JSON numeric constant: {value}")
+
+
 def run_json_process(
     command: list[str],
     payload: str,
@@ -22,23 +26,31 @@ def run_json_process(
     try:
         completed = subprocess.run(
             command,
-            input=payload,
-            text=True,
+            input=payload.encode("utf-8"),
             capture_output=True,
             cwd=cwd,
             check=False,
             timeout=timeout,
         )
+    except UnicodeEncodeError as exc:
+        raise RuntimeError(f"{label} request is not valid UTF-8") from exc
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(f"{label} timed out") from exc
     except OSError as exc:
         raise RuntimeError(f"{label} could not start: {exc}") from exc
     if completed.returncode != 0:
-        detail = completed.stderr.strip() or completed.stdout.strip()
+        detail = (
+            completed.stderr.decode("utf-8", errors="replace").strip()
+            or completed.stdout.decode("utf-8", errors="replace").strip()
+        )
         raise RuntimeError(f"{label} failed" + (f": {detail}" if detail else ""))
     try:
-        response = json.loads(completed.stdout)
-    except json.JSONDecodeError as exc:
+        response_text = completed.stdout.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise RuntimeError(f"{label} returned invalid UTF-8") from exc
+    try:
+        response = json.loads(response_text, parse_constant=_reject_json_constant)
+    except ValueError as exc:
         raise RuntimeError(f"{label} returned invalid JSON") from exc
     if not isinstance(response, dict):
         raise RuntimeError(f"{label} response must be a JSON object")  # noqa: TRY004 - backend protocol failure
