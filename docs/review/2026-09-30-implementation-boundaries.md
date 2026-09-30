@@ -128,3 +128,50 @@ NOMI_TEST_PYTHON=/absolute/path/to/project/python npm test -- --config .vscode-t
 
 That machine-local helper is validation evidence, not a committed repair of
 the test launcher. The durable repair belongs to the separate test pass.
+
+## Session Close Checkpoint
+
+After research commit `d897cca`, the user requested one final bounded
+implementation pass and session wind-up. This inspected the existing transport,
+Docker/notebook launchers, public caller imports, and verification scripts.
+It did not reopen the language design or start a native-engine extraction.
+
+| Discovery | Fix / commit | User-facing consequence |
+| --- | --- | --- |
+| Process text decoding depended on locale; arbitrary stderr could mask success/failure; unencodable requests spawned before encoding failed. | `057d1f5`: binary pipes, explicit UTF-8 request/stdout, diagnostic-only replacement decoding, pre-launch encoding rejection. | Non-ASCII data crosses the engine boundary predictably; corrupt output names the backend instead of leaking a codec exception. |
+| Python JSON parsing accepted non-JSON NaN/Infinity tokens from a backend. | `057d1f5`: reject those tokens recursively during JSON parsing; schema ownership stays in the adapter. | A malformed engine response cannot silently enter the runtime as a valid JSON object. |
+| Invalid ports/wait/resources reached Docker setup; token punctuation split the URL query/fragment. | `d3e00f5`: validate numeric options before setup and use structured query encoding. | Invalid commands fail before host setup; user-supplied tokens remain one authentication value. |
+
+New tests reproduced **19 failures and four passes** before the fixes;
+the focused transport/Node/launcher set then passed all **46 tests**.
+Only two new test files were added. No existing tests, snapshots, samples,
+interpreter rules, backend defaults, extension code or WASM outputs changed.
+Web generation produced no tracked artifact changes.
+
+Final validation on local Python 3.14.0rc3:
+
+- Full suite: **1454 passed, 76 skipped, 12 existing warnings** with four workers.
+- Web/runtime: **55 passed**; manifest and all eight WASM outputs fresh.
+- Fresh Chromium: real sample output, Pipeline metadata and scratch `42` passed;
+  ignored screenshots/logs/trace were regenerated. Its temporary server exited.
+- Five registered design packets coherent; new tests and transport lint passed.
+
+No Docker daemon/setup/build, new extension-host run, hosted CI, minimum-Python
+run, publication or remote push was performed. Docker tests isolate option/URL
+logic; they are not container integration evidence. The helper still has no
+output/memory/process-tree limit. Numeric representation limits, duplicate keys
+and adapter result schemas remain separate contracts. Docker launch logs still
+print tokens; URL encoding is not redaction or a new credential-security claim.
+The existing deferred-test findings remain in
+[the separate review](2026-09-30-test-issues.md), not silently fixed here.
+
+### Exact Resume Point
+
+Design-first continuation: read [function contracts](../design/function_contracts.md)
+and execute **DW1** in [the data/notation synthesis](../research/data_workflows/nomi_candidates.md):
+write and compare callback, schema-bound expression and collect contracts under
+effect/retention failures. Do not begin a query engine before those contracts close.
+Implementation continuation, when requested, uses
+[the existing layer plan](../orientation/implementation_layers.md); test-harness
+repairs use the separate test pass. This checkpoint records completed evidence,
+not another live backlog.

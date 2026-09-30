@@ -49,3 +49,9 @@ Data/notation research follow-up: full suite with four workers reports
 parametrization deprecations across workers, not twelve new test defects.
 Four new research-navigation/table/target-boundary tests were added; no existing
 tests, skip policies or regression snapshots were edited.
+
+Session-close implementation follow-up: **1454 passed, 76 skipped, 12 warnings**
+with four workers. The same three parametrization deprecations remain, repeated
+per worker. Twenty-three new transport/launcher cases were added in two new
+files; nineteen first failed against the previous implementation. Existing test
+files and snapshots remain untouched; no new test defect was identified.
