@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "nomi"
 version = "0.1.0"
 readme = "README.md"
+requires-python = ">=3.12"
 dependencies = [
     "lark",
 ]
@@ -22,6 +23,7 @@ jupyter = [
     "notebook",
 ]
 dev = [
+    "setuptools",
     "ipykernel",
     "jupyterlab",
     "jupyter_client",
@@ -38,6 +40,15 @@ dev = [
 
 [tool.setuptools.packages.find]
 include = ["prototype*", "scripts*", "tools*"]
+exclude = ["prototype.tests*", "*.node_modules*", "*.target*"]
+
+[tool.setuptools.package-data]
+"prototype.grammar" = ["*.lark", "layers/*.lark"]
+"prototype.runtime" = [
+    "host_capabilities.json", "js/*.js", "js/pkg/*.js",
+    "js/pkg/*.wasm", "js/pkg/*.json",
+]
+"scripts" = ["demo.nomi"]
 
 [project.scripts]
 nomi = "scripts.cli:main"
