@@ -23,6 +23,13 @@
     "runner"
   ],
   "main": "./src/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Language navigation is available; running Nomi code requires workspace trust."
+    },
+    "virtualWorkspaces": false
+  },
   "activationEvents": [
     "onLanguage:nomi",
     "onCommand:nomi.runFile",
@@ -121,12 +128,12 @@
         "nomi.executable": {
           "type": "string",
           "default": "nomi",
-          "description": "Command used when running through an installed Nomi executable."
+          "description": "Executable name or path for installed Nomi. Not a shell command; do not include arguments."
         },
         "nomi.pythonExecutable": {
           "type": "string",
           "default": "python3",
-          "description": "Python command used when running the source CLI."
+          "description": "Python executable name or path for the source CLI. Not a shell command; do not include arguments."
         },
         "nomi.sourceCliPath": {
           "type": "string",
@@ -152,6 +159,7 @@
     "clean": "python3 scripts/nomi-vscode.py clean",
     "publish-check": "python3 scripts/nomi-vscode.py publish-check",
     "test": "vscode-test",
+    "test:unit": "node --test src/test/unit/*.test.js",
     "package": "vsce package",
     "publish": "vsce publish",
     "publish:patch": "vsce publish patch",

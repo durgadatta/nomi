@@ -10,6 +10,12 @@ Early VS Code support for the Nomi language.
 - Adds `Nomi: Run File`, `Nomi: Run Selection`, and `Nomi: Open Terminal`.
 - Adds lightweight document symbols, hover text, completions, and go to definition.
 
+Run commands create process tasks, not shell command strings. Workspace trust
+and an opened workspace folder are required; cancelled saves do not run stale files. Runner settings accept
+single executable names or paths (no shell flags). Selections use their source
+workspace settings and cwd, and their temporary files are deleted when the
+task ends. Source execution needs Python 3.12+ with Nomi's dependencies.
+
 ## Local Workflow
 
 Use the project wrapper from a terminal:
@@ -54,6 +60,9 @@ To use a different compatible CLI command, set `NOMI_VSCODE_CLI` before running
 the wrapper.
 
 ## Local Development
+
+Run the isolated runner checks with `npm run test:unit` from this folder. The
+wrapper's `test` action runs those checks and the VS Code host suite.
 
 For active extension development:
 

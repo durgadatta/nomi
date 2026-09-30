@@ -101,6 +101,7 @@ def setup() -> int:
 
 def test() -> int:
     ensure_dependencies()
+    run(["npm", "run", "test:unit"])
     run(["npm", "test"])
     return 0
 

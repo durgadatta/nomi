@@ -1,9 +1,7 @@
 "use strict";
 
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
 const vscode = require("vscode");
+const { registerRunCommands } = require("./run_commands");
 
 const NOMI_SELECTOR = { language: "nomi" };
 const WORD_RE = /[A-Za-z_]\w*/;
@@ -11,9 +9,8 @@ const WORD_RE = /[A-Za-z_]\w*/;
 let terminal;
 
 function activate(context) {
+  registerRunCommands(vscode, context);
   context.subscriptions.push(
-    vscode.commands.registerCommand("nomi.runFile", runFile),
-    vscode.commands.registerCommand("nomi.runSelection", runSelection),
     vscode.commands.registerCommand("nomi.openTerminal", openTerminal),
     vscode.languages.registerDefinitionProvider(NOMI_SELECTOR, new NomiDefinitionProvider()),
     vscode.languages.registerDocumentSymbolProvider(NOMI_SELECTOR, new NomiDocumentSymbolProvider()),
@@ -24,64 +21,8 @@ function activate(context) {
 
 function deactivate() {}
 
-async function runFile(resource) {
-  const document = await resolveDocument(resource);
-  if (!document) {
-    vscode.window.showWarningMessage("Open a .nomi file to run it.");
-    return;
-  }
-
-  if (document.isDirty) {
-    await document.save();
-  }
-
-  const command = buildRunCommand(document.uri.fsPath);
-  if (!command) {
-    return;
-  }
-  sendToNomiTerminal(command);
-}
-
-async function runSelection() {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.document.languageId !== "nomi") {
-    vscode.window.showWarningMessage("Select Nomi code in a .nomi file first.");
-    return;
-  }
-
-  const selection = editor.selection;
-  if (selection.isEmpty) {
-    vscode.window.showWarningMessage("Select Nomi code to run.");
-    return;
-  }
-
-  const code = editor.document.getText(selection);
-  const tmpDir = path.join(os.tmpdir(), "nomi-vscode");
-  fs.mkdirSync(tmpDir, { recursive: true });
-  const tmpFile = path.join(tmpDir, `selection-${Date.now()}.nomi`);
-  fs.writeFileSync(tmpFile, code.endsWith("\n") ? code : `${code}\n`, "utf8");
-
-  const command = buildRunCommand(tmpFile);
-  if (command) {
-    sendToNomiTerminal(command);
-  }
-}
-
 function openTerminal() {
   getNomiTerminal().show();
-}
-
-async function resolveDocument(resource) {
-  if (resource && resource.scheme === "file") {
-    return vscode.workspace.openTextDocument(resource);
-  }
-
-  const editor = vscode.window.activeTextEditor;
-  if (editor && editor.document.languageId === "nomi") {
-    return editor.document;
-  }
-
-  return undefined;
 }
 
 function getNomiTerminal() {
@@ -89,60 +30,6 @@ function getNomiTerminal() {
     terminal = vscode.window.createTerminal("Nomi");
   }
   return terminal;
-}
-
-function sendToNomiTerminal(command) {
-  const nomiTerminal = getNomiTerminal();
-  nomiTerminal.show();
-  nomiTerminal.sendText(command);
-}
-
-function buildRunCommand(filePath) {
-  const config = vscode.workspace.getConfiguration("nomi");
-  const runner = config.get("runner", "auto");
-  const sourceCli = resolveSourceCliPath(filePath, config);
-
-  if (runner === "source") {
-    if (!sourceCli) {
-      vscode.window.showErrorMessage("Nomi source runner requested, but scripts/cli.py was not found.");
-      return undefined;
-    }
-    return `${quote(config.get("pythonExecutable", "python3"))} ${quote(sourceCli)} ${quote(filePath)}`;
-  }
-
-  if (runner === "auto" && sourceCli) {
-    return `${quote(config.get("pythonExecutable", "python3"))} ${quote(sourceCli)} ${quote(filePath)}`;
-  }
-
-  return `${quote(config.get("executable", "nomi"))} ${quote(filePath)}`;
-}
-
-function resolveSourceCliPath(filePath, config) {
-  const configuredPath = config.get("sourceCliPath", "").trim();
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath)) || vscode.workspace.workspaceFolders?.[0];
-
-  if (configuredPath) {
-    const absolutePath = path.isAbsolute(configuredPath)
-      ? configuredPath
-      : workspaceFolder
-        ? path.join(workspaceFolder.uri.fsPath, configuredPath)
-        : configuredPath;
-    return fs.existsSync(absolutePath) ? absolutePath : undefined;
-  }
-
-  if (!workspaceFolder) {
-    return undefined;
-  }
-
-  const localCli = path.join(workspaceFolder.uri.fsPath, "scripts", "cli.py");
-  return fs.existsSync(localCli) ? localCli : undefined;
-}
-
-function quote(value) {
-  if (/^[A-Za-z0-9_./:=+-]+$/.test(value)) {
-    return value;
-  }
-  return `'${value.replace(/'/g, "'\\''")}'`;
 }
 
 class NomiDefinitionProvider {
