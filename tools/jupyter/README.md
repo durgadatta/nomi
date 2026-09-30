@@ -4,6 +4,13 @@ This folder contains a local Jupyter kernel for running Nomi syntax in notebooks
 The kernel reuses the existing Nomi parser and interpreter, so notebook cells
 execute through the same prototype semantics as the CLI.
 
+Execution/session creation, `%ast`, completeness checks, and binding lookup
+use the public runtime facade. The kernel does not choose a parser directly.
+Silent execution still updates notebook state but suppresses streams, command
+output, and displayed results, following the
+[Jupyter messaging contract](https://jupyter-client.readthedocs.io/en/latest/messaging.html#execute).
+Normal visible output and cross-cell bindings are unchanged.
+
 ## Setup
 
 From the repository root:

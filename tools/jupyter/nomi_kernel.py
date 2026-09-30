@@ -29,22 +29,22 @@ def _ensure_project_root_on_path() -> None:
 
 _ensure_project_root_on_path()
 
-from prototype.parser.nomi.usage import generate_ast
-from prototype.runtime import RuntimeSession
+from prototype.runtime import create_session, inspect as inspect_runtime
 
 
 class KernelStream(io.TextIOBase):
     """File-like stream that forwards writes to the notebook frontend."""
 
-    def __init__(self, kernel: "NomiKernel", name: str):
+    def __init__(self, kernel: "NomiKernel", name: str, *, enabled: bool = True):
         self.kernel = kernel
         self.name = name
+        self.enabled = enabled
 
     def writable(self) -> bool:
         return True
 
     def write(self, text: str) -> int:
-        if text:
+        if text and self.enabled:
             self.kernel.send_response(
                 self.kernel.iopub_socket,
                 "stream",
@@ -72,7 +72,7 @@ class NomiKernel(Kernel):
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
-        self.runtime_session = RuntimeSession(mode="nomi")
+        self.runtime_session = create_session(mode="nomi")
         self.project_root = Path(os.environ.get("NOMI_PROJECT_ROOT", Path.cwd())).resolve()
 
     @property
@@ -100,7 +100,7 @@ class NomiKernel(Kernel):
         prefix = self._completion_prefix(code[:cursor_pos])
         matches = sorted(
             name
-            for name in self.interpreter.global_env.bindings
+            for name in self.runtime_session.bindings
             if name.startswith(prefix) and not name.startswith("__")
         )
         return {
@@ -118,7 +118,7 @@ class NomiKernel(Kernel):
         if stripped.startswith("%"):
             return {"status": "complete"}
         try:
-            generate_ast(code=self._normalize_source(code))
+            self._inspect_ast(code)
         except Exception:
             if code.rstrip().endswith(":"):
                 return {"status": "incomplete", "indent": "    "}
@@ -130,8 +130,8 @@ class NomiKernel(Kernel):
         return {"status": "ok", "restart": restart}
 
     def _execute_with_output(self, code: str, *, silent: bool) -> Any:
-        stdout = KernelStream(self, "stdout")
-        stderr = KernelStream(self, "stderr")
+        stdout = KernelStream(self, "stdout", enabled=not silent)
+        stderr = KernelStream(self, "stderr", enabled=not silent)
         with redirect_stdout(stdout), redirect_stderr(stderr):
             return self._execute_code_or_command(code, silent=silent)
 
@@ -147,7 +147,7 @@ class NomiKernel(Kernel):
         name = parts[0]
 
         if name == "%help":
-            self._write_stdout(self._help_text())
+            self._write_stdout(self._help_text(), silent=silent)
             return None
 
         if name == "%reset":
@@ -159,10 +159,10 @@ class NomiKernel(Kernel):
         if name == "%who":
             names = sorted(
                 key
-                for key in self.interpreter.global_env.bindings
+                for key in self.runtime_session.bindings
                 if key not in ("__builtins__", "builtins") and not key.startswith("__")
             )
-            self._write_stdout("\n".join(names) + ("\n" if names else ""))
+            self._write_stdout("\n".join(names) + ("\n" if names else ""), silent=silent)
             return None
 
         if name == "%run":
@@ -176,8 +176,8 @@ class NomiKernel(Kernel):
             source = rest if rest.strip() else command[len(first_line):].strip()
             if not source:
                 raise ValueError("Usage: %ast followed by Nomi source")
-            tree = generate_ast(code=self._normalize_source(source), dump=True)
-            self._write_stdout(f"{tree}\n")
+            tree = self._inspect_ast(source)
+            self._write_stdout(f"{tree}\n", silent=silent)
             return None
 
         raise ValueError(f"Unknown Nomi kernel command: {name}. Try %help.")
@@ -204,8 +204,17 @@ class NomiKernel(Kernel):
             },
         )
 
-    def _write_stdout(self, text: str) -> None:
-        KernelStream(self, "stdout").write(text)
+    def _write_stdout(self, text: str, *, silent: bool = False) -> None:
+        KernelStream(self, "stdout", enabled=not silent).write(text)
+
+    def _inspect_ast(self, code: str) -> str:
+        return inspect_runtime(
+            source=self._normalize_source(code),
+            mode=self.runtime_session.mode,
+            parser_frontend=self.runtime_session.pipeline.parser_frontend,
+            eval_backend=self.runtime_session.pipeline.eval_backend,
+            stage="python_ast",
+        ).output
 
     def _resolve_path(self, raw_path: str) -> Path:
         path = Path(raw_path).expanduser()
