@@ -2,6 +2,39 @@
   "schema_version": 1,
   "passes": [
     {
+      "id": "cognitive-interfaces",
+      "topic": "Cognitive representations, semantic commands, and inspectable change",
+      "owner": "language-design",
+      "status": "designing",
+      "last_reviewed": "2026-09-30",
+      "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign"],
+      "artifacts": {
+        "research": "docs/research/interfaces/README.md",
+        "design": "docs/design/interaction_model.md",
+        "target": "docs/design/interaction_model_target.nomi",
+        "bridge": "docs/review/2026-09-30-cognitive-interfaces.md"
+      },
+      "canonical_updates": [
+        "docs/design/README.md",
+        "docs/design/decisions.md",
+        "docs/design/redesign_agenda.md",
+        "docs/research/open_questions.md"
+      ],
+      "validation": [
+        "python3 -m tools.design_passes check",
+        "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
+        "python3 .codex/scripts/agent_doctor.py",
+        "git diff --check"
+      ],
+      "next_actions": [
+        "Use redesign_agenda.md for live closure gates; finish D0 target/prototype disposition inspection without changing execution.",
+        "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
+        "Falsify interaction laws using text and read-only invoice projections before editable views or new notation.",
+        "Run explicit stale/invalid/denied-capability and keyboard/IME/accessibility trials, then compare text-primary and structured-document alternatives if needed.",
+        "Promote only a settled semantic slice through backend-neutral artifacts, CLI/browser conformance, supported samples and GitHub playground evidence."
+      ]
+    },
+    {
       "id": "language-coherence",
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",

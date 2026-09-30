@@ -35,7 +35,8 @@ Every registered pass owns exactly these artifacts:
 | Bridge | `docs/review/<date>-<topic>.md` | Current implementation audit, ordered migration, risks, and retrospective |
 
 The four artifacts link one another by repository-relative path. Broad target
-files such as `syntax.md`, `semantics.md`, `decisions.md`, and `target.nomi`
+files such as `syntax.md`, `semantics.md`, `decisions.md`, and the active
+`targets/overall.nomi` / category suite
 still receive the durable cross-language changes; a focused design file may
 own detail that would make those spine documents unreadable.
 

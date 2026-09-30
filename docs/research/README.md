@@ -21,6 +21,9 @@
    experiments rather than more broad surveys.
 5. [Resource Experiment](resource_lifetime.md) - executed symbolic comparison
    of cleanup carriers and supplied-fact escape policies; not runtime conformance.
+6. [Cognitive Foundations](cognition.md) and
+   [Human-Computer Languages](interfaces/README.md) - the requested expansion
+   beyond conventional languages, with 18 bounded interface threads.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The
@@ -50,9 +53,10 @@ The consolidated corpus compared:
 - diagnostics, explanation, first-hour pedagogy, accessibility, AI-readable
   semantics, capabilities, secrets, supply-chain integrity, and governance.
 
-This breadth is enough for the present design stage. New research should begin
-with a failed target program or unresolved experiment, not another general
-language tour.
+The interface expansion adds questions about representation, change, evidence,
+and time; it does not turn every interface into a new syntax proposal. Further
+research should begin with a failed target program or unresolved experiment,
+using the [design-first agenda](../design/redesign_agenda.md) for coverage gaps.
 
 ## Method
 

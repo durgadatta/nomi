@@ -19,7 +19,8 @@ Nomi distinguishes:
 - **Target design:** the language being designed, independent of current
   parser/runtime limitations. Start with [Syntax](docs/design/syntax.md),
   [Semantics](docs/design/semantics.md), and the aspirational
-  [target program](docs/design/target.nomi).
+  [target suite](docs/design/targets/README.md) and
+  [overall program](docs/design/targets/overall.nomi).
 - **Current prototype:** runnable syntax implemented through Python/Lark and a
   browser Rust/WASM-to-JavaScript path. Runnable examples live in `samples/`
   and are covered by regression and web checks.

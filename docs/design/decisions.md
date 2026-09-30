@@ -220,6 +220,13 @@ These choices are not yet strong enough for permanent syntax:
 
 ## Feature Admission Packet
 
+The [cognitive/interface proposal](interaction_model.md) recommends testing
+text-primary source with read-only projections before editable views. Stable
+command identity, typed changes, explicit epochs, and evidence-aware explanation
+are **proposals, not accepted contracts**. Structured-document primary remains
+a competing candidate. The [design-first agenda](redesign_agenda.md) names
+broader gaps; it does not accept new keywords, inference rules, or APIs.
+
 The [September synthesis](synthesis.md) reaffirms the accepted core without
 admitting new syntax. [Category targets](targets/README.md) and
 [the overall fixture](targets/overall.nomi) replace the legacy program as the

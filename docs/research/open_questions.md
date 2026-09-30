@@ -229,6 +229,21 @@ missing cases, and overlapping capture alternatives from
 compiler-complexity pressure in `docs/research/pattern_matching.md` before
 changing the focused target.
 
+## 17. Computational Representations And Change
+
+**Question:** Should source text remain primary with derived views, or should
+a structured document own equally editable textual/spatial projections?
+
+**Current hypothesis:** test text-primary, read-only views first; retain the
+structured-document alternative if inverse source edits repeatedly fail.
+
+**Test:** the [invoice target](../design/interaction_model_target.nomi) across
+text, table, dependency diagram, form and semantic commands. Include stale edits,
+invalid drafts, row reordering, unsupported constructs, comments, denied effects,
+and keyboard/screen-reader workflows. The [registered interaction proposal](../design/interaction_model.md)
+owns laws and experiments; the [redesign agenda](../design/redesign_agenda.md)
+owns closure order. No usability study or target execution is claimed.
+
 ## Research Stop Rule
 
 The [September synthesis](../design/synthesis.md) orders these gates against

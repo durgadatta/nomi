@@ -1,0 +1,161 @@
+# Status: target-only cognitive/interface pressure fixture; not runnable today.
+# Packet: docs/research/interfaces/README.md
+# Design: docs/design/interaction_model.md
+# Bridge: docs/review/2026-09-30-cognitive-interfaces.md
+# All collection, generated codec, and Result method APIs below are proposals.
+# No new syntax. Int precision/overflow and generic callback contracts are open.
+from std.collections import all_unique, filter, fold, map
+
+data Line:
+    id: Text where id.trim() != ""
+    label: Text
+    quantity: Int where quantity >= 0
+    unit_price_minor: Int where unit_price_minor >= 0
+
+func unique_line_ids(lines: List[Line]) -> Bool:
+    return all_unique(map(lines, (line) => line.id))
+
+data Invoice:
+    lines: List[Line]
+    where unique_line_ids(lines) note "line IDs must be unique"
+
+data Model:
+    revision: Int where revision >= 0
+    invoice: Invoice
+
+func line_total(line: Line) -> Int:
+    return line.quantity * line.unit_price_minor
+
+func total_minor(invoice: Invoice) -> Int:
+    return invoice.lines
+        |> map(line_total)
+        |> fold(0, (sum, amount) => sum + amount)
+
+# 1. Beginner: text, named-input grid, and dependency view show this same
+# calculation. Currency is intentionally fixed out-of-band for this toy model;
+# production money needs explicit currency, rounding, and overflow contracts.
+example "named quantities determine the invoice":
+    invoice = Invoice(lines=[
+        Line(id="tea", label="Tea", quantity=2, unit_price_minor=400),
+        Line(id="cup", label="Cup", quantity=1, unit_price_minor=700),
+    ])
+    check total_minor(invoice) == 1500
+
+# A command contains domain identity, not displayed row position.
+# Quantity is intentionally unconstrained here: a negative request is an
+# expected command error, not an invalid internal Line construction.
+data Change:
+    SetQuantity(id: Text, quantity: Int)
+
+data Edit:
+    base_revision: Int where base_revision >= 0
+    change: Change
+
+data ChangeError:
+    Stale(expected: Int, actual: Int)
+    UnknownLine(id: Text)
+    NegativeQuantity(quantity: Int)
+    InvalidIdentity(id: Text)
+
+func replace_quantity(line: Line, id: Text, quantity: Int) -> Line:
+    if line.id == id:
+        return Line(
+            id=line.id,
+            label=line.label,
+            quantity=quantity,
+            unit_price_minor=line.unit_price_minor,
+        )
+    return line
+
+# 2. Production: a pure candidate change validates before constructing/committing.
+# This is an application model transaction, not source editing or database I/O.
+func apply_edit(model: Model, edit: Edit) -> Result[Model, ChangeError]:
+    if edit.base_revision != model.revision:
+        return Err(ChangeError.Stale(
+            expected=edit.base_revision,
+            actual=model.revision,
+        ))
+    match edit.change:
+        Change.SetQuantity(id, quantity):
+            if quantity < 0:
+                return Err(ChangeError.NegativeQuantity(quantity))
+            matches = filter(model.invoice.lines, (line) => line.id == id)
+            match matches:
+                []:
+                    return Err(ChangeError.UnknownLine(id))
+                [line]:
+                    updated = map(
+                        model.invoice.lines,
+                        (item) => replace_quantity(item, line.id, quantity),
+                    )
+                    return Ok(Model(
+                        revision=model.revision + 1,
+                        invoice=Invoice(lines=updated),
+                    ))
+                _:
+                    return Err(ChangeError.InvalidIdentity(id))
+
+data SubmissionError:
+    Decode(errors: DecodeErrors)
+    Change(error: ChangeError)
+
+# 3. Failure-heavy boundary: raw form/agent/JSON input is not an owned Edit.
+# The generated Edit decoder's variant wire format must be settled separately;
+# it is not inferred from the names or invented as hidden view behavior.
+func submit(model: Model, raw: Value) -> Result[Model, SubmissionError]:
+    edit = Edit.decode(raw).map_error(SubmissionError.Decode)?
+    return apply_edit(model, edit).map_error(SubmissionError.Change)
+
+example "immutable commit does not replace the old snapshot":
+    before = Model(revision=7, invoice=Invoice(lines=[
+        Line(id="tea", label="Tea", quantity=2, unit_price_minor=400),
+    ]))
+    edit = Edit(
+        base_revision=7,
+        change=Change.SetQuantity(id="tea", quantity=3),
+    )
+    match apply_edit(before, edit):
+        Ok(after):
+            check after.revision == 8
+            check total_minor(after.invoice) == 1200
+            check total_minor(before.invoice) == 800
+        Err(error):
+            panic("valid quantity edit failed: {error}")
+
+example "a stale request cannot silently target a newer model":
+    current = Model(revision=8, invoice=Invoice(lines=[]))
+    edit = Edit(
+        base_revision=7,
+        change=Change.SetQuantity(id="tea", quantity=3),
+    )
+    match apply_edit(current, edit):
+        Err(ChangeError.Stale(expected, actual)):
+            check expected == 7
+            check actual == 8
+        _:
+            panic("stale edit was not diagnosed")
+
+example "invalid quantity is an expected request error":
+    current = Model(revision=8, invoice=Invoice(lines=[]))
+    edit = Edit(
+        base_revision=8,
+        change=Change.SetQuantity(id="tea", quantity=-1),
+    )
+    match apply_edit(current, edit):
+        Err(ChangeError.NegativeQuantity(quantity)):
+            check quantity == -1
+        _:
+            panic("negative quantity was not diagnosed")
+
+# Required external fixtures after codec wire formats are specified:
+# - Invalid quantity text: keep the raw draft; report a decode path, not panic.
+# - Duplicate line IDs: Invoice.decode accumulates a declaration constraint error.
+# - Unknown line ID: valid Edit decode, then ChangeError.UnknownLine.
+# - Sort the projected rows before editing: the same ID is still changed.
+# - A preview for revision 7 cannot authorize a source/model at revision 8.
+# - Source edit and input/model edit are separate command kinds.
+# - Opening any view emits no Network/File/Process action.
+# - Inspect an old result after an edit: preserve its source/input epoch.
+# - Numeric overflow must follow the selected profile's explicit target policy.
+# Views proposed here: text, read-only grid, dependency graph, input form,
+# command palette, and trace. None is a second evaluator or supported sample.

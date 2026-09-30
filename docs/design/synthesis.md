@@ -21,6 +21,11 @@ and [the decision ledger](decisions.md). Proposed library signatures in target
 comments are hypotheses, not exports. The current playground runs a different,
 supported prototype surface. Do not advertise these fixtures as executable.
 
+The [cognitive/interface expansion](interaction_model.md) adds 18 non-standard
+interface threads and a second coherence fixture without admitting grammar.
+Use the [design-first agenda](redesign_agenda.md) for cross-cutting gaps and
+closure order; the sequence below continues to own import-workflow admission.
+
 ## One Coherent Model
 
 Nomi should borrow semantic mechanisms, not accumulate familiar spellings.

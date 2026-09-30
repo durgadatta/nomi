@@ -27,6 +27,11 @@
    interaction gaps, and ordered admission gates.
 10. [Resource Completion Proposal](resource_lifetime.md) - designing packet,
     executed symbolic comparison, and remaining type/runtime admission gates.
+11. [Interaction Proposal](interaction_model.md) and
+    [Interaction Target](interaction_model_target.nomi) - cognitive/interface
+    experiments; no new syntax admitted.
+12. [Design-First Agenda](redesign_agenda.md) - unresolved whole-language
+    dimensions and design closure before reversible implementation.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly

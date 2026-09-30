@@ -1,0 +1,184 @@
+# Nomi Interaction Model
+
+> Status: designing proposal; no new grammar or public library APIs accepted.
+
+Packet: `docs/research/interfaces/README.md`,
+`docs/design/interaction_model_target.nomi`,
+`docs/review/2026-09-30-cognitive-interfaces.md`.
+
+Evidence starts at [cognitive foundations](../research/cognition.md) and the
+[18 interface threads](../research/interfaces/README.md). This proposal extends
+the [language synthesis](synthesis.md); it does not replace [syntax](syntax.md),
+[semantics](semantics.md), or [industrial contracts](industrial.md). The
+[redesign agenda](redesign_agenda.md) owns broader unresolved design work.
+
+## Thesis And A Real Fork
+
+Nomi could be a checked computational medium whose meaning remains inspectable
+through text, values, tables, diagrams, commands, and traces. This is broader
+than an editor with decorations and narrower than a universal language of
+thought. The unit of coherence is the computation and its contracts, not the
+number of interfaces surrounding it.
+
+Two credible directions remain:
+
+| Candidate | Strength | Cost |
+| --- | --- | --- |
+| Text-primary source with derived views and explicit edits | Reviewable files, Git compatibility, readable fallback, one formatter | Some spatial/domain tasks remain awkward; inverse edits may be unavailable. |
+| Structured document as primary program with equally editable projections | Stable structure/identity and domain editing without reparsing text | Storage, merge, interoperability, accessibility, and exporting arbitrary source become first-order problems. |
+
+**Working recommendation:** start text-primary and read-only projections. This
+is a reversible experiment, not proof the second direction is inferior. If
+source synchronization repeatedly defeats useful domain edits, run a fenced
+structured-document experiment instead of forcing every interaction into text.
+
+## Small Semantic Model
+
+| Concept | Owned fact | Not interchangeable with |
+| --- | --- | --- |
+| Source revision | Exact checked text/document and edition | Whatever is currently visible in an editor. |
+| Binding identity | Resolved declaration/reference relationship | A name string or screen position. |
+| Owned value | Nominal concept after validation | Raw form text, host object, or diagram coordinates. |
+| View | Projection of source/value/trace plus presentation state | Another independently authoritative program. |
+| Candidate change | Proposed operation against a known revision/target | A committed mutation or capability grant. |
+| Evaluation epoch | Source, input snapshot, profile, observations and run identity | Latest edit time or a sequence number alone. |
+| Execution action | Explicit authorized effectful work | Re-rendering, invalidation, or replaying a preview. |
+| Evidence record | Provenance-tagged static fact, test, observation, or suggestion | A universal proof or model-generated assurance. |
+
+Different identities serve different purposes. A domain row ID is not a source
+binding ID; a run ID is not a revision hash. Source-only edits do not necessarily
+change domain data, and a form input transaction does not necessarily rewrite
+the program. Every command must declare which object it changes.
+
+## Candidate Architecture, Not Mandatory Core IR
+
+```text
+text or structured draft
+  -> lossless recovery -> checked Surface -> Core -> completed result/events
+                           |                         |
+                      source views              value/trace views
+                           |                         |
+                    candidate source edit      candidate input/model change
+                           |                         |
+                       check/commit             decode/validate/commit
+```
+
+Existing versioned Surface, diagnostics, and host-capability contracts are
+extraction points. Do not make editor layout part of Core, or include a model's
+private state in an exported source artifact. A semantic command adapter may
+remain tool-owned without becoming a runtime function type.
+
+## Shared Normal Form
+
+[The invoice target](interaction_model_target.nomi) uses ordinary functions,
+nominal data, explicit Result, and proposed collection/decoder APIs. Its three
+pressures are a beginner calculation, a production immutable change, and a
+failure-heavy submission. The same semantic model could appear as:
+
+- text defining line totals and an explicit fold;
+- a grid with input columns and read-only derived totals;
+- a dependency diagram with labelled eager data edges;
+- a form storing invalid drafts until decode succeeds;
+- a command palette applying a quantity change against a revision;
+- an explanation tracing a total back to validated inputs.
+
+These views do not require spreadsheet coordinates, global reactive bindings,
+graph scheduling, or natural-language evaluation in ordinary source. They may
+require better binding identity, source maps, typed metadata, and command
+contracts. Those are real language/toolchain obligations, not free UI features.
+
+## Interaction Laws To Falsify
+
+1. Opening or navigating a view never repeats an external action.
+2. View reordering preserves selected domain identity.
+3. A valid draft becomes owned data only through the declared boundary.
+4. A change commits entirely or not at all; stale revisions are explicit errors.
+5. A supported projection round trip preserves resolved meaning and comments
+   under separate semantic and lossless contracts.
+6. Unsupported source remains visible; a view cannot silently delete it.
+7. Results retain their epoch; late responses cannot replace a newer run.
+8. Keyboard, pointer, palette, and agent adapters invoke the same checked command.
+9. Inspection and semantic diff disclose uncertainty and omitted information.
+10. No serialization, replay, or source rewrite creates authority.
+
+These laws need counterexamples, not decorative checkmarks. Reformatting can
+change source offsets; remapping must preserve references. Arbitrary programs
+may have no useful editable diagram. Undo may restore a model snapshot but
+cannot guarantee reversal of external effects. Execution budgets may truncate
+a trace while leaving the program's result valid; the explanation must say so.
+
+## Command Vocabulary
+
+Proposed stable command IDs, not implemented exports or shortcut defaults:
+
+| ID | Target/precondition | Completion | Authority |
+| --- | --- | --- | --- |
+| `nomi.run` | Supported source revision and host profile | Run ID and typed result/diagnostics | Explicit profile grants. |
+| `nomi.stop` | A particular active run | Cancellation requested, then joined/stopped or failed | Run ownership, not arbitrary process access. |
+| `nomi.inspect` | Artifact/value/trace identity | Bounded redacted projection | Read existing evidence; no reexecution. |
+| `nomi.apply_source_edit` | Revision plus resolved target and edit | New checked revision or diagnostic | Document edit authority. |
+| `nomi.apply_input_change` | Model/input revision and decoded command | New owned model or expected error | Model edit authority. |
+| `nomi.reset_session` | Named session | Explicit reset report | Session ownership; no claim of external undo. |
+
+Toolbars use familiar icons with names; palettes and menus expose command names.
+Keybindings are remappable contextual adapters. Do not impose arbitrary chords
+before Monaco, browser, OS, keyboard-layout, IME, and accessibility testing.
+Commands which cannot run must report why without losing focus or draft input.
+
+## Type, Failure, Effect, And Time Interactions
+
+| Existing contract | Interaction obligation |
+| --- | --- |
+| Immutable bindings and `var`/`set` | A view distinguishes program binding edits from runtime cell mutation. |
+| Nominal data and decode | Input widgets preserve raw drafts; commit uses the actual decoder, not just exported schema. |
+| `match` and constraints | Pattern witness views use the checked closed domain; invalid input remains a decode error. |
+| Result/panic/cancellation | Source-edit conflict, invalid quantity, runtime panic, and Stop are different outcomes. |
+| Effects/capabilities | Pure preview is separate from execution; approvals bind to the exact program/action. |
+| Resources/tasks | Inspection does not revive leases; run completion includes cleanup/join obligations. |
+| Collections/plans | A diagram labels eager data flow versus a lazy plan; opening it never executes a query. |
+| Numeric/text semantics | Views preserve precision and identity; pretty output is not a lossy input codec. |
+| Modules/editions | Binding IDs and resolved interface facts are edition/profile-aware. |
+
+Callback typing, derived decoder signatures, region types, and numeric overflow
+remain open elsewhere. This packet does not claim to typecheck its target.
+
+## Diagnostics And Formatting
+
+Illustrative diagnostic payload, not a new schema accepted by this pass:
+
+```json
+{
+  "code": "EDIT_STALE_REVISION",
+  "phase": "interaction",
+  "message": "This change was prepared for an older invoice.",
+  "expected_revision": 7,
+  "actual_revision": 8,
+  "target": {"kind": "line", "id": "tea"},
+  "repair": "Refresh the preview before applying the change."
+}
+```
+
+Source-related diagnostics additionally need real source spans and binding IDs;
+input diagnostics need data paths. Host exception strings are not the primary
+explanation. Values and evidence honor existing redaction. The formatter renders
+ordinary Nomi, never a hidden diagram serialization inside comments. Narrow
+views may wrap labels but cannot change the represented expression.
+
+## Ordered Playground Experiments
+
+| Order | Deliverable/owner | Acceptance evidence | Stop or removal condition |
+| --- | --- | --- | --- |
+| 1 | Language/tool design: invoice model and explicit view contract | Three programs; invalid/stale/duplicate-ID cases; law counterexamples | Inconsistent core contracts: return to typing/decode first. |
+| 2 | Tooling: read-only value/dependency projection | Existing artifact IDs; no reexecution; redaction and unsupported fallback | Needs a second evaluator: keep plain inspection. |
+| 3 | Frontend: shared Run/Stop/Inspect command adapter | Same operation from button/palette/keyboard; late-response and repeated-Stop tests | Changes current execution semantics accidentally: remove adapter. |
+| 4 | Design study: text versus grid/form/diagram | Counterbalanced tasks, error categories, novice/expert/accessibility evidence | Faster only by hiding invalidity or authority: reject. |
+| 5 | Tooling spike: one editable literal/input projection | Atomic/stale checks, undo distinction, comments/identity preservation | Arbitrary inverse guessing: remain read-only. |
+| 6 | Alternative-design spike if needed | Compare structured primary document on the same tasks and export requirements | No measurable reasoning benefit for added storage/merge cost. |
+| 7 | Promotion after settled contract | CLI/browser conformance, sample regression, fresh manifest and browser smoke | Any unsupported target fixture presented as runnable. |
+
+Use the existing [playground plan](../review/2026-09-29-github-playground-agentic-plan.md).
+No UI was built and no study was run here. A trial of six to eight varied users
+could identify failure mechanisms, but would not establish universal usability.
+Pre-register tasks, counterbalance presentation order, retain qualitative repair
+accounts, and include assistive-technology testing rather than claiming it from
+an automated DOM check.

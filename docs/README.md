@@ -19,6 +19,8 @@ For language design, read:
 7. [Target Suite](design/targets/README.md) and [Overall Program](design/targets/overall.nomi)
 8. [Pattern Target](design/pattern_matching_target.nomi)
 9. [Language Synthesis](design/synthesis.md)
+10. [Interaction Proposal](design/interaction_model.md) and
+    [Design-First Agenda](design/redesign_agenda.md)
 
 For the evidence and unresolved forks behind those choices, read:
 
@@ -28,6 +30,8 @@ For the evidence and unresolved forks behind those choices, read:
 4. [Pattern Matching Research](research/pattern_matching.md)
 5. [Open Questions](research/open_questions.md)
 6. [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
+7. [Cognitive Foundations](research/cognition.md) and
+   [Human-Computer Languages](research/interfaces/README.md)
 
 For the current repository and runtime, read:
 
@@ -137,6 +141,8 @@ This list is intentionally complete and is checked by tests.
 - [Language Synthesis](design/synthesis.md)
 - [Target Suite](design/targets/README.md)
 - [Resource Completion Proposal](design/resource_lifetime.md)
+- [Interaction Proposal](design/interaction_model.md)
+- [Design-First Agenda](design/redesign_agenda.md)
 
 ### Research
 
@@ -146,6 +152,29 @@ This list is intentionally complete and is checked by tests.
 - [Pattern Matching Research](research/pattern_matching.md)
 - [Open Questions](research/open_questions.md)
 - [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
+- [Cognitive Foundations](research/cognition.md)
+
+### Interface Threads
+
+- [Human-Computer Language Index](research/interfaces/README.md)
+- [Spreadsheets](research/interfaces/spreadsheets.md)
+- [Command Shells](research/interfaces/command_shells.md)
+- [Keyboard Commands](research/interfaces/keyboard_commands.md)
+- [Direct Manipulation](research/interfaces/direct_manipulation.md)
+- [Visual Programming](research/interfaces/visual_programming.md)
+- [Text Patterns](research/interfaces/text_patterns.md)
+- [Query And Search](research/interfaces/query_search.md)
+- [State And Protocols](research/interfaces/state_protocols.md)
+- [Reactive Time](research/interfaces/reactive_temporal.md)
+- [Units And Constraints](research/interfaces/types_units_constraints.md)
+- [Structured Documents](research/interfaces/structured_documents.md)
+- [Collaboration](research/interfaces/distributed_collaboration.md)
+- [Planning And Optimization](research/interfaces/planning_optimization.md)
+- [Music And Timing](research/interfaces/music_timing.md)
+- [Games And Turtles](research/interfaces/games_turtles.md)
+- [Conversational Agents](research/interfaces/conversational_agents.md)
+- [Stack And Tacit Forms](research/interfaces/tacit_stack.md)
+- [Transactions And History](research/interfaces/transactions_versions.md)
 
 ### Language Reviews
 
@@ -231,3 +260,4 @@ This list is intentionally complete and is checked by tests.
 - [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md)
 - [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md)
 - [Resource Lifetime Experiment 2026-09-29](review/2026-09-29-resource-lifetime.md)
+- [Cognitive And Interface Review 2026-09-30](review/2026-09-30-cognitive-interfaces.md)

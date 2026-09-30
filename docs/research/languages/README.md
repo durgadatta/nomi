@@ -28,7 +28,9 @@ Examples in the linked Nomi suite are proposals, not executed comparisons.
 
 Read [feature comparisons](../features/README.md) to compare mechanisms along
 one axis, then [the synthesis](../../design/synthesis.md) to see how they fit
-together. The older [families](../families.md) and
+together. [Human-computer languages](../interfaces/README.md) adds the separate
+interface dimension, including Excel, keyboard commands, forms, and diagrams.
+The older [families](../families.md) and
 [convergences](../convergences.md) remain the compact evidence spine. These
 pages deepen that spine at the user's request; they do not revive the old
 corpus or introduce another language authority. Decisions still belong in
