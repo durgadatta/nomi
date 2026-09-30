@@ -6,6 +6,7 @@ import errno
 import socket
 import subprocess
 import sys
+import time
 import webbrowser
 from pathlib import Path
 
@@ -53,12 +54,14 @@ def port_available(host: str, port: int) -> bool:
 
 
 def choose_port(host: str, preferred: int, strict: bool) -> int:
+    if not 1 <= preferred <= 65535:
+        raise SystemExit("Port must be between 1 and 65535.")
     if port_available(host, preferred):
         return preferred
     if strict:
         raise SystemExit(f"Port {preferred} is already in use on {host}.")
 
-    for port in range(preferred + 1, preferred + 50):
+    for port in range(preferred + 1, min(preferred + 50, 65536)):
         if port_available(host, port):
             print(f"Port {preferred} is busy; using {port}.")
             return port
@@ -93,6 +96,23 @@ def regenerate_manifest() -> None:
     subprocess.run([sys.executable, str(ROOT / "scripts" / "make_web.py")], check=True)
 
 
+def wait_for_server(
+    server: subprocess.Popen, host: str, port: int, *, timeout: float = 10
+) -> None:
+    probe_host = "127.0.0.1" if host == "0.0.0.0" else host
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        status = server.poll()
+        if status is not None:
+            raise SystemExit(f"Playground server exited during startup (code {status}).")
+        try:
+            with socket.create_connection((probe_host, port), timeout=0.2):
+                return
+        except OSError:
+            time.sleep(0.05)
+    raise SystemExit(f"Playground server did not start on {host}:{port} within {timeout}s.")
+
+
 def main() -> int:
     args = parse_args()
     if not args.no_wasm:
@@ -101,22 +121,30 @@ def main() -> int:
         regenerate_manifest()
 
     port = choose_port(args.host, args.port, args.strict_port)
-    url = f"http://{args.host}:{port}/web/"
+    browser_host = "127.0.0.1" if args.host == "0.0.0.0" else args.host
+    url = f"http://{browser_host}:{port}/web/"
     print(f"Starting Nomi web playground at {url}")
-
-    if not args.no_browser:
-        webbrowser.open(url)
 
     server = subprocess.Popen(
         [sys.executable, "-m", "http.server", str(port), "--bind", args.host],
         cwd=str(ROOT),
     )
     try:
+        wait_for_server(server, args.host, port)
+        if not args.no_browser:
+            webbrowser.open(url)
         return server.wait()
     except KeyboardInterrupt:
-        server.terminate()
         print("\nStopped.")
         return 0
+    finally:
+        if server.poll() is None:
+            server.terminate()
+            try:
+                server.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                server.kill()
+                server.wait(timeout=5)
 
 
 if __name__ == "__main__":
