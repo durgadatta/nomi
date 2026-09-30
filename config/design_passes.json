@@ -2,6 +2,38 @@
   "schema_version": 1,
   "passes": [
     {
+      "id": "function-contracts",
+      "topic": "Generic callback contracts, effects, captures, and invocation",
+      "owner": "language-design",
+      "status": "designing",
+      "last_reviewed": "2026-09-30",
+      "keywords": ["function contracts", "callback typing", "generic declarations", "effect polymorphism", "pure callbacks", "callback retention", "latent effects"],
+      "artifacts": {
+        "research": "docs/research/features/functions.md",
+        "design": "docs/design/function_contracts.md",
+        "target": "docs/design/function_contracts_target.nomi",
+        "bridge": "docs/review/2026-09-30-function-contracts.md"
+      },
+      "canonical_updates": [
+        "docs/design/syntax.md",
+        "docs/design/decisions.md",
+        "docs/design/redesign_agenda.md",
+        "docs/research/features/effects.md"
+      ],
+      "validation": [
+        "python3 -m tools.design_passes check",
+        "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
+        "python3 .codex/scripts/agent_doctor.py",
+        "git diff --check"
+      ],
+      "next_actions": [
+        "Use function_contracts.md as the live callback contract; compare generic and function-value type spellings before accepting syntax.",
+        "Type map/fold, derived decode and run_scope under pure-only and effect-polymorphic candidates, including mutable capture, retained regions and cold tasks.",
+        "Specify protocol coherence, effect compatibility and encapsulated mutation rules with frontend-neutral positive/negative facts.",
+        "After design acceptance, implement one gated typed Surface producer/consumer slice and CLI/browser diagnostics before promoting a playground sample."
+      ]
+    },
+    {
       "id": "cognitive-interfaces",
       "topic": "Cognitive representations, semantic commands, and inspectable change",
       "owner": "language-design",

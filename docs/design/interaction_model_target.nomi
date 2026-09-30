@@ -103,8 +103,10 @@ data SubmissionError:
 # The generated Edit decoder's variant wire format must be settled separately;
 # it is not inferred from the names or invented as hidden view behavior.
 func submit(model: Model, raw: Value) -> Result[Model, SubmissionError]:
-    edit = Edit.decode(raw).map_error(SubmissionError.Decode)?
-    return apply_edit(model, edit).map_error(SubmissionError.Change)
+    edit = Edit.decode(raw)
+        .map_error((error) => SubmissionError.Decode(error))?
+    return apply_edit(model, edit)
+        .map_error((error) => SubmissionError.Change(error))
 
 example "immutable commit does not replace the old snapshot":
     before = Model(revision=7, invoice=Invoice(lines=[

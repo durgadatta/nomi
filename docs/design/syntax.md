@@ -41,7 +41,7 @@ result = source
     |> map((item) => item.value)
 
 resource = files.open(path, mode="read")
-    .map_error(AppError.Input)?
+    .map_error((error) => AppError.Input(error))?
 ```
 
 Only a final `:` opens a block. Continuation indentation never creates a
@@ -402,7 +402,7 @@ The enclosing function must return a compatible `Result` (or `Option` when
 propagating an `Option`). Error conversion is explicit before propagation:
 
 ```nomi
-text = files.read(path).map_error(AppError.ReadFailed)?
+text = files.read(path).map_error((error) => AppError.ReadFailed(error))?
 ```
 
 `?` never catches panics, exceptions, cancellation, or arbitrary effects.

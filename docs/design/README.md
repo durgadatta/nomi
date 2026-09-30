@@ -32,6 +32,9 @@
     experiments; no new syntax admitted.
 12. [Design-First Agenda](redesign_agenda.md) - unresolved whole-language
     dimensions and design closure before reversible implementation.
+13. [Function Contracts](function_contracts.md) and
+    [Callback Target](function_contracts_target.nomi) - designing pure/effectful
+    callback comparison; generic/function-type notation remains open.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly

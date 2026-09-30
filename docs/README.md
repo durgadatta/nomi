@@ -143,6 +143,7 @@ This list is intentionally complete and is checked by tests.
 - [Resource Completion Proposal](design/resource_lifetime.md)
 - [Interaction Proposal](design/interaction_model.md)
 - [Design-First Agenda](design/redesign_agenda.md)
+- [Function Contracts](design/function_contracts.md)
 
 ### Research
 
@@ -153,6 +154,7 @@ This list is intentionally complete and is checked by tests.
 - [Open Questions](research/open_questions.md)
 - [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
 - [Cognitive Foundations](research/cognition.md)
+- [Language Redesign Frontiers](research/design_frontiers.md)
 
 ### Interface Threads
 
@@ -261,3 +263,4 @@ This list is intentionally complete and is checked by tests.
 - [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md)
 - [Resource Lifetime Experiment 2026-09-29](review/2026-09-29-resource-lifetime.md)
 - [Cognitive And Interface Review 2026-09-30](review/2026-09-30-cognitive-interfaces.md)
+- [Function Contract Checkpoint 2026-09-30](review/2026-09-30-function-contracts.md)

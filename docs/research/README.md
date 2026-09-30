@@ -24,6 +24,8 @@
 6. [Cognitive Foundations](cognition.md) and
    [Human-Computer Languages](interfaces/README.md) - the requested expansion
    beyond conventional languages, with 18 bounded interface threads.
+7. [Redesign Frontiers](design_frontiers.md) - primary evidence for eight further
+   design pressures, from typed incomplete programs to qualified guarantees.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The

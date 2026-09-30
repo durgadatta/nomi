@@ -29,6 +29,8 @@ versus an explicit effect-polymorphic callback contract, not implicit authority.
 **Experiment:** CLI path grant, browser no-files profile, and service callback
 that sends a request. Require denial before unauthorized host access and an
 effect diagnostic at the callback argument. Separately budget pure evaluation.
+Use the [function contract proposal](../../design/function_contracts.md) for
+the pure-only/effect-polymorphic comparison; do not duplicate its type model here.
 
 **User-facing gate:** playground capabilities and diagnostics must reflect the
 actual sandbox. A declared Network effect cannot invent browser permissions.

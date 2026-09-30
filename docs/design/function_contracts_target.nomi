@@ -1,0 +1,83 @@
+# Status: target-only callback pressure fixture; not runnable or typechecked.
+# Packet: docs/research/features/functions.md
+# Design: docs/design/function_contracts.md
+# Bridge: docs/review/2026-09-30-function-contracts.md
+# Proposed library contracts: strict pure map, Result.map_error, HTTP API.
+# No generic/function-value type notation is admitted by this fixture.
+from std.collections import map
+from std.http import HttpError, NameService
+
+func double(value: Int) -> Int:
+    return value * 2
+
+# Beginner: named function and explicit lambda have the same callback model.
+example "pure map keeps order and handles an empty input":
+    check map([1, 2, 3], double) == [2, 4, 6]
+    check map([1, 2], (value) => value * 2) == [2, 4]
+    check map([], double) == []
+
+data RemoteLine:
+    id: Text
+
+data PublishError:
+    Request(error: HttpError)
+
+# Production: explicit effects and sequential fail-fast control.
+# NameService is a proposed typed capability-bearing service adapter.
+pub func publish_names(
+    lines: List[RemoteLine],
+    service: NameService,
+) -> Result[Unit, PublishError] uses Network:
+    for line in lines:
+        name = service.fetch_name(line.id)
+            .map_error((error) => PublishError.Request(error))?
+        service.publish_name(name)
+            .map_error((error) => PublishError.Request(error))?
+    return Ok(())
+
+# Rejected under candidate A, not a current parser/typechecker claim:
+# names = map(lines, service.fetch_name)
+# Required: callback mismatch at the argument, related Network contract,
+# explicit-loop repair. Candidate B could permit synchronous strict effectful
+# map if the caller declares Network and invocation/order rules are explicit.
+
+data RowError:
+    Negative(value: Int)
+
+data ReportError:
+    Row(error: RowError)
+
+func checked_double(value: Int) -> Result[Int, RowError]:
+    if value < 0:
+        return Err(RowError.Negative(value))
+    return Ok(value * 2)
+
+# Failure-heavy: expected Err is an ordinary callback result, not a map escape.
+func assess(values: List[Int]) -> List[Result[Int, ReportError]]:
+    return map(
+        values,
+        (value) => checked_double(value)
+            .map_error((error) => ReportError.Row(error)),
+    )
+
+example "independent row errors do not skip later rows":
+    rows = assess([1, -1, 3])
+    match rows:
+        [Ok(first), Err(ReportError.Row(RowError.Negative(bad))), Ok(last)]:
+            check first == 2
+            check bad == -1
+            check last == 6
+        _:
+            panic("expected all three independent row outcomes")
+
+# Required negative typing fixtures after the type model is accepted:
+# - map([], effectful_callback) remains an effect mismatch, not vacuous purity.
+# - filter callback returning Int fails Bool typing, regardless of truthiness.
+# - callback updates captured mutable cell: not a pure transform.
+# - callback reads Clock: not deterministic, even if no Network effect.
+# - callback returns borrowed Reader/closure/task beyond run_scope: region escape.
+# - map over a synchronous task-builder returns List[Task[T]], never starts tasks.
+# - imported extension collision reports both owners at the call.
+# - passing a variant constructor directly as callback stays explicitly open.
+# - panic/divergence/cancellation are not ordinary RowError or effects inferred
+#   away by calling the callback "pure".

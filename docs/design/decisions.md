@@ -227,6 +227,12 @@ are **proposals, not accepted contracts**. Structured-document primary remains
 a competing candidate. The [design-first agenda](redesign_agenda.md) names
 broader gaps; it does not accept new keywords, inference rules, or APIs.
 
+The [function contract proposal](function_contracts.md) recommends testing
+pure-only strict collection callbacks before effect-polymorphic callbacks.
+This remains **open**: world effects, mutable captures, retained regions and
+latent task effects require a coherent type model and source notation first.
+Result-returning callbacks do not silently introduce propagation or rollback.
+
 The [September synthesis](synthesis.md) reaffirms the accepted core without
 admitting new syntax. [Category targets](targets/README.md) and
 [the overall fixture](targets/overall.nomi) replace the legacy program as the
