@@ -15,7 +15,7 @@ from typing import Any
 from urllib.parse import quote, unquote, urlparse
 
 from tools.rag_mcp.config import load_config
-from tools.rag_mcp.index import RagIndex, build_and_save, read_text
+from tools.rag_mcp.index import RagIndex, build_and_save, iter_source_files, read_text
 
 
 SUPPORTED_PROTOCOL_VERSIONS = {"2024-11-05", "2025-06-18"}
@@ -189,16 +189,30 @@ class NomiRagMcpServer:
         return self.index
 
     def resources(self) -> list[dict[str, Any]]:
+        sources = {source.name: source for source in self.config.sources}
+        selected = {
+            source.name: {path.resolve() for path in iter_source_files(source, self.config.root)}
+            for source in self.config.sources
+        }
         seen: set[tuple[str, str]] = set()
         resources = []
         for chunk in self.get_index().chunks:
+            source = sources.get(chunk.source)
+            path = Path(chunk.path)
+            if not path.is_absolute():
+                path = self.config.root / path
+            path = path.resolve()
+            if source is None or path not in selected[source.name]:
+                continue
             key = (chunk.source, chunk.path)
             if key in seen:
                 continue
             seen.add(key)
             resources.append(
                 {
-                    "uri": self.resource_uri(chunk.source, chunk.path),
+                    "uri": self.resource_uri(
+                        chunk.source, path.relative_to(source.path.resolve()).as_posix()
+                    ),
                     "name": chunk.path,
                     "title": chunk.path,
                     "description": f"{chunk.source} {chunk.kind}",
@@ -226,6 +240,11 @@ class NomiRagMcpServer:
             raise ValueError(f"Unknown RAG source: {source_name}")
 
         path = self.resolve_resource_path(source.path, display_path)
+        if not any(
+            candidate.resolve() == path
+            for candidate in iter_source_files(source, self.config.root)
+        ):
+            raise ValueError(f"RAG resource not selected by source configuration: {display_path}")
         text = read_text(path)
         if text is None:
             raise ValueError(f"RAG resource is not readable text: {display_path}")

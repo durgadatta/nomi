@@ -111,15 +111,27 @@ def iter_source_files(source: SourceConfig, root: Path) -> Iterable[Path]:
     if not source.path.exists():
         return
 
+    source_root = source.path.resolve()
+    project_root = root.resolve()
     seen: set[Path] = set()
     for pattern in source.include:
         for path in source.path.glob(pattern):
             if not path.is_file() or path in seen:
                 continue
             seen.add(path)
+            resolved = path.resolve()
+            if not resolved.is_relative_to(source_root):
+                continue
             relative_to_source = path.relative_to(source.path).as_posix()
             relative_to_root = path.relative_to(root).as_posix() if path.is_relative_to(root) else str(path)
-            if is_excluded(relative_to_source, source.exclude) or is_excluded(relative_to_root, source.exclude):
+            resolved_to_source = resolved.relative_to(source_root).as_posix()
+            resolved_to_root = (
+                resolved.relative_to(project_root).as_posix()
+                if resolved.is_relative_to(project_root)
+                else str(resolved)
+            )
+            candidates = (relative_to_source, relative_to_root, resolved_to_source, resolved_to_root)
+            if any(is_excluded(candidate, source.exclude) for candidate in candidates):
                 continue
             if path.suffix.lower() in TEXT_SUFFIXES:
                 yield path
