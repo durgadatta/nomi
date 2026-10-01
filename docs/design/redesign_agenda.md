@@ -13,6 +13,9 @@ Existing accepted contracts remain in [syntax](syntax.md),
 [semantics](semantics.md), [industrial](industrial.md), and [decisions](decisions.md).
 The [dated audit](../review/2026-09-30-cognitive-interfaces.md) is evidence, not
 a second live backlog.
+The [Project Enhancement Roadmap](../orientation/project_roadmap.md) schedules
+language closure alongside runtime, product, verification and maintenance work.
+This agenda continues to own D0-D7 and the semantic questions below.
 
 ## Design Before Implementation
 

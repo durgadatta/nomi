@@ -112,14 +112,12 @@ can already execute Nomi or preserve its session semantics.
 
 ## Next Bounded Steps
 
-| Order | Action | Acceptance gate | User value |
-| --- | --- | --- | --- |
-| 1 | Observe the newly declared minimum-Python/full-suite CI jobs; extend to clean Node-absent profiles. | Installed CLI/default demo run outside checkout on 3.12 and 3.14; core Python execution does not need Node. Hosted runs still need to occur. | Installation fails clearly instead of importing a broken interpreter. |
-| 2 | Add real editor process-task smoke scenarios on Windows, macOS, and Linux after the separate test review. | File/selection, executable paths with spaces, cancelled saves, multi-root cwd, task cancellation, and cleanup verified in real hosts. | Run commands behave predictably across editors and shells. |
-| 3 | Inventory direct parser/interpreter imports in CLI, notebooks, reports, and editor tooling; migrate one supported consumer at a time. | Caller uses runtime inspection/results; relevant tests and web gates pass without changing outputs. | A parser replacement does not require rewriting every tool. |
-| 4 | Harden one declared lower-layer payload at a time, starting with browser `Expr::Raw` bridges. | Versioned structured expressions, source spans, rejection behavior, and source-to-Core parity; retain current fallback during the spike. | Errors point at the user's source and expressions do not depend on regex order. |
-| 5 | Measure one engine bottleneck, register an opt-in candidate, and evaluate it under the gate above. | Measured end-to-end gain, equivalent fixtures, bounded resource policy, reversible selection. | Faster startup or execution without a less explainable language. |
-| 6 | Resolve publisher/licensing and development-tool packaging scope. Repository metadata now matches Git origin. | Owner-approved license/publisher and explicit checkout-only vs installed tool contracts. | A published artifact is usable and legally unambiguous. |
+The [Project Enhancement Roadmap](project_roadmap.md) now owns the shared
+delivery sequence. Its A18 covers facade/session/transport boundaries, A23
+editor host behavior, A04/A06 structured parser/Core payloads, A25 measured
+optimization, and A28 distribution/CI/release metadata. Each retains the
+acceptance gates described here; the roadmap adds dependencies on language,
+diagnostic, conformance and product work rather than another engine framework.
 
 Do not batch these into a rewrite. Discovery should produce a small fix or a
 specific unresolved contract, followed by focused checks and a checkpoint.

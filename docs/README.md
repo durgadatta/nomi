@@ -104,6 +104,9 @@ For a registered cross-cutting feature, use the complete
 
 ## Implementation Orientation
 
+- [Project Enhancement Roadmap](orientation/project_roadmap.md): project-wide
+  audit, priorities, dependencies, detailed workstreams and delivery gates;
+  semantic decisions remain with the existing design owners.
 - [AI Collaboration](orientation/ai_collaboration.md): repository doctrine for
   AI-assisted design, implementation, critique, and checkpoints.
 - [Design Pass Workflow](orientation/design_pass_workflow.md): linked research,
@@ -268,6 +271,7 @@ This list is intentionally complete and is checked by tests.
 
 ### Orientation
 
+- [Project Enhancement Roadmap](orientation/project_roadmap.md)
 - [AI Collaboration](orientation/ai_collaboration.md)
 - [Design Pass Workflow](orientation/design_pass_workflow.md)
 - [Artifacts And Usage](orientation/artifacts_and_usage.md)

@@ -32,6 +32,8 @@ backend.
 
 For command/policy/adapter/engine ownership and incremental replacement gates,
 see [Implementation Layers](implementation_layers.md).
+Project-wide enhancement priorities and delivery dependencies live in the
+[Project Enhancement Roadmap](project_roadmap.md).
 
 Parsing and evaluation can now be modified with substantial granularity. The
 implemented resumable-control subsystem remains delicate and tested, but the
