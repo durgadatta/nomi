@@ -10,7 +10,10 @@
 The user requested a separate, deep DSL investigation after the
 [global project scan](../../orientation/project_roadmap.md), with particular
 attention to strings, Kubernetes configuration, GitHub Actions, and systems
-that add application interpretation to YAML. This dossier owns those boundaries.
+that add application interpretation to YAML. The requested expansion also
+examines orthogonal logic, solver, proof, temporal, signal, physical, spatial,
+probabilistic, device, media and scientific models. This dossier owns the DSL
+boundary comparisons across those domains.
 The existing [data/workflow research](../data_workflows/README.md) continues to
 own tables, numerical notation, and DW1-DW8; this is not a replacement survey.
 
@@ -19,10 +22,23 @@ own tables, numerical notation, and DW1-DW8; this is not a replacement survey.
    Actions, Helm, Kustomize, Compose, GitLab, Azure, Ansible and Argo.
 3. [Strings and embedding](strings_and_embedding.md): literal preservation,
    interpolation, contextual construction, Unicode, source maps and authority.
-4. [Nomi candidates](nomi_candidates.md): competing library and notation
+4. [Domain atlas](domain_atlas.md): 50 families, original counterexamples,
+   primary references and remaining breadth gaps.
+5. [Orthogonal models](orthogonal_models.md): 24 analytical semantic models
+   and deeper distinctions in evidence, search, time, state and execution.
+6. [Composition boundaries](composition_boundaries.md): twelve boundary pairs,
+   four whole-program fixtures, diagnostics and reversible integration shapes.
+7. [Nomi candidates](nomi_candidates.md): competing library and notation
    approaches, semantic laws, representative programs and experiment gates.
-5. [Executed probes](experiments.md): ten local observations with reproducible
-   [code](probe_boundaries.py) and [captured results](probe_results.json).
+8. [Executed probes](experiments.md): ten host observations plus eight original
+   finite-model observations, with reproducible scripts and captured results.
+9. [Coverage catalog](coverage.json): 122 representatives, family/model tags,
+   source references and explicit depth; research data rather than runtime wiring.
+
+The expanded catalog has 97 `mechanism-reviewed` and 25 `indexed` entries.
+Review means a specific mechanism comparison, not a complete system audit.
+Catalog entries do not imply conformance integrations; execution evidence is
+limited to the named host observations and original finite-model probes.
 
 The central research inference is that **a DSL boundary is a contract between
 representations, semantic owners and execution phases**. Borrowing a keyword
@@ -42,15 +58,21 @@ Evidence levels:
 | Level | Meaning | Evidence here |
 | --- | --- | --- |
 | Documented | A primary specification or maintainer document states behavior | Linked beside each external claim |
-| Observed | A named implementation produced a captured result | Python/PyYAML/jsonschema/SQLite probes only |
+| Observed | A named implementation or original finite model produced a captured result | Ten host observations and eight explicitly limited model probes |
 | Inferred | A cross-system design conclusion | Explicitly called inference or Nomi hypothesis |
-| Proposed | A competing contract awaiting an experiment | Candidates and E1-E12 below; no accepted API |
+| Proposed | A competing contract awaiting an experiment | Candidates and E1-E22; no accepted API |
 
 Live documentation can change. YAML 1.2.2, JSON Schema 2020-12, XPath 3.1,
 CWL 1.2 and Modelica 3.6 references identify editions; unversioned application
 documentation describes the material inspected on the check date. A later
 integration must pin parser, runner, controller, schema and extension versions.
 Reading documentation is not evidence that the associated service was run.
+Historical foundational sources are named as such, including PDDL 1998,
+Maude's foundational manual, P4-16 1.1.0, BehaviorTree.CPP 3.8 and the older
+Beancount syntax guide. Some current public pages failed to load; alternate
+maintainer sources were used where available. POSIX/awk indexing uses primary
+search excerpts with full-page access limits stated in the catalog. Standards
+pages identify formats; they do not certify vendor engine behavior.
 
 ## What Counts As A DSL
 
@@ -80,7 +102,9 @@ far more complex than its short surface suggests.
 
 ## Representative Coverage Map
 
-This is broad family coverage, not a claim to enumerate every DSL. The last
+This original 44-entry map supplies the configuration/string starting point.
+The [50-family expansion](domain_atlas.md) and [122-entry catalog](coverage.json)
+extend it substantially; neither claims to enumerate every DSL. The last
 column is a Nomi research question, not a feature recommendation. Detailed
 configuration facts belong to the linked configuration chapter, avoiding
 parallel per-product essays.
@@ -195,9 +219,35 @@ The following are research inferences to test:
 - Evaluate affordances for completion, refactoring, formatting, explanation,
   source maps and redaction alongside syntax—not after admitting it.
 
-Specialized hardware HDLs, music/game DSLs, legal/financial rule systems,
-spreadsheet engines, robotics languages and every vendor workflow dialect were
-not individually validated. Their main representation/time/solver pressures are
-covered by representative families above and the existing
-[notation atlas](../notation_atlas.md). A concrete Nomi target deficiency should
-trigger a focused extension, not another unbounded catalog.
+The expansion now compares selected hardware/signal, proof/search, ontology,
+probability, spatial/robotics, media/narrative, legal/accounting and scientific
+roles. It also records specific remaining gaps such as GIS, PLC control,
+process calculi and security-protocol proof tools. The
+[breadth limits](domain_atlas.md#breadth-limits-and-deliberate-gaps) distinguish
+unresearched clusters from indexed representatives. The existing
+[notation atlas](../notation_atlas.md), [interface threads](../interfaces/README.md)
+and [data/workflow dossier](../data_workflows/README.md) retain their owners.
+Future extensions should add a missing law and an original discriminating
+fixture, rather than inflate the count with another spelling of the same model.
+
+## Expansion Checkpoint And Next Action
+
+The first pass emphasized configuration and strings; the expansion corrected
+that bias by comparing semantic laws, then testing cross-model composition.
+The coverage catalog keeps breadth separate from depth, and the finite probes
+keep original assumptions separate from foreign implementation evidence.
+Historical editions and access-limited sources remain visible rather than
+being presented as current full-system validation.
+
+Validation on 2026-10-01: ten documentation/design-pass tests passed; all five
+registered packets were coherent; catalog IDs, family/model references and
+source fields checked; local file/heading links resolved; eight new probe
+reports reproduced exactly. The ignored local RAG index was refreshed. No
+canonical contract or runtime behavior changed during this research expansion.
+
+The exact next implementation slice remains E1/E2/E7/E9 plus E6/E3: preserve
+literal source, construct whole values, bind domain inputs, fix text/index
+contracts, retain diagnostic origins and state checker guarantees. Use E13's
+cardinality/domain identity and E18's time-domain checks when the chosen target
+requires them. E14-E22 remain conditional discriminators routed to existing
+design owners, with no requirement to implement all surveyed DSLs.

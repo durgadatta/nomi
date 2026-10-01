@@ -303,6 +303,64 @@ than cosmetic source identity.
 That motivates separate source, semantic and dependency identities, with no
 claim that Nomi currently implements them.
 
+## Strings Across Orthogonal Domains
+
+The [expanded atlas](domain_atlas.md) keeps strings central while extending
+beyond configuration. The same host Text type may carry these different roles;
+the table names proposed boundary distinctions, not accepted Nomi types.
+
+| Role | Example pressure | Evidence/operation to preserve |
+| --- | --- | --- |
+| Literal/display text | Diagram label, narration, user message | Exact text versus contextual rendering and escaping |
+| Domain source | Policy, recurrence, pattern, query, music mini-notation | Dialect, original source, parse/check phase and mapped diagnostics |
+| Foreign binder | Logic variable, proof binder, rewrite variable | Owning scope and capture/hygiene rules |
+| Schema/field reference | Protocol field, query column, message argument | Schema/environment identity and rename correspondence |
+| Entity/resource reference | User ID, workflow job, scene asset, robot joint | Nominal identity distinct from display spelling |
+| Namespace/reference coordinate | IRI, genomic reference, spatial frame | Versioned context rather than a globally meaningful bare name |
+| Pattern over bytes | Hex signature or binary layout condition | Bytes/bit offsets distinct from Unicode text indices |
+| Molecular/shape description | Molecular graph versus substructure query | Parsed value and pattern are different domains |
+| Unit expression | Quantity unit or special scale | Parse/normalize/convert under a named algebra; preserve display choice |
+| Localized message | Plural/select branches with named arguments | Argument schema, locale and translated source as one artifact |
+| Calendar/clock expression | Recurrence, event window, rhythm/cycle pattern | Time domain, endpoints, zone/version and conversion policy |
+| Device command | Packet rule, shader entry, modal machine program | Target capability, retained state and explicit execution authority |
+| Human evidence anchor | Legal provision, test scenario, model assumption | Source identity and relation to executable/formal interpretation |
+| Opaque external payload | Unknown future vocabulary or stored source | Preserve without evaluation; expose unknown owner/version honestly |
+
+**Inference:** validating one string role should not promote it to another.
+A checked identifier is not checked program source. A parsed graph is not a
+compiled pattern. Normalized units do not authorize motion. A translated label
+does not rename a foreign binder. Distinct wrapper values and explicit adapters
+are credible ordinary-library candidates before new source notation.
+
+### Three Equalities And Several Normalizations
+
+Compare separately:
+
+1. Exact source equality: bytes/text and line-ending/encoding contract.
+2. Parsed representation equality: the owner chooses whether spelling,
+   comments, order and alternative forms matter.
+3. Domain equivalence: a named theory/context establishes equivalent meaning.
+
+Unicode normalization, whitespace formatting, query equivalence, unit
+conversion, graph isomorphism and semantic hashing are different operations.
+No generic `normalize(Text)` should claim all of them. Keep the original source
+alongside any normalized semantic artifact and report the evidence/precision
+of the correspondence.
+
+### Construction Holes Need A Role Schema
+
+For a bounded embedding candidate, name each hole as value, literal text,
+identifier/reference, pattern, checked domain fragment or raw source. Define
+its cardinality, phase, allowed type, scope and diagnostic origin. Raw source
+insertion should be an explicit separately reviewed capability; it must not
+be a fallback when a typed value fails to encode.
+
+Message arguments and query parameters supply simple initial experiments.
+Logic/proof binders, coordinate references and device targets require stronger
+domain-specific checks. The library should report an unsupported hole role
+instead of inventing universal quoting. This extends E2/E7 with E13/E22 and
+the fourth [composition fixture](composition_boundaries.md#fixture-4--strings-across-several-languages).
+
 ## String APIs To Compare Before Adding Syntax
 
 Compare ordinary functions and explicit value types for:

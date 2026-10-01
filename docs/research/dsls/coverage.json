@@ -1,0 +1,2097 @@
+{
+  "status": "Research discovery/coverage data only; not a Nomi feature, runtime capability or conformance registry.",
+  "checked_on": "2026-10-01",
+  "method": "Primary documentation and original cross-model fixtures; coverage labels report one mechanism or indexing, never complete product validation. POSIX/awk indexing uses primary search excerpts where full-page access was limited. Historical editions are stated in mechanisms.",
+  "foreign_conformance_integrations": [],
+  "local_evidence": [
+    "probe_results.json: ten installed-host observations",
+    "orthogonal_probe_results.json: eight original finite-model observations; no foreign runtime conformance"
+  ],
+  "families": [
+    {
+      "id": "F01",
+      "name": "Serialization"
+    },
+    {
+      "id": "F02",
+      "name": "Schema and wire contracts"
+    },
+    {
+      "id": "F03",
+      "name": "Constraint/programmed configuration"
+    },
+    {
+      "id": "F04",
+      "name": "Desired-state infrastructure"
+    },
+    {
+      "id": "F05",
+      "name": "Templates and overlays"
+    },
+    {
+      "id": "F06",
+      "name": "CI orchestration"
+    },
+    {
+      "id": "F07",
+      "name": "Service/host automation"
+    },
+    {
+      "id": "F08",
+      "name": "Build/package/image descriptions"
+    },
+    {
+      "id": "F09",
+      "name": "Relational/graph querying"
+    },
+    {
+      "id": "F10",
+      "name": "Document/API querying"
+    },
+    {
+      "id": "F11",
+      "name": "Authorization/policy"
+    },
+    {
+      "id": "F12",
+      "name": "Decision/rights/legal rules"
+    },
+    {
+      "id": "F13",
+      "name": "Recognition and detection"
+    },
+    {
+      "id": "F14",
+      "name": "Templates/localized messages"
+    },
+    {
+      "id": "F15",
+      "name": "Grammar/parser construction"
+    },
+    {
+      "id": "F16",
+      "name": "Language construction"
+    },
+    {
+      "id": "F17",
+      "name": "Logic programming"
+    },
+    {
+      "id": "F18",
+      "name": "Knowledge/shape systems"
+    },
+    {
+      "id": "F19",
+      "name": "Constraint/optimization"
+    },
+    {
+      "id": "F20",
+      "name": "Proof/tactics"
+    },
+    {
+      "id": "F21",
+      "name": "Behavioral/formal models"
+    },
+    {
+      "id": "F22",
+      "name": "Rewrite/equivalence systems"
+    },
+    {
+      "id": "F23",
+      "name": "Scientific workflows"
+    },
+    {
+      "id": "F24",
+      "name": "Token/business workflows"
+    },
+    {
+      "id": "F25",
+      "name": "State/behavior control"
+    },
+    {
+      "id": "F26",
+      "name": "Planning"
+    },
+    {
+      "id": "F27",
+      "name": "Reactive UI/table/visualization"
+    },
+    {
+      "id": "F28",
+      "name": "Stream processing"
+    },
+    {
+      "id": "F29",
+      "name": "Observability queries"
+    },
+    {
+      "id": "F30",
+      "name": "Synchronous/signal languages"
+    },
+    {
+      "id": "F31",
+      "name": "Hardware elaboration"
+    },
+    {
+      "id": "F32",
+      "name": "Physical/biological simulation"
+    },
+    {
+      "id": "F33",
+      "name": "Probability/inference"
+    },
+    {
+      "id": "F34",
+      "name": "Symbolic/differentiable computation"
+    },
+    {
+      "id": "F35",
+      "name": "GPU/shader execution"
+    },
+    {
+      "id": "F36",
+      "name": "Quantum programs"
+    },
+    {
+      "id": "F37",
+      "name": "Packet/data-plane policy"
+    },
+    {
+      "id": "F38",
+      "name": "Geometry/scene composition"
+    },
+    {
+      "id": "F39",
+      "name": "Robotics/manufacturing"
+    },
+    {
+      "id": "F40",
+      "name": "Diagram/graph layout"
+    },
+    {
+      "id": "F41",
+      "name": "Structured documents"
+    },
+    {
+      "id": "F42",
+      "name": "Music/timed media"
+    },
+    {
+      "id": "F43",
+      "name": "Interactive narrative"
+    },
+    {
+      "id": "F44",
+      "name": "Molecular/clinical nomenclature"
+    },
+    {
+      "id": "F45",
+      "name": "Units/measurement notation"
+    },
+    {
+      "id": "F46",
+      "name": "Accounting ledger"
+    },
+    {
+      "id": "F47",
+      "name": "Calendar/recurrence"
+    },
+    {
+      "id": "F48",
+      "name": "Commands/text processing"
+    },
+    {
+      "id": "F49",
+      "name": "Stylesheet rules"
+    },
+    {
+      "id": "F50",
+      "name": "Executable examples"
+    }
+  ],
+  "models": [
+    {
+      "id": "M01",
+      "name": "Structural description"
+    },
+    {
+      "id": "M02",
+      "name": "Staged configuration"
+    },
+    {
+      "id": "M03",
+      "name": "Contextual text construction"
+    },
+    {
+      "id": "M04",
+      "name": "Relational selection"
+    },
+    {
+      "id": "M05",
+      "name": "Recognition/transduction"
+    },
+    {
+      "id": "M06",
+      "name": "Monotone deduction"
+    },
+    {
+      "id": "M07",
+      "name": "Search and alternative models"
+    },
+    {
+      "id": "M08",
+      "name": "Constraint/optimization"
+    },
+    {
+      "id": "M09",
+      "name": "Knowledge entailment"
+    },
+    {
+      "id": "M10",
+      "name": "Decision/authorization"
+    },
+    {
+      "id": "M11",
+      "name": "Proof construction"
+    },
+    {
+      "id": "M12",
+      "name": "Behavioral specification"
+    },
+    {
+      "id": "M13",
+      "name": "Rewrite/equivalence"
+    },
+    {
+      "id": "M14",
+      "name": "Dependency planning"
+    },
+    {
+      "id": "M15",
+      "name": "Token/event control"
+    },
+    {
+      "id": "M16",
+      "name": "Reactive/incremental computation"
+    },
+    {
+      "id": "M17",
+      "name": "Stream/time-series computation"
+    },
+    {
+      "id": "M18",
+      "name": "Synchronous signal/circuit"
+    },
+    {
+      "id": "M19",
+      "name": "Physical/equation simulation"
+    },
+    {
+      "id": "M20",
+      "name": "Probability/inference"
+    },
+    {
+      "id": "M21",
+      "name": "Differentiable/staged computation"
+    },
+    {
+      "id": "M22",
+      "name": "Spatial/visual composition"
+    },
+    {
+      "id": "M23",
+      "name": "Timed/narrative/document composition"
+    },
+    {
+      "id": "M24",
+      "name": "Device/data-plane execution"
+    }
+  ],
+  "entries": [
+    {
+      "id": "D001",
+      "name": "YAML",
+      "family": "F01",
+      "models": [
+        "M01"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Edition, duplicate keys, scalar decoding, alias policy",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://yaml.org/spec/1.2.2/"
+      ]
+    },
+    {
+      "id": "D002",
+      "name": "JSON Schema",
+      "family": "F02",
+      "models": [
+        "M01",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Dialect, vocabulary, exact validation guarantee",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://json-schema.org/draft/2020-12/json-schema-validation"
+      ]
+    },
+    {
+      "id": "D003",
+      "name": "Kubernetes",
+      "family": "F04",
+      "models": [
+        "M01",
+        "M02",
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Schema, admission, field ownership, reconciliation",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://kubernetes.io/docs/concepts/architecture/controller/"
+      ]
+    },
+    {
+      "id": "D004",
+      "name": "GitHub Actions",
+      "family": "F06",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Dependency edges, context availability, shell source",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax"
+      ]
+    },
+    {
+      "id": "D005",
+      "name": "Helm",
+      "family": "F05",
+      "models": [
+        "M02",
+        "M03"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Text stages and template reevaluation",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://helm.sh/docs/howto/charts_tips_and_tricks/"
+      ]
+    },
+    {
+      "id": "D006",
+      "name": "Kustomize",
+      "family": "F05",
+      "models": [
+        "M01",
+        "M02"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Patch kind, target identity, ordered composition",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/"
+      ]
+    },
+    {
+      "id": "D007",
+      "name": "Compose",
+      "family": "F07",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Interpolation versus container environment",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.docker.com/reference/compose-file/interpolation/"
+      ]
+    },
+    {
+      "id": "D008",
+      "name": "GitLab CI",
+      "family": "F06",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Whole-value type preservation",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.gitlab.com/ci/inputs/"
+      ]
+    },
+    {
+      "id": "D009",
+      "name": "Azure Pipelines",
+      "family": "F06",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Compile-time, runtime and macro phases",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops"
+      ]
+    },
+    {
+      "id": "D010",
+      "name": "Ansible",
+      "family": "F07",
+      "models": [
+        "M02",
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Conditions versus template expressions",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_conditionals.html"
+      ]
+    },
+    {
+      "id": "D011",
+      "name": "Argo Workflows",
+      "family": "F06",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Multiple embedded expression dialects",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://argo-workflows.readthedocs.io/en/latest/variables/"
+      ]
+    },
+    {
+      "id": "D012",
+      "name": "CUE",
+      "family": "F03",
+      "models": [
+        "M02",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Conflict evidence rather than silent override",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://cuelang.org/docs/tour/basics/unification/"
+      ]
+    },
+    {
+      "id": "D013",
+      "name": "Dhall",
+      "family": "F03",
+      "models": [
+        "M02"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Import authority and practical resource limits",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.dhall-lang.org/discussions/Safety-guarantees.html"
+      ]
+    },
+    {
+      "id": "D014",
+      "name": "Jsonnet",
+      "family": "F03",
+      "models": [
+        "M02"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Validation timing and representation costs",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://jsonnet.org/ref/language.html"
+      ]
+    },
+    {
+      "id": "D015",
+      "name": "Pkl",
+      "family": "F03",
+      "models": [
+        "M02",
+        "M03"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "String indentation and custom delimiters",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://pkl-lang.org/main/latest/language-reference/index.html"
+      ]
+    },
+    {
+      "id": "D016",
+      "name": "Nickel",
+      "family": "F03",
+      "models": [
+        "M02",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Priority, conflict and blame location",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://nickel-lang.org/user-manual/merging/",
+        "https://nickel-lang.org/user-manual/contracts/"
+      ]
+    },
+    {
+      "id": "D017",
+      "name": "HCL",
+      "family": "F03",
+      "models": [
+        "M02",
+        "M03"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Parser grammar versus host interpretation",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://github.com/hashicorp/hcl/blob/main/hclsyntax/spec.md"
+      ]
+    },
+    {
+      "id": "D018",
+      "name": "Terraform",
+      "family": "F04",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Encoding structured output rather than stitching text",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://developer.hashicorp.com/terraform/language/functions/templatefile"
+      ]
+    },
+    {
+      "id": "D019",
+      "name": "Nix",
+      "family": "F08",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Interpolation inside shell/configuration strings",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://nix.dev/manual/nix/2.34/language/string-literals.html"
+      ]
+    },
+    {
+      "id": "D020",
+      "name": "Starlark",
+      "family": "F08",
+      "models": [
+        "M02"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Core restrictions versus host capabilities",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://github.com/bazelbuild/starlark/blob/master/spec.md"
+      ]
+    },
+    {
+      "id": "D021",
+      "name": "Bazel",
+      "family": "F08",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Analysis distinct from executing commands",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://bazel.build/extending/concepts"
+      ]
+    },
+    {
+      "id": "D022",
+      "name": "Make",
+      "family": "F08",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Make expansion versus shell expansion",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://www.gnu.org/software/make/manual/html_node/Variables-in-Recipes.html"
+      ]
+    },
+    {
+      "id": "D023",
+      "name": "Dockerfile",
+      "family": "F08",
+      "models": [
+        "M02",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "JSON exec form versus shell source",
+      "chapter": "layered_configuration.md",
+      "primary_sources": [
+        "https://docs.docker.com/reference/dockerfile/"
+      ]
+    },
+    {
+      "id": "D024",
+      "name": "SQL",
+      "family": "F09",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Value parameters versus identifiers and syntax",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.postgresql.org/docs/17/libpq-exec.html"
+      ]
+    },
+    {
+      "id": "D025",
+      "name": "GraphQL",
+      "family": "F10",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Query source versus separately supplied variables",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://graphql.org/learn/queries/"
+      ]
+    },
+    {
+      "id": "D026",
+      "name": "jq",
+      "family": "F10",
+      "models": [
+        "M04",
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Zero, one or many outputs; explicit collection",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://jqlang.org/tutorial/"
+      ]
+    },
+    {
+      "id": "D027",
+      "name": "JSONPath",
+      "family": "F10",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Missing versus empty result, dialect portability",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.rfc-editor.org/rfc/rfc9535.html"
+      ]
+    },
+    {
+      "id": "D028",
+      "name": "XPath",
+      "family": "F10",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Namespace and context ownership",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/xpath-31/"
+      ]
+    },
+    {
+      "id": "D029",
+      "name": "CEL",
+      "family": "F11",
+      "models": [
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Environment identity and repeated evaluation",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://cel.dev/overview/cel-overview"
+      ]
+    },
+    {
+      "id": "D030",
+      "name": "Rego",
+      "family": "F11",
+      "models": [
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Undefined versus false and default policy",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.openpolicyagent.org/docs/policy-language"
+      ]
+    },
+    {
+      "id": "D031",
+      "name": "RE2 regular expressions",
+      "family": "F13",
+      "models": [
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Dialect, literal quoting and match budget",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://github.com/google/re2/blob/main/doc/syntax.txt"
+      ]
+    },
+    {
+      "id": "D032",
+      "name": "Jinja",
+      "family": "F14",
+      "models": [
+        "M03"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Undefined inputs, escaping and output context",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://jinja.palletsprojects.com/en/stable/templates/"
+      ]
+    },
+    {
+      "id": "D033",
+      "name": "ECMAScript tagged templates",
+      "family": "F14",
+      "models": [
+        "M03"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Preserve structure before stringification",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://tc39.es/ecma262/multipage/ecmascript-language-expressions.html#sec-template-literals"
+      ]
+    },
+    {
+      "id": "D034",
+      "name": "CSS",
+      "family": "F49",
+      "models": [
+        "M22"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Error recovery does not equal accepted declaration semantics",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/css-syntax-3/"
+      ]
+    },
+    {
+      "id": "D035",
+      "name": "Vega",
+      "family": "F27",
+      "models": [
+        "M16",
+        "M22"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Supplied datum/signal scopes and interaction",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://vega.github.io/vega/docs/expressions/"
+      ]
+    },
+    {
+      "id": "D036",
+      "name": "CWL",
+      "family": "F23",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Argument construction and explicit expression requirements",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.commonwl.org/v1.2/CommandLineTool.html"
+      ]
+    },
+    {
+      "id": "D037",
+      "name": "Nextflow",
+      "family": "F23",
+      "models": [
+        "M02",
+        "M14"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Host-like syntax and separately interpreted scripts",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://docs.seqera.io/nextflow/script"
+      ]
+    },
+    {
+      "id": "D038",
+      "name": "Statecharts",
+      "family": "F25",
+      "models": [
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Lifecycle, hierarchy and cancellation",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://stately.ai/docs/state-machines-and-statecharts"
+      ]
+    },
+    {
+      "id": "D039",
+      "name": "SMT-LIB",
+      "family": "F19",
+      "models": [
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Model/unknown/error distinct from application execution",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://smt-lib.org/language.shtml"
+      ]
+    },
+    {
+      "id": "D040",
+      "name": "Modelica",
+      "family": "F32",
+      "models": [
+        "M19"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Equation semantics distinct from assignment",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://specification.modelica.org/maint/3.6/equations.html"
+      ]
+    },
+    {
+      "id": "D041",
+      "name": "Protobuf",
+      "family": "F02",
+      "models": [
+        "M01"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Schema evolution and source/runtime identity",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://protobuf.dev/programming-guides/proto3/"
+      ]
+    },
+    {
+      "id": "D042",
+      "name": "ABNF",
+      "family": "F15",
+      "models": [
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Recognition without application meaning",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://www.rfc-editor.org/info/rfc5234/"
+      ]
+    },
+    {
+      "id": "D043",
+      "name": "Tree-sitter grammar DSL",
+      "family": "F15",
+      "models": [
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Precedence, conflicts and recoverable source trees",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://tree-sitter.github.io/tree-sitter/creating-parsers/2-the-grammar-dsl.html"
+      ]
+    },
+    {
+      "id": "D044",
+      "name": "Racket language construction",
+      "family": "F16",
+      "models": [
+        "M03",
+        "M05",
+        "M13"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Hygiene, lexical scope and source provenance",
+      "chapter": "strings_and_embedding.md",
+      "primary_sources": [
+        "https://docs.racket-lang.org/guide/languages.html"
+      ]
+    },
+    {
+      "id": "D045",
+      "name": "Soufflé",
+      "family": "F17",
+      "models": [
+        "M06",
+        "M07"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Positive recursive closure versus arithmetic extension divergence",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://souffle-lang.github.io/tutorial"
+      ]
+    },
+    {
+      "id": "D046",
+      "name": "SWI-Prolog CLP(FD)",
+      "family": "F17",
+      "models": [
+        "M07",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Constraint posting versus labeling/enumeration",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.swi-prolog.org/pldoc/man?section=clpfd"
+      ]
+    },
+    {
+      "id": "D047",
+      "name": "clingo answer-set language",
+      "family": "F17",
+      "models": [
+        "M07",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Grounding versus solving and alternative models",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://potassco.org/clingo/"
+      ]
+    },
+    {
+      "id": "D048",
+      "name": "MiniZinc",
+      "family": "F19",
+      "models": [
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Parameters, decision variables and satisfy/optimize operations",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.minizinc.dev/en/stable/modelling.html"
+      ]
+    },
+    {
+      "id": "D049",
+      "name": "CVX embedded modeling",
+      "family": "F19",
+      "models": [
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Sufficient rather than necessary convexity admission rules",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://cvxr.com/cvx/doc/dcp.html"
+      ]
+    },
+    {
+      "id": "D050",
+      "name": "OWL 2",
+      "family": "F18",
+      "models": [
+        "M09"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Open-world entailment rather than default false",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/owl2-primer/"
+      ]
+    },
+    {
+      "id": "D051",
+      "name": "SHACL",
+      "family": "F18",
+      "models": [
+        "M01",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Data graph versus shapes graph and validation evidence",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/shacl/"
+      ]
+    },
+    {
+      "id": "D052",
+      "name": "SPARQL 1.1",
+      "family": "F09",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Multiset solution algebra and bindings",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/sparql11-query/"
+      ]
+    },
+    {
+      "id": "D053",
+      "name": "Cedar",
+      "family": "F11",
+      "models": [
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Default deny, forbid precedence and skip-on-error diagnostics",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.cedarpolicy.com/auth/authorization.html"
+      ]
+    },
+    {
+      "id": "D054",
+      "name": "SpiceDB schema language",
+      "family": "F11",
+      "models": [
+        "M06",
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Relationship permissions and intersection arrow",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://authzed.com/docs/spicedb/concepts/schema"
+      ]
+    },
+    {
+      "id": "D055",
+      "name": "DMN decision tables",
+      "family": "F12",
+      "models": [
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Hit policy determines multiplicity and overlap behavior",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.camunda.io/docs/components/modeler/dmn/decision-table-hit-policy/"
+      ]
+    },
+    {
+      "id": "D056",
+      "name": "FEEL",
+      "family": "F12",
+      "models": [
+        "M04",
+        "M10"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Expression role within decision models; engine details pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.camunda.io/docs/components/modeler/feel/what-is-feel/"
+      ]
+    },
+    {
+      "id": "D057",
+      "name": "ODRL 2.2",
+      "family": "F12",
+      "models": [
+        "M10",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Permissions, prohibitions and duties; description versus enforcement",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/odrl-model/"
+      ]
+    },
+    {
+      "id": "D058",
+      "name": "Catala",
+      "family": "F12",
+      "models": [
+        "M10",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Explicit exception structure with legal-source provenance",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://book.catala-lang.org/en/5-4-definitions-exceptions.html"
+      ]
+    },
+    {
+      "id": "D059",
+      "name": "Lean tactic language",
+      "family": "F20",
+      "models": [
+        "M11"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Proof-state transformation versus kernel proof checking",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://lean-lang.org/doc/reference/latest/Tactic-Proofs/"
+      ]
+    },
+    {
+      "id": "D060",
+      "name": "TLA+",
+      "family": "F21",
+      "models": [
+        "M12"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Allowed behaviors and temporal properties",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://lamport.azurewebsites.net/tla/book-02-02-27.pdf"
+      ]
+    },
+    {
+      "id": "D061",
+      "name": "PlusCal",
+      "family": "F21",
+      "models": [
+        "M12"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Algorithm translated into a TLA+ specification",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://lamport.azurewebsites.net/tla/tutorial/session11-1.html"
+      ]
+    },
+    {
+      "id": "D062",
+      "name": "Alloy",
+      "family": "F21",
+      "models": [
+        "M08",
+        "M12"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Relational analysis with explicit bounded scope",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://alloytools.org/download/alloy-language-reference.pdf"
+      ]
+    },
+    {
+      "id": "D063",
+      "name": "UPPAAL modeling language",
+      "family": "F21",
+      "models": [
+        "M12",
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Delay and action transitions with clocks and invariants",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.uppaal.org/language-reference/system-description/semantics/"
+      ]
+    },
+    {
+      "id": "D064",
+      "name": "PRISM modeling language",
+      "family": "F21",
+      "models": [
+        "M12",
+        "M20"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Probabilistic state transitions rather than posterior inference",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction"
+      ]
+    },
+    {
+      "id": "D065",
+      "name": "Maude",
+      "family": "F22",
+      "models": [
+        "M13",
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Rewriting logic for state change; historical foundational source",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://maude.cs.illinois.edu/maude1/manual/maude-manual-html/maude-manual_61.html"
+      ]
+    },
+    {
+      "id": "D066",
+      "name": "Stratego",
+      "family": "F22",
+      "models": [
+        "M13"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Rules separate from traversal strategy",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://spoofax.dev/background/stratego/strategic-rewriting/strategic-rewriting/"
+      ]
+    },
+    {
+      "id": "D067",
+      "name": "egg rewrite/e-graph API",
+      "family": "F22",
+      "models": [
+        "M13"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Equality saturation separates equivalence exploration from extraction",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://arxiv.org/abs/2004.03082"
+      ]
+    },
+    {
+      "id": "D068",
+      "name": "Parsing Expression Grammars",
+      "family": "F15",
+      "models": [
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Prioritized choice differs from unordered alternatives",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://bford.info/pub/lang/peg.pdf"
+      ]
+    },
+    {
+      "id": "D069",
+      "name": "ANTLR grammar notation",
+      "family": "F15",
+      "models": [
+        "M05"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Parser generator; detailed recovery comparison pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.antlr.org/"
+      ]
+    },
+    {
+      "id": "D070",
+      "name": "Kaitai Struct",
+      "family": "F15",
+      "models": [
+        "M01",
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Binary byte/bit order and alignment in a YAML-carried schema",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://doc.kaitai.io/user_guide.html"
+      ]
+    },
+    {
+      "id": "D071",
+      "name": "CDDL",
+      "family": "F02",
+      "models": [
+        "M01"
+      ],
+      "coverage": "indexed",
+      "mechanism": "CBOR/JSON data description; full dialect integration pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.rfc-editor.org/rfc/rfc8610.html"
+      ]
+    },
+    {
+      "id": "D072",
+      "name": "P4-16",
+      "family": "F37",
+      "models": [
+        "M05",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Packet program versus control-plane table contents; 1.1.0 evidence",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://p4lang.github.io/p4-spec/docs/P4-16-v1.1.0-spec.html"
+      ]
+    },
+    {
+      "id": "D073",
+      "name": "nftables rule language",
+      "family": "F37",
+      "models": [
+        "M10",
+        "M24"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Packet rules/chains/sets; ordering and host integration pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.netfilter.org/projects/nftables/manpage.html"
+      ]
+    },
+    {
+      "id": "D074",
+      "name": "Wireshark display filters",
+      "family": "F13",
+      "models": [
+        "M05"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Typed protocol field queries distinct from capture filters",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.wireshark.org/docs/man-pages/wireshark-filter.html"
+      ]
+    },
+    {
+      "id": "D075",
+      "name": "YARA",
+      "family": "F13",
+      "models": [
+        "M05",
+        "M10"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Hexadecimal byte patterns versus text and regex strings",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://yara.readthedocs.io/en/stable/writingrules.html"
+      ]
+    },
+    {
+      "id": "D076",
+      "name": "Apache Beam pipeline API",
+      "family": "F28",
+      "models": [
+        "M14",
+        "M17"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Event time, watermarks, triggers and late-data policy",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://beam.apache.org/documentation/programming-guide/"
+      ]
+    },
+    {
+      "id": "D077",
+      "name": "PromQL",
+      "family": "F29",
+      "models": [
+        "M04",
+        "M17"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Instant/range vectors and range endpoint policy",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://prometheus.io/docs/prometheus/latest/querying/basics/"
+      ]
+    },
+    {
+      "id": "D078",
+      "name": "LogQL",
+      "family": "F29",
+      "models": [
+        "M04",
+        "M17"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Log and metric query roles; stage/endpoint details pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://grafana.com/docs/loki/latest/query/"
+      ]
+    },
+    {
+      "id": "D079",
+      "name": "SCXML",
+      "family": "F25",
+      "models": [
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Microstep/macrostep run-to-completion boundary",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/scxml/"
+      ]
+    },
+    {
+      "id": "D080",
+      "name": "Petri nets / PNML",
+      "family": "F24",
+      "models": [
+        "M15"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Interchange format; token probe is an original finite model",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.pnml.org/"
+      ]
+    },
+    {
+      "id": "D081",
+      "name": "BPMN 2.0.2",
+      "family": "F24",
+      "models": [
+        "M14",
+        "M15"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Process modeling standard; engine persistence/compensation not verified",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.omg.org/spec/BPMN/2.0.2/About-BPMN"
+      ]
+    },
+    {
+      "id": "D082",
+      "name": "BehaviorTree.CPP XML/node DSL",
+      "family": "F25",
+      "models": [
+        "M15"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Sequence variants differ on Running/Failure restart behavior; 3.8 source",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.behaviortree.dev/docs/3.8/nodes-library/SequenceNode/"
+      ]
+    },
+    {
+      "id": "D083",
+      "name": "PDDL",
+      "family": "F26",
+      "models": [
+        "M07",
+        "M08",
+        "M14"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Domain/problem/action planning role; foundational 1998 edition",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.cs.cmu.edu/~mmv/planning/readings/98aips-PDDL.pdf"
+      ]
+    },
+    {
+      "id": "D084",
+      "name": "QML bindings",
+      "family": "F27",
+      "models": [
+        "M16"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Dependency updates versus replacing a binding by assignment",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html"
+      ]
+    },
+    {
+      "id": "D085",
+      "name": "Excel formula language",
+      "family": "F27",
+      "models": [
+        "M04",
+        "M16"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Cell reference modes; broader research owned by interface thread",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://support.microsoft.com/en-us/excel/switch-between-relative-absolute-and-mixed-references"
+      ]
+    },
+    {
+      "id": "D086",
+      "name": "Lustre",
+      "family": "F30",
+      "models": [
+        "M12",
+        "M18"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Synchronous language and verification role",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www-verimag.imag.fr/DIST-TOOLS/SYNCHRONE/lustre-v6/"
+      ]
+    },
+    {
+      "id": "D087",
+      "name": "Chisel hardware construction",
+      "family": "F31",
+      "models": [
+        "M18",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Host elaboration versus one-cycle register delay",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.chisel-lang.org/docs/explanations/sequential-circuits"
+      ]
+    },
+    {
+      "id": "D088",
+      "name": "SPICE / ngspice languages",
+      "family": "F32",
+      "models": [
+        "M19"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Circuit netlist/control/simulation role; dialect execution pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://ngspice.sourceforge.io/docs.html"
+      ]
+    },
+    {
+      "id": "D089",
+      "name": "SBML",
+      "family": "F32",
+      "models": [
+        "M01",
+        "M19"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Versioned biological model format; simulator semantics pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://sbml.org/documents/specifications/"
+      ]
+    },
+    {
+      "id": "D090",
+      "name": "Stan",
+      "family": "F33",
+      "models": [
+        "M20"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Distribution statements build density rather than directly draw samples",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://mc-stan.org/docs/reference-manual/statements.html"
+      ]
+    },
+    {
+      "id": "D091",
+      "name": "JAX transformed computation",
+      "family": "F34",
+      "models": [
+        "M21"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Scalar-function derivative transformation in an embedded host role",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.jax.dev/en/latest/automatic-differentiation.html"
+      ]
+    },
+    {
+      "id": "D092",
+      "name": "SymPy symbolic expression API",
+      "family": "F34",
+      "models": [
+        "M08",
+        "M21"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Symbolic expression/solution role; domain/branch coverage pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.sympy.org/latest/modules/solvers/solvers.html"
+      ]
+    },
+    {
+      "id": "D093",
+      "name": "WGSL",
+      "family": "F35",
+      "models": [
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Uniform-control-flow requirements for workgroup barriers",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/TR/WGSL/"
+      ]
+    },
+    {
+      "id": "D094",
+      "name": "OpenQASM",
+      "family": "F36",
+      "models": [
+        "M18",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Unitary gate construction with target-owned restrictions",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://openqasm.com/language/gates.html"
+      ]
+    },
+    {
+      "id": "D095",
+      "name": "OpenSCAD",
+      "family": "F38",
+      "models": [
+        "M22"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Geometric construction role; robustness and target comparison pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://openscad.org/documentation.html"
+      ]
+    },
+    {
+      "id": "D096",
+      "name": "OpenUSD scene description",
+      "family": "F38",
+      "models": [
+        "M01",
+        "M22"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Scenegraph composition and non-destructive overrides",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://openusd.org/release/intro.html"
+      ]
+    },
+    {
+      "id": "D097",
+      "name": "DOT",
+      "family": "F40",
+      "models": [
+        "M22"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Graph/layout description does not supply application execution",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://graphviz.org/doc/info/lang.html"
+      ]
+    },
+    {
+      "id": "D098",
+      "name": "Mermaid flowcharts",
+      "family": "F40",
+      "models": [
+        "M22"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Diagram projection; executable model correspondence pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://mermaid.js.org/syntax/flowchart.html"
+      ]
+    },
+    {
+      "id": "D099",
+      "name": "Typst",
+      "family": "F41",
+      "models": [
+        "M03",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Markup/math/code modes",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://typst.app/docs/reference/syntax/"
+      ]
+    },
+    {
+      "id": "D100",
+      "name": "CommonMark",
+      "family": "F41",
+      "models": [
+        "M05",
+        "M23"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Versioned markup parsing/rendering role",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://spec.commonmark.org/0.31.2/"
+      ]
+    },
+    {
+      "id": "D101",
+      "name": "Fluent",
+      "family": "F14",
+      "models": [
+        "M03",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Numeric and locale plural message selection with named variables",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://projectfluent.org/fluent/guide/selectors.html"
+      ]
+    },
+    {
+      "id": "D102",
+      "name": "ICU MessageFormat",
+      "family": "F14",
+      "models": [
+        "M03",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Plural/select arguments and whole-message translation branches",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://unicode-org.github.io/icu/userguide/format_parse/messages/"
+      ]
+    },
+    {
+      "id": "D103",
+      "name": "iCalendar recurrence",
+      "family": "F47",
+      "models": [
+        "M15",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Floating local, UTC and time-zone-referenced time",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.rfc-editor.org/rfc/rfc5545.html"
+      ]
+    },
+    {
+      "id": "D104",
+      "name": "Faust",
+      "family": "F30",
+      "models": [
+        "M18"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Signal composition with one-sample feedback delay",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://faustdoc.grame.fr/manual/syntax/"
+      ]
+    },
+    {
+      "id": "D105",
+      "name": "SuperCollider Patterns",
+      "family": "F30",
+      "models": [
+        "M17",
+        "M23"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Pattern-to-stream/event generation role",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://docs.supercollider.online/Classes/Pattern.html"
+      ]
+    },
+    {
+      "id": "D106",
+      "name": "Tidal Cycles mini-notation",
+      "family": "F42",
+      "models": [
+        "M18",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Strings encode cycle subdivisions, rests and speed changes",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://tidalcycles.org/docs/reference/mini_notation/"
+      ]
+    },
+    {
+      "id": "D107",
+      "name": "LilyPond",
+      "family": "F42",
+      "models": [
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Sequential and simultaneous music expressions; 2.24 evidence",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://lilypond.org/doc/v2.24/Documentation/learning/music-expressions-explained"
+      ]
+    },
+    {
+      "id": "D108",
+      "name": "MusicXML",
+      "family": "F42",
+      "models": [
+        "M01",
+        "M23"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Score interchange 4.0; audio engine not specified here",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.w3.org/2021/06/musicxml40/"
+      ]
+    },
+    {
+      "id": "D109",
+      "name": "ink",
+      "family": "F43",
+      "models": [
+        "M15",
+        "M23"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Displayed choice text differs from emitted story text",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.inklestudios.com/ink/web-tutorial/"
+      ]
+    },
+    {
+      "id": "D110",
+      "name": "URDF",
+      "family": "F39",
+      "models": [
+        "M01",
+        "M22"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Versioned robot description; motion/simulation integration pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://github.com/ros/urdfdom"
+      ]
+    },
+    {
+      "id": "D111",
+      "name": "LinuxCNC G-code",
+      "family": "F39",
+      "models": [
+        "M15",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Modal commands retain controller state across lines",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://linuxcnc.org/docs/stable/html/gcode/overview.html"
+      ]
+    },
+    {
+      "id": "D112",
+      "name": "SMILES",
+      "family": "F44",
+      "models": [
+        "M01",
+        "M22"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Multiple strings can encode one molecular graph",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.daylight.com/dayhtml/doc/theory/theory.smiles.html"
+      ]
+    },
+    {
+      "id": "D113",
+      "name": "SMARTS",
+      "family": "F44",
+      "models": [
+        "M05",
+        "M22"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Substructure pattern differs from molecular value",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.daylight.com/dayhtml/doc/theory/theory.smarts.html"
+      ]
+    },
+    {
+      "id": "D114",
+      "name": "UCUM",
+      "family": "F45",
+      "models": [
+        "M01",
+        "M19"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Unit equality, commensurability and special scales",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://ucum.org/ucum"
+      ]
+    },
+    {
+      "id": "D115",
+      "name": "FHIRPath",
+      "family": "F10",
+      "models": [
+        "M04"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Empty collection/missing node and singleton cardinality rules",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://hl7.org/fhirpath/STU3/en/index.html"
+      ]
+    },
+    {
+      "id": "D116",
+      "name": "Clinical Quality Language",
+      "family": "F44",
+      "models": [
+        "M04",
+        "M10"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Clinical expression role; model/terminology integration pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://cql.hl7.org/"
+      ]
+    },
+    {
+      "id": "D117",
+      "name": "HGVS nomenclature",
+      "family": "F44",
+      "models": [
+        "M01"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Reference-sensitive variant notation role; adapter pending",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://hgvs-nomenclature.org/stable/"
+      ]
+    },
+    {
+      "id": "D118",
+      "name": "Beancount",
+      "family": "F46",
+      "models": [
+        "M01",
+        "M08"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Posting-weight balancing, not an unqualified sum; historical guide",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://beancount.github.io/docs/beancount_language_syntax/"
+      ]
+    },
+    {
+      "id": "D119",
+      "name": "systemd unit/service language",
+      "family": "F07",
+      "models": [
+        "M02",
+        "M15",
+        "M24"
+      ],
+      "coverage": "mechanism-reviewed",
+      "mechanism": "Command expansion differs from shell grammar; explicit shell prefix is version-sensitive",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml"
+      ]
+    },
+    {
+      "id": "D120",
+      "name": "POSIX shell command language",
+      "family": "F48",
+      "models": [
+        "M03",
+        "M24"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Expansion and field splitting; primary search excerpt, full page access blocked",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html"
+      ]
+    },
+    {
+      "id": "D121",
+      "name": "awk pattern/action language",
+      "family": "F48",
+      "models": [
+        "M05",
+        "M24"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Pattern/action processing role; primary search excerpt, full page access limited",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://www.gnu.org/s/gawk/manual/html_node/Patterns-and-Actions.html"
+      ]
+    },
+    {
+      "id": "D122",
+      "name": "Gherkin",
+      "family": "F50",
+      "models": [
+        "M23",
+        "M24"
+      ],
+      "coverage": "indexed",
+      "mechanism": "Scenario text maps to executable step definitions",
+      "chapter": "domain_atlas.md",
+      "primary_sources": [
+        "https://cucumber.io/docs/gherkin/reference/"
+      ]
+    }
+  ]
+}

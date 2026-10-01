@@ -194,6 +194,34 @@ do not build a general engine to run them. E4/E5/E8 require a chosen adapter or
 symbolic model with clearly limited claims. E10-E12 follow only if earlier
 results leave a concrete problem.
 
+### Orthogonal Extension: E13-E22
+
+The [50-family atlas](domain_atlas.md) adds differences in semantic model,
+not 50 new syntax proposals. The following bounded experiments extend the
+same research set and route into the existing owners. Apply the four
+[composition fixtures](composition_boundaries.md) where relevant, alongside
+the original beginner/production/adversarial programs. Initial finite probes
+illustrate a law; they do not count as executed Nomi candidate comparisons.
+
+| ID / priority | Competing candidates | Cases and oracle | Reject / stop condition | Evidence now |
+| --- | --- | --- | --- | --- |
+| E13 / next | Explicit set/bag/sequence/stream and nominal foreign values versus generic collections/Text | Duplicate joins; zero/one/many selections; molecule versus query; byte versus text pattern; typed message arguments | Multiplicity, offset units or domain identity erased in conversion | Set/bag finite probe; primary FHIRPath/SMILES/YARA/Fluent comparison |
+| E14 / later | Rich check/find/optimize evidence versus Boolean/optional answer | Supplied assignment; multiple witnesses; contradiction; budget exhaustion; feasible incumbent without proven optimum | Unknown becomes unsatisfiable; first answer masquerades as unique/optimal | Four-assignment probe; MiniZinc/CVX/SMT evidence |
+| E15 / later | Assumption/scope-backed proof/model evidence versus generic validated flag | Bounded no-counterexample; counterexample trace; checked proof with assumptions; unsupported checker input | Formal result silently promoted to an unbounded deployment guarantee | Alloy/Lean/TLA+/UPPAAL documentary evidence only |
+| E16 / next | Dependency graph plus explicit consumable resources versus one graph executor | Two ready jobs competing for one token; cancellation; partial deployment; stale inventory; idempotent retry | Dependency readiness implies resource availability or execution permission | One-token probe; composition fixture 2; no executor run |
+| E17 / later | Domain construction plus owned live/device lifecycle versus ordinary callback execution | Reactive binding replacement; delayed register; feedback cycle; subscription cleanup; device check without execution | Construction advances time, silently performs IO or leaks a live subscription | QML/Chisel/Faust sources; fixtures 2/3 only |
+| E18 / next | Nominal clocks/windows/calendars plus explicit conversions versus unqualified numbers/durations | Event/arrival reorder; exact endpoints; late updates; local recurring time; sample/beat conversion | A day, cycle, tick or sample silently treated as the same time unit | Event/arrival finite probe; Beam/PromQL/iCalendar/Tidal evidence |
+| E19 / later | Named world/rule/conflict laws with evidence versus predicate-only rules | Finite closure; missing fact; open-world countermodels; permit/forbid/error; overlapping decision rows | Missing/undefined/unknown coerced to false; conflict law unnamed | Closure and two-world probes; OWL/SHACL/Cedar/DMN comparison |
+| E20 / later | Named numeric/effect theory with checked rewrites versus generic optimizer | Exact versus float reassociation; rule side conditions; directed strategy versus equivalence extraction; divergent rules | Rewriting changes observable result/effects or claims unsupported equality | Host arithmetic probe; Stratego/Maude/egg evidence |
+| E21 / later | Separate score/sample/condition/infer/derive/simulate contracts versus generic model execution | Finite posterior; reproducible random state; transformed scalar callback; unit/shape mismatch; numerical nonconvergence | A density is presented as a draw; estimate as certificate; derivative changes callback staging invisibly | Rational conditioning probe; Stan/JAX/Modelica/UCUM evidence |
+| E22 / later | Shared source/evidence envelope with domain-owned payloads versus universal DSL AST/evaluator | Query/policy/circuit/geometry/message artifacts; schema/target changes; draft recovery; rename and format; Python/JS/WASM transport | Environment identity lost; fake exact spans; library cannot survive notation removal | Architecture and four composition fixtures only; foreign adapters unimplemented |
+
+E13/E16/E18 add concrete pressure to the first string/data/source packet if a
+chosen target requires them. The other experiments remain conditional later
+work. Do not run all 22 as a prerequisite to an ordinary codec or string fix.
+Bound each experiment to one domain, two candidates and an original failure
+oracle; record versions and removal criteria before extending its scope.
+
 ## Evaluation Measures
 
 Report all of the following; compactness alone is insufficient:
@@ -213,7 +241,7 @@ Report all of the following; compactness alone is insufficient:
 
 Reader studies need recorded tasks and participants; none were performed here.
 Benchmarks need input sizes, versions and distributions; no speed ranking is
-inferred from documentation adjectives or a ten-case local probe.
+inferred from documentation adjectives or the local illustrative probes.
 
 ## Route Results To Existing Owners
 
@@ -227,6 +255,9 @@ inferred from documentation adjectives or a ten-case local probe.
 | Query/scoped row forms | Open question 8; DW1-DW3; A16 | Typed expression/row scope and inspectable plan |
 | Syntax hygiene and foreign DSL admission | Open question 12; metaprogramming evidence | Library failure demonstrated; explicit grammar/format/recovery/phase owner |
 | Generated source and projections | Open question 17; A19/A23 | Provenance/precision plus draft-versus-checked model |
+| Multiplicity, rule worlds and solver evidence | Open questions 8/9; data/failure owners; A09/A16 | Explicit result variants, world assumptions, budgets and witnesses |
+| Temporal/signal/device models | Resource-lifetime and completion owners; A11/A14/A15 | Named clocks, construction/execution split and cleanup/target authority |
+| Numeric rewrites, inference and differentiation | Open question 9; DW4/DW5 | Numeric theory, units/shape, reproducibility and staged callback contract |
 
 Read [open questions](../open_questions.md),
 [metaprogramming evidence](../features/metaprogramming.md) and

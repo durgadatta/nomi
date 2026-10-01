@@ -153,6 +153,11 @@ Use [notation cases 2/3](notation_atlas.md) and
 axis/unit/frame identity and learned-state boundaries. Equal array lengths must
 not silently establish coordinate compatibility or prevent training leakage.
 
+The [orthogonal models](dsls/orthogonal_models.md) add E20/E21: arithmetic
+rewrite theories, density versus sampling, derivative callback staging and
+simulation evidence. The host float and finite-posterior probes illustrate
+differences; no numeric API or inference engine is selected.
+
 ## 10. Generic Dispatch
 
 **Question:** Are protocols and ordinary functions enough, or does scientific
@@ -193,6 +198,11 @@ libraries, explicitly parsed foreign DSL values and scoped notation. E1-E3/E7
 test literal preservation, typed construction and named checking guarantees
 before grammar extensibility. A foreign keyword or raw string is not evidence
 that a macro facility is needed; the existing scope/hygiene gate still applies.
+
+The [expanded atlas](dsls/domain_atlas.md) covers 50 families. E20/E22 distinguish
+directed rewrite strategy, equivalence exploration and a source/evidence
+envelope from a universal DSL AST. Parsed foreign binders and environment
+identity must not be reduced to raw interpolation or implicit host capture.
 
 ## 13. Package Identity And Federation
 
@@ -266,6 +276,13 @@ reference-coordinate variants and aligned annotation/evidence. DW7 owns the
 local comparison; [workflow evidence](data_workflows/execution_models.md)
 adds partition/attempt/observation identities. This does not turn every diagram
 into the same executable graph or reopen core punctuation by analogy.
+
+The [orthogonal DSL comparison](dsls/orthogonal_models.md) adds live bindings,
+solver/proof evidence, token traces, circuits, scenes and localized documents.
+E15/E17/E22 ask which inspection/source envelope can be shared while semantic
+payloads retain domain owners; [composition fixtures](dsls/composition_boundaries.md)
+include mapped errors and draft/checked separation. No universal editable IR
+or evaluator is selected.
 
 **DSL/string pressure:** [source provenance research](dsls/strings_and_embedding.md)
 adds escapes, folding, indentation removal, included files and repeated

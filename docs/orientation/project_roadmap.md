@@ -712,11 +712,14 @@ Existing data/workflow and interface research supplies context but does not own
 the full question of layered configuration languages and embedded string DSLs.
 
 **Research completed 2026-10-01:** [the dedicated dossier](../research/dsls/README.md)
-maps 44 representative systems/mechanisms, deeply compares layered YAML hosts,
-analyzes string boundaries, records ten local probes and defines E1-E12 with
-competing candidates and rejection gates. Remote integrations, Nomi candidate
-execution and reader studies remain explicit future evidence; no DSL syntax
-was admitted. The bullets below retain the scope of this completed research.
+maps 122 representatives across 50 families and 24 semantic models, deeply
+compares layered YAML hosts and orthogonal rule/proof/temporal/numeric/device/
+media models, and keeps string roles central. It records ten host observations
+plus eight original finite-model probes, twelve composition pairs, four
+extended fixtures and E1-E22 with competing candidates and rejection gates.
+The catalog distinguishes mechanism review from indexing. Remote integrations,
+Nomi candidate execution and reader studies remain explicit future evidence;
+no DSL syntax was admitted. The bullets retain the completed research scope.
 
 - Map internal/external, declarative/imperative, textual/structured/visual,
   embedded/standalone and static/dynamic DSLs using primary specifications.
@@ -729,11 +732,16 @@ was admitted. The bullets below retain the scope of this completed research.
 - Compare ordinary typed Nomi values/functions, validated DSL values and explicitly
   scoped notation. Produce real examples, failure cases, candidate laws and bounded
   experiments without treating a borrowed keyword as an accepted feature.
+- Compare orthogonal semantic laws: closure/search, open-world knowledge,
+  authorization/obligation, witness/proof, rewriting, token/dependency control,
+  clocks/windows/signals, simulation/inference, geometry/device targets and
+  locale/media composition. Preserve named result/evidence and conversion laws.
 
 **Files/owner:** dedicated research dossier linked from the research index,
 existing open questions and A03/A08/A12/A13; admission remains in design owners.
 **Research gate:** layer/authority taxonomy, cited boundary examples, observed
-host probes and specific competing candidates/experiment gates are recorded.
+host/finite-model probes and specific competing candidates/experiment gates
+are recorded; documented versus observed versus proposed remains explicit.
 **Implementation gate:** actual Nomi examples must survive adversarial
 multi-stage cases before adding a DSL engine or grammar. Documentary completion
 does not satisfy that later conformance gate.
@@ -788,7 +796,7 @@ scheduled without accepting open language notation.
 
 | Slice | Exact task | Depends on | Evidence / stop criterion |
 | --- | --- | --- | --- |
-| Q01 | Completed: A33 documentary DSL/string research and ten host probes; E1-E12 define subsequent Nomi experiments | This global plan completed | [Dossier](../research/dsls/README.md), primary-source coverage, competing candidates and explicit unperformed integrations; new syntax remains unaccepted. |
+| Q01 | Completed: A33 DSL/string research expanded to 50 families / 24 models; ten host and eight finite-model probes; E1-E22 define Nomi comparisons | This global plan completed | [Dossier](../research/dsls/README.md), explicit depth, composition fixtures and unperformed integrations; new syntax remains unaccepted. |
 | Q02 | Add a current parse-failure diagnostic producer and result fallback | Existing facade/collector | `x =` returns a stable phase/code/span where known, preserves exception/output, and renders through existing consumers. |
 | Q03 | Fence JS integer precision loss and document the bounded interchange choice | Reproducer plus A03 decision | Golden vectors around the host limit are exact or explicitly rejected; no silent rounded result. |
 | Q04 | Redact notebook/container tokens and narrow Docker build context | Existing launcher/context | Synthetic token absent from command/status logs; cache/private configuration absent from declared context. |

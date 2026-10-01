@@ -1,0 +1,333 @@
+{
+  "observed_on": "2026-10-01",
+  "python_version": "3.14.0rc3",
+  "evidence_kind": "original finite models and host arithmetic",
+  "foreign_runtime_tests": [],
+  "probes": {
+    "relation_multiplicity": {
+      "left": [
+        "a",
+        "a",
+        "b"
+      ],
+      "right": [
+        "a",
+        "a"
+      ],
+      "bag_join": [
+        [
+          "a",
+          "a"
+        ],
+        [
+          "a",
+          "a"
+        ],
+        [
+          "a",
+          "a"
+        ],
+        [
+          "a",
+          "a"
+        ]
+      ],
+      "set_join": [
+        [
+          "a",
+          "a"
+        ]
+      ]
+    },
+    "finite_deduction": {
+      "edges": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "c",
+          "a"
+        ],
+        [
+          "c",
+          "d"
+        ]
+      ],
+      "one_pass": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "c"
+        ],
+        [
+          "b",
+          "a"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "b",
+          "d"
+        ],
+        [
+          "c",
+          "a"
+        ],
+        [
+          "c",
+          "b"
+        ],
+        [
+          "c",
+          "d"
+        ]
+      ],
+      "fixed_point": [
+        [
+          "a",
+          "a"
+        ],
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "c"
+        ],
+        [
+          "a",
+          "d"
+        ],
+        [
+          "b",
+          "a"
+        ],
+        [
+          "b",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "b",
+          "d"
+        ],
+        [
+          "c",
+          "a"
+        ],
+        [
+          "c",
+          "b"
+        ],
+        [
+          "c",
+          "c"
+        ],
+        [
+          "c",
+          "d"
+        ]
+      ],
+      "expanding_rounds": 2,
+      "reordering_preserved": true,
+      "idempotent": true,
+      "fragment": "positive reachability over four finite nodes"
+    },
+    "knowledge_assumptions": {
+      "facts": [
+        "employee(Ada)"
+      ],
+      "query": "clearance(Ada)",
+      "closed_world_lookup": false,
+      "compatible_worlds": [
+        [
+          "employee(Ada)"
+        ],
+        [
+          "clearance(Ada)",
+          "employee(Ada)"
+        ]
+      ],
+      "possible_truth_values": [
+        false,
+        true
+      ],
+      "open_world_entailment_status": "undetermined",
+      "limit": "two explicit worlds; not an OWL implementation"
+    },
+    "constraint_evidence": {
+      "domain": [
+        0,
+        1
+      ],
+      "constraint": "job slots differ",
+      "check_assignment_0_0": false,
+      "feasible_assignments": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "objective": "2 * slot_a + slot_b",
+      "optimal_assignment": [
+        0,
+        1
+      ],
+      "optimal_cost": 1,
+      "budgeted_search": {
+        "checked": [
+          [
+            0,
+            0
+          ]
+        ],
+        "answers": [],
+        "status": "unknown",
+        "unexplored": 3
+      },
+      "fully_enumerated_contradiction": "unsatisfiable"
+    },
+    "temporal_windows": {
+      "events": [
+        {
+          "id": "e1",
+          "event_time": 2,
+          "arrival_time": 2
+        },
+        {
+          "id": "e2",
+          "event_time": 8,
+          "arrival_time": 12
+        },
+        {
+          "id": "e3",
+          "event_time": 12,
+          "arrival_time": 13
+        }
+      ],
+      "endpoints": "left-closed, right-open",
+      "event_time_windows": {
+        "[0,10)": [
+          "e1",
+          "e2"
+        ],
+        "[10,20)": [
+          "e3"
+        ]
+      },
+      "arrival_time_windows": {
+        "[0,10)": [
+          "e1"
+        ],
+        "[10,20)": [
+          "e2",
+          "e3"
+        ]
+      },
+      "imposed_close_rule": "first window closes at arrival time 10",
+      "late_ids": [
+        "e2"
+      ],
+      "drop_late": {
+        "[0,10)": [
+          "e1"
+        ],
+        "[10,20)": [
+          "e3"
+        ]
+      },
+      "update_late": {
+        "[0,10)": [
+          "e1",
+          "e2"
+        ],
+        "[10,20)": [
+          "e3"
+        ]
+      },
+      "limit": "fixed imposed policy; not a Beam runner/watermark test"
+    },
+    "arithmetic_theory": {
+      "inputs": [
+        "1e16",
+        "-1e16",
+        "1"
+      ],
+      "float_left_association": 1.0,
+      "float_right_association": 0.0,
+      "decimal_left_association": "1",
+      "decimal_right_association": "1",
+      "limit": "one host arithmetic fixture, not all numeric laws"
+    },
+    "token_exclusion": {
+      "initial_marking": {
+        "free": 1,
+        "active_a": 0,
+        "active_b": 0
+      },
+      "initially_enabled": [
+        "A",
+        "B"
+      ],
+      "after_A": {
+        "free": 0,
+        "active_a": 1,
+        "active_b": 0
+      },
+      "enabled_after_A": [],
+      "after_A_releases_token": {
+        "free": 1,
+        "active_a": 0,
+        "active_b": 0
+      },
+      "enabled_after_release": [
+        "A",
+        "B"
+      ],
+      "dependency_only_ready_jobs": [
+        "A",
+        "B"
+      ],
+      "limit": "original one-token model; not PNML/BPMN conformance"
+    },
+    "probability_conditioning": {
+      "prior": {
+        "A": "1/2",
+        "B": "1/2"
+      },
+      "observation_likelihood": {
+        "A": "3/4",
+        "B": "1/4"
+      },
+      "unnormalized_weights": {
+        "A": "3/8",
+        "B": "1/8"
+      },
+      "evidence_probability": "1/2",
+      "posterior": {
+        "A": "3/4",
+        "B": "1/4"
+      },
+      "random_draws_performed": 0,
+      "limit": "exact finite enumeration; not Stan inference or PRISM checking"
+    }
+  }
+}

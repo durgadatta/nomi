@@ -1,9 +1,10 @@
-# Executed String-Boundary Probes
+# Executed DSL Boundary Probes
 
 > Status: reproducible local research observations, recorded 2026-10-01.
 >
-> Host-library behavior only. No Nomi, GitHub runner, Kubernetes, Helm,
-> Kustomize, actual shell, browser renderer or remote service was executed.
+> Installed-host observations and original finite models only. The SQL probe
+> runs SQLite; no Nomi, specialized solver/model engine, actual shell, browser
+> renderer or remote service was run. These are not conformance integrations.
 
 ## Environment And Reproduction
 
@@ -86,3 +87,41 @@ GitHub context availability, Kubernetes schema/admission, Helm reevaluation,
 Kustomize patches, Compose merge order, policy environments and browser/editor
 source ranges. Those are explicitly unperformed here and must not be reported
 as passing because the local data probes passed.
+
+## Orthogonal Model Probes
+
+The expansion adds [a standard-library script](probe_orthogonal.py) and
+[eight captured results](orthogonal_probe_results.json), also observed on
+2026-10-01 using Python 3.14.0rc3. These are deliberately small original models
+which make differing laws visible. They neither implement the catalog's
+languages nor establish parser, solver, engine or service conformance.
+
+```bash
+python3 docs/research/dsls/probe_orthogonal.py
+```
+
+The date defaults to the local current date; use `--observed-on` for an explicit
+capture. Inputs, result variants and limiting assumptions are retained in JSON.
+There is no network, filesystem input, dependency installation, process launch,
+foreign runtime, random sampling or device execution in the script.
+
+| Probe | Captured distinction | Candidate discriminator | Limit |
+| --- | --- | --- | --- |
+| Set/bag multiplicity | Duplicate inputs yield four bag-join pairs versus one set pair | E13: explicit cardinality/multiplicity | Original equal-key join only; no SQL/SPARQL engine |
+| Finite deduction | One composition pass differs from 12-pair reachability closure; closure is order-invariant and idempotent | E19: fixed-point evidence and bounded fragment | Positive finite graph only; no negation, Soufflé or arbitrary termination theorem |
+| World assumptions | The same supplied facts admit worlds where a clearance query is true and false; closed lookup is false, open entailment undetermined | E19: unknown versus false | Two explicit worlds; no ontology reasoner |
+| Constraint evidence | Two feasible assignments, one cost optimum; stopping after the first infeasible assignment is unknown; exhaustive contradiction is unsatisfiable | E14: check/find/optimize/budget statuses | Exhaustive four-assignment toy domain; no solver certification |
+| Time-domain windows | Event time groups e1/e2 together; arrival time groups e2/e3; imposed late policy can drop or update e2 | E18: clock, endpoint and late-data policy | Fixed half-open windows and imposed close time; no Beam runner or watermark implementation |
+| Arithmetic theory | Float reassociation gives 1 versus 0; the specified Decimal fixture gives 1 in both orders | E20: named numeric laws | One host float/Decimal fixture; no all-purpose exact Decimal guarantee |
+| Token exclusion | A/B are individually enabled by one free token; firing A disables B; dependency-only readiness still lists both | E16: dependency versus consumable availability | Original one-token model; no PNML/BPMN scheduler |
+| Probability conditioning | Exact prior 1/2–1/2 becomes posterior 3/4–1/4 after likelihood weighting/normalization, with zero draws | E21: score/condition/infer versus sample | Finite rational enumeration; no Stan inference or PRISM checking |
+
+Assertions check the stated small-model invariants; they are not a test suite
+for accepted Nomi semantics. The captured model choices, including window
+endpoints and token transition rules, are ours. A foreign integration must
+replace assumptions with its own pinned contract and report its own evidence.
+
+These results sharpen the [composition fixtures](composition_boundaries.md).
+They support keeping domain evidence explicit; they do not select APIs, choose
+a parser/solver or justify a grammar hook. E13-E22 remain unperformed Nomi
+candidate comparisons even where a motivating finite probe has passed.
