@@ -1,0 +1,111 @@
+{
+  "observed_on": "2026-10-01",
+  "scope": "local host-library observations only",
+  "environment": {
+    "python": "3.14.0rc3",
+    "pyyaml": "6.0.3",
+    "jsonschema": "4.25.1",
+    "sqlite": "3.50.4",
+    "unicode_database": "16.0.0"
+  },
+  "cases": {
+    "yaml_key_resolution": {
+      "source": "on: [push]\n",
+      "keys": [
+        {
+          "type": "bool",
+          "repr": "True"
+        }
+      ],
+      "quoted_key": [
+        "on"
+      ]
+    },
+    "yaml_duplicates": {
+      "source": "replicas: 1\nreplicas: 2\n",
+      "value": {
+        "replicas": 2
+      }
+    },
+    "yaml_scalar_styles": {
+      "source": "literal: |\n  alpha\n  beta\nfolded: >\n  alpha\n  beta\nstrip: |-\n  alpha\n  beta\nkeep: |+\n  alpha\n  beta\n\ndouble: \"alpha\\nbeta\"\nsingle: 'alpha\\nbeta'\n",
+      "value": {
+        "literal": "alpha\nbeta\n",
+        "folded": "alpha beta\n",
+        "strip": "alpha\nbeta",
+        "keep": "alpha\nbeta\n\n",
+        "double": "alpha\nbeta",
+        "single": "alpha\\nbeta"
+      }
+    },
+    "yaml_alias_identity": {
+      "source": "base: &base\n  tags: [stable]\nalias: *base\n",
+      "same_host_object": true
+    },
+    "yaml_text_vs_value": {
+      "payload": "plain\nextra: true",
+      "text_substitution": "message: plain\nextra: true\n",
+      "text_substitution_value": {
+        "message": "plain",
+        "extra": true
+      },
+      "structured_encoding": "message: 'plain\n\n  extra: true'\n",
+      "structured_value": {
+        "message": "plain\nextra: true"
+      }
+    },
+    "sql_text_vs_parameter": {
+      "payload": "missing' OR 1=1 --",
+      "text_query": "SELECT name FROM items WHERE name = 'missing' OR 1=1 --'",
+      "text_query_rows": [
+        "alpha",
+        "beta"
+      ],
+      "parameter_query_rows": []
+    },
+    "regex_source_vs_literal": {
+      "payload": "a.+",
+      "source_matches": [
+        "a.+",
+        "abc"
+      ],
+      "literal_matches": [
+        "a.+"
+      ]
+    },
+    "posix_argv_serialization": {
+      "argv": [
+        "tool",
+        "--message",
+        "two words; $(do_not_execute) \"quote\""
+      ],
+      "serialized": "tool --message 'two words; $(do_not_execute) \"quote\"'",
+      "lexical_roundtrip": [
+        "tool",
+        "--message",
+        "two words; $(do_not_execute) \"quote\""
+      ],
+      "executed": false
+    },
+    "json_schema_format": {
+      "schema": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "value": "not-a-timestamp",
+      "errors_without_format_checker": 0,
+      "errors_with_format_checker": 1
+    },
+    "unicode_units": {
+      "composed": "é",
+      "decomposed": "é",
+      "equal_before_normalization": false,
+      "equal_after_nfc": true,
+      "composed_codepoints": 1,
+      "decomposed_codepoints": 2,
+      "astral_codepoints": 1,
+      "astral_utf8_bytes": 4,
+      "astral_utf16_code_units": 2
+    }
+  }
+}

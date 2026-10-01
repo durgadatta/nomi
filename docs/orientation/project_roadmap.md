@@ -711,6 +711,13 @@ The user requested this as the next deep research pass after the global plan.
 Existing data/workflow and interface research supplies context but does not own
 the full question of layered configuration languages and embedded string DSLs.
 
+**Research completed 2026-10-01:** [the dedicated dossier](../research/dsls/README.md)
+maps 44 representative systems/mechanisms, deeply compares layered YAML hosts,
+analyzes string boundaries, records ten local probes and defines E1-E12 with
+competing candidates and rejection gates. Remote integrations, Nomi candidate
+execution and reader studies remain explicit future evidence; no DSL syntax
+was admitted. The bullets below retain the scope of this completed research.
+
 - Map internal/external, declarative/imperative, textual/structured/visual,
   embedded/standalone and static/dynamic DSLs using primary specifications.
 - Examine Kubernetes resources/templates/policies, GitHub Actions `needs`/`uses`/
@@ -725,10 +732,11 @@ the full question of layered configuration languages and embedded string DSLs.
 
 **Files/owner:** dedicated research dossier linked from the research index,
 existing open questions and A03/A08/A12/A13; admission remains in design owners.
-**Done when:** the taxonomy identifies each language layer's semantics and
-authority, string examples survive adversarial multi-stage cases, and Nomi has
-specific competing candidates and experiment gates. This research may proceed
-now; a new DSL engine or grammar still waits for its contracts.
+**Research gate:** layer/authority taxonomy, cited boundary examples, observed
+host probes and specific competing candidates/experiment gates are recorded.
+**Implementation gate:** actual Nomi examples must survive adversarial
+multi-stage cases before adding a DSL engine or grammar. Documentary completion
+does not satisfy that later conformance gate.
 
 ## Delivery Order And Dependencies
 
@@ -773,13 +781,14 @@ sequenced by prerequisites rather than by an arbitrary promise to finish it all.
 
 ## First Reviewable Work Queue
 
-These are proposed future patches; this planning pass implements none of them.
-The user's next research priority is Q01. Current-behavior repair slices can be
-scheduled afterward or independently without accepting open language notation.
+These are proposed patches; the planning pass implemented none of them.
+Q01's documentary research and local host probes are now complete. Candidate
+implementation experiments remain open. Current-behavior repair slices can be
+scheduled without accepting open language notation.
 
 | Slice | Exact task | Depends on | Evidence / stop criterion |
 | --- | --- | --- | --- |
-| Q01 | Execute the dedicated DSL/string research in A33 with primary-source coverage and Nomi candidate experiments | This global plan completed | Layered YAML and embedded-string semantics are explained with cited examples; new syntax remains unaccepted. |
+| Q01 | Completed: A33 documentary DSL/string research and ten host probes; E1-E12 define subsequent Nomi experiments | This global plan completed | [Dossier](../research/dsls/README.md), primary-source coverage, competing candidates and explicit unperformed integrations; new syntax remains unaccepted. |
 | Q02 | Add a current parse-failure diagnostic producer and result fallback | Existing facade/collector | `x =` returns a stable phase/code/span where known, preserves exception/output, and renders through existing consumers. |
 | Q03 | Fence JS integer precision loss and document the bounded interchange choice | Reproducer plus A03 decision | Golden vectors around the host limit are exact or explicitly rejected; no silent rounded result. |
 | Q04 | Redact notebook/container tokens and narrow Docker build context | Existing launcher/context | Synthetic token absent from command/status logs; cache/private configuration absent from declared context. |

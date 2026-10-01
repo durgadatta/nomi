@@ -33,6 +33,10 @@
    [Notation Beyond Programming](notation_atlas.md) - deeper literal forms and
    execution layers, plus mathematical, scientific and humanistic representations.
    Their synthesis owns DW1-DW8; no new core syntax is admitted.
+9. [DSLs And Strings](dsls/README.md) - dedicated deep research on layered
+   configuration, embedded languages and string boundaries; 44 representative
+   systems/mechanisms, ten executed host probes and twelve bounded Nomi
+   experiments. This extends evidence without accepting grammar extensions.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The
@@ -57,6 +61,9 @@ The consolidated corpus compared:
   Mathematica;
 - Pydantic, serde, Elm decoders, zod, CUE, Nickel, Dhall, Pkl, Terraform/HCL,
   JSON Schema, and OpenAPI;
+- layered YAML systems including Kubernetes, GitHub Actions, Helm, Kustomize,
+  Compose, GitLab CI, Azure Pipelines, Ansible and Argo; embedded query, policy,
+  pattern, template, build, grammar and modeling DSLs;
 - package managers, standard libraries, formatters, language servers,
   notebooks, browser playgrounds, build systems, deployment systems, and Wasm;
 - diagnostics, explanation, first-hour pedagogy, accessibility, AI-readable

@@ -38,6 +38,8 @@ For the evidence and unresolved forks behind those choices, read:
 8. [Data And Workflow Languages](research/data_workflows/README.md) and
    [Cross-Disciplinary Notation](research/notation_atlas.md): source forms,
    layered execution models, critical comparisons and bounded Nomi experiments.
+9. [DSLs And Strings](research/dsls/README.md): dedicated configuration and
+   string-boundary research, primary sources, observed probes and Nomi candidates.
 
 For the current repository and runtime, read:
 
@@ -179,6 +181,11 @@ This list is intentionally complete and is checked by tests.
 - [Data Source Forms](research/data_workflows/source_forms.md)
 - [Workflow Execution Models](research/data_workflows/execution_models.md)
 - [Data/Notation Synthesis And Experiments](research/data_workflows/nomi_candidates.md)
+- [DSL And String Research](research/dsls/README.md)
+- [Layered Configuration Languages](research/dsls/layered_configuration.md)
+- [Strings And Embedded Languages](research/dsls/strings_and_embedding.md)
+- [Nomi DSL Candidates And Experiments](research/dsls/nomi_candidates.md)
+- [Executed String-Boundary Probes](research/dsls/experiments.md)
 - [Cross-Disciplinary Notation Atlas](research/notation_atlas.md)
 - [Research Pressure Targets](design/targets/research/README.md)
 

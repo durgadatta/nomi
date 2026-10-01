@@ -188,6 +188,12 @@ through tooling. Many use cases should remain code generation or protocols.
 **Test:** deriving equality/codec, route tables, parser declarations, symbolic
 math, and eliminating boilerplate in data APIs.
 
+**DSL/string pressure:** [the dedicated dossier](dsls/README.md) compares typed
+libraries, explicitly parsed foreign DSL values and scoped notation. E1-E3/E7
+test literal preservation, typed construction and named checking guarantees
+before grammar extensibility. A foreign keyword or raw string is not evidence
+that a macro facility is needed; the existing scope/hygiene gate still applies.
+
 ## 13. Package Identity And Federation
 
 **Question:** How should organization/domain identity, mirrors, offline use,
@@ -260,6 +266,12 @@ reference-coordinate variants and aligned annotation/evidence. DW7 owns the
 local comparison; [workflow evidence](data_workflows/execution_models.md)
 adds partition/attempt/observation identities. This does not turn every diagram
 into the same executable graph or reopen core punctuation by analogy.
+
+**DSL/string pressure:** [source provenance research](dsls/strings_and_embedding.md)
+adds escapes, folding, indentation removal, included files and repeated
+expansion to the source/view problem. E6/E11 compare mapped inner diagnostics
+and incomplete drafts with the existing committed-value model; no new editable
+projection or exact inverse source mapping is claimed.
 
 ## Research Stop Rule
 
