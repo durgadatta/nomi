@@ -251,6 +251,16 @@ feature completion.
 
 ## 18. Research Should Now Be Program-Driven
 
+The [human-interaction edge extension](interfaces/edge_cases.md) follows this
+rule through shared invoice/import/cancellation programs and
+[composition experiments](interfaces/composition_cases.md). It adds original
+counterexamples where reset counters, converged merges, plausible sensor values,
+or identical displays conceal changed context. The
+[philosophical translation](cognition.md) asks which facts justify a claim;
+[local probes](interfaces/experiments.md) distinguish finite-model evidence from
+language conformance and usability. Breadth reveals pressures, while a bounded
+comparison must earn any change to the target.
+
 The old corpus is broad enough. Remaining uncertainty sits in specific design
 forks, not missing language families. The next unit of evidence is:
 

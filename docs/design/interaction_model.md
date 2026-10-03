@@ -17,6 +17,15 @@ and [cross-disciplinary notation](../research/notation_atlas.md) test whether
 sets, axes, model references and evidence relations fit this proposal. Their
 [research targets](targets/research/README.md) admit no new grammar or exports.
 
+The [human-computation edge atlas](../research/interfaces/edge_cases.md) adds
+96 pressure cases across 24 families, with
+[twelve composition cases and HX1-HX8](../research/interfaces/composition_cases.md)
+and [18 executed local probes](../research/interfaces/experiments.md).
+The [philosophical translation](../research/cognition.md) now distinguishes
+representation, interpretation, assumptions, all-path obligations, progress,
+situated repair, and agency. These sharpen this proposal; they accept no new
+syntax or production API and do not establish usability or conformance.
+
 ## Thesis And A Real Fork
 
 Nomi could be a checked computational medium whose meaning remains inspectable
@@ -43,6 +52,7 @@ structured-document experiment instead of forcing every interaction into text.
 | --- | --- | --- |
 | Source revision | Exact checked text/document and edition | Whatever is currently visible in an editor. |
 | Binding identity | Resolved declaration/reference relationship | A name string or screen position. |
+| Model incarnation | A particular object/history in which revisions have meaning | A revision counter reused after reset or a rendered label. |
 | Owned value | Nominal concept after validation | Raw form text, host object, or diagram coordinates. |
 | View | Projection of source/value/trace plus presentation state | Another independently authoritative program. |
 | Candidate change | Proposed operation against a known revision/target | A committed mutation or capability grant. |
@@ -54,6 +64,36 @@ Different identities serve different purposes. A domain row ID is not a source
 binding ID; a run ID is not a revision hash. Source-only edits do not necessarily
 change domain data, and a form input transaction does not necessarily rewrite
 the program. Every command must declare which object it changes.
+
+## Context And Evidence Pressure
+
+The extended invoice target gives Model and Edit an explicit incarnation value
+so a reset revision cannot revive a candidate from an old history. These Text
+values are fixture tokens, not accepted identity-generation or grant APIs.
+Domain identity, model incarnation, source revision, and run epoch remain
+different facts. A sorted row keeps its domain identity; restarting a model
+does not keep the old edit's validity merely because its revision number recurs.
+
+Two candidates remain open in [HX1](../research/interfaces/composition_cases.md):
+invalidate a proposal whenever its context changes, or selectively reprepare
+pure checked facts while revalidating all mutable preconditions. Name the actual
+read set and semantic owner rather than attach every possible context field to
+every command. No cached artifact contains replayable execution permission.
+Concrete capability enforcement, including revocation timing for running tasks,
+belongs to the effect/task owner.
+
+Evidence also has a context. A candidate record may distinguish source/inputs,
+analysis assumptions, observed host outcome, completeness, redaction scope,
+and truncation. Unknown external outcome is separate from local cancellation;
+partial inspection is separate from incomplete execution. Schema projection
+must identify omitted rules and cannot replace actual decoding. These are
+proposed envelope obligations, not a new universal evidence type in Core.
+
+Start [HX2](../research/interfaces/composition_cases.md) with captured read-only
+results. If a domain needs fresh inspection with effects, expose that as an
+explicit action. Opening a view cannot silently refresh host objects, queries,
+or live handles. P14 only tests an imposed snapshot policy; real adapters and
+privacy guarantees still need their own evidence.
 
 ## Candidate Architecture, Not Mandatory Core IR
 
@@ -180,6 +220,14 @@ views may wrap labels but cannot change the represented expression.
 | 5 | Tooling spike: one editable literal/input projection | Atomic/stale checks, undo distinction, comments/identity preservation | Arbitrary inverse guessing: remain read-only. |
 | 6 | Alternative-design spike if needed | Compare structured primary document on the same tasks and export requirements | No measurable reasoning benefit for added storage/merge cost. |
 | 7 | Promotion after settled contract | CLI/browser conformance, sample regression, fresh manifest and browser smoke | Any unsupported target fixture presented as runnable. |
+
+The [HX1-HX8 detail](../research/interfaces/composition_cases.md#prioritized-discriminators)
+refines these experiments with explicit candidate forks and stop conditions.
+The [real-file handoff](../research/interfaces/composition_cases.md#implementation-handoff)
+maps source artifacts, worker generations, result/event records, decode paths,
+host declarations, and editor/notebook adapters. The atlas and 18 local probes
+do not justify a new evaluator or waiting for every research family to close;
+promote one settled contract at a time under the existing D0-D7 gates.
 
 Use the existing [playground plan](../review/2026-09-29-github-playground-agentic-plan.md).
 No UI was built and no study was run here. A trial of six to eight varied users

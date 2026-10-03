@@ -150,6 +150,60 @@ GUI run, foreign-system execution, accessibility trial or target conformance is
 claimed. These results establish preserved supported surfaces, not research
 correctness or usability.
 
+### Human Computation Edge Extension, 2026-10-02
+
+The requested continuation follows the latest DSL boundary/model research,
+extending the existing packet rather than registering another authority. It
+adds [96 edge cases in 24 families](../research/interfaces/edge_cases.md),
+[twelve composition cases and HX1-HX8 comparisons](../research/interfaces/composition_cases.md),
+and [18 executed local probes](../research/interfaces/experiments.md) with a
+checked-in capture. The six additional families cover accessibility/attention,
+multilingual/multimodal input, embodied/spatial models, physical supervision,
+privacy/evidence, and learning/repair. All cases are original pressures and
+explicitly bounded, not claimed bugs or exhaustive human coverage.
+
+[Cognition](../research/cognition.md) now connects selected readings of Leibniz,
+Boole, Dijkstra, Peirce, Hoare, Turing, Shannon, Simon, Suchman, and earlier
+interface foundations to concrete artifact/command/library obligations. It
+separates historical claims, original inference, normative design judgment,
+and experiment. Leibniz's 1684 text is an adapted translation; Hoare's abstract
+and Dijkstra's comparison support a limited reading, not a reconstructed proof.
+Suchman's available author chapter summary was used; the 1985 report fetch
+failed. No universal philosophy of computation or usability claim follows.
+
+Observed counterexamples: numerical revisions can recur across model histories;
+valid concurrent edits can yield an invalid merged range; equal displayed
+values can conceal exact differences; value laws can change effect traces;
+an invariant can hold without completion; and a lost acknowledgment can follow
+a completed modeled action. Actual source/backend behavior is not inferred from
+those supplied finite models.
+
+The interaction proposal now exposes incarnation/context and incomplete-evidence
+pressure. Its target-only invoice fixture carries an incarnation and rejects an
+edit from another history even when revision numbers match; a second example
+keeps the same line ID after row reordering. These remain unparsed/untyped target
+examples. No supported interpreter, grammar, web asset, notebook, extension, or
+sample changes. The real-file handoff identifies existing structures and missing
+contracts, including the gap between worker termination and structured cleanup.
+
+HX1-HX8 own this extension's candidate details under the existing interaction
+experiment order and D0-D7 gates. No new core semantics or production public API
+is accepted. Local captures test proposed small-model rules; human studies,
+actual IME/accessibility trials, capability enforcement and remote/device
+integration remain unperformed.
+
+Validation for the October extension: 58 registered focused syntax/docs/matrix
+tests passed; all five design packets were coherent; probe-script lint and
+`git diff --check` passed. All 18 probes reproduced the captured JSON inputs,
+results, limits, and host metadata. An additional audit checked 24 interface/
+cognition/proposal documents, 134 local links and heading anchors, table widths,
+96 unique ordered case IDs, 24 family sections, twelve composition IDs, eight
+HX experiment IDs, and all probe-to-atlas references. The documentation inventory
+tests include the three new Markdown files. The ignored local RAG index was
+rebuilt. These checks do not typecheck the target, validate all external URLs,
+or establish human comprehension. The full suite, web/browser conformance and
+manual trials were not rerun for this research-only extension.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,
@@ -157,6 +211,12 @@ solver enumeration, and causal ordering expose different kinds of hidden state.
 They motivate a shared identity/change/epoch model, not a larger grammar.
 Leibniz/Boole/Dijkstra provide questions about representation, laws, and reasoning;
 they are not authorities endorsing specific Nomi choices.
+
+The October counterexamples add context beyond a counter: model incarnation,
+authority state, observation epoch, source coordinate unit, and reference frame.
+They also require evidence to distinguish an unchanged valid model from an
+invalid draft, a stopped local task from an unknown remote action, and a bounded
+explanation from a complete trace. The recommendation stays library/tool-first.
 
 ### Workflow Friction
 
@@ -166,12 +226,24 @@ Broad research also risks becoming another catalog without a discriminating
 program. Using the same invoice across representations keeps the comparison
 concrete while the overall import continues to expose industrial gaps.
 
+This extension also exposed a recurring risk of treating every numbered case as
+an implemented test. The atlas owns coverage, composition cases own discriminators,
+and the capture owns only its stated finite observations. Source fetch failures
+and abstract-only readings are retained as evidence limits rather than filled
+with an unsupported historical synthesis.
+
 ### Durable Improvement
 
 Correct active target routing, add one registered cognitive-interface packet,
 and give the design-first agenda ownership of cross-cutting closure gates.
 Use the existing feature registry for the bounded disposition migration rather
 than introduce another parallel list of language features.
+
+The October improvement is a reproducible local probe/capture with stable case
+IDs, explicit execution flags, and one real-file handoff. Registry/index routes
+point to it from the existing packet. This adds no new agent instructions,
+universal metadata framework, or runtime registry; removal is confined to the
+research extension and its target-only examples.
 
 ### Next Pass
 
@@ -180,3 +252,10 @@ Continue D1 using the [function packet](../design/function_contracts.md) and
 its three type-spelling candidates; resolve callback/generic/effect contracts
 using the specified functions;
 only after that promote a settled semantic slice toward CLI/browser conformance.
+
+For this extension, prepare HX1's proposal context/read-set contract or HX2's
+bounded evidence envelope using the existing result/event structures. Resolve
+the relevant D1-D3 obligations before production promotion, then replace one
+probe's supplied facts with real adapters and retain its stale/invalid/denied
+negative fixtures. C12 and HX3/HX8 need manual human/input trials; the local probe
+count does not close them.

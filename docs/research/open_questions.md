@@ -290,6 +290,15 @@ expansion to the source/view problem. E6/E11 compare mapped inner diagnostics
 and incomplete drafts with the existing committed-value model; no new editable
 projection or exact inverse source mapping is claimed.
 
+**Human interaction edges:** the [96-case atlas](interfaces/edge_cases.md) and
+[twelve composition cases](interfaces/composition_cases.md) sharpen this same
+question. HX1-HX8 compare proposal invalidation/repreparation, passive/refreshed
+inspection, draft/commit controls, bounded inverse edits, Stop evidence, source
+mapping, frame/control context, and interrupted-task comprehension. The
+[18 local probes](interfaces/experiments.md) exhibit counterexamples; they do
+not close those Nomi candidates or perform a human study. Keep ordinary APIs,
+library models, and view adapters ahead of notation; D1-D3 dependencies remain.
+
 ## Research Stop Rule
 
 The [September synthesis](../design/synthesis.md) orders these gates against

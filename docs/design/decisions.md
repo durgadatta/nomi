@@ -227,6 +227,13 @@ are **proposals, not accepted contracts**. Structured-document primary remains
 a competing candidate. The [design-first agenda](redesign_agenda.md) names
 broader gaps; it does not accept new keywords, inference rules, or APIs.
 
+The [interaction edge/composition extension](../research/interfaces/composition_cases.md)
+adds counterexamples and HX1-HX8 comparisons. Model incarnation, proposal
+repreparation, evidence completeness, and bounded inverse edits remain
+**proposed, not accepted**. Target-only invoice cases now include reset histories
+and row identity; executed local research models are not runnable Nomi conformance
+or a decision to change ordinary Bool, match ordering, effects, or `where`.
+
 The [function contract proposal](function_contracts.md) recommends testing
 pure-only strict collection callbacks before effect-polymorphic callbacks.
 This remains **open**: world effects, mutable captures, retained regions and

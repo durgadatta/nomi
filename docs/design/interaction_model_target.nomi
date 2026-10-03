@@ -4,6 +4,8 @@
 # Bridge: docs/review/2026-09-30-cognitive-interfaces.md
 # All collection, generated codec, and Result method APIs below are proposals.
 # No new syntax. Int precision/overflow and generic callback contracts are open.
+# Edge cases: docs/research/interfaces/edge_cases.md
+# Composition: docs/research/interfaces/composition_cases.md
 from std.collections import all_unique, filter, fold, map
 
 data Line:
@@ -20,6 +22,7 @@ data Invoice:
     where unique_line_ids(lines) note "line IDs must be unique"
 
 data Model:
+    incarnation: Text where incarnation.trim() != ""
     revision: Int where revision >= 0
     invoice: Invoice
 
@@ -48,10 +51,12 @@ data Change:
     SetQuantity(id: Text, quantity: Int)
 
 data Edit:
+    model_incarnation: Text
     base_revision: Int where base_revision >= 0
     change: Change
 
 data ChangeError:
+    WrongModel(expected: Text, actual: Text)
     Stale(expected: Int, actual: Int)
     UnknownLine(id: Text)
     NegativeQuantity(quantity: Int)
@@ -69,6 +74,11 @@ func replace_quantity(line: Line, id: Text, quantity: Int) -> Line:
 # 2. Production: a pure candidate change validates before constructing/committing.
 # This is an application model transaction, not source editing or database I/O.
 func apply_edit(model: Model, edit: Edit) -> Result[Model, ChangeError]:
+    if edit.model_incarnation != model.incarnation:
+        return Err(ChangeError.WrongModel(
+            expected=edit.model_incarnation,
+            actual=model.incarnation,
+        ))
     if edit.base_revision != model.revision:
         return Err(ChangeError.Stale(
             expected=edit.base_revision,
@@ -88,6 +98,7 @@ func apply_edit(model: Model, edit: Edit) -> Result[Model, ChangeError]:
                         (item) => replace_quantity(item, line.id, quantity),
                     )
                     return Ok(Model(
+                        incarnation=model.incarnation,
                         revision=model.revision + 1,
                         invoice=Invoice(lines=updated),
                     ))
@@ -108,15 +119,17 @@ func submit(model: Model, raw: Value) -> Result[Model, SubmissionError]:
         .map_error((error) => SubmissionError.Change(error))
 
 example "immutable commit does not replace the old snapshot":
-    before = Model(revision=7, invoice=Invoice(lines=[
+    before = Model(incarnation="invoice-a", revision=7, invoice=Invoice(lines=[
         Line(id="tea", label="Tea", quantity=2, unit_price_minor=400),
     ]))
     edit = Edit(
+        model_incarnation="invoice-a",
         base_revision=7,
         change=Change.SetQuantity(id="tea", quantity=3),
     )
     match apply_edit(before, edit):
         Ok(after):
+            check after.incarnation == before.incarnation
             check after.revision == 8
             check total_minor(after.invoice) == 1200
             check total_minor(before.invoice) == 800
@@ -124,8 +137,9 @@ example "immutable commit does not replace the old snapshot":
             panic("valid quantity edit failed: {error}")
 
 example "a stale request cannot silently target a newer model":
-    current = Model(revision=8, invoice=Invoice(lines=[]))
+    current = Model(incarnation="invoice-a", revision=8, invoice=Invoice(lines=[]))
     edit = Edit(
+        model_incarnation="invoice-a",
         base_revision=7,
         change=Change.SetQuantity(id="tea", quantity=3),
     )
@@ -137,8 +151,9 @@ example "a stale request cannot silently target a newer model":
             panic("stale edit was not diagnosed")
 
 example "invalid quantity is an expected request error":
-    current = Model(revision=8, invoice=Invoice(lines=[]))
+    current = Model(incarnation="invoice-a", revision=8, invoice=Invoice(lines=[]))
     edit = Edit(
+        model_incarnation="invoice-a",
         base_revision=8,
         change=Change.SetQuantity(id="tea", quantity=-1),
     )
@@ -148,12 +163,53 @@ example "invalid quantity is an expected request error":
         _:
             panic("negative quantity was not diagnosed")
 
+# The incarnation strings below are fixture data, not an identity-generation API.
+# Number-only revision checks are insufficient when history/session resets.
+example "a reset revision cannot revive a change from another model":
+    current = Model(incarnation="invoice-b", revision=1, invoice=Invoice(lines=[]))
+    edit = Edit(
+        model_incarnation="invoice-a",
+        base_revision=1,
+        change=Change.SetQuantity(id="tea", quantity=3),
+    )
+    match apply_edit(current, edit):
+        Err(ChangeError.WrongModel(expected, actual)):
+            check expected == "invoice-a"
+            check actual == "invoice-b"
+        _:
+            panic("a change crossed model incarnations")
+
+example "reordered rows retain the domain target":
+    current = Model(incarnation="invoice-a", revision=7, invoice=Invoice(lines=[
+        Line(id="cup", label="Cup", quantity=1, unit_price_minor=700),
+        Line(id="tea", label="Tea", quantity=2, unit_price_minor=400),
+    ]))
+    edit = Edit(
+        model_incarnation="invoice-a",
+        base_revision=7,
+        change=Change.SetQuantity(id="tea", quantity=3),
+    )
+    match apply_edit(current, edit):
+        Ok(after):
+            check after.invoice.lines[0].id == "cup"
+            check after.invoice.lines[0].quantity == 1
+            check after.invoice.lines[1].id == "tea"
+            check after.invoice.lines[1].quantity == 3
+        Err(error):
+            panic("identity-preserving edit failed: {error}")
+
 # Required external fixtures after codec wire formats are specified:
 # - Invalid quantity text: keep the raw draft; report a decode path, not panic.
 # - Duplicate line IDs: Invoice.decode accumulates a declaration constraint error.
 # - Unknown line ID: valid Edit decode, then ChangeError.UnknownLine.
 # - Sort the projected rows before editing: the same ID is still changed.
 # - A preview for revision 7 cannot authorize a source/model at revision 8.
+# - A parse-cache hit after grant revocation conveys no execution authority.
+# - Lost publication acknowledgment remains unknown after local Stop/Reset.
+# - IME composition and pointer cancellation preserve the draft without commit.
+# - A schema/view that omits a cross-field rule reports its partial guarantee.
+# - Source spans carry exact revision and byte/scalar/code-unit convention.
+# - A trace budget reports omitted events without implying incomplete execution.
 # - Source edit and input/model edit are separate command kinds.
 # - Opening any view emits no Network/File/Process action.
 # - Inspect an old result after an edit: preserve its source/input epoch.

@@ -12,6 +12,14 @@ extends the [44 language reviews](../languages/README.md) and
 representations of human computational acts, not as candidate syntax libraries.
 Sources were consulted on 2026-09-29/30. No usability trial was conducted.
 
+The 2026-10-02 continuation adds [96 edge cases across 24 families](edge_cases.md),
+[twelve composition cases and HX1-HX8 comparisons](composition_cases.md), and
+[18 executed local research probes](experiments.md). It deepens the philosophical
+readings in [cognition](../cognition.md) and maps hypotheses to current files.
+The added standards/papers have their own bounded evidence notes. This remains
+one packet; no human trial, production command adapter, or new evaluator is
+claimed.
+
 The [language-feature matrix](../language_feature_matrix.md) includes Excel and
 keyboard commands beside the 44 language columns, using these thread reviews
 as their evidence links. The other threads retain this separate interface map.
@@ -49,6 +57,22 @@ Named neighboring systems are a coverage map, not a claim that all their
 implementations were examined. Each thread bounds its checked evidence and
 marks extrapolation. Unverified neighbors remain experiment candidates.
 
+## Edge And Composition Dossier
+
+| Artifact | Owns | Does not establish |
+| --- | --- | --- |
+| [Edge atlas](edge_cases.md) | 96 numbered triggers, distinctions, falsifiers, six additional families and explicit gaps | Exhaustive human coverage or observed bugs in cited systems |
+| [Composition cases](composition_cases.md) | Twelve combined pressures, ordinary-call candidates, diagnostics, real-file handoff and HX1-HX8 | Accepted APIs, another project backlog, or an implemented interface |
+| [Executed probes](experiments.md) | Inputs, results, limits, reproduction and promotion rules | Nomi/browser/solver/device conformance or human comprehension |
+| [Probe script](probe_interactions.py) and [capture](probe_results.json) | Original finite models and named host observations with explicit execution flags | A shared runtime or universal interaction IR |
+
+Obvious entry cases include invalid quantity, stale revision, and row sorting.
+Less obvious compositions include incarnation reuse after reset, complete-looking
+schema projections with omitted constraints, observation that itself runs code,
+lost acknowledgments after Stop, changed coordinate frames, and valid values
+with stale control context. Philosophical readings connect those cases to
+discoverability, interpretation, preconditions, progress, evidence, and agency.
+
 ## Shared Extraction Method
 
 For each interface ask: what does the person know, select, combine, change,
@@ -68,8 +92,8 @@ threads and orders playground experiments. The
 
 ## Research Admission And Stop Rules
 
-Do not interpret breadth as an obligation to implement 18 products. Begin with
-the invoice target, pure transformation inspection, or Run/Stop. Compare two
+Do not interpret breadth as an obligation to implement one product per family.
+Begin with the invoice target, pure transformation inspection, or Run/Stop. Compare two
 representations under a deliberately invalid input, stale revision, and denied
 capability. Keep a new notation only when the long form has a demonstrated
 failure that tooling cannot repair adequately.

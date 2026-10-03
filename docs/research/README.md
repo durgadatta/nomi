@@ -26,7 +26,12 @@
    of cleanup carriers and supplied-fact escape policies; not runtime conformance.
 6. [Cognitive Foundations](cognition.md) and
    [Human-Computer Languages](interfaces/README.md) - the requested expansion
-   beyond conventional languages, with 18 bounded interface threads.
+   beyond conventional languages, with 18 bounded interface threads. The linked
+   [edge atlas](interfaces/edge_cases.md) extends coverage to 96 cases across
+   24 families; [composition experiments](interfaces/composition_cases.md)
+   connect philosophical questions to actionable contracts and current files.
+   [18 executed probes](interfaces/experiments.md) are original local models,
+   not Nomi/browser conformance or user studies.
 7. [Redesign Frontiers](design_frontiers.md) - primary evidence for eight further
    design pressures, from typed incomplete programs to qualified guarantees.
 8. [Data And Workflow Languages](data_workflows/README.md) and
@@ -76,7 +81,10 @@ The consolidated corpus compared:
   semantics, capabilities, secrets, supply-chain integrity, and governance.
 
 The interface expansion adds questions about representation, change, evidence,
-and time; it does not turn every interface into a new syntax proposal. Further
+and time. Its edge extension includes accessibility/attention, multilingual and
+multimodal input, tangible/spatial models, physical supervision, privacy/evidence,
+and learning/repair, with unresearched domains explicitly named. It does not turn
+every interface into a new syntax proposal. Further
 research should begin with a failed target program or unresolved experiment,
 using the [design-first agenda](../design/redesign_agenda.md) for coverage gaps.
 

@@ -41,8 +41,8 @@
       "topic": "Cognitive representations, semantic commands, and inspectable change",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-09-30",
-      "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation"],
+      "last_reviewed": "2026-10-02",
+      "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation", "corner cases", "edge cases", "human computation", "philosophy", "interaction composition", "accessibility", "IME", "physical control"],
       "artifacts": {
         "research": "docs/research/interfaces/README.md",
         "design": "docs/design/interaction_model.md",
@@ -62,6 +62,8 @@
         "pytest -n 0 prototype/tests/unit/syntax/test_target_direction.py prototype/tests/unit/syntax/test_feature_capabilities.py prototype/tests/unit/syntax/test_desugar_profiles.py",
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "pytest -n 0 prototype/tests/unit/tools/test_data_notation_research.py prototype/tests/unit/tools/test_research_matrices.py",
+        "python3 docs/research/interfaces/probe_interactions.py",
+        "ruff check docs/research/interfaces/probe_interactions.py",
         "python3 .codex/scripts/agent_doctor.py",
         "git diff --check"
       ],
@@ -69,6 +71,7 @@
         "Use redesign_agenda.md for live closure gates; D0 inspection is implemented independently of execution, with three unreviewed directions remaining.",
         "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
         "Use docs/research/data_workflows/nomi_candidates.md for DW1-DW8 order and data/notation pressure-program gates; do not start an engine before the description contracts close.",
+        "Use docs/research/interfaces/composition_cases.md for HX1-HX8: context/repreparation, bounded inspection, draft commands, inverse projection, Stop evidence, source maps, frame/control context and interrupted-task studies; the 18 local probes are motivating models, not Nomi conformance.",
         "Falsify interaction laws using text and read-only invoice projections before editable views or new notation.",
         "Run explicit stale/invalid/denied-capability and keyboard/IME/accessibility trials, then compare text-primary and structured-document alternatives if needed.",
         "Promote only a settled semantic slice through backend-neutral artifacts, CLI/browser conformance, supported samples and GitHub playground evidence."

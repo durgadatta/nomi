@@ -679,6 +679,10 @@ or notebook/result migrations as future work.
   and feature support in generated registry views.
 - Convert research to a candidate comparison, reference oracle and stop criterion;
   label source observations, Nomi inference and untested recommendations.
+- Use the [interaction edge/composition dossier](../research/interfaces/composition_cases.md)
+  for HX1-HX8, 96 pressure cases and the philosophy-to-implementation map.
+  Its 18 local probes motivate comparisons; D1-D3 and D5 still own semantic
+  prerequisites and human evidence. Do not count a model capture as a shipped tool.
 - Organize learning from current runnable examples with honest target comparisons;
   measure first-use/repair comprehension instead of claiming cognitive benefit.
 

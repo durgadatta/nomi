@@ -1,0 +1,757 @@
+{
+  "schema": "nomi.research.interaction-probes.v1",
+  "observed_on": "2026-10-02",
+  "python_version": "3.14.0rc3",
+  "unicode_version": "16.0.0",
+  "evidence_kind": "original finite models and named host observations",
+  "nomi_execution": false,
+  "browser_execution": false,
+  "device_execution": false,
+  "foreign_service_execution": false,
+  "probes": [
+    {
+      "id": "P01",
+      "name": "domain_identity",
+      "atlas_cases": [
+        "H01"
+      ],
+      "inputs": [
+        {
+          "id": "tea",
+          "label": "Tea",
+          "quantity": 2
+        },
+        {
+          "id": "cup",
+          "label": "Cup",
+          "quantity": 1
+        }
+      ],
+      "sorted_ids": [
+        "cup",
+        "tea"
+      ],
+      "counterexample": {
+        "position_target": "cup"
+      },
+      "candidate": {
+        "identity_target": "tea"
+      },
+      "limit": "two unique rows; no grid, source rename, or duplicate-ID decoder"
+    },
+    {
+      "id": "P02",
+      "name": "incarnation_revision",
+      "atlas_cases": [
+        "H70"
+      ],
+      "inputs": {
+        "prepared_for": {
+          "model": "invoice",
+          "incarnation": "session-a",
+          "revision": 1
+        },
+        "current": {
+          "model": "invoice",
+          "incarnation": "session-b",
+          "revision": 1
+        }
+      },
+      "counterexample": {
+        "revision_only_accepts": true
+      },
+      "candidate": {
+        "full_identity_accepts": false,
+        "outcome": "wrong_incarnation"
+      },
+      "limit": "explicit two-incarnation model; no UUID generation or production revision protocol"
+    },
+    {
+      "id": "P03",
+      "name": "draft_commit",
+      "atlas_cases": [
+        "H41"
+      ],
+      "inputs": {
+        "initial_quantity": 2,
+        "initial_revision": 7
+      },
+      "candidate": [
+        {
+          "raw_draft": "",
+          "decode": "error",
+          "committed_quantity": 2,
+          "revision": 7
+        },
+        {
+          "raw_draft": "-",
+          "decode": "error",
+          "committed_quantity": 2,
+          "revision": 7
+        },
+        {
+          "raw_draft": "3x",
+          "decode": "error",
+          "committed_quantity": 2,
+          "revision": 7
+        },
+        {
+          "raw_draft": "-1",
+          "decode": "error",
+          "committed_quantity": 2,
+          "revision": 7
+        },
+        {
+          "raw_draft": "3",
+          "decode": "ok",
+          "committed_quantity": 3,
+          "revision": 8
+        }
+      ],
+      "counterexample": {
+        "filter_invalid_text": "loses the useful minus-sign draft"
+      },
+      "limit": "toy input codec, not Nomi Int.parse/decode or an IME/form test"
+    },
+    {
+      "id": "P04",
+      "name": "inverse_projection",
+      "atlas_cases": [
+        "H15",
+        "H51"
+      ],
+      "inputs": {
+        "quantity_domain": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "price_domain": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "counterexample": {
+        "unique_inverse_from_total": false
+      },
+      "candidate": {
+        "inverse_candidates": {
+          "0": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "3": [
+            [
+              1,
+              3
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          "7": []
+        }
+      },
+      "limit": "exhaustive 16-pair integer model; no general inverse, solver, or source editing"
+    },
+    {
+      "id": "P05",
+      "name": "value_law_effect_trace",
+      "atlas_cases": [
+        "H66"
+      ],
+      "inputs": "false conjunction with a counted predicate",
+      "counterexample": {
+        "same_values": {
+          "false_first": false,
+          "effect_first": false
+        },
+        "different_traces": {
+          "false_first": [],
+          "effect_first": [
+            "external_observation"
+          ]
+        }
+      },
+      "candidate": "preserve short-circuit order unless resolved side conditions permit rewriting",
+      "limit": "Python short circuit with an in-memory counter, not a real effect or Nomi optimizer"
+    },
+    {
+      "id": "P06",
+      "name": "domain_and_evidence",
+      "atlas_cases": [
+        "H25",
+        "H27"
+      ],
+      "inputs": {
+        "universes": [
+          [
+            "cup",
+            "tea"
+          ],
+          [
+            "book",
+            "cup",
+            "tea"
+          ]
+        ],
+        "selected": [
+          "tea"
+        ],
+        "support_refutation": {
+          "neither": [
+            false,
+            false
+          ],
+          "supported": [
+            true,
+            false
+          ],
+          "refuted": [
+            false,
+            true
+          ],
+          "conflicting": [
+            true,
+            true
+          ]
+        }
+      },
+      "counterexample": {
+        "unqualified_complements": [
+          [
+            "cup"
+          ],
+          [
+            "book",
+            "cup"
+          ]
+        ],
+        "support_bit_loses_information": {
+          "neither": false,
+          "supported": true,
+          "refuted": false,
+          "conflicting": true
+        }
+      },
+      "candidate": "name the universe and preserve evidence status separately from core Bool",
+      "limit": "original four evidence records, no universal truth algebra or epistemic reasoner"
+    },
+    {
+      "id": "P07",
+      "name": "guarded_preconditions",
+      "atlas_cases": [
+        "H52"
+      ],
+      "inputs": {
+        "initial_states": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "branches": "decrement or increment once",
+        "postcondition": "result >= 0"
+      },
+      "counterexample": {
+        "some_branch_safe": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "unsafe_path": [
+          0,
+          -1
+        ]
+      },
+      "candidate": {
+        "every_branch_safe": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "limit": "two terminating transitions over five states; no predicate-transformer engine or unordered Nomi match"
+    },
+    {
+      "id": "P08",
+      "name": "invariant_and_progress",
+      "atlas_cases": [
+        "H29",
+        "H87"
+      ],
+      "inputs": {
+        "invariant": "remaining >= 0",
+        "completion": "remaining == 0",
+        "trace_budget": 4
+      },
+      "counterexample": {
+        "stutter_trace": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "invariant_holds": true,
+        "completed_within_budget": false
+      },
+      "candidate": {
+        "decreasing_trace": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "variant": "remaining"
+      },
+      "limit": "two supplied traces; no unbounded termination or fairness proof"
+    },
+    {
+      "id": "P09",
+      "name": "run_epoch_order",
+      "atlas_cases": [
+        "H04",
+        "H33"
+      ],
+      "inputs": {
+        "current_run": 5,
+        "replies": [
+          [
+            4,
+            "old"
+          ],
+          [
+            5,
+            "current"
+          ]
+        ]
+      },
+      "candidate_and_counterexample": [
+        {
+          "arrival_run_ids": [
+            4,
+            5
+          ],
+          "arrival_only_visible": "current",
+          "epoch_visible": "current",
+          "archived": [
+            {
+              "run_id": 4,
+              "value": "old"
+            },
+            {
+              "run_id": 5,
+              "value": "current"
+            }
+          ]
+        },
+        {
+          "arrival_run_ids": [
+            5,
+            4
+          ],
+          "arrival_only_visible": "old",
+          "epoch_visible": "current",
+          "archived": [
+            {
+              "run_id": 5,
+              "value": "current"
+            },
+            {
+              "run_id": 4,
+              "value": "old"
+            }
+          ]
+        }
+      ],
+      "limit": "both permutations of two supplied completions, no worker or async scheduler"
+    },
+    {
+      "id": "P10",
+      "name": "cached_authority",
+      "atlas_cases": [
+        "H47",
+        "H90"
+      ],
+      "inputs": {
+        "artifact": {
+          "source_digest": "source-a",
+          "requires": [
+            "publish"
+          ]
+        },
+        "prepared_grants": [
+          "publish"
+        ],
+        "current_grants": []
+      },
+      "counterexample": {
+        "cached_allowed": true
+      },
+      "candidate": {
+        "allowed_now": false,
+        "outcome": "denied",
+        "actions": 0
+      },
+      "limit": "set-membership policy model; no capability handles, revocation race, or actual authorization"
+    },
+    {
+      "id": "P11",
+      "name": "uncertain_action",
+      "atlas_cases": [
+        "H69",
+        "H72",
+        "H87"
+      ],
+      "inputs": {
+        "operation_id": "publication-1",
+        "original": {
+          "quantity": 2
+        },
+        "changed": {
+          "quantity": 3
+        }
+      },
+      "counterexample": {
+        "unknown_does_not_mean_no_action": "outcome_unknown",
+        "blind_new_key_resend_would_add_an_action": true
+      },
+      "candidate": {
+        "same_key_same_payload": "acknowledged_existing",
+        "same_key_new_payload": "payload_conflict",
+        "external_action_count_in_model": 1,
+        "local_stop": "requested",
+        "remote_outcome_after_lost_ack": "unknown"
+      },
+      "limit": "fake ledger imposes stable-key rules; no provider exactly-once or cancellation guarantee"
+    },
+    {
+      "id": "P12",
+      "name": "merged_invariant",
+      "atlas_cases": [
+        "H45"
+      ],
+      "inputs": {
+        "base": {
+          "minimum": 0,
+          "maximum": 10
+        },
+        "left": {
+          "minimum": 8,
+          "maximum": 10
+        },
+        "right": {
+          "minimum": 0,
+          "maximum": 5
+        }
+      },
+      "counterexample": {
+        "converged_merge": {
+          "minimum": 8,
+          "maximum": 5
+        },
+        "valid": false
+      },
+      "candidate": {
+        "committed": {
+          "minimum": 0,
+          "maximum": 10
+        },
+        "retained_invalid_draft": {
+          "minimum": 8,
+          "maximum": 5
+        },
+        "error": "minimum must not exceed maximum"
+      },
+      "limit": "original two-property merge, not Git/Automerge or a CRDT algorithm"
+    },
+    {
+      "id": "P13",
+      "name": "lossy_projection",
+      "atlas_cases": [
+        "H16",
+        "H40",
+        "H44"
+      ],
+      "inputs": {
+        "exact_values": [
+          "1.001",
+          "1.004"
+        ],
+        "source_rules": [
+          "maximum <= 10",
+          "minimum <= maximum",
+          "minimum >= 0"
+        ]
+      },
+      "counterexample": {
+        "same_display": [
+          "1.00",
+          "1.00"
+        ],
+        "omitted_rule": [
+          "minimum <= maximum"
+        ]
+      },
+      "candidate": {
+        "codec": "exact decimal text under a named policy",
+        "schema_projection_status": "partial",
+        "commit": "use actual rules"
+      },
+      "limit": "two decimals and supplied rule sets; no schema exporter, codec, or confidentiality theorem"
+    },
+    {
+      "id": "P14",
+      "name": "passive_bounded_inspection",
+      "atlas_cases": [
+        "H36",
+        "H64",
+        "H89"
+      ],
+      "inputs": {
+        "events": 5,
+        "budget": 3,
+        "view_opens": 4
+      },
+      "counterexample": {
+        "naive_getter_calls": 1,
+        "raw_payload_export_leaks_fixture": true
+      },
+      "candidate": {
+        "inspection_getter_calls": 0,
+        "projection": [
+          {
+            "id": "e1",
+            "kind": "input"
+          },
+          {
+            "id": "e2",
+            "kind": "decode"
+          },
+          {
+            "id": "e3",
+            "kind": "compute"
+          }
+        ],
+        "shown": 3,
+        "omitted": 2,
+        "complete_trace": false,
+        "fixture_secret_in_export": false
+      },
+      "limit": "one imposed redaction key and supplied snapshot; no host renderer or information-flow proof"
+    },
+    {
+      "id": "P15",
+      "name": "source_offset_units",
+      "atlas_cases": [
+        "H77",
+        "H78"
+      ],
+      "inputs": {
+        "prefix": "a\ud83d\ude00e\u0301",
+        "source_revision": "source-a"
+      },
+      "counterexample": {
+        "unqualified_offset_is_ambiguous": {
+          "utf8_bytes": 8,
+          "utf16_units": 5,
+          "unicode_scalars": 4
+        },
+        "visually_similar_sequences_have_different_codepoints": true
+      },
+      "candidate": {
+        "offset_unit": "utf8_bytes",
+        "offset": 8,
+        "source_revision": "source-a",
+        "converted_utf16_offset": 5
+      },
+      "limit": "Python encodings/NFC observation; no grapheme count, bidi renderer, identifier policy, or Nomi parser"
+    },
+    {
+      "id": "P16",
+      "name": "command_adapters",
+      "atlas_cases": [
+        "H09",
+        "H13",
+        "H76"
+      ],
+      "inputs": {
+        "events": [
+          {
+            "kind": "enter",
+            "composing": true
+          },
+          {
+            "kind": "pointer_cancel",
+            "composing": false
+          },
+          {
+            "kind": "activate",
+            "composing": false
+          }
+        ],
+        "command": {
+          "id": "set_quantity",
+          "target": "tea",
+          "base_revision": 7,
+          "quantity": 3
+        }
+      },
+      "counterexample": {
+        "naive_enter_runs_during_composition": 1
+      },
+      "candidate": {
+        "adapter_commands": {
+          "keyboard": {
+            "id": "set_quantity",
+            "target": "tea",
+            "base_revision": 7,
+            "quantity": 3
+          },
+          "pointer": {
+            "id": "set_quantity",
+            "target": "tea",
+            "base_revision": 7,
+            "quantity": 3
+          },
+          "palette": {
+            "id": "set_quantity",
+            "target": "tea",
+            "base_revision": 7,
+            "quantity": 3
+          },
+          "agent": {
+            "id": "set_quantity",
+            "target": "tea",
+            "base_revision": 7,
+            "quantity": 3
+          }
+        },
+        "dispatched": [
+          {
+            "id": "set_quantity",
+            "target": "tea",
+            "base_revision": 7,
+            "quantity": 3
+          }
+        ]
+      },
+      "limit": "supplied adapter/event records; no browser, IME, key-repeat, focus, or accessibility test"
+    },
+    {
+      "id": "P17",
+      "name": "reference_frame_change",
+      "atlas_cases": [
+        "H81"
+      ],
+      "inputs": {
+        "prepared": {
+          "frame": "room",
+          "epoch": 1,
+          "offset": 0,
+          "local_x": 2
+        },
+        "current_frame": {
+          "frame": "room",
+          "epoch": 2,
+          "offset": 10
+        }
+      },
+      "counterexample": {
+        "apply_old_coordinates_in_new_frame": 12
+      },
+      "candidate": {
+        "stale_frame_outcome": "reject_or_explicitly_reproject_and_revalidate",
+        "preserved_world_x": 2,
+        "new_local_x": -8
+      },
+      "limit": "one-dimensional translation with known transform; no WebXR, rotations, uncertainty, or real device"
+    },
+    {
+      "id": "P18",
+      "name": "control_context",
+      "atlas_cases": [
+        "H85",
+        "H86"
+      ],
+      "inputs": {
+        "samples": [
+          {
+            "id": "old",
+            "observed_at": 2,
+            "value": 5
+          },
+          {
+            "id": "fresh",
+            "observed_at": 9,
+            "value": 5
+          }
+        ],
+        "clock_now": 10,
+        "max_age": 2,
+        "prepared_mode": "auto"
+      },
+      "candidate_and_counterexample": [
+        {
+          "sample": "old",
+          "mode": "auto",
+          "range_only_accepts": true,
+          "context_accepts": false
+        },
+        {
+          "sample": "old",
+          "mode": "manual",
+          "range_only_accepts": true,
+          "context_accepts": false
+        },
+        {
+          "sample": "fresh",
+          "mode": "auto",
+          "range_only_accepts": true,
+          "context_accepts": true
+        },
+        {
+          "sample": "fresh",
+          "mode": "manual",
+          "range_only_accepts": true,
+          "context_accepts": false
+        }
+      ],
+      "limit": "imposed same-clock freshness/mode model; no clock drift, physics, actuator, or safety guarantee"
+    }
+  ]
+}

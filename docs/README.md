@@ -35,6 +35,10 @@ For the evidence and unresolved forks behind those choices, read:
    alongside [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
 7. [Cognitive Foundations](research/cognition.md) and
    [Human-Computer Languages](research/interfaces/README.md)
+   with the [human computation edge atlas](research/interfaces/edge_cases.md),
+   [composition experiments](research/interfaces/composition_cases.md), and
+   [executed local probes](research/interfaces/experiments.md): philosophical
+   ideas translated to contracts, counterexamples, and implementation handoffs.
 8. [Data And Workflow Languages](research/data_workflows/README.md) and
    [Cross-Disciplinary Notation](research/notation_atlas.md): source forms,
    layered execution models, critical comparisons and bounded Nomi experiments.
@@ -196,6 +200,9 @@ This list is intentionally complete and is checked by tests.
 ### Interface Threads
 
 - [Human-Computer Language Index](research/interfaces/README.md)
+- [Human Computation Edge Atlas](research/interfaces/edge_cases.md)
+- [Interaction Composition And Implementation Experiments](research/interfaces/composition_cases.md)
+- [Executed Interaction Boundary Probes](research/interfaces/experiments.md)
 - [Spreadsheets](research/interfaces/spreadsheets.md)
 - [Command Shells](research/interfaces/command_shells.md)
 - [Keyboard Commands](research/interfaces/keyboard_commands.md)
