@@ -736,6 +736,37 @@ def clock_domain_freshness():
     }
 
 
+def observationally_indistinguishable_outcomes():
+    worlds = [
+        {"loss": "request_before_delivery", "action_count": 0},
+        {"loss": "ack_after_action", "action_count": 1},
+    ]
+    visible = [
+        {
+            "operation_id": "publication-1",
+            "remote_outcome": "unknown",
+            "local_stop": "requested",
+        }
+        for _ in worlds
+    ]
+    counts = sorted({world["action_count"] for world in worlds})
+    assert visible[0] == visible[1] and counts == [0, 1]
+    return {
+        "inputs": {"hidden_worlds": worlds, "visible_observations": visible},
+        "counterexample": {
+            "same_observation_different_action_counts": True,
+            "always_no_action_is_wrong": True,
+            "always_completed_action_is_wrong": True,
+        },
+        "candidate": {
+            "visible_observation": visible[0],
+            "compatible_action_counts_in_model": counts,
+            "remote_action_count": "unknown",
+        },
+        "limit": "two supplied worlds with identical visible evidence; no transport simulation, provider reconciliation, pending/duplicate outcomes, actual cancellation, or human interpretation",
+    }
+
+
 PROBES = [
     ("P01", domain_identity, ["H01"]),
     ("P02", incarnation_revision, ["H70"]),
@@ -759,6 +790,7 @@ PROBES = [
     ("P20", review_scope_and_authority, ["H47", "H62", "H72", "H90"]),
     ("P21", history_identity_reuse, ["H14", "H46", "H70", "H71"]),
     ("P22", clock_domain_freshness, ["H53", "H55", "H85"]),
+    ("P23", observationally_indistinguishable_outcomes, ["H62", "H64", "H69", "H87"]),
 ]
 
 

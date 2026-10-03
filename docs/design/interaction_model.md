@@ -20,7 +20,7 @@ sets, axes, model references and evidence relations fit this proposal. Their
 The [human-computation edge atlas](../research/interfaces/edge_cases.md) adds
 96 pressure cases across 24 families, with
 [twelve composition cases and HX1-HX8](../research/interfaces/composition_cases.md)
-and [22 executed local probes](../research/interfaces/experiments.md).
+and [23 executed local probes](../research/interfaces/experiments.md).
 The [philosophical translation](../research/cognition.md) now distinguishes
 representation, interpretation, assumptions, all-path obligations, progress,
 situated repair, and agency. These sharpen this proposal; they accept no new
@@ -246,7 +246,7 @@ The [HX1-HX8 detail](../research/interfaces/composition_cases.md#prioritized-dis
 refines these experiments with explicit candidate forks and stop conditions.
 The [real-file handoff](../research/interfaces/composition_cases.md#implementation-handoff)
 maps source artifacts, worker generations, result/event records, decode paths,
-host declarations, and editor/notebook adapters. The atlas and 22 local probes
+host declarations, and editor/notebook adapters. The atlas and 23 local probes
 do not justify a new evaluator or waiting for every research family to close;
 promote one settled contract at a time under the existing D0-D7 gates.
 
@@ -262,3 +262,9 @@ now specifies seven tasks, supplied answer facts, counterbalancing, prediction
 and repair scoring, incident categories, and blocked-task reporting. It remains
 unperformed. Maintained research tests and capture verification establish the
 integrity of those documents and finite models, not empirical success.
+
+The [U01-U07 fixture set](../research/interfaces/study_cases.json) keeps supplied
+facts, hidden controls, and answer keys distinct. P23's identical observations
+with different hidden action outcomes guard against grading unknown as either
+definite success or definite non-action. Blocked tasks, assisted trials, and
+unassisted timings need separate reporting; no automatic grader is accepted.

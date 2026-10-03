@@ -18,7 +18,7 @@ python3 docs/research/interfaces/probe_interactions.py
 ```
 
 The [script](probe_interactions.py) uses only the Python standard library and
-executes 22 independent probes. Assertions check the stated counterexamples
+executes 23 independent probes. Assertions check the stated counterexamples
 and candidate rules; run without Python's `-O` option. It performs no network,
 process, browser, Nomi, device, or foreign solver execution. Optional `--output`
 writes a generated research capture; otherwise JSON goes to stdout.
@@ -28,7 +28,8 @@ Verify the checked-in capture without rewriting it:
 ```bash
 python3 docs/research/interfaces/probe_interactions.py \
     --check docs/research/interfaces/probe_results.json
-pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py
+pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py \
+    prototype/tests/unit/tools/test_interaction_study_research.py
 ```
 
 The checker reuses the capture's date for comparison and compares every field
@@ -45,7 +46,8 @@ python3 docs/research/interfaces/probe_interactions.py \
     --observed-on 2026-10-02 \
     --output docs/research/interfaces/probe_results.json
 ruff check docs/research/interfaces/probe_interactions.py \
-    prototype/tests/unit/tools/test_interaction_research.py
+    prototype/tests/unit/tools/test_interaction_research.py \
+    prototype/tests/unit/tools/test_interaction_study_research.py
 ```
 
 The date defaults to the local current date. Later captures should use their
@@ -81,6 +83,7 @@ not a public Nomi protocol or accepted runtime schema.
 | P20: review scope | Grant-only admits five of six actions; review-only admits two; both checks admit only the original reviewed action | H47/H62/H72/H90/C02/C07: current authority and required review scope are separate facts | Supplied exact-match policy; no real approval, person, authentication, one-shot use, or revocation-race enforcement |
 | P21: reused history | Incarnation/counter accepts a rewound history, a copied fork, and an unchanged model; supplied commit identity distinguishes the first two | H14/H46/H70/H71/C02/C07: restoring values is not restoring publication context | Three explicit comparisons; supplied tokens, no identity service or blanket ban on pure-result reuse |
 | P22: clock provenance | Numeric age marks three of five samples fresh; clock-aware rules mark only one fresh, two incomparable, one stale, one invalid future | H53/H55/H85/C11: subtract only comparable timestamp values | Imposed same-clock rule with no clock mapping/skew; no real synchronization, sensor trust, or safety |
+| P23: indistinguishable outcomes | Two supplied worlds expose identical unknown/Stop-requested observations but have zero versus one hidden action | H62/H64/H69/H87/C05/C12: grade inference from visible evidence, not secret truth | Two supplied worlds only; no actual transport, reconciliation, pending/duplicate events, or human study |
 
 The counterexamples are evidence against specific overbroad claims, not proof
 that the candidate is the only workable design. For example, P02 rejects
@@ -104,6 +107,13 @@ forks need distinct history context. Pure-result reuse can still be valid after
 explicit repreparation. P22 sharpens P18's same-clock limit: an incomparable
 observation is not known stale. A declared cross-clock mapping with uncertainty
 is another candidate, not an implicit subtraction of unrelated ticks.
+
+P23 adds a counterfactual control to P11's lost-acknowledgment case. Unknown
+does not mean no action, but it also does not mean certain completed action.
+The [study fixtures](study_cases.json) separate participant-visible facts from
+hidden facilitator controls and answer keys. Their integrity tests cannot
+establish that a real renderer keeps those facts separate or that people
+interpret them correctly; HX8 still needs an actual trial.
 
 ## Philosophy Connected To A Check
 

@@ -32,14 +32,14 @@ still owns generic/callback/effect typing. No helper here can create authority.
 | C02 | Reset + cached artifact + changed authority | H06, H47, H70, H71, H90 | P02, P10, P20, P21 |
 | C03 | Incomplete draft + IME + accessible command | H09, H13, H41, H73, H76, H79 | P03, P16 |
 | C04 | Inverse view + rounding + omitted constraint | H15, H16, H38, H40, H44 | P04, P13 |
-| C05 | Stop + lost response + changed retry | H29, H54, H69, H71, H72, H87 | P09, P11 |
+| C05 | Stop + lost response + changed retry | H29, H54, H69, H71, H72, H87 | P09, P11, P23 |
 | C06 | Algebraic rewrite + evidence domain + progress | H25, H49, H52, H66, H68 | P05, P06, P07, P08 |
 | C07 | Converged draft + domain invariant + reviewed proposal | H14, H30, H40, H45, H46, H47, H48, H63 | P02, P10, P12, P19, P20, P21 |
 | C08 | Reactive result + notebook history + late completion | H04, H33, H34, H35, H36 | P09, P14 |
-| C09 | Observation + privacy + bounded explanation | H24, H64, H74, H89, H91 | P14 |
+| C09 | Observation + privacy + bounded explanation | H24, H64, H74, H89, H91 | P14, P23 |
 | C10 | Internationalized input + source mapping + rename | H09, H42, H77, H78, H80 | P15, P16 |
 | C11 | Spatial projection + frame reset + stale control | H53, H55, H81, H82, H83, H85, H86, H88 | P17, P18, P22 |
-| C12 | Beginner success + interrupted work + model revision | H60, H62, H93, H94, H95, H96 | Human study required |
+| C12 | Beginner success + interrupted work + model revision | H60, H62, H93, H94, H95, H96 | Human study required; P23 checks one supplied control |
 
 ## C01. The Row Is The Same; The Source Is Not
 
@@ -190,6 +190,13 @@ Proposed diagnostic: `ACTION_OUTCOME_UNKNOWN`, with operation identity and
 available recovery, not "nothing happened." Removal gate: Stop/Undo or a retry
 wrapper implies external reversal. The local fake ledger in P11 imposes its own
 idempotency rule; it is not evidence any provider offers that rule.
+
+P23 supplies a missing epistemic control: a request lost before delivery and
+an acknowledgment lost after action have identical visible unknown/Stop-requested
+records but different hidden action counts. The capture exposes both worlds for
+research review; a study interface must not reveal the hidden count as evidence.
+Neither "nothing happened" nor "it definitely happened" follows. New provider
+evidence can refine that outcome; no universal reconciliation API is assumed.
 
 ## C06. Valid Algebra Can Be Invalid Execution
 
@@ -424,6 +431,23 @@ Use fresh snapshots for each task. The baseline invoice has tea quantity 2 at
 this toy model. Pre-register parallel fixtures and check their answers before
 using them to reduce repetition/learning effects.
 
+The [machine-readable stimuli and answer facts](study_cases.json) provide one
+versioned original U01-U07 set. They are preparation fixtures, not Nomi syntax,
+a public result schema, a human grader, or an executed study. Tests check their
+arithmetic, identity/draft/context controls, references, and evidence scope.
+Only each task's `provided` record is participant-visible: prompts and answer
+keys must not accidentally disclose `facilitator_only` or `expected` facts.
+Both conditions must receive the same supplied facts, not a richer explanation
+in the projected condition. Record any extra help as a treatment difference.
+
+U05 has two hidden-world controls with the same visible unknown observation:
+zero actions after lost delivery, one action after lost acknowledgment. P23
+checks that equivalence in the supplied model. Grade the uncertain answer, not
+the hidden truth. U06 has partial and complete trace controls; the full trace
+contains a handled failure hidden by the three-event projection. This prevents
+teaching that every shortened trace necessarily implies a failure, or that a
+completed execution necessarily supplies complete inspection.
+
 | Task | Prompt or perturbation | Answer facts required by the supplied model | Error to retain |
 | --- | --- | --- | --- |
 | U01: prediction | Change tea quantity to 3; predict before running | Tea becomes 1200, cup stays 700, total becomes 1900 | Wrong dependency or accidental cup change |
@@ -435,7 +459,9 @@ using them to reduce repetition/learning effects.
 | U07: transfer | Interrupt work, then request a second currency/domain | Recover the target/context; expose the fixed-currency assumption and revise the model before combining unlike amounts | Correct arithmetic used as evidence of the wrong domain |
 
 **Procedure:** record prior programming/domain experience and the participant's
-chosen input/assistive setup, using voluntary self-description. Obtain agreement
+chosen input/assistive setup, using voluntary self-description. Also record prior
+exposure to this public fixture/answer set; pre-register how exposed trials enter
+the analysis instead of quietly excluding them. Obtain agreement
 to the tasks and recording, allow stopping or declining a task, and use only
 fictional local data and fake publication events. Pre-register retention and
 access to study notes; avoid collecting client code, secrets, or unnecessary
@@ -449,7 +475,10 @@ person's initial interpretation and subsequent repair rather than only the final
 successful state. Include creation, review, and repair; do not treat experienced
 users as a substitute for novice or assistive-technology workflows.
 
-**Scoring and records:** for each answer record 2 for the required facts plus a
+**Scoring and records:** pre-register examples for each score and incident type,
+then independently code a subset and retain disagreements before reconciling
+them. Do not silently rewrite the rubric after discovering a preferred view.
+For each answer record 2 for the required facts plus a
 supported explanation, 1 for a correct answer with incomplete reasoning, and 0
 for an incorrect claim. Appropriate uncertainty counts as correct on U05/U06;
 confidence alone is not evidence. Separately record wrong-target, wrong-context,
@@ -464,6 +493,15 @@ blocked step. Keep a task blocked by focus/input/accessibility failure as a
 design outcome in that setup, not silently as an excluded participant. Publish
 pre-registered exclusions and limitations alongside results. Quotes/transcripts
 need the participant's agreed recording scope.
+
+Mark blocked/unattempted answers separately from incorrect answers; report
+both attempted and assigned denominators and the blocking reason. Do not infer
+that a blocker is caused by the representation alone: browser, assistive setup,
+content, training, and task framing are competing explanations. Check known
+barriers before recruitment and include baseline input/setup checks. Facilitated
+think-aloud observations and unassisted timing trials are different evidence;
+do not pool their task times into a speed claim. These controls refine the
+W3C-linked method limits, not an executed conformance assessment.
 
 **Decision gate:** retain B only if its new relationships are understood without
 losing identity, context, uncertainty, or agency; otherwise revise it or keep A.

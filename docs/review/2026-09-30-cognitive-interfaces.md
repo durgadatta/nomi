@@ -261,6 +261,31 @@ Validation: all 22 probe captures and 68 focused tests passed, along with
 packet, lint, and whitespace checks. Integration and human evidence are not
 inferred from the added model comparisons.
 
+#### Pass 2: Evidence And Study Method
+
+The method scan found a missing negative control: P11's modeled lost
+acknowledgment demonstrated action despite unknown outcome, but could teach
+that every unknown outcome implies action. P23 now supplies indistinguishable
+visible records for lost delivery versus lost acknowledgment, with zero/one
+hidden actions. Neither definite non-action nor definite completion follows.
+
+The [U01-U07 fixture set](../research/interfaces/study_cases.json) gives exact
+supplied prompts, inputs and answer facts, with facilitator-only worlds kept
+outside participant-visible records. Partial/complete trace controls distinguish
+execution completion from complete evidence. Eight new integrity tests check
+arithmetic, identity, drafts, history, uncertainty, traces, transfer and routing.
+They are not a renderer, human grader, usability result or conformance claim.
+
+The protocol now records rubric disagreements, answer-key exposure, assigned
+and attempted denominators, blocked-task causes, and assistance. W3C's method
+guidance distinguishes accessibility investigation from unassisted timing;
+those observations must not be pooled into a speed claim. Historical readings
+remain qualified and normative design inferences remain explicitly ours.
+
+Validation: 76 focused tests and all 23 captured probes passed; packet,
+lint and whitespace checks passed. Actual participants, UI/assistive adapters,
+authentic approval, transport and physical measurements remain unperformed.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,

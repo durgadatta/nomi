@@ -14,7 +14,7 @@ Sources were consulted on 2026-09-29/30. No usability trial was conducted.
 
 The 2026-10-02 continuation adds [96 edge cases across 24 families](edge_cases.md),
 [twelve composition cases and HX1-HX8 comparisons](composition_cases.md), and
-[22 executed local research probes](experiments.md). It deepens the philosophical
+[23 executed local research probes](experiments.md). It deepens the philosophical
 readings in [cognition](../cognition.md) and maps hypotheses to current files.
 The added standards/papers have their own bounded evidence notes. This remains
 one packet; no human trial, production command adapter, or new evaluator is
@@ -71,6 +71,7 @@ marks extrapolation. Unverified neighbors remain experiment candidates.
 | [Composition cases](composition_cases.md) | Twelve combined pressures, ordinary-call candidates, diagnostics, real-file handoff and HX1-HX8 | Accepted APIs, another project backlog, or an implemented interface |
 | [Executed probes](experiments.md) | Inputs, results, limits, reproduction and promotion rules | Nomi/browser/solver/device conformance or human comprehension |
 | [Probe script](probe_interactions.py) and [capture](probe_results.json) | Original finite models and named host observations with explicit execution flags | A shared runtime or universal interaction IR |
+| [Study fixtures](study_cases.json) | U01-U07 supplied stimuli, paired evidence controls and answer facts | Actual participants, real adapters, automatic grading, or human comprehension |
 
 Obvious entry cases include invalid quantity, stale revision, and row sorting.
 Less obvious compositions include incarnation reuse after reset, complete-looking

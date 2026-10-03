@@ -1,0 +1,390 @@
+{
+  "schema": "nomi.research.interaction-study.v1",
+  "status": "prepared_unperformed",
+  "human_execution": false,
+  "nomi_execution": false,
+  "browser_execution": false,
+  "scope": "Original local study stimuli and supplied-policy answer facts; not an interface, grader, or Nomi conformance schema.",
+  "conditions": [
+    {
+      "id": "A",
+      "representation": "text_and_plain_records",
+      "semantic_contract": "shared",
+      "command_contract": "shared"
+    },
+    {
+      "id": "B",
+      "representation": "same_text_and_read_only_table",
+      "semantic_contract": "shared",
+      "command_contract": "shared"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "U01",
+      "composition_cases": [
+        "C04",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H01",
+        "H96"
+      ],
+      "probe_ids": [
+        "P01"
+      ],
+      "prompt": "Predict each line total and the invoice total after changing tea quantity to 3, before Run.",
+      "provided": {
+        "lines": [
+          {
+            "id": "tea",
+            "quantity": 2,
+            "unit_price_minor": 400
+          },
+          {
+            "id": "cup",
+            "quantity": 1,
+            "unit_price_minor": 700
+          }
+        ],
+        "change": {
+          "id": "tea",
+          "quantity": 3
+        },
+        "currency": "fixed_fixture_currency"
+      },
+      "expected": {
+        "before_total": 1500,
+        "after_line_totals": {
+          "tea": 1200,
+          "cup": 700
+        },
+        "after_total": 1900
+      },
+      "critical_incidents": [
+        "wrong_target",
+        "wrong_dependency"
+      ]
+    },
+    {
+      "id": "U02",
+      "composition_cases": [
+        "C03",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H09",
+        "H41",
+        "H76"
+      ],
+      "probe_ids": [
+        "P03",
+        "P16"
+      ],
+      "prompt": "Enter each draft. Which raw text survives, and when may the committed quantity change?",
+      "provided": {
+        "initial_quantity": 2,
+        "initial_revision": 7,
+        "raw_drafts": [
+          "",
+          "-",
+          "3x",
+          "-1",
+          "3"
+        ],
+        "codec": "ASCII_unsigned_integer",
+        "commit": "explicit_after_successful_decode"
+      },
+      "expected": {
+        "raw_drafts_retained": [
+          "",
+          "-",
+          "3x",
+          "-1",
+          "3"
+        ],
+        "quantities_after_attempted_commit": [
+          2,
+          2,
+          2,
+          2,
+          3
+        ],
+        "revisions_after_attempted_commit": [
+          7,
+          7,
+          7,
+          7,
+          8
+        ]
+      },
+      "critical_incidents": [
+        "lost_draft",
+        "invalid_owned_value",
+        "implicit_action"
+      ]
+    },
+    {
+      "id": "U03",
+      "composition_cases": [
+        "C01",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H01",
+        "H73"
+      ],
+      "probe_ids": [
+        "P01"
+      ],
+      "prompt": "The view displays cup before tea. Change tea quantity to 3; predict which ID changes.",
+      "provided": {
+        "displayed_ids": [
+          "cup",
+          "tea"
+        ],
+        "selected_id": "tea",
+        "before_quantities": {
+          "tea": 2,
+          "cup": 1
+        },
+        "quantity": 3
+      },
+      "expected": {
+        "after_quantities": {
+          "tea": 3,
+          "cup": 1
+        }
+      },
+      "critical_incidents": [
+        "wrong_target",
+        "lost_focus"
+      ]
+    },
+    {
+      "id": "U04",
+      "composition_cases": [
+        "C02",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H70"
+      ],
+      "probe_ids": [
+        "P02",
+        "P21"
+      ],
+      "prompt": "The old edit and current model both say revision 1. May this change commit?",
+      "provided": {
+        "prepared_for": {
+          "incarnation": "invoice-a",
+          "revision": 1
+        },
+        "current": {
+          "incarnation": "invoice-b",
+          "revision": 1
+        },
+        "policy": "strict_same_committed_history"
+      },
+      "expected": {
+        "commit": false,
+        "reason": "different_history",
+        "current_model_unchanged": true
+      },
+      "critical_incidents": [
+        "wrong_context",
+        "partial_commit"
+      ]
+    },
+    {
+      "id": "U05",
+      "composition_cases": [
+        "C02",
+        "C05",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H47",
+        "H62",
+        "H69",
+        "H72",
+        "H87"
+      ],
+      "probe_ids": [
+        "P11",
+        "P20",
+        "P23"
+      ],
+      "prompt": "What can you infer about the publication? Does the existing review permit publishing the changed action?",
+      "provided": {
+        "publication_observation": {
+          "operation_id": "publication-1",
+          "remote_outcome": "unknown",
+          "local_stop": "requested"
+        },
+        "reviewed_action": {
+          "action": "publish",
+          "recipient": "team-a",
+          "payload_digest": "payload-a"
+        },
+        "changed_action": {
+          "action": "publish",
+          "recipient": "team-b",
+          "payload_digest": "payload-b"
+        },
+        "current_grant_allows_publish": true,
+        "review_policy": "exact_action"
+      },
+      "facilitator_only": {
+        "compatible_worlds": [
+          {
+            "request_arrived": false,
+            "action_count": 0
+          },
+          {
+            "request_arrived": true,
+            "action_count": 1,
+            "acknowledgment_lost": true
+          }
+        ]
+      },
+      "expected": {
+        "remote_action_count": "unknown",
+        "compatible_counts_in_supplied_worlds": [
+          0,
+          1
+        ],
+        "changed_action_review_matches": false,
+        "stop_proves_remote_reversal": false
+      },
+      "critical_incidents": [
+        "false_no_action",
+        "false_completed_action",
+        "reused_endorsement",
+        "false_reversal"
+      ]
+    },
+    {
+      "id": "U06",
+      "composition_cases": [
+        "C09",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H24",
+        "H64",
+        "H74",
+        "H89"
+      ],
+      "probe_ids": [
+        "P14"
+      ],
+      "prompt": "For each record, did execution finish, is the trace complete, and what can you infer about failures?",
+      "provided": {
+        "partial": {
+          "execution_complete": true,
+          "trace_total": 5,
+          "trace_shown": [
+            {
+              "id": "e1",
+              "kind": "start"
+            },
+            {
+              "id": "e2",
+              "kind": "input"
+            },
+            {
+              "id": "e3",
+              "kind": "compute"
+            }
+          ]
+        },
+        "complete": {
+          "execution_complete": true,
+          "trace_total": 5,
+          "trace_shown": [
+            {
+              "id": "e1",
+              "kind": "start"
+            },
+            {
+              "id": "e2",
+              "kind": "input"
+            },
+            {
+              "id": "e3",
+              "kind": "compute"
+            },
+            {
+              "id": "e4",
+              "kind": "handled_failure"
+            },
+            {
+              "id": "e5",
+              "kind": "completion"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "partial": {
+          "execution_complete": true,
+          "trace_complete": false,
+          "omitted": 2,
+          "all_failure_count": "unknown"
+        },
+        "complete": {
+          "execution_complete": true,
+          "trace_complete": true,
+          "omitted": 0,
+          "all_failure_count": 1
+        }
+      },
+      "critical_incidents": [
+        "false_evidence",
+        "confused_execution_and_inspection"
+      ]
+    },
+    {
+      "id": "U07",
+      "composition_cases": [
+        "C04",
+        "C12"
+      ],
+      "atlas_cases": [
+        "H38",
+        "H93",
+        "H95",
+        "H96"
+      ],
+      "probe_ids": [
+        "P13"
+      ],
+      "prompt": "After interruption, combine these invoice totals. Which domain decision is missing?",
+      "provided": {
+        "totals": [
+          {
+            "minor_units": 1500,
+            "currency": "USD"
+          },
+          {
+            "minor_units": 1000,
+            "currency": "EUR"
+          }
+        ],
+        "conversion_policy": null,
+        "original_model": "one_fixed_currency",
+        "policy": "do_not_sum_unlike_currencies_without_conversion"
+      },
+      "expected": {
+        "unqualified_sum_allowed": false,
+        "required_repair": "choose_a_currency_and_explicit_conversion_policy",
+        "arithmetic_sum_without_domain_meaning": 2500
+      },
+      "critical_incidents": [
+        "wrong_domain",
+        "lost_context"
+      ]
+    }
+  ]
+}

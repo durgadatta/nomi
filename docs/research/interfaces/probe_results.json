@@ -1285,6 +1285,58 @@
         "incomparable_is_not_known_stale": true
       },
       "limit": "five supplied clock records with no cross-clock mapping or skew allowance; no real monotonic clock, synchronization, suspend handling, sensor trust, or physical safety"
+    },
+    {
+      "id": "P23",
+      "name": "observationally_indistinguishable_outcomes",
+      "atlas_cases": [
+        "H62",
+        "H64",
+        "H69",
+        "H87"
+      ],
+      "inputs": {
+        "hidden_worlds": [
+          {
+            "loss": "request_before_delivery",
+            "action_count": 0
+          },
+          {
+            "loss": "ack_after_action",
+            "action_count": 1
+          }
+        ],
+        "visible_observations": [
+          {
+            "operation_id": "publication-1",
+            "remote_outcome": "unknown",
+            "local_stop": "requested"
+          },
+          {
+            "operation_id": "publication-1",
+            "remote_outcome": "unknown",
+            "local_stop": "requested"
+          }
+        ]
+      },
+      "counterexample": {
+        "same_observation_different_action_counts": true,
+        "always_no_action_is_wrong": true,
+        "always_completed_action_is_wrong": true
+      },
+      "candidate": {
+        "visible_observation": {
+          "operation_id": "publication-1",
+          "remote_outcome": "unknown",
+          "local_stop": "requested"
+        },
+        "compatible_action_counts_in_model": [
+          0,
+          1
+        ],
+        "remote_action_count": "unknown"
+      },
+      "limit": "two supplied worlds with identical visible evidence; no transport simulation, provider reconciliation, pending/duplicate outcomes, actual cancellation, or human interpretation"
     }
   ]
 }
