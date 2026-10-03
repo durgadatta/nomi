@@ -14,11 +14,17 @@ Sources were consulted on 2026-09-29/30. No usability trial was conducted.
 
 The 2026-10-02 continuation adds [96 edge cases across 24 families](edge_cases.md),
 [twelve composition cases and HX1-HX8 comparisons](composition_cases.md), and
-[18 executed local research probes](experiments.md). It deepens the philosophical
+[20 executed local research probes](experiments.md). It deepens the philosophical
 readings in [cognition](../cognition.md) and maps hypotheses to current files.
 The added standards/papers have their own bounded evidence notes. This remains
 one packet; no human trial, production command adapter, or new evaluator is
 claimed.
+
+The follow-up gap review adds maintained capture/link/reference checks,
+same-base publication and exact-review counterexamples, and an
+[HX8 task/scoring protocol](composition_cases.md#hx8-minimal-study-protocol).
+A valid immutable candidate is not a shared-state commit; current authority
+is not evidence of the person's endorsement of a changed action.
 
 The [language-feature matrix](../language_feature_matrix.md) includes Excel and
 keyboard commands beside the 44 language columns, using these thread reviews

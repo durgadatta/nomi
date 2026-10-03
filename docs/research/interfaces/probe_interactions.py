@@ -487,6 +487,125 @@ def control_context():
     }
 
 
+def checked_publish_interleavings():
+    base = {"incarnation": "invoice-a", "revision": 7, "quantity": 2}
+    requests = {"a": 3, "b": 4}
+    events = [(actor, phase) for actor in requests for phase in ("prepare", "publish")]
+    orders = [
+        order
+        for order in permutations(events)
+        if all(
+            order.index((actor, "prepare")) < order.index((actor, "publish"))
+            for actor in requests
+        )
+    ]
+
+    def run(order, guarded):
+        current = dict(base)
+        prepared = {}
+        accepted = []
+        outcomes = {}
+        for actor, phase in order:
+            same_base = all(
+                current[field] == base[field] for field in ("incarnation", "revision")
+            )
+            if phase == "prepare":
+                prepared[actor] = (
+                    {**base, "revision": 8, "quantity": requests[actor]}
+                    if same_base
+                    else None
+                )
+            elif prepared[actor] is None:
+                outcomes[actor] = "stale_at_prepare"
+            elif guarded and not same_base:
+                outcomes[actor] = "stale_at_publish"
+            else:
+                # The guarded branch imposes one indivisible compare-and-publish step.
+                current = prepared[actor]
+                accepted.append(actor)
+                outcomes[actor] = "accepted"
+        return {"accepted": accepted, "outcomes": outcomes, "final_model": current}
+
+    histories = [
+        {
+            "events": [f"{actor}_{phase}" for actor, phase in order],
+            "prepare_then_unconditional_publish": run(order, guarded=False),
+            "guarded_publish": run(order, guarded=True),
+        }
+        for order in orders
+    ]
+    unsafe = sum(
+        len(history["prepare_then_unconditional_publish"]["accepted"]) == 2
+        for history in histories
+    )
+    assert len(histories) == 6 and unsafe == 4
+    assert all(
+        len(history["guarded_publish"]["accepted"]) == 1 for history in histories
+    )
+    assert all(
+        history["guarded_publish"]["final_model"]["revision"] == 8
+        for history in histories
+    )
+    return {
+        "inputs": {"base": base, "requests": requests},
+        "histories": histories,
+        "counterexample": {"two_same_base_commits_in_unconditional_histories": unsafe},
+        "candidate": {"guarded_histories_with_exactly_one_commit": len(histories)},
+        "limit": "six two-command histories with an imposed atomic publication step; no threads, locks, database, crash recovery, ABA handling, or linearizability proof",
+    }
+
+
+def review_scope_and_authority():
+    reviewed = {
+        "action": "publish",
+        "recipient": "team-a",
+        "payload_digest": "payload-a",
+        "model_incarnation": "invoice-a",
+        "model_revision": 7,
+    }
+    cases = [
+        ("reviewed_action", reviewed, True, reviewed),
+        (
+            "changed_payload",
+            {**reviewed, "payload_digest": "payload-b"},
+            True,
+            reviewed,
+        ),
+        ("changed_recipient", {**reviewed, "recipient": "team-b"}, True, reviewed),
+        ("changed_model", {**reviewed, "model_revision": 8}, True, reviewed),
+        ("revoked_grant", reviewed, False, reviewed),
+        ("missing_review", reviewed, True, None),
+    ]
+    outcomes = [
+        {
+            "case": label,
+            "current_action": current,
+            "current_grant_allows": granted,
+            "review_scope_matches": approval == current,
+            "execute_under_imposed_policy": granted and approval == current,
+        }
+        for label, current, granted, approval in cases
+    ]
+    grant_only = sum(outcome["current_grant_allows"] for outcome in outcomes)
+    review_only = sum(outcome["review_scope_matches"] for outcome in outcomes)
+    accepted = [
+        outcome["case"]
+        for outcome in outcomes
+        if outcome["execute_under_imposed_policy"]
+    ]
+    assert grant_only == 5 and review_only == 2 and accepted == ["reviewed_action"]
+    return {
+        "inputs": {"review_scope": reviewed},
+        "outcomes": outcomes,
+        "counterexample": {
+            "grant_only_accepts": grant_only,
+            "review_only_accepts": review_only,
+        },
+        "candidate": {"current_grant_and_exact_review_accepts": accepted},
+        "limit": "six supplied records under an exact-review policy; no human comprehension, authentic approval, cryptography, capability executor, one-shot consumption, or in-flight revocation",
+    }
+
+
 PROBES = [
     ("P01", domain_identity, ["H01"]),
     ("P02", incarnation_revision, ["H70"]),
@@ -506,6 +625,8 @@ PROBES = [
     ("P16", command_adapters, ["H09", "H13", "H76"]),
     ("P17", reference_frame_change, ["H81"]),
     ("P18", control_context, ["H85", "H86"]),
+    ("P19", checked_publish_interleavings, ["H14", "H30", "H45"]),
+    ("P20", review_scope_and_authority, ["H47", "H62", "H72", "H90"]),
 ]
 
 
@@ -529,12 +650,54 @@ def report(observed_on):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--observed-on", type=date.fromisoformat, default=date.today())
-    parser.add_argument(
-        "--output", type=Path, help="write a generated research capture"
+    parser.add_argument("--observed-on", type=date.fromisoformat)
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--output", type=Path, help="write a generated research capture")
+    modes.add_argument(
+        "--check", type=Path, help="verify an existing capture without rewriting it"
     )
     args = parser.parse_args()
-    payload = json.dumps(report(args.observed_on), indent=2, ensure_ascii=True) + "\n"
+    if not __debug__:
+        parser.error("Run without Python's -O option; probe assertions are required.")
+    if args.check:
+        if args.observed_on:
+            parser.error("--observed-on is only used when producing a capture")
+        try:
+            captured = json.loads(args.check.read_text(encoding="utf-8"))
+            current = report(date.fromisoformat(captured["observed_on"]))
+            for field in ("python_version", "unicode_version"):
+                if not isinstance(captured[field], str) or not captured[field]:
+                    raise ValueError(f"missing reported {field}")
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            parser.error(f"Cannot read capture: {error}")
+
+        # Preserve historical host metadata; compare every other field and its JSON type.
+        versions = {"python_version", "unicode_version"}
+        expected = json.dumps(
+            {key: value for key, value in captured.items() if key not in versions},
+            sort_keys=True,
+        )
+        actual = json.dumps(
+            {key: value for key, value in current.items() if key not in versions},
+            sort_keys=True,
+        )
+        if expected != actual:
+            parser.error(
+                "Capture differs from current probes; review changed outcomes before updating it."
+            )
+        print(
+            f"Verified {len(PROBES)} local probes against {args.check}; "
+            f"captured Python {captured['python_version']}, Unicode {captured['unicode_version']}; "
+            f"current Python {current['python_version']}, Unicode {current['unicode_version']}"
+        )
+        return
+
+    payload = (
+        json.dumps(
+            report(args.observed_on or date.today()), indent=2, ensure_ascii=True
+        )
+        + "\n"
+    )
     if args.output:
         args.output.write_text(payload, encoding="utf-8")
         print(f"Captured {len(PROBES)} local probes in {args.output}")

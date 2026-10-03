@@ -213,6 +213,16 @@ invalid and stale requests and verify no partial change. **Limit:** validating
 today's input does not prove the business model is right, and checking a function
 result does not prove it terminates or is free of external effects.
 
+**Concurrency gap:** this sequential obligation needs an explicit operation
+boundary when state is shared. Herlihy and Wing's 1990 treatment of concurrent
+histories makes that distinction precise; it is a separate primary source,
+not a property attributed to Hoare's abstract.
+[Primary concurrent-object paper](https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf).
+P19 compares six prepare/publish orders under supplied rules. A valid immutable
+candidate can race with another candidate; an owner must enforce freshness at
+publication. The model proves no real implementation linearizable and promises
+no remote atomicity or fairness.
+
 ### Turing: Mechanical Procedures Have A Boundary
 
 Turing's 1936 work defines a machine model and establishes limits on general
@@ -315,6 +325,15 @@ contest, and revise a model. It is our design judgment, not a theorem derived
 from Leibniz or a requirement to ask permission for every reversible edit.
 In a multi-person tool, authorship, review, and execution authority can belong
 to different people; command records should not erase that difference.
+
+Review, comprehension, and authority are also distinct. If an application
+requires exact action review, broad `publish` permission cannot silently reuse
+endorsement after changing recipient, payload, or relevant model context.
+P20 tests a supplied exact-match rule; it cannot establish the review's
+authenticity or whether a person understood it. Explicit bounded automation is
+a competing policy, not an exception requiring a new language keyword. The
+[HX8 protocol](interfaces/composition_cases.md#hx8-minimal-study-protocol)
+makes agency and repair observable study questions rather than inferred virtues.
 
 ## Actionable Translation Map
 

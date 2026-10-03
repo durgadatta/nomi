@@ -373,6 +373,13 @@ The [twelve composition cases](composition_cases.md) define forks, long forms,
 diagnostic facts, and removal gates for these combinations. A family appearing
 here does not earn an engine, a keyword, or a graphical editor.
 
+The follow-up review sharpens H14/H30/H45: two immutable candidates can each
+pass validation yet race at shared publication. P19 compares all six orders in
+its two-command model; owner-enforced publication remains an HX1 contract.
+H47/H62/H72/H90 also compose into a review-scope problem: permission to publish
+does not establish review of the newly changed payload or recipient. P20 tests
+an imposed exact-review rule, not authentic approval or human understanding.
+
 ## Gaps And Next Discovery Triggers
 
 Not independently researched here: brain/computer interfaces, haptic protocols,

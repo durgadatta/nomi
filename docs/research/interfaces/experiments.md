@@ -18,16 +18,34 @@ python3 docs/research/interfaces/probe_interactions.py
 ```
 
 The [script](probe_interactions.py) uses only the Python standard library and
-executes 18 independent probes. Assertions check the stated counterexamples
+executes 20 independent probes. Assertions check the stated counterexamples
 and candidate rules; run without Python's `-O` option. It performs no network,
 process, browser, Nomi, device, or foreign solver execution. Optional `--output`
 writes a generated research capture; otherwise JSON goes to stdout.
+
+Verify the checked-in capture without rewriting it:
+
+```bash
+python3 docs/research/interfaces/probe_interactions.py \
+    --check docs/research/interfaces/probe_results.json
+pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py
+```
+
+The checker reuses the capture's date for comparison and compares every field
+except the reported Python and Unicode versions. Those historical versions are
+preserved and displayed beside the current host versions. The probe outcomes,
+bounds, inputs, IDs, and execution flags must still agree, including their JSON
+types. A changed outcome fails the check; review the evidence before updating
+the capture. Running with `-O` is rejected rather than silently skipping asserts.
+The tests also check case/probe/composition references, local links and anchors,
+and table structure. These are research-integrity checks, not usability tests.
 
 ```bash
 python3 docs/research/interfaces/probe_interactions.py \
     --observed-on 2026-10-02 \
     --output docs/research/interfaces/probe_results.json
-ruff check docs/research/interfaces/probe_interactions.py
+ruff check docs/research/interfaces/probe_interactions.py \
+    prototype/tests/unit/tools/test_interaction_research.py
 ```
 
 The date defaults to the local current date. Later captures should use their
@@ -59,6 +77,8 @@ not a public Nomi protocol or accepted runtime schema.
 | P16: adapters | Supplied adapters carry the same command; composition Enter and pointer cancel dispatch none | H09/H76/C03: modality requests an explicit semantic command | Imposed finite policy; no actual adapter, IME, accessibility or focus test |
 | P17: frame reset | Old local x=2 becomes world x=12 under the changed offset; explicit reprojection restores world x=2 | H81/C11: frame epoch belongs to the proposal | Known 1-D translation only; no XR tracking or calibration error |
 | P18: control context | Range-only accepts all four sample/mode pairs; freshness/mode rule accepts one | H85/H86/C11: value validity does not establish current intervention context | Imposed same-clock policy; no physical safety or sensor/device test |
+| P19: publication race | Four of six prepare/publish orders accept two edits against one base under unconditional publication; the guarded step accepts one in all six | H14/H30/H45/C07: candidate validity needs an owner-enforced publication boundary | Two commands and an imposed indivisible compare-and-publish step; no real concurrency, crash, ABA, or linearizability proof |
+| P20: review scope | Grant-only admits five of six actions; review-only admits two; both checks admit only the original reviewed action | H47/H62/H72/H90/C02/C07: current authority and required review scope are separate facts | Supplied exact-match policy; no real approval, person, authentication, one-shot use, or revocation-race enforcement |
 
 The counterexamples are evidence against specific overbroad claims, not proof
 that the candidate is the only workable design. For example, P02 rejects
@@ -68,6 +88,14 @@ draft. P16 demonstrates an imposed command policy, not correctness of the
 browser's existing keyboard handler. Local models cannot establish what a human
 understands; C12 still needs a study.
 
+P19 tests one possible strict-freshness publication rule, not a mandate to use
+compare-and-swap in every library. A serialized owner is another candidate.
+P20 assumes this application requires exact action review: other applications
+can explicitly authorize a bounded class of automatic actions. It tests neither
+the person's understanding nor whether a review record is authentic. A pure
+model function, a current grant, and a genuine human endorsement are not the
+same guarantee.
+
 ## Philosophy Connected To A Check
 
 Leibniz's concern with discoverable relations becomes the question of whether a
@@ -76,7 +104,9 @@ Boole's interpretation/domain pressure motivates universe/evidence distinctions
 (P05/P06). Dijkstra's precondition/progress pressure motivates all-path and
 completion distinctions (P07/P08). Peirce motivates observing the difference
 between candidate rules; Hoare motivates unchanged state on rejection.
-These are original engineering translations, explained and sourced in
+The gap review adds a publication-history question (P19) and an endorsement
+scope question (P20); neither is settled by a sequential postcondition or an
+"allowed" bit. These are original engineering translations, explained and sourced in
 [cognition](../cognition.md), not reconstructions of those authors' formal systems.
 
 No philosophical authority can turn the pass count into proof of intent,

@@ -204,6 +204,42 @@ rebuilt. These checks do not typecheck the target, validate all external URLs,
 or establish human comprehension. The full suite, web/browser conformance and
 manual trials were not rerun for this research-only extension.
 
+### Follow-Up Gap Review, 2026-10-02
+
+After the expansion checkpoint, the requested review found three concrete
+preparation gaps: one-off audits did not protect captures over time; immutable
+snapshot validation did not specify shared-state publication; and review could
+be mistaken for current execution authority. The extension now has
+[maintained integrity tests](../../prototype/tests/unit/tools/test_interaction_research.py),
+non-writing capture verification, and two more bounded models, P19/P20.
+
+P19 enumerates six two-command prepare/publish orders. Four accept both
+same-base candidates under unconditional publication; an imposed atomic guard
+accepts exactly one in all six. P20 separately checks an imposed exact-review
+scope and a current grant across six supplied records. Neither proves real
+publication, authentic approval, comprehension, crash recovery, or revocation
+timing. Herlihy/Wing and MITRE supply the operation-history/race distinction;
+W3C evaluation guidance bounds accessibility study claims. Sources and limits
+are linked from the research, not promoted as accepted language policy.
+
+The target-only invoice now demonstrates two valid immutable successor
+candidates from one snapshot, explicitly without publishing either. HX1 owns
+the serialized-owner/guarded-publication choice and review-scope dependency.
+The [HX8 protocol](../research/interfaces/composition_cases.md#hx8-minimal-study-protocol)
+adds U01-U07 supplied answer facts, prediction/repair scoring, counterbalanced
+conditions, fictional data, incident records, and reporting of blocked input
+paths. It remains unperformed and cannot be scored as empirical validation.
+
+The registered check now compares every capture field except historical host
+version strings, displays original and current versions, and rejects changed
+outcomes, execution flags, or use of Python `-O`. It never rewrites a capture.
+The tests preserve ordered IDs, references, local links/anchors, and table shape.
+No current runtime, parser, supported sample, or UI behavior changes.
+
+Validation: 68 focused syntax/docs/research tests passed, including ten new
+checks; all 20 probes verified against the capture; packet, target-direction,
+lint, and whitespace checks passed. Real browser/human trials remain unperformed.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,
@@ -217,6 +253,9 @@ authority state, observation epoch, source coordinate unit, and reference frame.
 They also require evidence to distinguish an unchanged valid model from an
 invalid draft, a stopped local task from an unknown remote action, and a bounded
 explanation from a complete trace. The recommendation stays library/tool-first.
+
+The follow-up makes publication history and review scope observable in P19/P20;
+they cannot be inferred from a valid candidate or broad capability category.
 
 ### Workflow Friction
 
@@ -232,6 +271,10 @@ and the capture owns only its stated finite observations. Source fetch failures
 and abstract-only readings are retained as evidence limits rather than filled
 with an unsupported historical synthesis.
 
+One-off integrity checks also lacked a durable replay path. The new capture
+checker retains historical versions while comparing outcomes; a differing host
+version alone is not falsely reported as differing semantics.
+
 ### Durable Improvement
 
 Correct active target routing, add one registered cognitive-interface packet,
@@ -244,6 +287,9 @@ IDs, explicit execution flags, and one real-file handoff. Registry/index routes
 point to it from the existing packet. This adds no new agent instructions,
 universal metadata framework, or runtime registry; removal is confined to the
 research extension and its target-only examples.
+
+The follow-up adds ten maintained research-integrity tests and a non-writing
+`--check` mode to the existing script, plus a concrete unperformed HX8 protocol.
 
 ### Next Pass
 
@@ -259,3 +305,6 @@ the relevant D1-D3 obligations before production promotion, then replace one
 probe's supplied facts with real adapters and retain its stale/invalid/denied
 negative fixtures. C12 and HX3/HX8 need manual human/input trials; the local probe
 count does not close them.
+
+Carry P19's publication boundary and P20's review scope into HX1; use the
+prepared U01-U07 protocol only after the compared views expose the same facts.

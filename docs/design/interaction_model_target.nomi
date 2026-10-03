@@ -73,6 +73,9 @@ func replace_quantity(line: Line, id: Text, quantity: Int) -> Line:
 
 # 2. Production: a pure candidate change validates before constructing/committing.
 # This is an application model transaction, not source editing or database I/O.
+# apply_edit returns a snapshot candidate, not an atomic shared-state publication.
+# A serialized owner or guarded publication must enforce freshness at commit.
+# Incarnation/revision identify one committed history; copied forks need more identity.
 func apply_edit(model: Model, edit: Edit) -> Result[Model, ChangeError]:
     if edit.model_incarnation != model.incarnation:
         return Err(ChangeError.WrongModel(
@@ -198,12 +201,43 @@ example "reordered rows retain the domain target":
         Err(error):
             panic("identity-preserving edit failed: {error}")
 
+example "two valid snapshot candidates do not establish a shared commit":
+    before = Model(incarnation="invoice-a", revision=7, invoice=Invoice(lines=[
+        Line(id="tea", label="Tea", quantity=2, unit_price_minor=400),
+    ]))
+    left = Edit(
+        model_incarnation="invoice-a",
+        base_revision=7,
+        change=Change.SetQuantity(id="tea", quantity=3),
+    )
+    right = Edit(
+        model_incarnation="invoice-a",
+        base_revision=7,
+        change=Change.SetQuantity(id="tea", quantity=4),
+    )
+    match apply_edit(before, left):
+        Ok(left_candidate):
+            match apply_edit(before, right):
+                Ok(right_candidate):
+                    check left_candidate.revision == 8
+                    check right_candidate.revision == 8
+                    check total_minor(left_candidate.invoice) == 1200
+                    check total_minor(right_candidate.invoice) == 1600
+                    check before.revision == 7
+                    check total_minor(before.invoice) == 800
+                Err(error):
+                    panic("valid right candidate failed: {error}")
+        Err(error):
+            panic("valid left candidate failed: {error}")
+
 # Required external fixtures after codec wire formats are specified:
 # - Invalid quantity text: keep the raw draft; report a decode path, not panic.
 # - Duplicate line IDs: Invoice.decode accumulates a declaration constraint error.
 # - Unknown line ID: valid Edit decode, then ChangeError.UnknownLine.
 # - Sort the projected rows before editing: the same ID is still changed.
 # - A preview for revision 7 cannot authorize a source/model at revision 8.
+# - Two candidates from revision 7 cannot both publish as the current revision 8.
+# - Changed review target/payload does not inherit exact-action endorsement.
 # - A parse-cache hit after grant revocation conveys no execution authority.
 # - Lost publication acknowledgment remains unknown after local Stop/Reset.
 # - IME composition and pointer cancellation preserve the draft without commit.

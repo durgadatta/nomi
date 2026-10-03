@@ -28,13 +28,13 @@ still owns generic/callback/effect typing. No helper here can create authority.
 
 | Case | Main composition | Atlas cases | Local motivating probes |
 | --- | --- | --- | --- |
-| C01 | Sort + collaboration + source-directed repair | H01, H22, H23, H45, H77 | P01, P12, P15 |
-| C02 | Reset + cached artifact + changed authority | H06, H47, H70, H90 | P02, P10 |
+| C01 | Sort + collaboration + source-directed repair | H01, H22, H23, H45, H77 | P01, P12, P15, P19 |
+| C02 | Reset + cached artifact + changed authority | H06, H47, H70, H90 | P02, P10, P20 |
 | C03 | Incomplete draft + IME + accessible command | H09, H13, H41, H73, H76, H79 | P03, P16 |
 | C04 | Inverse view + rounding + omitted constraint | H15, H16, H38, H40, H44 | P04, P13 |
 | C05 | Stop + lost response + changed retry | H29, H54, H69, H71, H72, H87 | P09, P11 |
 | C06 | Algebraic rewrite + evidence domain + progress | H25, H49, H52, H66, H68 | P05, P06, P07, P08 |
-| C07 | Converged draft + domain invariant + reviewed proposal | H40, H45, H46, H48, H63 | P02, P10, P12 |
+| C07 | Converged draft + domain invariant + reviewed proposal | H14, H30, H40, H45, H46, H47, H48, H63 | P02, P10, P12, P19, P20 |
 | C08 | Reactive result + notebook history + late completion | H04, H33, H34, H35, H36 | P09, P14 |
 | C09 | Observation + privacy + bounded explanation | H24, H64, H74, H89, H91 | P14 |
 | C10 | Internationalized input + source mapping + rename | H09, H42, H77, H78, H80 | P15, P16 |
@@ -101,6 +101,14 @@ evidence claims. An artifact hash is identity, not proof of permission.
 Removal gate: a cache or macro can restore authority without the executor's
 current enforcement. Runtime revocation timing remains with the effect/task
 contracts; this experiment does not select a new grant syntax.
+
+Where application policy requires review, retain its actual scope: action,
+recipient, payload, and relevant model facts. A current `publish` grant does
+not establish that the person reviewed a changed recipient or payload. Compare
+exact-proposal review with an explicitly bounded automatic-action policy;
+neither can turn review into a capability. P20 only imposes the first policy.
+Approval authenticity, expiration/consumption, delegation, and in-flight
+revocation remain separate dependencies, not properties of a digest or button.
 
 ## C03. The Invalid Draft Is Useful Information
 
@@ -234,6 +242,30 @@ valid committed model. Removal gate: a green merge/check indicator conflates
 transport convergence with domain validity. Intent/priority arbitration remains
 application policy, not a rule silently embedded in the editor or language.
 
+There is also a publication race before any merge. Two calls to the invoice's
+pure `apply_edit` can return valid revision-8 candidates from revision 7.
+Returning `Ok` does not publish either one to shared state. In P19, four of six
+prepare/publish orders accept both candidates if publication is unconditional.
+An imposed atomic revision check at publication accepts one in all six orders.
+
+Compare a serialized model owner with version-guarded publication. Specify the
+operation boundary, target incarnation, read set, response, and unchanged state
+on rejection. A strict-freshness owner must not acknowledge two successors of
+the same committed base as if both were the current revision. Forked histories
+need distinct branch/commit identity; copying the incarnation and revision
+counter alone does not distinguish them. No locks, storage, or identity service
+are implemented here.
+
+Herlihy and Wing supply a primary treatment of concurrent histories and
+linearizability, not a proof of this candidate. The paper's operation-history
+boundary is the distinction needed beyond a sequential pre/postcondition.
+[Primary paper, introduction and section 2](https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf).
+MITRE also describes the broader
+[time-of-check/time-of-use failure pattern](https://cwe.mitre.org/data/definitions/367.html).
+This is a research counterexample, not a discovered vulnerability in Nomi.
+Local publication does not atomically commit a remote action or settle grant
+revocation timing; those still belong to the executor/resource contracts.
+
 ## C08. A Notebook Is A History, Not Only A Graph
 
 Change a pure invoice input while an import is running. Restart the worker, then
@@ -356,6 +388,76 @@ uncertainty or removing user choice, return to its contract. If all views expose
 the wrong domain assumptions, revise the model first. Philosophy motivates the
 question; participants and domain facts can falsify the design recommendation.
 
+### HX8 Minimal Study Protocol
+
+Status: proposed formative protocol; no participants, interface trial, or
+statistical result. This closes a preparation gap, not HX8's empirical question.
+The tasks and scoring below are original Nomi study design. W3C recommends
+involving people with disabilities while retaining standards-based evaluation;
+individual user results do not establish general accessibility.
+[W3C evaluation guidance](https://www.w3.org/WAI/test-evaluate/involving-users/).
+
+**Conditions and prerequisites:** compare A, text plus plain result/diagnostic
+records, with B, the same source/results plus a read-only named-input table.
+Both expose identical semantic facts and use the same commands and evidence.
+An editable projection is a later condition only after its supported subset
+and commit contract exist. A mockup may study interpretation of supplied facts;
+it cannot establish execution or adapter conformance. Do not run an ambiguous
+or inconsistent fixture and score the resulting confusion as a participant bug.
+
+Use fresh snapshots for each task. The baseline invoice has tea quantity 2 at
+400 minor units and cup quantity 1 at 700, total 1500. Currency is fixed outside
+this toy model. Pre-register parallel fixtures and check their answers before
+using them to reduce repetition/learning effects.
+
+| Task | Prompt or perturbation | Answer facts required by the supplied model | Error to retain |
+| --- | --- | --- | --- |
+| U01: prediction | Change tea quantity to 3; predict before running | Tea becomes 1200, cup stays 700, total becomes 1900 | Wrong dependency or accidental cup change |
+| U02: draft repair | Enter blank, minus sign, `3x`, then valid 3 | Raw drafts survive; committed quantity stays 2 until explicit valid commit | Lost draft, invalid owned value, unintended execution |
+| U03: identity | Display cup before tea, then edit tea | Same tea ID changes; cup quantity stays 1 | Positional retargeting |
+| U04: context | Apply a revision-1 edit from invoice-a to revision-1 invoice-b | Different history rejects; invoice-b remains unchanged | Number-only freshness or partial commit |
+| U05: responsibility | Review a publication, lose its acknowledgment, then change recipient/payload | Previous external outcome remains unknown; current grant alone cannot satisfy the imposed exact-review policy | False no-action/undo claim or reused endorsement |
+| U06: evidence | Show three of five trace events beside a completed result | Two events are omitted; partial explanation alone proves neither absent failures nor incomplete execution | Complete-proof claim from the shortened trace |
+| U07: transfer | Interrupt work, then request a second currency/domain | Recover the target/context; expose the fixed-currency assumption and revise the model before combining unlike amounts | Correct arithmetic used as evidence of the wrong domain |
+
+**Procedure:** record prior programming/domain experience and the participant's
+chosen input/assistive setup, using voluntary self-description. Obtain agreement
+to the tasks and recording, allow stopping or declining a task, and use only
+fictional local data and fake publication events. Pre-register retention and
+access to study notes; avoid collecting client code, secrets, or unnecessary
+personal data. This is a method proposal, not an ethics/compliance certification.
+
+Allocate AB and BA presentation order deliberately. Use matched parallel tasks,
+record the allocation, assistance, interruptions, and deviations; counterbalancing
+does not eliminate learning or recruitment bias. Ask for a prediction and reason
+before Run/Commit, then ask what evidence would change the answer. Preserve the
+person's initial interpretation and subsequent repair rather than only the final
+successful state. Include creation, review, and repair; do not treat experienced
+users as a substitute for novice or assistive-technology workflows.
+
+**Scoring and records:** for each answer record 2 for the required facts plus a
+supported explanation, 1 for a correct answer with incomplete reasoning, and 0
+for an incorrect claim. Appropriate uncertainty counts as correct on U05/U06;
+confidence alone is not evidence. Separately record wrong-target, wrong-context,
+implicit-action, lost-draft, false-evidence, and wrong-domain incidents, along
+with completion time, assistance, input path, and recovery steps. Do not average
+a critical incident away in a speed score.
+
+Each study row needs an anonymous session ID, task/fixture version, condition,
+order, supplied source/model/run context, initial answer, cited evidence,
+observed command/state changes, assistance, incident category, repair, and any
+blocked step. Keep a task blocked by focus/input/accessibility failure as a
+design outcome in that setup, not silently as an excluded participant. Publish
+pre-registered exclusions and limitations alongside results. Quotes/transcripts
+need the participant's agreed recording scope.
+
+**Decision gate:** retain B only if its new relationships are understood without
+losing identity, context, uncertainty, or agency; otherwise revise it or keep A.
+Report task-level qualitative mechanisms and observed differences. A small
+convenience pilot cannot support population-wide superiority, broad causal
+claims, or accessibility certification. If all conditions support the wrong
+domain model, revise the model rather than choosing the faster interface.
+
 ## Implementation Handoff
 
 These are read current extraction points, not claims that the proposed contract
@@ -367,10 +469,10 @@ needs it; no second universal IR or evaluator follows from this research.
 | [web/app.js](../../../web/app.js) | Request IDs, pending replies, worker generations; Stop terminates/restarts worker | Explicit run/result context and state adapter after C02/C05/C08 rules settle | Old-worker replies, repeated Stop, timeout/restart, result retention; no claim of resource join from worker termination |
 | [web/runtime.js](../../../web/runtime.js), [cells.js](../../../web/cells.js) | Result tabs, run/reset/cancel UI and cell model | Read-only captured projection using existing result contract | Navigation emits zero execution actions; C03/C09 focus/draft/truncation tests and manual accessibility trials |
 | [runtime/api.py](../../../prototype/runtime/api.py) | ExecutionResult and InspectionResult facades | Tool-owned evidence/epoch envelope around completed results | CLI/browser serialize the same evidence facts; unknown-version behavior |
-| [runtime/session.py](../../../prototype/runtime/session.py) | Persistent bindings and lowered-AST cache keys | Keep parse cache identity separate from session/run/input observation identity | C02 reset/incarnation and C08 notebook-history fixtures |
+| [runtime/session.py](../../../prototype/runtime/session.py) | Persistent bindings and lowered-AST cache keys | Keep parse cache identity separate from session/run/input observation identity; name a model publication owner separately | C02 reset/incarnation, C07 same-base publication and C08 notebook-history fixtures; a pure candidate is not a shared-state commit |
 | [runtime/diagnostics.py](../../../prototype/runtime/diagnostics.py) | Passive diagnostics/events, IDs, parent IDs, redaction metadata | Define one bounded observation envelope in the owning protocol | C09 zero extra effects, explicit truncation, export redaction; fixture results do not imply full information-flow security |
 | [runtime/decode.py](../../../prototype/runtime/decode.py) | Decode error/path records | Draft/raw-value adapter plus actual decoder commit boundary after codec design | C03/C04 invalid drafts, omitted projected rules, unchanged committed state |
-| [runtime/host_capabilities.py](../../../prototype/runtime/host_capabilities.py) | Declared host-call names/manifest checks | Separate declared support from current concrete grant enforcement | C02/C07/C11 denied/revoked/narrowed authority; today's manifest is not that grant system |
+| [runtime/host_capabilities.py](../../../prototype/runtime/host_capabilities.py) | Declared host-call names/manifest checks | Separate declared support, current concrete grants, and application-required review scope | C02/C07/C11 denied/revoked/narrowed authority and changed review target/payload; today's manifest is not that grant system |
 | [pattern_surface.py](../../../prototype/syntax/pattern_surface.py) | Versioned pattern document and UTF-8 byte spans | Reuse explicit source/unit/version discipline in future lossless/typed artifacts | C01/C10 conversion and stale-span failures across frontends; binding identity still needs design |
 | [VS Code run commands](../../../tools/vscode/nomi/src/run_commands.js), [Jupyter kernel](../../../tools/jupyter/nomi_kernel.py) | Run ownership and persistent session/reset adapters | Consume the same settled semantic command/result contract | Equivalent target/context across adapters; old context cannot revive grants |
 
@@ -384,14 +486,14 @@ probes can run now, while production migration waits for the relevant contract.
 
 | Experiment | Compare | Deliverable | Owner/gate | Stop condition |
 | --- | --- | --- | --- | --- |
-| HX1 | Full proposal invalidation versus selective repreparation | Context/read-set rules and C02/C07 negative fixtures | Interaction; D1/D3 prerequisite for typed public APIs | Reuse can hide changed authority/meaning |
+| HX1 | Full proposal invalidation versus selective repreparation | Context/read-set/review-scope rules and owner-enforced publication with C02/C07 negative fixtures | Interaction; D1/D3 prerequisite for typed public APIs | Reuse or check-then-publish can hide changed authority/meaning |
 | HX2 | Captured snapshot versus explicitly refreshed inspection | Evidence/truncation/disclosure envelope and C08/C09 fixtures | Interaction/runtime results; D2/D3 | Requires implicit effects or claims unsupported confidentiality |
 | HX3 | Draft-plus-commit versus restrictive control | C03 shared-command event fixtures and manual input/accessibility trial | Interaction/tooling; D5 | Valid entry/repair or an accessible path is lost |
 | HX4 | Read-only derived values versus bounded inverse adapter | C04 supported subset, alternatives, fallback and preservation contract | Interaction/scoped library; D4/D5 | Must guess source/input intent or invent solver semantics |
 | HX5 | Request-only Stop versus request plus observed completion states | C05/C08 state table with local/remote outcomes and cleanup blockers | Resource/task and interaction; D2 | Completion/rollback claim exceeds host evidence |
 | HX6 | Exact-span conversion versus structural target plus spans | C01/C10 revision-aware offset/binding mapping fixture | Scalar/parser/tooling; D3 | Text mapping rewrites meaning or guesses a target |
 | HX7 | Fail-on-context-change versus explicit reproject/replan | C11 frame/mode/freshness data contract and fake-device traces | Library/host profile; after D3, not a core feature | Physical guarantees inferred from the toy model |
-| HX8 | Text versus projected work on interrupted/transfer tasks | C12 pre-registered task protocol and qualitative error evidence | Interaction; D5 | Speed wins only by hiding facts or removing agency |
+| HX8 | Text versus projected work on interrupted/transfer tasks | Execute the C12 protocol with U01-U07 answer facts, incident/blocked-task records and qualitative repair evidence | Interaction; D5 | Speed wins only by hiding facts, removing agency, or excluding blocked input paths |
 
 HX1-HX8 are the live experiment details for this extension, not a competing
 cross-project delivery queue. Each must close or refine an existing owner;

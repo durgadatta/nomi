@@ -20,7 +20,7 @@ sets, axes, model references and evidence relations fit this proposal. Their
 The [human-computation edge atlas](../research/interfaces/edge_cases.md) adds
 96 pressure cases across 24 families, with
 [twelve composition cases and HX1-HX8](../research/interfaces/composition_cases.md)
-and [18 executed local probes](../research/interfaces/experiments.md).
+and [20 executed local probes](../research/interfaces/experiments.md).
 The [philosophical translation](../research/cognition.md) now distinguishes
 representation, interpretation, assumptions, all-path obligations, progress,
 situated repair, and agency. These sharpen this proposal; they accept no new
@@ -81,6 +81,20 @@ read set and semantic owner rather than attach every possible context field to
 every command. No cached artifact contains replayable execution permission.
 Concrete capability enforcement, including revocation timing for running tasks,
 belongs to the effect/task owner.
+
+The target's pure `apply_edit` validates one immutable snapshot and returns a
+candidate. It is not a shared-state publication protocol. A serialized owner or
+guarded publication must enforce the committed base at the operation boundary;
+P19 exposes the race when preparation and unconditional publication are separate.
+Forks cannot share the same incarnation/counter as if they were one committed
+history. Identity generation, branch identity, crashes, and remote effects are
+not settled by that local model.
+
+Where policy requires human review, the review scope and current grant are
+independent facts. P20 changes a payload/recipient/model while keeping a broad
+grant, and revokes a grant while retaining matching review. Exact-proposal review
+and explicitly bounded automatic-action policies remain candidates. A digest or
+supplied review record establishes neither human understanding nor authenticity.
 
 Evidence also has a context. A candidate record may distinguish source/inputs,
 analysis assumptions, observed host outcome, completeness, redaction scope,
@@ -225,7 +239,7 @@ The [HX1-HX8 detail](../research/interfaces/composition_cases.md#prioritized-dis
 refines these experiments with explicit candidate forks and stop conditions.
 The [real-file handoff](../research/interfaces/composition_cases.md#implementation-handoff)
 maps source artifacts, worker generations, result/event records, decode paths,
-host declarations, and editor/notebook adapters. The atlas and 18 local probes
+host declarations, and editor/notebook adapters. The atlas and 20 local probes
 do not justify a new evaluator or waiting for every research family to close;
 promote one settled contract at a time under the existing D0-D7 gates.
 
@@ -235,3 +249,9 @@ could identify failure mechanisms, but would not establish universal usability.
 Pre-register tasks, counterbalance presentation order, retain qualitative repair
 accounts, and include assistive-technology testing rather than claiming it from
 an automated DOM check.
+
+The [HX8 preparation protocol](../research/interfaces/composition_cases.md#hx8-minimal-study-protocol)
+now specifies seven tasks, supplied answer facts, counterbalancing, prediction
+and repair scoring, incident categories, and blocked-task reporting. It remains
+unperformed. Maintained research tests and capture verification establish the
+integrity of those documents and finite models, not empirical success.

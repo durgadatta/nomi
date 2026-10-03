@@ -295,9 +295,16 @@ projection or exact inverse source mapping is claimed.
 question. HX1-HX8 compare proposal invalidation/repreparation, passive/refreshed
 inspection, draft/commit controls, bounded inverse edits, Stop evidence, source
 mapping, frame/control context, and interrupted-task comprehension. The
-[18 local probes](interfaces/experiments.md) exhibit counterexamples; they do
+[20 local probes](interfaces/experiments.md) exhibit counterexamples; they do
 not close those Nomi candidates or perform a human study. Keep ordinary APIs,
 library models, and view adapters ahead of notation; D1-D3 dependencies remain.
+
+The gap review adds two HX1 obligations: publication must enforce freshness at
+the actual owner boundary, and application-required review must name its scope
+separately from current capability grants. P19/P20 are finite supplied-policy
+counterexamples, not production enforcement. HX8 now has a
+[seven-task protocol and answer facts](interfaces/composition_cases.md#hx8-minimal-study-protocol);
+execution, authentic approval, and human comprehension remain open evidence work.
 
 ## Research Stop Rule
 

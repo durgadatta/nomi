@@ -234,6 +234,11 @@ repreparation, evidence completeness, and bounded inverse edits remain
 and row identity; executed local research models are not runnable Nomi conformance
 or a decision to change ordinary Bool, match ordering, effects, or `where`.
 
+The gap review additionally separates pure candidate validation from shared-state
+publication, and required review scope from current execution authority. Both
+are **open tool/application contracts**. The HX8 preparation protocol and
+maintained research checks do not accept them or establish human comprehension.
+
 The [function contract proposal](function_contracts.md) recommends testing
 pure-only strict collection callbacks before effect-polymorphic callbacks.
 This remains **open**: world effects, mutable captures, retained regions and

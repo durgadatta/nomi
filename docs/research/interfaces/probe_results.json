@@ -752,6 +752,364 @@
         }
       ],
       "limit": "imposed same-clock freshness/mode model; no clock drift, physics, actuator, or safety guarantee"
+    },
+    {
+      "id": "P19",
+      "name": "checked_publish_interleavings",
+      "atlas_cases": [
+        "H14",
+        "H30",
+        "H45"
+      ],
+      "inputs": {
+        "base": {
+          "incarnation": "invoice-a",
+          "revision": 7,
+          "quantity": 2
+        },
+        "requests": {
+          "a": 3,
+          "b": 4
+        }
+      },
+      "histories": [
+        {
+          "events": [
+            "a_prepare",
+            "a_publish",
+            "b_prepare",
+            "b_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "a"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "stale_at_prepare"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "a"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "stale_at_prepare"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          }
+        },
+        {
+          "events": [
+            "a_prepare",
+            "b_prepare",
+            "a_publish",
+            "b_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "a",
+              "b"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "accepted"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "a"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "stale_at_publish"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          }
+        },
+        {
+          "events": [
+            "a_prepare",
+            "b_prepare",
+            "b_publish",
+            "a_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "b",
+              "a"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "accepted"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "b"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "stale_at_publish"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          }
+        },
+        {
+          "events": [
+            "b_prepare",
+            "a_prepare",
+            "a_publish",
+            "b_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "a",
+              "b"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "accepted"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "a"
+            ],
+            "outcomes": {
+              "a": "accepted",
+              "b": "stale_at_publish"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          }
+        },
+        {
+          "events": [
+            "b_prepare",
+            "a_prepare",
+            "b_publish",
+            "a_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "b",
+              "a"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "accepted"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 3
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "b"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "stale_at_publish"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          }
+        },
+        {
+          "events": [
+            "b_prepare",
+            "b_publish",
+            "a_prepare",
+            "a_publish"
+          ],
+          "prepare_then_unconditional_publish": {
+            "accepted": [
+              "b"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "stale_at_prepare"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          },
+          "guarded_publish": {
+            "accepted": [
+              "b"
+            ],
+            "outcomes": {
+              "b": "accepted",
+              "a": "stale_at_prepare"
+            },
+            "final_model": {
+              "incarnation": "invoice-a",
+              "revision": 8,
+              "quantity": 4
+            }
+          }
+        }
+      ],
+      "counterexample": {
+        "two_same_base_commits_in_unconditional_histories": 4
+      },
+      "candidate": {
+        "guarded_histories_with_exactly_one_commit": 6
+      },
+      "limit": "six two-command histories with an imposed atomic publication step; no threads, locks, database, crash recovery, ABA handling, or linearizability proof"
+    },
+    {
+      "id": "P20",
+      "name": "review_scope_and_authority",
+      "atlas_cases": [
+        "H47",
+        "H62",
+        "H72",
+        "H90"
+      ],
+      "inputs": {
+        "review_scope": {
+          "action": "publish",
+          "recipient": "team-a",
+          "payload_digest": "payload-a",
+          "model_incarnation": "invoice-a",
+          "model_revision": 7
+        }
+      },
+      "outcomes": [
+        {
+          "case": "reviewed_action",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-a",
+            "payload_digest": "payload-a",
+            "model_incarnation": "invoice-a",
+            "model_revision": 7
+          },
+          "current_grant_allows": true,
+          "review_scope_matches": true,
+          "execute_under_imposed_policy": true
+        },
+        {
+          "case": "changed_payload",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-a",
+            "payload_digest": "payload-b",
+            "model_incarnation": "invoice-a",
+            "model_revision": 7
+          },
+          "current_grant_allows": true,
+          "review_scope_matches": false,
+          "execute_under_imposed_policy": false
+        },
+        {
+          "case": "changed_recipient",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-b",
+            "payload_digest": "payload-a",
+            "model_incarnation": "invoice-a",
+            "model_revision": 7
+          },
+          "current_grant_allows": true,
+          "review_scope_matches": false,
+          "execute_under_imposed_policy": false
+        },
+        {
+          "case": "changed_model",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-a",
+            "payload_digest": "payload-a",
+            "model_incarnation": "invoice-a",
+            "model_revision": 8
+          },
+          "current_grant_allows": true,
+          "review_scope_matches": false,
+          "execute_under_imposed_policy": false
+        },
+        {
+          "case": "revoked_grant",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-a",
+            "payload_digest": "payload-a",
+            "model_incarnation": "invoice-a",
+            "model_revision": 7
+          },
+          "current_grant_allows": false,
+          "review_scope_matches": true,
+          "execute_under_imposed_policy": false
+        },
+        {
+          "case": "missing_review",
+          "current_action": {
+            "action": "publish",
+            "recipient": "team-a",
+            "payload_digest": "payload-a",
+            "model_incarnation": "invoice-a",
+            "model_revision": 7
+          },
+          "current_grant_allows": true,
+          "review_scope_matches": false,
+          "execute_under_imposed_policy": false
+        }
+      ],
+      "counterexample": {
+        "grant_only_accepts": 5,
+        "review_only_accepts": 2
+      },
+      "candidate": {
+        "current_grant_and_exact_review_accepts": [
+          "reviewed_action"
+        ]
+      },
+      "limit": "six supplied records under an exact-review policy; no human comprehension, authentic approval, cryptography, capability executor, one-shot consumption, or in-flight revocation"
     }
   ]
 }
