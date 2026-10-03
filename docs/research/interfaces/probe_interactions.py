@@ -801,6 +801,7 @@ def report(observed_on):
         "python_version": platform.python_version(),
         "unicode_version": unicodedata.unidata_version,
         "evidence_kind": "original finite models and named host observations",
+        "human_execution": False,
         "nomi_execution": False,
         "browser_execution": False,
         "device_execution": False,
@@ -810,6 +811,15 @@ def report(observed_on):
             for probe_id, probe, cases in PROBES
         ],
     }
+
+
+def capture_object(pairs):
+    fields = {}
+    for key, value in pairs:
+        if key in fields:
+            raise ValueError(f"Duplicate capture field: {key!r}")
+        fields[key] = value
+    return fields
 
 
 def main():
@@ -827,7 +837,9 @@ def main():
         if args.observed_on:
             parser.error("--observed-on is only used when producing a capture")
         try:
-            captured = json.loads(args.check.read_text(encoding="utf-8"))
+            captured = json.loads(
+                args.check.read_text(encoding="utf-8"), object_pairs_hook=capture_object
+            )
             current = report(date.fromisoformat(captured["observed_on"]))
             for field in ("python_version", "unicode_version"):
                 if not isinstance(captured[field], str) or not captured[field]:

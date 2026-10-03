@@ -4,6 +4,7 @@
   "python_version": "3.14.0rc3",
   "unicode_version": "16.0.0",
   "evidence_kind": "original finite models and named host observations",
+  "human_execution": false,
   "nomi_execution": false,
   "browser_execution": false,
   "device_execution": false,

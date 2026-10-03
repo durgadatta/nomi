@@ -26,6 +26,10 @@ same-base publication and exact-review counterexamples, and an
 A valid immutable candidate is not a shared-state commit; current authority
 is not evidence of the person's endorsement of a changed action.
 
+Current probe inventory lives here and in [the executed report](experiments.md).
+Secondary indexes link to those owners without copying the changing probe count;
+dated bridge validation counts remain historical observations.
+
 The [language-feature matrix](../language_feature_matrix.md) includes Excel and
 keyboard commands beside the 44 language columns, using these thread reviews
 as their evidence links. The other threads retain this separate interface map.

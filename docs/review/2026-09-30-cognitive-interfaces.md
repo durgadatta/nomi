@@ -286,6 +286,32 @@ Validation: 76 focused tests and all 23 captured probes passed; packet,
 lint and whitespace checks passed. Actual participants, UI/assistive adapters,
 authentic approval, transport and physical measurements remain unperformed.
 
+#### Pass 3: Repository And Capture Integration
+
+The integration scan ran the full suite and existing web/runtime checks, then
+challenged the capture boundary. A focused failing test demonstrated that root
+and nested duplicate JSON fields could be silently reduced to their last value,
+even with a contradictory execution flag. The local checker now rejects all
+repeated object fields through the structured parser's object-pairs hook.
+RFC 8259 section 4 supplies interoperability context; this strict policy applies
+to research evidence, not the unaccepted Nomi decoder design.
+
+Thirteen new boundary/inventory checks cover duplicate fields, malformed
+captures, exact boolean types, separate check/write modes, object reordering,
+study-fixture uniqueness, explicit `human_execution: false`, and the primary
+index's actual probe inventory. Current counts remain with the probe report and
+interface index; secondary routes no longer copy a changing number. Historical
+validation counts above remain dated evidence rather than current inventories.
+
+Final validation: `pytest -n 4` passed 1,485 tests with 76 skipped and four
+dependency deprecation warnings from Jupyter's path migration. The existing
+`check_web_runtime.py` passed 55 contracts and manifest/WASM freshness checks;
+the agent doctor passed. All 23 captures reproduced; packet, target-direction,
+lint, link/anchor/table/reference and whitespace checks passed. RAG was rebuilt
+after the edits. No supported runtime, grammar, UI or generated web asset changed.
+Actual browser interaction, IME/assistive trials, human studies, authenticated
+review, physical clocks/devices and real remote recovery remain unperformed.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,
@@ -336,6 +362,11 @@ research extension and its target-only examples.
 
 The follow-up adds ten maintained research-integrity tests and a non-writing
 `--check` mode to the existing script, plus a concrete unperformed HX8 protocol.
+
+The three additional review/fix passes bring the maintained research checks to
+31, add paired study stimuli and publication/history/clock/evidence controls,
+and remove duplicated live inventory counts from secondary navigation. These
+are scoped data, checks, and clearer obligations rather than a universal engine.
 
 ### Next Pass
 

@@ -63,8 +63,8 @@
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "pytest -n 0 prototype/tests/unit/tools/test_data_notation_research.py prototype/tests/unit/tools/test_research_matrices.py",
         "python3 docs/research/interfaces/probe_interactions.py --check docs/research/interfaces/probe_results.json",
-        "pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py prototype/tests/unit/tools/test_interaction_study_research.py",
-        "ruff check docs/research/interfaces/probe_interactions.py prototype/tests/unit/tools/test_interaction_research.py prototype/tests/unit/tools/test_interaction_study_research.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py prototype/tests/unit/tools/test_interaction_study_research.py prototype/tests/unit/tools/test_interaction_capture_boundary.py",
+        "ruff check docs/research/interfaces/probe_interactions.py prototype/tests/unit/tools/test_interaction_research.py prototype/tests/unit/tools/test_interaction_study_research.py prototype/tests/unit/tools/test_interaction_capture_boundary.py",
         "python3 .codex/scripts/agent_doctor.py",
         "git diff --check"
       ],
@@ -72,7 +72,7 @@
         "Use redesign_agenda.md for live closure gates; D0 inspection is implemented independently of execution, with three unreviewed directions remaining.",
         "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
         "Use docs/research/data_workflows/nomi_candidates.md for DW1-DW8 order and data/notation pressure-program gates; do not start an engine before the description contracts close.",
-        "Use docs/research/interfaces/composition_cases.md for HX1-HX8: context/repreparation, owner-enforced publication, review scope, bounded inspection, draft commands, inverse projection, Stop evidence, source maps, frame/clock/control context and the prepared U01-U07 study; the 23 local probes are motivating models, not Nomi conformance.",
+        "Use docs/research/interfaces/composition_cases.md for HX1-HX8: context/repreparation, owner-enforced publication, review scope, bounded inspection, draft commands, inverse projection, Stop evidence, source maps, frame/clock/control context and the prepared U01-U07 study; local probes are motivating models, not Nomi conformance.",
         "Falsify interaction laws using text and read-only invoice projections before editable views or new notation.",
         "Run explicit stale/invalid/denied-capability and keyboard/IME/accessibility trials, then compare text-primary and structured-document alternatives if needed.",
         "Promote only a settled semantic slice through backend-neutral artifacts, CLI/browser conformance, supported samples and GitHub playground evidence."

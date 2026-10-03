@@ -29,7 +29,8 @@ Verify the checked-in capture without rewriting it:
 python3 docs/research/interfaces/probe_interactions.py \
     --check docs/research/interfaces/probe_results.json
 pytest -n 0 prototype/tests/unit/tools/test_interaction_research.py \
-    prototype/tests/unit/tools/test_interaction_study_research.py
+    prototype/tests/unit/tools/test_interaction_study_research.py \
+    prototype/tests/unit/tools/test_interaction_capture_boundary.py
 ```
 
 The checker reuses the capture's date for comparison and compares every field
@@ -41,13 +42,24 @@ the capture. Running with `-O` is rejected rather than silently skipping asserts
 The tests also check case/probe/composition references, local links and anchors,
 and table structure. These are research-integrity checks, not usability tests.
 
+The checker rejects repeated object fields at every nesting level before
+comparison. Otherwise contradictory execution flags or outcomes could disappear
+under a parser's last-field policy. RFC 8259 recommends unique object names and
+documents divergent duplicate handling; strict rejection here is a local
+research-capture policy, not an accepted Nomi decoder contract.
+[JSON object interoperability, section 4](https://www.rfc-editor.org/rfc/rfc8259#section-4).
+The capture also explicitly records `human_execution: false`. Tests cover
+malformed input, boolean-versus-number drift, non-writing verification, and
+object reordering; they establish no general security or interoperability proof.
+
 ```bash
 python3 docs/research/interfaces/probe_interactions.py \
     --observed-on 2026-10-02 \
     --output docs/research/interfaces/probe_results.json
 ruff check docs/research/interfaces/probe_interactions.py \
     prototype/tests/unit/tools/test_interaction_research.py \
-    prototype/tests/unit/tools/test_interaction_study_research.py
+    prototype/tests/unit/tools/test_interaction_study_research.py \
+    prototype/tests/unit/tools/test_interaction_capture_boundary.py
 ```
 
 The date defaults to the local current date. Later captures should use their
