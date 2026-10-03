@@ -29,16 +29,16 @@ still owns generic/callback/effect typing. No helper here can create authority.
 | Case | Main composition | Atlas cases | Local motivating probes |
 | --- | --- | --- | --- |
 | C01 | Sort + collaboration + source-directed repair | H01, H22, H23, H45, H77 | P01, P12, P15, P19 |
-| C02 | Reset + cached artifact + changed authority | H06, H47, H70, H90 | P02, P10, P20 |
+| C02 | Reset + cached artifact + changed authority | H06, H47, H70, H71, H90 | P02, P10, P20, P21 |
 | C03 | Incomplete draft + IME + accessible command | H09, H13, H41, H73, H76, H79 | P03, P16 |
 | C04 | Inverse view + rounding + omitted constraint | H15, H16, H38, H40, H44 | P04, P13 |
 | C05 | Stop + lost response + changed retry | H29, H54, H69, H71, H72, H87 | P09, P11 |
 | C06 | Algebraic rewrite + evidence domain + progress | H25, H49, H52, H66, H68 | P05, P06, P07, P08 |
-| C07 | Converged draft + domain invariant + reviewed proposal | H14, H30, H40, H45, H46, H47, H48, H63 | P02, P10, P12, P19, P20 |
+| C07 | Converged draft + domain invariant + reviewed proposal | H14, H30, H40, H45, H46, H47, H48, H63 | P02, P10, P12, P19, P20, P21 |
 | C08 | Reactive result + notebook history + late completion | H04, H33, H34, H35, H36 | P09, P14 |
 | C09 | Observation + privacy + bounded explanation | H24, H64, H74, H89, H91 | P14 |
 | C10 | Internationalized input + source mapping + rename | H09, H42, H77, H78, H80 | P15, P16 |
-| C11 | Spatial projection + frame reset + stale control | H81, H82, H83, H85, H86, H88 | P17, P18 |
+| C11 | Spatial projection + frame reset + stale control | H53, H55, H81, H82, H83, H85, H86, H88 | P17, P18, P22 |
 | C12 | Beginner success + interrupted work + model revision | H60, H62, H93, H94, H95, H96 | Human study required |
 
 ## C01. The Row Is The Same; The Source Is Not
@@ -256,6 +256,13 @@ need distinct branch/commit identity; copying the incarnation and revision
 counter alone does not distinguish them. No locks, storage, or identity service
 are implemented here.
 
+P21 supplies those two missing examples: undo restores the old quantity and
+counter under a different commit, and a copied branch shares incarnation/counter
+but contains another successor. Keep publication history distinct from value
+history; one candidate restores values through a new commit, another names a
+distinct branch/commit context. Unchanged context must still be accepted.
+Selective reuse of a pure result is not reuse of execution/review permission.
+
 Herlihy and Wing supply a primary treatment of concurrent histories and
 linearizability, not a proof of this candidate. The paper's operation-history
 boundary is the distinction needed beyond a sequential pre/postcondition.
@@ -367,6 +374,13 @@ STPA adds questions about missing, wrong, mistimed, and overlong actions; it doe
 not certify Nomi. P17/P18 are imposed finite models with a fixed freshness rule,
 no device or physics. Removal gate: a simulation/view silently gains device
 authority or type validity is marketed as physical safety/reachability.
+
+P22 adds a timestamp-domain challenger: equal-looking ticks from another clock
+or previous boot are incomparable without a declared mapping. Distinguish stale,
+incomparable, and invalid-future evidence; do not report all denied observations
+as old. Compare same-clock-only intervention with a mapping carrying offset/skew
+bounds and provenance. Uncertainty can prevent intervention without claiming the
+sample is definitely stale. Physical freshness still needs real host evidence.
 
 ## C12. Success On The Happy Path Can Hide A Learning Failure
 

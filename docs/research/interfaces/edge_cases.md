@@ -380,6 +380,12 @@ H47/H62/H72/H90 also compose into a review-scope problem: permission to publish
 does not establish review of the newly changed payload or recipient. P20 tests
 an imposed exact-review rule, not authentic approval or human understanding.
 
+P21 challenges the history assumptions behind H14/H46/H70/H71: restoring a
+value or copying a fork must not silently reuse committed context. P22 challenges
+H53/H55/H85: matching numbers do not establish comparable clocks, and denied
+freshness can mean incomparable rather than stale. These are finite challengers
+inside existing families, not additional interface engines or accepted policy.
+
 ## Gaps And Next Discovery Triggers
 
 Not independently researched here: brain/computer interfaces, haptic protocols,

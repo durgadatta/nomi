@@ -606,6 +606,136 @@ def review_scope_and_authority():
     }
 
 
+def history_identity_reuse():
+    initial = {"incarnation": "invoice-a", "revision": 7, "commit": "c7", "quantity": 2}
+    changed = {**initial, "revision": 8, "commit": "c8", "quantity": 3}
+    rewound = {**initial, "commit": "c9"}
+    restored_as_new = {**rewound, "revision": 9}
+    other_branch = {**changed, "commit": "branch-b8", "quantity": 4}
+    cases = [
+        ("undo_rewinds_counter", initial, rewound),
+        ("copied_fork", changed, other_branch),
+        ("unchanged", initial, initial),
+    ]
+    outcomes = [
+        {
+            "case": label,
+            "prepared_for": prepared,
+            "current": current,
+            "incarnation_revision_accepts": all(
+                prepared[field] == current[field]
+                for field in ("incarnation", "revision")
+            ),
+            "commit_identity_accepts": all(
+                prepared[field] == current[field] for field in ("incarnation", "commit")
+            ),
+        }
+        for label, prepared, current in cases
+    ]
+    assert initial["quantity"] == rewound["quantity"]
+    assert all(outcome["incarnation_revision_accepts"] for outcome in outcomes)
+    assert [outcome["commit_identity_accepts"] for outcome in outcomes] == [
+        False,
+        False,
+        True,
+    ]
+    assert initial["revision"] != restored_as_new["revision"]
+    return {
+        "inputs": {
+            "undo_values": [initial, changed, rewound],
+            "restore_as_new_commit": restored_as_new,
+        },
+        "outcomes": outcomes,
+        "counterexample": {
+            "rewound_value_matches_original": True,
+            "context_pair_can_recur": True,
+        },
+        "candidate": "keep a non-reused committed-history identity; undo can restore values under a new revision, forks need distinct commit/branch context",
+        "limit": "three explicit comparisons with supplied commit tokens; no identity generation, persisted history, distributed clock, hash guarantees, or universal prohibition on pure-result reuse",
+    }
+
+
+def clock_domain_freshness():
+    clock = {"id": "controller", "incarnation": "boot-a", "tick": 100}
+    samples = [
+        {
+            "case": "fresh",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 99,
+        },
+        {
+            "case": "old",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 90,
+        },
+        {
+            "case": "other_clock",
+            "clock": "sensor",
+            "incarnation": "boot-a",
+            "observed_at": 99,
+        },
+        {
+            "case": "previous_boot",
+            "clock": "controller",
+            "incarnation": "boot-before",
+            "observed_at": 99,
+        },
+        {
+            "case": "future_same_clock",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 101,
+        },
+    ]
+    outcomes = []
+    for sample in samples:
+        age = clock["tick"] - sample["observed_at"]
+        comparable = (
+            sample["clock"] == clock["id"]
+            and sample["incarnation"] == clock["incarnation"]
+        )
+        status = (
+            "incomparable"
+            if not comparable
+            else "invalid_future"
+            if age < 0
+            else "fresh"
+            if age <= 2
+            else "stale"
+        )
+        outcomes.append(
+            {
+                "sample": sample,
+                "number_only_fresh": 0 <= age <= 2,
+                "clock_aware_status": status,
+            }
+        )
+    assert sum(outcome["number_only_fresh"] for outcome in outcomes) == 3
+    assert [outcome["clock_aware_status"] for outcome in outcomes] == [
+        "fresh",
+        "stale",
+        "incomparable",
+        "incomparable",
+        "invalid_future",
+    ]
+    return {
+        "inputs": {
+            "current_clock": clock,
+            "maximum_age": 2,
+            "cross_clock_mapping": None,
+        },
+        "outcomes": outcomes,
+        "counterexample": {"number_only_fresh_count": 3},
+        "candidate": {
+            "fresh_in_declared_clock_count": 1,
+            "incomparable_is_not_known_stale": True,
+        },
+        "limit": "five supplied clock records with no cross-clock mapping or skew allowance; no real monotonic clock, synchronization, suspend handling, sensor trust, or physical safety",
+    }
+
+
 PROBES = [
     ("P01", domain_identity, ["H01"]),
     ("P02", incarnation_revision, ["H70"]),
@@ -627,6 +757,8 @@ PROBES = [
     ("P18", control_context, ["H85", "H86"]),
     ("P19", checked_publish_interleavings, ["H14", "H30", "H45"]),
     ("P20", review_scope_and_authority, ["H47", "H62", "H72", "H90"]),
+    ("P21", history_identity_reuse, ["H14", "H46", "H70", "H71"]),
+    ("P22", clock_domain_freshness, ["H53", "H55", "H85"]),
 ]
 
 

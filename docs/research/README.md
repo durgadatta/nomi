@@ -30,7 +30,7 @@
    [edge atlas](interfaces/edge_cases.md) extends coverage to 96 cases across
    24 families; [composition experiments](interfaces/composition_cases.md)
    connect philosophical questions to actionable contracts and current files.
-   [20 executed probes](interfaces/experiments.md) are original local models,
+   [22 executed probes](interfaces/experiments.md) are original local models,
    not Nomi/browser conformance or user studies.
 7. [Redesign Frontiers](design_frontiers.md) - primary evidence for eight further
    design pressures, from typed incomplete programs to qualified guarantees.

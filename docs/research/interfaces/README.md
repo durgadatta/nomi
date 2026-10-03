@@ -14,7 +14,7 @@ Sources were consulted on 2026-09-29/30. No usability trial was conducted.
 
 The 2026-10-02 continuation adds [96 edge cases across 24 families](edge_cases.md),
 [twelve composition cases and HX1-HX8 comparisons](composition_cases.md), and
-[20 executed local research probes](experiments.md). It deepens the philosophical
+[22 executed local research probes](experiments.md). It deepens the philosophical
 readings in [cognition](../cognition.md) and maps hypotheses to current files.
 The added standards/papers have their own bounded evidence notes. This remains
 one packet; no human trial, production command adapter, or new evaluator is

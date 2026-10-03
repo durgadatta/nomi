@@ -18,7 +18,7 @@ python3 docs/research/interfaces/probe_interactions.py
 ```
 
 The [script](probe_interactions.py) uses only the Python standard library and
-executes 20 independent probes. Assertions check the stated counterexamples
+executes 22 independent probes. Assertions check the stated counterexamples
 and candidate rules; run without Python's `-O` option. It performs no network,
 process, browser, Nomi, device, or foreign solver execution. Optional `--output`
 writes a generated research capture; otherwise JSON goes to stdout.
@@ -79,6 +79,8 @@ not a public Nomi protocol or accepted runtime schema.
 | P18: control context | Range-only accepts all four sample/mode pairs; freshness/mode rule accepts one | H85/H86/C11: value validity does not establish current intervention context | Imposed same-clock policy; no physical safety or sensor/device test |
 | P19: publication race | Four of six prepare/publish orders accept two edits against one base under unconditional publication; the guarded step accepts one in all six | H14/H30/H45/C07: candidate validity needs an owner-enforced publication boundary | Two commands and an imposed indivisible compare-and-publish step; no real concurrency, crash, ABA, or linearizability proof |
 | P20: review scope | Grant-only admits five of six actions; review-only admits two; both checks admit only the original reviewed action | H47/H62/H72/H90/C02/C07: current authority and required review scope are separate facts | Supplied exact-match policy; no real approval, person, authentication, one-shot use, or revocation-race enforcement |
+| P21: reused history | Incarnation/counter accepts a rewound history, a copied fork, and an unchanged model; supplied commit identity distinguishes the first two | H14/H46/H70/H71/C02/C07: restoring values is not restoring publication context | Three explicit comparisons; supplied tokens, no identity service or blanket ban on pure-result reuse |
+| P22: clock provenance | Numeric age marks three of five samples fresh; clock-aware rules mark only one fresh, two incomparable, one stale, one invalid future | H53/H55/H85/C11: subtract only comparable timestamp values | Imposed same-clock rule with no clock mapping/skew; no real synchronization, sensor trust, or safety |
 
 The counterexamples are evidence against specific overbroad claims, not proof
 that the candidate is the only workable design. For example, P02 rejects
@@ -95,6 +97,13 @@ can explicitly authorize a bounded class of automatic actions. It tests neither
 the person's understanding nor whether a review record is authentic. A pure
 model function, a current grant, and a genuine human endorsement are not the
 same guarantee.
+
+P21 sharpens P02/P19's assumptions: incarnation/counter suffices only within
+an owner-enforced non-reused history. Undo can restore values under a new commit;
+forks need distinct history context. Pure-result reuse can still be valid after
+explicit repreparation. P22 sharpens P18's same-clock limit: an incomparable
+observation is not known stale. A declared cross-clock mapping with uncertainty
+is another candidate, not an implicit subtraction of unrelated ticks.
 
 ## Philosophy Connected To A Check
 

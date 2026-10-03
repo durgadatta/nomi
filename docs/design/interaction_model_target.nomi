@@ -237,6 +237,8 @@ example "two valid snapshot candidates do not establish a shared commit":
 # - Sort the projected rows before editing: the same ID is still changed.
 # - A preview for revision 7 cannot authorize a source/model at revision 8.
 # - Two candidates from revision 7 cannot both publish as the current revision 8.
+# - Undo restores values under new history context; copied forks are distinguishable.
+# - Sensor freshness distinguishes stale, incomparable-clock, and invalid-future input.
 # - Changed review target/payload does not inherit exact-action endorsement.
 # - A parse-cache hit after grant revocation conveys no execution authority.
 # - Lost publication acknowledgment remains unknown after local Stop/Reset.

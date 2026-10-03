@@ -295,7 +295,7 @@ projection or exact inverse source mapping is claimed.
 question. HX1-HX8 compare proposal invalidation/repreparation, passive/refreshed
 inspection, draft/commit controls, bounded inverse edits, Stop evidence, source
 mapping, frame/control context, and interrupted-task comprehension. The
-[20 local probes](interfaces/experiments.md) exhibit counterexamples; they do
+[22 local probes](interfaces/experiments.md) exhibit counterexamples; they do
 not close those Nomi candidates or perform a human study. Keep ordinary APIs,
 library models, and view adapters ahead of notation; D1-D3 dependencies remain.
 

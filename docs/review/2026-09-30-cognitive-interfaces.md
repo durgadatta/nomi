@@ -240,6 +240,27 @@ Validation: 68 focused syntax/docs/research tests passed, including ten new
 checks; all 20 probes verified against the capture; packet, target-direction,
 lint, and whitespace checks passed. Real browser/human trials remain unperformed.
 
+### Iterative Review Cycle, 2026-10-02
+
+#### Pass 1: Semantic Counterexamples
+
+The wider semantic scan reconciled history/clock pressure with binding, data,
+task, and capability target contracts. P02/P19 assume a non-reused committed
+history; P18 assumes comparable clocks. P21 now supplies undo/copy-fork cases
+that defeat incarnation/counter equality while retaining an unchanged positive
+control. P22 supplies five timestamp contexts: fresh, old, unrelated clock,
+previous boot, and invalid future. Incomparable is not known stale.
+
+Both are original finite models with explicit limits. The candidates are
+new committed context or distinct branch identity, and same-clock freshness or
+declared mapping with uncertainty. History identity generation, pure-result
+repreparation, clock synchronization, and physical safety remain open; no new
+runtime policy is accepted. HX1/HX7 retain ownership rather than adding a queue.
+
+Validation: all 22 probe captures and 68 focused tests passed, along with
+packet, lint, and whitespace checks. Integration and human evidence are not
+inferred from the added model comparisons.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,

@@ -1110,6 +1110,181 @@
         ]
       },
       "limit": "six supplied records under an exact-review policy; no human comprehension, authentic approval, cryptography, capability executor, one-shot consumption, or in-flight revocation"
+    },
+    {
+      "id": "P21",
+      "name": "history_identity_reuse",
+      "atlas_cases": [
+        "H14",
+        "H46",
+        "H70",
+        "H71"
+      ],
+      "inputs": {
+        "undo_values": [
+          {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c7",
+            "quantity": 2
+          },
+          {
+            "incarnation": "invoice-a",
+            "revision": 8,
+            "commit": "c8",
+            "quantity": 3
+          },
+          {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c9",
+            "quantity": 2
+          }
+        ],
+        "restore_as_new_commit": {
+          "incarnation": "invoice-a",
+          "revision": 9,
+          "commit": "c9",
+          "quantity": 2
+        }
+      },
+      "outcomes": [
+        {
+          "case": "undo_rewinds_counter",
+          "prepared_for": {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c7",
+            "quantity": 2
+          },
+          "current": {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c9",
+            "quantity": 2
+          },
+          "incarnation_revision_accepts": true,
+          "commit_identity_accepts": false
+        },
+        {
+          "case": "copied_fork",
+          "prepared_for": {
+            "incarnation": "invoice-a",
+            "revision": 8,
+            "commit": "c8",
+            "quantity": 3
+          },
+          "current": {
+            "incarnation": "invoice-a",
+            "revision": 8,
+            "commit": "branch-b8",
+            "quantity": 4
+          },
+          "incarnation_revision_accepts": true,
+          "commit_identity_accepts": false
+        },
+        {
+          "case": "unchanged",
+          "prepared_for": {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c7",
+            "quantity": 2
+          },
+          "current": {
+            "incarnation": "invoice-a",
+            "revision": 7,
+            "commit": "c7",
+            "quantity": 2
+          },
+          "incarnation_revision_accepts": true,
+          "commit_identity_accepts": true
+        }
+      ],
+      "counterexample": {
+        "rewound_value_matches_original": true,
+        "context_pair_can_recur": true
+      },
+      "candidate": "keep a non-reused committed-history identity; undo can restore values under a new revision, forks need distinct commit/branch context",
+      "limit": "three explicit comparisons with supplied commit tokens; no identity generation, persisted history, distributed clock, hash guarantees, or universal prohibition on pure-result reuse"
+    },
+    {
+      "id": "P22",
+      "name": "clock_domain_freshness",
+      "atlas_cases": [
+        "H53",
+        "H55",
+        "H85"
+      ],
+      "inputs": {
+        "current_clock": {
+          "id": "controller",
+          "incarnation": "boot-a",
+          "tick": 100
+        },
+        "maximum_age": 2,
+        "cross_clock_mapping": null
+      },
+      "outcomes": [
+        {
+          "sample": {
+            "case": "fresh",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 99
+          },
+          "number_only_fresh": true,
+          "clock_aware_status": "fresh"
+        },
+        {
+          "sample": {
+            "case": "old",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 90
+          },
+          "number_only_fresh": false,
+          "clock_aware_status": "stale"
+        },
+        {
+          "sample": {
+            "case": "other_clock",
+            "clock": "sensor",
+            "incarnation": "boot-a",
+            "observed_at": 99
+          },
+          "number_only_fresh": true,
+          "clock_aware_status": "incomparable"
+        },
+        {
+          "sample": {
+            "case": "previous_boot",
+            "clock": "controller",
+            "incarnation": "boot-before",
+            "observed_at": 99
+          },
+          "number_only_fresh": true,
+          "clock_aware_status": "incomparable"
+        },
+        {
+          "sample": {
+            "case": "future_same_clock",
+            "clock": "controller",
+            "incarnation": "boot-a",
+            "observed_at": 101
+          },
+          "number_only_fresh": false,
+          "clock_aware_status": "invalid_future"
+        }
+      ],
+      "counterexample": {
+        "number_only_fresh_count": 3
+      },
+      "candidate": {
+        "fresh_in_declared_clock_count": 1,
+        "incomparable_is_not_known_stale": true
+      },
+      "limit": "five supplied clock records with no cross-clock mapping or skew allowance; no real monotonic clock, synchronization, suspend handling, sensor trust, or physical safety"
     }
   ]
 }
