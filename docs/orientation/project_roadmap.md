@@ -170,6 +170,60 @@ not evidence of a broken public deployment. No hosted CI/deployment, owner
 license choice, package publication, Docker image rebuild, usability study or
 target conformance is claimed by this follow-up.
 
+### Third-Pass Delivery Receipt
+
+The next scan starts from `e97d908`. Runtime checkpoints `b55be88`/`db88807`
+and notebook checkpoint `5b7910c` close bounded A03/A08/A11/A16/A28/A29/A30
+gaps without admitting new syntax, Core nodes or target contracts.
+
+1. **Identify/reproduce:** failed native arguments could enter a callee that
+   ignored them; failed collection elements/callbacks and loop bodies could
+   continue work. **Repair:** portable Core consumers stop at abnormal errors,
+   failed bindings are not published, map/filter stop traversing, and abnormal
+   finalizer results are retained. Handler fixtures preserve the original native
+   error kind. This is not full host-exception unwinding, aggregate cleanup or
+   the target expected-outcome model; D2 remains open.
+2. **Identify/reproduce:** Python-AST lowering silently dropped call keywords,
+   parameter kinds and mapping unpacking; supplied JS AST keywords also vanished.
+   **Repair:** unsupported shapes become diagnostics, rejected before effects.
+   Positional defaults and the existing Nomi block path remain runnable. Raw
+   browser call arguments now identify named/unpacked calls rather than reporting
+   an unrelated comparison error. Richer target calls need a versioned binding
+   contract, not an accidental extension of this partial IR.
+3. **Identify/reproduce:** notebook launches shared a fixed credential, reused
+   incompatible named containers, and could echo credentials in timeout logs.
+   **Repair:** new credentials are generated, blank credentials rejected, reuse
+   inspects image-tag/loopback-port/token consistency, and timeout excerpts redact
+   the configured token. Old fixed-token reuse requires explicit selection or
+   replacement. Readiness requires JSON status evidence. Jupyter-owned logs,
+   digest attestation and service isolation remain outside these repairs.
+4. **Neighboring-code review:** portable `for ... else` ran only for empty input;
+   actual Chromium then exposed dropped For/While `else` bodies in JS lowering.
+   **Repair:** normal exhaustion, including `continue`, reaches `else`; `break`
+   and abnormal completion bypass it. Loop lowering retains nonempty Core Module
+   bodies. Fifteen Python-Core/JS-Core/actual-WASM fixtures plus browser scenarios
+   cover this migration behavior, not admission of loop-`else` to target syntax.
+
+The four new test files contribute **77 cases**, with failing reproducers run
+before repairs. Final `pytest -n 4` gives **1,930 passed, 80 skipped**, four
+existing Jupyter warnings, 34.12 seconds. The web/runtime gate gives **353
+passed**; all five design packets remain coherent. Actual Chromium checks pass
+both WASM/JS and optional Pyodide, including the new callback/argument-failure
+and pre-effect call-rejection scenarios plus desktop/mobile recovery workflows.
+Desktop diagnostics and 320-pixel layouts were inspected; artifacts stay ignored.
+Built-wheel checks are included in the full suite; 111 focused documentation/
+research/packet checks pass. The local RAG index was refreshed and all 18 agent
+checks pass. Focused lint and whitespace checks pass; no regression snapshots
+were regenerated.
+
+The manifest generator was rerun after runtime edits: the inventory remains
+123 runtime files and 11 samples, so no manifest diff is needed; `--check`
+passes. Rust sources and WASM outputs are unchanged; all eight outputs are fresh.
+The Docker client exists but its Colima daemon is unavailable: no image was
+built, no runtime was auto-installed and no container integration is claimed.
+Licensing, hosted revision/supported-version evidence, usability studies and
+D1-D4/D7 target admission remain next-phase gates, not completed release work.
+
 ### Next Phase Gates
 
 1. **D1/A08:** type ordered map/fold, decoder and scoped resource callbacks
@@ -818,9 +872,12 @@ and startup/shutdown/resource behavior is integration-tested.
 
 ### A30 — Security, Privacy And Isolation
 
-Concrete current issues are token-bearing logs, fixed development credentials
-and an overly broad Docker build context. Runtime redaction fields alone do not
-enforce redaction, and process transport is not a sandbox.
+Launcher-owned logs, default credentials, bounded reuse checks and common local
+context exclusions now have prototype repairs and tests (October 4 receipts).
+Remaining issues include Jupyter-owned credential logs, actual container/digest
+verification, central sensitive-value formatting and execution isolation.
+Runtime redaction fields alone do not enforce redaction, and process transport
+is not a sandbox.
 
 - Fix launcher log redaction and container context first, with synthetic secret
   cases; never collect real credentials during an audit.

@@ -139,6 +139,7 @@ but do not settle its open contracts:
 | Data dependencies and time | `samples/data_pipeline.nomi`: visible filter/map/fold stages and integer cents | Typed dependency descriptions, snapshot/time axes, incremental execution and durable provenance |
 | Cognitive repair and observation | Source-linked known errors, per-execution output, document/run generations and stale-result labels; inspection distinguishes missing evidence from known empty/zero records | Full source maps, semantic commands, task unwinding, usability/accessibility study and durable revision identity |
 | Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Target numeric tower, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance |
+| Eager failure and callable boundaries | Portable errors stop later eager work; partial Core call shapes reject unsupported names/parameter kinds before effects | Versioned named/default/callback binding, typed expected outcomes and composed abnormal completion |
 
 The next language step remains D1: type one ordered collection callback, one
 decoder callback and one scoped resource callback together under a resolved

@@ -136,6 +136,32 @@ reported only when known; Lark columns are Unicode code-point positions,
 browser Rust byte offsets are converted to Monaco's UTF-16 positions. Runtime
 source mapping and a complete versioned result transport remain future work.
 
+Portable Core runtimes propagate abnormal `ErrorValue` results before eager
+consumers invoke later arguments, elements, iterations or callbacks. Failed
+bindings are not committed, map/filter stop on abnormal callback failure, and
+an abnormal finalizer result is not discarded. This is distinct from ordinary
+data such as `List[Result[T, E]]`, whose expected outcomes are values. Prototype
+handlers can observe propagated native error kinds. Host-thrown exceptions,
+aggregate cleanup causes, region escape and structured task cancellation still
+need the D2 completion contract; this repair does not admit a universal unwind
+or target `Result` implementation.
+
+The portable Python-compatible `ForEach` runs its `else` body after normal
+exhaustion, including empty input and completed `continue` paths. `break`,
+`return` and abnormal failure bypass it. This preserves the existing migration
+contract; it does not admit loop-`else` syntax to the target language.
+
+The partial Core `Call`/`Function` contract carries positional arguments and
+defaults, plus the existing Nomi block callback. Python-AST lowering rejects
+named/unpacked calls, positional-only/keyword-only/variadic parameters and
+mapping unpacking rather than silently dropping their meaning. Structured JS
+lowering rejects supplied named/unpacked calls and unsupported parameter markers
+too. Strict Core verification and JS diagnostic preflight prevent earlier
+program effects when any lowering diagnostic remains. This is a prototype
+capability boundary, not rejection of the target's named-call design or the
+Python-hosted interpreter's support. A richer versioned call/binding contract
+must preserve names, ordering, defaults and callback effects before admission.
+
 The generated browser manifest includes Python/Lark source plus explicitly
 registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host
 capability JSON required by Pyodide initialization. Missing registered assets
@@ -577,9 +603,19 @@ and nonpositive wait/Colima resource values. Tokens are URL-encoded as a single
 query value, including when they contain `&`, `#`, `+` or spaces. Launcher-owned
 command logs redact token/password arguments without changing execution, and
 printed URLs omit authentication query values. The browser receives the real
-authenticated URL; `--no-browser` users enter their configured token at login.
-This does not sanitize Jupyter's own logs or change container reuse policy. The
-fixed `nomi` development token remains; this is not a publicly deployable service.
+authenticated URL. New containers receive a random token unless `--token` or
+`NOMI_JUPYTER_TOKEN` is supplied; blank credentials are rejected. `--no-browser`
+users retrieve it with `docker exec nomi-jupyter jupyter server list` and enter
+it at login. Reuse inspects structured Docker JSON, checking the image tag,
+exact localhost port binding and consistency of the configured credential;
+incompatible or unverifiable containers require `--restart-container`. Old
+fixed-`nomi` credentials require explicit selection or replacement. Readiness
+requires a JSON status response, not a redirected login page. Timeout excerpts
+redact the launch token and its encoded forms; this is not a general secret
+scanner. Jupyter's own logs and Docker-authorized inspection expose credentials;
+the [Jupyter security guide](https://jupyter-server.readthedocs.io/en/latest/operators/security.html)
+describes authentication and token discovery. Image-tag comparison is not image
+digest attestation; this is not a publicly deployable service.
 
 The Docker context is bounded by `.dockerignore`, which excludes local scratch
 files, generated reports, installed JavaScript dependencies, Python caches, and

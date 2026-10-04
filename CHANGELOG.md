@@ -21,6 +21,12 @@ data/ML engine is promised.
   expanded the text notebook with bounded windows.
 - Preserved special JavaScript property names as ordinary binding/map/data keys;
   excluded inherited host methods from nominal field lookup.
+- Propagated portable-runtime abnormal failures before later eager work; prevented
+  failed bindings, continuing map/filter callbacks and ignored finalizer errors.
+- Ran portable Python-compatible `for ... else` after normal exhaustion, not
+  only empty input; `break` and abnormal completion still bypass it.
+- Rejected unrepresentable portable call/parameter/mapping shapes before effects
+  instead of silently erasing named arguments or parameter kinds.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Distinguished unavailable inspection evidence from captured empty bindings or
@@ -34,6 +40,9 @@ data/ML engine is promised.
 - Kept JSON CLI failures structured before execution; redacted launcher-owned
   Docker token logs and excluded common local credential/state files from the
   build context. The development image is not a hardened service.
+- Replaced the fixed notebook credential with generated tokens; rejected blank
+  credentials and incompatible container reuse; required JSON readiness evidence
+  and redacted configured credentials in timeout log excerpts.
 
 The [project roadmap](docs/orientation/project_roadmap.md) owns observed
 verification and remaining gates. Root licensing, hosted deployment, supported
