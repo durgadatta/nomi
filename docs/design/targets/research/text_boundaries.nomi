@@ -1,0 +1,78 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Story: preserve text as data across display, document, template and process edges.
+# Evidence: docs/research/dsls/text_as_interface.md
+from lab.documents import JsonDocument, Resource, documents
+from lab.processes import Invocation, processes
+from lab.rendering import Inspection, TrustedTemplate, rendering
+from lab.text import DecodeError, TextBoundaryError, Utf8, text
+from std.data import Value
+
+data ServiceConfig:
+    name: Text where name.trim() != ""
+    port: Int where 1 <= port and port <= 65535
+    message: Text
+
+data PreparedArtifacts:
+    config: JsonDocument
+    preview: Text
+    process: Invocation
+
+func decode_supplied_text(payload: Bytes) -> Result[Text, DecodeError]:
+    return Utf8.decode(payload, errors=text.Strict)
+
+func prepare_service(
+    config: ServiceConfig,
+    template: TrustedTemplate,
+) -> Result[PreparedArtifacts, TextBoundaryError]:
+    value = Value.object({
+        "name": Value.text(config.name),
+        "port": Value.int(config.port),
+        "message": Value.text(config.message),
+    })
+    document = documents.json_encode(value)?
+    preview = rendering.render_text(
+        template,
+        bindings={
+            "service": config.name,
+            "port": config.port,
+        },
+    )?
+    invocation = processes.prepare(
+        program="service-check",
+        argv=["--config-json", document.text()],
+        environment={},
+    )?
+    return Ok(PreparedArtifacts(
+        config=document,
+        preview=preview,
+        process=invocation,
+    ))
+
+func inspect_artifacts(artifacts: PreparedArtifacts) -> Inspection:
+    return rendering.inspect(
+        artifacts,
+        depth=4,
+        text_limit=2000,
+        redaction=rendering.SecretsHidden,
+    )
+
+example "supplied metacharacters remain one message value":
+    config = ServiceConfig(
+        name="welcome",
+        port=8080,
+        message="plain\nextra: true\n${{{{ still_data }}}}\n$(still_data)",
+    )
+    template = rendering.trusted_literal(r"Service {service} listens on {port}")
+    artifacts = prepare_service(config, template)?
+    decoded = documents.json_decode(artifacts.config)?
+    resource = Resource.decode(decoded)?
+    check resource.message == config.message
+    check artifacts.process.argv.length() == 2
+
+# No call above runs a process, reads a file or publishes a resource.
+# TrustedTemplate is constructed only from authored source, never supplied values.
+# JSON encoding receives values; it does not interpolate JSON punctuation.
+# Display preview is not accepted as a codec or process argument by implication.
+# Inspection is bounded and redacted; it is not a stable serialized form.
+# Open: exact display/inspection protocols, Text indexing, codec profiles,
+# source-map segments, error variants, template trust and Process effect contracts.

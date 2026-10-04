@@ -2,7 +2,7 @@
 
 > Status: dedicated research evidence and bounded Nomi hypotheses.
 >
-> Primary documentation checked on 2026-10-01. This dossier does not accept
+> Primary documentation checked through 2026-10-03. This dossier does not accept
 > language syntax, promise a DSL engine, or establish host conformance.
 
 ## Purpose And Reading Order
@@ -22,17 +22,19 @@ own tables, numerical notation, and DW1-DW8; this is not a replacement survey.
    Actions, Helm, Kustomize, Compose, GitLab, Azure, Ansible and Argo.
 3. [Strings and embedding](strings_and_embedding.md): literal preservation,
    interpolation, contextual construction, Unicode, source maps and authority.
-4. [Domain atlas](domain_atlas.md): 50 families, original counterexamples,
+4. [Text as a computational interface](text_as_interface.md): producer/consumer
+   naming, display/codec boundaries, layered tools, human editing and T1-T10.
+5. [Domain atlas](domain_atlas.md): 50 families, original counterexamples,
    primary references and remaining breadth gaps.
-5. [Orthogonal models](orthogonal_models.md): 24 analytical semantic models
+6. [Orthogonal models](orthogonal_models.md): 24 analytical semantic models
    and deeper distinctions in evidence, search, time, state and execution.
-6. [Composition boundaries](composition_boundaries.md): twelve boundary pairs,
+7. [Composition boundaries](composition_boundaries.md): twelve boundary pairs,
    four whole-program fixtures, diagnostics and reversible integration shapes.
-7. [Nomi candidates](nomi_candidates.md): competing library and notation
+8. [Nomi candidates](nomi_candidates.md): competing library and notation
    approaches, semantic laws, representative programs and experiment gates.
-8. [Executed probes](experiments.md): ten host observations plus eight original
+9. [Executed probes](experiments.md): eighteen host/model observations plus eight original
    finite-model observations, with reproducible scripts and captured results.
-9. [Coverage catalog](coverage.json): 122 representatives, family/model tags,
+10. [Coverage catalog](coverage.json): 122 representatives, family/model tags,
    source references and explicit depth; research data rather than runtime wiring.
 
 The expanded catalog has 97 `mechanism-reviewed` and 25 `indexed` entries.
@@ -58,7 +60,7 @@ Evidence levels:
 | Level | Meaning | Evidence here |
 | --- | --- | --- |
 | Documented | A primary specification or maintainer document states behavior | Linked beside each external claim |
-| Observed | A named implementation or original finite model produced a captured result | Ten host observations and eight explicitly limited model probes |
+| Observed | A named implementation or original finite model produced a captured result | Eighteen boundary observations and eight explicitly limited model probes |
 | Inferred | A cross-system design conclusion | Explicitly called inference or Nomi hypothesis |
 | Proposed | A competing contract awaiting an experiment | Candidates and E1-E22; no accepted API |
 

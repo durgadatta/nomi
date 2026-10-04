@@ -41,6 +41,10 @@ The [data/workflow extension](../data_workflows/README.md) and
 threads with primary evidence and shared pressure programs. They are consolidated
 comparisons, not additional independent syntax authorities. The
 [DW experiment order](../data_workflows/nomi_candidates.md) owns their next steps.
+The [text-interface extension](../dsls/text_as_interface.md) deepens command,
+document, pattern and collaboration threads with producer/consumer vocabulary,
+layered interpreters, human editing obligations and T1-T10. It remains inside
+the existing DSL/string dossier and this cognitive-interface packet.
 
 | Thread | Representations considered | Pressure on Nomi |
 | --- | --- | --- |

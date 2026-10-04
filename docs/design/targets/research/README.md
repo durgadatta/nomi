@@ -15,6 +15,7 @@ and [notation research](../../../research/notation_atlas.md) own their questions
 | Workflow publication | [workflow.nomi](workflow.nomi) | Partition/attempt/idempotency identities; uncertain external outcome. | Persistence, runtime grants and retry/reconciliation contracts. |
 | Set/tensor/chemistry | [notation.nomi](notation.nomi) | Named universe, contracted axes and conservation model. | Equality, shape/unit and domain-validator contracts. |
 | Overall reconciliation | [overall.nomi](overall.nomi) | Decode, validate keys, calculate, preview, separately publish. | Higher-order effect/generic and domain-error contracts. |
+| Text boundaries | [text_boundaries.nomi](text_boundaries.nomi) | Display, strict decode, structured encoding, trusted rendering and argv preparation stay distinct. | Scalar/index, rendering, codec, provenance and process contracts. |
 
 Every `lab.*` module is **fictional proposed API**. These files have not been
 parsed, typechecked or executed. Imports summarize the required boundary; they

@@ -290,6 +290,14 @@ expansion to the source/view problem. E6/E11 compare mapped inner diagnostics
 and incomplete drafts with the existing committed-value model; no new editable
 projection or exact inverse source mapping is claimed.
 
+**Text-interface pressure:** [the focused extension](dsls/text_as_interface.md)
+distinguishes display, inspection, formatting, rendering, encoding, parsing and
+execution while retaining text as the universal authored/fallback form. T1-T10
+test representation intent, strict decode, offset units, structured encoding,
+template trust, argv, framing, lossless versus semantic formatting,
+localization, and the text/structured-primary fork. Before promoting a text API,
+close the scalar/index/rendering contract and reject implicit second evaluation.
+
 **Human interaction edges:** the [96-case atlas](interfaces/edge_cases.md) and
 [twelve composition cases](interfaces/composition_cases.md) sharpen this same
 question. HX1-HX8 compare proposal invalidation/repreparation, passive/refreshed

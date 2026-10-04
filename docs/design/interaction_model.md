@@ -26,6 +26,13 @@ representation, interpretation, assumptions, all-path obligations, progress,
 situated repair, and agency. These sharpen this proposal; they accept no new
 syntax or production API and do not establish usability or conformance.
 
+The [text-interface research](../research/dsls/text_as_interface.md) expands the
+working text-primary direction. It separates display, inspection, formatting,
+rendering, encoding, parsing and execution; compares language and PowerShell
+naming; and supplies T1-T10 plus a
+[target-only pressure program](targets/research/text_boundaries.nomi). These are
+candidate contracts, not accepted standard-library names.
+
 ## Thesis And A Real Fork
 
 Nomi could be a checked computational medium whose meaning remains inspectable
@@ -45,6 +52,13 @@ Two credible directions remain:
 is a reversible experiment, not proof the second direction is inferior. If
 source synchronization repeatedly defeats useful domain edits, run a fenced
 structured-document experiment instead of forcing every interaction into text.
+
+Text-primary means exact authored source plus explicit interpretation stages,
+not bare strings at every boundary. Bytes decoding, Unicode coordinates,
+localized display, machine encoding, trusted templates, source construction and
+process invocation remain different operations. A readable fallback is required
+even when a richer projection exists; display output is never the persistence
+or execution contract by implication.
 
 ## Small Semantic Model
 

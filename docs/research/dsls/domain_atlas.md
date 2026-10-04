@@ -27,7 +27,7 @@ Coverage labels in the catalog:
 - `indexed`: an official source establishes the representative's role, but
   detailed semantics, versions and integrations remain untested here.
 
-The first dossier's ten host probes and the new eight finite-model probes are
+The boundary dossier's eighteen host/model probes and the eight finite-model probes are
 separate evidence. No catalog entry means that its foreign runtime passed a
 conformance test. A family count measures breadth, never design quality.
 

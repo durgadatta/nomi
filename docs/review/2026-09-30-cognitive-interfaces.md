@@ -312,6 +312,46 @@ after the edits. No supported runtime, grammar, UI or generated web asset change
 Actual browser interaction, IME/assistive trials, human studies, authenticated
 review, physical clocks/devices and real remote recovery remain unperformed.
 
+### Text Interface Extension, 2026-10-03
+
+The requested text-focused continuation extends the existing DSL/string dossier
+and cognitive-interface packet rather than creating another authority. It adds
+[a focused chapter](../research/dsls/text_as_interface.md), a
+[target-only pressure program](../design/targets/research/text_boundaries.nomi),
+and eight additional local host/model observations. The chapter compares text
+producer/consumer names across Python, Rust, Go, ECMAScript, Swift, Java, .NET,
+Elixir and PowerShell; layered interpretation in Ansible, GitHub Actions,
+Kubernetes,
+Helm, Terraform, Ninja and Make; and Unicode, localization, framing, security,
+source maps, human editing and generated-text authority.
+
+The PowerShell finding is narrower than an English grammar for commands: the
+documented convention is an approved action verb plus a singular resource noun,
+with parameters providing refinements. The transferable mechanism is a
+discoverable semantic vocabulary. It does not justify a compiler restriction
+on Nomi function names.
+
+The local capture now has eighteen DSL/text boundary observations. New cases
+distinguish Python display/debug/format channels, strict/repairing byte decode,
+line-ending preservation, lossy numeric presentation, visible Unicode scalar
+structure, an invisible bidirectional control, destination-specific encoders
+and delimiter collision. No shell, terminal, template engine, cloud service or
+Nomi runtime was executed. T1-T10 remain candidate comparisons, and no public
+API or new string syntax is accepted.
+
+Completion audit, 2026-10-04: corrected the pressure fixture's raw template
+literal so Nomi interpolation cannot consume template bindings prematurely;
+the supplied GitHub-like braces are escaped at the Nomi source boundary.
+Capture checks compare outcomes while preserving historical host versions as
+provenance. The discovery catalog keeps its original checked date: this focused
+extension does not claim to refresh all 122 systems.
+
+Validation before the completion audit: 153 tools tests and 95 focused
+syntax/research checks passed, as did all five design packets, the interaction
+capture, target-direction inspection, lint, local links and whitespace. RAG was
+rebuilt and the agent doctor passed. These checks validate research integrity,
+not execution/typechecking of fictional APIs or foreign-system conformance.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,

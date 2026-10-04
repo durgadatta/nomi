@@ -43,8 +43,8 @@ For the evidence and unresolved forks behind those choices, read:
    [Cross-Disciplinary Notation](research/notation_atlas.md): source forms,
    layered execution models, critical comparisons and bounded Nomi experiments.
 9. [DSLs And Strings](research/dsls/README.md): configuration/string boundaries
-   plus 50 DSL families and 24 orthogonal semantic models; primary evidence,
-   composition fixtures, local probes and bounded Nomi candidates.
+   plus text API vocabulary, 50 DSL families and 24 orthogonal semantic models;
+   primary evidence, composition fixtures, local probes and bounded candidates.
 
 For the current repository and runtime, read:
 
@@ -189,6 +189,7 @@ This list is intentionally complete and is checked by tests.
 - [DSL And String Research](research/dsls/README.md)
 - [Layered Configuration Languages](research/dsls/layered_configuration.md)
 - [Strings And Embedded Languages](research/dsls/strings_and_embedding.md)
+- [Text As A Computational Interface](research/dsls/text_as_interface.md)
 - [DSL Domain Atlas](research/dsls/domain_atlas.md)
 - [Orthogonal DSL Models](research/dsls/orthogonal_models.md)
 - [Composing Orthogonal DSLs](research/dsls/composition_boundaries.md)

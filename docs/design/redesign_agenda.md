@@ -119,6 +119,12 @@ The first D0 implementation checkpoint adds target-direction metadata to the
 existing feature registry and shared inspection API. It does not change
 prototype coverage or select a new grammar. Three entries remain explicitly
 unreviewed; see [current inspection](../orientation/artifacts_and_usage.md#target-direction-inspection).
+The [text-interface extension](../research/dsls/text_as_interface.md) sharpens
+D3: close Text/Bytes validity and strict decode, source/public offset units,
+display versus inspection versus encoding, interpolation conversion, line
+ending/normalization policy, and redaction/provenance golden vectors across
+Python and browser hosts. T1-T3 are the first discriminators; T4-T10 remain
+conditional library/tool experiments. This accepts no codec API or new syntax.
 The existing pattern contract is a bounded accepted slice and can continue its
 registered migration without waiting for all 29 dimensions. Do not implement
 open notation merely to keep the repository busy.

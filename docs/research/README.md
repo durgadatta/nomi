@@ -41,9 +41,10 @@
 9. [DSLs And Strings](dsls/README.md) - dedicated deep research on layered
    configuration, strings and orthogonal models: 122 representatives across
    50 families, 24 semantic models, twelve composition pairs and four extended
-   fixtures. Ten host observations plus eight original finite-model probes
-   sharpen E1-E22. Depth and unperformed integrations are explicit; grammar
-   extensions remain unaccepted.
+   fixtures. [Text as an interface](dsls/text_as_interface.md) adds naming,
+   rendering, codecs, localization, tooling and T1-T10; eighteen boundary
+   observations plus eight finite-model probes sharpen E1-E22. Depth and
+   unperformed integrations are explicit; grammar extensions remain unaccepted.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The

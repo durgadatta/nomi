@@ -1,10 +1,11 @@
 # Executed DSL Boundary Probes
 
-> Status: reproducible local research observations, recorded 2026-10-01.
+> Status: reproducible local research observations, recorded through 2026-10-03.
 >
 > Installed-host observations and original finite models only. The SQL probe
-> runs SQLite; no Nomi, specialized solver/model engine, actual shell, browser
-> renderer or remote service was run. These are not conformance integrations.
+> runs SQLite; no Nomi, specialized solver/model engine, actual shell, terminal,
+> browser renderer or remote service was run. These are not conformance
+> integrations.
 
 ## Environment And Reproduction
 
@@ -50,10 +51,19 @@ of the script.
 | POSIX argv serialization | `shlex.join` then `split` reproduces three arguments exactly | A named lexical serializer preserves this fixture | Actual process launch, Windows or every POSIX shell construct |
 | Schema format | Invalid timestamp has zero errors without the format checker and one with it | Validator configuration changes the guarantee | Live admission or every format implementation |
 | Unicode units | Composed/decomposed accents differ before NFC; emoji is 1 scalar / 4 UTF-8 bytes / 2 UTF-16 units | Length/equality units must be explicit | Grapheme segmentation or Nomi backend behavior |
+| Python representation channels | One object produces distinct `str`, `repr` and compact-format output | Display, inspection and formatting can be separate protocols | A recommended Nomi protocol or stable Python wire format |
+| Text decode policies | Strict UTF-8 rejects byte `ff` at offset 0; replacement inserts U+FFFD; Python surrogate escape round-trips the bytes | Decode policy changes both guarantee and result domain | That surrogate-bearing host strings are valid Nomi Text |
+| Line boundaries | `splitlines()` loses mixed CRLF/LF/CR endings; retaining endings reconstructs exact input | Line parsing and source preservation are different operations | Every platform IO/newline conversion behavior |
+| Presentation versus codec | Formatting Decimal `1.234` to two places yields `1.23`, which parses to a different value | Human presentation need not be lossless or invertible | All numeric display/parse policies |
+| Visible Unicode structure | One family emoji fixture has seven scalars and 25 UTF-8 bytes | Visible editing units cannot be inferred from scalar/byte counts | Its grapheme count; no segmentation library was run |
+| Invisible source controls | The fixture contains U+202E RIGHT-TO-LEFT OVERRIDE, category `Cf`, which is exposed by escaped inspection | Lexical inspection must reveal controls that plain display may reorder | A rendered spoof, compiler behavior or confusable detection |
+| Destination-specific encoding | JSON string, HTML text and POSIX shell-word encoders produce three different outputs for one payload | There is no context-free escape result | Whole-program safety or Windows shell behavior; nothing executed |
+| Delimiter collision | A fixed `EOF` line collides; a checked generated sentinel round-trips the supplied payload in the finite model | Sentinel protocols need collision handling or out-of-band framing | GitHub runner/environment-file conformance or probabilistic uniqueness |
 
-The SQL, YAML-value and argv cases include assertions for the intended captured
-boundary. Other cases deliberately report the installed libraries' behavior;
-the script is not a conformance suite that endorses every observed result.
+The SQL, YAML-value, argv, representation, line, destination and delimiter
+cases include assertions for their intended captured boundary. Other cases
+deliberately report installed-library behavior; the script is not a conformance
+suite that endorses every observed result.
 
 ## Relation To Primary Evidence
 
@@ -73,6 +83,14 @@ is specific to jsonschema's default validator and explicit format checker.
 Unicode normalization supplies a canonical-equivalence operation; it does not
 implicitly change ordinary equality in the tested host.
 [Unicode normalization](https://unicode.org/reports/tr15/).
+
+The additional text-interface observations motivate T1-T3 and T7 in
+[text as a computational interface](text_as_interface.md). Unicode source
+handling and segmentation define external requirements; the local script only
+enumerates code points/control metadata and explicitly records that visual
+ordering and grapheme segmentation were not observed.
+[Unicode source handling](https://www.unicode.org/reports/tr55/) and
+[text segmentation](https://www.unicode.org/reports/tr29/).
 
 ## What The Probes Change In The Research
 

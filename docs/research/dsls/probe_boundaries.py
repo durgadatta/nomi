@@ -5,17 +5,37 @@ The JSON output records host-library observations, not DSL conformance.
 """
 
 import argparse
+import html
 import json
 import platform
 import re
 import shlex
 import sqlite3
 import unicodedata
-from importlib.metadata import version
 from datetime import date
+from decimal import Decimal
+from importlib.metadata import version
 
 import yaml
 from jsonschema import Draft202012Validator, FormatChecker
+
+
+class RepresentationProbe:
+    def __init__(self, code):
+        self.code = code
+
+    def __str__(self):
+        return "customer-facing"
+
+    def __repr__(self):
+        return f"RepresentationProbe(code={self.code})"
+
+    def __format__(self, specification):
+        if specification == "compact":
+            return f"P{self.code}"
+        if specification == "":
+            return str(self)
+        raise ValueError(f"unsupported format: {specification}")
 
 
 def main():
@@ -142,11 +162,128 @@ def main():
         "astral_utf16_code_units": len(astral.encode("utf-16-le")) // 2,
     }
 
+    represented = RepresentationProbe(7)
+    representations = {
+        "str": str(represented),
+        "repr": repr(represented),
+        "format_default": format(represented),
+        "format_compact": format(represented, "compact"),
+    }
+    assert len(set(representations.values())) == 3
+    cases["python_representation_channels"] = representations
+
+    invalid_utf8 = b"\xffA"
+    try:
+        invalid_utf8.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        strict_error = {
+            "start": error.start,
+            "end": error.end,
+            "reason": error.reason,
+        }
+    repaired = invalid_utf8.decode("utf-8", errors="replace")
+    escaped = invalid_utf8.decode("utf-8", errors="surrogateescape")
+    assert escaped.encode("utf-8", errors="surrogateescape") == invalid_utf8
+    cases["text_decode_policies"] = {
+        "input_hex": invalid_utf8.hex(),
+        "strict_error": strict_error,
+        "replacement": repaired,
+        "surrogateescape_repr": repr(escaped),
+        "surrogateescape_roundtrip_hex": escaped.encode(
+            "utf-8", errors="surrogateescape"
+        ).hex(),
+    }
+
+    mixed_lines = "alpha\r\nbeta\ngamma\r"
+    kept_lines = mixed_lines.splitlines(keepends=True)
+    assert "".join(kept_lines) == mixed_lines
+    cases["line_boundary_preservation"] = {
+        "source_repr": repr(mixed_lines),
+        "splitlines": mixed_lines.splitlines(),
+        "splitlines_keepends_repr": [repr(line) for line in kept_lines],
+        "keepends_roundtrip": "".join(kept_lines) == mixed_lines,
+        "plain_split_roundtrip": "\n".join(mixed_lines.splitlines()) == mixed_lines,
+    }
+
+    precise = Decimal("1.234")
+    displayed = format(precise, ".2f")
+    cases["presentation_is_not_a_codec"] = {
+        "exact": str(precise),
+        "displayed": displayed,
+        "parsed_display": str(Decimal(displayed)),
+        "roundtrip_equal": Decimal(displayed) == precise,
+    }
+
+    family = "👩‍👩‍👧‍👦"
+    cases["unicode_visible_structure"] = {
+        "text": family,
+        "codepoints": len(family),
+        "utf8_bytes": len(family.encode("utf-8")),
+        "scalar_names": [unicodedata.name(character) for character in family],
+        "grapheme_segmentation_performed": False,
+    }
+
+    directional = "allow # \u202e deny"
+    cases["invisible_source_controls"] = {
+        "source_repr": repr(directional),
+        "non_ascii_or_control": [
+            {
+                "codepoint": f"U+{ord(character):04X}",
+                "name": unicodedata.name(character, "UNKNOWN"),
+                "category": unicodedata.category(character),
+            }
+            for character in directional
+            if ord(character) > 127 or unicodedata.category(character).startswith("C")
+        ],
+        "visual_order_observed": False,
+    }
+
+    contextual_payload = '" $(touch never) <tag>&'
+    contextual_encodings = {
+        "json_string": json.dumps(contextual_payload),
+        "html_text": html.escape(contextual_payload, quote=False),
+        "posix_shell_word": shlex.quote(contextual_payload),
+    }
+    assert len(set(contextual_encodings.values())) == 3
+    cases["destination_specific_encoding"] = {
+        "payload": contextual_payload,
+        **contextual_encodings,
+        "executed": False,
+    }
+
+    delimiter_payload = "first\nEOF\nlast\n"
+    fixed_delimiter = "EOF"
+    suffix = 1
+    selected_delimiter = f"NOMI_END_{suffix}"
+    while selected_delimiter in delimiter_payload.splitlines():
+        suffix += 1
+        selected_delimiter = f"NOMI_END_{suffix}"
+    assert fixed_delimiter in delimiter_payload.splitlines()
+    assert selected_delimiter not in delimiter_payload.splitlines()
+    framed = (
+        f"VALUE<<{selected_delimiter}\n"
+        f"{delimiter_payload}"
+        f"{selected_delimiter}\n"
+    )
+    prefix = f"VALUE<<{selected_delimiter}\n"
+    terminator = f"{selected_delimiter}\n"
+    assert framed.startswith(prefix) and framed.endswith(terminator)
+    recovered = framed[len(prefix) : -len(terminator)]
+    assert recovered == delimiter_payload
+    cases["delimiter_collision"] = {
+        "payload_repr": repr(delimiter_payload),
+        "fixed_delimiter": fixed_delimiter,
+        "fixed_delimiter_collides": fixed_delimiter in delimiter_payload.splitlines(),
+        "selected_delimiter": selected_delimiter,
+        "model_roundtrip": recovered == delimiter_payload,
+        "external_protocol_executed": False,
+    }
+
     print(
         json.dumps(
             {
                 "observed_on": args.observed_on.isoformat(),
-                "scope": "local host-library observations only",
+                "scope": "local host-library and original finite-model observations only",
                 "environment": {
                     "python": platform.python_version(),
                     "pyyaml": version("PyYAML"),

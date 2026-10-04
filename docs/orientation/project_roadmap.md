@@ -718,7 +718,9 @@ the full question of layered configuration languages and embedded string DSLs.
 **Research completed 2026-10-01:** [the dedicated dossier](../research/dsls/README.md)
 maps 122 representatives across 50 families and 24 semantic models, deeply
 compares layered YAML hosts and orthogonal rule/proof/temporal/numeric/device/
-media models, and keeps string roles central. It records ten host observations
+media models, and keeps string roles central. The 2026-10-03 text-interface
+continuation adds producer/consumer naming, rendering/codec distinctions,
+human editing and T1-T10, bringing the boundary capture to eighteen observations
 plus eight original finite-model probes, twelve composition pairs, four
 extended fixtures and E1-E22 with competing candidates and rejection gates.
 The catalog distinguishes mechanism review from indexing. Remote integrations,
@@ -800,7 +802,7 @@ scheduled without accepting open language notation.
 
 | Slice | Exact task | Depends on | Evidence / stop criterion |
 | --- | --- | --- | --- |
-| Q01 | Completed: A33 DSL/string research expanded to 50 families / 24 models; ten host and eight finite-model probes; E1-E22 define Nomi comparisons | This global plan completed | [Dossier](../research/dsls/README.md), explicit depth, composition fixtures and unperformed integrations; new syntax remains unaccepted. |
+| Q01 | Completed: A33 DSL/string research expanded to 50 families / 24 models; eighteen boundary and eight finite-model probes; E1-E22 plus T1-T10 define Nomi comparisons | This global plan completed | [Dossier](../research/dsls/README.md), explicit depth, composition fixtures and unperformed integrations; new syntax remains unaccepted. |
 | Q02 | Add a current parse-failure diagnostic producer and result fallback | Existing facade/collector | `x =` returns a stable phase/code/span where known, preserves exception/output, and renders through existing consumers. |
 | Q03 | Fence JS integer precision loss and document the bounded interchange choice | Reproducer plus A03 decision | Golden vectors around the host limit are exact or explicitly rejected; no silent rounded result. |
 | Q04 | Redact notebook/container tokens and narrow Docker build context | Existing launcher/context | Synthetic token absent from command/status logs; cache/private configuration absent from declared context. |

@@ -2,7 +2,7 @@
 
 > Status: string-focused DSL research and competing semantic contracts.
 >
-> External evidence checked 2026-10-01. Proposed type/API names below are
+> External evidence checked through 2026-10-03. Proposed type/API names below are
 > explanatory notation, not implemented Nomi exports or admitted syntax.
 
 ## Why Strings Are Central
@@ -17,6 +17,13 @@ is a supplied value, and which interpreter owns the next step**. Raw literals
 solve host escape processing. Contextual construction solves a different
 problem. A parsed or checked DSL object solves another. None automatically
 implies permission to execute it.
+
+The companion [text-interface chapter](text_as_interface.md) expands the
+producer/consumer vocabulary (`display`, `inspect`, `format`, `render`,
+`encode`, `decode`, `parse`, `quote`, `read`, `import` and related verbs),
+PowerShell naming evidence, layered configuration/build stages, localization,
+human editing, security and actionable Nomi experiments. This chapter retains
+ownership of literal and embedded-language contracts.
 
 ## The Current Target And The Remaining String Questions
 
@@ -379,4 +386,6 @@ Compare ordinary functions and explicit value types for:
 Only then compare convenience notation that lowers to those same objects.
 Reject a proposal if it merely saves punctuation while discarding values,
 source maps, dialect identity or effect visibility. The bounded evaluation
-plan is in [Nomi candidates](nomi_candidates.md).
+plan is in [Nomi candidates](nomi_candidates.md); T1-T10 in
+[text as an interface](text_as_interface.md) add naming, rendering, decoding,
+coordinate, framing, localization and text-primary editing comparisons.
