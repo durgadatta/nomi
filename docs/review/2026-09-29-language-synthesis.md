@@ -184,3 +184,40 @@ engine for a settled numeric/query slice. No new notation or sample until
 independent value/error/authority/source-map fixtures and honest host profiles
 agree; the map is a finite research frontier, not a promise to implement all
 human knowledge simultaneously.
+
+### Messaging Continuation (October 4)
+
+**Evidence That Changed The Design:** selected primary architecture mechanisms
+separate event identity from delivery attempts, queue receipts from partition
+positions, acceptance from observation, and local atomic intent from external
+effects. Replayable history is neither current execution authority nor automatic
+business rollback. The synthesis now names those boundaries without admitting
+new core grammar or an all-purpose reliable-delivery type.
+
+**Workflow Friction:** some NATS documentation entrypoints redirected to an
+unrelated index; the official documentation repository was used with a rolling
+version fence instead. A simple consecutive-offset model would wrongly reject
+real numeric gaps, so the finite frontier model uses delivered obligations.
+Field matching and imposed atomic arbitration are explicitly not authentication,
+crash-safe transactions or distributed fencing.
+
+**Durable Improvement:** [the architecture dossier](../research/data_workflows/messaging_and_events.md)
+routes six bounded forks, 24 edge cases, three target-only long forms and ten
+original finite probes through the existing language-coherence packet. A new
+capture-integrity/behavior/navigation test file and registered reproduction
+commands make this evidence reproducible without changing runtime samples,
+existing tests, browser inventory or accepted language contracts.
+
+**Next Pass:** close D1-D3, type the messaging long forms, then choose one pinned
+adapter under MSG1/MSG3 and independent crash/recovery/settlement vectors. Test
+unknown publication, conflicting payload, retained dedup horizon and owner
+fencing at the actual durable boundary. No broker, network, durable store,
+asynchronous scheduler or authenticated authority was exercised by these probes.
+
+**Verification:** 37 new messaging checks and 92 combined research/docs/packet
+checks passed; the full suite passed 1,967 tests with 80 existing skips and ten
+worker-repeated Jupyter path deprecation warnings. All five packets, the finite
+capture comparison, Ruff and whitespace checks passed. Web manifest freshness
+(123 runtime files, 11 samples) and WASM freshness (eight outputs) passed without
+regeneration: this pass adds no runtime module or supported sample. Target
+typing, broker integration and a new browser interaction trial remain unperformed.

@@ -115,6 +115,13 @@ threads and orders playground experiments. The
 
 ## Research Admission And Stop Rules
 
+The neighboring [messaging architecture research](../data_workflows/messaging_and_events.md)
+adds repair/observation pressure: lag views need position units, ownership and
+observation time; acknowledgment is not business completion; Stop can leave a
+remote outcome unknown. Topology diagrams remain projections, and redrive,
+replay and compensation require distinct current authority. Its MSG1-MSG6 gates
+belong to the existing language-coherence packet, not a second interface authority.
+
 Do not interpret breadth as an obligation to implement one product per family.
 Begin with the invoice target, pure transformation inspection, or Run/Stop. Compare two
 representations under a deliberately invalid input, stale revision, and denied

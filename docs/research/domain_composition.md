@@ -98,6 +98,7 @@ levels or that one level compile mechanically into the next:
 | --- | --- | --- |
 | Data | Entity/reference -> schema/snapshot -> partitioned asset -> typed dependency description -> checked workflow -> run/materialization/history | Keys/cardinality, consistency, edge roles, progress and publication |
 | ML | Scalar/axis -> tensor/numeric program -> transformed program -> model specification/state -> training/evaluation -> serving or agent workflow | Derivative/shape laws, state, randomness, dataset basis and authority |
+| Messaging | Local channel/credit -> envelope/endpoint/delivery -> queue/subscription/log -> inbox/outbox/checkpoint -> projection/saga/durable workflow | Ownership, settlement, ordering scope, atomic participants, replay and recovery |
 | Documents/knowledge | Source/reference -> term/concept/provision -> typed relation/rule -> interpreted model -> evidence/review -> institution-specific action | Edition, scope, ambiguity, assumptions and responsible authority |
 
 The vertical program can compose horizontally: an ML split refers to a data
@@ -117,6 +118,7 @@ claimed. Every initial layer is library/protocol, with scoped tools conditional.
 | --- | --- | --- | --- |
 | Data / reviewed | Schema-bound plan, key/cardinality, snapshot/partition, typed dependency, change law | [Data/time survey](data_workflows/dependencies_and_time.md) | Duplicate keys, independent snapshots, deleted history, late correction |
 | AI/ML / reviewed | Numeric program, shape/axis, specification/state, split, randomness, evaluation | [AI/ML survey](data_workflows/ai_ml.md) | Held-out leakage, impure tracing, mutable model alias, weights-only resume |
+| Messaging/architecture / reviewed | Envelope identity, endpoint, ownership/settlement, position, transition, budget/profile | [Messaging and events](data_workflows/messaging_and_events.md) | Lost acknowledgments, stale owners, conflicting payload, offset holes, dedup expiry and effectful replay |
 | Web/service / reviewed | Request/response, media/schema, route, conditional update, streaming completion | [HTTP semantics](https://www.rfc-editor.org/rfc/rfc9110.html), [OpenAPI](https://spec.openapis.org/oas/latest.html) | A retry or stale precondition does not imply exactly-once business effect |
 | Command line / existing | Typed command/argument, stream codec, process invocation/outcome | [Text boundaries](dsls/text_as_interface.md), [PowerShell](languages/powershell.md) | Shell source versus argv, stdout data versus stderr diagnostics, partial stream |
 | Visual tools / reviewed | Model/view, selection identity, coordinate frame, semantic command | [Vega-Lite view specification](https://vega.github.io/vega-lite/docs/spec.html), [interface packet](interfaces/README.md) | Sorted selection, unsupported inverse, stale source map, accessible textual projection |
@@ -140,6 +142,14 @@ The scan is broad, not exhaustive. ASD-STE100 and clap entrypoint fetches failed
 in this pass; no detailed controlled-English or new CLI-framework claims are
 derived from them. Lean and IUPAC remain discovery-level here. Standards and
 domain-specific adapters need their own conformance profiles before execution.
+
+The [architecture continuation](data_workflows/messaging_and_events.md) studies
+Kafka, RabbitMQ, NATS, Redis, SQS, MQTT, actors, reactive demand, event schemas,
+outbox/CDC, CQRS, sagas and durable workflow mechanisms. MSG1-MSG6 extend
+DC1/DC5/DC6 rather than add global language modes. An event graph can contain
+feedback; a DAG specialization must not erase that behavior. Its six small
+contract candidates remain domain/library hypotheses, and ten original finite
+countermodels are not broker conformance or an implementation of those APIs.
 
 ## Knowledge Is Not One Tree Or One Truth Value
 

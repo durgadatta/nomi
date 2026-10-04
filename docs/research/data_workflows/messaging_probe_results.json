@@ -1,0 +1,341 @@
+{
+  "schema": "nomi.research.messaging.v1",
+  "observed_on": "2026-10-04",
+  "environment": {
+    "python": "3.14.0rc3"
+  },
+  "evidence_kind": "original finite countermodels",
+  "execution": {
+    "nomi": false,
+    "broker": false,
+    "network": false,
+    "durable_storage": false,
+    "async_scheduler": false,
+    "authenticated_authority": false
+  },
+  "probes": [
+    {
+      "id": "MP01",
+      "name": "frontier_holes",
+      "experiments": [
+        "MSG2"
+      ],
+      "delivered": [
+        10,
+        12,
+        13
+      ],
+      "end": 14,
+      "cases": [
+        {
+          "completed": [],
+          "frontier": 10
+        },
+        {
+          "completed": [
+            10
+          ],
+          "frontier": 12
+        },
+        {
+          "completed": [
+            12
+          ],
+          "frontier": 10
+        },
+        {
+          "completed": [
+            13
+          ],
+          "frontier": 10
+        },
+        {
+          "completed": [
+            10,
+            12
+          ],
+          "frontier": 13
+        },
+        {
+          "completed": [
+            10,
+            13
+          ],
+          "frontier": 12
+        },
+        {
+          "completed": [
+            12,
+            13
+          ],
+          "frontier": 10
+        },
+        {
+          "completed": [
+            10,
+            12,
+            13
+          ],
+          "frontier": 14
+        }
+      ],
+      "limit": "supplied ordered delivery obligations; no isolation, offset fetch, rebalance or broker commit"
+    },
+    {
+      "id": "MP02",
+      "name": "atomic_inbox",
+      "experiments": [
+        "MSG3"
+      ],
+      "attempts": [
+        "committed",
+        "duplicate"
+      ],
+      "local_effects": 1,
+      "outbox_intents": 1,
+      "assumption": "one indivisible local arbitration step",
+      "limit": "imposed atomicity, not crash-safe storage, concurrent arbitration or remote-effect deduplication"
+    },
+    {
+      "id": "MP03",
+      "name": "crash_cuts",
+      "experiments": [
+        "MSG3"
+      ],
+      "non_atomic_effect_first": [
+        {
+          "crash_after": [],
+          "effects_after_retry": 1
+        },
+        {
+          "crash_after": [
+            "effect"
+          ],
+          "effects_after_retry": 2
+        },
+        {
+          "crash_after": [
+            "effect",
+            "record_inbox"
+          ],
+          "effects_after_retry": 1
+        },
+        {
+          "crash_after": [
+            "effect",
+            "record_inbox",
+            "ack"
+          ],
+          "effects_after_retry": 1
+        }
+      ],
+      "ack_first_crash": {
+        "delivery_removed": true,
+        "effect_done": false
+      },
+      "mark_first_crash": {
+        "duplicate_suppressed": true,
+        "effect_done": false
+      },
+      "limit": "enumerated instruction-boundary crashes with one eventual retry; no torn writes, actual recovery or availability proof"
+    },
+    {
+      "id": "MP04",
+      "name": "identities_and_fencing",
+      "experiments": [
+        "MSG1",
+        "MSG3"
+      ],
+      "inputs": [
+        [
+          "a",
+          "1",
+          "reserve",
+          7
+        ],
+        [
+          "a",
+          "1",
+          "reserve",
+          8
+        ],
+        [
+          "a",
+          "1",
+          "reserve",
+          8
+        ],
+        [
+          "a",
+          "1",
+          "release",
+          8
+        ],
+        [
+          "b",
+          "1",
+          "reserve",
+          8
+        ]
+      ],
+      "outcomes": [
+        "stale_owner",
+        "committed",
+        "duplicate",
+        "payload_conflict",
+        "committed"
+      ],
+      "effects": 2,
+      "limit": "supplied trusted source/owner labels and exact payload comparison, not authentication, hashing or real distributed fencing"
+    },
+    {
+      "id": "MP05",
+      "name": "dedup_expiry",
+      "experiments": [
+        "MSG3"
+      ],
+      "original_commit_at": 0,
+      "expires_at": 5,
+      "retry_times": [
+        1,
+        4,
+        5,
+        6
+      ],
+      "total_effects": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "limit": "imposed half-open retention window and one retry; not any vendor's dedup policy"
+    },
+    {
+      "id": "MP06",
+      "name": "outbox_response_loss",
+      "experiments": [
+        "MSG3"
+      ],
+      "local_intents": 1,
+      "accepted_publications": [
+        "event-1",
+        "event-1"
+      ],
+      "trace": [
+        "publish accepted",
+        "response lost before sent marker",
+        "relay retries same identity"
+      ],
+      "limit": "one supplied lost-response trace; stable ID alone supplies no remote dedup or observation service"
+    },
+    {
+      "id": "MP07",
+      "name": "partition_order",
+      "experiments": [
+        "MSG2"
+      ],
+      "outcomes": [
+        {
+          "order": [
+            "add_1",
+            "set_0"
+          ],
+          "value": 0
+        },
+        {
+          "order": [
+            "set_0",
+            "add_1"
+          ],
+          "value": 1
+        }
+      ],
+      "limit": "two legal single-record partition interleavings; not total-order service or a general commutativity checker"
+    },
+    {
+      "id": "MP08",
+      "name": "replay_and_edition",
+      "experiments": [
+        "MSG5"
+      ],
+      "events": [
+        3,
+        -1,
+        2
+      ],
+      "pure_projection": [
+        4,
+        4
+      ],
+      "effectful_notifications_after_two_runs": 6,
+      "checkpoint_edition": "sum.v1",
+      "requested_edition": "absolute-sum.v2",
+      "compatible": false,
+      "limit": "integer fold and supplied edition-equality policy; no event store, migration or workflow replay engine"
+    },
+    {
+      "id": "MP09",
+      "name": "budgets_and_feedback",
+      "experiments": [
+        "MSG4"
+      ],
+      "cases": [
+        {
+          "active": 1,
+          "queued": 2,
+          "payload_bytes": [
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "active": 1,
+          "queued": 3,
+          "payload_bytes": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "active": 1,
+          "queued": 1,
+          "payload_bytes": [
+            1,
+            9
+          ]
+        }
+      ],
+      "count_limit": 3,
+      "byte_limit": 6,
+      "accepted": [
+        true,
+        false,
+        false
+      ],
+      "feedback": {
+        "a_to_b_full": true,
+        "b_to_a_full": true,
+        "both_next_actions": "blocking send",
+        "enabled_next_actions": 0
+      },
+      "limit": "supplied admission predicates and deadlocked configuration; bytes omit overhead/fanout and no scheduler/fairness execution occurs"
+    },
+    {
+      "id": "MP10",
+      "name": "observation_and_authority",
+      "experiments": [
+        "MSG6"
+      ],
+      "remote_truth": "accepted",
+      "local_observation_after_cancel": "unknown",
+      "safe_retry_conclusion": "not established",
+      "historical_grant": true,
+      "current_grant": false,
+      "replayed_command_authorized": false,
+      "limit": "supplied counterexample and current-grant predicate, not remote reconciliation, authentication or capability enforcement"
+    }
+  ]
+}

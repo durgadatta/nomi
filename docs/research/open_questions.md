@@ -314,7 +314,7 @@ template trust, argv, framing, lossless versus semantic formatting,
 localization, and the text/structured-primary fork. Before promoting a text API,
 close the scalar/index/rendering contract and reject implicit second evaluation.
 
-**Domain-layer pressure:** [the twenty-family map](domain_composition.md)
+**Domain-layer pressure:** [the domain-family map](domain_composition.md)
 adds DC1-DC6: domain-owned payloads versus a universal IR, ordinary package
 composition versus scoped tools, versioned vocabulary/catalog references,
 controlled clauses versus interpreted prose, a composed report/train/review/
@@ -322,6 +322,15 @@ publication fixture, and a new-domain admission trial. These extend questions
 4/7/8/9/11/12/15/17; the [canonical synthesis](../design/synthesis.md#domain-layer-proposal)
 owns the recommendation. No natural-language evaluator or universal knowledge
 ontology is selected.
+
+**Architecture pressure:** [messaging and events](data_workflows/messaging_and_events.md)
+adds MSG1-MSG6 beneath questions 4/5/7/11/15/17: carrier-specific delivery,
+partition frontiers, local versus remote atomic participants, handler versus
+explicit loops, replay versus effectful workflow, and verified adapter profiles.
+Lost acknowledgments, stale ownership, payload conflicts, retention and bounded
+feedback challenge the shared primitives. Finite models motivate the forks;
+they do not settle distributed guarantees. D1-D3 precede a pinned broker slice,
+and no new global architecture keywords or implementation backlog is selected.
 
 **Human interaction edges:** the [96-case atlas](interfaces/edge_cases.md) and
 [twelve composition cases](interfaces/composition_cases.md) sharpen this same

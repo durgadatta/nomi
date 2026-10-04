@@ -18,6 +18,7 @@ and [notation research](../../../research/notation_atlas.md) own their questions
 | Text boundaries | [text_boundaries.nomi](text_boundaries.nomi) | Display, strict decode, structured encoding, trusted rendering and argv preparation stay distinct. | Scalar/index, rendering, codec, provenance and process contracts. |
 | Domain composition | [domain_layers.nomi](domain_layers.nomi) | Pinned report inputs, train-only descriptions, inert independent workflow steps and reviewed publication compose without changing call semantics. | Typed ports/descriptions, temporal basis, learned state, facade error conversion and real review/authority/publication protocols. |
 | Generic operations | [generic_operations.nomi](generic_operations.nomi) | Strict transforms and seeded history, an explicit context-bound cache/codec, observable passthrough failure and bounded integer iteration. | Callback/generic/protocol/effect/region, cache policy, numeric and iteration outcome contracts. |
+| Messaging architecture | [messaging.nomi](messaging.nomi) | Pure reconstruction, one-delivery atomic local intent and uncertain relay/reconciliation remain distinct. | Identity/codec, ownership/fencing, settlement/progress, local transaction, effects and pinned adapter crash/recovery contracts. |
 
 Every `lab.*` module is **fictional proposed API**. These files have not been
 parsed, typechecked or executed. Imports summarize the required boundary; they

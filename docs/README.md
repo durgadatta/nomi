@@ -187,6 +187,7 @@ This list is intentionally complete and is checked by tests.
 - [Workflow Execution Models](research/data_workflows/execution_models.md)
 - [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
 - [AI/ML Transformations, State And Evidence](research/data_workflows/ai_ml.md)
+- [Messaging And Event-Driven Architectures](research/data_workflows/messaging_and_events.md)
 - [Coherent Domain Layers](research/domain_composition.md)
 - [Generic Operations And Compositional Properties](research/generic_operations.md)
 - [Local Domain Composition Experiments](research/data_workflows/composition_experiments.md)

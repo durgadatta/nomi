@@ -1,7 +1,8 @@
 # Data And Workflow Languages
 
 > Status: cross-cutting research evidence, original survey checked 2026-09-30;
-> selected data/time and AI/ML extension checked 2026-10-04; not syntax admission.
+> selected data/time, AI/ML and messaging extension checked 2026-10-04;
+> not syntax admission.
 
 This dossier extends the [syntax atlas](../syntax_matrix.md) and the registered
 [cognitive-interface packet](../interfaces/README.md). It compares the notation
@@ -24,9 +25,12 @@ mathematics, biology, chemistry, linguistics, music, and argumentation.
 6. [AI And ML](ai_ml.md): numeric transformations, learned/training state,
    data splits, randomness, interchange, agents and ML1-ML6.
 7. [Coherent Domain Layers](../domain_composition.md): shared foundations,
-   twenty domain families, package obligations and DC1-DC6.
+   selected domain families, package obligations and DC1-DC6.
 8. [Local Composition Experiments](composition_experiments.md): captured
    original counterexamples and named graphlib/SQLite host observations.
+9. [Messaging And Event-Driven Architectures](messaging_and_events.md): queues,
+   pub/sub, logs, actors, outbox/inbox, projections, sagas and durable workflows;
+   MSG1-MSG6, 24 adversarial cases and ten captured finite countermodels.
 
 The live experiment order belongs to the synthesis, not to a second dated
 backlog. Canonical [syntax](../../design/syntax.md),
@@ -109,3 +113,9 @@ The [canonical synthesis proposal](../../design/synthesis.md#domain-layer-propos
 and [composition target](../../design/targets/research/domain_layers.nomi) stay
 within the registered language-coherence packet. Existing D1-D3 contracts are
 prerequisites; no domain keywords or universal evaluator are admitted.
+
+The [messaging continuation](messaging_and_events.md) adds architectural
+composition without turning transports into core keywords. Delivery ownership,
+settlement, position, local atomicity, replay and current authority remain
+separate. Its target-only programs and finite probes do not execute a broker or
+durable workflow engine; one pinned adapter is a later independent admission gate.

@@ -1,0 +1,89 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Evidence: messaging_and_events.md; MSG1-MSG6. No new source syntax.
+# D1 callbacks/effects, D2 completion/ownership, D3 codecs/identity remain open.
+from lab.collections import fold
+from lab.order_projection import OrderEvent, OrderProjection, ProjectionError, projection
+from lab.messaging import Delivery, QueueReceipt, ConsumerObservation
+from lab.messaging import PublishObservation, OperationKey, EndpointRef, messaging
+from lab.messaging import Network, DeliverySettle, CurrentGrant
+from lab.order_store import Store, StoreRead, StoreWrite, CommitObservation, orders
+from lab.order_store import ProcessingError, OutboxIntent
+from lab.order_codecs import codecs
+
+# Beginner: reconstruction is a pure, ordered fold, not notification delivery.
+func rebuild(events: List[OrderEvent]) -> Result[OrderProjection, ProjectionError]:
+    return fold(events, Ok(projection.empty()), projection.apply_checked)
+
+# Production: process one acquired delivery. A caller owns the receive loop.
+# Decode/transition errors leave it unsettled; a later retry remains possible.
+# Error conversion belongs to the facade, not implicit cross-domain coercion.
+pub async func process_one(
+    delivery: Delivery[QueueReceipt],
+    store: Store,
+) -> Result[ConsumerObservation, ProcessingError] uses StoreRead, StoreWrite, DeliverySettle, Network:
+    event = codecs.decode_order_for_processing(delivery.body)?
+    prepared = await orders.prepare_transition(store, event)?
+    committed = await orders.commit_inbox_state_outbox(
+        store,
+        prepared,
+        identity=event.identity,
+        payload_fingerprint=event.payload_fingerprint,
+        expected_version=prepared.base_version,
+        ownership=delivery.ownership,
+    )
+    match committed:
+        case CommitObservation.Known(processed):
+            # Includes a matched prior commit, not a conflicting reused ID.
+            return await messaging.settle_after_commit(delivery.receipt, processed)
+        case CommitObservation.Rejected(error):
+            return Err(error)
+        case CommitObservation.Unknown(operation):
+            # Do not acknowledge, repeat an effect, or report rollback here.
+            return Ok(ConsumerObservation.CommitUncertain(operation))
+
+# Failure-heavy: the relay can publish twice after acceptance/response loss.
+# Stable identity survives attempts; endpoint deduplication may have expired.
+pub async func relay_one(
+    intent: OutboxIntent,
+    endpoint: EndpointRef,
+    grant: CurrentGrant,
+) -> PublishObservation uses Network:
+    return await messaging.publish_current(
+        endpoint,
+        intent.envelope,
+        operation=intent.operation,
+        grant=grant,
+        attempt_budget=1,
+    )
+
+pub async func reconcile_publication(
+    endpoint: EndpointRef,
+    operation: OperationKey,
+    grant: CurrentGrant,
+) -> PublishObservation uses Network:
+    return await messaging.observe_publication(endpoint, operation=operation, grant=grant)
+
+# apply_checked accepts/returns Result[OrderProjection, ProjectionError]; it
+# preserves the first failed transition and cannot send, settle or access Store.
+# A checkpoint binds source/partition positions, schema and reducer edition.
+# Rebuild fails explicitly if required history is unavailable or incompatible.
+# prepare_transition is inert with respect to writes/publication; its reading
+# contract and Store handle lifetime still require D1/D2 typing decisions.
+# StoreRead/StoreWrite are distinct candidate capabilities; the facade must
+# specify whether both are needed on the matched-duplicate path as well.
+# commit_inbox_state_outbox must arbitrate version/owner/payload conflicts and
+# atomically commit all three LOCAL participants. A remote payment is excluded.
+# The durable store must enforce fencing; a copied epoch is not enforcement.
+# settle_after_commit reports settlement uncertainty separately from rejection.
+# QueueReceipt cannot be substituted for a partition position. A log adapter
+# advances only a completed delivered prefix, including legitimate numeric gaps.
+# publish_current returns Accepted, Rejected or Unknown; no Result shortcut
+# turns lack of observation into proven rejection. Current authority is checked.
+# Unknown can remain unknown after reconciliation; cancellation is not undo.
+# These async calls create cold work; the caller's structured owner schedules
+# them and owns cancellation/join. Current grants are checked at execution.
+# Awaited commits/settlement can be interrupted with unknown remote outcomes;
+# D2 must retain that evidence, not coerce cancellation into ProcessingError.
+# A live delivery/store retained by cold work must pass D1/D2 region checks.
+# Retry, compensation, redrive and replay are different operations/authorities.
+# No with-body repetition, implicit handler macro or broker keyword is needed.

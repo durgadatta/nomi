@@ -163,6 +163,11 @@ The [data/time research](../research/data_workflows/dependencies_and_time.md),
 four-layer model. They test a language that can host rich domains coherently,
 without assigning a new meaning to ordinary calls or pipelines.
 
+The [messaging and event architecture continuation](../research/data_workflows/messaging_and_events.md)
+adds durable communication pressure to this same proposal. Actors/channels stay
+library-first; no broker syntax or universal reliable-delivery primitive is
+accepted. Transport evidence does not establish business completion.
+
 Existing typed values, immutable data, explicit functions, Result, constraints,
 effects, lifetimes, tasks and modules are the common foundations. Candidate
 shared contracts are contextual references, typed descriptions/relations,
@@ -176,6 +181,7 @@ Do not add a universal object/graph wrapper to every value.
 | Dependencies | Typed relation library; checked DAG specialization | Prerequisite, lineage, attribution, numeric dependence and feedback differ |
 | History | Storage/temporal library | Version, valid time, system/availability time, replay and compensation differ |
 | Learning | Numeric/learning library; scoped numeric tool if earned | Specification, learned artifact, training checkpoint and evaluation differ |
+| Messaging | Channel/transport/storage libraries and verified adapter profiles | Event versus attempt identity, ownership, settlement versus progress, atomic scope and replay versus authorized effects differ |
 | Knowledge/documents | Reference/edition/interpretation library | Labels, entities, evidence, formal rules and human interpretation differ |
 | Shared inspection | Tooling envelope, domain-owned payload and source maps | Captured evidence versus current observations; preview never executes |
 | Execution adapters | Domain/profile owner, effects/resources/tasks | Checked description versus current grants, completion and uncertain outcome |
@@ -191,6 +197,23 @@ fictional facades. It has not been parsed/typechecked/executed. The
 [local probes](../research/data_workflows/composition_experiments.md) execute
 selected finite discriminators, not these APIs or foreign engines. No DAG,
 time-travel, tensor, learning or natural-language keywords are admitted.
+
+The [messaging target](targets/research/messaging.nomi) challenges ordinary calls
+with a pure reconstruction, one-delivery local inbox/state/outbox transaction,
+and failure-heavy relay/reconciliation. It is also fictional and untyped.
+Candidate envelope, endpoint, delivery, position, transition and budget contracts
+compose into queues, subscriptions, logs, projections, sagas and durable
+workflows; they are not six new core types imposed on every object. Keep a
+guarantee's participants, ordering scope, retention horizon and failure model
+visible. Unknown remote outcome is not ordinary rejection; local cancellation
+is not remote rollback; an old grant is not replay authority. Library receipts
+must not interchange queue settlement and partition checkpoint semantics.
+
+MSG1-MSG6 remain subgates of D1-D3 and DC1/DC5/DC6. The ten captured finite
+countermodels falsify selected naive policies only. Admission still requires
+typing the three programs and independent crash/recovery vectors for one pinned
+adapter; no broker, durable storage, async scheduler or authenticated authority
+was exercised by those models.
 
 Admission order remains D1-D3 then D4: resolve generic/schema/callback/effect/
 region and scalar/codec/identity contracts; type the composed program; compare

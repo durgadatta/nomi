@@ -90,7 +90,7 @@
       "owner": "language-design",
       "status": "designing",
       "last_reviewed": "2026-10-04",
-      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem"],
+      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow"],
       "artifacts": {
         "research": "docs/research/features/README.md",
         "design": "docs/design/synthesis.md",
@@ -109,12 +109,16 @@
         "python3 docs/research/data_workflows/probe_composition.py --check docs/research/data_workflows/composition_probe_results.json",
         "pytest -n 0 prototype/tests/unit/tools/test_domain_composition_research.py",
         "ruff check docs/research/data_workflows/probe_composition.py prototype/tests/unit/tools/test_domain_composition_research.py",
+        "python3 docs/research/data_workflows/probe_messaging.py --check docs/research/data_workflows/messaging_probe_results.json",
+        "pytest -n 0 prototype/tests/unit/tools/test_messaging_architecture_research.py",
+        "ruff check docs/research/data_workflows/probe_messaging.py prototype/tests/unit/tools/test_messaging_architecture_research.py",
         "python3 .codex/scripts/agent_doctor.py",
         "git diff --check"
       ],
       "next_actions": [
         "Use the resource-lifetime packet's executed candidate comparison; next close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
+        "Use MSG1-MSG6 to challenge delivery/position/ownership/local atomicity/replay contracts with the messaging target; after D1-D3 typing, select one pinned adapter and independent crash/recovery/settlement fixtures, not a universal broker API.",
         "Specify callback effect types, minimal generics/protocols, and scoped task-handle contracts before claiming the overall target is fully typeable.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
         "Specify strict indexed decoding/encoding and numeric golden vectors across CLI and browser hosts.",
