@@ -96,7 +96,7 @@ jobs:
           python-version: '3.14'
       - run: python3 -m pip install -e '.[web-test]'
       - run: python3 -m playwright install --with-deps chromium
-      - run: python3 scripts/check_web_browser.py
+      - run: python3 scripts/check_web_browser.py --legacy-pyodide
       - name: Upload browser evidence
         if: always()
         uses: actions/upload-artifact@v4

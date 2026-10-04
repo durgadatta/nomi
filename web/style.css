@@ -1336,8 +1336,7 @@ body.sidebar-hidden .resize-handle {
     padding: 0 9px;
   }
 
-  .toolbar-divider,
-  #restart-btn {
+  .toolbar-divider {
     display: none;
   }
 

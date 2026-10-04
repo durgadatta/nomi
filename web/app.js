@@ -28,7 +28,7 @@ let _workbenchState = { active: "terse", drafts: {}, sidebarWidth: 272, resultPa
 let _evalBackend = new URLSearchParams(location.search).get("backend") || "wasm-js";
 
 const WORKBENCH_STORAGE_KEY = "nomi.playground.workbench.v2";
-const RUNTIME_INIT_TIMEOUT_MS = 5000;
+const RUNTIME_INIT_TIMEOUT_MS = _evalBackend === "pyodide" ? 60000 : 5000;
 const RUNTIME_RUN_TIMEOUT_MS = 10000;
 
 function byId(id) { return document.getElementById(id); }

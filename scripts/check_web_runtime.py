@@ -50,6 +50,8 @@ def main() -> int:
                 "prototype/tests/contracts/test_wasm_js_pipeline_contract.py",
                 "prototype/tests/contracts/test_host_capabilities_contract.py",
                 "prototype/tests/contracts/test_web_manifest_metadata_contract.py",
+                "prototype/tests/contracts/test_web_runtime_asset_contract.py",
+                "prototype/tests/contracts/test_pyodide_result_contract.py",
                 "prototype/tests/contracts/test_web_runtime_display_contract.py",
                 "prototype/tests/contracts/test_release_browser_semantics.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",

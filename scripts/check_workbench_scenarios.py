@@ -152,6 +152,18 @@ def check_workbench_scenarios(page, expect, artifacts):
             "Total in cents: 1260"
         )
         page.screenshot(path=str(artifacts / f"layout-{width}.png"), full_page=True)
+        if width == 320:
+            page.evaluate("failRuntime(new Error('simulated worker failure'))")
+            expect(page.locator("#run-all-btn")).to_be_disabled()
+            page.get_by_role(
+                "button", name="Restart runtime worker", exact=True
+            ).click()
+            expect(page.locator("#status")).to_have_text("ready")
+            page.locator("#run-all-btn").click()
+            expect(page.locator('[data-result-view="output"] pre')).to_contain_text(
+                "Total in cents: 1260"
+            )
+            expect(page.locator("#status")).to_have_text("ready")
     page.set_viewport_size({"width": 1440, "height": 1000})
 
     # Uniform CRLF survives the real Monaco/import/export path.

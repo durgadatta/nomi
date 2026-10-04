@@ -1,7 +1,7 @@
 """Generate web/manifest.json for the browser playground.
 
-Run this after adding, removing, or renaming runtime `.py` or `.lark` files
-under prototype/.
+Run this after adding, removing, or renaming runtime `.py`/`.lark` files or
+registered runtime data assets under prototype/.
 """
 
 import argparse
@@ -17,6 +17,7 @@ WEB_DIR = ROOT / "web"
 MANIFEST_PATH = WEB_DIR / "manifest.json"
 METADATA_PATH = WEB_DIR / "manifest_metadata.json"
 RUNTIME_SUFFIXES = {".py", ".lark"}
+RUNTIME_ASSET_PATHS = ("runtime/host_capabilities.json",)
 SAMPLE_SUFFIXES = {".nomi", ".nomi.nb"}
 IGNORED_PARTS = {"__pycache__", "tests", "archive"}
 
@@ -30,9 +31,13 @@ def should_include(path: Path) -> bool:
 
 
 def _runtime_files():
-    return sorted(
-        path for path in PROTOTYPE_DIR.rglob("*") if should_include(path)
-    )
+    files = {path for path in PROTOTYPE_DIR.rglob("*") if should_include(path)}
+    for relative in RUNTIME_ASSET_PATHS:
+        asset = PROTOTYPE_DIR / relative
+        if not asset.is_file():
+            raise FileNotFoundError(f"Required browser runtime asset is missing: {asset}")
+        files.add(asset)
+    return sorted(files)
 
 
 def build_manifest() -> dict:

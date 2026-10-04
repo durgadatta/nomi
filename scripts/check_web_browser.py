@@ -48,7 +48,9 @@ def playground_url(remote_url: str | None):
             thread.join()
 
 
-def check_browser(url: str, artifacts: Path, headed: bool) -> None:
+def check_browser(
+    url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
+) -> None:
     from scripts.check_workbench_scenarios import check_workbench_scenarios
 
     try:
@@ -136,6 +138,36 @@ def check_browser(url: str, artifacts: Path, headed: bool) -> None:
             expect(output).to_have_text("42")
             expect(page.locator("#status")).to_have_text("ready")
             check_workbench_scenarios(page, expect, artifacts)
+            if legacy_pyodide:
+                legacy_page = context.new_page()
+                try:
+                    legacy_page.on(
+                        "pageerror", lambda error: page_errors.append(str(error))
+                    )
+                    legacy_page.goto(
+                        urljoin(url, "?backend=pyodide"), wait_until="domcontentloaded"
+                    )
+                    expect(legacy_page.locator("#loading")).to_be_hidden(timeout=90_000)
+                    legacy_page.locator('[data-sample="terse"]').click()
+                    legacy_page.locator("#run-all-btn").click()
+                    expect(
+                        legacy_page.locator('[data-result-view="output"] pre')
+                    ).to_have_text(EXPECTED_OUTPUT)
+                    expect(legacy_page.locator("#status")).to_have_text("ready")
+                    legacy_page.get_by_role("tab", name="Pipeline", exact=True).click()
+                    expect(
+                        legacy_page.locator('[data-result-view="pipeline"]')
+                    ).to_contain_text("python-ast")
+                    legacy_page.screenshot(
+                        path=str(artifacts / "legacy-pyodide.png"), full_page=True
+                    )
+                except Exception:
+                    legacy_page.screenshot(
+                        path=str(artifacts / "legacy-failure.png"), full_page=True
+                    )
+                    raise
+                finally:
+                    legacy_page.close()
             assert not page_errors, "Uncaught browser errors: " + "; ".join(page_errors)
         except Exception:
             page.screenshot(path=str(artifacts / "failure.png"), full_page=True)
@@ -164,15 +196,22 @@ def main() -> int:
         "--headed", action="store_true", help="show Chromium while checking"
     )
     parser.add_argument(
+        "--legacy-pyodide",
+        action="store_true",
+        help="also check the opt-in Pyodide quick tour (network bootstrap)",
+    )
+    parser.add_argument(
         "--artifacts", type=Path, default=ROOT / "reports" / "web-browser"
     )
     args = parser.parse_args()
     with playground_url(args.url) as url:
         print(f"Checking playground: {url}", flush=True)
-        check_browser(url, args.artifacts, args.headed)
+        check_browser(url, args.artifacts, args.headed, args.legacy_pyodide)
     print(
         f"Browser checks passed: samples, notebook, diagnostics, cancellation, drafts, desktop/mobile. Artifacts: {args.artifacts}"
     )
+    if args.legacy_pyodide:
+        print("Opt-in legacy Pyodide quick tour and pipeline passed.")
     return 0
 
 

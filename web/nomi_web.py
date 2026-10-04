@@ -225,23 +225,23 @@ async def run_nomi(code: str) -> dict:
     result = execution["result"]
     timings = execution["timing"]
     timings["total_ms"] = (time.perf_counter() - total_start) * 1000
-    if result.ok:
-        return {
-            "output": result.stdout,
-            "session": _get_counter(),
-            "timing": timings,
-        }
-
-    try:
-        raise result.exception
-    except Exception as e:
-        import traceback
-        tb = traceback.format_exc()
-        _log(f"Error in run_nomi: {e}\n{tb}")
-        # Return full traceback so we can see the exact call path
-        return {
-            "error": tb.strip(),
-            "output": result.stdout,
-            "session": _get_counter(),
-            "timing": timings,
-        }
+    envelope = {
+        "ok": result.ok,
+        "output": result.stdout,
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+        "session": _get_counter(),
+        "timing": timings,
+        "timings": timings,
+        "backend": result.pipeline.eval_backend,
+        "pipeline": {
+            "parser_frontend": result.pipeline.parser_frontend,
+            "lowerer": result.pipeline.lowering,
+            "eval_backend": result.pipeline.eval_backend,
+            "host": "browser-worker-pyodide",
+        },
+        "diagnostics": [diagnostic.to_record() for diagnostic in result.diagnostics],
+    }
+    if not result.ok:
+        envelope["error"] = str(result.exception)
+    return envelope
