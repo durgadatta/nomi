@@ -69,12 +69,12 @@ function diagnostic(message, details) {
 }
 function loopNode(test, body, elseBody) {
   const node = { type: "Loop", test, body };
-  if (elseBody && elseBody.length) node.else_body = elseBody;
+  if (elseBody && elseBody.body.length) node.else_body = elseBody;
   return node;
 }
 function forEach(target, iterable, body, elseBody) {
   const node = { type: "ForEach", target, iterable, body };
-  if (elseBody && elseBody.length) node.else_body = elseBody;
+  if (elseBody && elseBody.body.length) node.else_body = elseBody;
   return node;
 }
 function matchNode(subject, cases) { return { type: "Match", subject, cases }; }

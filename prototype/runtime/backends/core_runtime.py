@@ -494,10 +494,8 @@ class CoreRuntimeEvaluator:
         iterable = self.eval(node.iterable)
         if isinstance(iterable, (ControlFlow, ErrorValue)):
             return iterable
-        ran = False
         last: Value | ControlFlow = NIL
         for item in self._iter_values(iterable):
-            ran = True
             self._current_frame.assign(node.target, item)
             body_result = self._eval_module(node.body)
             if isinstance(body_result, BreakSignal):
@@ -507,7 +505,7 @@ class CoreRuntimeEvaluator:
             if isinstance(body_result, (ControlFlow, ErrorValue)):
                 return body_result
             last = body_result
-        if not ran and node.else_body is not None:
+        if node.else_body is not None:
             return self._eval_module(node.else_body)
         return last
 

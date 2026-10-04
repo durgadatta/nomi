@@ -474,10 +474,8 @@ class CoreRuntime {
   evalForEach(node) {
     const iterable = this.eval(node.iterable);
     if (isAbrupt(iterable)) return iterable;
-    let ran = false;
     let last = NIL;
     for (const item of this.iterValues(iterable)) {
-      ran = true;
       this.currentFrame.assign(node.target, item);
       const bodyResult = this.evalModule(node.body);
       if (isSignal(bodyResult) && bodyResult.control === "break") return NIL;
@@ -485,7 +483,7 @@ class CoreRuntime {
       if (isAbrupt(bodyResult)) return bodyResult;
       last = bodyResult;
     }
-    return !ran && node.else_body ? this.evalModule(node.else_body) : last;
+    return node.else_body ? this.evalModule(node.else_body) : last;
   }
 
   evalUnaryOp(node) {

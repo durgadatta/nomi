@@ -115,6 +115,8 @@ def check_workbench_scenarios(page, expect, artifacts):
     }
     page.screenshot(path=str(artifacts / "source-diagnostic.png"), full_page=True)
     run_source("print(42)\n", "42")
+    run_source("for item in [1, 2]:\n    continue\nelse:\n    print('done')\n", "done")
+    run_source("for item in [1, 2]:\n    break\nelse:\n    print('skipped')\nprint(42)\n", "42")
     set_source("print(43)\n")
     expect(page.locator(".result-stale")).to_be_visible()
     page.locator("#run-all-btn").click()
