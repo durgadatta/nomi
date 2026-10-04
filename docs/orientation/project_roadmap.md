@@ -241,6 +241,84 @@ built, no runtime was auto-installed and no container integration is claimed.
 Licensing, hosted revision/supported-version evidence, usability studies and
 D1-D4/D7 target admission remain next-phase gates, not completed release work.
 
+### Deep-Scan Delivery Receipt
+
+The continuation starts from `dc8f13b`. Plan checkpoint `de03916` scopes
+independent target/research, runtime and web/tooling audits; repairs are recorded
+in `a1233f7`, `25f5ffa`, `06099e1`, `dcc148c`, `e7596cd`, `4c006e7` and
+`20c9a08`.
+The second scan reviews neighboring behavior and the repairs themselves; the
+third uses real-browser evidence and screenshot inspection. These are bounded
+A08/A11/A18/A21/A24/A28/A31/A32 improvements, not a target release.
+
+- **Packet integrity:** malformed required paths no longer skip validation;
+  metadata types, duplicate JSON keys, actual calendar dates and UTF-8 reads
+  fail clearly. Rejected paths are not opened. Resolved authority directories
+  prevent a research/design/review artifact from crossing its boundary through
+  `..` or an in-repository symlink. Listing/showing runs the same validation.
+- **Target coherence:** eight active target/spec files now use direct match
+  arms, named construction, declared `Value` variants and explicit imports.
+  Example declarations no longer invent function-level `?` propagation. The
+  66-case guard covers 29 active fixtures; it is not a parser/typechecker and
+  does not touch the superseded historical target or admit `lab.*` contracts.
+- **Function boundaries:** portable ordinary fall-through returns `None`;
+  explicit expression returns remain explicit. Call-time defaults see lexical
+  scope and earlier parameters, with arity rejection before defaults/body and
+  caller-frame restoration after default failure. Legacy lambda binding also
+  enters its lexical call frame. Target type/effect restrictions are not checked.
+- **Cleanup reentrancy:** Python-hosted nested calls restore outer cleanup
+  stacks. Repeated, recursive and failed cleanup no longer permanently alter
+  queued source AST markers. This is function-wide prototype defer, not D2
+  lexical lifetime, generator/async cleanup or aggregate-cause completion.
+- **Startup recovery:** editor/sample initialization is bounded; damaged sample
+  identities fail before source fetches. Fatal startup preserves its root error,
+  rejects pending boot work and disables runtime-only restart. Actual delayed
+  boot-log delivery and full Retry are browser scenarios. Screenshot review
+  exposed the late-log race; subsequent browser evidence exposed RequireJS's
+  wrapped opaque event message, now covered by a specific failure regression.
+
+One complete browser run also exposed a pinned Monaco disposal cancellation.
+Its trace points to the word-highlighter delay, not Nomi execution. Actual
+focus/cursor/immediate-disposal comparisons failed 12/12 with default occurrence
+highlighting, failed 12/12 after model detachment, and failed 0/12 with the public
+`off` option. The bounded compatibility repair disables automatic occurrences,
+not Find or selection highlighting; page errors remain a hard failure. Restore
+the affordance only when a pinned editor passes this stress. The final browser
+gate adds 30 alternating program/notebook switches, checks one surviving owned
+editor/model and retains Find/selection behavior. This is local host evidence,
+not a patch or conformance claim for upstream Monaco.
+
+Eight new test files add **250 cases**; no pre-existing test or snapshot was
+changed. Final observed checks:
+
+| Executed check | Observed result and scope |
+| --- | --- |
+| `pytest -q -n 4` | **2,244 passed, 80 skipped**, four existing worker-repeated Jupyter path warnings; 41.01 seconds. Installed-wheel/CLI checks are included. |
+| `python3 scripts/check_web_runtime.py --skip-agent-doctor` | **486 passed**; manifest and all eight WASM outputs fresh. Agent doctor is checked separately after context refresh. |
+| `check_web_browser.py --url http://127.0.0.1:8080/web/ --legacy-pyodide` | Actual Chromium/Monaco/WASM and Pyodide pass, including existing desktop/mobile scenarios, startup Retry, delayed boot logs, damaged manifest and 30-switch disposal stress. Error banners and narrow layouts were inspected. Evidence stays ignored under `reports/web-browser/`. |
+| Documentation/packet/active-target boundary checks | **127 pass**; all five packets remain coherent, with no status promoted. |
+| Messaging and interaction capture verification | Ten finite messaging models and 23 local interaction probes reproduce. Neither is Nomi/distributed-system/human-study conformance. |
+| Focused Ruff, JS syntax and whitespace | Changed/new executable owners and tests pass. |
+| RAG rebuild and agent doctor | Ignored local context refreshed; all 18 agent checks pass without a stale-index warning. |
+
+The manifest generator was rerun because Python/runtime owners changed; its
+inventory remains **123 runtime files and 11 samples**, so neither generated
+manifest file needed a diff. `make_web.py --check` passes. Parser source/WASM
+outputs are unchanged and `build_wasm.sh --check` passes. Browser/HTTP integration
+needed sandbox escalation: the restricted run could not launch Chromium/bind a
+test server; approved runs supplied the actual evidence. No dependency or
+container runtime was auto-installed for these checks.
+
+The Python-hosted argument binder still accepts invalid calls, including
+missing/extra/duplicate/unknown arguments and outer-name fallthrough. The
+conflicting existing positional-only test was not silently rewritten; explicit
+approval was requested and the A08 migration remains open. Future shipped-sample
+collisions with restored scratch identities also require a nonlossy migration
+path; the current guard fails explicitly rather than overwriting local work.
+Existing D1-D3, licensing, Docker, hosted revision, supported-version and human
+accessibility/usability evidence gates remain open. No research-study outcome,
+broker, data/ML engine, target checker or stable release is claimed.
+
 ### Next Phase Gates
 
 1. **D1/A08:** type ordered map/fold, decoder and scoped resource callbacks
@@ -488,6 +566,11 @@ is visible in source, diagnostics and events across the declared runtimes.
 
 The designing packet identifies the missing foundation for many other programs.
 
+- Correct the Python-hosted binder's acceptance of missing, extra, duplicate
+  and unknown arguments. Migrate the positional-only test that currently expects
+  an invalid call to succeed; require explicit approval before changing that
+  existing expectation. This is a prototype correctness/release gap, distinct
+  from D1 target design and portable Core's narrower call representation.
 - Select call-shape/default/label rules, then compare its existing three
   generic/function-value candidates at 80/100 columns on real programs.
 - Derive map/fold, decoder and resource callback contracts together. Distinguish

@@ -146,6 +146,13 @@ aggregate cleanup causes, region escape and structured task cancellation still
 need the D2 completion contract; this repair does not admit a universal unwind
 or target `Result` implementation.
 
+The Python-hosted function-wide defer experiment now restores an outer call's
+cleanup stack after nested calls, including cleanup failure. Repeated or
+recursive cleanup executes a shallow unmarked copy of the queued statement,
+not a permanently modified source AST. Lexical-scope cleanup, generator/async
+lifetime and aggregation of multiple cleanup failures remain unimplemented;
+this bounded repair does not settle D2.
+
 The portable Python-compatible `ForEach` runs its `else` body after normal
 exhaustion, including empty input and completed `continue` paths. `break`,
 `return` and abnormal failure bypass it. This preserves the existing migration
@@ -161,6 +168,26 @@ program effects when any lowering diagnostic remains. This is a prototype
 capability boundary, not rejection of the target's named-call design or the
 Python-hosted interpreter's support. A richer versioned call/binding contract
 must preserve names, ordering, defaults and callback effects before admission.
+
+Ordinary Core functions return `None` after normal body completion, never the
+value of the last statement. Expression-function helpers retain their explicit
+lowered return. Omitted positional defaults run at call time in declaration
+order in a fresh lexical callee frame, with earlier parameters visible; caller
+locals do not supply their names. Arity rejection happens before defaults and
+the body, and failed default evaluation restores the caller's frame. These are
+prototype runtime contracts, not enforcement of target restrictions on default
+effects or references to only module constants and earlier parameters.
+Legacy Python-style lambda defaults likewise enter their lexical call frame;
+the prototype's call-time default rule remains, not Python's definition-time
+default evaluation.
+
+The Python-hosted interpreter accepts richer call syntax, but its argument
+binder is not yet a reliable validation boundary: missing, extra, duplicate or
+unknown arguments can be accepted, and an unbound formal can resolve an outer
+name. One existing positional-only test preserves such an invalid call.
+Correcting that expectation and rejecting these calls is an explicit A08
+migration/release gate; portable Core rejection does not prove Python-hosted
+binding correctness.
 
 The generated browser manifest includes Python/Lark source plus explicitly
 registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host
@@ -456,6 +483,25 @@ Worker stop/timeout replaces the worker and loses its session, not a proof of
 language cancellation/cleanup. Initialization failures stop rather than retry
 indefinitely; Retry/restart is explicit. Samples come only from the generated
 manifest; missing deployment assets cannot be hidden by embedded fallback code.
+
+Editor setup and the entire sample-fetch phase have independent 30-second
+deadlines; sample fetch/body reads share one abort signal. The sample manifest
+must contain unique canonical `samples/` source paths, the initial quick tour
+and noncolliding document keys before any sample is fetched. Failure keeps Run
+disabled and offers full startup Retry. It terminates pending boot work and
+preserves the root error against late progress; runtime-only restart cannot
+recover a missing editor. A future shipped sample colliding with a restored
+scratch-document key fails explicitly rather than overwriting that local draft;
+nonlossy namespace migration remains an A21 follow-up.
+
+The pinned Monaco 0.52.0 editor disables automatic occurrence highlighting at
+creation. Actual focus/cursor/dispose probes reproduced an uncaught cancellation
+in its word-highlighter delay; detaching the model first also failed. The
+[pinned API](https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/monaco.d.ts) exposes
+the `off` setting; a [comparable upstream report](https://github.com/microsoft/monaco-editor/issues/4859)
+records the same disposal path. Explicit Find and selection highlighting remain
+available, and no error is filtered or swallowed. Restore this affordance only
+after a pinned editor release passes the disposal stress and full browser gate.
 
 The browser workbench exposes the runtime result record directly. Each run has
 `Output`, `Bindings`, `Diagnostics`, and `Pipeline` views; the last view names

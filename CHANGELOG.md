@@ -27,6 +27,10 @@ data/ML engine is promised.
   only empty input; `break` and abnormal completion still bypass it.
 - Rejected unrepresentable portable call/parameter/mapping shapes before effects
   instead of silently erasing named arguments or parameter kinds.
+- Repaired portable function fall-through and lexical call-time defaults;
+  rejected invalid positional arity before defaults or body execution.
+- Preserved Python-hosted cleanup across nested, repeated and recursive calls;
+  kept legacy lambda defaults in their lexical call frame.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Distinguished unavailable inspection evidence from captured empty bindings or
@@ -37,6 +41,12 @@ data/ML engine is promised.
   in the web manifest; added an isolated-manifest test and opt-in browser gate.
 - Rejected malformed legacy runtime manifests and stopped initialization after
   missing required assets or failed bridge/manifest HTTP responses.
+- Bounded editor/sample startup failures and exposed explicit recovery rather
+  than leaving the loading screen pending indefinitely.
+- Disabled automatic occurrence highlighting to avoid the pinned editor's
+  uncaught cancellation on disposal; explicit Find and selection remain usable.
+- Corrected active target examples and strengthened design-packet integrity
+  checks without claiming a target parser or typechecker.
 - Kept JSON CLI failures structured before execution; redacted launcher-owned
   Docker token logs and excluded common local credential/state files from the
   build context. The development image is not a hardened service.
