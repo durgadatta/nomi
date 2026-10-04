@@ -29,6 +29,8 @@
   letter-spacing: 0;
 }
 
+[hidden] { display: none !important; }
+
 html,
 body {
   width: 100%;
@@ -233,6 +235,7 @@ svg {
 .primary-button,
 .new-scratch-button,
 .nb-cell-run {
+  min-width: 66px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -647,6 +650,39 @@ body.sidebar-hidden .resize-handle {
   font-weight: 700;
 }
 
+.nb-cell-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.nb-cell-run, .nb-cell-delete { flex-shrink: 0; }
+
+.result-stale:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  color: var(--amber);
+  font-size: 11px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.diagnostic-location {
+  margin-top: 7px;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--teal);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.stale .diagnostic-location { color: var(--dim); cursor: default; }
+
 .nb-cell-run {
   min-height: 26px;
   padding: 0 8px;
@@ -700,6 +736,7 @@ body.sidebar-hidden .resize-handle {
   min-width: 0;
   min-height: 0;
   display: none;
+  flex-direction: column;
   border-top: 1px solid var(--line-soft);
   background: var(--surface-deep);
 }
@@ -1223,12 +1260,13 @@ body.sidebar-hidden .resize-handle {
     padding: 0 8px;
   }
 
-  .brand-text,
   .document-title > svg,
   .document-state,
   .status-pill {
     display: none;
   }
+
+  .brand-text span { display: none; }
 
   .document-title {
     justify-self: start;

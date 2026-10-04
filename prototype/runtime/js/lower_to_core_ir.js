@@ -167,7 +167,9 @@ function lowerExpr(expr) {
     }
     case "BoolOp": {
       const op = BOOLOP_MAP[expr.op] || expr.op;
-      const values = (expr.values || []).map(lowerExpr);
+      const operands = expr.values || (expr.left && expr.right ? [expr.left, expr.right] : null);
+      if (!operands) return diagnostic("Malformed boolean expression", { node_type: "BoolOp", capability: "rust-ast-json.contract" });
+      const values = operands.map(lowerExpr);
       return booleanOp(op, values);
     }
     case "UnaryOp": {

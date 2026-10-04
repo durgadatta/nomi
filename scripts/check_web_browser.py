@@ -14,6 +14,9 @@ from threading import Thread
 from urllib.parse import urljoin
 
 ROOT = Path(__file__).resolve().parent.parent
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(ROOT))
+
 SAMPLE = "samples/demo_terse.nomi"
 EXPECTED_OUTPUT = (
     "Nomi triage\n"
@@ -46,6 +49,8 @@ def playground_url(remote_url: str | None):
 
 
 def check_browser(url: str, artifacts: Path, headed: bool) -> None:
+    from scripts.check_workbench_scenarios import check_workbench_scenarios
+
     try:
         from playwright.sync_api import expect, sync_playwright
     except ImportError as exc:
@@ -130,6 +135,7 @@ def check_browser(url: str, artifacts: Path, headed: bool) -> None:
             expect(output).to_be_visible()
             expect(output).to_have_text("42")
             expect(page.locator("#status")).to_have_text("ready")
+            check_workbench_scenarios(page, expect, artifacts)
             assert not page_errors, "Uncaught browser errors: " + "; ".join(page_errors)
         except Exception:
             page.screenshot(path=str(artifacts / "failure.png"), full_page=True)
@@ -165,7 +171,7 @@ def main() -> int:
         print(f"Checking playground: {url}", flush=True)
         check_browser(url, args.artifacts, args.headed)
     print(
-        f"Browser smoke passed: sample, pipeline, scratch output. Artifacts: {args.artifacts}"
+        f"Browser checks passed: samples, notebook, diagnostics, cancellation, drafts, desktop/mobile. Artifacts: {args.artifacts}"
     )
     return 0
 

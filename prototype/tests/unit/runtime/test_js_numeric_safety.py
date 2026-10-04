@@ -77,10 +77,10 @@ def test_integer_overflow_is_reported(expression):
         "-2 >> 9007199254740991",
         "list(range(9007199254740989, 9007199254740991))",
         "float('2')",
-    "sum([1.0, 2.0])",
-    "'ha' * 3",
-    "3 * 'ha'",
-    "[1, 2] * 3",
+        "sum([1.0, 2.0])",
+        "'ha' * 3",
+        "3 * 'ha'",
+        "[1, 2] * 3",
     ],
 )
 def test_supported_numbers_match_python(expression):

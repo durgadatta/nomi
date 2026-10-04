@@ -99,7 +99,7 @@ function diagnosticMeta(diagnostic) {
   return parts.join(" · ");
 }
 
-function renderDiagnostics(view, diagnostics) {
+function renderDiagnostics(view, diagnostics, idx) {
   view.innerHTML = "";
   if (!diagnostics.length) {
     view.innerHTML = emptyResultMarkup("circle-check", "No diagnostics");
@@ -125,6 +125,22 @@ function renderDiagnostics(view, diagnostics) {
       meta.className = "diagnostic-meta";
       meta.textContent = metaText;
       content.appendChild(meta);
+    }
+    const editor = _cellEditors[idx];
+    const position = editor && diagnosticPosition(diagnostic, editor.getValue());
+    if (position) {
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "diagnostic-location";
+      link.textContent = `Line ${position.lineNumber}:${position.column}`;
+      link.title = "Go to source";
+      link.addEventListener("click", () => {
+        if (view.closest(".nb-cell-output").classList.contains("stale")) return;
+        editor.revealPositionInCenter(position);
+        editor.setPosition(position);
+        editor.focus();
+      });
+      content.appendChild(link);
     }
     if (diagnostic.source_excerpt) {
       const excerpt = document.createElement("div");
@@ -175,7 +191,7 @@ function renderPipeline(view, result, elapsed) {
   view.appendChild(timings);
 }
 
-function renderResult(idx, result, elapsed) {
+function renderResult(idx, result, elapsed, context) {
   const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   if (!outer) return;
   const pane = outer.querySelector(".nb-cell-output");
@@ -186,15 +202,30 @@ function renderResult(idx, result, elapsed) {
   const diagnostics = diagnosticsForResult(result);
 
   _cellResults[idx] = result;
+  const stale = Boolean(context && context.revision !== _documentRevision);
+  pane.classList.toggle("stale", stale);
+  pane.querySelector(".result-stale").hidden = !stale;
   outputPre.hidden = false;
-  outputPre.textContent = outputForResult(result);
+  outputPre.textContent = result.error && result.stdout ? result.stdout : outputForResult(result);
   if (empty) empty.hidden = true;
   pane.classList.add("show");
   pane.classList.toggle("error", Boolean(result.error));
   pane.querySelector('[data-result-count="bindings"]').textContent = String(bindings.length);
   pane.querySelector('[data-result-count="diagnostics"]').textContent = String(diagnostics.length);
   renderBindings(pane.querySelector('[data-result-view="bindings"]'), bindings);
-  renderDiagnostics(pane.querySelector('[data-result-view="diagnostics"]'), diagnostics);
+  renderDiagnostics(pane.querySelector('[data-result-view="diagnostics"]'), diagnostics, idx);
+  const model = _cellEditors[idx].getModel();
+  const markers = stale ? [] : diagnostics.flatMap((diagnostic) => {
+    const position = diagnosticPosition(diagnostic, model.getValue());
+    if (!position) return [];
+    return [{
+      startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
+      startColumn: position.column, endColumn: Math.min(model.getLineMaxColumn(position.lineNumber), position.column + 1),
+      severity: diagnostic.severity === "warning" ? monaco.MarkerSeverity.Warning : monaco.MarkerSeverity.Error,
+      message: diagnostic.message || "Unknown diagnostic", code: diagnostic.code || undefined,
+    }];
+  });
+  monaco.editor.setModelMarkers(model, "nomi", markers);
   renderPipeline(pane.querySelector('[data-result-view="pipeline"]'), result, elapsed);
   activateResultTab(idx, result.error ? "diagnostics" : "output");
   refreshIcons(pane);
@@ -204,11 +235,25 @@ function renderResult(idx, result, elapsed) {
   byId("runtime-detail").textContent = `${runtimeLabel(result)} · ${formatTiming(timing, elapsed)}`;
 }
 
+function markResultsStale() {
+  _cellEditors.forEach((editor, idx) => {
+    if (editor) monaco.editor.setModelMarkers(editor.getModel(), "nomi", []);
+    if (!_cellResults[idx]) return;
+    const pane = document.querySelector(`.nb-cell[data-index="${idx}"] .nb-cell-output`);
+    if (!pane) return;
+    pane.classList.add("stale");
+    pane.querySelector(".result-stale").hidden = false;
+  });
+}
+
 function resetResultPanel(idx) {
   const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   if (!outer) return;
   const pane = outer.querySelector(".nb-cell-output");
-  pane.classList.remove("show", "error");
+  pane.classList.remove("show", "error", "stale");
+  pane.querySelector(".result-stale").hidden = true;
+  const editor = _cellEditors[idx];
+  if (editor) monaco.editor.setModelMarkers(editor.getModel(), "nomi", []);
   const output = pane.querySelector('[data-result-view="output"]');
   const pre = output.querySelector("pre");
   const empty = output.querySelector(".empty-result");
@@ -238,13 +283,12 @@ async function runCell(idx, advance, options) {
   const manageControls = !(options && options.batch);
   const editor = _cellEditors[idx];
   if (!editor) return { ok: false };
-  const code = editor.getValue();
+  const code = options && options.code !== undefined ? options.code : editor.getValue();
   if (!code.trim()) return { ok: true };
 
-  if (manageControls) {
-    setControlsDisabled(true);
-    setStatus("running", "running");
-  }
+  const epoch = manageControls ? beginExecution() : options.epoch;
+  if (epoch === null) return { ok: false };
+  const context = { epoch, index: idx, editor, document: _documentGeneration, revision: options && options.revision !== undefined ? options.revision : _documentRevision };
 
   const outer = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   const time = outer.querySelector(".nb-cell-time");
@@ -253,30 +297,34 @@ async function runCell(idx, advance, options) {
   let ok = false;
 
   try {
+    if (_runtimeDocument !== _currentSample) {
+      await _resetFn();
+      if (!currentExecution(context)) return { ok: false };
+      _runtimeDocument = _currentSample;
+    }
     const result = await _runFn(code);
+    if (!currentExecution(context)) return { ok: false };
     const elapsed = Math.max(1, Math.round(performance.now() - start));
     _executionCounter++;
     outer.dataset.execCount = _executionCounter;
     outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
     time.textContent = `${elapsed} ms`;
-    renderResult(idx, result, elapsed);
+    renderResult(idx, result, elapsed, context);
     ok = !result.error;
   } catch (error) {
+    if (!currentExecution(context)) return { ok: false };
     const elapsed = Math.max(1, Math.round(performance.now() - start));
     _executionCounter++;
     outer.dataset.execCount = _executionCounter;
     outer.querySelector(".nb-cell-index").textContent = `In[${_executionCounter}]:`;
     time.textContent = `${elapsed} ms`;
-    renderResult(idx, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed);
+    renderResult(idx, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed, context);
   } finally {
     setCellRunning(outer, false);
-    if (manageControls) {
-      setControlsDisabled(false);
-      setStatus(ok ? "ready" : "error", ok ? "ready" : "error");
-    }
+    if (manageControls) finishExecution(epoch, ok);
   }
 
-  if (advance && ok) {
+  if (advance && ok && currentExecution(context)) {
     const nextIdx = idx + 1;
     if (nextIdx < _cellEditors.length) {
       setActiveCell(nextIdx);
@@ -293,15 +341,20 @@ async function runCell(idx, advance, options) {
 
 async function runAllCells() {
   if (!_ready || !_runFn || !_resetFn) return;
-  setControlsDisabled(true);
-  setStatus("running", "running");
+  const epoch = beginExecution();
+  if (epoch === null) return;
+  const revision = _documentRevision;
+  const codes = _cellEditors.map((editor) => editor.getValue());
   _executionCounter = 0;
   clearNotebookOutputs();
 
   try {
     await _resetFn();
-    for (let idx = 0; idx < _cellEditors.length; idx++) {
-      const result = await runCell(idx, false, { batch: true });
+    if (epoch !== _runEpoch) return;
+    _runtimeDocument = _currentSample;
+    for (let idx = 0; idx < codes.length; idx++) {
+      const result = await runCell(idx, false, { batch: true, epoch, code: codes[idx], revision });
+      if (epoch !== _runEpoch) return;
       if (!result.ok) {
         setStatus("error", "error");
         gotoCell(idx);
@@ -310,10 +363,11 @@ async function runAllCells() {
     }
     setStatus("ready", "ready");
   } catch (error) {
+    if (epoch !== _runEpoch) return;
     byId("runtime-detail").textContent = String(error);
     setStatus("error", "error");
   } finally {
-    setControlsDisabled(false);
+    if (epoch === _runEpoch) setControlsDisabled(false);
   }
 }
 
@@ -321,23 +375,28 @@ async function runPlainCode() {
   if (!_ready || !_runFn || !_resetFn) return;
   const editor = _cellEditors[0];
   if (!editor || !editor.getValue().trim()) return;
-  setControlsDisabled(true);
-  setStatus("running", "running");
+  const epoch = beginExecution();
+  if (epoch === null) return;
+  const code = editor.getValue();
+  const context = { epoch, editor, index: 0, document: _documentGeneration, revision: _documentRevision };
 
   const start = performance.now();
   let ok = false;
   try {
     await _resetFn();
-    const result = await _runFn(editor.getValue());
+    if (!currentExecution(context)) return;
+    _runtimeDocument = _currentSample;
+    const result = await _runFn(code);
+    if (!currentExecution(context)) return;
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    renderResult(0, result, elapsed);
+    renderResult(0, result, elapsed, context);
     ok = !result.error;
   } catch (error) {
+    if (!currentExecution(context)) return;
     const elapsed = Math.max(1, Math.round(performance.now() - start));
-    renderResult(0, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed);
+    renderResult(0, { error: String(error), diagnostics: [], backend: _evalBackend }, elapsed, context);
   } finally {
-    setControlsDisabled(false);
-    setStatus(ok ? "ready" : "error", ok ? "ready" : "error");
+    finishExecution(epoch, ok);
   }
 }
 
@@ -360,18 +419,21 @@ function clearNotebookOutputs() {
 
 window.resetRuntime = async function() {
   if (!_ready || !_resetFn) return;
-  setControlsDisabled(true);
-  setStatus("running", "running");
+  const epoch = beginExecution();
+  if (epoch === null) return;
   try {
     await _resetFn();
+    if (epoch !== _runEpoch) return;
+    _runtimeDocument = _currentSample;
     clearNotebookOutputs();
     byId("runtime-detail").textContent = "Runtime state reset";
     setStatus("ready", "ready");
   } catch (error) {
+    if (epoch !== _runEpoch) return;
     byId("runtime-detail").textContent = String(error);
     setStatus("error", "error");
   } finally {
-    setControlsDisabled(false);
+    if (epoch === _runEpoch) setControlsDisabled(false);
   }
 };
 
@@ -383,13 +445,15 @@ window.cancelRun = async function() {
 };
 
 window.restartWorker = async function() {
-  if (!_ready) return;
+  if (_executionBusy) return;
+  const epoch = ++_runEpoch;
   setControlsDisabled(true);
   setStatus("running", "running");
   byId("runtime-detail").textContent = "Restarting runtime";
   try {
     _ready = false;
     await startRuntimeWorker();
+    if (epoch !== _runEpoch) return;
     _ready = true;
     clearNotebookOutputs();
     byId("runtime-detail").textContent = "Runtime worker restarted";
@@ -399,7 +463,7 @@ window.restartWorker = async function() {
     byId("runtime-detail").textContent = String(error);
     setStatus("error", "error");
   } finally {
-    setControlsDisabled(false);
+    if (epoch === _runEpoch) setControlsDisabled(false);
   }
 };
 

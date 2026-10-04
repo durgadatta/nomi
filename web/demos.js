@@ -1,109 +1,13 @@
-// Nomi Web Playground — sample data, manifest loading, sidebar
-
-const DEMOS = {
-  demo: {
-    title: "demo.nomi", desc: "Guided tour from samples/demo.nomi.",
-    source: "samples/demo.nomi",
-    code: `add(a, b) = a + b
-print("add(3, 4) = " + str(add(3, 4)))`
-  },
-  "notebook-intro": {
-    title: "notebook_intro.nomi.nb", desc: "Notebook cells example.",
-    source: "samples/notebook_intro.nomi.nb",
-    code: `# %% Define a reusable function
-func normalize_name(name):
-    return name.strip().title()
-
-print(normalize_name(" ada lovelace "))
-
-# %% Bind data that later cells can reuse
-names = [" ada ", "grace", " alan turing "]
-clean_names = []
-
-for name in names:
-    clean_names.append(normalize_name(name))
-
-print(clean_names)`
-  },
-  terse: {
-    title: "demo_terse.nomi", desc: "Browser-safe quick tour: functions, flow, records, match, and output.",
-    source: "samples/demo_terse.nomi",
-    code: `priority(ticket) = ticket["impact"] * ticket["urgency"]
-is_hot = priority(_) >= 80
-label(score) when score >= 90 = "critical"
-label(score) when score >= 70 = "watch"
-label(_) = "steady"
-
-tickets = [{"service": "checkout", "impact": 10, "urgency": 9}, {"service": "search", "impact": 6, "urgency": 8}, {"service": "billing", "impact": 8, "urgency": 10}]
-scores = list(map(priority, tickets))
-hot = list(filter(is_hot, tickets))
-winner = hot[0]
-winner_score = priority(winner)
-action = match label(winner_score): case "critical" => "page now"; case "watch" => "assign owner"; case _ => "monitor"
-range_total = 1..5 |> list |> sum
-
-print("Nomi triage")
-print("scores = " + str(scores))
-print("hot tickets = " + str(len(hot)))
-print(winner["service"] + " -> " + str(winner_score) + " / " + action)
-print("range total = " + str(range_total))`
-  },
-  collections: {
-    title: "collections.nomi", desc: "Collection examples from samples/collections.nomi.",
-    source: "samples/collections.nomi",
-    code: `inclusive = list(1..5)
-print("1..5 = " + str(inclusive))`
-  },
-  block: {
-    title: "blocks.nomi", desc: "Yield-to-block control with a running total.",
-    code: `func each(items):
-    for item in items:
-        yield item
-
-total = 0
-each([1, -2, 3, 8]) -> item:
-    if item > 0:
-        total += item
-
-print(f"total = {total}")`
-  },
-  constraint: {
-    title: "constraints.nomi", desc: "Binding constraints and a match statement.",
-    code: `is_positive = (x) => x > 0
-score: int, is_positive = 72
-
-match score:
-    case 100:
-        label = "perfect"
-    case _:
-        label = "regular"
-
-print(f"score={score}, grade={label}")`
-  },
-  comprehensive: {
-    title: "comprehensive.nomi", desc: "Full coverage suite: functions, lambdas, patterns, control flow, data, blocks, and edge cases.",
-    source: "samples/comprehensive.nomi",
-    code: `# Functions, lambdas, patterns, data, blocks, edge cases
-add(a, b) = a + b
-double = x => x * 2
-
-func each(sequence):
-    for item in sequence:
-        yield item
-
-collected = []
-each([1, 2, 3]) -> n:
-    collected = collected + [n * 2]
-
-print(collected)`
-  }
-};
+// Samples are loaded from the generated manifest; source has one owner.
+const DEMOS = {};
 
 const SAMPLE_DESCRIPTIONS = {
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
   "samples/demo_terse.nomi": "Browser-safe quick tour: functions, flow, records, match, and output.",
   "samples/collections.nomi": "Collection examples from samples/collections.nomi.",
-  "samples/notebook_intro.nomi.nb": "Notebook cells example."
+  "samples/notebook_intro.nomi.nb": "Notebook cells example.",
+  "samples/data_pipeline.nomi": "Paid orders, integer cents, ordered fold and seeded scan.",
+  "samples/text_pipeline.nomi.nb": "Normalize delimited text, convert fields, accumulate counts."
 };
 
 let _draftSaveTimer = null;
@@ -120,18 +24,18 @@ async function loadSampleSources() {
   restoreScratchDocuments();
   try {
     const resp = await fetch("./manifest.json");
-    if (!resp.ok) return;
+    if (!resp.ok) throw new Error(`Sample manifest returned HTTP ${resp.status}`);
     const manifest = await resp.json();
     for (const path of (manifest.samples || [])) {
       const key = path === "samples/demo.nomi" ? "demo" : path === "samples/demo_terse.nomi" ? "terse" : sampleKey(path);
       const sampleUrl = new URL(`../${path}`, location.href);
       const r = await fetch(sampleUrl);
-      if (!r.ok) { console.warn("[web] Failed to fetch sample", path, r.status); continue; }
+      if (!r.ok) throw new Error(`Sample ${path} returned HTTP ${r.status}`);
       const code = await r.text();
       const existing = DEMOS[key] || {};
       DEMOS[key] = { ...existing, title: path.split("/").pop(), desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`, source: path, code };
     }
-  } catch (e) { console.warn("[web] Could not load samples from manifest", e); }
+  } catch (e) { console.warn("[web] Could not load samples from manifest", e); throw e; }
 }
 
 function restoreScratchDocuments() {
@@ -204,6 +108,7 @@ function buildFileList() {
 function updateSampleSelection() {
   document.querySelectorAll(".sample").forEach((el) => {
     el.classList.toggle("active", el.dataset.sample === _currentSample);
+    el.setAttribute("aria-current", el.dataset.sample === _currentSample ? "page" : "false");
     el.classList.toggle("has-draft", hasDocumentDraft(el.dataset.sample));
     const meta = el.querySelector(".sample-meta");
     if (meta) meta.textContent = `${lineCount(documentCode(el.dataset.sample))} lines`;
@@ -257,13 +162,13 @@ function saveCurrentDraft(immediate) {
 
   if (_draftSaveTimer) clearTimeout(_draftSaveTimer);
   if (immediate) {
-    persistWorkbenchState();
+    return persistWorkbenchState();
   } else {
     _draftSaveTimer = setTimeout(persistWorkbenchState, 250);
   }
 }
 
-window.newScratch = function() {
+function createLocalDocument(title, code) {
   saveCurrentDraft(true);
   const scratchDocs = _workbenchState.scratchDocs || {};
   let number = Object.keys(scratchDocs).length + 1;
@@ -272,13 +177,42 @@ window.newScratch = function() {
     number++;
     key = `scratch-${number}`;
   }
-  const title = `scratch-${number}.nomi`;
+  title = title || `scratch-${number}.nomi`;
   _workbenchState.scratchDocs = { ...scratchDocs, [key]: { title } };
-  _workbenchState.drafts[key] = "";
+  _workbenchState.drafts[key] = code || "";
   DEMOS[key] = { title, desc: "Local browser draft.", code: "", local: true };
   buildFileList();
   persistWorkbenchState();
   loadFile(key);
+  return key;
+}
+
+window.newScratch = function() {
+  createLocalDocument();
+};
+
+window.openLocalSource = async function(input) {
+  const file = input.files[0];
+  input.value = "";
+  if (!file) return;
+  if (file.size > 256 * 1024) { showToast("Source exceeds the 256 KiB limit"); return; }
+  try {
+    const source = new TextDecoder("utf-8", { fatal: true }).decode(await file.arrayBuffer());
+    createLocalDocument(file.name, source);
+  } catch (error) {
+    showToast("Could not open UTF-8 source");
+  }
+};
+
+window.downloadCurrentSource = function() {
+  const demo = DEMOS[_currentSample];
+  if (!demo) return;
+  const url = URL.createObjectURL(new Blob([currentDocumentCode()], { type: "text/plain;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = demo.title;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
 window.revertCurrentDocument = function() {
@@ -296,8 +230,12 @@ window.revertCurrentDocument = function() {
 };
 
 window.loadFile = function(name, options) {
-  if (!DEMOS[name]) return;
+  if (!Object.prototype.hasOwnProperty.call(DEMOS, name)) return;
   if (!options || !options.skipSave) saveCurrentDraft(true);
+  _documentGeneration++;
+  _documentRevision = 0;
+  _runtimeDocument = null;
+  if (_executionBusy) cancelRuntime("Document changed during execution");
   _currentSample = name;
   const demo = DEMOS[name];
   byId("current-file").textContent = demo.title;
@@ -306,12 +244,12 @@ window.loadFile = function(name, options) {
   const nb = demo.title.endsWith(".nomi.nb") || isNotebookSource(code);
   _notebookMode = nb;
   _documentLoading = true;
-  if (nb) {
-    loadCode(code);
-  } else {
-    loadPlain(code);
+  try {
+    if (nb) loadCode(code);
+    else loadPlain(code);
+  } finally {
+    _documentLoading = false;
   }
-  _documentLoading = false;
   _workbenchState.active = name;
   persistWorkbenchState();
   updateDocumentState();

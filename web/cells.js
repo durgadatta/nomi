@@ -3,27 +3,15 @@
 function markerMatch(line) { return line.match(/^\s*#\s*%%\s*(.*)$/); }
 
 function splitCode(code) {
-  const lines = code.split(/\r\n|\r|\n/);
-  const markers = [];
-  lines.forEach((line, index) => {
-    const match = markerMatch(line);
-    if (match) markers.push({ line: index + 1, title: match[1].trim() });
-  });
-  if (markers.length === 0) return [code.trim() || "# empty cell"];
-  return markers.map((marker, index) => {
-    const start = marker.line + 1;
-    const end = markers[index + 1] ? markers[index + 1].line - 1 : lines.length;
-    return lines.slice(start - 1, end).join("\n").trim() || "# empty cell";
-  });
+  return splitNotebookDocument(code).cells.map((cell) => cell.code);
 }
 
 function currentDocumentCode() {
   if (!_cellEditors.length) return "";
   if (!_notebookMode) return _cellEditors[0] ? _cellEditors[0].getValue() : "";
-  return _cellEditors
-    .filter(Boolean)
-    .map((editor, index) => `# %% Cell ${index + 1}\n${editor.getValue()}`)
-    .join("\n\n");
+  return joinNotebookDocument(_notebookPreamble, _cellEditors.map((editor, index) => ({
+    prefix: _cellPrefixes[index] || "", code: editor.getValue(),
+  })));
 }
 
 function setRunButtonLabel(label) {
@@ -49,6 +37,7 @@ function resultShellMarkup(idx, alwaysShow) {
           </button>
         </div>
       </div>
+      <div class="result-stale" hidden><i data-lucide="history"></i><span>Previous source</span></div>
       <div class="result-body">
         <div class="result-view active" data-result-view="output" role="tabpanel">
           <div class="empty-result"><div class="empty-result-inner"><i data-lucide="terminal-square"></i><span>No result</span></div></div>
@@ -69,6 +58,17 @@ function wireResultShell(outer) {
       activateResultTab(idx, button.dataset.resultTab);
     });
   });
+  outer.querySelector(".result-tabs").addEventListener("keydown", (event) => {
+    const tabs = [...outer.querySelectorAll(".result-tab")];
+    const current = tabs.indexOf(document.activeElement);
+    if (current < 0 || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1
+      : (current + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    tabs[next].click();
+    tabs[next].focus();
+  });
+  activateResultTab(Number(outer.dataset.index), "output");
   outer.querySelector(".copy-result").addEventListener("click", (event) => {
     event.stopPropagation();
     const view = outer.querySelector(".result-view.active");
@@ -84,9 +84,14 @@ function activateResultTab(idx, tabName) {
     const active = button.dataset.resultTab === tabName;
     button.classList.toggle("active", active);
     button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
+    button.id = `result-tab-${idx}-${button.dataset.resultTab}`;
+    button.setAttribute("aria-controls", `result-view-${idx}-${button.dataset.resultTab}`);
   });
   outer.querySelectorAll(".result-view").forEach((view) => {
     view.classList.toggle("active", view.dataset.resultView === tabName);
+    view.id = `result-view-${idx}-${view.dataset.resultView}`;
+    view.setAttribute("aria-labelledby", `result-tab-${idx}-${view.dataset.resultView}`);
   });
 }
 
@@ -94,6 +99,23 @@ function setupPaneResize(outer) {
   const handle = outer.querySelector(".pane-resize-handle");
   if (!handle) return;
   let dragging = false;
+  handle.tabIndex = 0;
+  handle.setAttribute("aria-valuemin", "28");
+  handle.setAttribute("aria-valuemax", "68");
+  function setPercent(percent) {
+    const value = Math.max(28, Math.min(68, percent));
+    document.documentElement.style.setProperty("--result-pane", `${value}%`);
+    _workbenchState.resultPane = Math.round(value * 10) / 10;
+    handle.setAttribute("aria-valuenow", String(value));
+    layoutAllEditorsSoon();
+  }
+  handle.setAttribute("aria-valuenow", String(_workbenchState.resultPane));
+  handle.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    setPercent(event.key === "Home" ? 28 : event.key === "End" ? 68 : _workbenchState.resultPane + (event.key === "ArrowLeft" ? 5 : -5));
+    persistWorkbenchState();
+  });
 
   handle.addEventListener("pointerdown", (event) => {
     if (matchMedia("(max-width: 760px)").matches) return;
@@ -108,10 +130,7 @@ function setupPaneResize(outer) {
     if (!dragging) return;
     const rect = outer.getBoundingClientRect();
     const fromRight = ((rect.right - event.clientX) / rect.width) * 100;
-    const percent = Math.max(28, Math.min(68, fromRight));
-    document.documentElement.style.setProperty("--result-pane", `${percent}%`);
-    _workbenchState.resultPane = Math.round(percent * 10) / 10;
-    layoutAllEditorsSoon();
+    setPercent(fromRight);
   });
 
   function stopDragging(event) {
@@ -136,10 +155,11 @@ function loadCode(code) {
   byId("nb-scroll").classList.remove("plain-mode");
   byId("nb-cells").classList.remove("plain-mode");
 
-  const chunks = splitCode(code);
-  chunks.forEach((chunk) => createCell(chunk));
+  const document = splitNotebookDocument(code);
+  _notebookPreamble = document.preamble;
+  document.cells.forEach((cell) => createCell(cell.code, cell));
   _executionCounter = 0;
-  const single = chunks.length === 1;
+  const single = document.cells.length === 1;
   byId("nb-scroll").classList.toggle("single-cell", single);
   byId("nb-cells").classList.toggle("single-cell", single);
   layoutAllEditorsSoon();
@@ -179,8 +199,10 @@ function loadPlain(code) {
 }
 
 window.addCell = function(initialCode) {
-  if (!_notebookMode) return;
-  createCell(initialCode || "");
+  if (!_notebookMode || _executionBusy) return;
+  createCell(initialCode || "", { prefix: `\n# %% Cell ${_cellEditors.length + 1}\n`, title: `Cell ${_cellEditors.length + 1}` });
+  _documentRevision++;
+  markResultsStale();
   byId("nb-scroll").classList.remove("single-cell");
   byId("nb-cells").classList.remove("single-cell");
   layoutAllEditorsSoon();
@@ -206,7 +228,7 @@ function createPlainCell(code) {
   layoutAllEditorsSoon();
 }
 
-function createCell(code) {
+function createCell(code, framing) {
   const idx = _cellEditors.length;
   const outer = document.createElement("div");
   outer.className = "nb-cell";
@@ -215,6 +237,7 @@ function createCell(code) {
   outer.innerHTML = `
     <div class="nb-cell-header">
       <span class="nb-cell-index">In[ ]:</span>
+      <span class="nb-cell-title">${esc(framing && framing.title || "")}</span>
       <button type="button" class="nb-cell-run" title="Run cell" aria-label="Run cell">
         <i data-lucide="play"></i><span>Run</span>
       </button>
@@ -241,6 +264,7 @@ function createCell(code) {
   wireResultShell(outer);
   setupPaneResize(outer);
   createEditor(idx, code, false);
+  _cellPrefixes[idx] = framing ? framing.prefix : `# %% Cell ${idx + 1}\n`;
   refreshIcons(outer);
   updateFooter();
   if (_cellEditors.length === 1) setActiveCell(0);
@@ -275,6 +299,9 @@ function createEditor(idx, code, plain) {
     padding: { top: 10, bottom: 10 },
   });
 
+  // Monaco defaults to LF; retain the loaded cell's line-ending convention.
+  if (code.includes("\r\n")) editor.getModel().setEOL(monaco.editor.EndOfLineSequence.CRLF);
+
   editor.layout();
   const notebookList = byId("nb-cells").classList;
   if (!notebookList.contains("single-cell") && !notebookList.contains("plain-mode")) {
@@ -291,10 +318,15 @@ function createEditor(idx, code, plain) {
       const maxHeight = Math.max(200, scrollHeight * 0.5);
       el.style.height = `${Math.min(maxHeight, Math.max(72, event.contentHeight))}px`;
     }
-    layoutEditor(idx);
+    const currentIndex = _cellEditors.indexOf(editor);
+    if (currentIndex >= 0) layoutEditor(currentIndex);
   });
 
   editor.onDidChangeModelContent(() => {
+    if (!_documentLoading) {
+      _documentRevision++;
+      markResultsStale();
+    }
     saveCurrentDraft(false);
     updateFooter();
   });
@@ -338,20 +370,34 @@ function createEditor(idx, code, plain) {
 }
 
 function disposeAllCells() {
-  _cellEditors.forEach((editor) => editor && editor.dispose());
+  _cellEditors.forEach((editor) => {
+    if (!editor) return;
+    const model = editor.getModel();
+    editor.dispose();
+    if (model) model.dispose();
+  });
   _cellEditors = [];
   _cellResults = [];
+  _cellPrefixes = [];
+  _notebookPreamble = "";
   byId("nb-cells").innerHTML = "";
 }
 
 function deleteCell(idx) {
-  if (_cellEditors.length <= 1) return;
-  if (_cellEditors[idx]) _cellEditors[idx].dispose();
+  if (_cellEditors.length <= 1 || _executionBusy) return;
+  if (_cellEditors[idx]) {
+    const model = _cellEditors[idx].getModel();
+    _cellEditors[idx].dispose();
+    if (model) model.dispose();
+  }
   _cellEditors.splice(idx, 1);
   _cellResults.splice(idx, 1);
+  _cellPrefixes.splice(idx, 1);
+  _documentRevision++;
   const cell = document.querySelector(`.nb-cell[data-index="${idx}"]`);
   if (cell) cell.remove();
   reindexCells();
+  markResultsStale();
   const single = _cellEditors.length === 1;
   byId("nb-scroll").classList.toggle("single-cell", single);
   byId("nb-cells").classList.toggle("single-cell", single);
@@ -370,6 +416,8 @@ function reindexCells() {
     if (indexLabel) indexLabel.textContent = count ? `In[${count}]:` : "In[ ]:";
     cell.querySelector(".nb-cell-editor").dataset.idx = index;
     cell.querySelector(".nb-cell-output").dataset.idx = index;
+    const activeTab = cell.querySelector(".result-tab.active");
+    activateResultTab(index, activeTab ? activeTab.dataset.resultTab : "output");
   });
 }
 

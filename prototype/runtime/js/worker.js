@@ -9,6 +9,7 @@ async function initWasm() {
   postLog("Loading WASM parser...");
   importScripts("./pkg/nomi_parser_worker.js?v=2");
   const response = await fetch("./pkg/nomi_parser_worker_bg.wasm");
+  if (!response.ok) throw new Error(`WASM parser returned HTTP ${response.status}`);
   const bytes = await response.arrayBuffer();
   wasm_bindgen.initSync({ module: bytes });
   postLog("WASM parser ready");

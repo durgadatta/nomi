@@ -8,7 +8,7 @@
 <link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 <div class="app" id="app-shell">
@@ -17,10 +17,13 @@
       <div class="loader-row">
         <div class="spinner" aria-hidden="true"></div>
         <div>
-          <strong>Starting Nomi</strong>
+          <strong id="loading-title">Starting Nomi</strong>
           <p id="loading-msg">Loading runtime...</p>
         </div>
       </div>
+      <button type="button" class="command-button" id="loading-retry-btn" hidden onclick="location.reload()">
+        <i data-lucide="refresh-cw"></i><span>Retry</span>
+      </button>
     </div>
   </div>
 
@@ -86,7 +89,7 @@
     <button type="button" class="sidebar-scrim" id="sidebar-scrim" onclick="toggleSidebar(false)"
             aria-label="Close sample browser"></button>
     <div class="resize-handle" id="resize-l" role="separator" aria-orientation="vertical"
-         aria-label="Resize sample browser"></div>
+         aria-label="Resize sample browser" tabindex="0" aria-valuemin="210" aria-valuemax="420"></div>
 
     <section class="workbench" aria-label="Nomi workbench">
       <div class="nb-toolbar">
@@ -95,6 +98,11 @@
           <span id="document-lines">0 lines</span>
         </div>
         <div class="toolbar-actions">
+          <input id="open-file-input" type="file" accept=".nomi,.nb,.txt" hidden onchange="openLocalSource(this)">
+          <button type="button" class="icon-button" onclick="byId('open-file-input').click()"
+                  title="Open local source" aria-label="Open local source"><i data-lucide="folder-open"></i></button>
+          <button type="button" class="icon-button" onclick="downloadCurrentSource()"
+                  title="Download source" aria-label="Download source"><i data-lucide="download"></i></button>
           <button type="button" class="icon-button" id="copy-code-btn" onclick="copyCurrentCode()"
                   title="Copy source" aria-label="Copy source">
             <i data-lucide="copy"></i>
@@ -125,7 +133,7 @@
   </main>
 
   <footer class="footer">
-    <span class="runtime-profile"><i data-lucide="cpu" aria-hidden="true"></i>WASM + JS</span>
+    <span class="runtime-profile" id="runtime-profile"><i data-lucide="cpu" aria-hidden="true"></i>Prototype · WASM + JS</span>
     <span class="footer-separator" aria-hidden="true"></span>
     <span id="runtime-detail">Starting runtime</span>
     <span class="spacer"></span>
@@ -137,18 +145,22 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
-<script src="app.js?v=3"></script>
-<script src="demos.js?v=3"></script>
-<script src="cells.js?v=3"></script>
-<script src="runtime.js?v=3"></script>
-<script src="editor.js?v=3"></script>
+<script src="documents.js?v=5"></script>
+<script src="app.js?v=5"></script>
+<script src="demos.js?v=5"></script>
+<script src="cells.js?v=5"></script>
+<script src="runtime.js?v=5"></script>
+<script src="editor.js?v=5"></script>
 <script>
 init().then(() => {
   setupResize(byId("resize-l"), byId("sidebar"));
   addEventListener("resize", handleViewportChange);
 }).catch((error) => {
   console.error(error);
-  byId("loading-msg").textContent = error && error.message ? error.message : String(error);
+  byId("loading-title").textContent = "Nomi unavailable";
+  document.querySelector(".spinner").hidden = true;
+  byId("loading-msg").textContent = String(error && error.message ? error.message : error).split("\n")[0];
+  byId("loading-retry-btn").hidden = false;
   setStatus("error", "error");
 });
 </script>

@@ -45,6 +45,7 @@ function zeroDivision() {
 function box(value, valueType = null) {
   if (value && typeof value === "object" && typeof value.kind === "string") {
     if (value.kind === "int") safeInteger(value.value);
+    if (value.kind === "float" && !Number.isFinite(value.value)) throw valueError("Non-finite numbers are not supported by the JS prototype transport");
     return value;
   }
   if (value === null || value === undefined) return NIL;
@@ -875,6 +876,7 @@ class CoreRuntime {
   iterValues(value) {
     if (value.kind === "sequence") return value.elements;
     if (value.kind === "mapping") return Array.from(value.entries.keys()).map(box);
+    if (value.kind === "str") return Array.from(value.value).map((character) => box(character));
     return unbox(value).map(box);
   }
 
@@ -933,7 +935,12 @@ class CoreRuntime {
         if (Number.isNaN(number)) throw valueError(`invalid literal for int(): '${value}'`);
         return safeInteger(Math.trunc(number));
       },
-      len: (value) => value.length,
+      len: native("len", (value) => {
+        if (value.kind === "sequence") return value.elements.length;
+        if (value.kind === "mapping") return value.entries.size;
+        if (value.kind === "str") return Array.from(value.value).length;
+        throw new TypeError(`${value.kind} has no length`);
+      }, true),
       list: (value) => (value === undefined || value === null ? [] : Array.from(value)),
       map: native("map", (func, sequence) => {
         const mapped = [];
