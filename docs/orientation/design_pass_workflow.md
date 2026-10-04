@@ -82,6 +82,13 @@ python3 -m tools.design_passes show pattern-matching
 python3 -m tools.design_passes check
 ```
 
+The CLI validates metadata and packet links before listing or showing a pass.
+Required artifact paths cannot be blank or mistyped; duplicate JSON keys,
+invalid calendar dates, unreadable text and out-of-repository artifacts fail
+the check. Rejected artifact paths are not opened. This is packet-integrity
+validation, not parsing, typechecking, semantic conformance or evidence that a
+declared validation command has run.
+
 ## Self-Improvement Rule
 
 Each bridge note ends with a `Pass Retrospective` containing four headings:

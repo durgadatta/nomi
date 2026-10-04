@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import json
 from pathlib import Path
 import re
@@ -33,7 +34,20 @@ RETROSPECTIVE_HEADINGS = (
 
 
 def load_registry(path: Path = DEFAULT_REGISTRY) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key: {key}")
+            result[key] = value
+        return result
+
+    registry = json.loads(
+        path.read_text(encoding="utf-8"), object_pairs_hook=unique_object
+    )
+    if not isinstance(registry, dict):
+        raise ValueError("registry must be an object")
+    return registry
 
 
 def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
@@ -45,7 +59,8 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
         return [f"cannot load {display_path(registry_path, root)}: {exc}"]
 
     errors: list[str] = []
-    if registry.get("schema_version") != SCHEMA_VERSION:
+    version = registry.get("schema_version")
+    if type(version) is not int or version != SCHEMA_VERSION:
         errors.append(f"schema_version must be {SCHEMA_VERSION}")
 
     passes = registry.get("passes")
@@ -80,7 +95,7 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
                 errors.append(f"{prefix}: {field} must be a non-empty string")
 
         status = design_pass.get("status")
-        if status not in ALLOWED_STATUSES:
+        if not isinstance(status, str) or status not in ALLOWED_STATUSES:
             errors.append(
                 f"{prefix}: status must be one of {', '.join(sorted(ALLOWED_STATUSES))}"
             )
@@ -90,6 +105,11 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
             r"\d{4}-\d{2}-\d{2}", reviewed
         ):
             errors.append(f"{prefix}: last_reviewed must use YYYY-MM-DD")
+        else:
+            try:
+                date.fromisoformat(reviewed)
+            except ValueError:
+                errors.append(f"{prefix}: last_reviewed must be a valid calendar date")
 
         keywords = design_pass.get("keywords")
         errors.extend(validate_string_list(prefix, "keywords", keywords))
@@ -106,18 +126,27 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
             missing = set(ARTIFACT_KEYS) - artifacts.keys()
             extra = artifacts.keys() - set(ARTIFACT_KEYS)
             if missing:
-                errors.append(f"{prefix}: missing artifacts: {', '.join(sorted(missing))}")
+                errors.append(
+                    f"{prefix}: missing artifacts: {', '.join(sorted(missing))}"
+                )
             if extra:
-                errors.append(f"{prefix}: unknown artifacts: {', '.join(sorted(extra))}")
+                errors.append(
+                    f"{prefix}: unknown artifacts: {', '.join(sorted(extra))}"
+                )
             for kind in ARTIFACT_KEYS:
                 rel_path = artifacts.get(kind)
-                if not isinstance(rel_path, str) or not rel_path:
+                if not isinstance(rel_path, str) or not rel_path.strip():
+                    errors.append(f"{prefix}: {kind} path must be a non-empty string")
                     continue
-                artifact_paths[kind] = rel_path
-                errors.extend(validate_artifact_path(root, prefix, kind, rel_path))
+                path_errors = validate_artifact_path(root, prefix, kind, rel_path)
+                errors.extend(path_errors)
+                if not path_errors:
+                    artifact_paths[kind] = rel_path
 
         canonical_updates = design_pass.get("canonical_updates")
-        errors.extend(validate_string_list(prefix, "canonical_updates", canonical_updates))
+        errors.extend(
+            validate_string_list(prefix, "canonical_updates", canonical_updates)
+        )
         if isinstance(canonical_updates, list):
             for rel_path in canonical_updates:
                 if isinstance(rel_path, str):
@@ -134,8 +163,12 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
             errors.extend(validate_packet_links(root, prefix, artifact_paths))
             bridge = root / artifact_paths["bridge"]
             if bridge.is_file():
-                bridge_text = bridge.read_text(encoding="utf-8")
-                errors.extend(validate_retrospective(prefix, bridge_text))
+                try:
+                    bridge_text = bridge.read_text(encoding="utf-8")
+                except (OSError, UnicodeError) as exc:
+                    errors.append(f"{prefix}: cannot read bridge artifact: {exc}")
+                else:
+                    errors.extend(validate_retrospective(prefix, bridge_text))
 
     return errors
 
@@ -148,15 +181,20 @@ def validate_string_list(prefix: str, field: str, value: Any) -> list[str]:
     return []
 
 
-def validate_existing_path(root: Path, prefix: str, kind: str, rel_path: str) -> list[str]:
+def validate_existing_path(
+    root: Path, prefix: str, kind: str, rel_path: str
+) -> list[str]:
     path = Path(rel_path)
     if path.is_absolute():
         return [f"{prefix}: {kind} path must be repository-relative: {rel_path}"]
-    resolved = (root / path).resolve()
-    if not resolved.is_relative_to(root):
-        return [f"{prefix}: {kind} path escapes the repository: {rel_path}"]
-    if not resolved.is_file():
-        return [f"{prefix}: {kind} does not exist: {rel_path}"]
+    try:
+        resolved = (root / path).resolve()
+        if not resolved.is_relative_to(root):
+            return [f"{prefix}: {kind} path escapes the repository: {rel_path}"]
+        if not resolved.is_file():
+            return [f"{prefix}: {kind} does not exist: {rel_path}"]
+    except (OSError, ValueError) as exc:
+        return [f"{prefix}: invalid {kind} path {rel_path!r}: {exc}"]
     return []
 
 
@@ -185,7 +223,11 @@ def validate_packet_links(
         path = root / rel_path
         if not path.is_file():
             continue
-        text = path.read_text(encoding="utf-8")
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{prefix}: cannot read {kind} artifact: {exc}")
+            continue
         for other_kind, other_path in artifact_paths.items():
             if other_kind != kind and other_path not in text:
                 errors.append(
@@ -280,17 +322,18 @@ def main() -> None:
     args = parser.parse_args()
 
     command = args.command or "list"
+    errors = validate_registry(ROOT)
+    if errors:
+        for error in errors:
+            print(f"FAIL {error}")
+        raise SystemExit(1)
+
+    registry = load_registry(ROOT / "config/design_passes.json")
     if command == "check":
-        errors = validate_registry()
-        if errors:
-            for error in errors:
-                print(f"FAIL {error}")
-            raise SystemExit(1)
-        count = len(load_registry().get("passes", []))
+        count = len(registry["passes"])
         print(f"PASS {count} design pass packet(s) are coherent.")
         return
 
-    registry = load_registry()
     if command == "show":
         design_pass = find_pass(registry, args.pass_id)
         if design_pass is None:
