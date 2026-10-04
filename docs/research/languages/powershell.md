@@ -59,6 +59,13 @@ approved-verb restriction: domain verbs carry useful distinctions, ordinary
 methods need not be command names, and spelling alone cannot establish a codec,
 effect, loss or authority contract.
 
+The [natural-language continuation](../interfaces/natural_language.md) separates
+grammatical class, domain role, resolved binding and display/search label. It
+uses this verb/resource vocabulary as one discovery mechanism alongside Swift's
+use-site phrasing, not as an English grammar for all Nomi APIs. NL1/NL2 compare
+opt-in glossary guidance and named semantic roles before any naming lint;
+NL5 keeps localized discovery terms separate from executable command identity.
+
 ## Test
 
 Pipe a List of three records into a function that expects one List. Assert one

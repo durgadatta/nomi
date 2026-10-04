@@ -1,0 +1,132 @@
+{
+  "schema": "nomi.research.natural-language-study.v1",
+  "status": "prepared_unperformed",
+  "human_execution": false,
+  "nomi_execution": false,
+  "nlp_execution": false,
+  "browser_execution": false,
+  "scope": "Original illustrative stimuli and supplied facts, not participant responses, a prose parser, translation validation, grading rules or executable Nomi APIs.",
+  "presentation_rule": "Show prompt, variants and visible_facts; control_facts and expected are facilitator-only. Meaning-preserving pairs hold facts/contracts constant; ambiguity and discovery controls are analyzed separately.",
+  "cases": [
+    {
+      "id": "N01",
+      "experiments": ["NL2"],
+      "edge_cases": ["LN01", "LN13"],
+      "kind": "meaning_preserving",
+      "prompt": "Which account supplies the amount, which receives it, and has money moved yet?",
+      "variants": {"A": "request_transfer(500, account_a, account_b)", "B": "request_transfer(amount_minor=500, source=account_a, destination=account_b)"},
+      "visible_facts": {"parameter_order": ["amount_minor", "source", "destination"], "amount_minor": 500, "source": "account_a", "destination": "account_b", "currency": "fixed_fixture_currency", "function_contract": "pure request construction; no transfer"},
+      "control_facts": {},
+      "expected": {"source": "account_a", "destination": "account_b", "amount_minor": 500, "effect_occurred": false},
+      "critical_incidents": ["role_swap", "request_as_effect"]
+    },
+    {
+      "id": "N02",
+      "experiments": ["NL3"],
+      "edge_cases": ["LN02"],
+      "kind": "meaning_preserving",
+      "prompt": "Do 'not every recipient is approved' and 'every recipient is unapproved' mean the same thing? Predict both.",
+      "variants": {"A": "not every recipient is approved; every recipient is unapproved", "B": "not all(recipients, approved); all(recipients, (recipient) => not approved(recipient))"},
+      "visible_facts": {"approval_values": [true, false], "predicate_contract": "total Bool over this complete two-recipient population"},
+      "control_facts": {},
+      "expected": {"not_all_approved": true, "all_not_approved": false},
+      "critical_incidents": ["quantifier_scope_swap"]
+    },
+    {
+      "id": "N03",
+      "experiments": ["NL3"],
+      "edge_cases": ["LN03"],
+      "kind": "meaning_preserving",
+      "prompt": "Does all approved establish that a recipient exists or that this batch is eligible?",
+      "variants": {"A": "all approved; eligible requires a recipient and all approved", "B": "all(recipients, approved); recipients.length > 0 and all(recipients, approved)"},
+      "visible_facts": {"approval_values": [], "universal_on_empty": true, "business_requires_nonempty": true},
+      "control_facts": {},
+      "expected": {"all_approved": true, "recipient_exists": false, "eligible": false},
+      "critical_incidents": ["empty_domain_as_existence"]
+    },
+    {
+      "id": "N04",
+      "experiments": ["NL3", "NL4"],
+      "edge_cases": ["LN08", "LN15"],
+      "kind": "ambiguity_control",
+      "prompt": "Can the person be classified as explicitly refusing approval from these observations? What is missing?",
+      "variants": {"A": "No approval response was observed.", "B": "ApprovalObservation.Unknown; no signed response in the retained observations."},
+      "visible_facts": {"approval_observation": "unknown", "observation_coverage": "partial", "selection_policy": "only observed explicit refusal qualifies"},
+      "control_facts": {"actual_response": "not supplied"},
+      "expected": {"explicit_refusal_established": false, "selection_justified": false, "needed": "authoritative response or revised selection policy"},
+      "critical_incidents": ["unknown_as_negative", "invented_evidence"]
+    },
+    {
+      "id": "N05",
+      "experiments": ["NL4", "NL6"],
+      "edge_cases": ["LN06", "LN07"],
+      "kind": "ambiguity_control",
+      "prompt": "Can 'send this now' choose the currently highlighted revision without clarification?",
+      "variants": {"A": "Send this now.", "B": "Requested operation: publish; report/revision/basis: unresolved."},
+      "visible_facts": {"selection_when_draft_started": {"report": "daily", "revision": 7}, "selection_now": {"report": "daily", "revision": 8}, "request_contains_report_id": false, "request_contains_revision": false},
+      "control_facts": {"intended_revision": "not supplied"},
+      "expected": {"clarification_needed": true, "execute": false, "needed": "exact report revision and temporal basis"},
+      "critical_incidents": ["implicit_referent", "stale_target"]
+    },
+    {
+      "id": "N06",
+      "experiments": ["NL4", "NL6"],
+      "edge_cases": ["LN05", "LN17"],
+      "kind": "ambiguity_control",
+      "prompt": "Is this a capability question or an execution request? Does technical support permit publishing?",
+      "variants": {"A": "Can you publish the report?", "B": "Intent unresolved between support inquiry and publication request."},
+      "visible_facts": {"adapter_supports_publication": true, "current_grant": false, "review_supplied": false},
+      "control_facts": {"intended_speech_act": "not supplied"},
+      "expected": {"intent_clarification_needed": true, "execute": false, "support_is_authority": false},
+      "critical_incidents": ["question_as_execution", "support_as_permission"]
+    },
+    {
+      "id": "N07",
+      "experiments": ["NL1", "NL4"],
+      "edge_cases": ["LN18"],
+      "kind": "meaning_preserving",
+      "prompt": "What can be claimed about remote publication after Stop? What should happen before a retry?",
+      "variants": {"A": "Stop requested; remote response unavailable.", "B": "Local cancellation requested; publication observation Unknown(operation=k)."},
+      "visible_facts": {"cancel_requested": true, "remote_response": null, "operation": "k", "stop_contract": "request local cancellation, not remote rollback"},
+      "control_facts": {"remote_truth": "accepted"},
+      "expected": {"remote_outcome_known": false, "remote_rejection_established": false, "next": "reconcile operation k, which may remain unknown"},
+      "critical_incidents": ["cancellation_as_undo", "fresh_retry_identity"]
+    },
+    {
+      "id": "N08",
+      "experiments": ["NL1", "NL5"],
+      "edge_cases": ["LN09", "LN10"],
+      "kind": "vocabulary_discovery",
+      "prompt": "Search for send. Which operation is intended? Can discovery rewrite a binding?",
+      "variants": {"A": "Canonical entries: publish report; export report file.", "B": "The discovery term send routes to both canonical entries."},
+      "visible_facts": {"query": "send", "alias_candidates": ["nomi.publish_report", "nomi.export_report"], "compiler_bindings_changed": false},
+      "control_facts": {"intended_command": "not supplied"},
+      "expected": {"choice_needed": true, "candidate_count": 2, "compiler_bindings_changed": false, "execute": false},
+      "critical_incidents": ["alias_as_binding", "silent_command_choice"]
+    },
+    {
+      "id": "N09",
+      "experiments": ["NL5"],
+      "edge_cases": ["LN19", "LN20"],
+      "kind": "meaning_preserving",
+      "prompt": "What stays identical when the label locale changes? Does the accessible name contain the visible label?",
+      "variants": {"A": "Publish report", "B": "Publier le rapport"},
+      "visible_facts": {"command_id": "nomi.publish_report", "labels": {"en": "Publish report", "fr": "Publier le rapport"}, "accessible_names": {"en": "Publish report", "fr": "Publier le rapport"}, "target_report": "daily", "revision": 7, "translation_status": "illustrative supplied labels; not professionally validated"},
+      "control_facts": {},
+      "expected": {"command_id": "nomi.publish_report", "target_report": "daily", "revision": 7, "accessible_contains_visible": true},
+      "critical_incidents": ["localized_identity", "label_name_mismatch"]
+    },
+    {
+      "id": "N10",
+      "experiments": ["NL2", "NL6"],
+      "edge_cases": ["LN04", "LN14", "LN16"],
+      "kind": "ambiguity_control",
+      "prompt": "Does this describe sequence or parallel work? Does quoting the instruction run it?",
+      "variants": {"A": "Save the draft and publish the report.", "B": "Requested steps save/publish; ordering and failure policy unresolved."},
+      "visible_facts": {"text_is_quoted_draft": true, "ordering_contract": "not supplied", "failure_policy": "not supplied", "grant_in_quote": false},
+      "control_facts": {"intended_order": "not supplied"},
+      "expected": {"ordering_clarification_needed": true, "execute": false, "quotation_is_authority": false},
+      "critical_incidents": ["coordination_as_scheduler", "mention_as_execution"]
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Packet: cognitive-interfaces; evidence: interfaces/natural_language.md.
+# This is not a grammar for prose or a claim that a supplied parse is correct.
+from lab.report_commands import Context, CheckedPublication, PrepareError, commands
+from lab.report_commands import PublicationOutcome, ReviewRef, CurrentGrant, Network
+
+data ReportId:
+    value: Text where value.trim() != ""
+
+data RecipientId:
+    value: Text where value.trim() != ""
+
+data PublicationRequest:
+    report: ReportId
+    report_revision: Int where report_revision >= 0
+    recipients: List[RecipientId]
+
+# Beginner: names identify semantic roles, not an English sentence parser.
+func request_publication(
+    report: ReportId,
+    report_revision: Int where report_revision >= 0,
+    recipients: List[RecipientId],
+) -> PublicationRequest:
+    return PublicationRequest(
+        report=report,
+        report_revision=report_revision,
+        recipients=recipients,
+    )
+
+example "preparing a request does not send it":
+    request = request_publication(
+        report=ReportId("daily"),
+        report_revision=7,
+        recipients=[RecipientId("account-a")],
+    )
+    check request.report_revision == 7
+    check request.recipients.length == 1
+
+data Interpretation:
+    Proposed(request: PublicationRequest)
+    NeedsClarification(question: Text)
+    Unsupported(reason: Text)
+
+data Preparation:
+    Candidate(value: CheckedPublication)
+    Clarify(question: Text)
+    Reject(reason: Text)
+    Invalid(error: PrepareError)
+
+# Production: upstream proposals are SUPPLIED, not produced by this function.
+# A proposal is neither checked meaning, authenticated review nor authority.
+func prepare_supplied_interpretation(
+    interpretation: Interpretation,
+    context: Context,
+) -> Preparation:
+    match interpretation:
+        Interpretation.NeedsClarification(question):
+            return Preparation.Clarify(question)
+        Interpretation.Unsupported(reason):
+            return Preparation.Reject(reason)
+        Interpretation.Proposed(request):
+            prepared = commands.prepare_publication(request, context=context)
+            match prepared:
+                Ok(candidate):
+                    return Preparation.Candidate(candidate)
+                Err(error):
+                    return Preparation.Invalid(error)
+
+# Failure-heavy: ready interpretation and fluent readback do not cause send.
+pub async func submit_reviewed(
+    candidate: CheckedPublication,
+    review: ReviewRef,
+    grant: CurrentGrant,
+) -> PublicationOutcome uses Network:
+    return await commands.publish_current(candidate, review=review, grant=grant)
+
+# Context pins domain identity, source/model revision, population and profile.
+# prepare_publication is pure checking of supplied context, not a live query.
+# It checks eligibility, unique recipients and exact basis before Candidate.
+# Empty recipients need an explicit no-op/error policy, not prose inference.
+# Publish rechecks mutable preconditions at the actual owner/remote boundary.
+# Review binds the exact candidate; current grant is separate and authenticated.
+# PublicationOutcome distinguishes KnownAccepted, KnownRejected and Unknown.
+# Task cancellation does not prove remote rejection or undo publication.
+# Calling submit_reviewed creates cold work; a structured caller schedules/joins.
+# Quoted prose, search aliases and localized labels never become bindings.
+# These facade signatures/conversions are hypotheses. D1-D3 region/effect,
+# identity/codec/completion checks remain open; no parser/typechecker ran here.

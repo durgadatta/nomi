@@ -32,12 +32,12 @@ pub async func process_one(
         ownership=delivery.ownership,
     )
     match committed:
-        case CommitObservation.Known(processed):
+        CommitObservation.Known(processed):
             # Includes a matched prior commit, not a conflicting reused ID.
             return await messaging.settle_after_commit(delivery.receipt, processed)
-        case CommitObservation.Rejected(error):
+        CommitObservation.Rejected(error):
             return Err(error)
-        case CommitObservation.Unknown(operation):
+        CommitObservation.Unknown(operation):
             # Do not acknowledge, repeat an effect, or report rollback here.
             return Ok(ConsumerObservation.CommitUncertain(operation))
 

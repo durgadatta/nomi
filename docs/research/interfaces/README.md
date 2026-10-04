@@ -49,6 +49,11 @@ The [domain composition continuation](../domain_composition.md) extends data,
 AI/ML and human/documentary models under the language-coherence synthesis.
 It shares inspectable boundaries and command/evidence obligations with this
 packet without selecting a universal graph, truth algebra or editable IR.
+The [natural-language continuation](natural_language.md) deepens naming,
+linguistic roles, segmentation, scope, reference, modality, dialogue and access.
+NL1-NL6 and [prepared cases N01-N10](language_cases.json) refine T1/T9/T10 and
+HX3/HX8; they are not a nineteenth independent thread, a prose evaluator or
+executed human evidence. Its source forms remain target-only.
 The [generic-operation continuation](../generic_operations.md) belongs
 to the function-contract packet and sharpens pipeline, observation and repeated
 execution boundaries. Familiar method chains do not establish invocation count,

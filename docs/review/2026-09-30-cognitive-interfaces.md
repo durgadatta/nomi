@@ -431,3 +431,49 @@ count does not close them.
 
 Carry P19's publication boundary and P20's review scope into HX1; use the
 prepared U01-U07 protocol only after the compared views expose the same facts.
+
+### Natural Language Continuation, 2026-10-04
+
+**Evidence That Changed The Design:** the [linguistic dossier](../research/interfaces/natural_language.md)
+separates lexical form/sense, grammatical role, domain role, resolved binding and
+audience label. UD/WALS/FrameNet make English-only mappings unsafe assumptions;
+Pane's study exposes several uses of Boolean words; grounding research motivates
+repair rather than inferred intent. The code-comprehension study is a counterweight
+to the premise that English-looking syntax automatically recruits sentence
+comprehension or eases programming. None of these sources chooses Nomi syntax.
+
+**Workflow Friction:** original vocabulary-paper and Grice PDF fetches failed;
+the narrower vocabulary mechanism uses a primary Dumais interview, without
+claiming unavailable quantitative results. Some pages returned author-hosted
+paper copies or rolling references; dates, editions, populations and inference
+limits remain explicit. A fluent stimulus can also conceal missing facts, so
+meaning-preserving, ambiguity-control and discovery trials are separated.
+
+**Durable Improvement:** NL1-NL6, twenty adversarial distinctions, three ordinary-call
+target pressures and ten prepared study cases route through the same cognitive
+packet. Maintained checks preserve supplied/hidden facts, Bool fixture oracles,
+identity/localization boundaries and navigation. No NLP model, grammar, naming
+linter, runtime API, new playground sample or existing test was changed.
+
+The coherence review also removed Python-style `case` markers from the recent
+messaging challenger and the new linguistic target. Both now follow the
+accepted pattern contract's direct arms; a narrow maintained guard prevents
+that drafting drift without modifying the parser or older research targets.
+
+**Next Pass:** close D1-D3 for one actual command, then pilot NL2's equal-typed
+role swap and NL4's changed referent under HX8. Ask for prediction, missing facts,
+effects and repair; treat clarification as success. Run locale/assistive-input
+trials on the same command identity separately from English phrase preference.
+Do not grade comprehension using schema checks or hidden outcomes, and do not
+promote controlled prose until its ordinary-call challenger genuinely fails.
+
+**Verification:** 27 new linguistic/target checks passed; 75 combined
+cognitive/docs/packet checks passed before the two final match-arm guards were
+added, and all 64 linguistic/messaging checks then passed. The final full suite
+passed 1,994 tests with 80 existing skips and ten worker-repeated Jupyter path
+deprecation warnings. All five packets, target-direction inspection, the existing
+23-probe interaction capture, Ruff and whitespace checks passed. Web manifest
+freshness (123 runtime files, 11 samples) and WASM freshness (eight outputs)
+passed without regeneration because no runtime module or runnable sample changed.
+These checks do not typecheck the research targets, validate the example
+translations or establish comprehension, accessibility or NLP performance.

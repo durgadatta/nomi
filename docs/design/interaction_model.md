@@ -33,6 +33,12 @@ naming; and supplies T1-T10 plus a
 [target-only pressure program](targets/research/text_boundaries.nomi). These are
 candidate contracts, not accepted standard-library names.
 
+The [natural-language continuation](../research/interfaces/natural_language.md)
+and [target challenger](targets/research/natural_language.nomi) extend this
+proposal with roles, segmentation, scope, context, dialogue and localization.
+NL1-NL6 and prepared N01-N10 facts refine T1/T9/T10 and HX3/HX8; no natural-language
+evaluator, grammatical naming rule or measured usability result is accepted.
+
 The [domain-layer proposal](synthesis.md#domain-layer-proposal) extends the
 shared context/evidence/projection boundary across data/time, learning and
 documentary domains. Each payload retains its domain owner; graph layout and
@@ -193,6 +199,29 @@ cannot guarantee reversal of external effects. Execution budgets may truncate
 a trace while leaving the program's result valid; the explanation must say so.
 
 ## Command Vocabulary
+
+### Linguistic Roles And Negotiated Intent
+
+Designing hypothesis: keep resolved binding/command identity separate from
+lexical sense, semantic role and audience label. Function signatures and named
+arguments can expose roles without treating ordinary calls as English phrases.
+Domain glossaries may guide optional lint/discovery; they cannot infer types,
+effects or authorization from parts of speech. Localized labels and search
+aliases route to the same checked command and may require disambiguation.
+
+A dialogue can retain an authored draft and propose an interpretation, but
+ambiguous references, quantifier scope and query-versus-request intent remain
+explicit missing facts until resolved. A supplied interpretation is untrusted
+input, not checked meaning. Explanation/readback is neither authenticated review
+nor execution authority. Recheck mutable context at the semantic owner, preserve
+unsupported/ambiguous drafts, and never turn a confident paraphrase into action.
+
+Use NL2's same-type role swap and NL4's changed referent as HX8 pressure tasks
+after D1-D3 close the actual command contract. Boolean scope/empty-domain facts
+remain unchanged; unknown domain evidence is not default false. The prepared
+language cases are facilitator facts, not NLP parsing or comprehension tests.
+
+### Stable Commands
 
 Proposed stable command IDs, not implemented exports or shortcut defaults:
 

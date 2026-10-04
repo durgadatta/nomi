@@ -314,6 +314,15 @@ template trust, argv, framing, lossless versus semantic formatting,
 localization, and the text/structured-primary fork. Before promoting a text API,
 close the scalar/index/rendering contract and reject implicit second evaluation.
 
+**Natural-language pressure:** [the linguistic dossier](interfaces/natural_language.md)
+adds NL1-NL6 under existing questions 4/5/7/11/15/17: optional domain vocabulary,
+named/nominal argument roles, quantifier/evidence views, context clarification,
+localized discovery aliases and scoped controlled-language tools. Start with
+NL2 role swaps and NL4 changed referents using the prepared N01-N10 facts and
+HX8 protocol. Maintain ordinary Bool and call meaning, distinguish query/request
+from permission, and treat fluent interpretations as drafts. No NLP engine,
+universal English grammar or compiler naming restriction is selected.
+
 **Domain-layer pressure:** [the domain-family map](domain_composition.md)
 adds DC1-DC6: domain-owned payloads versus a universal IR, ordinary package
 composition versus scoped tools, versioned vocabulary/catalog references,

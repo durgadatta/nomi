@@ -36,6 +36,12 @@ string transformations. The canonical target remains
 [syntax](../../design/syntax.md), [semantics](../../design/semantics.md) and
 [industrial contracts](../../design/industrial.md).
 
+The [natural-language dossier](../interfaces/natural_language.md) extends the
+linguistic side: lexical senses, semantic roles, segmentation, scope, reference,
+modality, grounding and comprehension. NL1-NL6 refine the naming/localization/
+interaction forks here; they do not change the text probe inventory or admit
+English-looking execution syntax.
+
 ## One Representation, Many Roles
 
 The same sequence of Unicode scalar values can be all of the following:

@@ -32,6 +32,9 @@
    connect philosophical questions to actionable contracts and current files.
    [executed probes](interfaces/experiments.md) are original local models,
    not Nomi/browser conformance or user studies.
+   [Natural-language structure](interfaces/natural_language.md) adds roles,
+   naming, segmentation, scope, reference, modality, repair and NL1-NL6 with
+   prepared study facts, not a natural-language execution mode.
 7. [Redesign Frontiers](design_frontiers.md) - primary evidence for eight further
    design pressures, from typed incomplete programs to qualified guarantees.
 8. [Data And Workflow Languages](data_workflows/README.md) and

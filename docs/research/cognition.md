@@ -9,6 +9,12 @@ Read this before the [interface threads](interfaces/README.md), then the
 Historical interpretation, Nomi inference, and untested claims
 are distinguished below. This is not a claim to exhaust either philosophy or HCI.
 
+The [natural-language continuation](interfaces/natural_language.md) supplies
+selected linguistic, pragmatic and code-comprehension evidence for naming,
+roles, scope, dialogue repair and multilingual access. It translates these into
+NL1-NL6 under the existing interaction packet; prepared stimuli are not human
+results or a claim that fluent prose makes a computation correct.
+
 ## Start Before Programming Languages
 
 The design object is a person making an idea sufficiently precise to inspect,
