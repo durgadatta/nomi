@@ -16,11 +16,11 @@ pub func publish_report(
 ) -> PublicationObservation uses Network:
     outcome = publisher.send(report, partition, attempt, key)
     match outcome:
-        case Ok(receipt):
+        Ok(receipt):
             return PublicationObservation.Confirmed(receipt)
-        case Err(PublishError.AcknowledgmentUnknown()):
-            return PublicationObservation.Uncertain(key, attempt)
-        case Err(error):
+        Err(PublishError.AcknowledgmentUnknown()):
+            return PublicationObservation.Uncertain(operation_key=key, attempt=attempt)
+        Err(error):
             return PublicationObservation.Rejected(error)
 
 # Proposed synchronous facade; retries/reconciliation are NOT implicit.

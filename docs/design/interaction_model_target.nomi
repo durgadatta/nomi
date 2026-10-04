@@ -7,6 +7,7 @@
 # Edge cases: docs/research/interfaces/edge_cases.md
 # Composition: docs/research/interfaces/composition_cases.md
 from std.collections import all_unique, filter, fold, map
+from std.data import DecodeErrors, Value
 
 data Line:
     id: Text where id.trim() != ""

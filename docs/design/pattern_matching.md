@@ -273,8 +273,8 @@ Pattern matching may inspect a `Value` to route by shape:
 
 ```nomi
 match value:
-    Value.Map({"version": 2, ..}) => Version2.decode(value)
-    Value.Map({"version": 1, ..}) => Version1.decode(value)
+    Value.Map({"version": Value.Number(2), ..}) => Version2.decode(value)
+    Value.Map({"version": Value.Number(1), ..}) => Version1.decode(value)
     _ => Err(DecodeErrors.expected("versioned map", value))
 ```
 

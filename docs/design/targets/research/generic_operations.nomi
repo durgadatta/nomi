@@ -5,6 +5,8 @@
 # Core call/pipeline shapes only. Generic/effect/region/protocol contracts open.
 # All numeric examples use finite small integers, not an overflow oracle.
 from std.collections import filter, fold, map
+from std.console import ConsoleWrite
+from std.files import FileRead, FileWrite
 from lab.generic import (
     AuditError, AuditSink, AuditSummary, CacheError, IntIteration,
     PinnedAmounts, ReportCache, ReportKey, iterate_bounded_int,

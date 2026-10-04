@@ -29,9 +29,9 @@ func request_publication(
 
 example "preparing a request does not send it":
     request = request_publication(
-        report=ReportId("daily"),
+        report=ReportId(value="daily"),
         report_revision=7,
-        recipients=[RecipientId("account-a")],
+        recipients=[RecipientId(value="account-a")],
     )
     check request.report_revision == 7
     check request.recipients.length == 1

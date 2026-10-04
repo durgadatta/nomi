@@ -51,7 +51,7 @@ func prepare_bundle(
         prerequisites=[],
     )?
     checked = workflows.require_acyclic(description)?
-    return Ok(Bundle(report, training, checked))
+    return Ok(Bundle(report=report, training=training, workflow=checked))
 
 func inspect_bundle(bundle: Bundle) -> Inspection:
     return inspection.describe(bundle, depth=4, redaction=inspection.SecretsHidden)
@@ -82,11 +82,11 @@ pub func publish(
 ) -> PublicationObservation uses Network, PublicationWrite:
     outcome = publisher.send_reviewed(request, review)
     match outcome:
-        case Ok(receipt):
+        Ok(receipt):
             return PublicationObservation.Confirmed(receipt)
-        case Err(PublicationError.AcknowledgmentUnknown()):
+        Err(PublicationError.AcknowledgmentUnknown()):
             return PublicationObservation.Uncertain(request.operation)
-        case Err(error):
+        Err(error):
             return PublicationObservation.Rejected(error)
 
 # Beginner: prepare_report names two pinned sources, schema and temporal basis.
@@ -97,6 +97,7 @@ pub func publish(
 # that table, workflow and ML errors are interchangeable without conversion.
 # prepare/inspect do not read, fit, publish or manufacture execution authority.
 # The two steps are independent: sharing a bundle is not a prerequisite edge.
+# Bundle's named report/training/workflow fields are proposed facade metadata.
 # A real dependency must connect typed output/input ports under its edge owner.
 # SnapshotRef/ModelRef identify retained artifacts, not live readers or aliases.
 # TemporalBasis distinguishes validity and knowledge/availability, not one Date.

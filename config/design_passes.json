@@ -110,6 +110,7 @@
         "python3 -m tools.design_passes check",
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "python3 docs/research/data_workflows/probe_composition.py --check docs/research/data_workflows/composition_probe_results.json",
+        "pytest -n 0 prototype/tests/unit/tools/test_target_fixture_coherence.py prototype/tests/unit/tools/test_design_packet_boundaries.py",
         "pytest -n 0 prototype/tests/unit/tools/test_domain_composition_research.py",
         "ruff check docs/research/data_workflows/probe_composition.py prototype/tests/unit/tools/test_domain_composition_research.py",
         "python3 docs/research/data_workflows/probe_messaging.py --check docs/research/data_workflows/messaging_probe_results.json",

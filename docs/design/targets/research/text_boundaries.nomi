@@ -24,10 +24,10 @@ func prepare_service(
     config: ServiceConfig,
     template: TrustedTemplate,
 ) -> Result[PreparedArtifacts, TextBoundaryError]:
-    value = Value.object({
-        "name": Value.text(config.name),
-        "port": Value.int(config.port),
-        "message": Value.text(config.message),
+    value = Value.Map({
+        "name": Value.Text(config.name),
+        "port": Value.Number(config.port),
+        "message": Value.Text(config.message),
     })
     document = documents.json_encode(value)?
     preview = rendering.render_text(
@@ -63,11 +63,20 @@ example "supplied metacharacters remain one message value":
         message="plain\nextra: true\n${{{{ still_data }}}}\n$(still_data)",
     )
     template = rendering.trusted_literal(r"Service {service} listens on {port}")
-    artifacts = prepare_service(config, template)?
-    decoded = documents.json_decode(artifacts.config)?
-    resource = Resource.decode(decoded)?
-    check resource.message == config.message
-    check artifacts.process.argv.length() == 2
+    match prepare_service(config, template):
+        Ok(artifacts):
+            match documents.json_decode(artifacts.config):
+                Ok(decoded):
+                    match Resource.decode(decoded):
+                        Ok(resource):
+                            check resource.message == config.message
+                            check artifacts.process.argv.length() == 2
+                        Err(error):
+                            panic("encoded resource failed decoding: {error}")
+                Err(error):
+                    panic("encoded JSON failed parsing: {error}")
+        Err(error):
+            panic("valid service preparation failed: {error}")
 
 # No call above runs a process, reads a file or publishes a resource.
 # TrustedTemplate is constructed only from authored source, never supplied values.
