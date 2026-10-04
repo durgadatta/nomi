@@ -78,6 +78,28 @@ def check_workbench_scenarios(page, expect, artifacts):
     )
     page.get_by_role("tab", name="Output", exact=True).click()
     expect(page.locator('[data-result-view="output"] pre')).to_have_text("before")
+    set_source(
+        "func fail(value):\n    print(value)\n    return int('invalid')\n"
+        "print('before')\nvalues = list(map(fail, [1, 2, 3]))\nprint('after')\n"
+    )
+    page.locator("#run-all-btn").click()
+    expect(page.locator("#status")).to_have_text("error")
+    expect(page.locator('[data-result-view="output"] pre')).to_have_text("before\n1")
+    set_source(
+        "func ignore(value):\n    print('body')\n    return 42\n"
+        "print('before')\nignore(int('invalid'))\nprint('after')\n"
+    )
+    page.locator("#run-all-btn").click()
+    expect(page.locator("#status")).to_have_text("error")
+    expect(page.locator('[data-result-view="output"] pre')).to_have_text("before")
+    set_source(
+        "print('before')\nfunc named(value=7):\n    return value\nnamed(value=1)\n"
+    )
+    page.locator("#run-all-btn").click()
+    expect(page.locator("#status")).to_have_text("error")
+    expect(page.locator('[data-result-view="output"] pre')).to_be_hidden()
+    expect(page.locator(".diagnostic-message")).to_contain_text("unsupported Core call shape")
+    page.screenshot(path=str(artifacts / "call-shape-diagnostic.png"), full_page=True)
     set_source('text = "\U0001f600"\nx = !\n')
     page.locator("#run-all-btn").click()
     expect(page.locator("#status")).to_have_text("error")

@@ -173,7 +173,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_Bind(self, node: Bind) -> Value | ControlFlow:
         value = self.eval(node.value)
-        if isinstance(value, ControlFlow):
+        if isinstance(value, (ControlFlow, ErrorValue)):
             return value
         self._current_frame.bind(node.name, value)
         return value
@@ -188,16 +188,16 @@ class CoreRuntimeEvaluator:
 
     def _eval_Call(self, node: Call) -> Value | ControlFlow:
         func = self.eval(node.func)
-        if isinstance(func, ControlFlow):
+        if isinstance(func, (ControlFlow, ErrorValue)):
             return func
         args: list[Value] = []
         for arg in node.args:
             value = self.eval(arg)
-            if isinstance(value, ControlFlow):
+            if isinstance(value, (ControlFlow, ErrorValue)):
                 return value
             args.append(value)
         block = self.eval(node.block) if node.block is not None else None
-        if isinstance(block, ControlFlow):
+        if isinstance(block, (ControlFlow, ErrorValue)):
             return block
         if block is not None and not isinstance(block, FunctionValue):
             raise TypeError(f"{type(block).__name__} is not a block")
@@ -228,7 +228,7 @@ class CoreRuntimeEvaluator:
                 )
             for i in range(len(filled_args), len(func.params)):
                 default = self.eval(func.defaults[i - required])
-                if isinstance(default, ControlFlow):
+                if isinstance(default, (ControlFlow, ErrorValue)):
                     return default
                 filled_args.append(default)
         self._current_frame = func.closure.extend(func.params, tuple(filled_args))
@@ -262,7 +262,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_Yield(self, node: Yield) -> ControlFlow:
         value = self.eval(node.value)
-        if isinstance(value, ControlFlow):
+        if isinstance(value, (ControlFlow, ErrorValue)):
             return value
         if self._current_block is not None:
             block = self._current_block
@@ -292,7 +292,7 @@ class CoreRuntimeEvaluator:
                         self._current_frame.bindings.pop(param, None)
                     else:
                         self._current_frame.bind(param, old_value)
-                if isinstance(result, ControlFlow):
+                if isinstance(result, (ControlFlow, ErrorValue)):
                     return result
                 return NIL
             finally:
@@ -303,7 +303,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_Branch(self, node: Branch) -> Value | ControlFlow:
         test = self.eval(node.test)
-        if isinstance(test, ControlFlow):
+        if isinstance(test, (ControlFlow, ErrorValue)):
             return test
         branch = node.then_body if is_truthy(test) else node.else_body
         return self._eval_module(branch)
@@ -319,7 +319,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_UnaryOp(self, node: UnaryOp) -> Value | ControlFlow:
         operand = self.eval(node.operand)
-        if isinstance(operand, ControlFlow):
+        if isinstance(operand, (ControlFlow, ErrorValue)):
             return operand
         value = unbox_value(operand)
         if node.op == "+":
@@ -334,10 +334,10 @@ class CoreRuntimeEvaluator:
 
     def _eval_BinaryOp(self, node: BinaryOp) -> Value | ControlFlow:
         left = self.eval(node.left)
-        if isinstance(left, ControlFlow):
+        if isinstance(left, (ControlFlow, ErrorValue)):
             return left
         right = self.eval(node.right)
-        if isinstance(right, ControlFlow):
+        if isinstance(right, (ControlFlow, ErrorValue)):
             return right
         return box_value(
             self._apply_binary_op(node.op, unbox_value(left), unbox_value(right))
@@ -350,7 +350,7 @@ class CoreRuntimeEvaluator:
             last: Value = NIL
             for value_node in node.values:
                 value = self.eval(value_node)
-                if isinstance(value, ControlFlow):
+                if isinstance(value, (ControlFlow, ErrorValue)):
                     return value
                 last = value
                 if not is_truthy(value):
@@ -360,7 +360,7 @@ class CoreRuntimeEvaluator:
             last = NIL
             for value_node in node.values:
                 value = self.eval(value_node)
-                if isinstance(value, ControlFlow):
+                if isinstance(value, (ControlFlow, ErrorValue)):
                     return value
                 last = value
                 if is_truthy(value):
@@ -370,12 +370,12 @@ class CoreRuntimeEvaluator:
 
     def _eval_CompareOp(self, node: CompareOp) -> Value | ControlFlow:
         left = self.eval(node.left)
-        if isinstance(left, ControlFlow):
+        if isinstance(left, (ControlFlow, ErrorValue)):
             return left
         current = unbox_value(left)
         for op, comparator in zip(node.ops, node.comparators):
             right = self.eval(comparator)
-            if isinstance(right, ControlFlow):
+            if isinstance(right, (ControlFlow, ErrorValue)):
                 return right
             right_value = unbox_value(right)
             if not self._apply_compare_op(op, current, right_value):
@@ -385,7 +385,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_ConditionalExpr(self, node: ConditionalExpr) -> Value | ControlFlow:
         test = self.eval(node.test)
-        if isinstance(test, ControlFlow):
+        if isinstance(test, (ControlFlow, ErrorValue)):
             return test
         branch = node.then_value if is_truthy(test) else node.else_value
         return self.eval(branch)
@@ -395,12 +395,12 @@ class CoreRuntimeEvaluator:
         for elem in node.elements:
             if isinstance(elem, Spread):
                 spread_value = self.eval(elem.value)
-                if isinstance(spread_value, ControlFlow):
+                if isinstance(spread_value, (ControlFlow, ErrorValue)):
                     return spread_value
                 elements.extend(self._spread_elements(spread_value))
                 continue
             value = self.eval(elem)
-            if isinstance(value, ControlFlow):
+            if isinstance(value, (ControlFlow, ErrorValue)):
                 return value
             elements.append(value)
         return SequenceValue(tuple(elements))
@@ -409,20 +409,20 @@ class CoreRuntimeEvaluator:
         entries: dict[Any, Value] = {}
         for key_node, value_node in node.entries:
             key = self.eval(key_node)
-            if isinstance(key, ControlFlow):
+            if isinstance(key, (ControlFlow, ErrorValue)):
                 return key
             value = self.eval(value_node)
-            if isinstance(value, ControlFlow):
+            if isinstance(value, (ControlFlow, ErrorValue)):
                 return value
             entries[unbox_value(key)] = value
         return MappingValue(entries)
 
     def _eval_GetItem(self, node: GetItem) -> Value | ControlFlow:
         obj = self.eval(node.object_)
-        if isinstance(obj, ControlFlow):
+        if isinstance(obj, (ControlFlow, ErrorValue)):
             return obj
         key = self.eval(node.key)
-        if isinstance(key, ControlFlow):
+        if isinstance(key, (ControlFlow, ErrorValue)):
             return key
         key_value = unbox_value(key)
         if isinstance(obj, SequenceValue):
@@ -442,7 +442,7 @@ class CoreRuntimeEvaluator:
             fields: dict[str, Value] = {}
             for name, field_node in node.fields:
                 value = self.eval(field_node)
-                if isinstance(value, ControlFlow):
+                if isinstance(value, (ControlFlow, ErrorValue)):
                     return value
                 fields[name] = value
             return DataValue(name=node.name, fields=fields)
@@ -455,7 +455,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_GetField(self, node: GetField) -> Value | ControlFlow:
         obj = self.eval(node.object_)
-        if isinstance(obj, ControlFlow):
+        if isinstance(obj, (ControlFlow, ErrorValue)):
             return obj
         if isinstance(obj, MappingValue) and node.field == "get":
             return NativeValue(
@@ -477,7 +477,7 @@ class CoreRuntimeEvaluator:
         last: Value | ControlFlow = NIL
         while True:
             test = self.eval(node.test)
-            if isinstance(test, ControlFlow):
+            if isinstance(test, (ControlFlow, ErrorValue)):
                 return test
             if not is_truthy(test):
                 return self._eval_module(node.else_body) if node.else_body else last
@@ -486,13 +486,13 @@ class CoreRuntimeEvaluator:
                 return NIL
             if isinstance(body_result, ContinueSignal):
                 continue
-            if isinstance(body_result, ControlFlow):
+            if isinstance(body_result, (ControlFlow, ErrorValue)):
                 return body_result
             last = body_result
 
     def _eval_ForEach(self, node: ForEach) -> Value | ControlFlow:
         iterable = self.eval(node.iterable)
-        if isinstance(iterable, ControlFlow):
+        if isinstance(iterable, (ControlFlow, ErrorValue)):
             return iterable
         ran = False
         last: Value | ControlFlow = NIL
@@ -504,7 +504,7 @@ class CoreRuntimeEvaluator:
                 return NIL
             if isinstance(body_result, ContinueSignal):
                 continue
-            if isinstance(body_result, ControlFlow):
+            if isinstance(body_result, (ControlFlow, ErrorValue)):
                 return body_result
             last = body_result
         if not ran and node.else_body is not None:
@@ -513,7 +513,7 @@ class CoreRuntimeEvaluator:
 
     def _eval_Match(self, node: Match) -> Value | ControlFlow:
         subject = self.eval(node.subject)
-        if isinstance(subject, ControlFlow):
+        if isinstance(subject, (ControlFlow, ErrorValue)):
             return subject
         for case in node.cases:
             if not isinstance(case, PatternTest):
@@ -538,7 +538,7 @@ class CoreRuntimeEvaluator:
             return False, NIL
         if node.guard is not None:
             guard = self.eval(node.guard)
-            if isinstance(guard, ControlFlow):
+            if isinstance(guard, (ControlFlow, ErrorValue)):
                 return True, guard
             if not is_truthy(guard):
                 self._current_frame.bindings.clear()
@@ -595,11 +595,11 @@ class CoreRuntimeEvaluator:
         if isinstance(result, ErrorValue):
             handled = self._handle_error(result, node.handlers)
             final = self._eval_module(node.finalbody)
-            if isinstance(final, ControlFlow):
+            if isinstance(final, (ControlFlow, ErrorValue)):
                 return final
             return handled
         final = self._eval_module(node.finalbody)
-        if isinstance(final, ControlFlow):
+        if isinstance(final, (ControlFlow, ErrorValue)):
             return final
         return result
 
@@ -706,12 +706,14 @@ class CoreRuntimeEvaluator:
         combine = self._collection_combiner(func)
         return SequenceValue(tuple(scan(self._iter_values(items), seed, combine)))
 
-    def _host_filter(self, func: Value, sequence: Value) -> SequenceValue:
+    def _host_filter(self, func: Value, sequence: Value) -> SequenceValue | ErrorValue:
         kept: list[Value] = []
         for item in self._iter_values(sequence):
             result = self._apply_value_callable(func, (item,))
             if isinstance(result, ControlFlow):
                 raise RuntimeError(f"Unexpected {type(result).__name__} inside filter")
+            if isinstance(result, ErrorValue):
+                return result
             if is_truthy(result):
                 kept.append(item)
         return SequenceValue(tuple(kept))
@@ -721,12 +723,14 @@ class CoreRuntimeEvaluator:
             return SequenceValue(())
         return SequenceValue(tuple(self._iter_values(value)))
 
-    def _host_map(self, func: Value, sequence: Value) -> SequenceValue:
+    def _host_map(self, func: Value, sequence: Value) -> SequenceValue | ErrorValue:
         mapped: list[Value] = []
         for item in self._iter_values(sequence):
             result = self._apply_value_callable(func, (item,))
             if isinstance(result, ControlFlow):
                 raise RuntimeError(f"Unexpected {type(result).__name__} inside map")
+            if isinstance(result, ErrorValue):
+                return result
             mapped.append(result)
         return SequenceValue(tuple(mapped))
 
@@ -786,7 +790,7 @@ class CoreRuntimeEvaluator:
             return False, NIL
         if handler.guard is not None:
             guard = self.eval(handler.guard)
-            if isinstance(guard, ControlFlow):
+            if isinstance(guard, (ControlFlow, ErrorValue)):
                 return True, guard
             if not is_truthy(guard):
                 return False, NIL

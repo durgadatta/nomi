@@ -1057,6 +1057,10 @@ def _lower_stmt_dispatch(node: ast.AST) -> CoreNode:
             else_body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.orelse)),
         )
     if isinstance(node, ast.FunctionDef):
+        if _unsupported_parameters(node.args):
+            return Diagnostic(
+                message="unsupported Core parameter shape: positional-only, keyword-only, or variadic"
+            )
         return Bind(
             name=str(node.name),
             value=Function(
@@ -1132,6 +1136,14 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
         return Load(name=str(node.id))
     if isinstance(node, ast.Call):
         block = _lower_call_block(node)
+        if (
+            any(keyword.arg != "__block__" for keyword in node.keywords)
+            or (node.keywords and block is None)
+            or any(isinstance(arg, ast.Starred) for arg in node.args)
+        ):
+            return Diagnostic(
+                message="unsupported Core call shape: named or unpacked arguments"
+            )
         return Call(
             func=_lower_expr(node.func),
             args=tuple(_lower_expr(arg) for arg in node.args),
@@ -1171,6 +1183,10 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
             else_value=_lower_expr(node.orelse),
         )
     if isinstance(node, ast.FunctionDef):
+        if _unsupported_parameters(node.args):
+            return Diagnostic(
+                message="unsupported Core parameter shape: positional-only, keyword-only, or variadic"
+            )
         return Function(
             params=tuple(str(arg.arg) for arg in node.args.args),
             body=Module(body=tuple(_lower_stmt(stmt) for stmt in node.body)),
@@ -1191,6 +1207,10 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
             elements=tuple(_lower_expr(elt) for elt in node.elts),
         )
     if isinstance(node, ast.Dict):
+        if any(key is None for key in node.keys):
+            return Diagnostic(
+                message="unsupported Core mapping shape: unpacked entries"
+            )
         entries: list[tuple[CoreNode, CoreNode]] = []
         for key, value in zip(node.keys, node.values):
             entries.append((_lower_expr(key), _lower_expr(value)))
@@ -1219,6 +1239,10 @@ def _lower_pattern(node: ast.AST | None) -> CoreNode:
             entries.append((_lower_expr(key), _lower_pattern(pattern)))
         return MappingLiteral(entries=tuple(entries))
     return _unsupported(node)
+
+
+def _unsupported_parameters(args: ast.arguments) -> bool:
+    return bool(args.posonlyargs or args.kwonlyargs or args.vararg or args.kwarg)
 
 
 def _lower_call_block(node: ast.Call) -> Function | None:

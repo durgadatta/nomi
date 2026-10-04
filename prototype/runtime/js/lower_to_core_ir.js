@@ -139,6 +139,9 @@ function lowerExpr(expr) {
       return sequence(items);
     }
     case "Dict": {
+      if ((expr.keys || []).some(key => key === null)) {
+        return diagnostic("unsupported Core mapping shape: unpacked entries");
+      }
       const keys = (expr.keys || []).map(lowerExpr);
       const values = (expr.values || []).map(lowerExpr);
       const entries = keys.map((k, i) => [k, values[i] || NIL]);
@@ -151,8 +154,11 @@ function lowerExpr(expr) {
       return getItem(value, lowerExpr(expr.slice));
     }
     case "Call": {
+      if ((expr.keywords || []).length || (expr.args || []).some(arg => arg && arg.type === "Starred")) {
+        return diagnostic("unsupported Core call shape: named or unpacked arguments");
+      }
       const func = lowerExpr(expr.func);
-      const args = (expr.args || []).map(lowerExpr);
+      const args = (expr.args || []).map(arg => arg && arg.type === "Raw" ? lowerCallArgument(arg.value || "") : lowerExpr(arg));
       return call(func, args);
     }
     case "BinOp": {
@@ -185,6 +191,7 @@ function lowerExpr(expr) {
     }
     case "FunctionDef": {
       const params = expr.params || [];
+      if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
       const bodyStmt = lowerExpr(expr.body);
       const body = returnNode(bodyStmt);
       const fn = { type: "Function", params, body: moduleNode([body]), defaults: [] };
@@ -307,6 +314,7 @@ function lowerStmt(stmt) {
 
 function lowerFuncDef(stmt) {
   const params = stmt.params || [];
+  if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
   const bodyExpr = stmt.body ? lowerExpr(stmt.body) : NIL;
   const defaults = [];
   const fn = { type: "Function", params, body: moduleNode([returnNode(bodyExpr)]), defaults };
@@ -352,6 +360,7 @@ function lowerAssign(stmt) {
         params.push(p);
       }
     }
+    if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
     // If params contain non-identifiers, they're patterns; keep as-is for later merging
     return bind(name, { type: "Function", params, body: moduleNode([returnNode(value)]), defaults });
   }
@@ -362,6 +371,7 @@ function lowerAssign(stmt) {
     const funcPart = target.slice(0, whenIdx).trim();
     const guardText = target.slice(whenIdx + 6).trim();  // " when " is 6 chars
     const { name, params, defaults } = parseFuncHead(funcPart);
+    if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
     const guard = lowerRawExpr(guardText);
     return bind(name, {
       type: "Function",
@@ -377,6 +387,7 @@ function lowerAssign(stmt) {
     const spaceIdx = target.indexOf(" ");
     const name = target.slice(0, spaceIdx).trim();
     const params = target.slice(spaceIdx + 1).trim().split(/\s+/);
+    if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
     return bind(name, { type: "Function", params, body: moduleNode([returnNode(value)]), defaults: [] });
   }
 
@@ -433,6 +444,7 @@ function lowerSuite(stmt) {
   switch (kind) {
     case "Func": {
       const { name, params, defaults } = parseFuncHead(head);
+      if (unsupportedParameters(params)) return diagnostic("unsupported Core parameter shape: positional-only, keyword-only, or variadic");
       return bind(name, { type: "Function", params, body: moduleNode(body), defaults });
     }
     case "For": {
@@ -634,6 +646,10 @@ function lowerPatternMatchNegBranch(head, body) {
   ]);
 }
 
+function unsupportedParameters(params) {
+  return params.some(param => typeof param !== "string" || param.trim() === "/" || param.trim().startsWith("*"));
+}
+
 function parseFuncHead(head) {
   if (!head) return { name: "", params: [], defaults: [] };
   const paren = head.indexOf("(");
@@ -712,7 +728,7 @@ function findAssignEq(text) {
         const prev = text[i - 1];
         if (prev === "=" || prev === "!" || prev === "<" || prev === ">") continue;
       }
-      if (i < text.length - 1 && text[i + 1] === "=") continue;
+      if (i < text.length - 1 && (text[i + 1] === "=" || text[i + 1] === ">")) continue;
       return i;
     }
   }
@@ -1368,7 +1384,7 @@ function parseSafeNavSegment(text) {
     const methodName = text.slice(0, paren).trim();
     const close = text.lastIndexOf(")");
     const argsStr = text.slice(paren + 1, (close >= 0 ? close : text.length)).trim();
-    const args = argsStr ? splitCallArgs(argsStr).map(s => lowerRawExpr(s.trim())) : [];
+    const args = argsStr ? splitCallArgs(argsStr).map(lowerCallArgument) : [];
     return call(getField(load("_0"), methodName), args);
   }
   // Subscript: ?.[0] or ?.[key]
@@ -1511,6 +1527,16 @@ function lowerRangeExpr(text) {
   return call(load("list"), [call(load("range"), rangeArgs)]);
 }
 
+function lowerCallArgument(raw) {
+  const text = raw.trim();
+  if (findAssignEq(text) >= 0 || text.startsWith("*")) {
+    return diagnostic("unsupported Core call shape: named or unpacked arguments", {
+      capability: "js-lowerer.call-shape", source_excerpt: text,
+    });
+  }
+  return lowerRawExpr(text);
+}
+
 function lowerCallExpr(text) {
   const paren = text.indexOf("(");
   const close = text.lastIndexOf(")");
@@ -1522,7 +1548,7 @@ function lowerCallExpr(text) {
   const funcName = text.slice(0, paren).trim();
   const argsStr = text.slice(paren + 1, close).trim();
 
-  const args = argsStr ? splitCallArgs(argsStr).map(s => lowerRawExpr(s.trim())) : [];
+  const args = argsStr ? splitCallArgs(argsStr).map(lowerCallArgument) : [];
 
   // Handle dotted method calls: obj . method (...) or a.b.c (...)
   const func = lowerDottedName(funcName);

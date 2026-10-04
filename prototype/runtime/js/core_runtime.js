@@ -193,6 +193,10 @@ function isSignal(value) {
   return value && typeof value === "object" && typeof value.control === "string";
 }
 
+function isAbrupt(value) {
+  return isSignal(value) || Boolean(value && value.kind === "error");
+}
+
 class CoreRuntime {
   constructor(hostCalls = {}) {
     this.stdout = [];
@@ -211,11 +215,12 @@ class CoreRuntime {
   evaluate(corePayload, options = {}) {
     this.stdout = [];
     const root = this.unwrapPayload(corePayload);
-    // Reject unsupported literals anywhere in the program before any effects.
+    // Reject lowering failures and unsupported literals before any effects.
     const pending = [root];
     while (pending.length) {
       const node = pending.pop();
       if (!node || typeof node !== "object") continue;
+      if (node.type === "Diagnostic") throw new Error(`Unexecutable Core diagnostic: ${node.message || "unsupported lowering"}`);
       if (node.type === "Literal") box(node.value, node.value_type || null);
       pending.push(...Object.values(node).filter((value) => value && typeof value === "object"));
     }
@@ -285,7 +290,7 @@ class CoreRuntime {
 
   evalBind(node) {
     const value = this.eval(node.value);
-    if (isSignal(value)) return value;
+    if (isAbrupt(value)) return value;
     this.currentFrame.bind(node.name, value);
     return value;
   }
@@ -302,15 +307,15 @@ class CoreRuntime {
 
   evalCall(node) {
     const func = this.eval(node.func);
-    if (isSignal(func)) return func;
+    if (isAbrupt(func)) return func;
     const args = [];
     for (const argNode of node.args || []) {
       const arg = this.eval(argNode);
-      if (isSignal(arg)) return arg;
+      if (isAbrupt(arg)) return arg;
       args.push(arg);
     }
     const block = node.block ? this.eval(node.block) : null;
-    if (isSignal(block)) return block;
+    if (isAbrupt(block)) return block;
     if (block !== null && block.kind !== "function") {
       throw new TypeError(`${block.kind} is not a block`);
     }
@@ -335,7 +340,7 @@ class CoreRuntime {
       for (let i = filledArgs.length; i < func.params.length; i++) {
         const defaultNode = defaults[i - required];
         const defaultVal = this.eval(defaultNode);
-        if (isSignal(defaultVal)) return defaultVal;
+        if (isAbrupt(defaultVal)) return defaultVal;
         filledArgs.push(defaultVal);
       }
     }
@@ -377,15 +382,13 @@ class CoreRuntime {
 
   evalReturn(node) {
     const value = this.eval(node.value);
-    if (isSignal(value)) return value;
-    if (value.kind === "error") return value;
+    if (isAbrupt(value)) return value;
     return signal("return", value);
   }
 
   evalYield(node) {
     const value = this.eval(node.value);
-    if (isSignal(value)) return value;
-    if (value.kind === "error") return value;
+    if (isAbrupt(value)) return value;
     if (this.currentBlock !== null) {
       const block = this.currentBlock;
       const savedFrame = this.currentFrame;
@@ -425,7 +428,7 @@ class CoreRuntime {
             this.currentFrame.bind(param, oldValue);
           }
         }
-        if (isSignal(result)) return result;
+        if (isAbrupt(result)) return result;
         return NIL;
       } finally {
         this.currentFrame = savedFrame;
@@ -438,7 +441,7 @@ class CoreRuntime {
 
   evalBranch(node) {
     const test = this.eval(node.test);
-    if (isSignal(test)) return test;
+    if (isAbrupt(test)) return test;
     return this.evalModule(truthy(test) ? node.then_body : node.else_body);
   }
 
@@ -458,19 +461,19 @@ class CoreRuntime {
     let last = NIL;
     while (true) {
       const test = this.eval(node.test);
-      if (isSignal(test)) return test;
+      if (isAbrupt(test)) return test;
       if (!truthy(test)) return node.else_body ? this.evalModule(node.else_body) : last;
       const bodyResult = this.evalModule(node.body);
       if (isSignal(bodyResult) && bodyResult.control === "break") return NIL;
       if (isSignal(bodyResult) && bodyResult.control === "continue") continue;
-      if (isSignal(bodyResult)) return bodyResult;
+      if (isAbrupt(bodyResult)) return bodyResult;
       last = bodyResult;
     }
   }
 
   evalForEach(node) {
     const iterable = this.eval(node.iterable);
-    if (isSignal(iterable)) return iterable;
+    if (isAbrupt(iterable)) return iterable;
     let ran = false;
     let last = NIL;
     for (const item of this.iterValues(iterable)) {
@@ -479,7 +482,7 @@ class CoreRuntime {
       const bodyResult = this.evalModule(node.body);
       if (isSignal(bodyResult) && bodyResult.control === "break") return NIL;
       if (isSignal(bodyResult) && bodyResult.control === "continue") continue;
-      if (isSignal(bodyResult)) return bodyResult;
+      if (isAbrupt(bodyResult)) return bodyResult;
       last = bodyResult;
     }
     return !ran && node.else_body ? this.evalModule(node.else_body) : last;
@@ -487,7 +490,7 @@ class CoreRuntime {
 
   evalUnaryOp(node) {
     const operand = this.eval(node.operand);
-    if (isSignal(operand)) return operand;
+    if (isAbrupt(operand)) return operand;
     const value = unbox(operand);
     if (node.op === "+") return box(+value, operand.kind);
     if (node.op === "-") return box(-value, operand.kind);
@@ -501,9 +504,9 @@ class CoreRuntime {
 
   evalBinaryOp(node) {
     const left = this.eval(node.left);
-    if (isSignal(left)) return left;
+    if (isAbrupt(left)) return left;
     const right = this.eval(node.right);
-    if (isSignal(right)) return right;
+    if (isAbrupt(right)) return right;
     return this.binaryValue(node.op, left, right);
   }
 
@@ -558,14 +561,14 @@ class CoreRuntime {
     if (node.op === "and") {
       for (const valueNode of node.values) {
         last = this.eval(valueNode);
-        if (isSignal(last) || !truthy(last)) return last;
+        if (isAbrupt(last) || !truthy(last)) return last;
       }
       return last;
     }
     if (node.op === "or") {
       for (const valueNode of node.values) {
         last = this.eval(valueNode);
-        if (isSignal(last) || truthy(last)) return last;
+        if (isAbrupt(last) || truthy(last)) return last;
       }
       return last;
     }
@@ -574,11 +577,11 @@ class CoreRuntime {
 
   evalCompareOp(node) {
     const left = this.eval(node.left);
-    if (isSignal(left)) return left;
+    if (isAbrupt(left)) return left;
     let current = unbox(left);
     for (let index = 0; index < node.ops.length; index += 1) {
       const right = this.eval(node.comparators[index]);
-      if (isSignal(right)) return right;
+      if (isAbrupt(right)) return right;
       const rightValue = unbox(right);
       if (!this.applyCompareOp(node.ops[index], current, rightValue)) return box(false);
       current = rightValue;
@@ -588,7 +591,7 @@ class CoreRuntime {
 
   evalConditionalExpr(node) {
     const test = this.eval(node.test);
-    if (isSignal(test)) return test;
+    if (isAbrupt(test)) return test;
     return this.eval(truthy(test) ? node.then_value : node.else_value);
   }
 
@@ -597,12 +600,12 @@ class CoreRuntime {
     for (const elementNode of node.elements || []) {
       if (elementNode.type === "Spread") {
         const spreadValue = this.eval(elementNode.value);
-        if (isSignal(spreadValue)) return spreadValue;
+        if (isAbrupt(spreadValue)) return spreadValue;
         elements.push(...this.spreadElements(spreadValue));
         continue;
       }
       const value = this.eval(elementNode);
-      if (isSignal(value)) return value;
+      if (isAbrupt(value)) return value;
       elements.push(value);
     }
     return { kind: "sequence", elements };
@@ -612,9 +615,9 @@ class CoreRuntime {
     const entries = new Map();
     for (const [keyNode, valueNode] of node.entries || []) {
       const key = this.eval(keyNode);
-      if (isSignal(key)) return key;
+      if (isAbrupt(key)) return key;
       const value = this.eval(valueNode);
-      if (isSignal(value)) return value;
+      if (isAbrupt(value)) return value;
       entries.set(unbox(key), value);
     }
     return { kind: "mapping", entries };
@@ -622,11 +625,9 @@ class CoreRuntime {
 
   evalGetItem(node) {
     const objectValue = this.eval(node.object_);
-    if (isSignal(objectValue)) return objectValue;
-    if (objectValue.kind === "error") return objectValue;
+    if (isAbrupt(objectValue)) return objectValue;
     const key = this.eval(node.key);
-    if (isSignal(key)) return key;
-    if (key.kind === "error") return key;
+    if (isAbrupt(key)) return key;
     if (objectValue.kind === "sequence" || objectValue.kind === "str") {
       const elements = objectValue.kind === "str" ? Array.from(objectValue.value) : objectValue.elements;
       let index = sequenceIndex(key);
@@ -662,7 +663,7 @@ class CoreRuntime {
     const fields = Object.create(null);
     for (const [name, fieldNode] of node.fields || []) {
       const value = this.eval(fieldNode);
-      if (isSignal(value)) return value;
+      if (isAbrupt(value)) return value;
       const key = typeof name === "string" ? name : name.name;
       fields[key] = value;
     }
@@ -671,7 +672,7 @@ class CoreRuntime {
 
   evalGetField(node) {
     const objectValue = this.eval(node.object_);
-    if (isSignal(objectValue)) return objectValue;
+    if (isAbrupt(objectValue)) return objectValue;
     if (objectValue.kind === "mapping" && node.field === "get") {
       return native("mapping.get", (key, defaultValue = NIL) => {
         const keyValue = unbox(key);
@@ -743,7 +744,7 @@ class CoreRuntime {
 
   evalMatch(node) {
     const subject = this.eval(node.subject);
-    if (isSignal(subject)) return subject;
+    if (isAbrupt(subject)) return subject;
     for (const caseNode of node.cases || []) {
       if (caseNode.type !== "PatternTest") {
         throw new TypeError(`Match case must be PatternTest, got ${caseNode.type}`);
@@ -766,7 +767,7 @@ class CoreRuntime {
     }
     if (node.guard !== null && node.guard !== undefined) {
       const guard = this.eval(node.guard);
-      if (isSignal(guard)) return [true, guard];
+      if (isAbrupt(guard)) return [true, guard];
       if (!truthy(guard)) {
         this.currentFrame.bindings = snapshot;
         return [false, NIL];
@@ -830,8 +831,7 @@ class CoreRuntime {
 
   evalRaise(node) {
     const value = this.eval(node.exception);
-    if (isSignal(value)) return value;
-    if (value.kind === "error") return value;
+    if (isAbrupt(value)) return value;
     return {
       kind: "error",
       errorKind: "RuntimeError",
@@ -845,11 +845,11 @@ class CoreRuntime {
     if (result.kind === "error") {
       const handled = this.handleError(result, node.handlers || []);
       const finalResult = this.evalModule(node.finalbody);
-      if (isSignal(finalResult)) return finalResult;
+      if (isAbrupt(finalResult)) return finalResult;
       return handled;
     }
     const finalResult = this.evalModule(node.finalbody);
-    if (isSignal(finalResult)) return finalResult;
+    if (isAbrupt(finalResult)) return finalResult;
     return result;
   }
 
@@ -873,7 +873,7 @@ class CoreRuntime {
     }
     if (handler.guard !== null && handler.guard !== undefined) {
       const guard = this.eval(handler.guard);
-      if (isSignal(guard)) return [true, guard];
+      if (isAbrupt(guard)) return [true, guard];
       if (!truthy(guard)) return [false, NIL];
     }
     return [true, this.evalModule(handler.body)];
@@ -949,6 +949,7 @@ class CoreRuntime {
         for (const item of this.iterValues(sequence)) {
           const result = this.applyCallable(func, [item]);
           if (isSignal(result)) throw new Error(`Unexpected ${result.control} inside filter`);
+          if (result.kind === "error") return result;
           if (truthy(result)) kept.push(item);
         }
         return { kind: "sequence", elements: kept };
@@ -980,6 +981,7 @@ class CoreRuntime {
         for (const item of this.iterValues(sequence)) {
           const result = this.applyCallable(func, [item]);
           if (isSignal(result)) throw new Error(`Unexpected ${result.control} inside map`);
+          if (result.kind === "error") return result;
           mapped.push(result);
         }
         return { kind: "sequence", elements: mapped };
