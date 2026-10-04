@@ -85,30 +85,129 @@ The paper-audit follow-up also passed 63 resource/docs/packet tests and agent
 doctor checks; local links were checked outside fenced code and the ignored
 RAG index was refreshed. The source counterexamples remain design fixtures.
 
-## Pass Retrospective
+## Original September Retrospective
 
-### Evidence That Changed The Design
+### September Evidence
 
 Koka supplies a concrete higher-order effect alternative. Typed holes and
 projection laws show why an editor cannot simply guess missing type facts.
 The invoice and import programs make retained captures and expected errors
 observable even without a new source notation.
 
-### Workflow Friction
+### September Friction
 
 Examples can settle open API questions by accident. A constructor passed as a
 callback looks innocent while assuming a first-class callable contract. Keep
 abstract signatures separate from accepted source and use explicit long forms.
 
-### Durable Improvement
+### September Improvement
 
 Register the function contract packet using the existing function evidence page,
 correct constructor-callback examples, and route the agenda to its admission
 gates instead of duplicating generic/effect research in every interface thread.
 
-### Next Pass
+### September Next Step
 
 Select a call-shape rule and compare the explicit function-value/generic candidates
 at 80/100 columns. Close construction/latent authority and whole-completion
 region rules, then produce checked map/fold, decode and run_scope facts.
 No interpreter migration is justified for this still-open contract.
+
+The generic-operation continuation below extends this same packet; the original
+September observations and validation above remain historical evidence.
+
+## Generic-Operation Continuation 2026-10-04
+
+### Pass 1: Source Mechanisms And Property Hierarchy
+
+The user requested pragmatic functional abstractions across paradigms, including
+map/reduce/filter, pipe, object methods, hash/serialization, caching, tap,
+accumulation, repeat and fixed points. The
+[cross-cutting chapter](../research/generic_operations.md) develops a capability
+graph from small value/callable/structure/state/law/policy facts. Selected primary
+sources cover Wolfram, Haskell, Common Lisp, Python, ECMAScript, pandas, Clojure,
+Rust, Java, Kotlin, Lodash, RxJS and Serde, with pinned/rolling/fetch limits.
+
+Important corrections: Java Object methods are broadly present but Serializable
+is opt-in; hash is not a persistent identity; Haskell fix is not operational
+numerical iteration; pandas pipe passes the whole frame rather than its cells.
+Higher-order functions and generic object protocols share useful design pressure
+without becoming one universal Function/Object superclass.
+
+The [canonical contract continuation](../design/function_contracts.md#generic-operation-continuation)
+and [three-program challenger](../design/targets/research/generic_operations.nomi)
+keep existing call/pipeline shapes. Their cache/codec/observer/iteration facades
+are fictional, not public APIs or a static capability checker. No notation,
+generic spelling, core IR, callback-effect choice or production library was
+accepted. GA1-GA8 refine existing D1-D3 and open questions.
+
+### Pass 2: Counterexamples And Evidence Checks
+
+Twelve [local probes](../research/features/probe_generic_operations.py) record
+strict/fused call and failure order, reduction direction/seed/history,
+nonassociativity, row outcomes, tap mutation/failure, demand, repetition,
+bounded stopping, stale captured cache state and wrapper order, hash eligibility,
+encoding profiles and aliased accumulator histories. Their
+[capture](../research/features/generic_probe_results.json) retains per-case
+limits and explicit unperformed execution flags. Forty focused tests passed.
+These are Python-host and original finite-model evidence, not Nomi or foreign
+library conformance; concurrency, authority, numerical proofs and human trials
+remain unperformed.
+
+The repository matrix check caught a real topology mismatch: a supplemental
+chapter placed in the feature-category directory appeared to require another
+matrix row. Moving it to cross-cutting research preserved the thirteen category
+reviews without weakening the coverage test or copying a new comparison axis.
+The repaired focused/docs/packet/matrix run passed 53 tests. The maintained
+capture checker rejects ambiguous metadata, wrong JSON types and scope/outcome
+drift, preserves historical version differences and never rewrites evidence.
+
+### Pass 3: Integration Audit
+
+Registry routing, research indexes, function/collection evidence, text/domain/ML
+continuations and the target index now route to the same owner. All five design
+packets and target-direction inspection passed. Parser, runtime, samples and
+generated web assets were not changed. Integration checks also caught the
+required research-target header marker and duplicate historical retrospective
+headings that confused the existing registry's first-heading lookup. The target
+marker and historical heading names were corrected without weakening validators.
+The repaired target/probe run passed 44 tests and the packet/docs run passed ten.
+A changed-document audit resolved 466 local links/anchors. The final full Python
+suite passed 1,573 tests with 76 skipped and four existing Jupyter path
+deprecation warnings. All agent-doctor checks passed after refreshing the ignored
+RAG index; the agent/docs/packet regression slice passed 17 tests. Lint,
+formatting, capture reproduction and whitespace checks passed. No browser trial
+or Nomi/foreign generic-operation conformance was performed.
+
+## Pass Retrospective
+
+### Evidence That Changed The Design
+
+Equal output values do not establish identical execution order or failure
+prefixes. Receiver identity does not include changing receiver state; returning
+the same value does not make tap an identity operation. Bounded stopping needs
+reason/evidence, while reusable caches need explicit context and ownership.
+Keep the hierarchy conditional and the pure/effectful callback fork open.
+
+### Workflow Friction
+
+Some primary documentation is rolling, redirects between editions or lacks
+extractable content. Pinned/fetch limits remain explicit. The category-directory
+check additionally distinguished a useful cross-cutting research chapter from
+another feature row; research breadth must not silently expand target taxonomy.
+
+### Durable Improvement
+
+The existing function packet now routes generic-operation prompts and validates
+the twelve-probe capture and forty focused tests. The existing matrix invariant
+remains intact. No new packet, agent instruction, universal metadata framework
+or runtime flags were justified by these bounded observations.
+
+### Next Pass
+
+Use GA2/GA3/GA8 to produce D1-D3 positive/negative typed facts for strict map,
+seeded scan and conditional Eq/Hash/codec support. Then challenge the context-
+bound cache and fallible observer long forms under region/effect contracts.
+Retain explicit statements/loops when they make control clearer. Compare one
+settled adapter on CLI/browser before adding shorthand or runnable samples;
+the hierarchy is not a mandate to implement every cataloged combinator.

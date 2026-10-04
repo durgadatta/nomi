@@ -4,6 +4,7 @@
 # Bridge: docs/review/2026-09-30-function-contracts.md
 # Proposed library contracts: strict pure map, Result.map_error, HTTP API.
 # No generic/function-value type notation is admitted by this fixture.
+# Generic-operation continuation: docs/design/targets/research/generic_operations.nomi
 from std.collections import map
 from std.http import HttpError, NameService
 

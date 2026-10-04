@@ -49,6 +49,10 @@ The [domain composition continuation](../domain_composition.md) extends data,
 AI/ML and human/documentary models under the language-coherence synthesis.
 It shares inspectable boundaries and command/evidence obligations with this
 packet without selecting a universal graph, truth algebra or editable IR.
+The [generic-operation continuation](../generic_operations.md) belongs
+to the function-contract packet and sharpens pipeline, observation and repeated
+execution boundaries. Familiar method chains do not establish invocation count,
+purity, cache dependency completeness or a reliable audit trail.
 
 | Thread | Representations considered | Pressure on Nomi |
 | --- | --- | --- |

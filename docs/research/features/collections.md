@@ -35,6 +35,11 @@ propagation, parallelism, laziness, query translation, or generated parameters.
 Shared verb names can help users, but result laws must be specified per domain.
 Callback effects and generic dispatch remain admission gates.
 
+The [generic-operation hierarchy](../generic_operations.md) adds seed/history,
+state-versus-output, carrier shape, merge laws and demand-aware observation.
+A plain sequential fold requires no associative merge law; neither pure map nor
+pipeline spelling licenses callback fusion or implicit parallel reduction.
+
 **Experiment:** compare List, explicit Stream, and TablePlan over the same input.
 Record call order, partial-consumer behavior, memory bound, result order, and
 error paths. Require unsupported query callbacks to fail at construction, not

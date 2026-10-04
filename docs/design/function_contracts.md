@@ -375,6 +375,52 @@ These are requirements for a future schema, not fields already produced by the
 current compiler. An empty-list test must still typecheck the callback contract;
 zero runtime invocations do not turn an effectful function into a pure one.
 
+## Generic-Operation Continuation
+
+The [property hierarchy](../research/generic_operations.md) and
+[ordinary-call challenger](targets/research/generic_operations.nomi) extend
+this packet with GA1-GA8. Status: designing hypotheses, not additional accepted
+core semantics or public stdlib APIs. Keep the A/B callback-effect fork open.
+
+Recommendation: build a capability graph from specific callable/value facts,
+not a universal Object/Function toolbox. Identity/composition need compatible
+call shapes; map/filter need carrier-specific structure; fold/scan thread state;
+parallel merge needs additional laws; cache/iteration/tap need explicit policy
+and outcomes. Hash/encoding/display belong to conditional value protocols and
+selected profiles, not eligibility automatically shared by every object.
+
+For each proposed combinator, supplement the existing callback metadata with
+only the facts its interface needs:
+
+| Contract dimension | Required distinction |
+| --- | --- |
+| Input/result shape | Element versus whole value, state versus emitted output, receiver binding, labels/defaults and carrier |
+| Invocation phase | Construction, immediate traversal, consumer demand, task start or subscription |
+| Multiplicity/order | Zero/one/many calls, prefix short-circuiting, no hidden repetition or optimizer elision |
+| Retention/sharing | Callback/capture/result region; immutable owned result versus aliased mutable or single-use state |
+| Completion | Ordinary Result policy, observer failure, budget/cycle/stopping evidence, abnormal cancellation/panic |
+| Context/dependencies | Explicit operation/key/schema/profile basis for reusable artifacts; current authority remains separate |
+| Laws/rewrite scope | Value equality alone versus declared operational observations; sequential step versus associative merge |
+
+These are abstract interface obligations, not annotations chosen for source or
+facts the current compiler infers. Pure callbacks can still panic/diverge;
+strict map fusion and reassociation need a separate preservation argument.
+Tap is not pure identity; cache state and captured mutable dependencies do not
+disappear behind a decorator; approximate stopping is not Eq/hash coherence.
+Normal statements/loops are valid long forms, not missing FP sophistication.
+
+The challenger supplies beginner, production and failure-heavy forms without
+new punctuation or an automatic method-to-free-function equivalence. Preserve
+local protocol/import resolution and whole-completion region checks. Extend
+D1-D3 typed facts with seeded scan, context-bound caching and fallible observation
+before considering shared higher-kinded protocols or shorthand.
+
+The [local capture](../research/features/generic_probe_results.json) contains
+bounded Python-host/original models only. It does not establish Nomi typing,
+foreign library conformance, concurrent caches, numerical convergence or human
+repair. GA1-GA8 remain open; removal is limited to proposed library contracts,
+their research metadata and target-only challenger, not current runtime behavior.
+
 ## Acceptance And Removal Gates
 
 1. Specify function-value type/generic/protocol notation through a separate

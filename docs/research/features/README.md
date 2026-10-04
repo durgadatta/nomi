@@ -20,7 +20,7 @@ performed in this pass.
 | Feature | Target pressure |
 | --- | --- |
 | [Bindings and state](binding.md) | Name a fact, then visibly change state. |
-| [Functions and calls](functions.md) | Transform values without hidden argument/control rules. |
+| [Functions and calls](functions.md) | Transform values without hidden argument/control rules; [generic operations](../generic_operations.md) develop the property hierarchy. |
 | [Types and owned data](types_data.md) | Model concepts while keeping local inference. |
 | [Patterns and choice](patterns.md) | Handle every structural alternative. |
 | [Failure and absence](failure.md) | Distinguish missing, rejected, and broken. |

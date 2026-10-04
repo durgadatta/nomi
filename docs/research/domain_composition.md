@@ -61,6 +61,12 @@ graph and approval record. Attach metadata at boundaries or artifacts that need
 it; optional facets must carry a declared schema/owner. Avoid a giant
 `UniversalObject` with nullable fields for every discipline.
 
+The [generic-operation hierarchy](generic_operations.md) supplies the
+horizontal library vocabulary: carrier-specific traversal, state accumulation,
+lawful merge, explicit observation, context-bound reuse and bounded iteration.
+These combine the foundations without assuming every domain value supports
+hashing, serialization, filtering, differentiation or the same executor.
+
 ## One Source Language, Multiple Domain Models
 
 The existing four [surface layers](../design/README.md#surface-layers) are enough:

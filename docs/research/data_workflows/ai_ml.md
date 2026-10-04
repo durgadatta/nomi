@@ -59,6 +59,12 @@ programs; they are not silently covered by mentioning a framework.
 
 ## Four Different Things Called A Model
 
+The [generic-operation hierarchy](../generic_operations.md) puts differentiate,
+vectorize, trace and compile beside map/fold/cache rather than treating them as
+universal Function methods. Shape, supported primitives, state/randomness,
+staging and host profiles remain this domain's contracts; a pure callback alone
+does not establish transformation eligibility.
+
 | Artifact | Owns | Does not establish |
 | --- | --- | --- |
 | Model specification | Architecture/algorithm, hyperparameters, input/output contract | Learned parameters or predictive validity |

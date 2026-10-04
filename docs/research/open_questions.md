@@ -61,6 +61,13 @@ Compare pure-only collection callbacks with explicit effect-polymorphic types;
 inspect resolved dispatch and errors at the callback argument. See
 [functions](features/functions.md) and [effects](features/effects.md).
 
+**Generic-operation pressure:** [GA1-GA8](generic_operations.md#bounded-experiments)
+compare carrier-specific versus shared protocols, pure/effectful callbacks,
+seeded history, lawful merge, fallible observation, context-bound caches,
+bounded iteration and conditional value capabilities. Start with GA2/GA3/GA8
+under D1-D3. Host/model counterexamples do not select type notation or close
+effect/region checking. No universal Object/Function methods are assumed.
+
 ## 4. Effect Taxonomy
 
 **Question:** What belongs in a public `uses` set, and at what granularity?

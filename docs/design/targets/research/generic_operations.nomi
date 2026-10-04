@@ -1,0 +1,128 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable or typechecked.
+# Evidence: docs/research/generic_operations.md
+# Design: docs/design/function_contracts.md
+# Bridge: docs/review/2026-09-30-function-contracts.md
+# Core call/pipeline shapes only. Generic/effect/region/protocol contracts open.
+# All numeric examples use finite small integers, not an overflow oracle.
+from std.collections import filter, fold, map
+from lab.generic import (
+    AuditError, AuditSink, AuditSummary, CacheError, IntIteration,
+    PinnedAmounts, ReportCache, ReportKey, iterate_bounded_int,
+    scan_including_seed,
+)
+from lab.codec import CodecError, ReportCodec
+
+func double(value: Int) -> Int:
+    return value * 2
+
+func add(total: Int, value: Int) -> Int:
+    return total + value
+
+func positive_totals(values: List[Int]) -> Int:
+    selected = filter(values, (value) => value > 0)
+    doubled = map(selected, double)
+    return fold(doubled, 0, add)
+
+# Beginner: explicit long form and accepted insertion convenience.
+example "filter and map do not change fold's empty seed":
+    check positive_totals([1, -1, 3]) == 8
+    check positive_totals([]) == 0
+    check ([1, -1, 3]
+        |> filter((value) => value > 0)
+        |> map(double)
+        |> fold(0, add)) == 8
+    check scan_including_seed([1, 2], 0, add) == [0, 1, 3]
+    check scan_including_seed([], 0, add) == [0]
+
+data Report:
+    total: Int
+    count: Int
+
+data BuildError:
+    Cache(error: CacheError)
+    Codec(error: CodecError)
+
+func make_report(values: List[Int]) -> Report:
+    return Report(total=positive_totals(values), count=values.length())
+
+# Production: a cache is an explicit stateful service, not f.cache() on every
+# callable. Fictional key fields capture this fixture's declared dependencies;
+# this is not automatic completeness inference from a name/hash.
+# The lab cache owns current read/write policy, bounded retention, key equality,
+# owned immutable Report values and miss/error semantics. It grants no authority.
+# No single-flight or exactly-once computation claim is made.
+pub func load_report(
+    input: PinnedAmounts,
+    cache: ReportCache,
+) -> Result[Report, BuildError] uses FileRead, FileWrite:
+    key = ReportKey(
+        dataset=input.dataset,
+        revision=input.revision,
+        schema=input.schema,
+        numeric_profile=input.numeric_profile,
+        operation="positive-totals-v1",
+    )
+    hit = cache.lookup(key)
+        .map_error((error) => BuildError.Cache(error))?
+    match hit:
+        Some(report):
+            return Ok(report)
+        none:
+            report = make_report(input.values)
+            cache.store(key, report)
+                .map_error((error) => BuildError.Cache(error))?
+            return Ok(report)
+
+pub func encode_report(
+    input: PinnedAmounts,
+    cache: ReportCache,
+    codec: ReportCodec,
+) -> Result[Bytes, BuildError] uses FileRead, FileWrite:
+    report = load_report(input, cache)?
+    return codec.encode(report)
+        .map_error((error) => BuildError.Codec(error))
+
+# Selected codec/schema is explicit. A Report display or object hash is not the
+# encoding contract. No automatic serialization of closures/handles/grants.
+
+data ObserveError:
+    Audit(error: AuditError)
+
+# Failure-heavy passthrough long form. The observer gets a copied summary,
+# returns an explicit Result, and runs before Ok(report). It can fail.
+# This is the challenger to a future tap API, not a hidden best-effort logger.
+pub func observe_and_return(
+    report: Report,
+    audit: AuditSink,
+) -> Result[Report, ObserveError] uses ConsoleWrite:
+    summary = AuditSummary(count=report.count)
+    audit.record(summary)
+        .map_error((error) => ObserveError.Audit(error))?
+    return Ok(report)
+
+func toggle(value: Int) -> Int:
+    return 1 - value
+
+# This fictional integer-only adapter owns exact consecutive comparison,
+# finite history and a nonnegative step budget. Zero budget performs no step.
+# Generic function types, retention, panic/cancellation and step errors remain
+# unclosed. This outcome is not a mathematical convergence proof.
+example "a cycle is not a successful fixed point":
+    outcome = iterate_bounded_int(0, toggle, max_steps=8)
+    match outcome:
+        IntIteration.Cycle(value, steps):
+            check value == 0
+            check steps == 2
+        _:
+            panic("expected the repeated integer state, not convergence")
+
+# Required negative facts before public API admission:
+# - receiver/defaulted callback shape requires an explicit contract/adapter;
+# - fusing strict maps changes invocation/failure order unless proven allowed;
+# - List[Result] assessment does not become fail-fast traversal automatically;
+# - a sequential fold step is not a parallel merge function;
+# - cached Report/Err/diagnostic cannot retain a scoped Reader or authority;
+# - lookup does not bypass current permission; cache hits do not emit hidden work;
+# - observer failure prevents ordinary return; downstream stages do not run;
+# - approximate stopping, budget exhaustion and exact equality are distinct;
+# - no new ->, _, where, ?, with or |> meanings, no implicit currying/holes.

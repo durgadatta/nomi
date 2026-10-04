@@ -53,8 +53,11 @@
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The
-44 language reviews and 13 feature pages are deliberately indexed evidence,
-not independent specifications or 44 new implementation backlogs.
+44 language reviews and 13 matrix feature categories are deliberately indexed
+evidence, not independent specifications or 44 new implementation backlogs.
+The [generic-operation continuation](generic_operations.md) deepens
+the function category with a property hierarchy, GA1-GA8 and bounded local
+counterexamples rather than adding another matrix axis or paradigm requirement.
 
 The decisions drawn from this evidence live in
 [Target Design](../design/README.md), [Syntax](../design/syntax.md), and the

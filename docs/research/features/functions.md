@@ -6,6 +6,13 @@ Packet: `docs/design/function_contracts.md`,
 `docs/design/function_contracts_target.nomi`,
 `docs/review/2026-09-30-function-contracts.md`.
 
+The [generic-operation continuation](../generic_operations.md) researches a
+pragmatic hierarchy beyond FP doctrine: call adapters, carrier-specific
+map/filter/fold/scan, method/pipe/tap interfaces, bounded repetition/fixed points,
+stateful caching, and conditional equality/hash/codec capabilities. Its GA1-GA8
+comparisons and bounded probes belong to this same packet. No universal object
+methods, generic type syntax or new runtime API is admitted.
+
 User pressure: know which arguments a transformation receives and where it
 returns without reconstructing shorthand rules.
 

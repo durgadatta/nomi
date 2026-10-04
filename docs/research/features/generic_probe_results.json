@@ -1,0 +1,340 @@
+{
+  "schema": "nomi.research.generic-operations.v1",
+  "observed_on": "2026-10-04",
+  "environment": {
+    "python": "3.14.0rc3"
+  },
+  "evidence_kind": "Python-host/library observations and original bounded models",
+  "execution": {
+    "nomi": false,
+    "foreign_library": false,
+    "parallel_executor": false,
+    "remote_service": false,
+    "human": false
+  },
+  "probes": [
+    {
+      "id": "GP01",
+      "name": "map_fusion",
+      "experiments": [
+        "GA2"
+      ],
+      "strict": {
+        "values": [
+          3,
+          5,
+          7
+        ],
+        "events": [
+          "f:1",
+          "f:2",
+          "f:3",
+          "g:2",
+          "g:4",
+          "g:6"
+        ]
+      },
+      "fused": {
+        "values": [
+          3,
+          5,
+          7
+        ],
+        "events": [
+          "f:1",
+          "g:2",
+          "f:2",
+          "g:4",
+          "f:3",
+          "g:6"
+        ]
+      },
+      "strict_failure": {
+        "error": "first_failed",
+        "events": [
+          "f:1",
+          "f:2"
+        ]
+      },
+      "fused_failure": {
+        "error": "first_failed",
+        "events": [
+          "f:1",
+          "g:2",
+          "f:2"
+        ]
+      },
+      "limit": "three integer inputs and observable callback trace/failure models; not Nomi fusion or a pure-callback proof"
+    },
+    {
+      "id": "GP02",
+      "name": "fold_and_scan",
+      "experiments": [
+        "GA3",
+        "GA4"
+      ],
+      "left_subtract": 7,
+      "right_subtract": 9,
+      "empty_unseeded_error": "TypeError",
+      "empty_seeded": 10,
+      "seeded_scan": [
+        0,
+        1,
+        3
+      ],
+      "empty_seeded_scan": [
+        0
+      ],
+      "limit": "functools/itertools and an explicit finite right fold; not Common Lisp, Haskell, Wolfram or Nomi execution"
+    },
+    {
+      "id": "GP03",
+      "name": "reassociation",
+      "experiments": [
+        "GA4"
+      ],
+      "subtraction": [
+        4,
+        6
+      ],
+      "floating_addition": [
+        1.0,
+        0.0
+      ],
+      "limit": "two chosen Python arithmetic examples; no parallel engine, portable numeric profile or general algebra proof"
+    },
+    {
+      "id": "GP04",
+      "name": "row_outcomes",
+      "experiments": [
+        "GA1",
+        "GA2"
+      ],
+      "independent": {
+        "outcome": [
+          [
+            "ok",
+            2
+          ],
+          [
+            "err",
+            -1
+          ],
+          [
+            "ok",
+            6
+          ]
+        ],
+        "invoked": [
+          1,
+          -1,
+          3
+        ]
+      },
+      "fail_fast": {
+        "outcome": [
+          "err",
+          -1
+        ],
+        "invoked": [
+          1,
+          -1
+        ]
+      },
+      "limit": "original tuple-tagged result and finite traversal policy; not Nomi Result, generic typing or rollback"
+    },
+    {
+      "id": "GP05",
+      "name": "tap_outcomes",
+      "experiments": [
+        "GA5"
+      ],
+      "same_reference": true,
+      "after_mutation": [
+        1,
+        2,
+        3
+      ],
+      "failure": "observer_failed",
+      "events": [
+        "observer"
+      ],
+      "limit": "original immediate tap with a mutable List and Python exception; no logging/RxJS/Lodash library or Nomi effect enforcement"
+    },
+    {
+      "id": "GP06",
+      "name": "lazy_demand",
+      "experiments": [
+        "GA2",
+        "GA5"
+      ],
+      "construction_calls": [],
+      "first": 2,
+      "partial_calls": [
+        1
+      ],
+      "remainder": [
+        4,
+        6
+      ],
+      "all_calls": [
+        1,
+        2,
+        3
+      ],
+      "limit": "Python map demand only; not Nomi Stream, callback retention typing, Rust adapters or Java stage elision"
+    },
+    {
+      "id": "GP07",
+      "name": "repetition",
+      "experiments": [
+        "GA7"
+      ],
+      "repeated_share_reference": true,
+      "repeated_after_mutation": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ]
+      ],
+      "fresh_share_reference": false,
+      "iteration_history": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "zero_repeat": [],
+      "limit": "itertools.repeat and three original finite constructions; no remote effects, retry policy or freshness type proof"
+    },
+    {
+      "id": "GP08",
+      "name": "stopping_policies",
+      "experiments": [
+        "GA7"
+      ],
+      "stable": {
+        "reason": "criterion_satisfied",
+        "value": 3,
+        "steps": 4
+      },
+      "cycle": {
+        "reason": "cycle",
+        "value": 0,
+        "steps": 2
+      },
+      "growth": {
+        "reason": "budget_exhausted",
+        "value": 3,
+        "steps": 3
+      },
+      "loose_test": {
+        "reason": "criterion_satisfied",
+        "value": 1,
+        "steps": 1
+      },
+      "zero_budget": {
+        "reason": "budget_exhausted",
+        "value": 0,
+        "steps": 0
+      },
+      "limit": "bounded integer model, equality-based finite history and supplied comparison; no convergence proof, numerical solver, cancellation or termination checker"
+    },
+    {
+      "id": "GP09",
+      "name": "caching_context",
+      "experiments": [
+        "GA5",
+        "GA6"
+      ],
+      "initial_stale_direct": [
+        4,
+        4,
+        20
+      ],
+      "tap_outside_cache": [
+        4,
+        4
+      ],
+      "tap_inside_cache": [
+        4
+      ],
+      "limit": "sequential functools.cache and original observer composition; no complete dependency inference, current capability check or concurrent single-flight"
+    },
+    {
+      "id": "GP10",
+      "name": "hash_eligibility",
+      "experiments": [
+        "GA8"
+      ],
+      "equal_hashes": true,
+      "equal_objects": false,
+      "distinct_entries": 2,
+      "list_hash_error": "TypeError",
+      "limit": "Python identity-equal objects with imposed collision and one unhashable List; no Java VM, cryptography or portable Nomi Hash algorithm"
+    },
+    {
+      "id": "GP11",
+      "name": "encoding_profiles",
+      "experiments": [
+        "GA8"
+      ],
+      "equal_mappings": true,
+      "ordinary_encodings": [
+        "{\"a\": 1, \"b\": 2}",
+        "{\"b\": 2, \"a\": 1}"
+      ],
+      "sorted_key_encodings": [
+        "{\"a\": 1, \"b\": 2}",
+        "{\"a\": 1, \"b\": 2}"
+      ],
+      "list_roundtrip_equal": true,
+      "tuple_roundtrip_equal": false,
+      "limit": "chosen Python JSON subset and key ordering; not canonical JSON for every type, schema migration or safe executable-object serialization"
+    },
+    {
+      "id": "GP12",
+      "name": "accumulated_state",
+      "experiments": [
+        "GA3"
+      ],
+      "aliased_history": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "copied_history": [
+        [],
+        [
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "map_accum": {
+        "final_state": 3,
+        "emitted": [
+          "total:1",
+          "total:3"
+        ]
+      },
+      "limit": "original mutable-state and finite map_accum models; no Nomi immutability, snapshot derivation or encapsulated-mutation checking"
+    }
+  ]
+}

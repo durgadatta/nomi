@@ -593,6 +593,11 @@ strong.
 
 ## Research Judgment
 
+The [generic-operation hierarchy](../generic_operations.md) carries
+display/inspection/encoding and equality/hash context into reusable value
+protocols. A broadly available method remains conditional on its law/profile;
+serialization is not automatically a property of every object or callable.
+
 Retain text as Nomi's primary authored and fallback interface. Make simple prose
 and interpolation pleasant. At boundaries, prefer owned values, explicit
 decoders, contextual encoders, typed arguments, preserved source and separate

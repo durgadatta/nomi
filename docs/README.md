@@ -188,6 +188,7 @@ This list is intentionally complete and is checked by tests.
 - [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
 - [AI/ML Transformations, State And Evidence](research/data_workflows/ai_ml.md)
 - [Coherent Domain Layers](research/domain_composition.md)
+- [Generic Operations And Compositional Properties](research/generic_operations.md)
 - [Local Domain Composition Experiments](research/data_workflows/composition_experiments.md)
 - [Data/Notation Synthesis And Experiments](research/data_workflows/nomi_candidates.md)
 - [DSL And String Research](research/dsls/README.md)
