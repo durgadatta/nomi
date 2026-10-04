@@ -309,15 +309,67 @@ needed sandbox escalation: the restricted run could not launch Chromium/bind a
 test server; approved runs supplied the actual evidence. No dependency or
 container runtime was auto-installed for these checks.
 
-The Python-hosted argument binder still accepts invalid calls, including
-missing/extra/duplicate/unknown arguments and outer-name fallthrough. The
+At that checkpoint, the Python-hosted argument binder still accepted invalid
+calls, including missing/extra/duplicate/unknown arguments and outer-name
+fallthrough. The
 conflicting existing positional-only test was not silently rewritten; explicit
-approval was requested and the A08 migration remains open. Future shipped-sample
-collisions with restored scratch identities also require a nonlossy migration
+approval was requested. The approved follow-up below closes this bounded gap.
+Future shipped-sample collisions with restored scratch identities also require
+a nonlossy migration
 path; the current guard fails explicitly rather than overwriting local work.
 Existing D1-D3, licensing, Docker, hosted revision, supported-version and human
 accessibility/usability evidence gates remain open. No research-study outcome,
 broker, data/ML engine, target checker or stable release is claimed.
+
+### Approved Call-Binding Follow-Up
+
+The user approved correcting the conflicting test and continuing the repair.
+Runtime/test/browser-gate commit: `d3b0143`.
+The ordinary Python-hosted function/lambda path now validates the whole call
+shape before frame writes, optional defaults, parameter constraints and body
+execution. Missing formals cannot resolve outer names. All five parameter kinds
+are mapped explicitly; positional-only names remain ordered extra keys only
+when a `**kwargs` collector exists and cannot satisfy a required positional
+argument. An explicit routing adapter fences differing `inspect.Signature`
+behavior across host versions. Lexical call-time defaults remain in declaration
+order, with earlier parameters (including `*args`) available.
+
+Call construction rejects duplicate named/unpacked keys and non-text keys,
+accepts mapping-protocol unpacking and retains completed arguments across direct
+yield pauses, including `send(None)` and starred expansion. The invalid existing
+positional-only expectation was corrected with approval. One regression fixture
+lost an unused second parameter that had been called without an argument; its
+output and snapshots remain unchanged.
+
+This closes the ordinary hosted binder gap, not the D1 target contract.
+Interpreted context-manager hooks still bypass the shared binder, and compound
+expressions containing yields need a general continuation model. Static
+type/capture/effect checking, default-reference restrictions, transactional
+predicate effects and richer Core call transport remain unimplemented.
+
+Three new test files add **214 cases**; the corrected existing test and fixture
+are the only pre-existing test artifacts changed, and snapshots are unchanged.
+Final observed verification:
+
+| Executed check | Observed result and scope |
+| --- | --- |
+| Focused call-boundary and scenario tests | **218 pass** across the three hosted modes; includes the corrected four-test file and local replay of the four browser programs. |
+| `pytest -q -n 4` | **2,458 passed, 80 skipped**, four existing worker-repeated Jupyter path warnings; 35.23 seconds on local Python 3.14.0rc3. |
+| `python3 scripts/check_web_runtime.py --skip-agent-doctor` | **704 pass**; manifest and all eight WASM outputs fresh. |
+| Actual Chromium gate with `--legacy-pyodide` | Default playground plus four new Pyodide call programs pass. A separate real-worker `sys.version` observation confirms Python **3.12.7**. No uncaught page errors; the successful call-boundary screenshot was inspected. |
+| Independent finite native/hosted comparison | **124,992 shape/result comparisons** across 28 signatures and all three hosted modes match, including collector order and literal defaults. This is an ad hoc local review, not a target proof or an arbitrary-host conformance claim. |
+| Documentation/packet/fixture checks | **127 pass**; all five packets remain coherent with statuses unchanged. |
+
+The first browser attempt caught Monaco auto-indentation altering injected source.
+The harness now uses the existing exact editor-value pattern, checks that source
+before Run and selects Output explicitly. Runtime/parser expectations were not
+relaxed. Browser evidence remains ignored under `reports/web-browser/`.
+The manifest was regenerated because hosted runtime owners changed; its inventory
+remains **123 runtime files and 11 samples**, so neither manifest needs a diff.
+`make_web.py --check` and `build_wasm.sh --check` pass; parser/WASM outputs are
+unchanged. Focused Ruff and whitespace checks pass. The ignored local RAG index
+was refreshed and all 18 agent-doctor checks pass. No hosted deployment or stable release is
+claimed.
 
 ### Next Phase Gates
 
@@ -566,11 +618,12 @@ is visible in source, diagnostics and events across the declared runtimes.
 
 The designing packet identifies the missing foundation for many other programs.
 
-- Correct the Python-hosted binder's acceptance of missing, extra, duplicate
-  and unknown arguments. Migrate the positional-only test that currently expects
-  an invalid call to succeed; require explicit approval before changing that
-  existing expectation. This is a prototype correctness/release gap, distinct
-  from D1 target design and portable Core's narrower call representation.
+- The approved ordinary Python-hosted binder repair is complete; see the
+  [follow-up receipt](#approved-call-binding-follow-up). Preserve its strict
+  shape/default-order regressions while replacing the hosted adapter. Migrate
+  the remaining manual context-manager path and compound-yield continuations
+  under explicit completion contracts, not a claim that every callable route
+  or D1/Core target contract is already implemented.
 - Select call-shape/default/label rules, then compare its existing three
   generic/function-value candidates at 80/100 columns on real programs.
 - Derive map/fold, decoder and resource callback contracts together. Distinguish

@@ -31,6 +31,12 @@ data/ML engine is promised.
   rejected invalid positional arity before defaults or body execution.
 - Preserved Python-hosted cleanup across nested, repeated and recursive calls;
   kept legacy lambda defaults in their lexical call frame.
+- Rejected invalid Python-hosted argument shapes before defaults, parameter
+  checks or body execution; preserved positional-only keyword collisions in
+  ordered `**kwargs` without letting missing formals resolve outer names.
+- Rejected duplicate/non-text unpacked keywords, accepted mapping-protocol
+  calls and preserved argument values across direct yield pauses, including
+  resumed `None` and starred expansion.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Distinguished unavailable inspection evidence from captured empty bindings or

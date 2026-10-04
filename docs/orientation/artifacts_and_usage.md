@@ -181,13 +181,24 @@ Legacy Python-style lambda defaults likewise enter their lexical call frame;
 the prototype's call-time default rule remains, not Python's definition-time
 default evaluation.
 
-The Python-hosted interpreter accepts richer call syntax, but its argument
-binder is not yet a reliable validation boundary: missing, extra, duplicate or
-unknown arguments can be accepted, and an unbound formal can resolve an outer
-name. One existing positional-only test preserves such an invalid call.
-Correcting that expectation and rejecting these calls is an explicit A08
-migration/release gate; portable Core rejection does not prove Python-hosted
-binding correctness.
+The Python-hosted ordinary function/lambda binder validates missing, extra,
+duplicate and unknown arguments before frame writes, optional defaults,
+parameter constraints or the body. Positional-only, keyword-only and variadic
+kinds retain their meaning; a positional-only name in collected `**kwargs`
+does not satisfy that parameter. Missing formals cannot resolve an outer name.
+The hosted AST adapter uses `inspect.Signature` with explicit positional-only
+routing to avoid host-version differences; it is not Nomi's language definition.
+Defaults still evaluate lexically at call time, in declaration order.
+
+Call construction rejects duplicate named/unpacked keys and non-text keys before
+invoking the callee; `**` accepts the mapping protocol. Direct argument yields
+preserve already evaluated positional/keyword values and honor resumed `None`,
+including starred expansion. These are bounded prototype repairs, not a general
+expression continuation engine: yields inside non-resumable compound expressions
+remain a separate limitation. Interpreted context-manager hooks still use their
+older manual binding path. Target default-reference/effect restrictions,
+transactional predicate effects, static callback contracts and a richer portable
+Core representation remain A08/D1-D2 work.
 
 The generated browser manifest includes Python/Lark source plus explicitly
 registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host
