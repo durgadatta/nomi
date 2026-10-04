@@ -44,7 +44,9 @@ async function initPyodide() {
   await micropip.install("lark");
 
   postLog("Initializing Nomi...");
-  const nomiPy = await fetch("./nomi_web.py").then(function (response) { return response.text(); });
+  const response = await fetch("./nomi_web.py?v=6");
+  if (!response.ok) throw new Error(`Pyodide bridge returned HTTP ${response.status}`);
+  const nomiPy = await response.text();
   await pyodide.runPythonAsync(nomiPy);
   await pyodide.globals.get("init_nomi")();
   runNomi = pyodide.globals.get("run_nomi");

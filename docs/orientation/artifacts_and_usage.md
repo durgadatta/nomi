@@ -439,6 +439,13 @@ map. The legacy Pyodide bridge does not export arbitrary Python bindings.
 Failed JS runs likewise do not claim a captured binding map. Elapsed UI time
 can still be reported without pretending it is a measured engine phase.
 
+Legacy Pyodide bootstrap checks HTTP status and validates nonempty, unique,
+canonical `prototype/` manifest paths before fetching. Any missing listed
+runtime asset prevents readiness; import/prewarming never proceeds from a
+partially loaded manifest. Partial files may remain in that failed worker's
+virtual filesystem until restart. This guards damaged deployment inputs, not
+remote code authenticity or an untrusted-host security sandbox.
+
 Edits are kept as browser-local drafts per sample. `New scratch` creates a
 local-only Nomi file, while the revert action returns a tracked sample to its
 manifest source. These drafts are convenience state, not repository artifacts

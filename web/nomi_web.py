@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import time
+from pathlib import PurePosixPath
 
 PYODIDE = False
 try:
@@ -72,14 +73,10 @@ def _base_url():
 
 
 async def _fetch_manifest_file(base_url, path):
-    dir_path = os.path.dirname(path)
-    if dir_path:
-        try:
-            os.makedirs(dir_path)
-        except OSError:
-            pass
-
     try:
+        dir_path = os.path.dirname(path)
+        if dir_path:
+            os.makedirs(dir_path, exist_ok=True)
         resp = await pyfetch(base_url + path)
         if resp.status == 200:
             with open(path, "wb") as f:
@@ -90,9 +87,31 @@ async def _fetch_manifest_file(base_url, path):
         return (path, f"{path}: {e}")
 
 
+def _manifest_files(manifest):
+    files = manifest.get("files") if isinstance(manifest, dict) else None
+    if not isinstance(files, list) or not files:
+        raise ValueError("Browser runtime manifest needs a nonempty files list")
+    seen = set()
+    for path in files:
+        if not isinstance(path, str):
+            raise ValueError("Browser runtime manifest contains a non-text path")
+        parsed = PurePosixPath(path)
+        if (
+            not path.startswith("prototype/")
+            or parsed.is_absolute()
+            or ".." in parsed.parts
+            or parsed.as_posix() != path
+            or any(char in path for char in "\\?#%")
+            or path in seen
+        ):
+            raise ValueError(f"Invalid or duplicate browser runtime manifest path: {path}")
+        seen.add(path)
+    return files
+
+
 async def _load_from_manifest(base_url, manifest):
     """Load prototype files individually from the manifest."""
-    files = manifest["files"]
+    files = _manifest_files(manifest)
     _log(f"Loading {len(files)} files in batches...")
 
     missing = []
@@ -109,10 +128,8 @@ async def _load_from_manifest(base_url, manifest):
 
     _log(f"Loaded {ok}/{len(files)} files")
     if missing:
-        for m in missing[:5]:
-            _log(f"  MISSING: {m}")
-        if len(missing) > 5:
-            _log(f"  ... and {len(missing) - 5} more")
+        detail = "; ".join(missing[:5])
+        raise RuntimeError(f"Required runtime assets unavailable ({len(missing)}/{len(files)}): {detail}")
 
 
 async def _ensure_prototype_loaded():
@@ -124,8 +141,12 @@ async def _ensure_prototype_loaded():
     # Fetch manifest first (small, needed for samples list anyway)
     _log("Loading manifest...")
     resp = await pyfetch(base + "web/manifest.json")
-    manifest = json.loads(await resp.string())
-    _log(f"Manifest: {len(manifest['files'])} files")
+    if resp.status != 200:
+        raise RuntimeError(f"Browser runtime manifest returned HTTP {resp.status}")
+    try:
+        manifest = json.loads(await resp.string())
+    except json.JSONDecodeError as error:
+        raise ValueError("Browser runtime manifest is not valid JSON") from error
 
     await _load_from_manifest(base, manifest)
 

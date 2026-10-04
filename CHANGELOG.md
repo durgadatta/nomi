@@ -27,6 +27,8 @@ data/ML engine is promised.
   backend, sample, wheel and generated-asset checks.
 - Repaired the optional Pyodide bootstrap by registering required runtime data
   in the web manifest; added an isolated-manifest test and opt-in browser gate.
+- Rejected malformed legacy runtime manifests and stopped initialization after
+  missing required assets or failed bridge/manifest HTTP responses.
 - Kept JSON CLI failures structured before execution; redacted launcher-owned
   Docker token logs and excluded common local credential/state files from the
   build context. The development image is not a hardened service.
