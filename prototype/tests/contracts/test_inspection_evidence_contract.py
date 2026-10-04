@@ -106,3 +106,11 @@ def test_known_legacy_backend_does_not_fill_missing_stage_evidence():
         ["Backend", "python-ast"],
         ["Host", "Unavailable"],
     ]
+
+
+def test_cache_timing_does_not_require_repeated_parse_and_lower_observations():
+    result = inspect_result(
+        {"timings": {"cache_hit": True, "cache_ms": 0, "eval_ms": 2, "total_ms": 3}}
+    )
+    assert result["timingLabel"] == "3 ms total, 0 ms cached, 2 ms eval"
+    assert result["timings"] == [["Parse", None], ["Lower", None], ["Evaluate", 2]]

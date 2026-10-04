@@ -134,11 +134,11 @@ but do not settle its open contracts:
 
 | Research pressure | Runnable evidence | Still unresolved |
 | --- | --- | --- |
-| Text as a composable interface | `samples/text_pipeline.nomi.nb`: explicit normalization, delimiter split, conversion, ordered state | Strict format decoding, complete Unicode/offset/normalization contract, localization and safe rendering |
+| Text as a composable interface | `samples/text_pipeline.nomi.nb`: explicit whitespace trimming, delimiter split, conversion, ordered state and bounded windows; code-point access fixtures in both JS parser routes | Strict format decoding, complete Unicode/offset/normalization contract, localization and safe rendering |
 | Pragmatic generic operations | Ordinary `fold(items, seed, combine)` and seeded `scan`; empty, order, callback-failure and reference-history tests | Typed generic callbacks, effect checking, immutable history, parallel merge laws and conditional object protocols |
 | Data dependencies and time | `samples/data_pipeline.nomi`: visible filter/map/fold stages and integer cents | Typed dependency descriptions, snapshot/time axes, incremental execution and durable provenance |
-| Cognitive repair and observation | Source-linked known errors, per-execution output, document/run generations and stale-result labels in the workbench | Full source maps, semantic commands, task unwinding, usability/accessibility study and durable revision identity |
-| Portable values and boundaries | JavaScript exact-integer range rejection before effects and at arithmetic/conversion boundaries | Target numeric tower, Text/Bytes validity, scalar codecs and cross-host conformance |
+| Cognitive repair and observation | Source-linked known errors, per-execution output, document/run generations and stale-result labels; inspection distinguishes missing evidence from known empty/zero records | Full source maps, semantic commands, task unwinding, usability/accessibility study and durable revision identity |
+| Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Target numeric tower, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance |
 
 The next language step remains D1: type one ordered collection callback, one
 decoder callback and one scoped resource callback together under a resolved

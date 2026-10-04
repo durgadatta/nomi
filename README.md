@@ -99,6 +99,12 @@ The JS prototype rejects integers outside +/-9007199254740991 rather than
 rounding them; Python supports wider integers. Target scalar semantics and
 typed callbacks remain design work.
 
+Browser text length, iteration, indexing and slicing count Unicode code points,
+not grapheme clusters; normalization is not implicit. Invalid indices and
+missing mapping keys fail rather than becoming `None`. The text notebook also
+shows negative indices and bounded/reverse slices. Inspection distinguishes
+unavailable bindings or timings from captured empty results or observed zero.
+
 Run it locally:
 
 ```bash

@@ -122,6 +122,54 @@ choose a root license, rebuild Docker, test Python 3.12 locally or conduct
 screen-reader/IME/usability studies. The package version remains `0.1.0`, marked
 pre-alpha; the root changelog describes an unreleased experimental preview.
 
+### Follow-Up Delivery Receipt
+
+A second October 4 scan starts from `850488f` and repairs additional bounded
+A03/A12/A18/A21/A24/A28 surfaces. Checkpoints `f96f6fb`, `add21bf`, `aa5ce8c`
+and `79500ef` cover access, inspection, bootstrap and host dictionary boundaries.
+No new grammar, Core node, target API or design-packet status is admitted.
+
+- Text/sequence indices now check type and bounds, support negative indices,
+  and count code points consistently with length/iteration. Missing map keys
+  fail while present `None` remains a value. Browser slices clip half-open
+  bounds, distinguish omitted reverse stops, reject zero/noninteger strides,
+  and retain shallow tagged elements/callables. Bool indices remain prototype
+  compatibility, not a target typing decision. Python-AST-to-Core slices are
+  still unsupported; interpreter and structured WASM routes are checked.
+- The text notebook has a fourth bounded-window cell. Its two Nomi/reduced
+  `test_eval_loop_*_sample_text_pipeline_nomi_nb_.txt` snapshots were regenerated
+  for four added output lines, then checked normally: four pass, two skips.
+  Existing notebook source/export and per-cell execution checks remain active.
+- Inspection no longer guesses parser/lowerer/host metadata. Uncaptured
+  bindings and unobserved timings are unavailable, not known empty/zero;
+  skipped worker phases omit timings, and cache observations do not imply
+  repeated parsing. Successful empty captures and measured zero remain valid.
+- Legacy Pyodide checks bridge/manifest HTTP status, validates canonical unique
+  `prototype/` paths before fetching, and stops when any listed asset is missing.
+  This is deployment-input validation, not remote authenticity or a sandbox.
+- Export/field dictionaries preserve `__proto__` and other special text keys
+  without host inheritance; nominal lookup cannot expose inherited JS methods.
+  Mixed-type/composite map equality and portable codecs remain open.
+
+Observed final checks: `pytest -n 4` gives **1,853 passed, 80 skipped** and four
+existing Jupyter path warnings (31.36 seconds). The web/runtime gate gives
+**295 passed**, with manifest and eight WASM outputs fresh. The actual Chromium
+gate passes both WASM/JS and optional Pyodide, including Unicode access, bounded
+windows, failure stdout, uncaptured bindings, skipped-phase timing, special
+binding names and the existing recovery/desktop/mobile scenarios. Desktop and
+320-pixel screenshots were inspected; browser artifacts stay ignored.
+All five design packets remain coherent. Built-wheel checks are included in
+the full suite. Focused new-test/script lint and whitespace checks pass.
+
+The manifest generator was rerun and `--check` passed; no generated manifest
+diff was needed because no runtime/sample paths were added or removed. Rust
+source and WASM binaries are unchanged. The five new contract files add 139
+cases, separating actual WASM/source behavior, Core access, host transport,
+inspection and supplied bootstrap/worker failures. Supplied failure probes are
+not evidence of a broken public deployment. No hosted CI/deployment, owner
+license choice, package publication, Docker image rebuild, usability study or
+target conformance is claimed by this follow-up.
+
 ### Next Phase Gates
 
 1. **D1/A08:** type ordered map/fold, decoder and scoped resource callbacks

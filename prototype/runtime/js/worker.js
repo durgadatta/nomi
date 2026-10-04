@@ -111,8 +111,6 @@ function runWithWasmJs(code) {
       ],
       timings: {
         parse_ms: totalMs,
-        lower_ms: 0,
-        eval_ms: 0,
         total_ms: totalMs,
         cache_hit: false,
       },
@@ -139,7 +137,6 @@ function runWithWasmJs(code) {
       timings: {
         parse_ms: parseMs,
         lower_ms: lowerMs,
-        eval_ms: 0,
         total_ms: parseMs + lowerMs,
         cache_hit: false,
       },

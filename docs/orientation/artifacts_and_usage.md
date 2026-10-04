@@ -443,6 +443,9 @@ missing bindings show `Bindings unavailable`, distinct from a captured empty
 map. The legacy Pyodide bridge does not export arbitrary Python bindings.
 Failed JS runs likewise do not claim a captured binding map. Elapsed UI time
 can still be reported without pretending it is a measured engine phase.
+Skipped JS worker phases omit timing observations rather than manufacturing
+zero durations. Cached Pyodide runs can report cache/evaluation time without
+pretending parsing and lowering ran again.
 
 Legacy Pyodide bootstrap checks HTTP status and validates nonempty, unique,
 canonical `prototype/` manifest paths before fetching. Any missing listed

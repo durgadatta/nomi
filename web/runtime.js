@@ -1,14 +1,15 @@
 // Nomi Web Playground - execution and structured result rendering
 
 function formatTiming(timing, elapsed) {
-  if (!timing || timingEntries({ timing }).some(([, value]) => value === null)) return `${elapsed} ms elapsed`;
+  if (!timing) return `${elapsed} ms elapsed`;
   const total = observedDuration(timing.total_ms);
   if (total === null) return `${elapsed} ms elapsed`;
   if (timing.cache_hit) {
     const cache = observedDuration(timing.cache_ms);
     const evalMs = observedDuration(timing.eval_ms);
-    if (cache !== null) return `${total} ms total, ${cache} ms cached, ${evalMs} ms eval`;
+    if (cache !== null && evalMs !== null) return `${total} ms total, ${cache} ms cached, ${evalMs} ms eval`;
   }
+  if (timingEntries({ timing }).some(([, value]) => value === null)) return `${elapsed} ms elapsed`;
   const [[, parse], [, lower], [, evalMs]] = timingEntries({ timing });
   return `${total} ms total, ${parse} ms parse, ${lower} ms lower, ${evalMs} ms eval`;
 }

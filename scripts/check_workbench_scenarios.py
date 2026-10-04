@@ -82,6 +82,10 @@ def check_workbench_scenarios(page, expect, artifacts):
     page.locator("#run-all-btn").click()
     expect(page.locator("#status")).to_have_text("error")
     expect(page.locator(".diagnostic-message")).not_to_contain_text("undefined")
+    page.get_by_role("tab", name="Pipeline", exact=True).click()
+    expect(page.locator(".timing-segment").nth(1)).to_contain_text("Unavailable")
+    expect(page.locator(".timing-segment").nth(2)).to_contain_text("Unavailable")
+    page.get_by_role("tab", name="Diagnostics", exact=False).click()
     page.get_by_role("button", name="Line 2:5", exact=True).click()
     assert page.evaluate("_cellEditors[0].getPosition()") == {
         "lineNumber": 2,
