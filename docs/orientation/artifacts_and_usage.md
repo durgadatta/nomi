@@ -432,6 +432,13 @@ the parser/lowerer/backend/host path and reports parse, lower, and evaluation
 timings. Samples are searchable, editor/result and sample panes are resizable,
 and the sidebar becomes a dismissible drawer on narrow screens.
 
+Inspection displays supplied evidence, not inferred pipeline defaults. Missing
+stage metadata or timings show `Unavailable`, distinct from measured zero;
+missing bindings show `Bindings unavailable`, distinct from a captured empty
+map. The legacy Pyodide bridge does not export arbitrary Python bindings.
+Failed JS runs likewise do not claim a captured binding map. Elapsed UI time
+can still be reported without pretending it is a measured engine phase.
+
 Edits are kept as browser-local drafts per sample. `New scratch` creates a
 local-only Nomi file, while the revert action returns a tracked sample to its
 manifest source. These drafts are convenience state, not repository artifacts

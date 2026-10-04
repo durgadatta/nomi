@@ -21,6 +21,8 @@ data/ML engine is promised.
   expanded the text notebook with bounded windows.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
+- Distinguished unavailable inspection evidence from captured empty bindings or
+  measured zero timings; stopped guessing pipeline stages for unknown results.
 - Expanded release gates to real desktop/mobile browser scenarios, alongside
   backend, sample, wheel and generated-asset checks.
 - Repaired the optional Pyodide bootstrap by registering required runtime data

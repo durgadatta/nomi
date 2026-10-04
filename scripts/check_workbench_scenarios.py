@@ -68,6 +68,10 @@ def check_workbench_scenarios(page, expect, artifacts):
     page.locator("#run-all-btn").click()
     expect(page.locator("#status")).to_have_text("error")
     expect(page.locator(".diagnostic-message")).to_contain_text("index out of range")
+    page.get_by_role("tab", name="Bindings", exact=False).click()
+    expect(page.locator('[data-result-view="bindings"]')).to_have_text(
+        "Bindings unavailable"
+    )
     page.get_by_role("tab", name="Output", exact=True).click()
     expect(page.locator('[data-result-view="output"] pre')).to_have_text("before")
     set_source('text = "\U0001f600"\nx = !\n')

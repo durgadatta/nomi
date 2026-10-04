@@ -1,22 +1,23 @@
 // Nomi Web Playground - execution and structured result rendering
 
 function formatTiming(timing, elapsed) {
-  if (!timing) return `${elapsed} ms`;
-  const total = Math.max(1, Math.round(timing.total_ms || elapsed));
+  if (!timing || timingEntries({ timing }).some(([, value]) => value === null)) return `${elapsed} ms elapsed`;
+  const total = observedDuration(timing.total_ms);
+  if (total === null) return `${elapsed} ms elapsed`;
   if (timing.cache_hit) {
-    const cache = Math.max(1, Math.round(timing.cache_ms || 0));
-    const evalMs = Math.max(1, Math.round(timing.eval_ms || 0));
-    return `${total} ms total, ${cache} ms cached, ${evalMs} ms eval`;
+    const cache = observedDuration(timing.cache_ms);
+    const evalMs = observedDuration(timing.eval_ms);
+    if (cache !== null) return `${total} ms total, ${cache} ms cached, ${evalMs} ms eval`;
   }
-  const parse = Math.max(0, Math.round(timing.parse_ms || 0));
-  const lower = Math.max(0, Math.round(timing.lower_ms ?? timing.desugar_ms ?? 0));
-  const evalMs = Math.max(0, Math.round(timing.eval_ms || 0));
+  const [[, parse], [, lower], [, evalMs]] = timingEntries({ timing });
   return `${total} ms total, ${parse} ms parse, ${lower} ms lower, ${evalMs} ms eval`;
 }
 
 function runtimeLabel(result) {
-  if (result.backend === "python-ast") return "Pyodide";
-  return "WASM + JS";
+  const backend = (result.pipeline && result.pipeline.eval_backend) || result.backend;
+  if (backend === "python-ast") return "Pyodide";
+  if (["wasm-js", "js-core-runtime"].includes(backend)) return "WASM + JS";
+  return backend || "Unavailable";
 }
 
 function formatRuntimeValue(value) {
@@ -41,8 +42,12 @@ function outputForResult(result) {
 }
 
 function bindingEntries(result) {
-  return Object.entries((result && result.bindings) || {})
+  return Object.entries(bindingsAvailable(result) ? result.bindings : {})
     .sort(([left], [right]) => left.localeCompare(right));
+}
+
+function bindingsAvailable(result) {
+  return Boolean(result && result.bindings && typeof result.bindings === "object" && !Array.isArray(result.bindings));
 }
 
 function diagnosticsForResult(result) {
@@ -54,23 +59,37 @@ function diagnosticsForResult(result) {
   return [];
 }
 
-function timingEntries(result, elapsed) {
+function observedDuration(value) {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0 ? Math.round(value) : null;
+}
+
+function timingEntries(result) {
   const timing = (result && (result.timings || result.timing)) || {};
   return [
-    ["Parse", timing.parse_ms || 0],
-    ["Lower", timing.lower_ms ?? timing.desugar_ms ?? 0],
-    ["Evaluate", timing.eval_ms || 0],
-  ].map(([label, value]) => [label, Math.max(0, Math.round(Number(value) || 0))]);
+    ["Parse", timing.parse_ms],
+    ["Lower", timing.lower_ms ?? timing.desugar_ms],
+    ["Evaluate", timing.eval_ms],
+  ].map(([label, value]) => [label, observedDuration(value)]);
+}
+
+function pipelineEntries(result) {
+  const pipeline = (result && result.pipeline) || {};
+  return [
+    ["Frontend", pipeline.parser_frontend],
+    ["Lowerer", pipeline.lowerer],
+    ["Backend", pipeline.eval_backend],
+    ["Host", pipeline.host],
+  ].map(([label, value]) => [label, typeof value === "string" && value.trim() ? value : "Unavailable"]);
 }
 
 function emptyResultMarkup(icon, label) {
   return `<div class="empty-result"><div class="empty-result-inner"><i data-lucide="${icon}"></i><span>${esc(label)}</span></div></div>`;
 }
 
-function renderBindings(view, entries) {
+function renderBindings(view, entries, available) {
   view.innerHTML = "";
   if (!entries.length) {
-    view.innerHTML = emptyResultMarkup("braces", "No public bindings");
+    view.innerHTML = emptyResultMarkup("braces", available ? "No public bindings" : "Bindings unavailable");
     return;
   }
   const table = document.createElement("div");
@@ -156,13 +175,7 @@ function renderDiagnostics(view, diagnostics, idx) {
 
 function renderPipeline(view, result, elapsed) {
   view.innerHTML = "";
-  const pipeline = result.pipeline || {};
-  const fields = [
-    ["Frontend", pipeline.parser_frontend || (result.backend === "python-ast" ? "lark-python" : "rust-fast-ast-wasm")],
-    ["Lowerer", pipeline.lowerer || (result.backend === "python-ast" ? "python-ast" : "js-core-lowerer")],
-    ["Backend", pipeline.eval_backend || result.backend || "unknown"],
-    ["Host", pipeline.host || "browser-worker"],
-  ];
+  const fields = pipelineEntries(result);
   const grid = document.createElement("div");
   grid.className = "pipeline-grid";
   fields.forEach(([name, value]) => {
@@ -184,7 +197,7 @@ function renderPipeline(view, result, elapsed) {
     const name = document.createElement("span");
     name.textContent = label;
     const duration = document.createElement("strong");
-    duration.textContent = `${value} ms`;
+    duration.textContent = value === null ? "Unavailable" : `${value} ms`;
     segment.append(name, duration);
     timings.appendChild(segment);
   });
@@ -210,9 +223,9 @@ function renderResult(idx, result, elapsed, context) {
   if (empty) empty.hidden = true;
   pane.classList.add("show");
   pane.classList.toggle("error", Boolean(result.error));
-  pane.querySelector('[data-result-count="bindings"]').textContent = String(bindings.length);
+  pane.querySelector('[data-result-count="bindings"]').textContent = bindingsAvailable(result) ? String(bindings.length) : "-";
   pane.querySelector('[data-result-count="diagnostics"]').textContent = String(diagnostics.length);
-  renderBindings(pane.querySelector('[data-result-view="bindings"]'), bindings);
+  renderBindings(pane.querySelector('[data-result-view="bindings"]'), bindings, bindingsAvailable(result));
   renderDiagnostics(pane.querySelector('[data-result-view="diagnostics"]'), diagnostics, idx);
   const model = _cellEditors[idx].getModel();
   const markers = stale ? [] : diagnostics.flatMap((diagnostic) => {
@@ -260,8 +273,8 @@ function resetResultPanel(idx) {
   pre.hidden = true;
   pre.textContent = "";
   if (empty) empty.hidden = false;
-  pane.querySelector('[data-result-view="bindings"]').innerHTML = emptyResultMarkup("braces", "No public bindings");
-  pane.querySelector('[data-result-view="diagnostics"]').innerHTML = emptyResultMarkup("circle-check", "No diagnostics");
+  pane.querySelector('[data-result-view="bindings"]').innerHTML = emptyResultMarkup("braces", "No binding result");
+  pane.querySelector('[data-result-view="diagnostics"]').innerHTML = emptyResultMarkup("circle-check", "No diagnostic result");
   pane.querySelector('[data-result-view="pipeline"]').innerHTML = emptyResultMarkup("waypoints", "No pipeline result");
   pane.querySelector('[data-result-count="bindings"]').textContent = "0";
   pane.querySelector('[data-result-count="diagnostics"]').textContent = "0";
@@ -470,9 +483,13 @@ window.restartWorker = async function() {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     bindingEntries,
+    bindingsAvailable,
     diagnosticsForResult,
+    formatTiming,
     formatRuntimeValue,
     outputForResult,
+    pipelineEntries,
+    runtimeLabel,
     timingEntries,
   };
 }

@@ -161,6 +161,13 @@ def check_browser(
                     legacy_page.screenshot(
                         path=str(artifacts / "legacy-pyodide.png"), full_page=True
                     )
+                    legacy_page.get_by_role("tab", name="Bindings", exact=False).click()
+                    expect(
+                        legacy_page.locator('[data-result-view="bindings"]')
+                    ).to_have_text("Bindings unavailable")
+                    expect(
+                        legacy_page.locator('[data-result-count="bindings"]')
+                    ).to_have_text("-")
                 except Exception:
                     legacy_page.screenshot(
                         path=str(artifacts / "legacy-failure.png"), full_page=True

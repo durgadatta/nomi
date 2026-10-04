@@ -221,8 +221,8 @@ async function startRuntimeWorker(options) {
   _runtimeDocument = null;
 
   const workerPath = _evalBackend === "pyodide"
-    ? "./worker_pyodide.js?v=5"
-    : "../prototype/runtime/js/worker.js?v=5";
+    ? "./worker_pyodide.js?v=6"
+    : "../prototype/runtime/js/worker.js?v=6";
 
   _runtimeWorker = new Worker(workerPath);
   const worker = _runtimeWorker;

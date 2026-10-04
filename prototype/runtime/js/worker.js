@@ -16,8 +16,8 @@ async function initWasm() {
 }
 
 async function initRuntime() {
-  importScripts("./core_runtime.js?v=3");
-  importScripts("./lower_to_core_ir.js?v=3");
+  importScripts("./core_runtime.js?v=4");
+  importScripts("./lower_to_core_ir.js?v=4");
   await initWasm();
   runtime = new NomiCoreRuntime.CoreRuntime();
 }
@@ -75,7 +75,7 @@ function resultEnvelope({
     backend: "wasm-js",
     value: value === undefined ? null : value,
     has_value: hasValue === true,
-    bindings: bindings || {},
+    bindings: bindings === undefined ? null : bindings,
     diagnostics: diagnostics || [],
     timings: timings || {},
     timing: timings || {},
