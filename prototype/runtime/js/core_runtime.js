@@ -330,28 +330,29 @@ class CoreRuntime {
     const savedFrame = this.currentFrame;
     const savedBlock = this.currentBlock;
     const savedDefer = this.deferStack;
-    const filledArgs = [...args];
     const defaults = func.defaults || [];
-    if (filledArgs.length < func.params.length) {
-      const required = func.params.length - defaults.length;
-      if (filledArgs.length < required) {
-        throw new TypeError(`Expected at least ${required} arguments, received ${filledArgs.length}`);
-      }
-      for (let i = filledArgs.length; i < func.params.length; i++) {
-        const defaultNode = defaults[i - required];
-        const defaultVal = this.eval(defaultNode);
-        if (isAbrupt(defaultVal)) return defaultVal;
-        filledArgs.push(defaultVal);
-      }
+    const required = func.params.length - defaults.length;
+    if (args.length < required) {
+      throw new TypeError(`Expected at least ${required} arguments, received ${args.length}`);
     }
-    this.currentFrame = func.closure.extend(func.params, filledArgs);
+    if (args.length > func.params.length) {
+      throw new TypeError(`Expected ${func.params.length} arguments, received ${args.length}`);
+    }
+    this.currentFrame = func.closure.extend(func.params.slice(0, args.length), args);
     this.currentBlock = block;
     this.deferStack = [];
     try {
+      // Bind defaults incrementally in the callee's lexical frame.
+      for (let i = args.length; i < func.params.length; i++) {
+        const defaultNode = defaults[i - required];
+        const defaultVal = this.eval(defaultNode);
+        if (isAbrupt(defaultVal)) return defaultVal;
+        this.currentFrame.bind(func.params[i], defaultVal);
+      }
       const rawResult = this.evalModule(func.body);
       const resultValue = (isSignal(rawResult) && rawResult.control === "return")
         ? rawResult.value
-        : rawResult;
+        : (isAbrupt(rawResult) ? rawResult : NIL);
       for (let i = this.deferStack.length - 1; i >= 0; i--) {
         const deferred = this.eval(this.deferStack[i]);
         if (isSignal(deferred)) return deferred;

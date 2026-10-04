@@ -1,7 +1,8 @@
 import ast
+from copy import copy
 from typing import List, Any
 
-from ..constants import BLOCK_KWARG, Block
+from ..constants import BLOCK_KWARG
 from .signals import ReturnException
 from .function_call import FunctionCallMixin
 
@@ -74,6 +75,7 @@ class FunctionMixin(FunctionCallMixin):
         return self.gen_state(self, body, local_env)
 
     def _execute_function_body(self, body):
+        saved_defer = getattr(self, '_defer_stack', [])
         self._defer_stack = []
         try:
             self.eval(body)
@@ -81,11 +83,15 @@ class FunctionMixin(FunctionCallMixin):
         except ReturnException as re:
             return re.value
         finally:
-            for stmt in reversed(self._defer_stack):
-                if hasattr(stmt, '_nomi_defer'):
-                    delattr(stmt, '_nomi_defer')
-                self.eval(stmt)
-            self._defer_stack = []
+            try:
+                for stmt in reversed(self._defer_stack):
+                    # Do not mutate cached source when cleanup calls recurse.
+                    deferred = copy(stmt)
+                    if hasattr(deferred, '_nomi_defer'):
+                        delattr(deferred, '_nomi_defer')
+                    self.eval(deferred)
+            finally:
+                self._defer_stack = saved_defer
 
     def eval_Function(self, node: ast.FunctionDef) -> callable:
         '''
@@ -142,8 +148,8 @@ class FunctionMixin(FunctionCallMixin):
         
         def lambda_func(*args, **kwargs):
             local_env = func_env.copy()
-            self._bind_function_args(node, local_env, args, kwargs)
             with self.this_env(local_env):
+                self._bind_function_args(node, local_env, args, kwargs)
                 return self.eval(node.body)
         
         lambda_func.func_env = func_env  

@@ -219,27 +219,33 @@ class CoreRuntimeEvaluator:
         saved_frame = self._current_frame
         saved_block = self._current_block
         saved_defer = self._defer_stack
-        filled_args = list(args)
-        if len(filled_args) < len(func.params):
-            required = len(func.params) - len(func.defaults)
-            if len(filled_args) < required:
-                raise TypeError(
-                    f"Expected at least {required} arguments, received {len(filled_args)}"
-                )
-            for i in range(len(filled_args), len(func.params)):
-                default = self.eval(func.defaults[i - required])
-                if isinstance(default, (ControlFlow, ErrorValue)):
-                    return default
-                filled_args.append(default)
-        self._current_frame = func.closure.extend(func.params, tuple(filled_args))
+        required = len(func.params) - len(func.defaults)
+        if len(args) < required:
+            raise TypeError(
+                f"Expected at least {required} arguments, received {len(args)}"
+            )
+        if len(args) > len(func.params):
+            raise TypeError(
+                f"Expected {len(func.params)} arguments, received {len(args)}"
+            )
+        self._current_frame = func.closure.extend(func.params[:len(args)], args)
         self._current_block = block
         self._defer_stack = []
         try:
+            # Defaults see the lexical closure and already-bound parameters,
+            # never the caller's frame.
+            for i in range(len(args), len(func.params)):
+                default = self.eval(func.defaults[i - required])
+                if isinstance(default, (ControlFlow, ErrorValue)):
+                    return default
+                self._current_frame.bind(func.params[i], default)
             result = self._eval_module(func.body)
             if isinstance(result, ReturnSignal):
                 result_value = result.value
-            else:
+            elif isinstance(result, (ControlFlow, ErrorValue)):
                 result_value = result
+            else:
+                result_value = NIL
             for stmt in reversed(self._defer_stack):
                 deferred = self.eval(stmt)
                 if isinstance(deferred, ControlFlow):
