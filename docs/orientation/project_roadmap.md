@@ -26,6 +26,23 @@ slice with accurate diagnostics and matching CLI/browser behavior.
 
 ## October 4 Prototype Delivery Pass
 
+### Deep-Scan Continuation Plan
+
+The next global scan starts from `dc8f13b`, after the messaging and
+natural-language research continuations. Independent audits cover target and
+research coherence, runtime semantics, and web/release boundaries. The delivery
+loop is reproduce, repair a bounded owner, verify adjacent contracts, and scan
+again. Initial priorities are malformed design-packet rejection, active target
+source drift, editor bootstrap failure recovery, and function completion/default
+scope. Findings remain provisional until reproduced; existing open D1-D3 and
+release gates are not counted as new defects or implicitly closed.
+
+No broad rewrite or new core feature is assumed. Existing tests and snapshots
+stay unchanged; new focused tests capture discovered contracts. Runtime work
+must preserve the runnable samples and actual browser path. The follow-up
+receipt below will distinguish executed evidence from deferred design, hosted,
+container, accessibility, and publication checks.
+
 Baseline `5a1f66b` includes the text, data/time, AI/ML, domain-composition and
 generic-operation research continuations. They are evidence and target-only
 fixtures, not newly implemented language layers. This pass prepares the
