@@ -3,6 +3,15 @@
 .vscode
 .pytest_cache
 .venv
+.nomi
+.codex
+.claude
+.opencode
+.agents
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
 __pycache__
 *.pyc
 

@@ -50,7 +50,7 @@ The full rationale and action sequence are in the
 
 ## Quick Start
 
-Use Python 3.12 or newer; CI currently verifies Python 3.14. The bootstrap
+Use Python 3.12 or newer; CI is configured to test Python 3.14. The bootstrap
 interpreter needs `ast.TypeAlias`, which Python 3.11 does not provide.
 
 Install the current Python-hosted prototype in editable mode:
@@ -91,6 +91,10 @@ the readable orchestration and replaceable engine boundaries.
 
 The live playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
 runtime. Its sample list is generated from runnable files under `samples/`.
+The optional Pyodide path loads required Python modules and explicitly registered
+runtime data from the same manifest. Add `--legacy-pyodide` to the browser gate
+to check that slower network-bootstrap path too.
+
 The JS prototype rejects integers outside +/-9007199254740991 rather than
 rounding them; Python supports wider integers. Target scalar semantics and
 typed callbacks remain design work.
@@ -124,15 +128,28 @@ Check the actual browser experience (optional local dependencies):
 python3 -m pip install -e '.[web-test]'
 python3 -m playwright install chromium
 python3 scripts/check_web_browser.py
+python3 scripts/check_web_browser.py --legacy-pyodide
 ```
 
-The check starts and stops its own local server, selects `demo_terse.nomi`,
-checks its output and Pipeline tab, then types and runs a scratch program.
+The check starts and stops its own local server and exercises the quick tour,
+data/text examples, notebook export, source-linked diagnostics and repair,
+worker cancellation, delayed replies, local draft recovery, keyboard controls
+and desktop/mobile layouts.
 It uses the committed WASM files and the same CDN assets as the live site.
 Screenshots, a Playwright trace, and browser logs go to ignored
 `reports/web-browser/`. Add `--headed` to watch it run, or
 `--url https://durgadatta.github.io/nomi/web/` to check the published site.
 Browser installation and CDN loading require network access.
+
+The workbench opens local UTF-8 source without running it and downloads current
+source, preserving notebook titles and framing. Edited results are visibly
+marked as previous-source results. Drafts use browser-local storage; storage
+failures are reported, and downloads do not depend on that storage. Stopping a
+worker resets it; this is not the target language's resource-cleanup guarantee.
+
+See [Unreleased Changes](CHANGELOG.md) and the
+[delivery roadmap](docs/orientation/project_roadmap.md). This is an experimental
+preview, not a stable or target-conforming release.
 
 `.github/workflows/playground-ci.yml` runs the full Python suite, fast smoke
 tests, the web/runtime gate, and Chromium checks on pull requests and pushes
@@ -160,6 +177,12 @@ For the Dockerized notebook path:
 ```bash
 python3 scripts/run_nomi_docker.py
 ```
+
+This is a local development image, not a hardened service. The host launcher
+binds localhost and redacts its own token-bearing logs; the fixed development
+token remains `nomi`. Use `--token` to choose another token, and never expose
+this image publicly. Jupyter's own logs and container reuse still need a
+separate authentication review.
 
 See [tools/jupyter/README.md](tools/jupyter/README.md) for details.
 

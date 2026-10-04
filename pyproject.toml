@@ -5,6 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "nomi"
 version = "0.1.0"
+description = "Experimental general-purpose language with inspectable prototype runtimes"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Topic :: Software Development :: Interpreters",
+]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

@@ -118,10 +118,40 @@ and exact continuation, while this sequence is the live synthesis route.
 | 7 | Product/design review: repeat the overall workflow | Locked host profile, bounded inputs, no secret leaks, publication/failure checks | A coherent import/report workflow rather than isolated feature demos. |
 
 Keep the existing registered pattern pass moving in parallel; do not rewrite
-its accepted contract from this survey. The playground work is routed through
-the [September playground plan](../review/2026-09-29-github-playground-agentic-plan.md)
-and the existing runtime checks. No parser/runtime migration is implemented by
-this documentation pass.
+its accepted contract from this survey. Current project-wide delivery and
+playground work are routed through the
+[project roadmap](../orientation/project_roadmap.md), with the
+[September playground plan](../review/2026-09-29-github-playground-agentic-plan.md)
+retained as evidence. The import-workflow admission route above remains a
+target-design gate, not a claim that the prototype satisfies it.
+
+## Prototype Evidence And Next Admission
+
+The October 4 delivery pass converts selected research into bounded runnable
+experiments and interaction repairs. It deliberately does not turn all research
+categories into language primitives. These observations constrain future design
+but do not settle its open contracts:
+
+| Research pressure | Runnable evidence | Still unresolved |
+| --- | --- | --- |
+| Text as a composable interface | `samples/text_pipeline.nomi.nb`: explicit normalization, delimiter split, conversion, ordered state | Strict format decoding, complete Unicode/offset/normalization contract, localization and safe rendering |
+| Pragmatic generic operations | Ordinary `fold(items, seed, combine)` and seeded `scan`; empty, order, callback-failure and reference-history tests | Typed generic callbacks, effect checking, immutable history, parallel merge laws and conditional object protocols |
+| Data dependencies and time | `samples/data_pipeline.nomi`: visible filter/map/fold stages and integer cents | Typed dependency descriptions, snapshot/time axes, incremental execution and durable provenance |
+| Cognitive repair and observation | Source-linked known errors, per-execution output, document/run generations and stale-result labels in the workbench | Full source maps, semantic commands, task unwinding, usability/accessibility study and durable revision identity |
+| Portable values and boundaries | JavaScript exact-integer range rejection before effects and at arithmetic/conversion boundaries | Target numeric tower, Text/Bytes validity, scalar codecs and cross-host conformance |
+
+The next language step remains D1: type one ordered collection callback, one
+decoder callback and one scoped resource callback together under a resolved
+generic/protocol/effect model. Use the runnable collection traces as behavioral
+fixtures, not as a reason to erase target typing requirements. D2 must then
+preserve all completion causes, and D3 must give values and transport one
+explicit contract before D4 composes the import program.
+
+AI/ML, web, scientific and documentary domains retain their distinct library/
+plan owners in the proposal below. A browser worker being terminated is not a
+language-level cancellation/cleanup implementation; a sequence of source edits
+is not data time travel. Those distinctions keep a cohesive language possible
+without claiming that small prototype experiments implement entire domains.
 
 ## Domain Layer Proposal
 

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import http.client
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,9 @@ from urllib.parse import quote, urlencode
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(ROOT))
+
 DEFAULT_IMAGE = "nomi:jupyter"
 DEFAULT_CONTAINER = "nomi-jupyter"
 DEFAULT_PORT = 8888
@@ -26,7 +30,9 @@ DEFAULT_NOTEBOOK = "notebooks/nomi_syntax_tour.ipynb"
 
 
 def run(args: list[str], *, check: bool = True, capture: bool = False) -> subprocess.CompletedProcess:
-    print(f"+ {' '.join(args)}", flush=True)
+    from tools.docker.launch_logging import redacted_command
+
+    print(f"+ {shlex.join(redacted_command(args))}", flush=True)
     return subprocess.run(
         args,
         cwd=ROOT,
@@ -232,6 +238,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from tools.docker.launch_logging import unauthenticated_url
+
     args = parse_args(argv)
     notebook = "notebooks/nomi_minimal.ipynb" if args.minimal else args.notebook
     notebook_url = quote(notebook)
@@ -247,13 +255,15 @@ def main(argv: list[str] | None = None) -> int:
 
     ensure_container(args, notebook)
 
-    print(f"Waiting for Jupyter at {status_url}", flush=True)
+    print(f"Waiting for Jupyter at {unauthenticated_url(status_url)}", flush=True)
     if not wait_for_jupyter(status_url, args.wait_seconds):
         print("Jupyter did not respond before the timeout. Recent container logs:", file=sys.stderr)
         run(["docker", "logs", "--tail", "80", args.container_name], check=False)
         return 1
 
-    print(f"Nomi notebook is ready: {url}", flush=True)
+    print(f"Nomi notebook is ready: {unauthenticated_url(url)}", flush=True)
+    if args.no_browser:
+        print("Enter your configured --token at the Jupyter login (development default: nomi).", flush=True)
     if not args.no_browser:
         webbrowser.open(url)
     print(f"Stop it with: docker stop {args.container_name}", flush=True)

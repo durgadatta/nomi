@@ -58,6 +58,87 @@ Prototype operations must identify their owner, metadata, normal form, failure
 contract, tests and replacement criteria in the implementation orientation.
 Removing a bounded library experiment must not require grammar or Core changes.
 
+### Delivery Receipt
+
+The pass implemented bounded subsets of the work map, not whole-item closure.
+Runtime checkpoint `961515c` adds ordinary ordered `fold`/seeded `scan`, runnable
+text/data samples, structured fallback diagnostics, selectable CLI output, an
+explicit JS exact-integer fence and a Rust multiline/pipeline repair. Follow-up
+workbench checkpoint `4379000` fixes actual WASM boolean lowering and code-point
+text length/iteration, keeps callback effect metadata conservative, and improves
+source-preserving workbench execution and recovery. No new grammar or Core node
+was admitted.
+
+The workbench now keeps titles/preamble and uniform LF/CRLF source, exports
+current source independently of storage, imports UTF-8 without executing it,
+rejects stale document/run replies, labels results from previous source, and
+links known diagnostics to the editor. Keyboard result tabs/resizing and
+320/390/768/1440/1920 layouts are checked. Worker termination is a host stop,
+not language cleanup. Mixed line endings may normalize through Monaco; full
+Unicode indexing, normalization and source mapping remain open.
+
+The final CLI/tooling review keeps missing-file and invalid pipeline setup
+failures structured in program/JSON modes. Docker launcher-owned commands and
+URLs no longer print credentials, and common credential/local-state names are
+excluded from the build context. The fixed development token, Jupyter-owned
+logs, container reuse/authentication and actual image rebuild remain review
+gates; no hardened-container claim is made.
+
+Optional-host checkpoint `8e4b513` follows a reproduced Pyodide initialization failure:
+capability JSON was absent from the source-only manifest. Registered runtime
+data is now included and checked in isolation; arbitrary JSON is not swept in.
+The legacy result adapter also preserves actual pipeline metadata, stdout and
+diagnostics instead of defaulting its inspection view to WASM. The browser gate
+has an opt-in legacy path, now configured in CI; local execution is observed,
+not an assertion that the hosted workflow ran. Mobile worker-failure recovery
+retains an accessible restart control.
+
+| Executed check | Observed result |
+| --- | --- |
+| `pytest -n 4` | 1,714 passed, 80 intentional matrix skips, four existing Jupyter path deprecation warnings; 29.25 seconds. |
+| `python3 scripts/check_web_runtime.py` | 156 focused contracts pass; manifest and all eight WASM outputs fresh. |
+| `python3 scripts/check_web_browser.py --legacy-pyodide` | Actual Chromium/Monaco/WASM: quick tour, data/text samples, notebook export/CRLF, known Unicode diagnostic navigation, failure/repair, cancellation/recovery, delayed replies, draft reload, invalid UTF-8, storage/clipboard denial, missing manifest/WASM and responsive layouts pass. Optional Pyodide quick tour and actual pipeline also pass. Screenshots and trace are ignored local evidence. |
+| `pytest -n 4 prototype/tests/e2e/test_distribution_boundary.py` | Five checks pass, including built-wheel execution outside the checkout and optional Node backend. |
+| Rust parser `cargo test` | Three Rust tests pass after the delimiter-continuation repair; existing dead-code warnings remain. |
+| `python3 -m tools.design_passes check` | All five registered packets remain coherent; no target status promoted from runtime tests. |
+| RAG rebuild and `python3 .codex/scripts/agent_doctor.py` | Local index refreshed; all 18 agent checks pass. Generated index remains ignored. |
+| Focused docs/research/packet checks | 98 checks pass after synthesis and receipt edits; this is authority/link/evidence hygiene, not target execution. |
+| Focused lint and `git diff --check` | Changed/new Python helpers and tests pass; no whitespace errors. |
+
+The web manifest was regenerated because one runtime library module, two
+samples and required capability JSON were added: 123 runtime files, 11 samples.
+`make_web.py --check` passes. The JSON registration repairs Pyodide bootstrap;
+metadata counts/digest changed accordingly, not from manual manifest editing.
+WASM binaries/build metadata were rebuilt for the Rust lexer change, and
+`build_wasm.sh --check` passes. Six Nomi/reduced sample snapshots were regenerated:
+four for the new data/text samples and two for the quick tour's named `is_hot`
+binding replacing an anonymous function. Existing quick-tour stdout is unchanged.
+Snapshot regeneration was followed by normal regression checks, not treated as
+an assertion that changed output is automatically correct.
+
+Local tools remain Python 3.14.0rc3, Node 25.9.0 and Cargo 1.95.0. This pass
+did not run hosted CI, verify a published Pages revision, publish a package,
+choose a root license, rebuild Docker, test Python 3.12 locally or conduct
+screen-reader/IME/usability studies. The package version remains `0.1.0`, marked
+pre-alpha; the root changelog describes an unreleased experimental preview.
+
+### Next Phase Gates
+
+1. **D1/A08:** type ordered map/fold, decoder and scoped resource callbacks
+   together; close generic/protocol resolution and effect rules before admitting
+   richer domain descriptions. Runtime callback traces are evidence, not typing.
+2. **D2/A11/A14/A15:** implement one completion/resource/task contract with all
+   causes, cleanup, escape and cancellation traces. Browser stop is not this gate.
+3. **D3/A03/A12:** one scalar/Text/Bytes/codec/identity golden contract across
+   declared hosts, including Unicode indexing, source units, exact transport,
+   strict accumulated decode and sensitive-value handling. Range rejection is a
+   bounded prototype repair, not a target numeric decision.
+4. **D4/D7/A28/A30:** review the composed import workflow, then promote one
+   conformance-backed target sample. Before public release, resolve the root
+   license, supported-version CI evidence, exact hosted revision and deployment/
+   authentication policy. Data/ML/documentary adapters keep their own laws and
+   staged admission; they do not become a universal execution engine.
+
 ## Audit Evidence
 
 The scan covered the tracked tree, canonical design spine, focused packets,

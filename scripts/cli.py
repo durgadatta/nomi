@@ -37,14 +37,41 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
+def report_setup_error(message, output):
+    from prototype.runtime.diagnostics import Diagnostic
+
+    diagnostic = Diagnostic(message=message, code="NOMI-CLI", phase="setup")
+    if output == "json":
+        print(
+            json.dumps(
+                {
+                    "schema": "nomi.cli-inspection",
+                    "version": 1,
+                    "ok": False,
+                    "stdout": "",
+                    "stderr": "",
+                    "bindings": {},
+                    "diagnostics": [diagnostic.to_record()],
+                    "pipeline": None,
+                }
+            )
+        )
+    else:
+        print(f"NOMI-CLI: {message}", file=sys.stderr)
+    return 1
+
+
 def main():
     args = parse_args(sys.argv[1:])
     filename = args.filename or str(Path(__file__).with_name("demo.nomi"))
     file_path = Path(filename)
 
     if not file_path.exists():
-        print(f"Error: File '{filename}' not found.")
-        sys.exit(1)
+        message = f"File '{filename}' not found."
+        if args.output == "debug":
+            print(f"Error: {message}")
+            return 1
+        return report_setup_error(message, args.output)
 
     if file_path.suffix == ".nomi" or file_path.name.endswith(".nomi.nb"):
         mode = "nomi"
@@ -58,7 +85,10 @@ def main():
     from prototype.runtime import execute
 
     options = {"parser_frontend": args.parser_frontend} if args.parser_frontend else {}
-    result = execute(filename=file_path, mode=mode, raise_on_error=False, **options)
+    try:
+        result = execute(filename=file_path, mode=mode, raise_on_error=False, **options)
+    except (ValueError, LookupError, OSError, ImportError) as error:
+        return report_setup_error(str(error), args.output)
     if args.output == "json":
         print(
             json.dumps(

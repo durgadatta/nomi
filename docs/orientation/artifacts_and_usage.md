@@ -114,10 +114,25 @@ reported only when known; Lark columns are Unicode code-point positions,
 browser Rust byte offsets are converted to Monaco's UTF-16 positions. Runtime
 source mapping and a complete versioned result transport remain future work.
 
+The generated browser manifest includes Python/Lark source plus explicitly
+registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host
+capability JSON required by Pyodide initialization. Missing registered assets
+fail generation; unrelated JSON is not broadly collected. An isolated-manifest
+runtime test and the opt-in `check_web_browser.py --legacy-pyodide` gate cover
+that boundary. The legacy adapter forwards actual pipeline metadata, captured
+output and shared diagnostic records, without exposing internal tracebacks as
+the user-facing error. It does not yet export arbitrary Python bindings as
+portable browser values. Pyodide gets a bounded 60-second bootstrap/reset
+request budget; the default WASM worker retains five seconds.
+
 CLI `--output program` separates program output from the legacy debug dump;
 `--output json` emits a `nomi.cli-inspection` v1 record with diagnostic records
 and **repr strings** for bindings, not a value codec. The default stays `debug`
 for existing tooling. Execution errors exit 1 without an internal traceback.
+Missing-file and invalid frontend/backend setup failures also exit 1;
+program/JSON modes carry `NOMI-CLI`, with a null pipeline when none resolved.
+The legacy debug missing-file message remains unchanged. Argparse usage errors
+retain their standard exit-2/text contract rather than an inspection envelope.
 
 
 The current default pipeline is:
@@ -376,6 +391,24 @@ current program from a clean runtime session. `# %%` comments split a file into 
 `Shift+Enter` evaluates and advances, and `Run all` restarts that session before
 evaluating the cells in order. Each notebook cell keeps its own result record.
 
+Notebook framing preserves column-zero marker titles, preamble comments,
+whitespace and each cell's LF/CRLF convention rather than synthesizing `Cell n`
+headings on load. Executable preamble text becomes a cell. This is a lightweight
+marker-framed document, not a lossless language CST or a Jupyter file codec.
+Uniform LF and CRLF are supported; Monaco may normalize mixed line endings.
+Open/download controls use local UTF-8 source (import limit 256 KiB), never
+automatically executing imported code. Models are disposed when cells are
+removed; tab navigation and pane resizing support keyboard input.
+
+Run epochs and document generations fence late results. `Run all` captures
+the cells' source at its start, while individual cells share only their current
+document's session. Source edits mark retained results stale and clear source
+markers; known parse locations navigate to the editor only for current source.
+Worker stop/timeout replaces the worker and loses its session, not a proof of
+language cancellation/cleanup. Initialization failures stop rather than retry
+indefinitely; Retry/restart is explicit. Samples come only from the generated
+manifest; missing deployment assets cannot be hidden by embedded fallback code.
+
 The browser workbench exposes the runtime result record directly. Each run has
 `Output`, `Bindings`, `Diagnostics`, and `Pipeline` views; the last view names
 the parser/lowerer/backend/host path and reports parse, lower, and evaluation
@@ -411,9 +444,9 @@ python3 scripts/make_web.py
 python3 scripts/make_web.py --check
 ```
 
-`make_web.py` includes prototype `.py` and `.lark` runtime files plus
-`samples/*.nomi`. When `samples/demo.nomi`, `samples/demo_terse.nomi`,
-`samples/notebook_intro.nomi`, or another focused sample changes, rerun the
+`make_web.py` includes prototype `.py`/`.lark` runtime files, registered runtime
+data and `samples/*.nomi`/`*.nomi.nb`. When `samples/demo.nomi`, `samples/demo_terse.nomi`,
+`samples/notebook_intro.nomi.nb`, or another focused sample changes, rerun the
 manifest generator before testing the web editor. The generator also writes
 `web/manifest_metadata.json`, a deterministic sidecar with schema/version,
 runtime profile, file/sample counts, generator name, and a digest of
@@ -502,13 +535,21 @@ registered inside the container.
 
 Before any Docker/Homebrew setup, the launcher rejects ports outside 1-65535
 and nonpositive wait/Colima resource values. Tokens are URL-encoded as a single
-query value, including when they contain `&`, `#`, `+` or spaces. This does not
-redact tokens from printed launch commands/URLs or change container reuse policy.
+query value, including when they contain `&`, `#`, `+` or spaces. Launcher-owned
+command logs redact token/password arguments without changing execution, and
+printed URLs omit authentication query values. The browser receives the real
+authenticated URL; `--no-browser` users enter their configured token at login.
+This does not sanitize Jupyter's own logs or change container reuse policy. The
+fixed `nomi` development token remains; this is not a publicly deployable service.
 
 The Docker context is bounded by `.dockerignore`, which excludes local scratch
 files, generated reports, installed JavaScript dependencies, Python caches, and
-distribution artifacts while keeping source, notebooks, documentation, and AI
-artifacts in the image.
+distribution artifacts. It also excludes `.nomi`, agent configuration trees,
+`.env` files and common private-key extensions. Source, notebooks and
+documentation remain in the image. These filename exclusions are a guard,
+not a secret scanner or proof that the context contains no sensitive material.
+Credential filename patterns use Docker's recursive `**` matching, including
+nested files; see the [Docker context reference](https://docs.docker.com/build/concepts/context/#matching).
 
 The container entrypoint lives at `tools/docker/serve_nomi_notebook.py`.
 

@@ -9,10 +9,14 @@ from __future__ import annotations
 
 import argparse
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
 from urllib.parse import quote
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 
 def project_root() -> Path:
@@ -23,7 +27,9 @@ def project_root() -> Path:
 
 
 def run_step(args: list[str], *, cwd: Path) -> None:
-    print(f"+ {' '.join(args)}", flush=True)
+    from tools.docker.launch_logging import redacted_command
+
+    print(f"+ {shlex.join(redacted_command(args))}", flush=True)
     subprocess.run(args, cwd=cwd, check=True)
 
 
