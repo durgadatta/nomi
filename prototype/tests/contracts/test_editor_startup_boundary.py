@@ -53,6 +53,8 @@ vm.runInContext(fs.readFileSync('./web/editor.js', 'utf8'), context);
     if (typeof onError === 'function') onError(new Error('editor HTTP 404'));
   } else if (scenario === 'event_error') {
     if (typeof onError === 'function') onError({ type: 'error' });
+  } else if (scenario === 'wrapped_event_error') {
+    if (typeof onError === 'function') onError(new Error('[object Event]'));
   } else if (scenario === 'timeout') {
     if (timers.size) [...timers.values()][0]();
   } else if (onLoad) {
@@ -84,6 +86,7 @@ vm.runInContext(fs.readFileSync('./web/editor.js', 'utf8'), context);
     [
         ("load_error", "editor HTTP 404"),
         ("event_error", "Editor asset could not be loaded"),
+        ("wrapped_event_error", "Editor asset could not be loaded"),
         ("timeout", "timed out"),
         ("missing_loader", "Editor loader unavailable"),
         ("config_error", "loader configuration failed"),

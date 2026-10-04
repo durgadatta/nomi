@@ -13,9 +13,10 @@ async function initMonaco() {
       settled = true;
       clearTimeout(timer);
       if (error) {
-        const message = error.message || (typeof error === "string" ? error
-          : error.type === "error" ? "Editor asset could not be loaded"
-          : "Editor loader reported an unknown failure");
+        let message = typeof error === "string" ? error : error.message;
+        if (typeof message !== "string" || !message.trim() || /^\[object [^\]]+\]$/.test(message.trim())) {
+          message = "Editor asset could not be loaded";
+        }
         reject(new Error(`Editor startup failed: ${message}`));
       } else resolve();
     }
