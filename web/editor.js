@@ -1,12 +1,26 @@
 // Nomi Web Playground — Monaco editor boot, language, theme
 
+const MONACO_INIT_TIMEOUT_MS = 30000;
+
 async function initMonaco() {
-  return new Promise((resolve) => {
-    require.config({
-      paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" },
-      "vs/nls": { availableLanguages: { "*": "en" } }
-    });
-    require(["vs/editor/editor.main"], function() {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      settle(new Error(`Editor startup timed out after ${MONACO_INIT_TIMEOUT_MS} ms`));
+    }, MONACO_INIT_TIMEOUT_MS);
+    function settle(error) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (error) {
+        const message = error.message || (typeof error === "string" ? error
+          : error.type === "error" ? "Editor asset could not be loaded"
+          : "Editor loader reported an unknown failure");
+        reject(new Error(`Editor startup failed: ${message}`));
+      } else resolve();
+    }
+
+    const configureEditor = function() {
       monaco.languages.register({ id: "nomi", extensions: [".nomi"], aliases: ["Nomi"] });
       monaco.languages.setMonarchTokensProvider("nomi", {
         tokenizer: {
@@ -87,7 +101,27 @@ async function initMonaco() {
           "editorGutter.background": "#171c19", "editorWidget.background": "#1f2321", "editorWidget.border": "#3c443f",
         },
       });
-      resolve();
-    });
+    };
+
+    try {
+      if (typeof require !== "function" || typeof require.config !== "function") {
+        throw new Error("Editor loader unavailable");
+      }
+      require.config({
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" },
+        "vs/nls": { availableLanguages: { "*": "en" } }
+      });
+      require(["vs/editor/editor.main"], function() {
+        if (settled) return;
+        try {
+          configureEditor();
+          settle();
+        } catch (error) {
+          settle(error);
+        }
+      }, settle);
+    } catch (error) {
+      settle(error);
+    }
   });
 }

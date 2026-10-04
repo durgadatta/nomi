@@ -1,5 +1,5 @@
 // Samples are loaded from the generated manifest; source has one owner.
-const DEMOS = {};
+const DEMOS = Object.create(null);
 
 const SAMPLE_DESCRIPTIONS = {
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
@@ -11,8 +11,11 @@ const SAMPLE_DESCRIPTIONS = {
 };
 
 let _draftSaveTimer = null;
+const SAMPLE_LOAD_TIMEOUT_MS = 30000;
 
 function sampleKey(path) {
+  if (path === "samples/demo.nomi") return "demo";
+  if (path === "samples/demo_terse.nomi") return "terse";
   return path.replace(/^samples\//,"").replace(/\.nomi(\.nb)?$/,"").replace(/_/g,"-");
 }
 
@@ -22,20 +25,54 @@ function isNotebookSource(code) {
 
 async function loadSampleSources() {
   restoreScratchDocuments();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SAMPLE_LOAD_TIMEOUT_MS);
   try {
-    const resp = await fetch("./manifest.json");
+    const resp = await fetch("./manifest.json", { signal: controller.signal });
     if (!resp.ok) throw new Error(`Sample manifest returned HTTP ${resp.status}`);
     const manifest = await resp.json();
-    for (const path of (manifest.samples || [])) {
-      const key = path === "samples/demo.nomi" ? "demo" : path === "samples/demo_terse.nomi" ? "terse" : sampleKey(path);
+    if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)
+      || !Array.isArray(manifest.samples) || !manifest.samples.length
+      || !manifest.samples.every((path) => typeof path === "string" && path.trim())) {
+      throw new Error("Sample manifest needs a nonempty text-path samples list");
+    }
+    if (!manifest.samples.includes("samples/demo_terse.nomi")) {
+      throw new Error("Sample manifest is missing samples/demo_terse.nomi");
+    }
+    const paths = new Set();
+    const keys = new Set();
+    for (const path of manifest.samples) {
+      const parts = path.split("/");
+      if (parts[0] !== "samples" || parts.length < 2
+        || parts.some((part) => !part || part === "." || part === "..")
+        || /[\u0000-\u001f\u007f\\%?#]/.test(path) || !/\.nomi(?:\.nb)?$/.test(path)) {
+        throw new Error(`Invalid sample manifest path: ${path}`);
+      }
+      if (paths.has(path)) throw new Error(`Duplicate sample manifest path: ${path}`);
+      paths.add(path);
+      const key = sampleKey(path);
+      if (keys.has(key) || (Object.prototype.hasOwnProperty.call(DEMOS, key) && DEMOS[key].local)) {
+        throw new Error(`Colliding sample manifest identity: ${key}`);
+      }
+      keys.add(key);
+    }
+    for (const path of manifest.samples) {
+      const key = sampleKey(path);
       const sampleUrl = new URL(`../${path}`, location.href);
-      const r = await fetch(sampleUrl);
+      const r = await fetch(sampleUrl, { signal: controller.signal });
       if (!r.ok) throw new Error(`Sample ${path} returned HTTP ${r.status}`);
       const code = await r.text();
       const existing = DEMOS[key] || {};
       DEMOS[key] = { ...existing, title: path.split("/").pop(), desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`, source: path, code };
     }
-  } catch (e) { console.warn("[web] Could not load samples from manifest", e); throw e; }
+  } catch (e) {
+    const error = controller.signal.aborted
+      ? new Error(`Sample loading timed out after ${SAMPLE_LOAD_TIMEOUT_MS} ms`) : e;
+    console.warn("[web] Could not load samples from manifest", error);
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function restoreScratchDocuments() {

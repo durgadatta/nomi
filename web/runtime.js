@@ -459,7 +459,7 @@ window.cancelRun = async function() {
 };
 
 window.restartWorker = async function() {
-  if (_executionBusy) return;
+  if (_startupFailed || _executionBusy) return;
   const epoch = ++_runEpoch;
   setControlsDisabled(true);
   setStatus("running", "running");

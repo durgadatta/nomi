@@ -7,6 +7,7 @@ let _runtimeGeneration = 0;
 let _runFn = null;
 let _resetFn = null;
 let _ready = false;
+let _startupFailed = false;
 let _currentSample = "terse";
 let _cellEditors = [];
 let _cellResults = [];
@@ -32,7 +33,11 @@ const RUNTIME_INIT_TIMEOUT_MS = _evalBackend === "pyodide" ? 60000 : 5000;
 const RUNTIME_RUN_TIMEOUT_MS = 10000;
 
 function byId(id) { return document.getElementById(id); }
-function log(msg) { console.log("[web]", msg); byId("loading-msg").textContent = msg; }
+function log(msg) {
+  if (_startupFailed) return;
+  console.log("[web]", msg);
+  byId("loading-msg").textContent = msg;
+}
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function lineCount(text) { return text ? text.split(/\r\n|\r|\n/).length : 0; }
 
@@ -166,6 +171,18 @@ function failRuntime(error) {
   byId("restart-btn").disabled = false;
   setStatus("error", "error");
   byId("runtime-detail").textContent = error.message;
+}
+
+function failStartup(error) {
+  _startupFailed = true;
+  const message = String(error && error.message ? error.message : error).split("\n")[0];
+  failRuntime(new Error(message));
+  byId("restart-btn").disabled = true;
+  console.error(error);
+  byId("loading-title").textContent = "Nomi unavailable";
+  document.querySelector(".spinner").hidden = true;
+  byId("loading-msg").textContent = message;
+  byId("loading-retry-btn").hidden = false;
 }
 
 function callRuntime(type, payload, options) {

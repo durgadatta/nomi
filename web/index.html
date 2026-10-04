@@ -146,23 +146,16 @@
 </div>
 
 <script src="documents.js?v=5"></script>
-<script src="app.js?v=6"></script>
-<script src="demos.js?v=5"></script>
+<script src="app.js?v=7"></script>
+<script src="demos.js?v=6"></script>
 <script src="cells.js?v=5"></script>
-<script src="runtime.js?v=6"></script>
-<script src="editor.js?v=5"></script>
+<script src="runtime.js?v=7"></script>
+<script src="editor.js?v=6"></script>
 <script>
 init().then(() => {
   setupResize(byId("resize-l"), byId("sidebar"));
   addEventListener("resize", handleViewportChange);
-}).catch((error) => {
-  console.error(error);
-  byId("loading-title").textContent = "Nomi unavailable";
-  document.querySelector(".spinner").hidden = true;
-  byId("loading-msg").textContent = String(error && error.message ? error.message : error).split("\n")[0];
-  byId("loading-retry-btn").hidden = false;
-  setStatus("error", "error");
-});
+}).catch(failStartup);
 </script>
 </body>
 </html>
