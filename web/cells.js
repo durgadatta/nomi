@@ -292,6 +292,9 @@ function createEditor(idx, code, plain) {
     overviewRulerBorder: false,
     renderLineHighlight: "line",
     renderWhitespace: "selection",
+    // Monaco 0.52's WordHighlighter rejects a pending delay on disposal (#4859).
+    // Restore automatic occurrences only after its disposal stress gate is clean.
+    occurrencesHighlight: "off",
     smoothScrolling: true,
     cursorBlinking: "smooth",
     wordWrap: "on",

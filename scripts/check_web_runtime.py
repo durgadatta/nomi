@@ -64,6 +64,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_js_dictionary_keys.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",
                 "prototype/tests/contracts/test_editor_startup_boundary.py",
+                "prototype/tests/contracts/test_editor_lifecycle_boundary.py",
                 "prototype/tests/contracts/test_sample_startup_boundary.py",
                 "prototype/tests/unit/runtime/test_function_completion_defaults.py",
                 "prototype/tests/unit/runtime/test_defer_reentrancy_boundaries.py",

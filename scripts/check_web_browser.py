@@ -51,6 +51,7 @@ def playground_url(remote_url: str | None):
 def check_browser(
     url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
 ) -> None:
+    from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
     from scripts.check_editor_startup_scenarios import (
         check_editor_startup_scenarios,
         check_sample_manifest_startup_scenarios,
@@ -144,6 +145,7 @@ def check_browser(
             check_workbench_scenarios(page, expect, artifacts)
             check_editor_startup_scenarios(page, expect, artifacts)
             check_sample_manifest_startup_scenarios(page, expect, artifacts)
+            check_editor_lifecycle_scenarios(page, expect, artifacts)
             if legacy_pyodide:
                 legacy_page = context.new_page()
                 try:
