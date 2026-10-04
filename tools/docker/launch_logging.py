@@ -1,6 +1,6 @@
 """Redact launcher-owned diagnostics without altering subprocess arguments."""
 
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote, quote_plus, urlencode, urlsplit, urlunsplit
 
 
 def redacted_command(arguments: list[str]) -> list[str]:
@@ -11,6 +11,7 @@ def redacted_command(arguments: list[str]) -> list[str]:
         "--password",
         "--ServerApp.token",
         "--ServerApp.password",
+        "--IdentityProvider.token",
     }
     secret_assignments = {"NOMI_JUPYTER_TOKEN", *secret_flags}
     for argument in arguments:
@@ -25,6 +26,14 @@ def redacted_command(arguments: list[str]) -> list[str]:
             result.append(argument)
             secret_next = argument in secret_flags
     return result
+
+
+def redacted_output(output: str, token: str | None) -> str:
+    if token:
+        variants = {token, quote(token, safe=""), quote_plus(token)}
+        for value in sorted(variants, key=len, reverse=True):
+            output = output.replace(value, "<redacted>")
+    return output
 
 
 def unauthenticated_url(url: str) -> str:

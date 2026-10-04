@@ -50,8 +50,19 @@ The launcher is the whole front door. On first run it checks for Docker. On
 macOS, if Docker is not ready, it can install the Docker CLI and Colima through
 Homebrew, start Colima, build the `nomi:jupyter` image, start a container named
 `nomi-jupyter`, wait for Jupyter Lab, and open
-`notebooks/nomi_syntax_tour.ipynb` with token `nomi`. Later runs reuse the
-existing image and running container when possible.
+`notebooks/nomi_syntax_tour.ipynb` with a generated token. An explicit `--token`
+or `NOMI_JUPYTER_TOKEN` overrides generation; blank tokens are rejected. Later
+runs reuse a running container only after inspecting its image tag, exact
+localhost port binding and credential. Mismatches require `--restart-container`;
+old fixed-`nomi` containers also require a restart unless that token is explicitly
+selected. Rebuild the image to pick up entrypoint changes.
+
+The launcher does not print authenticated URLs or credentials, including its
+timeout log excerpt. With `--no-browser`, obtain the token locally with
+`docker exec nomi-jupyter jupyter server list` and enter it at login. Jupyter's
+own logs and Docker inspection still expose credentials to Docker-authorized
+users, as described in the [Jupyter security guide](https://jupyter-server.readthedocs.io/en/latest/operators/security.html).
+This remains a development image, not a hardened or publicly exposed service.
 
 Useful variants:
 

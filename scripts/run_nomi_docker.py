@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import argparse
 import http.client
+import json
+import os
 import platform
+import secrets
 import shlex
 import shutil
 import subprocess
@@ -25,7 +28,6 @@ if __package__ in {None, ""}:
 DEFAULT_IMAGE = "nomi:jupyter"
 DEFAULT_CONTAINER = "nomi-jupyter"
 DEFAULT_PORT = 8888
-DEFAULT_TOKEN = "nomi"
 DEFAULT_NOTEBOOK = "notebooks/nomi_syntax_tour.ipynb"
 
 
@@ -139,9 +141,12 @@ def remove_existing_container(name: str) -> None:
 
 def ensure_container(args: argparse.Namespace, notebook: str) -> None:
     if container_running(args.container_name) and not args.restart_container and not args.rebuild:
+        reuse_container_credentials(args)
         print(f"Container already running: {args.container_name}", flush=True)
         return
 
+    if args.token is None:
+        args.token = secrets.token_urlsafe(32)
     if container_exists(args.container_name):
         remove_existing_container(args.container_name)
 
@@ -167,20 +172,57 @@ def ensure_container(args: argparse.Namespace, notebook: str) -> None:
     run(command)
 
 
+def reuse_container_credentials(args: argparse.Namespace) -> None:
+    result = run(["docker", "container", "inspect", args.container_name], capture=True)
+    message = "Running container configuration differs or cannot be verified; use --restart-container to replace it."
+    try:
+        records = json.loads(result.stdout)
+        if not isinstance(records, list) or len(records) != 1:
+            raise ValueError("expected one container")
+        config = records[0]["Config"]
+        ports = records[0]["NetworkSettings"]["Ports"]
+        expected_ports = {"8888/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(args.port)}]}
+        tokens = [
+            entry.partition("=")[2]
+            for entry in config["Env"]
+            if entry.startswith("NOMI_JUPYTER_TOKEN=")
+        ]
+        command = config["Cmd"]
+        token = tokens[0] if len(tokens) == 1 else None
+        token_index = command.index("--token")
+        if (
+            config["Image"] != args.image
+            or ports != expected_ports
+            or not token
+            or not token.strip()
+            or command[token_index + 1] != token
+            or (args.token is not None and args.token != token)
+            or (args.token is None and token == "nomi")
+        ):
+            raise ValueError("incompatible launch configuration")
+    except (KeyError, TypeError, AttributeError, ValueError, IndexError):
+        raise RuntimeError(message) from None
+    args.token = token
+
+
 def wait_for_jupyter(url: str, timeout: int) -> bool:
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         try:
             with urllib.request.urlopen(url, timeout=2) as response:
-                if response.status < 500:
-                    return True
+                if response.status == 200 and response.headers.get_content_type() == "application/json":
+                    status = json.loads(response.read(8192))
+                    if isinstance(status, dict) and {"kernels", "connections"} <= status.keys():
+                        return True
         except (
             ConnectionResetError,
             http.client.RemoteDisconnected,
             TimeoutError,
             urllib.error.URLError,
+            ValueError,
         ):
-            time.sleep(1)
+            pass
+        time.sleep(1)
     return False
 
 
@@ -195,7 +237,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Name for the running Docker container.",
     )
     parser.add_argument("--port", type=int, default=DEFAULT_PORT, help="Host port for Jupyter.")
-    parser.add_argument("--token", default=DEFAULT_TOKEN, help="Jupyter token.")
+    parser.add_argument(
+        "--token",
+        default=os.environ.get("NOMI_JUPYTER_TOKEN"),
+        help="Jupyter token (or NOMI_JUPYTER_TOKEN); otherwise generate one for a new container.",
+    )
     parser.add_argument(
         "--notebook",
         default=DEFAULT_NOTEBOOK,
@@ -229,6 +275,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="How long to wait for Jupyter before opening the URL.",
     )
     args = parser.parse_args(argv)
+    if args.token is not None and not args.token.strip():
+        parser.error("--token / NOMI_JUPYTER_TOKEN must not be blank")
     if not 1 <= args.port <= 65535:
         parser.error("--port must be between 1 and 65535")
     for option in ("colima_cpu", "colima_memory", "colima_disk", "wait_seconds"):
@@ -238,32 +286,40 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
-    from tools.docker.launch_logging import unauthenticated_url
+    from tools.docker.launch_logging import redacted_output, unauthenticated_url
 
     args = parse_args(argv)
     notebook = "notebooks/nomi_minimal.ipynb" if args.minimal else args.notebook
     notebook_url = quote(notebook)
+    if not ensure_docker_runtime(args):
+        return 1
+
+    try:
+        if not args.no_build:
+            build_image(args.image, args.rebuild)
+        ensure_container(args, notebook)
+    except RuntimeError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    except (OSError, subprocess.CalledProcessError):
+        print("Docker build/launch failed; inspect Docker state before retrying.", file=sys.stderr)
+        return 1
+
     query = urlencode({"token": args.token})
     url = f"http://127.0.0.1:{args.port}/lab/tree/{notebook_url}?{query}"
     status_url = f"http://127.0.0.1:{args.port}/api/status?{query}"
 
-    if not ensure_docker_runtime(args):
-        return 1
-
-    if not args.no_build:
-        build_image(args.image, args.rebuild)
-
-    ensure_container(args, notebook)
-
     print(f"Waiting for Jupyter at {unauthenticated_url(status_url)}", flush=True)
     if not wait_for_jupyter(status_url, args.wait_seconds):
         print("Jupyter did not respond before the timeout. Recent container logs:", file=sys.stderr)
-        run(["docker", "logs", "--tail", "80", args.container_name], check=False)
+        logs = run(["docker", "logs", "--tail", "80", args.container_name], check=False, capture=True)
+        print(redacted_output(logs.stdout or "", args.token), file=sys.stderr)
         return 1
 
     print(f"Nomi notebook is ready: {unauthenticated_url(url)}", flush=True)
     if args.no_browser:
-        print("Enter your configured --token at the Jupyter login (development default: nomi).", flush=True)
+        print("Enter your configured token at the Jupyter login. To retrieve the container's token locally:", flush=True)
+        print(shlex.join(["docker", "exec", args.container_name, "jupyter", "server", "list"]), flush=True)
     if not args.no_browser:
         webbrowser.open(url)
     print(f"Stop it with: docker stop {args.container_name}", flush=True)

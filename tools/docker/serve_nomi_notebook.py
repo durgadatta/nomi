@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import secrets
 import shlex
 import subprocess
 import sys
@@ -49,7 +50,7 @@ def delegate_to_host_launcher(root: Path, args: argparse.Namespace) -> None:
         command.extend(["--notebook", args.notebook])
     if args.port != "8888":
         command.extend(["--port", args.port])
-    if args.token != "nomi":
+    if args.token is not None:
         command.extend(["--token", args.token])
     run_step(command, cwd=root)
 
@@ -90,15 +91,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--token",
-        default=os.environ.get("NOMI_JUPYTER_TOKEN", "nomi"),
-        help="Jupyter token. Set to an empty string to disable token auth.",
+        default=os.environ.get("NOMI_JUPYTER_TOKEN"),
+        help="Jupyter token (or NOMI_JUPYTER_TOKEN); generated when omitted.",
     )
     parser.add_argument(
         "--skip-kernel-install",
         action="store_true",
         help="Do not refresh the Nomi kernelspec before launching Jupyter.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.token is not None and not args.token.strip():
+        parser.error("--token / NOMI_JUPYTER_TOKEN must not be blank")
+    return args
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -109,6 +113,8 @@ def main(argv: list[str] | None = None) -> None:
         delegate_to_host_launcher(root, args)
         return
 
+    if args.token is None:
+        args.token = secrets.token_urlsafe(32)
     notebook = root / "notebooks" / "nomi_minimal.ipynb" if args.minimal else Path(args.notebook)
     if not notebook.is_absolute():
         notebook = root / notebook
@@ -129,8 +135,7 @@ def main(argv: list[str] | None = None) -> None:
         "--ServerApp.open_browser=False",
         f"--ServerApp.root_dir={root}",
         f"--ServerApp.default_url=/lab/tree/{notebook_url(root, notebook)}",
-        f"--ServerApp.token={args.token}",
-        "--ServerApp.password=",
+        f"--IdentityProvider.token={args.token}",
         "--LabServerApp.notebook_starts_kernel=True",
     ]
     run_step(command, cwd=root)

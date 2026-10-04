@@ -185,10 +185,12 @@ python3 scripts/run_nomi_docker.py
 ```
 
 This is a local development image, not a hardened service. The host launcher
-binds localhost and redacts its own token-bearing logs; the fixed development
-token remains `nomi`. Use `--token` to choose another token, and never expose
-this image publicly. Jupyter's own logs and container reuse still need a
-separate authentication review.
+binds localhost, generates a token for each new container, and redacts its own
+credential-bearing output. Use `--token` or `NOMI_JUPYTER_TOKEN` to configure one;
+blank tokens are rejected. Reuse checks the image tag, localhost port binding
+and credential; incompatible containers require an explicit restart. For
+`--no-browser`, retrieve the token with `docker exec nomi-jupyter jupyter server list`.
+Jupyter's own logs still contain credentials; never expose this image publicly.
 
 See [tools/jupyter/README.md](tools/jupyter/README.md) for details.
 
