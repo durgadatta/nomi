@@ -212,6 +212,10 @@ def validate_artifact_path(
         errors.append(
             f"{prefix}: {kind} must be a {expected[1]} file under {expected[0]}"
         )
+    elif not errors and not (root / rel_path).resolve().is_relative_to(
+        root / expected[0]
+    ):
+        errors.append(f"{prefix}: {kind} must resolve under {expected[0]}")
     return errors
 
 

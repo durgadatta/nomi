@@ -85,7 +85,9 @@ python3 -m tools.design_passes check
 The CLI validates metadata and packet links before listing or showing a pass.
 Required artifact paths cannot be blank or mistyped; duplicate JSON keys,
 invalid calendar dates, unreadable text and out-of-repository artifacts fail
-the check. Rejected artifact paths are not opened. This is packet-integrity
+the check. Each artifact must also resolve inside its declared authority
+directory, even through `..` or an in-repository symlink. Rejected artifact
+paths are not opened. This is packet-integrity
 validation, not parsing, typechecking, semantic conformance or evidence that a
 declared validation command has run.
 

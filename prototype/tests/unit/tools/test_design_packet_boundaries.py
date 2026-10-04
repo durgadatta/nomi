@@ -110,6 +110,38 @@ def test_rejected_artifact_path_is_not_read(tmp_path, monkeypatch):
     assert any("escapes" in error for error in design_passes.validate_registry(root))
 
 
+@pytest.mark.parametrize(
+    ("kind", "path"),
+    [
+        ("research", "docs/research/../design/topic.md"),
+        ("design", "docs/design/../research/topic.md"),
+        ("bridge", "docs/review/../research/topic.md"),
+    ],
+)
+def test_artifact_kind_uses_resolved_authority_subtree(tmp_path, kind, path):
+    registry = make_registry(tmp_path)
+    registry["passes"][0]["artifacts"][kind] = path
+    save_registry(tmp_path, registry)
+
+    assert any(
+        "must resolve under" in error
+        for error in design_passes.validate_registry(tmp_path)
+    )
+
+
+def test_in_repository_symlink_cannot_change_artifact_kind(tmp_path):
+    registry = make_registry(tmp_path)
+    research = tmp_path / registry["passes"][0]["artifacts"]["research"]
+    design = tmp_path / registry["passes"][0]["artifacts"]["design"]
+    research.unlink()
+    research.symlink_to(design)
+
+    assert any(
+        "research must resolve under" in error
+        for error in design_passes.validate_registry(tmp_path)
+    )
+
+
 @pytest.mark.parametrize("command", ["check", "list", "show"])
 def test_cli_reports_invalid_packets_before_formatting(
     tmp_path, monkeypatch, capsys, command
