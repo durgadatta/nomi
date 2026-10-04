@@ -143,6 +143,7 @@ def execute(
         if capture_output
         else contextlib.nullcontext()
     )
+    diagnostic_source, diagnostic_filename = source, filename
     try:
         with stdout_context, stderr_context:
             frontend_tree = _parse_with_frontend(
@@ -165,6 +166,8 @@ def execute(
             exc,
             frontend=pipeline.parser_frontend,
             backend=pipeline.eval_backend,
+            source=diagnostic_source,
+            filename=diagnostic_filename,
         )
         result_diagnostics, result_events = collector.snapshot()
         return ExecutionResult(

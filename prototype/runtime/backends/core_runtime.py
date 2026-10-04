@@ -33,6 +33,7 @@ from prototype.runtime.backends.values import (
     unbox_value,
 )
 from prototype.runtime.host_capabilities import validate_host_call_names
+from prototype.runtime.collections import fold, scan
 from prototype.syntax.core import (
     BinaryOp,
     Bind,
@@ -110,11 +111,7 @@ class CoreRuntimeEvaluator:
         self._current_block: FunctionValue | None = None
         self._defer_stack: list[CoreNode] = []
         self._host_calls = {
-            name: (
-                func
-                if isinstance(func, NativeValue)
-                else box_value(func)
-            )
+            name: (func if isinstance(func, NativeValue) else box_value(func))
             for name, func in self._raw_host_calls.items()
         }
         for name, value in self._host_calls.items():
@@ -130,9 +127,7 @@ class CoreRuntimeEvaluator:
         verify_core(core_ir, strict=True)
         result = self._eval_module(core_ir)
         if isinstance(result, ControlFlow):
-            raise RuntimeError(
-                f"Unexpected {type(result).__name__} at module level"
-            )
+            raise RuntimeError(f"Unexpected {type(result).__name__} at module level")
         if isinstance(result, ErrorValue):
             raise RuntimeError(result.message)
         has_value = display_last_expr and result is not NIL
@@ -628,10 +623,7 @@ class CoreRuntimeEvaluator:
     def _export_global_bindings(self) -> dict[str, object]:
         exported = {}
         for name, value in self._global_frame.bindings.items():
-            if (
-                name in self._default_host_names
-                and self._host_calls.get(name) is value
-            ):
+            if name in self._default_host_names and self._host_calls.get(name) is value:
                 continue
             exported[name] = unbox_value(value)
         return exported
@@ -671,6 +663,7 @@ class CoreRuntimeEvaluator:
                 True,
             ),
             "filter": NativeValue("filter", self._host_filter, True),
+            "fold": NativeValue("fold", self._host_fold, True),
             "float": NativeValue(
                 "float",
                 lambda value: float(unbox_value(value)),
@@ -682,20 +675,43 @@ class CoreRuntimeEvaluator:
             "map": NativeValue("map", self._host_map, True),
             "print": NativeValue("print", self._host_print, True),
             "range": NativeValue("range", self._host_range, True),
+            "scan": NativeValue("scan", self._host_scan, True),
             "str": NativeValue("str", self._host_str, True),
             "sum": NativeValue("sum", lambda value: sum(unbox_value(value)), True),
         }
         validate_host_call_names("core-runtime", set(calls))
         return calls
 
+    def _collection_combiner(self, func: Value):
+        if not isinstance(func, (FunctionValue, NativeValue, DataConstructorValue)):
+            raise TypeError("combine must be callable")
+
+        def combine(state, item):
+            result = self._apply_value_callable(func, (state, item))
+            if isinstance(result, ErrorValue):
+                raise RuntimeError(result.message)
+            if isinstance(result, ControlFlow):
+                raise RuntimeError(
+                    f"Unexpected {type(result).__name__} inside reduction"
+                )
+            return result
+
+        return combine
+
+    def _host_fold(self, items: Value, seed: Value, func: Value) -> Value:
+        combine = self._collection_combiner(func)
+        return fold(self._iter_values(items), seed, combine)
+
+    def _host_scan(self, items: Value, seed: Value, func: Value) -> SequenceValue:
+        combine = self._collection_combiner(func)
+        return SequenceValue(tuple(scan(self._iter_values(items), seed, combine)))
+
     def _host_filter(self, func: Value, sequence: Value) -> SequenceValue:
         kept: list[Value] = []
         for item in self._iter_values(sequence):
             result = self._apply_value_callable(func, (item,))
             if isinstance(result, ControlFlow):
-                raise RuntimeError(
-                    f"Unexpected {type(result).__name__} inside filter"
-                )
+                raise RuntimeError(f"Unexpected {type(result).__name__} inside filter")
             if is_truthy(result):
                 kept.append(item)
         return SequenceValue(tuple(kept))
@@ -710,9 +726,7 @@ class CoreRuntimeEvaluator:
         for item in self._iter_values(sequence):
             result = self._apply_value_callable(func, (item,))
             if isinstance(result, ControlFlow):
-                raise RuntimeError(
-                    f"Unexpected {type(result).__name__} inside map"
-                )
+                raise RuntimeError(f"Unexpected {type(result).__name__} inside map")
             mapped.append(result)
         return SequenceValue(tuple(mapped))
 
@@ -847,7 +861,7 @@ class CoreRuntimeEvaluator:
         if op == "%":
             return left % right
         if op == "**":
-            return left ** right
+            return left**right
         if op == "@":
             return left @ right
         if op == "<<":

@@ -357,6 +357,14 @@ cleanup, transactions and cancellation keep their existing semantic owners.
 
 ## Candidate Nomi Layers And Admission
 
+The October prototype delivery pass now exercises a narrow operational slice:
+ordinary `fold(items, seed, combine)` and seeded `scan` calls across Nomi/reduced
+and Python/JS Core adapters. See the
+[current contract](../orientation/artifacts_and_usage.md#bounded-prototype-library-and-numeric-contracts)
+and runnable data/text samples. This is strict finite traversal evidence, not
+typed callback/effect admission, optimizer laws, parallel merge or a universal
+protocol. GA1-GA8 and the target-only candidates retain their open status.
+
 This is our design inference, not a conclusion dictated by the sources:
 
 | Layer | Candidate responsibility | Admission boundary |

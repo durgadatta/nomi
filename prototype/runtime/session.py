@@ -108,6 +108,7 @@ class RuntimeSession:
             if capture_output
             else contextlib.nullcontext()
         )
+        phase = "parse" if tree is None else "eval"
         try:
             with stdout_context, stderr_context:
                 if tree is None:
@@ -132,8 +133,10 @@ class RuntimeSession:
 
                 if not tree_locations_fixed:
                     tree = ast.fix_missing_locations(tree)
+                phase = "lower"
                 if os.environ.get("NOMI_VERIFY_CORE") == "1":
                     self._verify_core(tree)
+                phase = "eval"
                 eval_started = perf_counter()
                 if self._use_core_ir_path():
                     has_value, value = self._eval_core_ir(
@@ -153,8 +156,11 @@ class RuntimeSession:
             record_runtime_exception(
                 collector,
                 exc,
+                phase=phase,
                 frontend=self.pipeline.parser_frontend,
                 backend=self.pipeline.eval_backend,
+                source=source,
+                filename=filename,
             )
             diagnostics, events = collector.snapshot()
             return ExecutionResult(

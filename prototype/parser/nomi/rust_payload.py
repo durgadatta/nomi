@@ -846,7 +846,11 @@ def _pipeline_from_rust_text(raw: str) -> ast.expr:
     parts = _split_top_level_token(raw, "|>")
     value = _raw_or_python_expr(parts[0])
     for func_text in parts[1:]:
-        value = ast.Call(func=_raw_or_python_expr(func_text), args=[value], keywords=[])
+        stage = _raw_or_python_expr(func_text)
+        if isinstance(stage, ast.Call):
+            value = ast.Call(func=stage.func, args=[value, *stage.args], keywords=stage.keywords)
+        else:
+            value = ast.Call(func=stage, args=[value], keywords=[])
     return value
 
 

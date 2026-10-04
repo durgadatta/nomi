@@ -1,11 +1,17 @@
 # Nomi Quick Tour — triage a tiny operations queue
 
-priority(ticket) = ticket["impact"] * ticket["urgency"]
-is_hot = priority(_) >= 80
+func priority(ticket):
+    return ticket["impact"] * ticket["urgency"]
 
-label(score) when score >= 90 = "critical"
-label(score) when score >= 70 = "watch"
-label(_) = "steady"
+func is_hot(ticket):
+    return priority(ticket) >= 80
+
+func label(score):
+    if score >= 90:
+        return "critical"
+    if score >= 70:
+        return "watch"
+    return "steady"
 
 tickets = [{"service": "checkout", "impact": 10, "urgency": 9}, {"service": "search", "impact": 6, "urgency": 8}, {"service": "billing", "impact": 8, "urgency": 10}]
 

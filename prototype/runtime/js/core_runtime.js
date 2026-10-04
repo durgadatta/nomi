@@ -21,16 +21,39 @@ function valueError(message) {
   return error;
 }
 
+function safeInteger(value) {
+  if (!Number.isSafeInteger(value)) {
+    const error = new RangeError("Integer exceeds the JS prototype's exact range (-9007199254740991..9007199254740991)");
+    error.code = "NOMI-NUMERIC-RANGE";
+    throw error;
+  }
+  return value;
+}
+
+function integerResult(value) {
+  const limit = BigInt(Number.MAX_SAFE_INTEGER);
+  if (value < -limit || value > limit) return safeInteger(Infinity);
+  return Number(value);
+}
+
+function zeroDivision() {
+  const error = new Error("division by zero");
+  error.name = "ZeroDivisionError";
+  throw error;
+}
+
 function box(value, valueType = null) {
   if (value && typeof value === "object" && typeof value.kind === "string") {
+    if (value.kind === "int") safeInteger(value.value);
     return value;
   }
   if (value === null || value === undefined) return NIL;
   if (typeof value === "boolean") return { kind: "bool", value };
   if (typeof value === "number") {
-    return valueType === "float" || !Number.isInteger(value)
-      ? { kind: "float", value }
-      : { kind: "int", value };
+    const kind = valueType === "int" ? "int" : valueType === "float" || !Number.isInteger(value) ? "float" : "int";
+    if (kind === "int") safeInteger(value);
+    if (!Number.isFinite(value)) throw valueError("Non-finite numbers are not supported by the JS prototype transport");
+    return { kind, value };
   }
   if (typeof value === "string") return { kind: "str", value };
   if (Array.isArray(value)) return { kind: "sequence", elements: value.map(box) };
@@ -163,7 +186,16 @@ class CoreRuntime {
   }
 
   evaluate(corePayload, options = {}) {
+    this.stdout = [];
     const root = this.unwrapPayload(corePayload);
+    // Reject unsupported literals anywhere in the program before any effects.
+    const pending = [root];
+    while (pending.length) {
+      const node = pending.pop();
+      if (!node || typeof node !== "object") continue;
+      if (node.type === "Literal") box(node.value, node.value_type || null);
+      pending.push(...Object.values(node).filter((value) => value && typeof value === "object"));
+    }
     const result = this.evalModule(root);
     if (isSignal(result)) {
       throw new Error(`Unexpected ${result.control} at module level`);
@@ -436,7 +468,10 @@ class CoreRuntime {
     const value = unbox(operand);
     if (node.op === "+") return box(+value, operand.kind);
     if (node.op === "-") return box(-value, operand.kind);
-    if (node.op === "~") return box(~value);
+    if (node.op === "~") {
+      if (!["int", "bool"].includes(operand.kind)) throw new TypeError("bitwise operators require integers");
+      return box(integerResult(~BigInt(value)));
+    }
     if (node.op === "not") return box(!truthy(operand));
     throw new Error(`Unsupported unary op ${node.op}`);
   }
@@ -446,8 +481,52 @@ class CoreRuntime {
     if (isSignal(left)) return left;
     const right = this.eval(node.right);
     if (isSignal(right)) return right;
-    const result = this.applyBinaryOp(node.op, unbox(left), unbox(right));
-    return box(result, this.binaryResultKind(node.op, left, right, result));
+    return this.binaryValue(node.op, left, right);
+  }
+
+  binaryValue(op, left, right) {
+    if (op === "*" && (left.kind === "sequence" || right.kind === "sequence")) {
+      const items = left.kind === "sequence" ? left : right;
+      const count = left.kind === "sequence" ? right : left;
+      if (!["int", "bool"].includes(count.kind)) throw new TypeError("sequence repetition requires an integer");
+      const elements = [];
+      for (let n = 0; n < Number(count.value); n++) elements.push(...items.elements);
+      return { kind: "sequence", elements };
+    }
+    const integerInputs = [left.kind, right.kind].every((kind) => kind === "int" || kind === "bool");
+    const a = unbox(left), b = unbox(right);
+    if (["<<", ">>", "|", "^", "&"].includes(op) && !integerInputs) throw new TypeError("bitwise operators require integers");
+    if (integerInputs && op !== "/" && !(op === "**" && b < 0)) {
+      return box(this.applyIntegerOp(op, BigInt(a), BigInt(b)), "int");
+    }
+    const result = this.applyBinaryOp(op, a, b);
+    return box(result, this.binaryResultKind(op, left, right, result));
+  }
+
+  applyIntegerOp(op, a, b) {
+    let result;
+    if (op === "+") result = a + b;
+    else if (op === "-") result = a - b;
+    else if (op === "*") result = a * b;
+    else if (op === "//" || op === "%") {
+      if (b === 0n) zeroDivision();
+      let quotient = a / b;
+      const remainder = a % b;
+      if (remainder !== 0n && (a < 0n) !== (b < 0n)) quotient -= 1n;
+      result = op === "//" ? quotient : a - quotient * b;
+    } else if (op === "**") {
+      // Bound allocation before exponentiation; +/-1 and 0 stay small.
+      if (b > 53n && a !== 0n && a !== 1n && a !== -1n) return safeInteger(Infinity);
+      result = a === -1n ? (b % 2n === 0n ? 1n : -1n) : a === 1n ? 1n : a === 0n ? (b === 0n ? 1n : 0n) : a ** b;
+    } else if (op === "<<" || op === ">>") {
+      if (b < 0n) throw valueError("negative shift count");
+      if (b > 53n) return op === ">>" ? (a < 0n ? -1 : 0) : a === 0n ? 0 : safeInteger(Infinity);
+      result = op === "<<" ? a << b : a >> b;
+    } else if (op === "|") result = a | b;
+    else if (op === "^") result = a ^ b;
+    else if (op === "&") result = a & b;
+    else throw new Error(`Unsupported integer op ${op}`);
+    return integerResult(result);
   }
 
   evalBooleanOp(node) {
@@ -839,15 +918,20 @@ class CoreRuntime {
         }
         return { kind: "sequence", elements: kept };
       }, true),
+      fold: native("fold", (...args) => this.reduceCollection("fold", args), true),
       float: (value) => {
         const number = Number(value);
         if (Number.isNaN(number)) throw valueError(`could not convert string to float: '${value}'`);
-        return number;
+        return box(number, "float");
       },
       int: (value) => {
+        if (typeof value === "string" && !/^[+-]?\d(?:_?\d)*$/.test(value.trim())) {
+          throw valueError(`invalid literal for int(): '${value}'`);
+        }
+        if (typeof value === "string") value = value.trim().replace(/_/g, "");
         const number = Number(value);
         if (Number.isNaN(number)) throw valueError(`invalid literal for int(): '${value}'`);
-        return Math.trunc(number);
+        return safeInteger(Math.trunc(number));
       },
       len: (value) => value.length,
       list: (value) => (value === undefined || value === null ? [] : Array.from(value)),
@@ -881,27 +965,62 @@ class CoreRuntime {
         return { kind: "sequence", elements: result.map(box) };
       }, true),
       range: (...args) => {
+        if (args.length < 1 || args.length > 3) throw new TypeError("range expects 1..3 arguments");
         const [start, stop, step] =
-          args.length === 1 ? [0, args[0], 1] : [args[0], args[1], args[2] || 1];
+          args.length === 1 ? [0, args[0], 1] : [args[0], args[1], args.length === 3 ? args[2] : 1];
+        [start, stop, step].forEach(safeInteger);
+        if (step === 0) throw valueError("range() arg 3 must not be zero");
         const values = [];
-        for (let i = start; step > 0 ? i < stop : i > stop; i += step) values.push(i);
+        const end = BigInt(stop), stride = BigInt(step);
+        for (let i = BigInt(start); stride > 0n ? i < end : i > end; i += stride) values.push(Number(i));
         return values;
       },
       str: native("str", (value) => this.displayValue(value), true),
-      sum: (values) => values.reduce((total, item) => total + item, 0),
+      scan: native("scan", (...args) => this.reduceCollection("scan", args), true),
+      sum: native("sum", (values) => {
+        let total = box(0);
+        for (const item of this.iterValues(values)) {
+          if (!["int", "float", "bool"].includes(item.kind)) throw new TypeError("sum expects numbers");
+          total = this.binaryValue("+", total, item);
+        }
+        return total;
+      }, true),
     };
   }
 
+  reduceCollection(operation, args) {
+    if (args.length !== 3) throw new TypeError(`${operation} expects 3 arguments`);
+    const [items, seed, combine] = args;
+    if (!["function", "native", "constructor"].includes(combine.kind)) throw new TypeError("combine must be callable");
+    let state = seed;
+    const states = [seed];
+    for (const item of this.iterValues(items)) {
+      state = this.applyCallable(combine, [state, item]);
+      if (isSignal(state)) throw new Error(`Unexpected ${state.control} inside ${operation}`);
+      if (state.kind === "error") throw new Error(state.message);
+      if (operation === "scan") states.push(state);
+    }
+    return operation === "scan" ? { kind: "sequence", elements: states } : state;
+  }
+
   applyBinaryOp(op, left, right) {
+    if (["/", "//", "%"].includes(op) && right === 0) zeroDivision();
     if (op === "+") {
       if (Array.isArray(left) && Array.isArray(right)) return left.concat(right);
       return left + right;
     }
     if (op === "-") return left - right;
-    if (op === "*") return left * right;
+    if (op === "*") {
+      if (typeof left === "string" && Number.isSafeInteger(right)) return left.repeat(Math.max(0, right));
+      if (typeof right === "string" && Number.isSafeInteger(left)) return right.repeat(Math.max(0, left));
+      return left * right;
+    }
     if (op === "/") return left / right;
     if (op === "//") return Math.floor(left / right);
-    if (op === "%") return left % right;
+    if (op === "%") {
+      const remainder = left % right;
+      return remainder !== 0 && (remainder < 0) !== (right < 0) ? remainder + right : remainder;
+    }
     if (op === "**") return left ** right;
     if (op === "<<") return left << right;
     if (op === ">>") return left >> right;

@@ -75,6 +75,51 @@ remain deliberately parser-specific inspection adapters. The inspection CLI's
 
 ## Current Pipeline Artifacts
 
+### Bounded Prototype Library And Numeric Contracts
+
+These are current operational contracts, not target typing/effect admission.
+The [generic-operation research](../research/generic_operations.md) motivates
+ordinary calls rather than additional grammar or Core nodes.
+
+| Operation | Current contract |
+| --- | --- |
+| `fold(items, seed, combine)` | Strict ordered left traversal; `combine(state, item)` once per visited item; empty input returns the seed; first callback failure stops traversal. |
+| `scan(items, seed, combine)` | Same traversal; materialized list includes the seed, then every successive state. Empty input returns `[seed]`. States are references, not implicit deep-copy snapshots. |
+
+Owner/layer: collections, library experiment; normal form: ordinary `Call`.
+The Nomi/reduced interpreter prelude and Python/JavaScript Core host adapters
+expose these names. The plain Python compatibility interpreter is unchanged.
+The existing host-capability manifest records callbacks as potentially
+effectful/fallible; it is inventory, not an effect checker or authority grant.
+Inspect using `--stage host-capabilities` and `--stage core-json`.
+Coverage includes empty/non-associative reductions, callback order/failure,
+seeded history, Python reference aliasing and backend/sample comparisons.
+Replace or remove the experiment when D1 closes the typed callback contract;
+no syntax, parser feature, universal method or parallel-merge law is admitted.
+
+The JavaScript prototype represents integers only in
+`-9007199254740991..9007199254740991`. Unsupported literals are rejected before
+program effects; arithmetic, conversion and summation overflow fail at the
+operation with `NOMI-NUMERIC-RANGE`. Internal BigInt arithmetic prevents 32-bit
+bitwise truncation and inaccurate integer division, but BigInt is not exposed
+as a language value or JSON transport. Floats must be finite; they are not
+exact arithmetic. Python retains its wider integer range. This fence repairs
+silent loss without choosing the unresolved target numeric tower. The bound
+follows [ECMAScript's safe-integer definition](https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-number.max_safe_integer).
+
+Failed facade/session execution now carries a fallback `NOMI-PARSE` or
+`NOMI-RUNTIME` diagnostic while retaining the original exception and captured
+output. Known binding errors keep their specific record. Source locations are
+reported only when known; Lark columns are Unicode code-point positions,
+browser Rust byte offsets are converted to Monaco's UTF-16 positions. Runtime
+source mapping and a complete versioned result transport remain future work.
+
+CLI `--output program` separates program output from the legacy debug dump;
+`--output json` emits a `nomi.cli-inspection` v1 record with diagnostic records
+and **repr strings** for bindings, not a value codec. The default stays `debug`
+for existing tooling. Execution errors exit 1 without an internal traceback.
+
+
 The current default pipeline is:
 
 ```text

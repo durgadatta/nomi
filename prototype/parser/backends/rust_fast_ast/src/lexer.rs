@@ -6,6 +6,7 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
     let mut offset = 0;
     let mut line_start = true;
     let mut indents = vec![0usize];
+    let mut delimiters = Vec::new();
 
     while offset < source.len() {
         if line_start {
@@ -15,13 +16,13 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
                 continue;
             }
             let current = *indents.last().expect("indent stack is never empty");
-            if indent > current {
+            if delimiters.is_empty() && indent > current {
                 indents.push(indent);
                 tokens.push(Token {
                     kind: TokenKind::Indent,
                     offset,
                 });
-            } else {
+            } else if delimiters.is_empty() {
                 while indent < *indents.last().expect("indent stack is never empty") {
                     indents.pop();
                     tokens.push(Token {
@@ -49,10 +50,12 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
                 offset += ch.len_utf8();
             }
             '\n' => {
-                tokens.push(Token {
-                    kind: TokenKind::Newline,
-                    offset,
-                });
+                if delimiters.is_empty() {
+                    tokens.push(Token {
+                        kind: TokenKind::Newline,
+                        offset,
+                    });
+                }
                 offset += ch.len_utf8();
                 line_start = true;
             }
@@ -438,6 +441,24 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
                 ));
             }
         };
+        match ch {
+            '(' | '[' | '{' => delimiters.push(ch),
+            ')' | ']' | '}' => {
+                let expected = match ch {
+                    ')' => '(',
+                    ']' => '[',
+                    _ => '{',
+                };
+                if delimiters.pop() != Some(expected) {
+                    return Err(ParseError::new("mismatched delimiter", offset - 1));
+                }
+            }
+            _ => {}
+        }
+    }
+
+    if !delimiters.is_empty() {
+        return Err(ParseError::new("unclosed delimiter", source.len()));
     }
 
     while indents.len() > 1 {

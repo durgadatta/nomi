@@ -4,6 +4,7 @@ Nomi CLI - Run Nomi or Python files
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -15,6 +16,12 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(
         prog="nomi",
         description="Run Nomi or Python files",
+    )
+    parser.add_argument(
+        "--output",
+        choices=("debug", "program", "json"),
+        default="debug",
+        help="Output format (default: legacy debug; program prints only program output)",
     )
     parser.add_argument(
         "filename",
@@ -44,25 +51,60 @@ def main():
     else:
         mode = "python"
 
-    print(f"Running: {filename}")
-    print("-" * 40)
+    if args.output == "debug":
+        print(f"Running: {filename}")
+        print("-" * 40)
 
     from prototype.runtime import execute
 
     options = {"parser_frontend": args.parser_frontend} if args.parser_frontend else {}
-    result = execute(filename=file_path, mode=mode, **options)
+    result = execute(filename=file_path, mode=mode, raise_on_error=False, **options)
+    if args.output == "json":
+        print(
+            json.dumps(
+                {
+                    "schema": "nomi.cli-inspection",
+                    "version": 1,
+                    "ok": result.ok,
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                    "bindings": {
+                        key: repr(value) for key, value in result.bindings.items()
+                    },
+                    "diagnostics": [
+                        diagnostic.to_record() for diagnostic in result.diagnostics
+                    ],
+                    "pipeline": {
+                        "parser_frontend": result.pipeline.parser_frontend,
+                        "eval_backend": result.pipeline.eval_backend,
+                    },
+                }
+            )
+        )
+        return 0 if result.ok else 1
     if result.stdout:
         print(result.stdout, end="")
     if result.stderr:
         print(result.stderr, end="", file=sys.stderr)
+    if not result.ok:
+        for diagnostic in result.diagnostics:
+            span = diagnostic.span or {}
+            position = f":{span['line']}:{span['column']}" if span.get("line") else ""
+            print(
+                f"{filename}{position}: {diagnostic.code}: {diagnostic.message}",
+                file=sys.stderr,
+            )
+        return 1
     bindings = result.bindings
 
-    print("-" * 40)
-    print("Global Environment:")
-    for key, value in bindings.items():
-        if key not in ("__builtins__", "builtins"):
-            print(f"{key}: {value}")
+    if args.output == "debug":
+        print("-" * 40)
+        print("Global Environment:")
+        for key, value in bindings.items():
+            if key not in ("__builtins__", "builtins"):
+                print(f"{key}: {value}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

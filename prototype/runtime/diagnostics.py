@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
+
+from lark.exceptions import UnexpectedInput
 
 
 SEMANTIC_EVENT_KINDS = (
@@ -458,8 +461,10 @@ def record_runtime_exception(
     phase: str = "eval",
     frontend: str | None = None,
     backend: str | None = None,
+    source: str | None = None,
+    filename: str | Path | None = None,
 ) -> None:
-    """Record structured diagnostics for exceptions with known Nomi semantics."""
+    """Prefer semantic diagnostics, otherwise preserve the failing phase/source."""
     known_error = _known_semantic_error(error)
     if _is_binding_error(known_error):
         record_binding_error(
@@ -469,6 +474,56 @@ def record_runtime_exception(
             frontend=frontend,
             backend=backend,
         )
+        return
+
+    chain = list(_exception_chain(error))
+    parse_error = next(
+        (item for item in chain if isinstance(item, (UnexpectedInput, SyntaxError))),
+        None,
+    )
+    cause = parse_error or chain[-1]
+    actual_phase = "parse" if parse_error is not None else phase
+    if source is None and filename is not None:
+        try:
+            source = Path(filename).read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            pass
+    line = getattr(cause, "line", None) or getattr(cause, "lineno", None)
+    column = getattr(cause, "column", None) or getattr(cause, "offset", None)
+    # Lark's EOF token uses -1 rather than a source position.
+    if parse_error is not None and source is not None and (not line or line < 1):
+        lines = source.split("\n")
+        line, column = len(lines), len(lines[-1]) + 1
+    span = None
+    excerpt = None
+    if isinstance(line, int) and line > 0:
+        column = column if isinstance(column, int) and column > 0 else 1
+        span = {"line": line, "column": column, "coordinate_unit": "unicode-code-point"}
+        if filename is not None:
+            span["filename"] = str(filename)
+        lines = source.splitlines() if source is not None else []
+        if line <= len(lines):
+            excerpt = lines[line - 1]
+    collector.diagnostic(
+        str(error),
+        phase=actual_phase,
+        code="NOMI-PARSE" if parse_error is not None else "NOMI-RUNTIME",
+        span=span,
+        source_excerpt=excerpt,
+        node_type=type(cause).__name__,
+        frontend=frontend,
+        backend=backend,
+        details={"exception_type": type(cause).__name__},
+    )
+
+
+def _exception_chain(error: Exception):
+    seen: set[int] = set()
+    current: BaseException | None = error
+    while isinstance(current, Exception) and id(current) not in seen:
+        seen.add(id(current))
+        yield current
+        current = current.__cause__ or current.__context__
 
 
 def _known_semantic_error(error: Exception) -> Exception:

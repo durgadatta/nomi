@@ -66,6 +66,13 @@ Run without installation:
 python3 scripts/cli.py samples/demo.nomi
 ```
 
+For program-only output, add `--output program`; `--output json` returns
+diagnostics and inspected binding strings separately from stdout. The legacy
+debug output remains the default. Try `samples/data_pipeline.nomi` for ordered
+`fold`/seeded `scan`, or `samples/text_pipeline.nomi.nb` for delimited-text
+exploration. These are runnable prototype library operations, not a static
+callback checker, strict CSV decoder or data/ML engine.
+
 The current runtime parses source with Lark, lowers through Python AST and
 Nomi-owned artifacts, and evaluates it with layered interpreters. Python is a
 bootstrap substrate, not the future language definition.
@@ -84,6 +91,9 @@ the readable orchestration and replaceable engine boundaries.
 
 The live playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
 runtime. Its sample list is generated from runnable files under `samples/`.
+The JS prototype rejects integers outside +/-9007199254740991 rather than
+rounding them; Python supports wider integers. Target scalar semantics and
+typed callbacks remain design work.
 
 Run it locally:
 

@@ -72,6 +72,24 @@
       "available_in_browser": true
     },
     {
+      "name": "fold",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "3",
+      "argument_shape": ["iterable", "seed", "callable(state, item)"],
+      "return_shape": "state",
+      "value_boxing": "core-values",
+      "error_kind": "call-error",
+      "determinism": "depends-on-callback",
+      "side_effects": ["callback", "stdout"],
+      "minimum_host": "core-runtime",
+      "expects_values": true,
+      "pure": false,
+      "may_print": true,
+      "may_throw": true,
+      "available_in_browser": true,
+      "notes": "Prototype library experiment: strict left traversal, explicit seed, fail-fast; no associativity or static purity claim. Normal form: ordinary Call."
+    },
+    {
       "name": "float",
       "runtimes": ["core-runtime", "js-core-runtime"],
       "arity": "1",
@@ -189,6 +207,24 @@
       "may_print": false,
       "may_throw": true,
       "available_in_browser": true
+    },
+    {
+      "name": "scan",
+      "runtimes": ["core-runtime", "js-core-runtime"],
+      "arity": "3",
+      "argument_shape": ["iterable", "seed", "callable(state, item)"],
+      "return_shape": "seeded-state-sequence",
+      "value_boxing": "core-values",
+      "error_kind": "call-error",
+      "determinism": "depends-on-callback",
+      "side_effects": ["callback", "stdout"],
+      "minimum_host": "core-runtime",
+      "expects_values": true,
+      "pure": false,
+      "may_print": true,
+      "may_throw": true,
+      "available_in_browser": true,
+      "notes": "Prototype library experiment: strict left traversal; seed included; states retained by reference, not deep copied. Normal form: ordinary Call."
     },
     {
       "name": "slice",

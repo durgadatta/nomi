@@ -15,23 +15,41 @@ async function initWasm() {
 }
 
 async function initRuntime() {
-  importScripts("./core_runtime.js?v=2");
-  importScripts("./lower_to_core_ir.js?v=2");
+  importScripts("./core_runtime.js?v=3");
+  importScripts("./lower_to_core_ir.js?v=3");
   await initWasm();
   runtime = new NomiCoreRuntime.CoreRuntime();
 }
 
-function diagnosticRecord({ phase, message, severity, capability, frontend, backend }) {
+function diagnosticRecord({ phase, message, severity, capability, frontend, backend, code, span, sourceExcerpt }) {
   return {
     phase,
     severity: severity || "error",
     message,
-    span: null,
-    source_excerpt: null,
+    span: span || null,
+    source_excerpt: sourceExcerpt || null,
     node_type: null,
     capability: capability || null,
     frontend: frontend || "rust-fast-ast-wasm",
     backend: backend || "js-core-runtime",
+    code: code || null,
+  };
+}
+
+function parseErrorLocation(message, source) {
+  const match = String(message).match(/ at byte (\d+)$/);
+  if (!match) return {};
+  const offset = Number(match[1]);
+  const bytes = new TextEncoder().encode(source);
+  if (offset > bytes.length) return {};
+  let prefix;
+  try { prefix = new TextDecoder("utf-8", { fatal: true }).decode(bytes.slice(0, offset)); }
+  catch (_) { return {}; }
+  const line = prefix.split("\n").length;
+  const column = prefix.length - prefix.lastIndexOf("\n");
+  return {
+    span: { line, column, byte_offset: offset, coordinate_unit: "utf16-code-unit" },
+    sourceExcerpt: source.split(/\r?\n/)[line - 1] || "",
   };
 }
 
@@ -76,7 +94,7 @@ function runWithWasmJs(code) {
     json = wasm_bindgen.parse_nomi(code);
   } catch (e) {
     const totalMs = performance.now() - parseStart;
-    const message = "parse error: " + e.message;
+    const message = "parse error: " + (e && e.message ? e.message : String(e));
     return resultEnvelope({
       ok: false,
       error: message,
@@ -86,6 +104,8 @@ function runWithWasmJs(code) {
           message,
           capability: "rust-fast-ast-wasm.parse",
           backend: null,
+          code: "NOMI-PARSE",
+          ...parseErrorLocation(message, code),
         }),
       ],
       timings: {
@@ -135,11 +155,13 @@ function runWithWasmJs(code) {
     return resultEnvelope({
       ok: false,
       error: message,
+      stdout: runtime.stdout.join(""),
       diagnostics: [
         diagnosticRecord({
           phase: "eval",
           message,
           capability: "js-core-runtime.eval",
+          code: e.code || "NOMI-RUNTIME",
         }),
       ],
       timings: {

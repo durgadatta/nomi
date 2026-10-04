@@ -107,6 +107,7 @@
     "prototype/runtime/backends/json_process.py",
     "prototype/runtime/backends/python_ast.py",
     "prototype/runtime/backends/values.py",
+    "prototype/runtime/collections.py",
     "prototype/runtime/decode.py",
     "prototype/runtime/diagnostics.py",
     "prototype/runtime/host_capabilities.py",
@@ -127,10 +128,12 @@
     "samples/collections.nomi",
     "samples/comprehensive.nomi",
     "samples/constraint.nomi",
+    "samples/data_pipeline.nomi",
     "samples/demo.nomi",
     "samples/demo_terse.nomi",
     "samples/demo_verbose.nomi",
     "samples/notebook_intro.nomi.nb",
-    "samples/others.nomi"
+    "samples/others.nomi",
+    "samples/text_pipeline.nomi.nb"
   ]
 }

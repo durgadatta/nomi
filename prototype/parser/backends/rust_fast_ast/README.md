@@ -6,6 +6,14 @@ as real replacement machinery, not as the replacement itself.
 
 ## Current Status
 
+The October prototype delivery pass fixes implicit line continuation inside
+balanced `()`, `[]` and `{}`: interior whitespace/comments do not emit statement
+or indentation tokens, outer suites still do, and mismatched delimiters fail
+with byte offsets. This is parity repair for existing collection/call syntax,
+not new notation or frontend promotion. Release-facing fixtures exercise the
+Python adapter and committed WASM/JS pipeline; source hashes require rebuilding
+both WASM targets after lexer changes.
+
 The root `rust-toolchain.toml` pins the project Rust toolchain to stable and
 declares `rustfmt` as a required component for this spike.
 

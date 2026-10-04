@@ -48,6 +48,8 @@ JS_CORE_BACKEND_SPEC = EvalBackendSpec(
         "first non-Python runtime backend",
         "Node wrapper consumes session-lowered Core IR; browser default uses Rust/WASM parsing plus JS lowering",
         "dispatches every currently registered CoreNode in JavaScript",
+        "integers limited to +/-9007199254740991; unsupported literals fail before execution, overflow fails at the operation",
+        "finite floats only; this prototype boundary does not define the target numeric tower",
     ),
 )
 

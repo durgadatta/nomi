@@ -1,0 +1,58 @@
+{
+  "is_paid": "is_paid:class=<class 'function'>",
+  "amount": "amount:class=<class 'function'>",
+  "add_amount": "add_amount:class=<class 'function'>",
+  "orders": [
+    {
+      "item": "notebook",
+      "quantity": 2,
+      "unit_cents": 450,
+      "status": "paid"
+    },
+    {
+      "item": "pencil",
+      "quantity": 3,
+      "unit_cents": 120,
+      "status": "paid"
+    },
+    {
+      "item": "folder",
+      "quantity": 1,
+      "unit_cents": 250,
+      "status": "cancelled"
+    }
+  ],
+  "paid": [
+    {
+      "item": "notebook",
+      "quantity": 2,
+      "unit_cents": 450,
+      "status": "paid"
+    },
+    {
+      "item": "pencil",
+      "quantity": 3,
+      "unit_cents": 120,
+      "status": "paid"
+    }
+  ],
+  "amounts": [
+    900,
+    360
+  ],
+  "total_cents": 1260,
+  "running_cents": [
+    0,
+    900,
+    1260
+  ],
+  "empty_total": 0,
+  "stdout": [
+    "Paid orders: 2",
+    "Amounts in cents: [900, 360]",
+    "Total in cents: 1260",
+    "Running cents, including seed: [0, 900, 1260]",
+    "Empty batch total: 0",
+    ""
+  ]
+}

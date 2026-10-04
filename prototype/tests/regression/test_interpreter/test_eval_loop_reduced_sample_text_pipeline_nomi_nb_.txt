@@ -1,0 +1,37 @@
+{
+  "normalize_line": "normalize_line:class=<class 'function'>",
+  "is_record": "is_record:class=<class 'function'>",
+  "lines": [
+    " # daily counts ",
+    " ada,3 ",
+    "",
+    " grace,5 ",
+    " alan,2 "
+  ],
+  "normalized": [
+    "# daily counts",
+    "ada,3",
+    "",
+    "grace,5",
+    "alan,2"
+  ],
+  "records": [
+    "ada,3",
+    "grace,5",
+    "alan,2"
+  ],
+  "read_count": "read_count:class=<class 'function'>",
+  "counts": [
+    3,
+    5,
+    2
+  ],
+  "add_count": "add_count:class=<class 'function'>",
+  "stdout": [
+    "Records: 3",
+    "Counts: [3, 5, 2]",
+    "Total: 10",
+    "History: [0, 3, 8, 10]",
+    ""
+  ]
+}

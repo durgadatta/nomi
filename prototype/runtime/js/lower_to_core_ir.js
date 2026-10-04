@@ -63,6 +63,7 @@ function diagnostic(message, details) {
     capability: details && details.capability ? details.capability : "js-lowerer.unsupported",
     frontend: "rust-fast-ast-wasm",
     backend: "js-core-runtime",
+    code: details && details.code ? details.code : null,
   };
   return { type: "Diagnostic", message, diagnostic };
 }
@@ -199,8 +200,20 @@ function lowerExpr(expr) {
 }
 
 function lowerNumber(raw) {
-  const n = Number(raw);
-  if (Number.isInteger(n) && raw.indexOf(".") === -1) {
+  const text = String(raw).replace(/_/g, "");
+  const n = Number(text);
+  const isInteger = !/[.eE]/.test(text) || /^[-+]?0[xXbBoO]/.test(text);
+  if (isInteger && !Number.isSafeInteger(n)) {
+    return diagnostic("Integer exceeds the JS prototype's exact range (-9007199254740991..9007199254740991)", {
+      code: "NOMI-NUMERIC-RANGE", capability: "numeric.safe-integer", source_excerpt: String(raw),
+    });
+  }
+  if (!Number.isFinite(n)) {
+    return diagnostic("Non-finite numbers are not supported by the JS prototype transport", {
+      code: "NOMI-NUMERIC-RANGE", capability: "numeric.finite", source_excerpt: String(raw),
+    });
+  }
+  if (isInteger) {
     return literal(n, "int");
   }
   return literal(n, "float");

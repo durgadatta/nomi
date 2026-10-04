@@ -1,0 +1,28 @@
+# ASCII delimited-text exploration; not a CSV parser or strict decoder.
+
+# %% Normalize and select text
+func normalize_line(line):
+    return line.strip()
+
+func is_record(line):
+    return line != "" and not line.startswith("#")
+
+lines = [" # daily counts ", " ada,3 ", "", " grace,5 ", " alan,2 "]
+normalized = list(map(normalize_line, lines))
+records = list(filter(is_record, normalized))
+print("Records: " + str(len(records)))
+
+# %% Convert fields explicitly
+func read_count(line):
+    fields = line.split(",")
+    return int(fields[1])
+
+counts = list(map(read_count, records))
+print("Counts: " + str(counts))
+
+# %% Accumulate ordered state
+func add_count(total, count):
+    return total + count
+
+print("Total: " + str(fold(counts, 0, add_count)))
+print("History: " + str(scan(counts, 0, add_count)))

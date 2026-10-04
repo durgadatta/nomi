@@ -1,0 +1,29 @@
+# Ordered data transformations with explicit state and integer cents.
+# Prototype library calls; no database, streaming or parallel execution.
+
+func is_paid(order):
+    return order["status"] == "paid"
+
+func amount(order):
+    return order["quantity"] * order["unit_cents"]
+
+func add_amount(total, cents):
+    return total + cents
+
+orders = [
+    {"item": "notebook", "quantity": 2, "unit_cents": 450, "status": "paid"},
+    {"item": "pencil", "quantity": 3, "unit_cents": 120, "status": "paid"},
+    {"item": "folder", "quantity": 1, "unit_cents": 250, "status": "cancelled"},
+]
+
+paid = list(filter(is_paid, orders))
+amounts = list(map(amount, paid))
+total_cents = amounts |> fold(0, add_amount)
+running_cents = scan(amounts, 0, add_amount)
+empty_total = fold([], 0, add_amount)
+
+print("Paid orders: " + str(len(paid)))
+print("Amounts in cents: " + str(amounts))
+print("Total in cents: " + str(total_cents))
+print("Running cents, including seed: " + str(running_cents))
+print("Empty batch total: " + str(empty_total))

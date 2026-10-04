@@ -1,6 +1,6 @@
 {
   "priority": "priority:class=<class 'function'>",
-  "is_hot": "func:class=<class 'function'>",
+  "is_hot": "is_hot:class=<class 'function'>",
   "label": "label:class=<class 'function'>",
   "tickets": [
     {
