@@ -230,10 +230,10 @@
       "name": "slice",
       "runtimes": ["js-core-runtime"],
       "arity": "2..4",
-      "argument_shape": ["sequence", "optional int", "optional int", "optional int"],
-      "return_shape": "sequence",
-      "value_boxing": "host-values",
-      "error_kind": "type-error",
+      "argument_shape": ["sequence or str", "optional int", "optional int", "optional int"],
+      "return_shape": "same collection kind",
+      "value_boxing": "core-values",
+      "error_kind": "type-or-value-error",
       "determinism": "deterministic",
       "side_effects": [],
       "minimum_host": "js-core-runtime",
@@ -242,7 +242,7 @@
       "may_print": false,
       "may_throw": true,
       "available_in_browser": true,
-      "notes": "Temporary JS lowerer helper for slice expressions."
+      "notes": "Temporary JS lowerer helper, not a target public API: clipped half-open bounds; nonzero stride; code-point text; shallow tagged sequence copies. Remove when slices gain an accepted backend-neutral representation."
     },
     {
       "name": "str",

@@ -16,6 +16,9 @@ data/ML engine is promised.
 - Added structured fallback diagnostics and selectable CLI program/JSON output.
 - Repaired Rust multiline collection continuation and pipeline argument insertion,
   browser boolean lowering, text iteration/length and per-execution stdout.
+- Made browser indexing and slicing code-point consistent, with explicit invalid
+  access failures, clipped/reverse bounds and shallow type-preserving copies;
+  expanded the text notebook with bounded windows.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Expanded release gates to real desktop/mobile browser scenarios, alongside

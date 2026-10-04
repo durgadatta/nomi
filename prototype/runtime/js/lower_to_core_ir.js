@@ -1134,7 +1134,7 @@ function lowerSliceExpr(text) {
   }
   const objText = text.slice(0, bracketStart).trim();
   const inner = text.slice(bracketStart + 1, bracketEnd).trim();
-  const parts = inner.split(":").filter(s => s !== "").map(s => s.trim());
+  const parts = inner.split(":").map(s => s.trim());
   const args = [lowerRawExpr(objText), NIL, NIL, literal(1, "int")];
   if (parts[0]) args[1] = lowerRawExpr(parts[0]);
   if (parts[1]) args[2] = lowerRawExpr(parts[1]);

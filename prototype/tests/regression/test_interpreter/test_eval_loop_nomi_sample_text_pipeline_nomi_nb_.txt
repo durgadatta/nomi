@@ -32,6 +32,10 @@
     "Counts: [3, 5, 2]",
     "Total: 10",
     "History: [0, 3, 8, 10]",
+    "Last count: 2",
+    "First record prefix: ada",
+    "Count window: [5, 2]",
+    "Reverse counts: [2, 5, 3]",
     ""
   ]
 }

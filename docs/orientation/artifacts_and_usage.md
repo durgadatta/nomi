@@ -107,6 +107,23 @@ exact arithmetic. Python retains its wider integer range. This fence repairs
 silent loss without choosing the unresolved target numeric tower. The bound
 follows [ECMAScript's safe-integer definition](https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-number.max_safe_integer).
 
+Browser text length, iteration, indexing and slicing now use Unicode code
+points, not UTF-16 units or grapheme clusters. No normalization is implicit:
+an astral character occupies one element; a combining mark remains a separate
+element. Sequence/text indexing accepts prototype integer (including Bool)
+indices, resolves negatives relative to length, and rejects wrong types or
+out-of-range access. Missing mapping keys fail; a present `None` remains a value.
+These are compatibility repairs at Core `GetItem`, not target absence policy.
+
+Browser slices retain the existing temporary `Call(slice, ...)` lowering.
+Half-open bounds clip to length; omitted reverse bounds differ from explicit
+negative bounds; zero strides and noninteger bounds fail. Sequence copies are
+shallow and retain tagged values/callables; text copies preserve code points.
+The host-capability record describes this fenced helper and its removal gate.
+Python-AST-to-Core slice lowering is still unsupported; the Python interpreter
+and structured Rust/WASM browser path are covered. Target Text/Bytes validity,
+normalization, grapheme APIs, portable maps and source coordinates remain D3.
+
 Failed facade/session execution now carries a fallback `NOMI-PARSE` or
 `NOMI-RUNTIME` diagnostic while retaining the original exception and captured
 output. Known binding errors keep their specific record. Source locations are

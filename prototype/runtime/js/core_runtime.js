@@ -21,6 +21,28 @@ function valueError(message) {
   return error;
 }
 
+function accessError(kind, message) {
+  const error = new Error(message);
+  error.name = kind;
+  return error;
+}
+
+function sequenceIndex(value) {
+  if (!value || !["int", "bool"].includes(value.kind)) {
+    throw new TypeError("sequence index must be an integer");
+  }
+  return safeInteger(Number(value.value));
+}
+
+function sliceBound(value, length, stride, fallback) {
+  if (value === undefined || value.kind === "nil") return fallback;
+  let index = BigInt(sequenceIndex(value));
+  if (index < 0n) index += length;
+  const minimum = stride < 0n ? -1n : 0n;
+  const maximum = stride < 0n ? length - 1n : length;
+  return index < minimum ? minimum : index > maximum ? maximum : index;
+}
+
 function safeInteger(value) {
   if (!Number.isSafeInteger(value)) {
     const error = new RangeError("Integer exceeds the JS prototype's exact range (-9007199254740991..9007199254740991)");
@@ -601,12 +623,23 @@ class CoreRuntime {
   evalGetItem(node) {
     const objectValue = this.eval(node.object_);
     if (isSignal(objectValue)) return objectValue;
+    if (objectValue.kind === "error") return objectValue;
     const key = this.eval(node.key);
     if (isSignal(key)) return key;
-    const keyValue = unbox(key);
-    if (objectValue.kind === "sequence") return objectValue.elements[keyValue];
-    if (objectValue.kind === "mapping") return objectValue.entries.get(keyValue);
-    return box(unbox(objectValue)[keyValue]);
+    if (key.kind === "error") return key;
+    if (objectValue.kind === "sequence" || objectValue.kind === "str") {
+      const elements = objectValue.kind === "str" ? Array.from(objectValue.value) : objectValue.elements;
+      let index = sequenceIndex(key);
+      if (index < 0) index += elements.length;
+      if (index < 0 || index >= elements.length) throw accessError("IndexError", `${objectValue.kind} index out of range`);
+      return objectValue.kind === "str" ? box(elements[index]) : elements[index];
+    }
+    if (objectValue.kind === "mapping") {
+      const keyValue = unbox(key);
+      if (!objectValue.entries.has(keyValue)) throw accessError("KeyError", `mapping key not found: ${this.displayValue(key)}`);
+      return objectValue.entries.get(keyValue);
+    }
+    throw new TypeError(`${objectValue.kind} does not support indexing`);
   }
 
   evalSpread(_node) {
@@ -955,22 +988,7 @@ class CoreRuntime {
         this.stdout.push(`${values.map((value) => this.displayValue(value)).join(" ")}\n`);
         return null;
       }, true),
-      slice: native("slice", (obj, start, end, step) => {
-        const stepVal = step === undefined || step === null ? 1 : unbox(step);
-        const startVal = start === undefined || start === null ? 0 : unbox(start);
-        let source;
-        if (Array.isArray(obj)) source = obj;
-        else if (obj && obj.kind === "sequence") source = obj.elements.map(unbox);
-        else if (typeof obj === "string") source = obj;
-        else source = String(obj);
-        const endVal = end === undefined || end === null ? source.length : unbox(end);
-        const result = [];
-        for (let i = startVal; stepVal > 0 ? i < endVal : i > endVal; i += stepVal) {
-          result.push(source[i]);
-        }
-        if (typeof source === "string") return result.join("");
-        return { kind: "sequence", elements: result.map(box) };
-      }, true),
+      slice: native("slice", (...args) => this.sliceCollection(args), true),
       range: (...args) => {
         if (args.length < 1 || args.length > 3) throw new TypeError("range expects 1..3 arguments");
         const [start, stop, step] =
@@ -1008,6 +1026,24 @@ class CoreRuntime {
       if (operation === "scan") states.push(state);
     }
     return operation === "scan" ? { kind: "sequence", elements: states } : state;
+  }
+
+  sliceCollection(args) {
+    if (args.length < 2 || args.length > 4) throw new TypeError("slice helper expects 2..4 arguments");
+    const [value, start, end, step] = args;
+    if (!["sequence", "str"].includes(value.kind)) throw new TypeError(`${value.kind} does not support slicing`);
+    const elements = value.kind === "str" ? Array.from(value.value) : value.elements;
+    const stride = step === undefined || step.kind === "nil" ? 1n : BigInt(sequenceIndex(step));
+    if (stride === 0n) throw valueError("slice step must not be zero");
+    const length = BigInt(elements.length);
+    // An omitted reverse stop is -1; an explicit -1 is relative to length.
+    const first = sliceBound(start, length, stride, stride < 0n ? length - 1n : 0n);
+    const stop = sliceBound(end, length, stride, stride < 0n ? -1n : length);
+    const result = [];
+    for (let index = first; stride > 0n ? index < stop : index > stop; index += stride) {
+      result.push(elements[Number(index)]);
+    }
+    return value.kind === "str" ? box(result.join("")) : { kind: "sequence", elements: result };
   }
 
   applyBinaryOp(op, left, right) {

@@ -53,10 +53,23 @@ def check_workbench_scenarios(page, expect, artifacts):
     expect(outputs.nth(0)).to_have_text("Records: 3")
     expect(outputs.nth(1)).to_have_text("Counts: [3, 5, 2]")
     expect(outputs.nth(2)).to_have_text("Total: 10\nHistory: [0, 3, 8, 10]")
+    expect(outputs.nth(3)).to_have_text(
+        "Last count: 2\nFirst record prefix: ada\nCount window: [5, 2]\nReverse counts: [2, 5, 3]"
+    )
     page.screenshot(path=str(artifacts / "text-notebook.png"), full_page=True)
 
     # Edit/diagnose/repair; locations must survive UTF-8 -> UTF-16 conversion.
     page.get_by_role("button", name="Create local scratch file").click()
+    run_source(
+        "text = 'a\U0001f600e\u0301'\nprint(len(text))\nprint(text[1])\nprint(text[::-1])\n",
+        "4\n\U0001f600\n\u0301e\U0001f600a",
+    )
+    set_source("print('before')\nprint([][0])\nprint('after')\n")
+    page.locator("#run-all-btn").click()
+    expect(page.locator("#status")).to_have_text("error")
+    expect(page.locator(".diagnostic-message")).to_contain_text("index out of range")
+    page.get_by_role("tab", name="Output", exact=True).click()
+    expect(page.locator('[data-result-view="output"] pre')).to_have_text("before")
     set_source('text = "\U0001f600"\nx = !\n')
     page.locator("#run-all-btn").click()
     expect(page.locator("#status")).to_have_text("error")

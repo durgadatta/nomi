@@ -26,3 +26,9 @@ func add_count(total, count):
 
 print("Total: " + str(fold(counts, 0, add_count)))
 print("History: " + str(scan(counts, 0, add_count)))
+
+# %% Select bounded windows
+print("Last count: " + str(counts[-1]))
+print("First record prefix: " + records[0][:3])
+print("Count window: " + str(counts[1:3]))
+print("Reverse counts: " + str(counts[::-1]))
