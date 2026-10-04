@@ -1,5 +1,6 @@
 import ast
 from copy import copy
+from inspect import Parameter, Signature
 from typing import List, Any
 
 from ..constants import BLOCK_KWARG
@@ -156,94 +157,68 @@ class FunctionMixin(FunctionCallMixin):
         lambda_func.ast_node = node
         return lambda_func
 
-    def _bind_self_obj(self, env, params, self_obj):
-        if self_obj is None:
-            return params
-        if params:
-            env.set(params[0].arg, self_obj)
-            return params[1:]
-        return params
-
-    def _bind_declared_params(self, env, params, posargs, kwargs, keywordable_params=None):
-        if keywordable_params is None:
-            keywordable_params = params
-        keywordable = {param.arg for param in keywordable_params}
-        for i, param in enumerate(params):
-            if i < len(posargs):
-                env.set(param.arg, posargs[i])
-            elif param.arg in keywordable and param.arg in kwargs:
-                env.set(param.arg, kwargs[param.arg])
-
-    def _bind_keyword_values(self, env, params, kwonlyargs, posargs, kwargs):
-        bound_by_position = {param.arg for param in params[:len(posargs)]}
-        declared_names = {param.arg for param in params}
-        declared_names.update(param.arg for param in kwonlyargs)
-        for key, value in kwargs.items():
-            if key in declared_names and key not in bound_by_position:
-                env.set(key, value)
-
-    def _apply_param_defaults(self, env, params, defaults):
-        num_defaults = len(defaults)
-        if not num_defaults:
-            return
-
-        default_start = len(params) - num_defaults
-        for i, param in enumerate(params):
-            if param.arg not in env.bindings and i >= default_start:
-                default_idx = i - default_start
-                if default_idx < len(defaults):
-                    env.set(param.arg, self.eval(defaults[default_idx]))
-
-    def _apply_kwonly_defaults(self, env, params, defaults):
-        for param, default in zip(params, defaults or []):
-            if param.arg not in env.bindings and default is not None:
-                env.set(param.arg, self.eval(default))
-
-    def _bind_varargs(self, func_node, env, params, posargs):
-        if not func_node.args.vararg:
-            return
-
-        vararg_name = func_node.args.vararg.arg
-        consumed_pos = min(len(params), len(posargs))
-        remaining_args = posargs[consumed_pos:]
-        env.set(vararg_name, tuple(remaining_args))
-
-    def _bind_kwargs(self, func_node, env, params, kwargs):
-        if not func_node.args.kwarg:
-            return
-
-        kwarg_name = func_node.args.kwarg.arg
-        consumed_kw = {p.arg for p in params if p.arg in env.bindings}
-        extra_kwargs = {k: v for k, v in kwargs.items() if k not in consumed_kw}
-        env.set(kwarg_name, extra_kwargs)
+    def _function_signature(self, func_node):
+        """Adapt hosted AST parameters without evaluating their defaults."""
+        arguments = func_node.args
+        positional = list(arguments.posonlyargs) + list(arguments.args)
+        defaults = dict(zip(
+            (param.arg for param in positional[len(positional) - len(arguments.defaults):]),
+            arguments.defaults,
+        ))
+        parameters = []
+        for index, param in enumerate(positional):
+            kind = (Parameter.POSITIONAL_ONLY if index < len(arguments.posonlyargs)
+                    else Parameter.POSITIONAL_OR_KEYWORD)
+            parameters.append(Parameter(
+                param.arg, kind, default=defaults.get(param.arg, Parameter.empty),
+            ))
+        if arguments.vararg:
+            parameters.append(Parameter(arguments.vararg.arg, Parameter.VAR_POSITIONAL))
+        for param, default in zip(arguments.kwonlyargs, arguments.kw_defaults):
+            parameters.append(Parameter(
+                param.arg, Parameter.KEYWORD_ONLY,
+                default=default if default is not None else Parameter.empty,
+            ))
+        if arguments.kwarg:
+            parameters.append(Parameter(arguments.kwarg.arg, Parameter.VAR_KEYWORD))
+        return Signature(parameters)
 
     def _bind_function_args(self, func_node, env, posargs, kwargs, self_obj=None):
-        '''
-        NOTE: this is called by both definition and call
-        for call, arguments are already evaluated
-        for definition, we need to evaluate the defaults
+        # TODO(NOMI-SUBSTRATE-011): Replace this hosted shape adapter with the
+        # shared Nomi binding contract; it does not check types/captures/effects.
+        signature = self._function_signature(func_node)
+        if self_obj is not None:
+            posargs = (self_obj, *posargs)
+        positional_only = {param.arg for param in func_node.args.posonlyargs}
+        collisions = positional_only.intersection(kwargs)
+        if collisions and func_node.args.kwarg is None:
+            names = ', '.join(sorted(collisions))
+            raise TypeError(f"positional-only arguments passed by keyword: {names}")
+        # Host inspect versions disagree on omitted positional-only defaults.
+        # Keep these keys in the collector, never in ordinary name matching.
+        named = {name: value for name, value in kwargs.items() if name not in positional_only}
+        supplied = signature.bind(*posargs, **named).arguments
+        if func_node.args.kwarg:
+            consumed = {
+                name for name, param in signature.parameters.items()
+                if param.kind in (Parameter.POSITIONAL_OR_KEYWORD, Parameter.KEYWORD_ONLY)
+            }
+            supplied[func_node.args.kwarg.arg] = {
+                name: value for name, value in kwargs.items() if name not in consumed
+            }
 
-        We may actually eval all of them here 
-        '''
-
-
-        # Note: constraints are already set up in parent env, so env.set() will check them automatically
-        # TODO(NOMI-SUBSTRATE-011): Route this through the shared
-        # binding/constraint engine once parser and runtime agree on one path.
-        
-        posonlyargs = list(func_node.args.posonlyargs)
-        positional_or_keyword_args = list(func_node.args.args)
-        params = posonlyargs + positional_or_keyword_args
-        kwonlyargs = list(func_node.args.kwonlyargs)
-        defaults = func_node.args.defaults or []
-        
-        params = self._bind_self_obj(env, params, self_obj)
-        self._bind_declared_params(env, params, posargs, kwargs, positional_or_keyword_args)
-        self._bind_keyword_values(env, positional_or_keyword_args, kwonlyargs, posargs, kwargs)
-        self._apply_param_defaults(env, params, defaults)
-        self._apply_kwonly_defaults(env, kwonlyargs, func_node.args.kw_defaults)
-        self._bind_varargs(func_node, env, params, posargs)
-        self._bind_kwargs(func_node, env, params + kwonlyargs, kwargs)
+        # Validate the whole call before any frame write or default/constraint
+        # evaluation. AST defaults remain lexical and call-time, not host values.
+        for name, param in signature.parameters.items():
+            if name in supplied:
+                value = supplied[name]
+            elif param.kind == Parameter.VAR_POSITIONAL:
+                value = ()
+            elif param.kind == Parameter.VAR_KEYWORD:
+                value = {}
+            else:
+                value = self.eval(param.default)
+            env.set(name, value)
     
     def eval_Return(self, node: ast.Return) -> None:
         value = self.eval(node.value) if node.value else None

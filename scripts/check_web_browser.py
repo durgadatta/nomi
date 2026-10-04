@@ -51,6 +51,7 @@ def playground_url(remote_url: str | None):
 def check_browser(
     url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
 ) -> None:
+    from scripts.check_legacy_call_scenarios import check_legacy_call_scenarios
     from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
     from scripts.check_editor_startup_scenarios import (
         check_editor_startup_scenarios,
@@ -176,6 +177,7 @@ def check_browser(
                     expect(
                         legacy_page.locator('[data-result-count="bindings"]')
                     ).to_have_text("-")
+                    check_legacy_call_scenarios(legacy_page, expect, artifacts)
                 except Exception:
                     legacy_page.screenshot(
                         path=str(artifacts / "legacy-failure.png"), full_page=True
@@ -226,7 +228,7 @@ def main() -> int:
         f"Browser checks passed: samples, notebook, diagnostics, cancellation, drafts, desktop/mobile. Artifacts: {args.artifacts}"
     )
     if args.legacy_pyodide:
-        print("Opt-in legacy Pyodide quick tour and pipeline passed.")
+        print("Opt-in legacy Pyodide quick tour, pipeline and call boundaries passed.")
     return 0
 
 

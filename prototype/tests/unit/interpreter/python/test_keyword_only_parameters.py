@@ -1,3 +1,5 @@
+import pytest
+
 from prototype.interpreter.python.usage import run_eval_loop
 
 
@@ -37,13 +39,12 @@ def test_positional_only_argument_uses_position():
     assert bindings["result"] == 3
 
 
-def test_positional_only_argument_ignores_keyword_binding():
-    bindings = run_eval_loop(
-        code=(
-            "def label(value, /, **kwargs):\n"
-            "    return kwargs['value']\n"
-            "result = label(value=3)\n"
+def test_positional_only_argument_is_required_even_with_same_named_extra():
+    with pytest.raises(TypeError):
+        run_eval_loop(
+            code=(
+                "def label(value, /, **kwargs):\n"
+                "    return kwargs['value']\n"
+                "result = label(value=3)\n"
+            )
         )
-    )
-
-    assert bindings["result"] == 3
