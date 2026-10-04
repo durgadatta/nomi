@@ -24,6 +24,40 @@ The product goal is one coherent, explainable language that grows from a small
 script into a checked program. The next useful milestone is a modest target
 slice with accurate diagnostics and matching CLI/browser behavior.
 
+## October 4 Prototype Delivery Pass
+
+Baseline `5a1f66b` includes the text, data/time, AI/ML, domain-composition and
+generic-operation research continuations. They are evidence and target-only
+fixtures, not newly implemented language layers. This pass prepares the
+experimental prototype for broader evaluation without claiming target
+conformance or a stable release.
+
+1. **A03/A19/A20 correctness:** produce fallback parse/runtime diagnostics
+   through the existing facade and session; fence JavaScript integer precision
+   loss before execution and at arithmetic/conversion boundaries. Preserve the
+   Python prototype's wider integer range. Add selectable CLI output without
+   silently breaking the existing debug-output contract.
+2. **A16/A17/A31 useful composition:** add bounded data-first `fold` and `scan`
+   library calls, not new syntax/Core nodes. Specify ordered left traversal,
+   explicit seed, callback failure and seeded history. Connect generic-operation
+   and text/data research to runnable samples and cross-backend tests. No static
+   callback/effect checker, streaming engine or universal object protocol is
+   implied.
+3. **A18/A21/A24 workbench reliability:** preserve notebook source and titles;
+   associate results with the executed document/model revision; expose local
+   source import/export; link known parse diagnostics to source; improve keyboard
+   and narrow-screen operation. Extend actual Chromium scenarios beyond one
+   sample, including failure/repair, cancellation/recovery and local drafts.
+4. **A28 delivery evidence:** rerun focused contracts, the full suite, generated
+   artifact checks, wheel/CLI checks and desktop/mobile Chromium. Record observed
+   results here, including remaining release gates. Do not infer hosted Pages,
+   Python 3.12, accessibility-study or container evidence from local checks.
+
+Semantic owners remain syntax/semantics/industrial and the registered packets.
+Prototype operations must identify their owner, metadata, normal form, failure
+contract, tests and replacement criteria in the implementation orientation.
+Removing a bounded library experiment must not require grammar or Core changes.
+
 ## Audit Evidence
 
 The scan covered the tracked tree, canonical design spine, focused packets,
