@@ -1,0 +1,495 @@
+{
+  "schema": "nomi.research.domain-composition.v1",
+  "observed_on": "2026-10-04",
+  "environment": {
+    "python": "3.14.0rc3",
+    "sqlite": "3.50.4"
+  },
+  "evidence_kind": "original bounded models plus named graphlib/SQLite host observations",
+  "execution": {
+    "nomi": false,
+    "foreign_framework": false,
+    "ml_engine": false,
+    "device": false,
+    "cloud": false,
+    "human": false
+  },
+  "probes": [
+    {
+      "id": "CP01",
+      "name": "dependency_order",
+      "experiments": [
+        "DT1"
+      ],
+      "inputs": {
+        "source": [],
+        "left": [
+          "source"
+        ],
+        "right": [
+          "source"
+        ],
+        "join": [
+          "left",
+          "right"
+        ]
+      },
+      "permutations_checked": 24,
+      "valid_orders": [
+        [
+          "source",
+          "left",
+          "right",
+          "join"
+        ],
+        [
+          "source",
+          "right",
+          "left",
+          "join"
+        ]
+      ],
+      "cycle_rejected": true,
+      "limit": "graphlib readiness only; no scheduler, task body, fairness or effect conflict execution"
+    },
+    {
+      "id": "CP02",
+      "name": "edge_roles",
+      "experiments": [
+        "DT1",
+        "DC1"
+      ],
+      "inputs": [
+        {
+          "source": "a",
+          "target": "b",
+          "role": "task_prerequisite"
+        },
+        {
+          "source": "a",
+          "target": "b",
+          "role": "attribution"
+        }
+      ],
+      "untyped_drawing_equal": true,
+      "task_owner_accepts": [
+        true,
+        false
+      ],
+      "limit": "two supplied role tags under an imposed checker policy; not Nomi edge typing or a universal relation algebra"
+    },
+    {
+      "id": "CP03",
+      "name": "bitemporal_correction",
+      "experiments": [
+        "DT2"
+      ],
+      "inputs": {
+        "questions_valid_known": [
+          [
+            15,
+            2
+          ],
+          [
+            15,
+            3
+          ],
+          [
+            15,
+            4
+          ],
+          [
+            20,
+            4
+          ],
+          [
+            9,
+            4
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "intervals": "half-open"
+      },
+      "answers": [
+        [
+          100
+        ],
+        [
+          120
+        ],
+        [
+          120
+        ],
+        [],
+        [],
+        []
+      ],
+      "limit": "SQLite on two original interval records and integer time domains; no temporal database engine or concurrent consistency guarantee"
+    },
+    {
+      "id": "CP04",
+      "name": "snapshot_retention",
+      "experiments": [
+        "DT2"
+      ],
+      "inputs": {
+        "manifests": {
+          "v1": "blob-old",
+          "v2": "blob-new"
+        },
+        "retained_blobs": [
+          "blob-new"
+        ]
+      },
+      "outcomes": {
+        "v1": {
+          "error": "expired_content"
+        },
+        "v2": {
+          "value": [
+            120
+          ]
+        },
+        "v3": {
+          "error": "unknown_version"
+        }
+      },
+      "limit": "in-memory manifest/store with imposed errors; no lakehouse, lease, privacy policy or durable storage integration"
+    },
+    {
+      "id": "CP05",
+      "name": "independent_snapshots",
+      "experiments": [
+        "DT2"
+      ],
+      "inputs": [
+        {
+          "store": "orders",
+          "version": "v7",
+          "basis": "cut-a"
+        },
+        {
+          "store": "payments",
+          "version": "v9",
+          "basis": "cut-b"
+        }
+      ],
+      "individually_pinned": true,
+      "shared_transaction_basis_established": false,
+      "consistent_in_real_world": "unknown",
+      "limit": "supplied basis labels show missing shared-cut evidence, not actual inconsistency or a distributed snapshot protocol"
+    },
+    {
+      "id": "CP06",
+      "name": "change_algebra",
+      "experiments": [
+        "DT3"
+      ],
+      "inputs": {
+        "values": [
+          2,
+          5
+        ],
+        "delete": 2
+      },
+      "sum": {
+        "before": 7,
+        "delta": -2,
+        "after": 5
+      },
+      "minimum": {
+        "naive_subtraction": 0,
+        "retained_alternatives": 5
+      },
+      "limit": "finite nonempty integer bag with retained counts; no incremental query engine, Float law or general deletion algebra"
+    },
+    {
+      "id": "CP07",
+      "name": "cache_context",
+      "experiments": [
+        "DT4"
+      ],
+      "inputs": {
+        "operation": "sum-v1",
+        "inputs": [
+          "orders:v7"
+        ],
+        "schema": "sales-v2",
+        "profile": "exact-int-v1"
+      },
+      "input_change_changes_key": true,
+      "profile_change_changes_key": true,
+      "cache_available_after_read_revocation": true,
+      "current_read_allowed": false,
+      "candidate_returns_cached_secret": false,
+      "limit": "supplied contexts/permission flag; no complete read-set inference, canonical JSON, real authorization or cryptographic authenticity"
+    },
+    {
+      "id": "CP08",
+      "name": "train_only_preprocessing",
+      "experiments": [
+        "ML1"
+      ],
+      "inputs": {
+        "training": [
+          1,
+          3
+        ],
+        "held_out_alternatives": [
+          100,
+          200
+        ]
+      },
+      "training_only_mean": "2",
+      "leaked_means": [
+        "104/3",
+        "68"
+      ],
+      "limit": "exact Fraction arithmetic for a mean; no fitted estimator, model-quality evaluation or complete leakage detector"
+    },
+    {
+      "id": "CP09",
+      "name": "feature_availability",
+      "experiments": [
+        "DT2",
+        "ML1"
+      ],
+      "inputs": {
+        "measurement": {
+          "valid_at": 12,
+          "known_from": 4,
+          "value": 120
+        },
+        "prediction": {
+          "valid_at": 15,
+          "known_at": 2
+        }
+      },
+      "event_time_only_includes_future_information": true,
+      "available_at_original_prediction": false,
+      "available_in_hindsight": true,
+      "limit": "single supplied fact and availability rule; no feature store, clock mapping, label horizon or causal/statistical validity"
+    },
+    {
+      "id": "CP10",
+      "name": "axis_identity",
+      "experiments": [
+        "ML2"
+      ],
+      "inputs": {
+        "expected_axes": [
+          [
+            "sample",
+            2
+          ],
+          [
+            "feature",
+            2
+          ]
+        ],
+        "actual_axes": [
+          [
+            "feature",
+            2
+          ],
+          [
+            "sample",
+            2
+          ]
+        ]
+      },
+      "extent_only_accepts": true,
+      "named_axis_contract_accepts": false,
+      "limit": "two supplied axis descriptors; no tensor/shape checker, contraction, AD engine or device execution"
+    },
+    {
+      "id": "CP11",
+      "name": "checkpoint_scope",
+      "experiments": [
+        "ML4"
+      ],
+      "inputs": {
+        "weights_only": {
+          "parameters": {
+            "weight": 2
+          }
+        },
+        "training_record": {
+          "parameters": {
+            "weight": 2
+          },
+          "optimizer": {
+            "momentum": 3
+          },
+          "rng": "key-v1",
+          "data_position": 7,
+          "step": 4
+        }
+      },
+      "weights_contain_inference_parameters": true,
+      "weights_missing_for_training": [
+        "data_position",
+        "optimizer",
+        "rng",
+        "step"
+      ],
+      "record_missing_for_training": [],
+      "exact_resume_established": false,
+      "limit": "imposed field-presence contract; no semantic state validation, model loading, safe deserialization or actual training resume"
+    },
+    {
+      "id": "CP12",
+      "name": "reference_identity",
+      "experiments": [
+        "ML5",
+        "DC3"
+      ],
+      "inputs": {
+        "alias": "champion",
+        "catalog": [
+          {
+            "work_id": "work-a",
+            "title": "Methods"
+          },
+          {
+            "work_id": "work-b",
+            "title": "Methods"
+          }
+        ]
+      },
+      "resolved_before": "model-v1",
+      "resolved_after": "model-v2",
+      "same_title_different_work_ids": true,
+      "limit": "supplied alias and work records; no registry authentication, bibliographic resolution or universal ID generation"
+    },
+    {
+      "id": "CP13",
+      "name": "publication_review",
+      "experiments": [
+        "DT4",
+        "ML5",
+        "DC5"
+      ],
+      "inputs": "four independent supplied booleans; exact-scope review policy",
+      "outcomes": [
+        {
+          "payload_matches": false,
+          "model_matches": false,
+          "recipient_matches": false,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": false,
+          "recipient_matches": false,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": false,
+          "recipient_matches": true,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": false,
+          "recipient_matches": true,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": true,
+          "recipient_matches": false,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": true,
+          "recipient_matches": false,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": true,
+          "recipient_matches": true,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": false,
+          "model_matches": true,
+          "recipient_matches": true,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": false,
+          "recipient_matches": false,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": false,
+          "recipient_matches": false,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": false,
+          "recipient_matches": true,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": false,
+          "recipient_matches": true,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": true,
+          "recipient_matches": false,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": true,
+          "recipient_matches": false,
+          "current_grant": true,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": true,
+          "recipient_matches": true,
+          "current_grant": false,
+          "candidate_accepts": false
+        },
+        {
+          "payload_matches": true,
+          "model_matches": true,
+          "recipient_matches": true,
+          "current_grant": true,
+          "candidate_accepts": true
+        }
+      ],
+      "accepted_count": 1,
+      "limit": "finite matching-policy truth table; no authenticated review, actual capability enforcement, human understanding or remote publication"
+    }
+  ]
+}

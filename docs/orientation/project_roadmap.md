@@ -410,6 +410,13 @@ notation are still library/research contracts.
 experiments. **Done when:** the chosen bounded library model has independent value,
 error, order and resource fixtures; notation is added only after the long form fails.
 
+The 2026-10-04 [data/time](../research/data_workflows/dependencies_and_time.md),
+[AI/ML](../research/data_workflows/ai_ml.md) and
+[domain composition](../research/domain_composition.md) continuation supplies
+DT1-DT5/ML1-ML6/DC1-DC6 and limited local models. D1-D3 remain prerequisites;
+this is not engine implementation or completion of DW1-DW8. The synthesis's
+domain-layer proposal owns shared contracts, not a separate global roadmap.
+
 ### A17 — Prelude And Standard Library
 
 The current host builtin set is a bootstrap convenience, not the target stdlib.

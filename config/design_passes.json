@@ -41,7 +41,7 @@
       "topic": "Cognitive representations, semantic commands, and inspectable change",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-03",
+      "last_reviewed": "2026-10-04",
       "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation", "corner cases", "edge cases", "human computation", "philosophy", "interaction composition", "accessibility", "IME", "physical control", "text interface", "string API", "Unicode", "PowerShell", "templating", "codec", "source text"],
       "artifacts": {
         "research": "docs/research/interfaces/README.md",
@@ -85,8 +85,8 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-09-29",
-      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence"],
+      "last_reviewed": "2026-10-04",
+      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem"],
       "artifacts": {
         "research": "docs/research/features/README.md",
         "design": "docs/design/synthesis.md",
@@ -102,11 +102,15 @@
       "validation": [
         "python3 -m tools.design_passes check",
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
+        "python3 docs/research/data_workflows/probe_composition.py --check docs/research/data_workflows/composition_probe_results.json",
+        "pytest -n 0 prototype/tests/unit/tools/test_domain_composition_research.py",
+        "ruff check docs/research/data_workflows/probe_composition.py prototype/tests/unit/tools/test_domain_composition_research.py",
         "python3 .codex/scripts/agent_doctor.py",
         "git diff --check"
       ],
       "next_actions": [
         "Use the resource-lifetime packet's executed candidate comparison; next close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
+        "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
         "Specify callback effect types, minimal generics/protocols, and scoped task-handle contracts before claiming the overall target is fully typeable.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
         "Specify strict indexed decoding/encoding and numeric golden vectors across CLI and browser hosts.",

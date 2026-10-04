@@ -129,6 +129,13 @@ The existing pattern contract is a bounded accepted slice and can continue its
 registered migration without waiting for all 29 dimensions. Do not implement
 open notation merely to keep the repository busy.
 
+The [domain-layer proposal](synthesis.md#domain-layer-proposal) adds data/time,
+AI/ML and documentary challengers to D1-D4. DT1-DT5/ML1-ML6/DC1-DC6 extend
+existing questions; they do not add another global gate or require implementing
+every domain. First type inert descriptions and contextual references, preserve
+domain payload laws, then review one composed report/train/review/publication
+program. A shared envelope is a candidate protocol, not a universal Core IR.
+
 ## Reversible Implementation Policy
 
 Use the [exploratory doctrine](../orientation/exploratory_implementation_doctrine.md).

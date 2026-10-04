@@ -123,6 +123,52 @@ the [September playground plan](../review/2026-09-29-github-playground-agentic-p
 and the existing runtime checks. No parser/runtime migration is implemented by
 this documentation pass.
 
+## Domain Layer Proposal
+
+Status: designing hypothesis; no new syntax, core IR or public APIs accepted.
+The [data/time research](../research/data_workflows/dependencies_and_time.md),
+[AI/ML survey](../research/data_workflows/ai_ml.md) and
+[cross-domain synthesis](../research/domain_composition.md) extend the existing
+four-layer model. They test a language that can host rich domains coherently,
+without assigning a new meaning to ordinary calls or pipelines.
+
+Existing typed values, immutable data, explicit functions, Result, constraints,
+effects, lifetimes, tasks and modules are the common foundations. Candidate
+shared contracts are contextual references, typed descriptions/relations,
+domain-owned transitions, interpretation/execution boundaries, evidence and
+revision-bound projections/commands. They initially belong to libraries,
+protocols and tooling; metadata is attached only where the artifact needs it.
+Do not add a universal object/graph wrapper to every value.
+
+| Pressure | Proposed semantic owner | Boundary that must survive composition |
+| --- | --- | --- |
+| Dependencies | Typed relation library; checked DAG specialization | Prerequisite, lineage, attribution, numeric dependence and feedback differ |
+| History | Storage/temporal library | Version, valid time, system/availability time, replay and compensation differ |
+| Learning | Numeric/learning library; scoped numeric tool if earned | Specification, learned artifact, training checkpoint and evaluation differ |
+| Knowledge/documents | Reference/edition/interpretation library | Labels, entities, evidence, formal rules and human interpretation differ |
+| Shared inspection | Tooling envelope, domain-owned payload and source maps | Captured evidence versus current observations; preview never executes |
+| Execution adapters | Domain/profile owner, effects/resources/tasks | Checked description versus current grants, completion and uncertain outcome |
+
+Recommendation: one source language with ordinary domain packages and explicit
+scoped tools, not global web/data/ML modes. Domain IRs remain distinct and can
+lower through versioned checked adapters. One diagnostic/evidence envelope
+does not imply one algebra, optimizer, identity or truth system.
+
+The [composition target](targets/research/domain_layers.nomi) supplies report,
+train-only description and failure-heavy reviewed-publication long forms using
+fictional facades. It has not been parsed/typechecked/executed. The
+[local probes](../research/data_workflows/composition_experiments.md) execute
+selected finite discriminators, not these APIs or foreign engines. No DAG,
+time-travel, tensor, learning or natural-language keywords are admitted.
+
+Admission order remains D1-D3 then D4: resolve generic/schema/callback/effect/
+region and scalar/codec/identity contracts; type the composed program; compare
+one data, one numeric and one documentary adapter under DC1/DC5. These studies
+extend existing questions 4/7/8/9/11/12/15/17, not a second implementation backlog.
+Only evidence that ordinary calls fail three representative programs can justify
+scoped notation. A further core primitive needs a concrete missing semantic
+contract, an independent conformance slice and an explicit removal criterion.
+
 ## Admission And Stop Rules
 
 A target category becomes a supported sample only when it has one meaning

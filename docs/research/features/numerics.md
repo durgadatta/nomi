@@ -8,6 +8,10 @@ host behavior.
 The [notation atlas](../notation_atlas.md) deepens bound indices, axes,
 units/frames and algebra laws. [Scientific source forms](../data_workflows/source_forms.md)
 add fit/transform and tracing boundaries; DW4/DW5 own the corresponding experiments.
+The [AI/ML continuation](../data_workflows/ai_ml.md) deepens supported numeric
+transformations, dtype/axis/placement, explicit state/randomness and ML1-ML6.
+Its local arithmetic/metadata models do not execute an AD engine or close the
+portable numeric contract.
 
 | Evidence | Mechanism | Nomi consequence |
 | --- | --- | --- |

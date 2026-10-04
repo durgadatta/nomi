@@ -352,6 +352,12 @@ capture, target-direction inspection, lint, local links and whitespace. RAG was
 rebuilt and the agent doctor passed. These checks validate research integrity,
 not execution/typechecking of fictional APIs or foreign-system conformance.
 
+The 2026-10-04 [domain continuation](2026-09-29-language-synthesis.md#domain-composition-continuation-2026-10-04)
+is owned by the registered language-coherence synthesis. Data/time, AI/ML and
+documentary payloads share this packet's context/evidence/projection boundaries
+without selecting a universal graph, ontology or editable IR. Its bridge owns
+the new local capture and validation; this bridge does not duplicate that inventory.
+
 ### Evidence That Changed The Design
 
 Spreadsheet reference changes, keyboard command contexts, draft form validity,

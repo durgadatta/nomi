@@ -135,6 +135,10 @@ The [data dossier](data_workflows/README.md) supplies literal comparisons and a
 reconciliation oracle. [DW1-DW3](data_workflows/nomi_candidates.md) first close
 expression/callback contracts, then compare eager rows, schema-bound expression
 data and scoped notation under duplicate keys, missing values and name collisions.
+The [dependency/time continuation](data_workflows/dependencies_and_time.md)
+adds DT1-DT5: checked DAG owners, partial ordering, snapshot versus bitemporal
+basis, domain-specific change algebra and cache/backfill authority. Acyclicity
+does not prove safe ordering, consistent snapshots or lawful incrementality.
 
 ## 9. Numeric And Scientific Model
 
@@ -157,6 +161,11 @@ The [orthogonal models](dsls/orthogonal_models.md) add E20/E21: arithmetic
 rewrite theories, density versus sampling, derivative callback staging and
 simulation evidence. The host float and finite-posterior probes illustrate
 differences; no numeric API or inference engine is selected.
+The [AI/ML continuation](data_workflows/ai_ml.md) adds ML1-ML6: train-only
+preprocessing, supported differentiation/staging, exact/tolerance/profile
+vectors, training-state completeness, pinned serving/agent requests and checked
+export. [Local probes](data_workflows/composition_experiments.md) cover selected
+arithmetic/metadata counterexamples, not engine execution or model quality.
 
 ## 10. Generic Dispatch
 
@@ -297,6 +306,15 @@ test representation intent, strict decode, offset units, structured encoding,
 template trust, argv, framing, lossless versus semantic formatting,
 localization, and the text/structured-primary fork. Before promoting a text API,
 close the scalar/index/rendering contract and reject implicit second evaluation.
+
+**Domain-layer pressure:** [the twenty-family map](domain_composition.md)
+adds DC1-DC6: domain-owned payloads versus a universal IR, ordinary package
+composition versus scoped tools, versioned vocabulary/catalog references,
+controlled clauses versus interpreted prose, a composed report/train/review/
+publication fixture, and a new-domain admission trial. These extend questions
+4/7/8/9/11/12/15/17; the [canonical synthesis](../design/synthesis.md#domain-layer-proposal)
+owns the recommendation. No natural-language evaluator or universal knowledge
+ontology is selected.
 
 **Human interaction edges:** the [96-case atlas](interfaces/edge_cases.md) and
 [twelve composition cases](interfaces/composition_cases.md) sharpen this same

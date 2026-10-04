@@ -45,6 +45,10 @@ The [text-interface extension](../dsls/text_as_interface.md) deepens command,
 document, pattern and collaboration threads with producer/consumer vocabulary,
 layered interpreters, human editing obligations and T1-T10. It remains inside
 the existing DSL/string dossier and this cognitive-interface packet.
+The [domain composition continuation](../domain_composition.md) extends data,
+AI/ML and human/documentary models under the language-coherence synthesis.
+It shares inspectable boundaries and command/evidence obligations with this
+packet without selecting a universal graph, truth algebra or editable IR.
 
 | Thread | Representations considered | Pressure on Nomi |
 | --- | --- | --- |

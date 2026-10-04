@@ -101,6 +101,13 @@ of future reference checks, not claimed measurements or comprehension results.
 If two forms are semantically identical and neither wins comprehension/error
 locality, stop at ordinary calls and delete the proposed shorthand.
 
+The [October data/time extension](dependencies_and_time.md) adds DT1-DT5;
+[AI/ML](ai_ml.md) adds ML1-ML6; and [cross-domain composition](../domain_composition.md)
+adds DC1-DC6. They refine these existing forks rather than mark DW1-DW8 complete.
+[Local models](composition_experiments.md) execute selected counterexamples,
+not Nomi contracts or foreign-framework integration. The canonical synthesis
+continues to own admission order.
+
 ## Diagnostics, Formatting And Views
 
 Example terminal diagnostic (candidate):

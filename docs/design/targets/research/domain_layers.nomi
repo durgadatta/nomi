@@ -1,0 +1,107 @@
+# Status: target-only research candidate; fictional lab APIs, not runnable.
+# Evidence: docs/research/domain_composition.md; DT5, ML1/ML5, DC1/DC5.
+# Accepted source shapes; generic/effect/region/adapter contracts remain open.
+from lab.data_domain import DataRead, PlanError, ReportArtifact, ReportInputs
+from lab.data_domain import ReportPlan, RunError, SnapshotRef, TemporalBasis, tables
+from lab.learning_domain import BackendProfile, DeviceCompute, LearnedArtifact, LearningPlan
+from lab.learning_domain import ModelRef, ModelSpec, SplitSpec, learning
+from lab.domain_workflows import Bundle, workflows
+from lab.domain_inspection import Inspection, inspection
+from lab.reviewed_publication import Network, PublicationWrite, publisher
+from lab.reviewed_publication import PublicationError, Receipt, RecipientId
+from lab.reviewed_publication import ReviewRef, Revision, OperationKey
+
+func prepare_report(inputs: ReportInputs) -> Result[ReportPlan, PlanError]:
+    return tables.reconciliation_plan(
+        orders=inputs.orders,
+        payments=inputs.payments,
+        schema=inputs.schema,
+        basis=inputs.basis,
+        duplicate_payments=tables.RejectDuplicates,
+        missing_amount=tables.RejectMissing,
+    )
+
+func prepare_learning(
+    features: SnapshotRef,
+    basis: TemporalBasis,
+    spec: ModelSpec,
+    split: SplitSpec,
+    seed: Int,
+    profile: BackendProfile,
+) -> Result[LearningPlan, PlanError]:
+    source = learning.feature_plan(features, basis=basis)?
+    partitioned = learning.split_plan(source, split=split)?
+    preprocessing = learning.training_only_scaler_plan(partitioned)?
+    return learning.training_plan(
+        spec,
+        preprocessing=preprocessing,
+        split=partitioned,
+        seed=seed,
+        profile=profile,
+    )
+
+func prepare_bundle(
+    report: ReportPlan,
+    training: LearningPlan,
+) -> Result[Bundle, PlanError]:
+    report_step = workflows.describe_report("daily-report", report)?
+    training_step = workflows.describe_training("fit-model", training)?
+    description = workflows.describe(
+        steps=[report_step, training_step],
+        prerequisites=[],
+    )?
+    checked = workflows.require_acyclic(description)?
+    return Ok(Bundle(report, training, checked))
+
+func inspect_bundle(bundle: Bundle) -> Inspection:
+    return inspection.describe(bundle, depth=4, redaction=inspection.SecretsHidden)
+
+pub func collect_report(plan: ReportPlan) -> Result[ReportArtifact, RunError] uses DataRead:
+    return tables.collect(plan)
+
+pub func fit_model(
+    plan: LearningPlan,
+) -> Result[LearnedArtifact, RunError] uses DataRead, DeviceCompute:
+    return learning.execute_training(plan)
+
+data PublicationRequest:
+    report: ReportArtifact
+    model: ModelRef
+    recipient: RecipientId
+    prepared_revision: Revision
+    operation: OperationKey
+
+data PublicationObservation:
+    Confirmed(receipt: Receipt)
+    Rejected(error: PublicationError)
+    Uncertain(operation: OperationKey)
+
+pub func publish(
+    request: PublicationRequest,
+    review: ReviewRef,
+) -> PublicationObservation uses Network, PublicationWrite:
+    outcome = publisher.send_reviewed(request, review)
+    match outcome:
+        case Ok(receipt):
+            return PublicationObservation.Confirmed(receipt)
+        case Err(PublicationError.AcknowledgmentUnknown()):
+            return PublicationObservation.Uncertain(request.operation)
+        case Err(error):
+            return PublicationObservation.Rejected(error)
+
+# Beginner: prepare_report names two pinned sources, schema and temporal basis.
+# Production: preprocessing/fit plans bind a split; held-out rows cannot fit it.
+# Failure-heavy: expired snapshots, unavailable features, denied device/profile,
+# changed model/recipient/revision/review and unknown publication remain distinct.
+# PlanError/RunError are proposed explicit domain-facade conversions, not proof
+# that table, workflow and ML errors are interchangeable without conversion.
+# prepare/inspect do not read, fit, publish or manufacture execution authority.
+# The two steps are independent: sharing a bundle is not a prerequisite edge.
+# A real dependency must connect typed output/input ports under its edge owner.
+# SnapshotRef/ModelRef identify retained artifacts, not live readers or aliases.
+# TemporalBasis distinguishes validity and knowledge/availability, not one Date.
+# Inspection is bounded evidence, not an executable or complete graph guarantee.
+# send_reviewed must authenticate review, match payload/model/recipient/context,
+# check current grants and enforce the store/remote publication protocol.
+# This facade does NOT implement those obligations or exactly-once delivery.
+# No gradient, query, workflow, legal or natural-English grammar is introduced.

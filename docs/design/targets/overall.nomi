@@ -3,6 +3,8 @@
 # docs/review/2026-09-29-language-synthesis.md
 # Category map: docs/design/targets/README.md
 # Resource continuation: docs/design/resource_lifetime.md (still designing).
+# Domain continuation: docs/design/targets/research/domain_layers.nomi;
+# docs/research/domain_composition.md (candidate APIs, not executable).
 #
 # Story: read a small JSON batch, validate every input before network access,
 # skip valid but ineligible customers, enrich eligible customers concurrently,

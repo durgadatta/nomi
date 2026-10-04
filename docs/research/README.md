@@ -38,6 +38,11 @@
    [Notation Beyond Programming](notation_atlas.md) - deeper literal forms and
    execution layers, plus mathematical, scientific and humanistic representations.
    Their synthesis owns DW1-DW8; no new core syntax is admitted.
+   [Dependencies and time](data_workflows/dependencies_and_time.md) and
+   [AI/ML](data_workflows/ai_ml.md) deepen that work with DT1-DT5 and ML1-ML6.
+   [Domain composition](domain_composition.md) maps twenty families into the
+   existing layers and DC1-DC6; [local composition probes](data_workflows/composition_experiments.md)
+   distinguish executed counterexamples from unperformed integrations.
 9. [DSLs And Strings](dsls/README.md) - dedicated deep research on layered
    configuration, strings and orthogonal models: 122 representatives across
    50 families, 24 semantic models, twelve composition pairs and four extended

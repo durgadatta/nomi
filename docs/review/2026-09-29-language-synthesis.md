@@ -58,6 +58,73 @@ relative file links, and new suite/research files had no trailing whitespace.
 `git diff --check` passed. The ignored local RAG index was rebuilt with the new
 documents. These results are documentation checks, not language conformance.
 
+## Domain Composition Continuation, 2026-10-04
+
+The user requested data dependencies/history first, AI/ML second, then coherent
+extension across computational and human-knowledge domains. The existing
+data/workflow dossier is extended with
+[dependencies/time](../research/data_workflows/dependencies_and_time.md) and
+[AI/ML](../research/data_workflows/ai_ml.md), followed by a
+[twenty-family composition map](../research/domain_composition.md). These routes
+link to the [canonical synthesis proposal](../design/synthesis.md#domain-layer-proposal)
+and [target-only challenger](../design/targets/research/domain_layers.nomi).
+No new packet, universal ontology/evaluator, grammar or production library was
+created. Existing D1-D7 and open questions retain admission ownership.
+
+### Pass 1: Mechanisms And Whole-Program Pressure
+
+Selected primary sources distinguish task DAGs, lineage, relational plans,
+provenance, streams/fixed points and differentiation. They also distinguish
+retained historical reads, valid/system time, checkpoint restoration, replay,
+recompute and compensation. ML evidence separates tracing from execution,
+specification from learned/training state, seed from reproducibility, and
+model inference from authorized tool action. The Nomi recommendation is our
+inference: domain-owned models with compositional typed/effectful boundaries,
+within the existing four layers. Framework prominence is not core admission.
+
+The broader scan adds documentary/reference/evidence contexts, including legal
+structure, scientific naming, catalog identity and communication profiles.
+Reviewed, existing and discovery-level mechanisms are labeled. Inaccessible
+entrypoints and deprecated/pinned editions are recorded; the pass does not
+claim every cited system or human discipline has been comprehensively audited.
+
+### Pass 2: Counterexamples And Capture Boundary
+
+Thirteen [local probes](../research/data_workflows/composition_experiments.md)
+execute original bounded models and graphlib/SQLite observations: alternate
+topological orders, role mismatch, temporal correction/availability, deleted
+content, independent snapshots, update-law failure, cache context/current read
+policy, train-only statistics, axes, checkpoint scope, aliases/catalog identity
+and exact review scope. Existing interaction probes retain uncertain external
+outcomes and history/publication races; they are not recounted as integrations.
+
+A new negative test exposed malformed environment metadata that produced an
+attribute traceback. The checker now validates object shape before comparing
+versions. It rejects duplicate fields, changed execution flags (including wrong
+JSON types), malformed captures and outcome drift without rewriting evidence.
+Historical host versions remain provenance. A supplied policy flag is still
+not a real capability, and required-field presence is not exact training resume.
+
+Validation at this checkpoint: 62 focused tests passed; all five design packets,
+the thirteen-probe capture, lint and whitespace checks passed. Remaining full
+repository validation is recorded below after completion. No target type
+checker, AD engine, remote service, device, authenticated review or human study
+was executed.
+
+### Pass 3: Repository Integration And Final Evidence Audit
+
+The full Python suite passed 1,533 tests with 76 skipped and four Jupyter path
+deprecation warnings. Existing web/runtime checks passed 55 contracts plus
+manifest and WASM freshness; no browser interaction trial was performed. All
+five design packets, target-direction inspection, lint and whitespace passed.
+A changed-document audit resolved 544 local file/anchor links across 20 Markdown
+files. Runtime, parser, samples and generated web assets were not changed.
+
+The final evidence audit tightened the text capture comparison to preserve JSON
+types (`true` is not `1`) and require nonempty historical version strings while
+allowing version-only differences. The six focused text checks passed after
+that test-only tightening. This does not claim Nomi or foreign conformance.
+
 ## Pass Retrospective
 
 ### Evidence That Changed The Design
@@ -85,7 +152,7 @@ experiment and each target labels proposed APIs. The complete docs inventory
 and existing design-pass checks guard the routing, while canonical decisions
 keep unresolved assumptions open.
 
-### Next Pass
+### Next Pass (Original September Checkpoint)
 
 Run `python3 -m tools.design_passes show language-coherence`, then read the
 resource comparison and canonical resource semantics. Write three programs
@@ -94,3 +161,26 @@ two outcome carriers and two escape policies, and produce ordered event traces
 and diagnostic JSON. Only after that decision should a frontend/runtime slice
 and supported playground sample be proposed. Keep the pattern pass's existing
 authority and avoid expanding this survey absent a concrete failed program.
+
+### Domain Continuation Retrospective
+
+**Evidence That Changed The Design:** a common graph drawing is not a common
+executor; historical validity and availability differ; fitted state and training
+resume differ; formal/documentary structure is not semantic truth or authority.
+The candidate retains domain payloads and explicit adapters instead of one IR.
+
+**Workflow Friction:** rolling docs redirected to versioned pages or unrelated
+entrypoints, so versions/fetch limits were retained. Pure field-presence models
+could otherwise be mistaken for static typing or engine guarantees.
+
+**Durable Improvement:** the registered synthesis packet routes the new domains,
+and deterministic capture/limit/experiment/link/anchor checks preserve the
+boundary between local evidence and unperformed integrations. No new agent
+instruction or framework was justified.
+
+**Next Pass:** close D1-D3, type an inert two-input report and temporal basis,
+then compare data/numeric/documentary adapters under DC1/DC5. Use an established
+engine for a settled numeric/query slice. No new notation or sample until
+independent value/error/authority/source-map fixtures and honest host profiles
+agree; the map is a finite research frontier, not a promise to implement all
+human knowledge simultaneously.

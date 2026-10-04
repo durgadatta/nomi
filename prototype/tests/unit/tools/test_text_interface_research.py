@@ -43,10 +43,17 @@ def test_text_boundary_capture_reproduces_without_foreign_execution():
     )
     observed = json.loads(completed.stdout)
     assert observed["environment"].keys() == captured["environment"].keys()
+    assert all(
+        isinstance(value, str) and value for value in captured["environment"].values()
+    )
     # Historical host versions are provenance; changed outcomes still fail.
-    assert {key: value for key, value in observed.items() if key != "environment"} == {
-        key: value for key, value in captured.items() if key != "environment"
-    }
+    assert json.dumps(
+        {key: value for key, value in observed.items() if key != "environment"},
+        sort_keys=True,
+    ) == json.dumps(
+        {key: value for key, value in captured.items() if key != "environment"},
+        sort_keys=True,
+    )
     assert len(captured["cases"]) == 18
     assert (
         captured["scope"]

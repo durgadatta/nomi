@@ -4,6 +4,12 @@
 
 [Dossier](README.md) · [Source](source_forms.md) · [Synthesis](nomi_candidates.md)
 
+The [2026-10-04 dependency/time continuation](dependencies_and_time.md) deepens
+graph ownership, partial ordering, bitemporal questions, retained snapshots and
+change algebras. [AI/ML](ai_ml.md) separates computation/transformation graphs,
+state and checkpoint meanings. The mechanisms below retain their original
+survey date; neither continuation makes this a complete framework audit.
+
 ## Similar Source, Different Lifetimes
 
 | Object the user constructs | Meaning of a connection | Execution boundary | Identity / invalidation | Not interchangeable with |

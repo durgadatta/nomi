@@ -38,3 +38,9 @@ test. The [synthesis](../../design/synthesis.md) orders cross-feature work;
 [open questions](../open_questions.md) retain the active experiment agenda.
 Accepted forms remain in [syntax](../../design/syntax.md),
 [semantics](../../design/semantics.md), and [decisions](../../design/decisions.md).
+
+The [domain composition continuation](../domain_composition.md) tests whether
+these foundations can support data/time, AI/ML and documentary/human domains
+coherently. The same [registered synthesis](../../design/synthesis.md#domain-layer-proposal)
+owns the proposal; [local experiments](../data_workflows/composition_experiments.md)
+are bounded models, not a new specification or runtime capability inventory.

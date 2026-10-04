@@ -33,6 +33,11 @@ naming; and supplies T1-T10 plus a
 [target-only pressure program](targets/research/text_boundaries.nomi). These are
 candidate contracts, not accepted standard-library names.
 
+The [domain-layer proposal](synthesis.md#domain-layer-proposal) extends the
+shared context/evidence/projection boundary across data/time, learning and
+documentary domains. Each payload retains its domain owner; graph layout and
+common diagnostics do not erase relation, temporal or numeric laws.
+
 ## Thesis And A Real Fork
 
 Nomi could be a checked computational medium whose meaning remains inspectable

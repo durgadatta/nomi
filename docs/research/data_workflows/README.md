@@ -1,6 +1,7 @@
 # Data And Workflow Languages
 
-> Status: cross-cutting research evidence, checked 2026-09-30; not syntax admission.
+> Status: cross-cutting research evidence, original survey checked 2026-09-30;
+> selected data/time and AI/ML extension checked 2026-10-04; not syntax admission.
 
 This dossier extends the [syntax atlas](../syntax_matrix.md) and the registered
 [cognitive-interface packet](../interfaces/README.md). It compares the notation
@@ -18,6 +19,14 @@ mathematics, biology, chemistry, linguistics, music, and argumentation.
    syntax costs, bounded comparisons, diagnostics, and promotion gates.
 4. [Research Targets](../../design/targets/research/README.md): independent
    category programs and a combined reconciliation fixture.
+5. [Dependencies, Change And Time](dependencies_and_time.md): graph owners,
+   ordering, incremental laws, snapshots, bitemporal history and DT1-DT5.
+6. [AI And ML](ai_ml.md): numeric transformations, learned/training state,
+   data splits, randomness, interchange, agents and ML1-ML6.
+7. [Coherent Domain Layers](../domain_composition.md): shared foundations,
+   twenty domain families, package obligations and DC1-DC6.
+8. [Local Composition Experiments](composition_experiments.md): captured
+   original counterexamples and named graphlib/SQLite host observations.
 
 The live experiment order belongs to the synthesis, not to a second dated
 backlog. Canonical [syntax](../../design/syntax.md),
@@ -88,3 +97,15 @@ needed to interpret a line. A shorter expression can be a worse interface.
 - No proposed query, tensor, workflow, or diagram syntax is accepted by this pass.
 
 The synthesis must narrow these claims before an implementation is admitted.
+
+## October Continuation
+
+The requested broader pass starts with data and AI/ML, then tests extension to
+web, CLI, visual tools, support, DevOps/cloud, design, databases, research,
+mathematics, legal documents, scientific naming, cataloging and communication.
+The domain map distinguishes selected reviewed mechanisms from discovery and
+existing evidence; it does not claim comprehensive product or knowledge coverage.
+The [canonical synthesis proposal](../../design/synthesis.md#domain-layer-proposal)
+and [composition target](../../design/targets/research/domain_layers.nomi) stay
+within the registered language-coherence packet. Existing D1-D3 contracts are
+prerequisites; no domain keywords or universal evaluator are admitted.
