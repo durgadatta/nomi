@@ -19,6 +19,8 @@ data/ML engine is promised.
 - Made browser indexing and slicing code-point consistent, with explicit invalid
   access failures, clipped/reverse bounds and shallow type-preserving copies;
   expanded the text notebook with bounded windows.
+- Preserved special JavaScript property names as ordinary binding/map/data keys;
+  excluded inherited host methods from nominal field lookup.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Distinguished unavailable inspection evidence from captured empty bindings or

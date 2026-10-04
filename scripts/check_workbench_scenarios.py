@@ -60,6 +60,10 @@ def check_workbench_scenarios(page, expect, artifacts):
 
     # Edit/diagnose/repair; locations must survive UTF-8 -> UTF-16 conversion.
     page.get_by_role("button", name="Create local scratch file").click()
+    run_source("__proto__ = {'ok': 7}\nprint(__proto__['ok'])\n", "7")
+    page.get_by_role("tab", name="Bindings", exact=False).click()
+    expect(page.locator(".binding-name")).to_have_text("__proto__")
+    expect(page.locator(".binding-value")).to_contain_text('"ok": 7')
     run_source(
         "text = 'a\U0001f600e\u0301'\nprint(len(text))\nprint(text[1])\nprint(text[::-1])\n",
         "4\n\U0001f600\n\u0301e\U0001f600a",

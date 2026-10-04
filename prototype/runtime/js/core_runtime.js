@@ -105,12 +105,12 @@ function unbox(value) {
     case "sequence":
       return value.elements.map(unbox);
     case "mapping": {
-      const result = {};
+      const result = Object.create(null);
       for (const [key, item] of value.entries) result[key] = unbox(item);
       return result;
     }
     case "data": {
-      const fields = {};
+      const fields = Object.create(null);
       for (const [key, item] of Object.entries(value.fields)) {
         fields[key] = unbox(item);
       }
@@ -226,7 +226,7 @@ class CoreRuntime {
     if (result.kind === "error") {
       throw new Error(result.message);
     }
-    const bindings = {};
+    const bindings = Object.create(null);
     for (const [name, value] of this.globalFrame.bindings) {
       if (this.defaultHostNames.has(name)) continue;
       bindings[name] = unbox(value);
@@ -393,7 +393,7 @@ class CoreRuntime {
       this.currentFrame = block.closure;
       this.currentBlock = null;
       this.deferStack = [];
-      const savedParams = {};
+      const savedParams = Object.create(null);
       try {
         if (block.params.length > 0) {
           let args;
@@ -659,7 +659,7 @@ class CoreRuntime {
       this.currentFrame.bind(node.name, constructor);
       return constructor;
     }
-    const fields = {};
+    const fields = Object.create(null);
     for (const [name, fieldNode] of node.fields || []) {
       const value = this.eval(fieldNode);
       if (isSignal(value)) return value;
@@ -737,7 +737,7 @@ class CoreRuntime {
     if (objectValue.kind !== "data") {
       throw new TypeError(`${objectValue.kind} has no field '${node.field}'`);
     }
-    if (!(node.field in objectValue.fields)) throw new Error(node.field);
+    if (!Object.hasOwn(objectValue.fields, node.field)) throw accessError("AttributeError", `${objectValue.name} has no field '${node.field}'`);
     return objectValue.fields[node.field];
   }
 
@@ -899,7 +899,7 @@ class CoreRuntime {
         `${constructor.name} expected ${constructor.fields.length} arguments, received ${args.length}`,
       );
     }
-    const fields = {};
+    const fields = Object.create(null);
     constructor.fields.forEach((field, index) => {
       fields[field] = args[index];
     });

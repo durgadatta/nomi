@@ -19,7 +19,7 @@ function convertPyValue(value) {
     return convertPyValue(converted);
   }
   if (value instanceof Map) {
-    const obj = {};
+    const obj = Object.create(null);
     for (const [key, item] of value.entries()) {
       obj[key] = convertPyValue(item);
     }

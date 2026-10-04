@@ -57,6 +57,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_inspection_evidence_contract.py",
                 "prototype/tests/contracts/test_release_browser_semantics.py",
                 "prototype/tests/contracts/test_text_sequence_boundaries.py",
+                "prototype/tests/contracts/test_js_dictionary_keys.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",
                 "prototype/tests/unit/runtime/test_js_numeric_safety.py",
                 "prototype/tests/unit/runtime/test_collection_operations.py",

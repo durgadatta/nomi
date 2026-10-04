@@ -124,6 +124,11 @@ Python-AST-to-Core slice lowering is still unsupported; the Python interpreter
 and structured Rust/WASM browser path are covered. Target Text/Bytes validity,
 normalization, grapheme APIs, portable maps and source coordinates remain D3.
 
+JavaScript field/export dictionaries have no inherited host prototype; names
+such as `__proto__` survive as ordinary own keys. Nominal field lookup does not
+read inherited host methods. This preserves text-key evidence without settling
+the open equality/hash/transport rules for mixed-type or composite mapping keys.
+
 Failed facade/session execution now carries a fallback `NOMI-PARSE` or
 `NOMI-RUNTIME` diagnostic while retaining the original exception and captured
 output. Known binding errors keep their specific record. Source locations are
