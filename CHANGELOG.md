@@ -37,6 +37,14 @@ data/ML engine is promised.
 - Rejected duplicate/non-text unpacked keywords, accepted mapping-protocol
   calls and preserved argument values across direct yield pauses, including
   resumed `None` and starred expansion.
+- Repaired hosted context-hook binding, partial acquisition, assignment failure
+  and synchronous LIFO unwind; reduced scopes now always enter and use guarded
+  cleanup. Python suppression remains separate from target resource semantics.
+- Kept re-yielding child frames ahead of waiting ancestors and propagated state
+  through expression statements and while bodies; general expression and
+  suspended-error continuations remain open.
+- Displayed single-expression native session values exactly once and retained
+  historical binding-name maps without deep-copying mutable values or handles.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked
   diagnostics, stale-result labels, run-generation protection and keyboard controls.
 - Distinguished unavailable inspection evidence from captured empty bindings or

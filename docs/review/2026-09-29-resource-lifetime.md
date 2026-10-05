@@ -61,6 +61,38 @@ standalone experiment passed all 32 traces and 14 escape comparisons; all three
 design packets validated. Ruff and the agent doctor are also required before
 committing this checkpoint. No target runtime or browser conformance was run.
 
+## 2026-10-04 Hosted Compatibility Follow-Up
+
+The September audit above remains dated evidence. The user-approved runtime
+continuation repairs a bounded Python-hosted compatibility surface, not the
+proposed Resource/Result/region contract. Interpreted hooks use ordinary callable
+binding; captured type-level exit is registered after enter, before handle
+assignment/checking. Successful acquisitions unwind once in LIFO order on later
+acquisition/binding failure, normal completion, real BaseException and
+return/break/continue. Cleanup replacement and Python suppression retain their
+legacy meaning, including abandonment of a transfer when its replacement error
+is suppressed. No-error hook results are ignored. Private control signals are
+not active cleanup exceptions or user-visible context-chain entries.
+
+Reduced hosted `with` always enters and uses captured hooks with guarded
+`try/finally`; generated names and private intrinsic loads survive source
+shadowing. Core rejects these intrinsics instead of inventing a portable scope
+operation. Synchronous host `try` retains real exception context and validates
+handlers; pending transfers run finalizers without an active private signal.
+This adapter is removable when a versioned completion/scope contract owns it.
+
+New native-oracle scope/exception tests, inspectable reduction tests and real
+Pyodide scope/resumption programs cover this slice. Direct AST assignment-shape
+tests do not imply source parser acceptance. Snapshots and WASM outputs are
+unchanged; observed verification and commits belong to the
+[continuation receipt](../orientation/project_roadmap.md#scoped-runtime-continuation-receipt).
+
+Normal generator suspension retains scopes, but a failing paused child can
+bypass waiting ancestor cleanup in the old engine; a precise reduced-mode skip
+records this gap. Arbitrary expression resumption, generator close/throw, async
+cleanup, retained causes, non-escape and cancellation/timeout joining remain
+gates. The packet stays `designing`; no syntax or target conformance is promoted.
+
 ## Pass Retrospective
 
 ### Evidence That Changed The Design
@@ -71,12 +103,20 @@ through a declared Result or adds another public control channel. Returning
 copied data differs from returning an alias, and repeated cancellation differs
 from repeated release. These distinctions changed the recommendation and fixtures.
 
+October 4: real hosted binding-failure and cleanup-transfer tests sharpen the
+migration obligations without changing the target recommendation. Host exception
+suppression and context chains are compatibility evidence, not typed causes.
+
 ### Workflow Friction
 
 The current implementations use several host-control models, none a complete
 target scope contract. A symbolic lease check can be mistaken for a lifetime
 checker, so its inputs and evidence limits are named explicitly. The accepted
 function-value/generic surface is not yet sufficient to type the proposed APIs.
+
+October 4: reduced AST helper hygiene, host active-exception state and child-frame
+ordering required separate tests. A direct AST fixture is not evidence of source
+grammar acceptance, and a passing normal resume is not abnormal unwind evidence.
 
 ### Durable Improvement
 
@@ -86,7 +126,16 @@ records and has focused tests; it is explicitly removable when conformance owns
 the fixtures. No additional agent instructions or production abstractions were
 justified by this single pass.
 
+October 4: the new scope, exception and reduction suites join the maintained
+web/runtime gate; two actual Pyodide programs cover scopes and nested resumption.
+A precise known-gap skip prevents normal suspension coverage from hiding failed
+child unwind. No additional agent instructions are justified by this repair.
+
 ### Next Pass
+
+October 4: the [live runtime plan](../orientation/project_roadmap.md#iterative-runtime-continuation-plan)
+owns operand/phase/completion reproductions and the next continuation boundary.
+The resource packet's target typing/region gate below is unchanged.
 
 For the resource thread, begin with callback/generic/region metadata and the
 binding-failure fixture, not more source-language surveys. The user also requested

@@ -73,6 +73,14 @@ remain deliberately parser-specific inspection adapters. The inspection CLI's
 `passes` and `expansions` continue to show the full reduction inventory; runtime
 `inspect(mode="nomi", stage="passes")` still shows the default Nomi profile.
 
+Native sessions with `display_last_expr=True` retain a single expression's
+value, including `None` and other falsy values, without evaluating it twice.
+Empty/non-expression cells and block-call expressions have no displayed value.
+Successful results copy the binding-name map: later rebinding, deletion or reset
+cannot rewrite that historical map. Its values remain references; mutable
+objects and opaque handles are not deep snapshots. The legacy Pyodide adapter
+remains output-only and does not export this native session value contract.
+
 ## Current Pipeline Artifacts
 
 ### Bounded Prototype Library And Numeric Contracts
@@ -195,10 +203,39 @@ invoking the callee; `**` accepts the mapping protocol. Direct argument yields
 preserve already evaluated positional/keyword values and honor resumed `None`,
 including starred expansion. These are bounded prototype repairs, not a general
 expression continuation engine: yields inside non-resumable compound expressions
-remain a separate limitation. Interpreted context-manager hooks still use their
-older manual binding path. Target default-reference/effect restrictions,
-transactional predicate effects, static callback contracts and a richer portable
-Core representation remain A08/D1-D2 work.
+remain a separate limitation. Re-yielding child frames now precede their waiting
+ancestors, expression statements and while bodies forward generator state, and
+completed expression-call values do not leak into the next yield's sent-value
+mailbox. Retained operands/phases for arbitrary expressions, errors escaping
+suspended children, generator close/throw and async unwinding remain open.
+
+The hosted synchronous context protocol captures type-level descriptors before
+enter, invokes interpreted hooks through ordinary callable binding, and
+registers exit before acquired-value assignment/checking. An `ExitStack` adapter
+unwinds successful acquisitions in LIFO order and attempts each exit once,
+including enter/binding failure, real BaseException and control-transfer paths.
+It retains normal suspended scopes, ignores no-error exit return values, and
+uses Python suppression only for actual errors. Cleanup failure can replace a
+pending transfer; suppression of that replacement cancels the transfer. Internal
+return/break/continue signals are not exposed as active cleanup exceptions.
+Synchronous `try` uses host unwind with validated handler types and captured
+pending transfers; the resumable `try` engine is still a separate limitation.
+These hosted exception-context/suppression rules are not D2's typed cause
+carrier or its no-suppression resource target.
+
+Reduced hosted `with` always enters, captures both hooks once, and protects
+binding/body with guarded `try/finally`. Fresh names avoid authored bindings;
+private marked AST loads keep compiler-inserted protocol helpers independent
+of source shadowing. Core lowering explicitly rejects these hosted intrinsics
+before effects rather than erasing their meaning. This private bridge is
+replaceable by the target scope/completion operation, not new target syntax or
+a public builtin API. Assignment-shape tests use Python AST; Nomi source still
+admits only its existing named `as` target.
+
+Target default-reference/effect restrictions, transactional predicate effects,
+static callback contracts and richer portable call/scope representations remain
+A08/D1-D2 work. See the [continuation receipt](project_roadmap.md#scoped-runtime-continuation-receipt)
+and [resource bridge](../review/2026-09-29-resource-lifetime.md#2026-10-04-hosted-compatibility-follow-up).
 
 The generated browser manifest includes Python/Lark source plus explicitly
 registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host

@@ -342,10 +342,12 @@ lost an unused second parameter that had been called without an argument; its
 output and snapshots remain unchanged.
 
 This closes the ordinary hosted binder gap, not the D1 target contract.
-Interpreted context-manager hooks still bypass the shared binder, and compound
-expressions containing yields need a general continuation model. Static
-type/capture/effect checking, default-reference restrictions, transactional
+At this checkpoint interpreted context-manager hooks still bypassed the shared
+binder. Compound expressions containing yields need a general continuation model.
+Static type/capture/effect checking, default-reference restrictions, transactional
 predicate effects and richer Core call transport remain unimplemented.
+The later [scoped continuation receipt](#scoped-runtime-continuation-receipt)
+records the hook-path repair without promoting the target contract.
 
 Three new test files add **214 cases**; the corrected existing test and fixture
 are the only pre-existing test artifacts changed, and snapshots are unchanged.
@@ -402,10 +404,73 @@ plan does not accept new target notation or promote a designing packet.
    map, refresh local context, and commit each coherent slice. Select the next
    enhancement from reproduced gaps, not an undifferentiated feature catalog.
 
-The initial context findings are code-read audit evidence; no new implementation
-or conformance claim is made by this plan. The function/resource packets and
-existing redesign agenda remain the semantic owners. Exact next step: add
-direct/reduced scope regressions before modifying acquisition or unwind.
+The plan was committed as `e941321` before implementation. The function/resource
+packets and existing redesign agenda remain the semantic owners. The scoped
+compatibility, child-frame ordering and native session-result slices have now
+been implemented; see the [receipt](#scoped-runtime-continuation-receipt).
+The whole suspension workstream is not complete: compound expression operands,
+error delivery to waiting ancestor frames and close/throw still need a coherent
+completion engine or explicit pre-effect rejection.
+
+Exact next runtime step: add minimal native/hosted reproductions for retained
+compound-expression operands and a failing paused child under `try`/`with`.
+Inspect their required operand, phase and completion state together, then select
+one versioned continuation boundary or explicit unsupported-shape fence. Do not
+add isolated operator handlers or promote generator/resource target conformance.
+
+### Scoped Runtime Continuation Receipt
+
+Plan: `e941321`. Native session result repair: `f8209ea`. Hosted scope,
+synchronous completion and child-frame repair: `e949551`.
+
+Three bounded iterations now have runnable evidence:
+
+- **A08/A11 hosted scopes:** captured type-level hooks use ordinary callable
+  binding; successful enter registers exit before assignment/checking. Direct
+  and reduced paths unwind once in LIFO order across later acquisition failure,
+  normal completion, control transfer and real BaseException. Synchronous `try`
+  validates handlers, preserves active genuine errors and holds private transfers
+  as pending state while cleanup runs. Normal exit results are ignored; legacy
+  suppression of a cleanup replacement cancels the original transfer.
+- **A08 frame order:** a re-yielding child is queued before waiting ancestors.
+  Expression statements and while bodies forward generator state; completed
+  expression calls do not leave stale results in the next yield's mailbox.
+  This is not an operand/phase continuation engine.
+- **A21 native results:** single-expression cells retain values without duplicate
+  evaluation, including falsy values. Successful result maps retain historical
+  names across rebinding/deletion/reset; mutable values and handles stay shared
+  references, not implicitly deep-owned snapshots. Pyodide stays output-only.
+
+Five new test files collect **470 cases**; two additional browser programs add
+four local mode checks. No pre-existing test file or regression snapshot changed.
+Initial failing scope/frame/session tests drove the repairs. Final review added
+native-oracle checks for descriptor-type lookup, cleanup truth testing,
+replacement/suppression, real context chains, active exceptions and bare re-raise.
+Some later tests arrived after their repair and are not claimed as failing-first.
+
+| Executed check | Observed result and scope |
+| --- | --- |
+| Focused new suites plus local browser-program replay | **481 passed, 1 skipped** across the three hosted modes and explicit session backend paths. |
+| `pytest -q -n 4 --tb=short` | **2,931 passed, 81 skipped**, four existing worker-repeated Jupyter path warnings; 44.53 seconds on local Python 3.14.0rc3. |
+| `python3 scripts/check_web_runtime.py --skip-agent-doctor` | **1,177 passed, 1 skipped**; manifest and all eight WASM outputs fresh. |
+| Actual Chromium gate with `--legacy-pyodide` | Default samples/notebook/diagnostics/cancellation/drafts/desktop/mobile pass, plus all six Pyodide call/scope/resumption programs. Successful desktop/mobile screenshots inspected; reports remain ignored. |
+| Independent native/hosted synchronous completion probes | **117 comparisons** match across 13 source cases, three observations and three modes, against 39 native runs. Values, events, active error type/message and context chains match; not arbitrary-host or target conformance. |
+| Documentation/packet/target-fixture checks | **127 passed**; all five packets coherent, statuses unchanged. |
+| Local RAG rebuild and agent doctor | Ignored local context refreshed; all **18** agent checks pass without a stale-index warning. |
+
+The manifest generator was rerun after hosted runtime edits and `--check` passed.
+The inventory remains **123 runtime files and 11 samples**; both generated
+manifest files and all WASM outputs are unchanged. No generated artifact diff is
+needed. Focused Ruff and whitespace checks pass; the three touched older frame/
+expression/control modules retain their pre-existing E741/F821 exclusions.
+
+The additional skip is explicit: a failed paused reduced child `Try` still
+bypasses its waiting scope ancestor. Arbitrary yielded operands, failed-child
+delivery, close/throw and async cleanup remain the exact next continuation gate
+described in the [plan](#iterative-runtime-continuation-plan). Host suppression
+and context chaining do not implement D2's typed all-cause completion or lifetime
+checker; D1/D2 packets remain `designing`. No target syntax, sample promotion,
+hosted deployment or stable release is claimed.
 
 ### Next Phase Gates
 
@@ -656,10 +721,11 @@ The designing packet identifies the missing foundation for many other programs.
 
 - The approved ordinary Python-hosted binder repair is complete; see the
   [follow-up receipt](#approved-call-binding-follow-up). Preserve its strict
-  shape/default-order regressions while replacing the hosted adapter. Migrate
-  the remaining manual context-manager path and compound-yield continuations
-  under explicit completion contracts, not a claim that every callable route
-  or D1/Core target contract is already implemented.
+  shape/default-order regressions while replacing the hosted adapter. Synchronous
+  interpreted context hooks now use ordinary callable binding; see the
+  [scope receipt](#scoped-runtime-continuation-receipt). Compound-yield operands
+  and suspended-child completion/unwinding remain open under explicit completion
+  contracts, not a claim that every callable route or D1/Core target is implemented.
 - Select call-shape/default/label rules, then compare its existing three
   generic/function-value candidates at 80/100 columns on real programs.
 - Derive map/fold, decoder and resource callback contracts together. Distinguish
@@ -847,6 +913,8 @@ still vary; transport has no output/memory/process-tree policy.
 
 - Define session reset, partial-failure state and cross-cell binding behavior;
   validate backend values that cannot be serialized between Node invocations.
+  Successful native result maps now retain historical names across rebinding,
+  deletion and reset; value references remain shallow, not owned snapshots.
 - Include source/grammar/artifact/profile identity in cache invalidation and
   test bounded eviction and AST immutability assumptions.
 - Specify request/response versions, duplicate keys, payload validation, byte
