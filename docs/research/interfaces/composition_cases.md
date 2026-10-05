@@ -1,7 +1,7 @@
 # Interaction Composition And Implementation Experiments
 
 > Status: designing research experiments and implementation handoff; illustrative
-> APIs are unaccepted and unexecuted. Updated 2026-10-02.
+> APIs are unaccepted and unexecuted. Updated 2026-10-04.
 
 This is the experiment detail for the [edge atlas](edge_cases.md), within the
 existing [interaction proposal](../../design/interaction_model.md) and
@@ -509,6 +509,200 @@ Report task-level qualitative mechanisms and observed differences. A small
 convenience pilot cannot support population-wide superiority, broad causal
 claims, or accessibility certification. If all conditions support the wrong
 domain model, revise the model rather than choosing the faster interface.
+
+### C12 Advisory Reliability And Calibrated Reliance
+
+Status: additional HX8 research protocol, not an executed study or another
+prepared fixture set. U01-U07 remain the only supplied HX8 answer fixtures.
+The sequences below are hypothetical stimuli that need independent answer
+review and piloting before recruitment. They do not establish the accuracy of
+an agent, compiler, linter, or Nomi interface.
+
+The current protocol separates confidence from evidence on an individual task.
+The additional question is whether repeated useful advice changes what a person
+checks later. **Linguistic certainty**, **a person's reported confidence**,
+**a tool's measured reliability on a stated population**, and **appropriate
+reliance on this task** are different facts. A confident label or numerical
+score cannot substitute for any of the others. Missing advice is not a complete
+negative check; advice that conflicts with an independent observation cannot
+be treated as authoritative merely because earlier advice was correct.
+
+Skitka's primary NASA report describes five studies of automated decision aids,
+including a student simulation comparing monitoring with and without an aid and
+one-/two-person conditions. It distinguishes missed events when an aid supplies
+no cue from following an erroneous recommendation. This motivates separate
+omission and commission controls; it neither measures programming tools nor
+establishes Nomi's error rates or an inevitable decline in human skill.
+[Primary report, methods and results](https://ntrs.nasa.gov/api/citations/19980048379/downloads/19980048379.pdf).
+The report's populations, task workload, supplied instrument accuracy and
+experimental reliability matter. Do not copy their quantitative results into
+a claim about contemporary agents or this study.
+
+| Scenario | Same ordinary computation | Additional research pressure |
+| --- | --- | --- |
+| Beginner | Predict the invoice total before changing tea quantity | A useful hint becomes a habit; later a hint names cup instead of tea while the original request remains visible. |
+| Production | Review a prepared publication with explicit recipient, payload and revision | After several correct summaries, the advice says the recipient is unchanged although the supplied candidate differs. |
+| Failure-heavy | Repair invalid input and inspect a bounded result before a new action | A warning is absent despite a supplied invalidity, or advice says to retry while the retained remote outcome is unknown. |
+
+Counterexamples to a successful-looking design:
+
+- Nineteen accurate suggested edits precede one wrong-target edit. The change
+  is typed, fresh and authorized; the reviewer stops comparing it with the
+  authored request. Formal correctness and current permission do not settle
+  whether the person checked or intended the target.
+- A linter emits no warning on a case outside its supported check set. The
+  person treats silence as evidence that every relevant condition was checked.
+  Disclosure of unsupported coverage must not resemble a successful check.
+- Advice and its explanation both come from the same analysis. Presenting them
+  as two corroborating sources can encourage false confidence. Shared origin
+  does not make either false, but it does not provide independent confirmation.
+- A cautious user rejects correct advice because the interface advertises every
+  suggestion as uncertain. Avoiding all automation is not the success criterion;
+  correct acceptance and justified rejection must both remain possible.
+
+**Alternatives:** no advice with the same underlying facts; advice plus its
+stated basis; or advice plus a task-specific evidence comparison before review.
+An imposed comparison is a candidate, not a requirement to add a confirmation
+dialog to every reversible edit. Its time, attention and habituation costs must
+be measured. Warning density and forced clicks are not evidence of verification.
+
+**Bounded method:** select one scenario and one comparison, rather than combine
+all three with every representation. Prepare disjoint matched sequences of
+fictional local tasks. For example, a pilot sequence may contain twenty-four
+reviews, including two suggestions contradicted by supplied evidence and one
+omitted warning. Those counts are an original stimulus proposal, not observed
+error rates, a sufficient sample size or a recommended production reliability.
+Vary advice availability while holding the task facts and commands fixed;
+counterbalance error position/order and record training, workload, interruption
+and prior exposure. Disclose to participants that advice can be fallible and
+use the study's agreed recording/debriefing protocol. An ethics review, if
+required for the chosen setting, is not replaced by this paragraph.
+
+Record advice accepted/rejected, the task decision, which independently supplied
+facts were consulted, reported confidence, wrong-target/action incidents, missed
+anomalies and repair. Distinguish justified reliance from lucky correctness.
+Report critical error opportunities and their denominators separately from
+routine successes; average accuracy can hide a rare consequential error. An
+absent cue with a complete negative check and an absent cue with an unsupported
+check are paired controls, not equivalent meanings. If the experiment varies
+both reliability and presentation, identify that confound rather than attribute
+every difference to language. Small pilots reveal mechanisms, not population
+calibration curves or proof that automation degrades expertise. Longer-term
+skill retention requires a separately justified longitudinal design.
+
+**Candidate normal form and layer:** retain authored intent and source/input
+context; attach advisory origin, analysis scope and evidence basis where the
+owner can establish them; compare or request missing facts; form an ordinary
+typed candidate; then use the existing review/current-authority/commit boundary.
+Advice remains tool-owned input, not Core truth or a new source operator. A
+source-linked explanation may name `ADVICE_EVIDENCE_CONFLICT` or
+`CHECK_COVERAGE_UNKNOWN` as illustrative diagnostic facts; these are not accepted
+stable codes. Inspecting an old suggestion must reveal its basis without
+rerunning the program. Never label an unmeasured model score a calibrated
+probability or manufacture a history of checks from an approval click.
+
+**Falsifiers/removal:** reject the candidate presentation if it raises unjustified
+acceptance, conceals omitted coverage, encourages treating correlated claims as
+independent evidence, or makes valid repair inaccessible. Remove a forced-check
+step that adds clicks without improving verification or that blocks ordinary
+low-risk work without a stated policy. Retain contrary evidence: a plain view
+may support better review, and more explanation may increase reliance without
+increasing correct understanding. These outcomes refine HX8 and the
+[linguistic confidence boundary](natural_language.md#grounding-reliance-and-shared-understanding).
+
+### C12 Team Handoff And Distributed Understanding
+
+Status: unperformed HX8 extension. A reviewed/converged document and an
+authentic approval do not establish who knows which assumption, which check
+someone performed, or which unresolved work a successor owns. This is distinct
+from C07's merge validity and publication race, and from current capability
+enforcement. Communication acknowledgment, comprehension, assigned work,
+completed checking and execution permission must remain separate claims.
+
+Hollan, Hutchins and Kirsh's primary distributed-cognition article proposes
+studying cognition across people, artifacts and their environment rather than
+only an isolated desktop user. The author-hosted search extraction exposed the
+abstract/introduction; the full PDF fetch failed in this pass. It supports a
+framework-level research lead, not a checked account of every case or a measured
+handoff benefit. [Primary article](https://interactivity.ucsd.edu/articles/DCog/DCog.pdf),
+[author publication index](https://pages.ucsd.edu/~ehutchins/vitae/pubs.htm).
+Clark and Brennan's grounding source in the
+[natural-language dossier](natural_language.md#selected-evidence-and-limits)
+provides a neighboring communication lens. Neither source makes a signed
+receipt proof that the recipient understood all relevant assumptions.
+
+| Scenario | Split knowledge or ownership | Required research distinction |
+| --- | --- | --- |
+| Beginner | One person changes quantities; another checks prices and resumes the calculation | A visible total does not disclose which inputs each person checked or who owns an unresolved price. |
+| Production | A preparer knows the currency policy; a reviewer receives the invoice and publication candidate | Source/approval convergence differs from transfer of the fixed-currency assumption and relevant check scope. |
+| Failure-heavy | A new operator inherits completed, blocked and remotely uncertain work after interruption | Assignment of recovery differs from knowledge of the old outcome, authority to retry and actual completed checks. |
+
+Counterexamples:
+
+- Both reviewers assume the other verified the recipient or currency. Both
+  approvals are genuine and current; nobody performed that domain check.
+- A handoff says "validated" without naming the schema, revision or omitted
+  cross-field rule. The successor correctly reads the document but attributes
+  a stronger guarantee than the completed check supports.
+- A checklist says a check is assigned to a colleague; a summary presents it
+  as completed. The record has lost a responsibility state, not merely a label.
+- A recipient acknowledges a summary but cannot see a redacted input or query
+  result needed to assess it. Receipt is observable; comprehension of the hidden
+  fact is not. Clarification must not leak that fact to prove shared awareness.
+- A successor repeats a publication because the earlier operator is unavailable
+  and the local task has ended. Neither team membership nor handoff receipt
+  resolves the retained unknown remote outcome.
+
+**Alternatives:** ordinary source/result records; a revision-bound handoff
+summary that names checked, pending, disputed and unknown facts; or that summary
+plus explicit acknowledgment of assigned next work. These are competing tool/
+application protocols, not a universal mandated checklist. A useful short
+handoff may disclose only the assumptions the next task needs. Duplicating every
+trace into every person's view can impose cost and violate disclosure policy.
+
+**Bounded method:** recruit pairs for one fictional scenario, record relevant
+experience and communication/input setup, and assign disjoint task information
+deliberately. Do not withhold a fact then grade its unknowable answer as an error.
+Use separate cases where the missing fact can be requested, remains unavailable,
+or is intentionally outside the recipient's disclosure scope. Compare matched
+plain-record and scoped-handoff conditions; counterbalance role/order and permit
+clarification or refusal. A tabletop supplied-fact mockup can investigate
+interpretation now; it cannot establish a real collaboration adapter's behavior.
+
+Before any proposed action, ask each person what was checked, what remains
+unknown, what they believe the partner checked, and who owns the next step.
+Use the facilitator's actual supplied check history to score those different
+claims. Record unsupported beliefs about another person's knowledge, duplicated
+work, unperformed required checks, changed assumptions, requests for information
+and repair. Keep timing, communication volume, assistance and social pressure
+separate from correctness. Dyads are linked observations, not two independent
+samples; participant- and pair-level analyses need a justified design. Think-aloud
+or explicit questioning can itself improve handoff, so do not pool it with
+unassisted performance or claim that a prompted finding arose spontaneously.
+
+**Candidate normal form and layer:** a library/tool record refers to an artifact
+revision and a named check/question; it can distinguish a supplied assertion,
+observed completed check, pending assignment, contested result and unavailable
+evidence. Its owner and intended recipient are task facts, not implicit access
+rights. A recipient may accept assigned work or request clarification; only
+the owning domain protocol can establish completion and current authority.
+Immutable data and ordinary functions suffice for the research long form; no
+new source syntax, common-knowledge type or global "understood" bit is proposed.
+Illustrative diagnostic facts are `HANDOFF_CHECK_SCOPE_STALE` and
+`REQUIRED_CHECK_UNASSIGNED`, with the exact artifact, scope and missing fact.
+Use C09/HX2's bounded/redacted inspection; preserve contested and historical
+records rather than rewrite a disagreement as unanimous approval.
+
+**Falsifiers/removal:** reject a handoff representation that encourages false
+beliefs about completed checks, silently assigns work, retargets approval,
+discloses protected evidence, or treats acknowledgment as comprehension. Remove
+metadata that costs more coordination than it saves on the selected task.
+Acknowledge a negative result where partners with plain artifacts detect the
+gap more reliably. Social incentives, hierarchy, workload and language context
+are competing explanations; authentic records cannot certify shared intent.
+This extends HX8 under the existing packet and
+[collaboration thread](distributed_collaboration.md), not a new distributed
+runtime or second task backlog.
 
 ## Implementation Handoff
 

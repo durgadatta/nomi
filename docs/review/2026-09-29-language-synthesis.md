@@ -221,3 +221,64 @@ capture comparison, Ruff and whitespace checks passed. Web manifest freshness
 (123 runtime files, 11 samples) and WASM freshness (eight outputs) passed without
 regeneration: this pass adds no runtime module or supported sample. Target
 typing, broker integration and a new browser interaction trial remain unperformed.
+
+## Research Gap Continuation, 2026-10-04
+
+The accepted audit is documented across existing owners, with the
+[research overview](../research/README.md#research-gap-continuation) providing
+the full route. This bridge records research evidence, not implementation or
+another live ordering. The synthesis packet now deepens
+[memory publication](../research/features/concurrency.md#memory-visibility-and-publication),
+[predicate consistency](../research/data_workflows/dependencies_and_time.md#predicate-consistency-beyond-snapshots-and-row-guards),
+[package/module nominal identity](../research/features/modules_tooling.md#nominal-identity-across-package-instances),
+[adaptive evaluation](../research/data_workflows/ai_ml.md#adaptive-evaluation-feedback-is-also-a-dependency),
+[learned influence removal](../research/data_workflows/ai_ml.md#data-erasure-and-learned-influence-are-different-operations)
+and [correlated uncertainty](../research/notation_atlas.md#correlated-uncertainty-shared-origin-is-part-of-the-model).
+The function, resource and cognitive bridges retain their respective units.
+
+**Evidence That Changed The Design:** tasks do not imply a memory model;
+individually fresh rows do not protect a cross-row predicate; same-shaped
+versioned declarations need not be the same nominal type. Selected primary
+data/ML and measurement evidence also separates training reads from evaluation
+feedback, data deletion from learned-state removal, and marginal summaries from
+joint uncertainty. These sharpen existing research forks rather than select new
+syntax, package identity rules, guarantees or engines.
+
+**Workflow Friction:** already broad coverage can hide a missing composition
+law. Each added unit therefore states both what the corpus already covers and
+the narrower missing discriminator. Foreign specification guarantees, supplied
+model assumptions and original thought experiments remain distinct. An
+independent review additionally required the uncertainty averaging oracle to
+state its measurand, independence and finite fixed-variance assumptions.
+It also sharpened the generalization comparison: value eligibility cannot
+quantify variables fixed by an outer shared slot. The memory counterexample
+now says "store" rather than imply the publication edge it deliberately lacks.
+
+**Durable Improvement:** existing DT4, ML1, ML4, DW4 and questions 8/9/13/15
+now route to competing contracts, inspection obligations and three-level
+experiments. Feature/data/interface indexes and registry discovery expose all
+eleven detailed units from the ten audit findings. No separate packet, universal
+IR, new experiment inventory, accepted target edit, generated web artifact,
+code, test or runnable sample was added.
+
+**Next Pass:** take one bounded unit through independent evidence: event- and
+model-qualified memory observations, actual owner/adapter commit schedules,
+resolved nominal declarations, declared holdout exposure, method-qualified
+removal or a supported joint uncertainty procedure. Preserve unknowns and
+unsupported profiles instead of widening the claim. Existing D1-D3 and the
+canonical research-to-target admission process still gate language changes;
+this documentation pass does not close any experiment.
+
+**Completion Verification, 2026-10-05:** the resumed documentation pass passed
+317 existing documentation/packet/target-fixture/research checks and all five
+packet validations. Local links and heading anchors resolved across all 19
+changed Markdown files. The existing generic-operation, interaction, domain
+composition and messaging captures reproduced with `--check`; none captures the
+new thought experiments or study protocols. The agent doctor passed all 18
+checks after refreshing the ignored local RAG index. `git diff --check` passed.
+Web manifest freshness (123 runtime files, 11 samples) and WASM freshness (eight
+outputs) passed without regeneration: no runtime module or runnable sample
+changed. No code/test/capture/target edits, full runtime suite, browser trial,
+new foreign-system execution or human study belong to this research-only pass.
+The dated source consultation notes remain October 4; registry review dates
+record October 5 completion, and all four affected packets remain `designing`.

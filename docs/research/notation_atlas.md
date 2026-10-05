@@ -7,7 +7,8 @@ Companion to [data/workflow research](data_workflows/README.md),
 [human-computer interfaces](interfaces/README.md). This is a deliberately broad
 search for relationships humans learned to express economically, not a claim
 that every notation should become executable or that the survey is exhaustive.
-Primary references below were consulted on 2026-09-30. Foreign forms are
+Original-survey primary references were consulted on 2026-09-30; later
+continuations carry their own consultation dates and evidence limits. Foreign forms are
 illustrative; no foreign-language execution, proof checking, chemical simulation,
 clinical interpretation, or user trial was performed.
 
@@ -180,6 +181,120 @@ after explicit calls fail. Test equal-size but mismatched axes, affine conversio
 longitude/latitude swap, absent coordinate and unit-compatible but frame-invalid
 addition. An optimizer cannot erase model/version metadata merely because the
 underlying buffers have compatible shapes.
+
+### Correlated Uncertainty: Shared Origin Is Part Of The Model
+
+> Research-depth extension checked 2026-10-04; named subexperiment
+> **DW4 / shared-uncertainty**, refining question 9 and the existing axis/unit
+> exercise. No measurement type, covariance API or numerical engine is admitted.
+
+The five-way distinction above already separates units, frames, axes and
+uncertainty, and the [domain map](domain_composition.md#knowledge-is-not-one-tree-or-one-truth-value)
+rejects a universal confidence number. The missing composition law concerns
+**which uncertain inputs are shared**. Copying a measurement value or using it
+twice does not create two independent measurements. Nor do different record IDs,
+equal error bars, different instruments or a provenance edge alone establish
+statistical independence.
+
+Zero covariance likewise does not by itself establish independence. A
+covariance basis can suffice for a selected affine variance law without being a
+complete joint-distribution description for nonlinear transformations.
+
+Selected primary evidence: **JCGM 100:2008**, section 5.2, requires correlated
+inputs to enter combined uncertainty through their covariance. Shared calibration
+or reference information can correlate otherwise distinct measurements.
+[GUM primary text](https://www.iso.org/sites/JCGM/GUM/JCGM100/C045315e-html/C045315e_FILES/MAIN_C045315e/05_e.html).
+**JCGM 102:2011**, sections 5.6/6.2, treats vector outputs, input/output covariance
+and propagation through a measurement model; linearization and propagation of
+joint distributions are distinct procedures. [Primary supplement](https://www.bipm.org/documents/20126/2071204/JCGM_102_2011_E.pdf).
+These editions were checked on the date above. This is selected mechanism
+evidence, not a metrology conformance audit or a claim that every uncertainty
+model is Gaussian, linear or reducible to a covariance matrix.
+
+Original exact affine oracle, with deliberately stated assumptions:
+
+```text
+X has estimate 10 and variance 1 under one supplied uncertainty model
+reuse that same uncertain input: Y = X - X; estimate 0, variance 0
+independent X1 and X2 each have estimate 10 and variance 1:
+    Z = X1 - X2; estimate 0, variance 2
+```
+
+The variance difference follows algebraically from the supplied joint model;
+it is not an executed measurement study. The zero case does not prove there is
+no measurement error elsewhere, that two new readings cancel, or that floating
+evaluation of arbitrary expressions has exact cancellation. In a second
+original model, `Xi = true_value + shared_offset + noise_i`, the readings measure
+one fixed scalar measurand. Assume a zero-mean finite-variance shared offset and
+zero-mean finite-variance noise terms that are mutually independent, independent
+of the offset, and all have the same fixed variance. For n readings,
+`Var(mean(Xi)) = Var(shared_offset) + Var(noise_i)/n`. More readings reduce only
+the independent-noise contribution under these assumptions; they do not remove
+the shared-offset contribution. A naive per-value error bar can conceal this
+distinction even when every unit and array shape matches.
+
+**Competing candidate contracts**, library/domain-model first:
+
+| Candidate | Visible composition | Cost / falsifier |
+| --- | --- | --- |
+| Explicit joint model plus covariance basis | State input identity, covariance assumptions and transformation basis together | A marginal standard deviation is promoted to a complete joint model; invalid matrix or unsupported nonlinear approximation goes unnoticed |
+| Shared latent-source/sensitivity representation | Compose affine contributions by source identity; repeated references retain the same supplied source | Independently created values accidentally share an ID, or missing correlations are silently set to zero |
+| Profiled joint-distribution propagation | Retain a named joint distribution and execute a bounded established numerical procedure | Sampling each marginal separately destroys dependencies or results claim exactness beyond the profile |
+| Marginal-only observation | Display one estimate and its local uncertainty with an explicit composition limit | Unsupported arithmetic automatically assumes independence instead of returning a gap/error |
+
+None implies an uncertainty wrapper around all Nomi numbers. Metadata belongs
+to a measurement/evidence boundary that needs it. Identity is a modeling fact,
+not a guess from object address, equal numeric payloads or a common instrument
+label. A duplicate citation has a similar shared-origin pressure, but measurement
+covariance does not automatically define independence of documentary testimony.
+Keep those domain laws separate.
+
+Candidate normal form, **protocol metalanguage**:
+
+```text
+bind measurand, units/frame and input/source basis
+-> state joint uncertainty assumptions and unknown dependencies
+-> describe a supported transformation without resampling copied inputs
+-> check compatibility, covariance/distribution validity and method limits
+-> propagate under a named exact/approximate profile
+-> inspect output estimate, dependency basis, uncertainty and limitations
+```
+
+For a supplied affine covariance model the candidate reference equation is
+`U_out = A U_in transpose(A)` with stated axis order and units. This finite
+reference law does not license arbitrary automatic differentiation, nonlinear
+linearization, asymptotic confidence claims or a general numerical optimizer.
+The [AI/ML numeric-program boundary](data_workflows/ai_ml.md#differentiation-is-a-transformation-with-a-domain)
+owns transformability; [adaptive evaluation](data_workflows/ai_ml.md#adaptive-evaluation-feedback-is-also-a-dependency)
+owns a different kind of feedback dependence.
+
+| Program / protocol | Observation and inspection | Failure-heavy discriminator |
+| --- | --- | --- |
+| Beginner: subtract a measurement from its explicit copy, then compare independent readings | Same central result, different supplied dependency/variance basis | Copying changes source identity or silently resamples an input |
+| Production: combine calibrated readings into a derived quantity | Units/frame, shared calibration edition, covariance basis, method and unknown correlations remain visible | Averaging claims all uncertainty vanishes although the shared component remains |
+| Failure-heavy: import incomplete covariance or nonlinear transformation | Distinguish unsupported method, invalid supplied covariance, unknown dependence and nonfinite arithmetic | Missing covariance becomes zero, an impossible covariance is accepted, or approximation is advertised as exact |
+
+Inspection should expose a compact dependency view plus a textual equivalent,
+including omitted sources and assumptions; it must not fetch calibration data
+or authorize a device action merely by opening the view. Candidate diagnostics
+include `joint dependence unspecified; independence not inferred` and
+`transformation outside affine uncertainty profile`. Report a covariance basis
+with named axes, not an unlabeled matrix that can be transposed accidentally.
+
+**Falsifiers and stop/removal criteria:** compare alias versus independent
+inputs, shared offset versus fresh noise, changed calibration edition, unknown
+correlation, asymmetric/non-positive-semidefinite supplied covariance, swapped
+axes, singular valid covariance, incompatible units and nonlinear/nonfinite
+cases. Singularity alone is not a reason to reject the repeated-input model.
+Reject automatic independent composition without evidence. Stop a stronger
+claim when the joint model or method's domain is unknown; retain marginal
+observations. Remove generic arithmetic sugar if it conceals resampling,
+approximation or covariance/source identity from a reader.
+
+**Unperformed:** neither oracle has been executed or captured; no established
+uncertainty engine, covariance checker, device adapter, differential numeric
+suite or reader study was run. DW4 and question 9 remain open. These cases add
+research obligations, not new successful probes to the historical inventory.
 
 ## 4. Chemistry: Composition, Structure And Process
 

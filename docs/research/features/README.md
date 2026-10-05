@@ -44,3 +44,17 @@ these foundations can support data/time, AI/ML and documentary/human domains
 coherently. The same [registered synthesis](../../design/synthesis.md#domain-layer-proposal)
 owns the proposal; [local experiments](../data_workflows/composition_experiments.md)
 are bounded models, not a new specification or runtime capability inventory.
+
+## Research Gap Continuation
+
+The October 4 research-only audit deepens four existing owners rather than
+adding feature rows: [polymorphic sharing](functions.md#polymorphic-sharing-and-generalization),
+[memory visibility](concurrency.md#memory-visibility-and-publication),
+[foreign callback lifetime and re-entry](resources.md#foreign-callbacks-and-re-entry),
+and [package-qualified nominal identity](modules_tooling.md#nominal-identity-across-package-instances).
+Each distinguishes existing coverage from the sharper unresolved contract,
+compares alternatives, and supplies beginner/production/failure-heavy inputs.
+These are unperformed discriminators, not accepted generic notation, a memory
+model, an FFI ABI or a package/type identity scheme. The
+[research overview](../README.md#research-gap-continuation) routes the related
+data, numeric and human-interaction obligations without changing the matrix.

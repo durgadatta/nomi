@@ -119,3 +119,16 @@ composition without turning transports into core keywords. Delivery ownership,
 settlement, position, local atomicity, replay and current authority remain
 separate. Its target-only programs and finite probes do not execute a broker or
 durable workflow engine; one pinned adapter is a later independent admission gate.
+
+The research-only gap continuation sharpens existing experiments:
+[DT4 predicate consistency](dependencies_and_time.md#predicate-consistency-beyond-snapshots-and-row-guards),
+[ML1 adaptive holdout feedback](ai_ml.md#adaptive-evaluation-feedback-is-also-a-dependency),
+[ML4 learned influence removal](ai_ml.md#data-erasure-and-learned-influence-are-different-operations),
+and [DW4 correlated uncertainty](../notation_atlas.md#correlated-uncertainty-shared-origin-is-part-of-the-model).
+Snapshots and row guards do not by themselves protect a cross-row predicate;
+train-only fitting does not erase evaluation feedback; deleting source data does
+not erase a trained descendant; equal uncertainty summaries do not identify
+independent measurements. Detailed candidate comparisons and representative
+programs are unperformed. Earlier finite captures retain their original claims;
+no database isolation guarantee, evaluation budget, removal algorithm or
+uncertainty engine is selected.

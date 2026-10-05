@@ -199,6 +199,104 @@ bitemporal basis supplies that distinction. Bind label horizon, feature schema,
 entity/split IDs and preprocessing artifact to training/evaluation evidence.
 No metadata proves the chosen experimental design is scientifically sound.
 
+### Adaptive Evaluation: Feedback Is Also A Dependency
+
+> Research-depth extension checked 2026-10-04; named subexperiment
+> **ML1 / adaptive-holdout**, refining DW5 and questions 8/9/17. No evaluation
+> API, statistical guarantee or mandatory experiment policy is admitted.
+
+Training-only preprocessing, entity/time splits and feature availability above
+prevent important leakage paths. They do not describe a developer choosing
+features, prompts, thresholds, metrics or stopping time **after seeing evaluation
+feedback**. The evaluator's dataset can be absent from the training function's
+read set while influencing the delivered model through human or agent decisions.
+This is a research gap in the evaluation record's meaning, not evidence that
+the existing fit/transform distinction is wrong.
+
+Selected primary evidence has three scopes. Cawley and Talbot (**2010**) analyze
+overfitting a model-selection criterion and subsequent evaluation bias.
+[Primary paper](https://jmlr.org/papers/v11/cawley10a.html).
+Dwork et al. (**2015**, arXiv v2) study adaptive holdout reuse and propose
+procedures with statistical guarantees under their stated assumptions; reuse
+is not universally forbidden or safe. [Primary paper](https://arxiv.org/abs/1506.02629v2).
+The scikit-learn **1.9.1** nested-CV example separates inner parameter selection
+from outer evaluation. It demonstrates a selected procedure, not immunity to
+repeatedly redesigning that procedure using its outer scores.
+[Official example](https://scikit-learn.org/1.9/auto_examples/model_selection/plot_nested_cross_validation_iris.html).
+These sources were checked on the date above; no foreign example was executed.
+
+Original finite counterexample: holdout labels are four binary values. Prepare
+all sixteen possible prediction vectors without reading those labels, score
+each, and publish only the best score. One vector matches perfectly for **every**
+possible holdout. No fit call read the holdout, yet selecting the winner did.
+For fresh independent fair binary labels, that selected fixed prediction rule
+still has expected accuracy one half. This constructed probability model is not
+a measured result, a claim about real datasets or a useful learning algorithm.
+
+The counterexample separates selection from prediction. Additional edges to
+include are changing the reported metric after results arrive, reporting only
+successful seeds, reading a public benchmark leaderboard, using test errors to
+rewrite an LLM prompt, and repeatedly checking a conventional fixed-sample claim
+until a desired result appears. A sequential/adaptive procedure may be valid
+under its own stopping/selection assumptions; the objection is presenting it
+as an independent fixed procedure without those assumptions.
+
+**Competing candidate contracts**, ordinary library evidence values first:
+
+| Candidate | Visible claim | Cost / rejecting observation |
+| --- | --- | --- |
+| Explicit selection set plus independent final evaluation | Selection feedback and final assessment have separate declared purposes/bases | Final feedback influences another candidate while its record still says independent assessment |
+| Complete bounded search/selection procedure evaluated externally | Evaluation concerns a procedure, including its search, rather than just the selected parameter vector | Search changes using outer feedback without changing the procedure/evidence basis |
+| Profiled adaptive evaluation procedure | Named algorithm, assumptions, feedback interface, stopping rule and scope support a specific statistical claim | Plain score caching, query counts or a history log are presented as that algorithm or its guarantee |
+| Exploratory observation only | Preserve scores and incomplete selection history without asserting confirmatory validity | A useful exploratory record is mislabeled invalid merely because it does not support a stronger claim |
+
+An evaluation dataset is not necessarily a linear consumable resource. Reading
+it twice does not destroy its values; it changes which independence/selection
+claims are justified. A policy may restrict feedback exposure, but inspection
+must explain the evidence obligation instead of pretending `evaluate` inherently
+uses up data. Missing human/agent decision history is **unknown exposure**, not
+proof no adaptation happened. A digest of code cannot record an unobserved
+conversation or certify an analyst's independence.
+
+Candidate normal form, **protocol metalanguage**, not proposed exports:
+
+```text
+state evaluation purpose, population, selection and stopping assumptions
+-> bind dataset/split and candidate-or-search-procedure identity
+-> record permitted feedback exposures and resulting decisions where observed
+-> freeze the declared subject before independent assessment, or select an
+   explicitly justified adaptive procedure
+-> retain all relevant outcomes and history coverage under privacy policy
+-> publish observation plus the narrower claim actually supported
+```
+
+| Program / protocol | Observation and inspection | Failure-heavy discriminator |
+| --- | --- | --- |
+| Beginner: select on validation, then assess a fixed candidate | Show distinct dataset purposes and which score selected the model | User tunes again after final score; the next claim must account for that feedback |
+| Production: evaluate a complete search/preprocessing procedure | Pin search, metric bundle, split/entity/time rules and observed feedback history; keep outer outcomes separate | Selected seeds/folds disappear, or repeated outer comparisons are labeled one untouched assessment |
+| Failure-heavy: agent edits prompts after benchmark feedback | Bind prompt/candidate revisions, feedback receipts and known exposure scope | Resume hides earlier feedback or presents an incomplete log as proof of independence |
+
+Candidate diagnostics distinguish `score observed for selection` from
+`independent assessment not established: feedback history is incomplete`.
+Views should identify metric direction, population and procedure scope; a green
+score does not certify generalization, fairness, causality or deployment fitness.
+These records compose with [shared-origin uncertainty](../notation_atlas.md#correlated-uncertainty-shared-origin-is-part-of-the-model)
+and [learned-state erasure](#data-erasure-and-learned-influence-are-different-operations);
+do not retain personal labels or prompts merely to make a provenance graph full.
+
+**Falsifiers and stop/removal criteria:** compare the sixteen-vector winner
+with an independently chosen fixed vector; expose the same score through CLI,
+dashboard and agent; change selection/metric/stopping rules after feedback;
+omit prior exposures; and replay an evaluation record against another candidate.
+Reject a universal `validated=true` wrapper if it cannot name the assessed
+subject and claim. Prefer exploratory records when independent/adaptive claims
+cannot be supported; do not automatically prohibit legitimate reuse. Stop
+before stronger guarantees without a domain-qualified experimental procedure.
+
+**Unperformed:** the finite model has not been captured or executed here. No
+estimator, nested-CV/adaptive evaluator, exposure enforcement, statistical proof
+audit or human repair study has been performed. ML1/DW5 remain open.
+
 ## Randomness, Checkpoints And Reproducibility
 
 JAX's typed keys distinguish generator implementations, and its explicit-key
@@ -227,6 +325,123 @@ does not establish statistical independence, privacy or cryptographic security.
 Gradient checkpoint/rematerialization is a memory/recompute strategy, training
 checkpoint is persisted state, and agent checkpoint is recorded execution state.
 Calling all three time travel would conceal the relevant guarantees.
+
+### Data Erasure And Learned Influence Are Different Operations
+
+> Research-depth extension checked 2026-10-04; named subexperiment
+> **ML4 / learned-removal**, also refining ML5, DT3/DT4 and DW5. This is not a
+> privacy-law interpretation, generic unlearning API or claim of certified erasure.
+
+The [data/time failure cases](dependencies_and_time.md#failure-cases-that-must-shape-the-design)
+already distinguish retained history from current read permission, and
+[messaging ME24](messaging_and_events.md#edge-cases-and-falsifiers) includes
+payload copies, snapshots and projections. Privacy accounting remains explicitly
+outside this survey's selected mechanisms. The additional composition question
+is narrower: what happens to **learned artifacts and training descendants** when
+an input contribution is withdrawn? Deleting a source record, revoking access,
+invalidating an artifact, retiring serving endpoints and removing learned
+influence are different operations with different evidence.
+
+Selected primary evidence: Guo et al. (**2020**) define certified removal relative
+to a specified training procedure and develop a mechanism for linear classifiers;
+that does not certify arbitrary model updates. [Primary paper](https://proceedings.mlr.press/v119/guo20c.html).
+Bourtoule et al. (**2021**, arXiv v3 from 2020) propose SISA training to limit the
+training scope affected by removal and reduce retraining work. This is evidence
+that removal cost can shape training architecture, not a universal inverse of
+`fit`. [Primary paper](https://arxiv.org/abs/1912.03817v3).
+Both were checked on the date above; no removal method or benchmark was executed.
+
+Original deterministic arithmetic oracle:
+
+```text
+training contributions: a=0, b=100; exact fitted mean=50
+delete stored contribution b, keep existing learned artifact: prediction=50
+retrain the same exact mean procedure on retained a: prediction=0
+```
+
+This oracle is about a declared training procedure, not whether a model knows
+a concept or whether a particular legal duty is satisfied. An exact sum/count
+update can match recomputation for this bounded mean model if its contribution
+basis, arithmetic and empty-result contract are preserved. It is not a removal
+law for arbitrary optimizer steps. For stochastic training, identical weights,
+matching output distribution under a stated definition, approximate distance
+to retraining and observed task-score change are distinct possible claims.
+
+**Candidate operation boundaries**, none admitted:
+
+| Operation | Evidence it could own | Does not establish |
+| --- | --- | --- |
+| Revoke access / retire artifact | Current read/serve policy and endpoint outcome | Existing copies or learned influence disappeared |
+| Delete owned stored records | Defined storage scope, descendants searched and deletion/expiry outcome | An imported copy, inaccessible backup or model state is covered automatically |
+| Invalidate descendants | Known lineage basis, affected artifact IDs and permitted future use | Lineage is complete or an invalidated artifact was physically removed |
+| Rebuild under retained basis | New artifact, retained contributions, training edition/profile and outcome | Bitwise equality across profiles or elimination of all ability to infer a fact |
+| Supported removal update | Selected algorithm, reference procedure, assumptions and exact/approximate/certified claim | A low forgetting-task score is a general removal certificate |
+
+A removal request needs a declared unit: record ID, subject, feature contribution,
+client update or another domain-owned selection. Duplicated records and retained
+correlated examples expose why removing one contribution does not imply the
+model can no longer predict the same information. Do not silently reinterpret
+"delete record b" as "erase every similar concept". Repeated requests need
+stable identity and idempotent bookkeeping; an unknown prior outcome is not a
+reason to subtract the contribution again.
+
+Competing initial contracts are: **invalidate/retire and rebuild**, which avoids
+claiming unsupported updates but may lose availability; **support only named
+removal-capable training profiles**, which can give narrower guarantees with
+architecture/state costs; or **record a domain-approved approximate update**,
+which must expose its weaker comparison and residual uncertainty. A serving
+policy may forbid the old artifact before a replacement is ready. Policy
+selection and legal adequacy remain outside a generic language library.
+
+The initial Nomi owner is an ordinary learning/storage library with profiled
+adapters. It reuses owned artifact values, explicit Result outcomes, effects,
+resource/task lifetimes and current capabilities; no global `erase` keyword or
+universal value-history mechanism is proposed. D1-D3 remain prerequisites for
+typed state, callbacks, retained regions and numeric comparison contracts.
+
+Candidate normal form, **protocol metalanguage**:
+
+```text
+resolve authorized request and contribution selection under an explicit basis
+-> enumerate known source/artifact/checkpoint/cache/export descendants and gaps
+-> apply the declared access/retention/serving policy
+-> select rebuild or a supported removal procedure with its reference claim
+-> record new artifact, outcome, residual/unavailable scope and review basis
+-> publish/retire through current authority; reconcile uncertain outcomes
+```
+
+Lineage can guide that work without proving it found every copy. An old training
+checkpoint can reintroduce a removed contribution on resume; an export, distilled
+model, fitted preprocessing artifact or inference cache may have another owner.
+Erasure evidence itself must not retain the sensitive content it purports to
+remove. A redacted contribution reference can be useful, but its identity,
+retention and disclosure policy still need an owner.
+
+| Program / protocol | Required observations | Adversarial edge |
+| --- | --- | --- |
+| Beginner: remove one exact-mean contribution and refit | Old artifact differs from retained-source recomputation; empty retained input has typed absence/error | Deleting the row is reported as updating the prediction |
+| Production: withdraw a contribution across a declared artifact lineage | Contribution/basis identity, selected claim, known descendants, unavailable copies and replacement/retirement outcome | A stale checkpoint resumes, or a serving alias still resolves to the old artifact |
+| Failure-heavy: partial deletion with lost replacement acknowledgment | Separate revoked use, unavailable evidence, incomplete deletion and unknown publication | Retry subtracts twice, success hides an external export, or replay restores an old grant |
+
+Inspection should say `source removed; artifact still derived from prior basis`
+or `removal comparison unavailable: reference training inputs expired`, not one
+Boolean `forgotten`. Keep numerical/evaluation observations separate from the
+removal claim; [adaptive evaluation](#adaptive-evaluation-feedback-is-also-a-dependency)
+also applies when a removal method is chosen using the reported score.
+
+**Falsifiers and stop/removal criteria:** test duplicate and repeated requests,
+empty retained data, stale preprocessing/checkpoints, incomplete lineage,
+changed training profile, retained equivalent examples, inaccessible exports
+and unknown retirement/publication outcomes. Reject generic `unfit` or universal
+inverse-update abstractions without a named reference law. Stop a certificate
+claim when assumptions, scope, verifier or reference comparison are unavailable;
+report the narrower observed action rather than fabricate proof. Remove a common
+wrapper if it collapses access control, storage erasure and learned-state change.
+
+**Unperformed:** no probe capture, training/removal engine, lineage-completeness
+checker, privacy accounting, certificate verifier, serving adapter or physical
+deletion test has been run. The arithmetic oracle is designed evidence only;
+this extension neither closes ML4/ML5 nor expands their implementation status.
 
 ## Generative AI Is An Effectful Evidence Producer
 

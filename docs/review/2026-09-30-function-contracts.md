@@ -211,3 +211,34 @@ bound cache and fallible observer long forms under region/effect contracts.
 Retain explicit statements/loops when they make control clearer. Compare one
 settled adapter on CLI/browser before adding shorthand or runnable samples;
 the hierarchy is not a mandate to implement every cataloged combinator.
+
+## Research Gap Continuation, 2026-10-04
+
+This continuation documents the accepted audit finding, not an accepted language
+feature. [Polymorphic sharing](../research/features/functions.md#polymorphic-sharing-and-generalization)
+owns the detailed counterexamples, alternative generalization policies and
+unperformed D1/D3 subexperiment. Existing GA1-GA8 and the current call contract
+retain their scope; no generic notation, checker or new probe was added.
+
+**Evidence That Changed The Design:** the selected OCaml 5.5 evidence exposes
+state retained between apparently identity-shaped calls. Callable shape and
+per-invocation purity are insufficient reasons to generalize shared storage.
+The research now compares conservative restriction with justified relaxation
+and explicit state ownership; no alternative has been selected.
+
+**Workflow Friction:** callback effects, local mutation and inference are already
+open, but their prior coverage did not preserve a sharp soundness discriminator.
+A named subexperiment prevents that obligation from becoming either a second
+generic backlog or a premature prohibition on all useful local inference.
+
+**Durable Improvement:** the existing function owner, research indexes, question
+2/3 and registry now expose the delayed-identity and factory-isolation cases.
+The dossier records normal-form/inspection requirements and three program
+levels while retaining the unperformed boundary. No framework, agent instruction
+or maintained runtime abstraction was justified by this documentation pass.
+
+**Next Pass:** compare frontend-neutral positive/negative generalization facts
+under D1/D3, including shared mutable captures, independent factories and
+immutable covariant results. Record rejection location and any lost useful
+inference. Only evidence that distinguishes the alternatives can select a rule;
+documentation checks or host-language examples do not prove Nomi soundness.

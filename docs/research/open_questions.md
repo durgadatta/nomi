@@ -43,6 +43,15 @@ locals infer; no implicit `Any`; constraint predicates retain runtime meaning.
 **Test:** separate compilation, recursive local functions, generic collection
 helpers, dynamic host interop, editor latency, and public API diffing.
 
+**Sharing pressure:** [polymorphic sharing and generalization](features/functions.md#polymorphic-sharing-and-generalization)
+adds a stateful delayed-identity counterexample. Use unrestricted generalization
+as a negative baseline; compare conservative restriction with justified
+relaxed/effect-aware rules, excluding variables fixed by the environment;
+an apparently identity-shaped callable can retain values across invocations.
+Challenge private mutable captures, independent factory calls and immutable
+covariant results before choosing annotation or generalization policy. These
+are unperformed D1/D3 subexperiments, not a selected type-system rule.
+
 ## 3. Protocol And Method Model
 
 **Question:** How do generic behavior, owned methods, and third-party extension
@@ -67,6 +76,12 @@ seeded history, lawful merge, fallible observation, context-bound caches,
 bounded iteration and conditional value capabilities. Start with GA2/GA3/GA8
 under D1-D3. Host/model counterexamples do not select type notation or close
 effect/region checking. No universal Object/Function methods are assumed.
+
+Resolved protocol ownership must distinguish
+[package/declaration identity from runtime instance ownership](features/modules_tooling.md#nominal-identity-across-package-instances),
+not just use the displayed type name. Follow question 13 for duplicate-version,
+re-export and explicit conversion cases; a structural resemblance is not
+evidence that two nominal declarations share constraints or conformance.
 
 ## 4. Effect Taxonomy
 
@@ -102,6 +117,14 @@ causes under both carriers. Prefer typed recoverable completion and static scope
 use with revocation, subject to callback/error/region typing. Next test binding
 failure after successful enter, in-flight operations, and actual async cleanup
 with deadlines; supplied lifetime facts are not checker evidence.
+
+**Foreign-boundary pressure:** [callbacks and re-entry](features/resources.md#foreign-callbacks-and-re-entry)
+extend capture/escape and in-flight use with synchronous foreign callbacks,
+foreign-thread entry, deregistration races and incompatible unwinding.
+Compare restricted non-reentrant entry, explicit re-entry contexts and queued
+handoff, preserving current authority and distinct body/cleanup causes.
+The existing lease model does not establish an ABI, thread safety or quiescence;
+use deterministic callback schedules before any unsafe adapter is admitted.
 
 ## 6. Error Conversion
 
@@ -147,6 +170,13 @@ adds DT1-DT5: checked DAG owners, partial ordering, snapshot versus bitemporal
 basis, domain-specific change algebra and cache/backfill authority. Acyclicity
 does not prove safe ordering, consistent snapshots or lawful incrementality.
 
+**Commit-consistency pressure:** [DT4 predicate consistency](data_workflows/dependencies_and_time.md#predicate-consistency-beyond-snapshots-and-row-guards)
+adds write skew and absent-row predicates. Compare whole-owner revision guards,
+precise dependency/predicate validation, and a named serializable adapter profile.
+Revalidate at the publication owner and preserve atomic participant boundaries;
+per-row freshness is not cross-row invariant preservation. The designed schedules
+are unperformed and do not replace the existing owner-enforced publication law.
+
 ## 9. Numeric And Scientific Model
 
 **Question:** What are the default integer, decimal, float, overflow, unit,
@@ -173,6 +203,23 @@ preprocessing, supported differentiation/staging, exact/tolerance/profile
 vectors, training-state completeness, pinned serving/agent requests and checked
 export. [Local probes](data_workflows/composition_experiments.md) cover selected
 arithmetic/metadata counterexamples, not engine execution or model quality.
+
+**Uncertainty pressure:** [DW4 shared origins and covariance](notation_atlas.md#correlated-uncertainty-shared-origin-is-part-of-the-model)
+compares independent summaries, named uncertainty sources and explicit joint
+models. Under the stated exact scalar theory, one uncertain X minus itself
+cancels; separately measured equal-valued inputs need not. Challenge shared
+calibration, nonlinear propagation and missing covariance without treating zero
+covariance as independence. No uncertainty notation or engine is selected.
+
+**Evaluation and removal pressure:** [ML1 adaptive feedback](data_workflows/ai_ml.md#adaptive-evaluation-feedback-is-also-a-dependency)
+treats selection and optional stopping as evaluation dependencies, not only
+training-code reads. Compare declared exposure histories, governed held-out
+evaluation and method-qualified adaptive reuse. [ML4 learned removal](data_workflows/ai_ml.md#data-erasure-and-learned-influence-are-different-operations)
+separates source erasure, current access, descendant invalidation, retraining and
+supported influence-removal claims. Scope each guarantee to its model, retained
+state and threat/measurement profile; neither a provenance graph nor a delete
+acknowledgment certifies it. Both are unperformed continuations, and privacy
+accounting remains explicitly outside the existing selected ML scope.
 
 ## 10. Generic Dispatch
 
@@ -231,6 +278,14 @@ not identity; exact lockfile; immutable releases; pure fetch.
 **Test:** domain loss, package transfer, private registries, air-gapped builds,
 forks, compromised signing keys, and dependency confusion.
 
+**Nominal identity pressure:** [the package-instance comparison](features/modules_tooling.md#nominal-identity-across-package-instances)
+separates registry location, resolved package identity, declaration identity and
+runtime module instance. Compare revision-qualified declarations with stable
+public identities and checked compatibility, including a diamond
+dependency, an identity-preserving re-export and fresh module instances.
+Compatibility claims need their own evidence; neither equal source spelling nor
+equal fields establishes substitutability. The comparison is unperformed.
+
 ## 14. Edition And Migration Model
 
 **Question:** How can source syntax evolve after stability without splitting
@@ -254,6 +309,13 @@ platform differences require explicit APIs.
 
 **Test:** differential execution of randomized conformance programs and
 failure/cancellation/resource scenarios across every backend.
+
+**Memory-model pressure:** [visibility and publication](features/concurrency.md#memory-visibility-and-publication)
+separate task lifetime/scheduling from what another worker may observe.
+Compare isolation/transfer, synchronized sharing and qualified atomics using
+publication, stale reads and compound updates. Require named happens-before
+edges, race policy and host profile; sleep/yield is not a publication contract.
+No weak-memory model or atomic API has been accepted or exercised by this pass.
 
 ## 16. Pattern Ergonomics After The Core Decision
 
@@ -356,6 +418,21 @@ separately from current capability grants. P19/P20 are finite supplied-policy
 counterexamples, not production enforcement. HX8 now has a
 [seven-task protocol and answer facts](interfaces/composition_cases.md#hx8-minimal-study-protocol);
 execution, authentic approval, and human comprehension remain open evidence work.
+
+**Reliance and team pressure:** C12/HX8 now includes
+[repeated advisory reliability](interfaces/composition_cases.md#c12-advisory-reliability-and-calibrated-reliance)
+and [split-information handoff](interfaces/composition_cases.md#c12-team-handoff-and-distributed-understanding).
+Compare prediction and repair over a reliability sequence, and distinguish
+artifact completeness from who checked each obligation. These are additional
+unperformed protocols, not participants, outcomes or additions to the prepared
+U01-U07/N01-N10 inventories. Natural-language grounding alone does not establish
+calibrated reliance or shared task knowledge.
+
+**Diagnostic pressure:** [contrastive explanation and diagnosis](interfaces/query_search.md#contrastive-explanation-and-diagnosis)
+extend C09/HX2/HX8 with why/why-not, false-premise and multiple-blocker cases.
+Compare passive traces, contrastive dependency slices and separately authorized
+hypothetical repair. Showing one failed condition does not prove that changing
+it will enable the expected action; incomplete evidence must remain visible.
 
 ## Research Stop Rule
 

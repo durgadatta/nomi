@@ -477,3 +477,43 @@ freshness (123 runtime files, 11 samples) and WASM freshness (eight outputs)
 passed without regeneration because no runtime module or runnable sample changed.
 These checks do not typecheck the research targets, validate the example
 translations or establish comprehension, accessibility or NLP performance.
+
+## Research Gap Continuation, 2026-10-04
+
+The user requested detailed documentation of the research audit's remaining
+edges, without implementation. Existing C12/HX8 now owns
+[repeated-advice reliance](../research/interfaces/composition_cases.md#c12-advisory-reliability-and-calibrated-reliance)
+and [team handoff](../research/interfaces/composition_cases.md#c12-team-handoff-and-distributed-understanding).
+[Contrastive diagnosis](../research/interfaces/query_search.md#contrastive-explanation-and-diagnosis)
+extends C09/HX2/HX8; the
+[linguistic dossier](../research/interfaces/natural_language.md#grounding-reliance-and-shared-understanding)
+links those distinctions rather than duplicate their protocols. This adds no
+new numbered thread, study fixture, participant, result or target rule.
+
+**Evidence That Changed The Design:** selected primary automation research
+distinguishes missed cues from following erroneous advice. Whyline supplies a
+question-bound alternative to undirected traces, including false premises.
+Distributed cognition supplies a framework-level lead for split knowledge, not
+a verified handoff benefit. The added Nomi counterexamples separate task
+correctness from justified reliance, authentic approval from completed checking,
+and accurate branch evidence from sufficient repair. All remain hypotheses.
+
+**Workflow Friction:** a full distributed-cognition PDF fetch failed; the limited
+abstract/introduction extraction is explicitly retained. Historical simulation
+and small debugging-study populations cannot settle contemporary programming
+usability. New hypothetical sequence and dyad tasks also need reviewed answer
+oracles; existing prepared fixtures are not silently claimed to cover them.
+
+**Durable Improvement:** detailed alternatives, normal forms, inspection facts,
+beginner/production/failure-heavy pressures, confounds and falsifiers now live
+in the existing packet. The registry and question 17 route to them without
+inventing new global experiment IDs, a universal understanding bit, a causal
+engine or an automatic repair API. Existing probe captures and U01-U07/N01-N10
+remain unchanged; no new test or runtime behavior is introduced.
+
+**Next Pass:** select and pilot one matched comparison, with independently
+reviewed supplied facts and explicit disclosure scope. Record initial prediction,
+missing facts and repair separately from confidence/time. Treat dyads as linked
+observations and prompting as an intervention. A tabletop study of supplied
+facts and a later actual adapter/capture trial answer different questions;
+neither can justify population-wide or longitudinal claims without its own design.

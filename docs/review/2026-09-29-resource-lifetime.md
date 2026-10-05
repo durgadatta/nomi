@@ -142,3 +142,36 @@ binding-failure fixture, not more source-language surveys. The user also request
 a separate maximal cognitive/interface exploration after this checkpoint: connect
 human acts, historical principles, and modern interfaces to explicit Nomi forms
 and bounded interface experiments without admitting borrowed notation prematurely.
+
+## Research Gap Continuation, 2026-10-04
+
+The later research-only audit deepens
+[foreign callbacks and re-entry](../research/features/resources.md#foreign-callbacks-and-re-entry)
+inside the existing lifetime question. It does not expand the preceding hosted
+compatibility repair or claim that the symbolic lease experiment models foreign
+threads, callback quiescence, a target ABI or supported cross-language unwinding.
+
+**Evidence That Changed The Design:** selected Rustonomicon mechanisms distinguish
+synchronous re-entry, asynchronous foreign callback lifetime and unwind
+compatibility. Admission closure, draining in-flight callbacks and releasing
+captured state are different obligations. The dossier compares restricted entry,
+explicit re-entry contexts and queued handoff without choosing a Nomi contract.
+
+**Workflow Friction:** a callback whose registration remains live can outlive a
+nominally closed resource scope. Rejecting new callbacks is not enough when a
+foreign caller can reach freed gate memory; deterministic schedule proposals
+must name the still-live entry boundary and final quiescence evidence. Hosted
+`with` tests do not settle those obligations.
+
+**Durable Improvement:** question 5, feature navigation and the existing resource
+registry now route to the detailed edge matrix, long form, inspection facts,
+three program levels and unperformed experiment. This preserves the original
+completion/lease recommendation and all existing test evidence. No unsafe
+adapter, callback runtime, source syntax or new maintained probe was added.
+
+**Next Pass:** compare event-controlled callback admission, synchronous re-entry,
+foreign-thread attachment, late/in-flight callbacks, deregistration and abnormal
+completion under two explicit contracts. Establish authority and thread/region
+ownership before invoking user code, and prove quiescence before freeing state.
+Only then consider one pinned host adapter; even that cannot justify a portable
+cross-language unwind guarantee without a declared ABI profile.

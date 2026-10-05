@@ -26,6 +26,17 @@ same-base publication and exact-review counterexamples, and an
 A valid immutable candidate is not a shared-state commit; current authority
 is not evidence of the person's endorsement of a changed action.
 
+The October 4 research-only continuation deepens C12/HX8 with
+[calibrated reliance over repeated advice](composition_cases.md#c12-advisory-reliability-and-calibrated-reliance)
+and [team handoff/shared understanding](composition_cases.md#c12-team-handoff-and-distributed-understanding).
+[Contrastive diagnosis](query_search.md#contrastive-explanation-and-diagnosis)
+sharpens C09/HX2/HX8, while
+[natural-language grounding](natural_language.md#grounding-reliance-and-shared-understanding)
+links the distinctions without duplicating their protocols. These additions
+describe unperformed studies and counterexamples, not new numbered threads,
+prepared fixtures, observed comprehension or implemented diagnostic/repair APIs.
+The earlier local probe and U01-U07/N01-N10 inventories are unchanged.
+
 Current probe inventory lives here and in [the executed report](experiments.md).
 Secondary indexes link to those owners without copying the changing probe count;
 dated bridge validation counts remain historical observations.

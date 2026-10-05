@@ -70,6 +70,36 @@ The decisions drawn from this evidence live in
 [Decision Ledger](../design/decisions.md). Research proposes; target design
 decides.
 
+## Research Gap Continuation
+
+The research-only audit on 2026-10-04 identified sharper contracts inside
+already covered topics, not eleven wholly missing fields. The ten reported
+findings split into eleven units because concurrency includes both memory
+visibility and database predicate consistency. Their detailed evidence stays
+with these existing owners:
+
+| Research unit | Counterexample or distinction | Detailed owner |
+| --- | --- | --- |
+| Polymorphic sharing | A delayed identity closure retains the previous argument; generalization must account for shared state. | [Functions](features/functions.md#polymorphic-sharing-and-generalization) |
+| Memory publication | Owning a task or yielding execution does not establish visibility of its shared writes. | [Concurrency](features/concurrency.md#memory-visibility-and-publication) |
+| Predicate consistency | Disjoint guarded row updates can both succeed while violating a cross-row invariant. | [Dependencies and time](data_workflows/dependencies_and_time.md#predicate-consistency-beyond-snapshots-and-row-guards) |
+| Foreign callbacks | Re-entry, foreign threads, unwinding and in-flight deregistration need distinct contracts. | [Resources](features/resources.md#foreign-callbacks-and-re-entry) |
+| Nominal identity | Equal names and fields across package versions need not denote the same owned type. | [Modules and tooling](features/modules_tooling.md#nominal-identity-across-package-instances) |
+| Adaptive evaluation | Held-out feedback can influence selection even when training never reads the held-out rows. | [AI/ML](data_workflows/ai_ml.md#adaptive-evaluation-feedback-is-also-a-dependency) |
+| Correlated uncertainty | Reusing one uncertain origin differs from using independent values with equal summaries. | [Notation](notation_atlas.md#correlated-uncertainty-shared-origin-is-part-of-the-model) |
+| Learned influence removal | Deleting a source row is not the same operation as invalidating or removing its learned influence. | [AI/ML](data_workflows/ai_ml.md#data-erasure-and-learned-influence-are-different-operations) |
+| Calibrated reliance | Repeated correct advice can conceal a rare misleading suggestion or omitted warning. | [C12/HX8](interfaces/composition_cases.md#c12-advisory-reliability-and-calibrated-reliance) |
+| Team understanding | Authentic approvals can coexist with an unchecked obligation each reviewer assumes another owns. | [C12/HX8](interfaces/composition_cases.md#c12-team-handoff-and-distributed-understanding) |
+| Contrastive diagnosis | A trace, an answer to why-not, and an authorized repair establish different facts. | [Query and search](interfaces/query_search.md#contrastive-explanation-and-diagnosis) |
+
+Each substantive unit records bounded primary evidence, original counterexamples,
+competing contracts, layer/normal-form/inspection implications, representative
+programs and falsifying experiments. Existing questions, DT/ML/DW and C/HX owners
+remain the routing system; this table is navigation, not another priority list.
+No new experiment was executed, participant recruited, target rule accepted,
+ABI guaranteed or runtime behavior changed. Existing local probe captures and
+prepared study inventories retain their earlier scope.
+
 ## Corpus Covered
 
 The consolidated corpus compared:

@@ -169,6 +169,110 @@ atomic database cut. Record a shared transaction basis when available, or name
 independent snapshots and the reconciliation assumption. Timestamp equality
 alone does not establish causal or transactional consistency.
 
+### Predicate Consistency: Beyond Snapshots And Row Guards
+
+> Research-depth extension checked 2026-10-04; named subexperiment
+> **DT4 / predicate-commit**, also refining DT2/DT3 and question 8. Not a new
+> transaction API, isolation default or implemented concurrency guarantee.
+
+The preceding consistency claim concerns **what was read**. The stale-edit and
+merged-constraint cases below concern **what may be published**. The
+[interaction proposal](../../design/interaction_model.md#context-and-evidence-pressure)
+already requires an owner-enforced base and names read-set completeness. The
+missing discriminator is the scope of that base: validating a row revision is
+not necessarily validating a predicate over a collection, including absent rows.
+A whole-model revision guard can be sufficient under its single-owner contract;
+we must not silently weaken it into unrelated row guards at a database adapter.
+
+Selected primary evidence: PostgreSQL **18** distinguishes stable Repeatable
+Read snapshots from Serializable execution. Its documented Repeatable Read
+prevents phantom reads yet still permits serialization anomalies; therefore
+"no phantoms observed" is not the same property as serializability. Serializable
+transactions can abort and require a whole-transaction retry. This is one
+engine's edition-specific contract, not a portable meaning inferred from an
+isolation-level name. [Isolation semantics](https://www.postgresql.org/docs/18/transaction-iso.html).
+Its ordinary `CHECK` constraints do not support general checks against other
+table rows. A Nomi value constraint must not be advertised as a database-wide
+invariant merely because it lowers to a check-looking expression.
+[Constraint boundary](https://www.postgresql.org/docs/18/ddl-constraints.html#DDL-CONSTRAINTS-CHECK-CONSTRAINTS).
+
+Original schedule, not an executed PostgreSQL fixture: a roster has two
+responders, A and B, both available; the invariant is at least one available.
+
+```text
+T1 reads A=true@1, B=true@1; proposes A=false, guarded only by A@1
+T2 reads A=true@1, B=true@1; proposes B=false, guarded only by B@1
+T1 commits A=false@2; T2 commits B=false@2
+both own-row guards passed; the committed roster violates the invariant
+```
+
+Each candidate passes a check against its original snapshot. The combination
+does not. Rechecking that same captured snapshot immediately before commit
+does not repair the missing atomic boundary. A second discriminator starts
+with no overlapping reservation: two transactions find the range empty and
+insert different reservation IDs for overlapping times. The read dependency
+includes the **absence of matching rows**, not just IDs returned by the query.
+This is a predicate/insert countermodel, not a claim that every snapshot engine
+allows a repeated query to see new rows.
+
+**Candidate Nomi contracts**, library/protocol first; none is selected:
+
+| Candidate | Meaning and benefit | Cost / falsifier |
+| --- | --- | --- |
+| Serialized aggregate owner or complete aggregate revision guard | Check and publish one invariant-bearing model under one owner/base | Too coarse for unrelated writes; fails if a bypass writer or external participant escapes that owner |
+| Explicit read/predicate dependency validation | Commit validates declared rows, ranges, absence and semantic context in the same protected boundary | An incomplete read set, changed query meaning or check-then-write gap makes the guarantee false |
+| Engine-owned transaction profile | Adapter requires a verified isolation/invariant contract and returns conflict/abort distinctly | A profile name alone is insufficient; distributed/external effects are not included unless the participants cooperate |
+
+These alternatives need not force every operation into the strongest profile.
+A read-only historical report may want a stable snapshot, while reserving shared
+capacity needs a different contract. Locking, database constraints and optimistic
+validation can be implementations of an obligation, not interchangeable words
+for it. Serial order of database transactions also does not guarantee real-time
+ordering across services, authorization freshness, fairness or external delivery.
+
+Candidate normal form, **protocol metalanguage rather than accepted syntax**:
+
+```text
+declare invariant and atomic participants
+-> acquire/read under named consistency profile and current authority
+-> derive candidate plus its complete relevant read/predicate basis
+-> validate and publish inside the owner's protected commit boundary
+-> observe committed / conflict-or-abort / uncertain outcome
+-> expose receipt or reconcile; retry only the permitted replay-safe work
+```
+
+Keep a speculative report or notification out of committed output until its
+transaction outcome is known. A retry must not replay a send performed before
+an abort. Current authority, unknown commit outcome and application `Err` remain
+different facts; [messaging commit/settlement](messaging_and_events.md#normal-forms-and-architecture-composition)
+owns the cooperating external protocol.
+
+| Program / protocol | Required observations | Adversarial edge |
+| --- | --- | --- |
+| Beginner: change one immutable roster through one owner | Show base, invariant, proposed roster and committed revision | Two proposals share a base; at most one stale-base publication succeeds |
+| Production: reserve a capacity/time range through a profiled store | Identify predicate/range, atomic participants, commit point and conflict outcome | Disjoint written IDs still overlap; an empty query result is a read dependency |
+| Failure-heavy: reserve, then notify through recorded intent | Separate transaction abort, successful commit and lost response; show permissible reconciliation | A retry sends twice, publishes aborted evidence or uses an old authorization decision |
+
+Inspection should show the guarded object and **property guaranteed**, not only
+"transactional". A redacted predicate description may be necessary; inspection
+does not execute the query or disclose protected matches. Candidate diagnostics
+include `row revisions match, but predicate basis is not protected` and
+`commit outcome unknown; reconcile operation K before selecting a new ID`.
+Do not infer predicate completeness from declared purity or an acyclic graph.
+
+**Falsifiers and stop/removal criteria:** enumerate the two schedules above,
+same-row conflict, phantom insertion, irrelevant concurrent write, changed
+predicate edition, bypass writer, aborted read-only result and uncertain commit.
+Reject a generic wrapper if its protection cannot include the invariant's actual
+scope; keep carrier-specific contracts instead. Reject retry convenience that
+conceals side-effect multiplicity. Stop before API admission when the engine
+profile, conflict taxonomy or protected participants are unspecified.
+
+**Unperformed:** no concurrent engine test, model checker, predicate/read-set
+inference, crash injection, typed contract, adapter or reader study has been run
+for this subexperiment. The schedules are designed reasoning oracles, not new
+captured results or closure of DT2-DT4.
+
 ## Incrementality Needs An Algebra And A Read Set
 
 [Build Systems A La Carte](https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/)

@@ -249,6 +249,44 @@ source provenance, diagnostics, formatter/round trips and a removal path.
 Free prose, controlled prose and checked Nomi source remain different artifacts.
 An LLM may propose a draft, but generated fluency never upgrades its evidence.
 
+### Grounding, Reliance And Shared Understanding
+
+The proposed dialogue protocol needs two further distinctions. First, fluent
+or cautious wording is not calibrated reliability. A person can report high
+confidence while relying on an unsupported suggestion, or reject useful advice
+because every answer sounds uncertain. Repeated correct advice may change what
+they check on a later task; the absence of a warning can be misread as a completed
+negative check. These are research questions about reliance and task history,
+not deductions from grammatical modality or an instruction to make every answer
+less confident. Tool scores need a named measurement population and evaluation
+basis before they are presented as probabilities.
+
+Second, common ground in a conversation is not a globally shared knowledge bit.
+In a team, one person may know the currency assumption, another the recipient,
+and a successor only the final source/result. Receipt of a summary, assigned
+checking, observed completed checking, understanding, endorsement and authority
+are different claims. Two genuine approvals can coexist with each reviewer
+assuming the other checked a fact. A revision-bound handoff must not present
+pending work as completed or require disclosure of a private fact merely to
+resolve a reference. Source/protocol records can expose the gap; they cannot
+certify a person's mental state or settle institutional responsibility.
+
+The substantive counterexamples, primary-source limits, alternatives and
+unperformed methods live in
+[C12's advisory-reliability protocol](composition_cases.md#c12-advisory-reliability-and-calibrated-reliance)
+and [team-handoff protocol](composition_cases.md#c12-team-handoff-and-distributed-understanding).
+They refine HX8, not NL1-NL6 or the prepared N01-N10/U01-U07 inventory. The
+existing individual prediction/repair trial cannot by itself establish safe
+long-term reliance or team knowledge transfer.
+
+Explanations also need a question and contrast. "Why did this happen?", "Why
+didn't the expected action happen?" and "What change would make it happen?"
+need different evidence. The premise may be false, and a truthful trace can
+identify one blocker without justifying a unique or safe repair. The
+[contrastive-explanation research](query_search.md#contrastive-explanation-and-diagnosis)
+owns that distinction under C09/HX2/HX8. Asking for missing facts is still
+success; a confident paraphrase is not a causal argument or an execution grant.
+
 ## Localization, Access And Terminology
 
 Separate stable machine command identity from localized visible/accessibility

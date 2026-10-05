@@ -6,8 +6,8 @@
       "topic": "Generic callback contracts, effects, captures, and invocation",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-04",
-      "keywords": ["function contracts", "callback typing", "generic declarations", "effect polymorphism", "pure callbacks", "callback retention", "latent effects", "functional abstractions", "generic operations", "map reduce filter", "accumulate", "memoization", "caching", "tap", "fixed point", "serialization", "hashing"],
+      "last_reviewed": "2026-10-05",
+      "keywords": ["function contracts", "callback typing", "generic declarations", "effect polymorphism", "pure callbacks", "callback retention", "latent effects", "functional abstractions", "generic operations", "map reduce filter", "accumulate", "memoization", "caching", "tap", "fixed point", "serialization", "hashing", "value restriction", "polymorphic sharing", "generalization"],
       "artifacts": {
         "research": "docs/research/features/functions.md",
         "design": "docs/design/function_contracts.md",
@@ -35,6 +35,7 @@
       "next_actions": [
         "Use function_contracts.md as the live callback contract; select call-shape/default/label rules and compare its three generic/function-value candidates before accepting syntax.",
         "Type map/fold, derived decode and run_scope under pure-only and effect-polymorphic candidates, including mutable capture, retained regions and cold tasks.",
+        "Use functions.md's polymorphic-sharing comparison to challenge D1/D3 generalization with delayed identity, shared mutable storage and independent factory calls; no value-restriction rule is selected.",
         "Use GA1-GA8 to challenge carrier-specific versus shared generic operations; first type seeded scan, context-bound cache and fallible observation without universal Object/Function methods or inferred merge/convergence laws.",
         "Specify protocol coherence, effect compatibility, encapsulated mutation, whole-completion region export, and cold-task authorization timing with frontend-neutral positive/negative facts.",
         "After design acceptance, implement one gated typed Surface producer/consumer slice and CLI/browser diagnostics before promoting a playground sample."
@@ -45,8 +46,8 @@
       "topic": "Cognitive representations, semantic commands, and inspectable change",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-04",
-      "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation", "corner cases", "edge cases", "human computation", "philosophy", "interaction composition", "accessibility", "IME", "physical control", "text interface", "string API", "Unicode", "PowerShell", "templating", "codec", "source text", "natural language", "linguistics", "naming", "grammatical roles", "semantic roles", "pragmatics", "grounding", "quantifier scope", "localization", "controlled language"],
+      "last_reviewed": "2026-10-05",
+      "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation", "corner cases", "edge cases", "human computation", "philosophy", "interaction composition", "accessibility", "IME", "physical control", "text interface", "string API", "Unicode", "PowerShell", "templating", "codec", "source text", "natural language", "linguistics", "naming", "grammatical roles", "semantic roles", "pragmatics", "grounding", "quantifier scope", "localization", "controlled language", "calibrated reliance", "automation bias", "team handoff", "shared understanding", "contrastive explanation", "why-not", "diagnosis"],
       "artifacts": {
         "research": "docs/research/interfaces/README.md",
         "design": "docs/design/interaction_model.md",
@@ -80,6 +81,7 @@
         "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
         "Use docs/research/data_workflows/nomi_candidates.md for DW1-DW8 order and data/notation pressure-program gates; do not start an engine before the description contracts close.",
         "Use docs/research/interfaces/composition_cases.md for HX1-HX8: context/repreparation, owner-enforced publication, review scope, bounded inspection, draft commands, inverse projection, Stop evidence, source maps, frame/clock/control context and the prepared U01-U07 study; local probes are motivating models, not Nomi conformance.",
+        "Use C12/HX8's unperformed repeated-advice and split-information handoff protocols, and query_search.md's contrastive diagnosis comparison; do not infer reliance, shared knowledge or repair sufficiency from fluent explanations or approvals.",
         "Use docs/research/dsls/text_as_interface.md for T1-T10; close display/inspection, strict Text/Bytes decode, offset-unit and source-provenance contracts before a codec, template engine or new string notation.",
         "Use natural_language.md NL1-NL6 and prepared N01-N10 facts to challenge naming/roles/scope/intent/localized discovery; after D1-D3, select NL2 role swaps and NL4 changed referents for an HX8 pilot, not a prose execution engine or English-only naming lint.",
         "Falsify interaction laws using text and read-only invoice projections before editable views or new notation.",
@@ -92,8 +94,8 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-04",
-      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow"],
+      "last_reviewed": "2026-10-05",
+      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty"],
       "artifacts": {
         "research": "docs/research/features/README.md",
         "design": "docs/design/synthesis.md",
@@ -122,6 +124,7 @@
       "next_actions": [
         "Use the resource-lifetime packet's executed candidate comparison; next close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
+        "Follow the research overview's gap-continuation routes for memory publication, predicate consistency, package-qualified nominal identity, adaptive evaluation, learned removal and correlated uncertainty; existing questions/experiments retain ownership and none is resolved by the documentation pass.",
         "Use MSG1-MSG6 to challenge delivery/position/ownership/local atomicity/replay contracts with the messaging target; after D1-D3 typing, select one pinned adapter and independent crash/recovery/settlement fixtures, not a universal broker API.",
         "Specify callback effect types, minimal generics/protocols, and scoped task-handle contracts before claiming the overall target is fully typeable.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
@@ -134,8 +137,8 @@
       "topic": "Typed resource completion and scoped handle escape",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-09-29",
-      "keywords": ["resource lifetime", "cleanup outcome", "scope failure", "handle escape", "resource completion", "cleanup cancellation"],
+      "last_reviewed": "2026-10-05",
+      "keywords": ["resource lifetime", "cleanup outcome", "scope failure", "handle escape", "resource completion", "cleanup cancellation", "FFI", "foreign callbacks", "re-entry", "deregistration", "unwinding"],
       "artifacts": {
         "research": "docs/research/resource_lifetime.md",
         "design": "docs/design/resource_lifetime.md",
@@ -158,6 +161,7 @@
       "next_actions": [
         "Specify Resource/callback/error/region metadata and type the three programs, including explicit heterogeneous nested error mapping.",
         "Add binding failure after successful enter, lexical defer/capture timing, in-flight concurrent use, and cleanup timeout cases.",
+        "Use features/resources.md's foreign-callback comparison for re-entry, foreign-thread attachment, in-flight deregistration and unwind boundaries; symbolic lease checks and hosted with compatibility do not establish an ABI or callback quiescence.",
         "Validate actual event-controlled async cancellation and cleanup join before accepting any fallible-with shorthand.",
         "Migrate one target-neutral scope/lease backend slice with typed diagnostics and CLI/browser conformance before promoting a playground sample."
       ]
