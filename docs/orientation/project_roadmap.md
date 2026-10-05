@@ -371,6 +371,42 @@ unchanged. Focused Ruff and whitespace checks pass. The ignored local RAG index
 was refreshed and all 18 agent-doctor checks pass. No hosted deployment or stable release is
 claimed.
 
+### Iterative Runtime Continuation Plan
+
+Continue from `d3b0143`/`77bdcfb` in bounded, separately verified commits. This
+plan does not accept new target notation or promote a designing packet.
+
+1. **A08/A11 compatibility scopes:** reproduce hook binding, enter/assignment
+   failure, return/break/continue, LIFO cleanup failure and suppression in the
+   direct and reduced hosted paths. Route interpreted hooks through ordinary
+   callable binding; register exit immediately after successful enter. Repair
+   reduced no-`as` acquisition and try/finally cleanup together. Use a proven
+   unwind helper with captured type-level descriptors; keep Python suppression
+   explicitly fenced from D2's no-suppression, typed-cause target. Add focused
+   failing tests before edits, including host BaseException and failed cleanup.
+2. **A08 suspension integrity:** first reproduce nested call re-yield ordering,
+   then compound expressions whose work is lost after suspension. Do not add
+   individual operator handlers on top of an incorrect frame queue. Select a
+   coherent child-before-parent continuation boundary or reject unsupported
+   shapes explicitly; retain source order, once-only evaluation and resumed
+   `None`. Generator close/throw, async cleanup and target generator admission
+   remain separate until their completion contracts are checked.
+3. **A21 result integrity:** preserve a one-expression session's displayed value
+   without executing it twice; cover empty/non-expression/block/error cases and
+   cached/tree paths. Audit historical result maps separately from live session
+   bindings; do not deep-copy arbitrary handles to imply captured value safety.
+4. **Verification and next selection:** review each repair, run its neighboring
+   contracts, then the full suite and actual default/Pyodide playground gates.
+   Regenerate/check the manifest when runtime owners change; preserve snapshots
+   unless intended output changes. Update this receipt and live implementation
+   map, refresh local context, and commit each coherent slice. Select the next
+   enhancement from reproduced gaps, not an undifferentiated feature catalog.
+
+The initial context findings are code-read audit evidence; no new implementation
+or conformance claim is made by this plan. The function/resource packets and
+existing redesign agenda remain the semantic owners. Exact next step: add
+direct/reduced scope regressions before modifying acquisition or unwind.
+
 ### Next Phase Gates
 
 1. **D1/A08:** type ordered map/fold, decoder and scoped resource callbacks
