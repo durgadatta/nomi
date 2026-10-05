@@ -92,6 +92,7 @@ class RuntimeSession:
         capture_output: bool = False,
         event_collector: RuntimeEventCollector | None = None,
     ) -> ExecutionResult:
+        """Execute input and snapshot binding names, retaining their value references."""
         started = perf_counter()
         timings: dict[str, float] = {}
         tree_locations_fixed = False
@@ -182,7 +183,7 @@ class RuntimeSession:
             mode=self.mode,
             profile=self.profile,
             pipeline=self.pipeline,
-            bindings=self.bindings,
+            bindings=dict(self.bindings),
             timings=timings,
             value=value,
             has_value=has_value,
@@ -197,7 +198,7 @@ class RuntimeSession:
             return False, self.interpreter.eval(tree)
 
         body = list(tree.body)
-        if len(body) <= 1:
+        if not body:
             return False, self.interpreter.eval(tree)
 
         last = body[-1]
