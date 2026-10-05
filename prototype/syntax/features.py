@@ -344,7 +344,7 @@ _with = SyntaxFeature(
         normal_form="exactly-once acquisition, body and lexical cleanup",
         reason="Host try/exit conventions do not establish target completion semantics.",
     ),
-    description="Desugar with ctx as x: B into try/except/else",
+    description="Desugar hosted with into captured protocol hooks and guarded try/finally",
     layer=SUGAR_LAYER,
     semantic_forms=("resource-policy", "branch", "exception"),
     reduces_to=("try-finally-resource-protocol",),

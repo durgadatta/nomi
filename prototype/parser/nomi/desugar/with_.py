@@ -1,126 +1,117 @@
 import ast
 
+from prototype.interpreter.constants import CONTEXT_METHODS_HELPER
+
 from .base import NomiDesugarer, Phase
 
 
 class With(NomiDesugarer):
-    phase = Phase.semantic
-    """Desugar with-statement into enter/assign/try/except/else blocks.
+    """Lower the hosted protocol to captured hooks and guarded try/finally.
 
-    with ctx as x:
-        body
-    →
-    _mgr = ctx
-    x = _mgr.__enter__()
-    try: body
-    except Exception as _exc:
-        if not _mgr.__exit__(type(_exc), _exc, _exc.__traceback__): raise
-    else:
-        _mgr.__exit__(None, None, None)
+    manager -> (enter, exit) -> acquired value -> try bind/body
+    -> exceptional exit or normal/control-transfer exit, exactly once.
 
-    Multiple items nest outermost-first.
+    The private helper binds type-level descriptors. Python suppression is a
+    compatibility behavior, not the target Resource/completion contract.
     """
 
+    phase = Phase.semantic
     input_node_types = (ast.With,)
     removed_node_types = (ast.With,)
     produced_node_types = (
-        ast.Assign,
-        ast.Try,
-        ast.ExceptHandler,
-        ast.If,
-        ast.Raise,
-        ast.Call,
+        ast.Assign, ast.Try, ast.ExceptHandler, ast.If, ast.Raise, ast.Call,
     )
     normal_forms = ("try-finally-resource-protocol",)
 
-    _counter = 0
+    def __init__(self):
+        self._counter = 0
+        self._names = set()
 
-    def _fresh_mgr(self):
-        self._counter += 1
-        return f"_mgr_{self._counter}"
+    def visit_Module(self, node):
+        for child in ast.walk(node):
+            if isinstance(child, ast.Name):
+                self._names.add(child.id)
+            elif isinstance(child, ast.arg):
+                self._names.add(child.arg)
+            elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                self._names.add(child.name)
+            elif isinstance(child, ast.ExceptHandler) and child.name:
+                self._names.add(child.name)
+            elif isinstance(child, ast.alias):
+                self._names.add(child.asname or child.name.split('.')[0])
+            elif isinstance(child, (ast.Global, ast.Nonlocal)):
+                self._names.update(child.names)
+            elif isinstance(child, (ast.MatchAs, ast.MatchStar)) and child.name:
+                self._names.add(child.name)
+            elif isinstance(child, ast.MatchMapping) and child.rest:
+                self._names.add(child.rest)
+        return self.generic_visit(node)
 
-    def _fresh_exc(self):
-        self._counter += 1
-        return f"_exc_{self._counter}"
+    def _fresh(self, role):
+        while True:
+            self._counter += 1
+            name = f"_with_{role}_{self._counter}"
+            if name not in self._names:
+                self._names.add(name)
+                return name
 
-    def _enter_call(self, mgr_name):
-        return ast.Call(
-            func=ast.Attribute(
-                value=ast.Name(id=mgr_name, ctx=ast.Load()),
-                attr="__enter__",
-                ctx=ast.Load(),
-            ),
-            args=[],
-            keywords=[],
-        )
+    def _name(self, name, *, store=False):
+        return ast.Name(id=name, ctx=ast.Store() if store else ast.Load())
 
-    def _exit_call(self, mgr_name, exc_type, exc_val, exc_tb):
-        return ast.Call(
-            func=ast.Attribute(
-                value=ast.Name(id=mgr_name, ctx=ast.Load()),
-                attr="__exit__",
-                ctx=ast.Load(),
-            ),
-            args=[exc_type, exc_val, exc_tb],
-            keywords=[],
-        )
+    def _assign(self, name, value):
+        return ast.Assign(targets=[self._name(name, store=True)], value=value)
 
-    def _build_try(self, mgr_name, exc_name, body):
-        exc_ref = ast.Name(id=exc_name, ctx=ast.Load())
-        return ast.Try(
-            body=body,
-            handlers=[ast.ExceptHandler(
-                type=ast.Name(id="Exception", ctx=ast.Load()),
-                name=exc_name,
-                body=[ast.If(
-                    test=ast.UnaryOp(
-                        op=ast.Not(),
-                        operand=self._exit_call(
-                            mgr_name,
-                            ast.Call(
-                                func=ast.Name(id="type", ctx=ast.Load()),
-                                args=[exc_ref],
-                                keywords=[],
-                            ),
-                            exc_ref,
-                            ast.Attribute(
-                                value=exc_ref,
-                                attr="__traceback__",
-                                ctx=ast.Load(),
-                            ),
-                        ),
-                    ),
-                    body=[ast.Raise(exc=None, cause=None)],
-                    orelse=[],
-                )],
-            )],
-            orelse=[ast.Expr(value=self._exit_call(
-                mgr_name,
-                ast.Constant(value=None),
-                ast.Constant(value=None),
-                ast.Constant(value=None),
-            ))],
-            finalbody=[],
-        )
+    def _call(self, name, *args):
+        return ast.Call(func=self._name(name), args=list(args), keywords=[])
+
+    def _builtin(self, name):
+        node = self._name(f"__nomi_builtin_{name}__")
+        node._nomi_builtin_reference = name
+        return node
 
     def visit_With(self, node):
-        inner_body = list(node.body)
-
+        node = self.generic_visit(node)
+        body = list(node.body)
         for item in reversed(node.items):
-            mgr_name = self._fresh_mgr()
-            exc_name = self._fresh_exc()
-            try_node = self._build_try(mgr_name, exc_name, inner_body)
-
-            item_stmts = [ast.Assign(
-                targets=[ast.Name(id=mgr_name, ctx=ast.Store())],
-                value=item.context_expr,
-            )]
+            manager, enter, exit_method, value, exceptional, error = (
+                self._fresh(role) for role in ('manager', 'enter', 'exit', 'value', 'exceptional', 'error')
+            )
+            protected = list(body)
             if item.optional_vars:
-                item_stmts.append(ast.Assign(
-                    targets=[item.optional_vars],
-                    value=self._enter_call(mgr_name),
-                ))
-
-            inner_body = item_stmts + [try_node]
-
-        return inner_body
+                protected.insert(0, ast.Assign(targets=[item.optional_vars], value=self._name(value)))
+            triplet = (
+                ast.Call(func=self._builtin('type'), args=[self._name(error)], keywords=[]), self._name(error),
+                ast.Attribute(value=self._name(error), attr='__traceback__', ctx=ast.Load()),
+            )
+            scope = ast.Try(
+                body=protected,
+                handlers=[ast.ExceptHandler(
+                    type=self._builtin('BaseException'), name=error,
+                    body=[
+                        self._assign(exceptional, ast.Constant(value=True)),
+                        ast.If(
+                            test=ast.UnaryOp(op=ast.Not(), operand=self._call(exit_method, *triplet)),
+                            body=[ast.Raise(exc=None, cause=None)], orelse=[],
+                        ),
+                    ],
+                )],
+                orelse=[],
+                finalbody=[ast.If(
+                    test=ast.UnaryOp(op=ast.Not(), operand=self._name(exceptional)),
+                    body=[ast.Expr(value=self._call(
+                        exit_method, *(ast.Constant(value=None) for _ in range(3)),
+                    ))],
+                    orelse=[],
+                )],
+            )
+            body = [
+                self._assign(manager, item.context_expr),
+                ast.Assign(
+                    targets=[ast.Tuple(elts=[self._name(enter, store=True), self._name(exit_method, store=True)], ctx=ast.Store())],
+                    value=ast.Call(func=self._builtin(CONTEXT_METHODS_HELPER), args=[self._name(manager)], keywords=[]),
+                ),
+                self._assign(value, self._call(enter)),
+                self._assign(exceptional, ast.Constant(value=False)),
+                scope,
+            ]
+        return body

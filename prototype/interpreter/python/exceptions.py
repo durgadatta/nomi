@@ -1,7 +1,7 @@
 import ast
 from typing import Any
 
-from .signals import ReturnException, YieldException
+from .signals import ControlException, ReturnException, YieldException
 
 class ExceptionMixin:
     def eval_Raise(self, node: ast.Raise) -> None:
@@ -30,6 +30,8 @@ class ExceptionMixin:
         """
         Evaluate a try statement with resumable execution
         """
+        if generator_state is None:
+            return self._execute_sync_try(node)
         # Initialize state if new execution
         if state is None:
             state = {
@@ -142,4 +144,42 @@ class ExceptionMixin:
                 # Re-raise pending return after finally completes
                 if state.get('pending_return') is not None:
                     raise state['pending_return']
-                
+
+    def _execute_sync_try(self, node):
+        # Host unwind is a compatibility adapter, not the target D2 carrier.
+        pending_transfer = None
+        try:
+            try:
+                pending_transfer = self._execute_sync_block(node.body)
+            except BaseException as error:
+                for handler in node.handlers:
+                    if handler.type is None or self._matches_exception(error, self.eval(handler.type)):
+                        if handler.name:
+                            self.current_env.set(handler.name, error)
+                        pending_transfer = self._execute_sync_block(handler.body)
+                        break
+                else:
+                    raise
+            else:
+                if pending_transfer is None:
+                    pending_transfer = self._execute_sync_block(node.orelse)
+        finally:
+            self.eval(node.finalbody)
+        if pending_transfer is not None:
+            raise pending_transfer
+
+    def _execute_sync_block(self, body):
+        try:
+            self.eval(body)
+        except ControlException as transfer:
+            return transfer
+
+    def _matches_exception(self, error, handler_type):
+        candidates = tuple(tuple.__iter__(handler_type)) if isinstance(handler_type, tuple) else (handler_type,)
+        for candidate in candidates:
+            if not isinstance(candidate, type) or not any(
+                base is BaseException for base in type.__getattribute__(candidate, '__mro__')
+            ):
+                raise TypeError("catching classes that do not inherit from BaseException is not allowed")
+        error_bases = type.__getattribute__(type(error), '__mro__')
+        return any(candidate is base for candidate in candidates for base in error_bases)

@@ -17,7 +17,8 @@ from .class_ import ClassMixin
 from .binding import BindingMixin
 from .others import OthersMixin
 
-from .context_managers import ContextManagerMixin
+from ..constants import CONTEXT_METHODS_HELPER
+from .context_managers import ContextManagerMixin, context_methods
 
 class Interpreter(
     BindingMixin, FunctionMixin, ExpressionMixin, DataStructMixin,
@@ -36,6 +37,7 @@ class Interpreter(
         ast.With,
         ast.Assign,
         ast.Call,
+        ast.Expr,
     )
 
     pass_through_exceptions: tuple = (
@@ -70,6 +72,7 @@ class Interpreter(
     def __init__(self):
         self.builtin_env = self.env_class(self)
         self.builtin_env.bindings = builtins.__dict__.copy()
+        self.builtin_env.bindings[CONTEXT_METHODS_HELPER] = context_methods
         self.global_env = self.env_class(self, parent=self.builtin_env)
         self.current_env = self.global_env
         if type(self).__eval_dispatch is None:

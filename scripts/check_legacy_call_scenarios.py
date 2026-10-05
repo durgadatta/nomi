@@ -2,6 +2,53 @@
 
 CALL_SCENARIOS = (
     (
+        "context-unwind",
+        """events = []
+class Manager:
+    func __init__(self, label):
+        self.label = label
+    func __enter__(self, /):
+        events.append(('enter', self.label))
+        return self.label
+    func __exit__(self, error_type, error, traceback, /):
+        events.append(('exit', self.label))
+        return False
+func scoped():
+    with Manager('outer'), Manager('inner'):
+        return 7
+assert scoped() == 7
+assert events == [('enter', 'outer'), ('enter', 'inner'), ('exit', 'inner'), ('exit', 'outer')]
+events = []
+acquired: int
+try:
+    with Manager('outer'), Manager('inner') as acquired:
+        events.append('body')
+except TypeError:
+    pass
+assert events == [('enter', 'outer'), ('enter', 'inner'), ('exit', 'inner'), ('exit', 'outer')]
+print('context-unwind passed')
+""",
+    ),
+    (
+        "nested-resume",
+        """events = []
+func inner(value):
+    events.append(value)
+    return value + 1
+func gather(**values):
+    return values
+func resume_nested():
+    result = gather(first=inner((yield 'one')), second=inner((yield 'two')))
+    yield result
+generator = resume_nested()
+assert next(generator) == 'one'
+assert generator.send(10) == 'two'
+assert generator.send(20) == {'first': 11, 'second': 21}
+assert events == [10, 20]
+print('nested-resume passed')
+""",
+    ),
+    (
         "positional-only",
         """events = []
 func required(value, /, **extra):

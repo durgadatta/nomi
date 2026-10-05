@@ -1133,6 +1133,8 @@ def _lower_expr(node: ast.AST | None) -> CoreNode:
     if isinstance(node, ast.Constant):
         return Literal(value=node.value)
     if isinstance(node, ast.Name):
+        if getattr(node, '_nomi_builtin_reference', None) is not None:
+            return Diagnostic(message="unsupported Core hosted protocol intrinsic")
         return Load(name=str(node.id))
     if isinstance(node, ast.Call):
         block = _lower_call_block(node)

@@ -8,6 +8,7 @@ import ast
 
 
 BLOCK_KWARG = "__block__"
+CONTEXT_METHODS_HELPER = "__nomi_context_methods__"
 
 
 @dataclass(slots=True)
@@ -29,4 +30,3 @@ class Block:
 
     def __bool__(self):
         return bool(self.body)
-

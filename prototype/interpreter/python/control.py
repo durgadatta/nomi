@@ -174,14 +174,14 @@ class ControlMixin(ExceptionMixin):
             state = self._initial_while_state(node)
         try:
             self._maybe_raise_injected_exception(generator_state)
-            self._execute_while_loop(node, state)      
+            self._execute_while_loop(node, state, generator_state=generator_state)
         except YieldException:
             # Save state and re-raise for generator handling
             self._pause_generator(node, state, generator_state)
             raise
 
 
-    def _execute_while_loop(self, node: ast.While, state:dict):
+    def _execute_while_loop(self, node: ast.While, state:dict, *, generator_state=None):
         """Unified while loop executor."""
         start_index = state.get('body_index', 0)
         while True:
@@ -196,7 +196,7 @@ class ControlMixin(ExceptionMixin):
             while i < len(node.body):
                 stmt = node.body[i]
                 try:
-                    self.eval(stmt)
+                    self.eval(stmt, generator_state=generator_state)
                     i += 1
                 except YieldException:
                     # Save where to resume

@@ -55,11 +55,11 @@ class ExpressionMixin:
     def eval_Nonlocal(self, node: ast.Nonlocal) -> None:
         self.current_env.declared_nonlocals.update(node.names)
 
-    def eval_Expr(self, node: ast.Expr) -> Any:
+    def eval_Expr(self, node: ast.Expr, *, state=None, generator_state=None) -> Any:
         if getattr(node, '_nomi_defer', False):
             self._defer_stack.append(node)
             return None
-        return self.eval(node.value)
+        return self.eval(node.value, generator_state=generator_state)
 
     def eval_BoolOp(self, node: ast.BoolOp) -> bool:
         value = self.eval(node.values[0])
@@ -124,6 +124,9 @@ class ExpressionMixin:
     def eval_Name(self, node: ast.Name) -> Any:
         try:
             if isinstance(node.ctx, ast.Load):
+                builtin_name = getattr(node, '_nomi_builtin_reference', None)
+                if builtin_name is not None:
+                    return self.builtin_env.get(builtin_name)
                 return self.current_env.get(node.id)
             elif isinstance(node.ctx, ast.Store):
                 # This should return the name for assignment, but your assignment logic

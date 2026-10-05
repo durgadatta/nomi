@@ -23,7 +23,7 @@ class CoroutineState:
 
     __slots__ = (
         'interpreter', 'body', 'env', 'index', 'return_value',
-        'injected_exception', 'paused_frames', '_processing_frame',
+        'injected_exception', 'paused_frames', '_processing_frame', '_pause_insertion_index',
         'sent_value', 'is_first_iteration',
     )
 
@@ -44,6 +44,7 @@ class CoroutineState:
         # This is only for compound statements (For/While/Try).
         self.paused_frames = []
         self._processing_frame = None  # Frame currently being evaluated 
+        self._pause_insertion_index = 0
 
         # for implementing send()
         self.sent_value = None
@@ -55,31 +56,32 @@ class CoroutineState:
             'state': state,
         }
 
-    def _is_processing_node(self, node) -> bool:
-        return self._processing_frame and self._processing_frame['node'] == node
-
     def _queue_paused_frame(self, node, state) -> None:
         self.paused_frames.append(self._frame(node, state))
 
     def _queue_current_frame(self, node, state) -> None:
-        self.paused_frames.insert(0, self._frame(node, state))
+        self.paused_frames.insert(self._pause_insertion_index, self._frame(node, state))
+        self._pause_insertion_index += 1
 
     def pause(self, node, state):
-        # Check if this yield comes from the frame we're currently processing
-        if self._is_processing_node(node):
-            # Current frame yielded again - put at front for immediate continuation
+        self.sent_value = None
+        if self._processing_frame is not None:
+            # Re-yielding descendants must finish before already-waiting ancestors.
             self._queue_current_frame(node, state)
         else:
             # New frame yielding - add to end (normal nesting)
             self._queue_paused_frame(node, state)
-        self._processing_frame = None  # Reset processing state
 
     def resume(self):
         # ALWAYS process compound statement stack first
         if self.pending_compound_state:
             while self.pending_compound_state:
                 node, state = self.frame_to_resume()
-                self.eval(node, state)
+                try:
+                    self.eval(node, state)
+                finally:
+                    self._processing_frame = None
+                    self._pause_insertion_index = 0
             # only advance if there was a pending state and is completed
             self.index += 1 
 
@@ -96,6 +98,7 @@ class CoroutineState:
         if self.paused_frames:
             frame = self.paused_frames.pop(0)
             self._processing_frame = frame  # Track what we're processing
+            self._pause_insertion_index = 0
             return (frame['node'], frame['state'])
         return None
         
