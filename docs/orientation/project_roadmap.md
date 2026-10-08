@@ -24,6 +24,13 @@ The product goal is one coherent, explainable language that grows from a small
 script into a checked program. The next useful milestone is a modest target
 slice with accurate diagnostics and matching CLI/browser behavior.
 
+The [October 5-8 action notes](project_action_notes.md) expand A01-A33 into local
+tasks, dependencies, failure cases, domain recipes and completion/removal gates.
+They are notes only, not another priority queue or acceptance of new contracts.
+Use the latest delivery receipts before acting on historical audit findings;
+the original baseline tables retain at-the-time observations, including repaired
+issues. Future task completion still belongs in this roadmap and its linked owners.
+
 ## October 4 Prototype Delivery Pass
 
 ### Deep-Scan Continuation Plan
@@ -1136,8 +1143,10 @@ verification, central sensitive-value formatting and execution isolation.
 Runtime redaction fields alone do not enforce redaction, and process transport
 is not a sandbox.
 
-- Fix launcher log redaction and container context first, with synthetic secret
-  cases; never collect real credentials during an audit.
+- Retain the repaired launcher log redaction and narrowed container context;
+  reproduce residual Jupyter-owned logs and actual container/digest boundaries
+  with synthetic secret cases before extending policy. Never collect real
+  credentials during an audit.
 - Specify central sensitive-value formatting across output, bindings, diagnostics,
   events, cached artifacts, exported JSON and agent retrieval.
 - Bound parser/decoder/output/event/process resources and distinguish trusted
@@ -1279,17 +1288,18 @@ sequenced by prerequisites rather than by an arbitrary promise to finish it all.
 
 ## First Reviewable Work Queue
 
-These are proposed patches; the planning pass implemented none of them.
-Q01's documentary research and local host probes are now complete. Candidate
-implementation experiments remain open. Current-behavior repair slices can be
-scheduled without accepting open language notation.
+This queue began as proposed patches; the planning pass implemented none of
+them. Subsequent receipts completed Q01's documentary/local-probe slice and
+the bounded Q02-Q04 repairs, as marked below. Their broader target and host
+obligations remain open. Reproduce other historical tasks at the selected
+revision before scheduling; current-behavior repairs need not accept open notation.
 
 | Slice | Exact task | Depends on | Evidence / stop criterion |
 | --- | --- | --- | --- |
 | Q01 | Completed: A33 DSL/string research expanded to 50 families / 24 models; eighteen boundary and eight finite-model probes; E1-E22 plus T1-T10 define Nomi comparisons | This global plan completed | [Dossier](../research/dsls/README.md), explicit depth, composition fixtures and unperformed integrations; new syntax remains unaccepted. |
-| Q02 | Add a current parse-failure diagnostic producer and result fallback | Existing facade/collector | `x =` returns a stable phase/code/span where known, preserves exception/output, and renders through existing consumers. |
-| Q03 | Fence JS integer precision loss and document the bounded interchange choice | Reproducer plus A03 decision | Golden vectors around the host limit are exact or explicitly rejected; no silent rounded result. |
-| Q04 | Redact notebook/container tokens and narrow Docker build context | Existing launcher/context | Synthetic token absent from command/status logs; cache/private configuration absent from declared context. |
+| Q02 | Completed bounded slice: parse/runtime fallback diagnostics; remaining versioned causes/source maps belong to A19/Q09 | Existing facade/collector | [Delivery receipt](#delivery-receipt) preserves failed source, exception/output and known locations; not all semantic producers are implemented. |
+| Q03 | Completed bounded slice: JS safe-integer fences; remaining scalar/wire contract belongs to A03/D3 | Reproducer plus A03 decision | [Delivery receipt](#delivery-receipt) records exact-or-rejected host-limit vectors; this is not a wider portable numeric type. |
+| Q04 | Completed bounded slice: launcher-owned token redaction and narrowed context; remaining actual host/container evidence belongs to A29/A30 | Existing launcher/context | [Delivery receipt](#delivery-receipt) and [third pass](#third-pass-delivery-receipt) record local repairs; Jupyter-owned logs and container/digest verification remain open. |
 | Q05 | Audit selectors, skip accounting and historical warning/harness issues | Separate test review | Invalid selections cannot falsely succeed; existing case identities/exclusions are preserved. |
 | Q06 | Close three unreviewed target dispositions and record host fixture evidence | Existing registries, canonical owners | Same inspection result across CLI/API; no change to execution defaults from disposition metadata. |
 | Q07 | Resolve callback call shape and compare generic/function-value candidates | Function-contracts packet | 80/100-column examples plus negative effect/capture/region cases; stop before implementation if no coherent candidate. |

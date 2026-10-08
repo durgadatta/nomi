@@ -298,6 +298,7 @@ This list is intentionally complete and is checked by tests.
 ### Orientation
 
 - [Project Enhancement Roadmap](orientation/project_roadmap.md)
+- [Project Action Notes](orientation/project_action_notes.md)
 - [AI Collaboration](orientation/ai_collaboration.md)
 - [Design Pass Workflow](orientation/design_pass_workflow.md)
 - [Artifacts And Usage](orientation/artifacts_and_usage.md)
