@@ -34,7 +34,7 @@ The current design direction favors:
 
 ```text
 direct scripts and inferred local code
-explicit typed public APIs
+checked public contracts, inferred or declared
 immutable names and data by default
 nominal data with explicit external decode
 one named function form and one match form

@@ -41,16 +41,60 @@ Nomi uses progressive static typing:
 
 - local bindings are inferred where the answer is direct;
 - annotations may make local intent explicit;
-- public package declarations require complete parameter and result types;
-- `Any` is an explicit unchecked escape, never an inference fallback;
+- checked public interfaces require complete types, locally inferred or declared;
+- exploratory definitions may remain dynamically checked with unresolved static facts;
+- an unresolved fact is not an inferred `Any` or a proof of safe unchecked use;
 - `Unknown` is a safe top type that must be decoded or pattern-narrowed;
-- generic parameters are explicit on public declarations but may be inferred
-  at calls;
-- public inference does not depend on whole-program analysis.
+- generic quantification is explicit in checked interface artifacts; source
+  spelling and generalization rules remain in the function-contracts packet;
+- public inference does not depend on private code in downstream clients.
 
 Nominal `data` types are the default for program concepts. Structural types are
 limited to external values, protocols, and explicit patterns. The initial
 language uses named variant data rather than untagged unions for alternatives.
+
+## Progressive Assurance
+
+Accepted direction: users can start with dynamic exploration and select
+independent restrictions as the program grows. Written annotations are one
+source of direction, not a universal prerequisite to useful code. This revises
+the earlier mandatory-public-annotation rule. The exact general inference
+algorithm, policy declaration syntax and dynamic package adapters remain open.
+
+Separate source meaning, checking policy, runtime authority and engine choice.
+A policy selects obligations and their required evidence; it does not change
+evaluation order, successful values, default timing, binding/capture meaning,
+cleanup or failure semantics. Promised runtime checks cannot simply be disabled.
+Optimizations may discharge them only with sufficient evidence. Stricter
+checking is neither permission to touch the world nor a performance guarantee.
+
+Reports distinguish inferred facts, declared promises, verified contracts,
+runtime-enforced boundaries, observed examples and unresolved obligations.
+Checking a scalar call at one known argument type does not establish a generic
+public signature. Checked interfaces serialize their complete contract and
+provenance, independently of private downstream use; changed dependencies or
+source invalidate affected evidence. A supplied annotation is checked against
+the implementation, not trusted merely because it is written.
+
+For example, `pub func answer(): return 42` can expose `() -> Int` with no world
+effects when those facts are established locally. `func identity(value): return
+value` remains usable in exploration; accepting a polymorphic public interface
+also requires the generalization/capture law. An unknown foreign callback may
+run under the host's ordinary runtime boundary, but cannot satisfy a selected
+purity or closed-interface obligation without evidence or an approved adapter.
+Here "approved" means supported by the language/host contract, not inferred
+from a user's description of intent.
+
+Restrictions need not form a total ladder: a schema requirement need not imply
+purity, and a pure computation can still have unresolved type information.
+The scope and unfulfilled obligation must appear in diagnostics. A strict
+run/build policy completes required admission before effects; this admission
+path is a target requirement, not a claim the prototype implements it.
+
+The `known-types`/`pure` prototype experiment reports facts about module
+execution in a small scalar/direct-call subset. It does not establish whole
+package interfaces, lifetimes, termination or freedom from runtime failure.
+Unsupported syntax and indirect calls remain explicitly unresolved.
 
 ## Binding
 
@@ -320,8 +364,10 @@ Effect order is not semantic. The formatter displays a set in stable type-name
 order so equivalent public contracts have one source representation.
 
 The static rule is transitive: a function may call an effectful operation only
-when its resolved effect set includes that capability. Private inference is a
-convenience; public `uses` clauses are stable API contracts.
+when its resolved effect set includes that capability. Checked public effect
+sets are stable API contracts whether inferred or written with `uses`.
+Unknown effects cannot satisfy a closed effect requirement; inference is not
+authorization.
 
 The runtime rule is capability-based: a process, test, notebook, browser host,
 or embedded application supplies concrete capability values. Declaring an
@@ -359,9 +405,10 @@ path. Import resolution never executes source code merely to discover names.
 Module initialization is deterministic, cycle-checked, and free of undeclared
 effects.
 
-An executable script may contain direct top-level statements. Its complete
-effect set is inferred, displayed, and granted or denied by the host before
-execution. Published library modules allow declarations and deterministic
+An executable script may contain direct top-level statements. Its known and
+unresolved effects are displayed; the host independently grants or denies
+runtime authority. A selected closed policy requires a complete supported
+effect contract before execution. Published checked library modules allow declarations and deterministic
 effect-free constants at top level; application entry points use explicit
 `main` contracts.
 

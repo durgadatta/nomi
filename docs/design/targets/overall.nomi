@@ -29,6 +29,17 @@ from std.secret import Secret
 from std.task import TaskFailurePolicy, TaskGroup
 
 
+# Inferred checked interface pressure: () -> Int, no world effects.
+# This target example does not claim the prototype exports checked interfaces.
+pub func maximum_batch_size():
+    return 128
+
+# Negative checked-boundary pressure (exploration may retain the unknown):
+# pub func external_score(value): return unknown_dependency(value)
+# A selected closed/pure policy must explain the unresolved dependency;
+# neither an omitted annotation nor a caller's concrete argument proves it pure.
+
+
 pub data CustomerId:
     value: Text where value.trim() != ""
 
@@ -46,7 +57,7 @@ data CustomerInput:
 
 data BatchInput:
     customers: List[CustomerInput]
-    where customers.length <= 128 note "a batch contains at most 128 customers"
+    where customers.length <= maximum_batch_size() note "a batch contains at most 128 customers"
 
 pub data ImportConfig:
     input: Path

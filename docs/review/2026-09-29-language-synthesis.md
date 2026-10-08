@@ -127,6 +127,29 @@ that test-only tightening. This does not claim Nomi or foreign conformance.
 
 ## Pass Retrospective
 
+### Frontier continuation, October 8
+
+The new user direction and planned scalar/direct-call experiment reopen a
+mandatory public source-annotation rule. The canonical spine now distinguishes
+dynamic exploration, checked inferred/declared interface evidence, selectable
+annotation policy, runtime authority and engines. This is a target-direction
+revision; no general inference algorithm, dynamic package adapter or full
+checker is established by these edits. The overall target gains a locally
+inferable public constant function and an explicitly negative unknown call.
+
+Evidence/verification for the executable slice belongs in the current roadmap
+receipt. The first resumed lifecycle check failed because the earlier frontier
+checkpoint was missing from the docs index; the index was repaired without
+altering its existing test. That failure is the immediate feedback loop's first
+concrete correction. Public callback generalization remains a separate D1 gate.
+
+The planned durable process improvement is an explicit command-receipt tool and reusable
+feedback-cycle prompt, routed from the existing agent collaboration owner.
+They record actual checks and require findings to lead to a fix, a bounded
+experiment, or a documented deferral. They do not certify semantics or accept
+designs automatically. The next comparison is the analyzer's independent
+type/purity matrix plus adversarial capture/rebinding/unknown-call fixtures.
+
 ### Evidence That Changed The Design
 
 The combined program exposed misleading count semantics and an unstated CSV

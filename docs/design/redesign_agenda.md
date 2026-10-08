@@ -43,7 +43,7 @@ three real programs justify a new registered packet.
 | Human intent | General-purpose script-first versus domain/projection-first entry | Compare invoice creation/revision/review; name audience and exclusion costs | interaction model |
 | Meaning | Operational core alone versus additional inspectable denotational/plan models | Laws with purity, termination and numeric side conditions; no hidden alternate evaluator | semantics |
 | Binding | Value/cell capture, shadowing, symbol identity across edits | Closure and rename cases; tentative/commit trace | semantics, open question 1 |
-| Types | Progressive checking versus stronger whole-program inference | Complete public signatures; no implicit Any; principality/annotation costs | semantics, questions 2/3/10 |
+| Types | Dynamic exploration and selected restrictions versus stronger whole-program inference | Checked public contracts inferred or declared; honest unknowns; generalization/annotation costs | semantics, questions 2/3/10 |
 | Polymorphism | Nominal protocols, generic bounds, effect variables versus broad dispatch | Type three collection/codec/resource callbacks and conflicting extensions | function contracts, questions 3/10 |
 | Proof and evidence | Runtime contracts/tests versus optional proof-carrying refinements | Distinguish proof, witness, test and assumption; annotate what was actually checked | constraints and tooling |
 | Failure | Ordinary typed errors versus abnormal completion; conversion/composition | Failure-heavy target, all causes, accumulated versus fail-fast outcomes | question 6, resource packet |

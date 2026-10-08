@@ -94,7 +94,7 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-05",
+      "last_reviewed": "2026-10-08",
       "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty"],
       "artifacts": {
         "research": "docs/research/features/README.md",
@@ -122,7 +122,8 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Use the resource-lifetime packet's executed candidate comparison; next close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
+        "Execute the progressive-assurance scalar/direct-call experiment with independent type/purity judgments, unknown-call and rebinding negatives; do not generalize call-context facts into public interface proof.",
+        "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
         "Follow the research overview's gap-continuation routes for memory publication, predicate consistency, package-qualified nominal identity, adaptive evaluation, learned removal and correlated uncertainty; existing questions/experiments retain ownership and none is resolved by the documentation pass.",
         "Use MSG1-MSG6 to challenge delivery/position/ownership/local atomicity/replay contracts with the messaging target; after D1-D3 typing, select one pinned adapter and independent crash/recovery/settlement fixtures, not a universal broker API.",

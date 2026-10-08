@@ -37,8 +37,18 @@ type, predicate, value, and diagnostic note without rereading.
 **Question:** Which declarations require annotations, and how much local
 inference remains predictable?
 
-**Current hypothesis:** exported package APIs are explicit; scripts and private
-locals infer; no implicit `Any`; constraint predicates retain runtime meaning.
+**Current direction (October 8):** exploration permits unresolved static facts;
+selected restrictions demand evidence. Checked exported contracts may be inferred
+locally or declared; inference cannot depend on clients' private calls. An
+unknown is not an inferred `Any` or proof. Constraint predicates retain runtime
+meaning. See the revised [assurance contract](../design/semantics.md#progressive-assurance).
+
+**First executable discriminator:** scalar/direct-call module analysis must
+infer an unannotated invoice's call results, reject unknown effects under a
+purity requirement, and retain identical facts under four type/purity policy
+combinations. Uncalled function effects stay latent. Rebinding, imported calls
+and unknown overload dispatch cannot retain stale proofs. This bounded analysis
+does not close public generic inference or the package boundary question.
 
 **Test:** separate compilation, recursive local functions, generic collection
 helpers, dynamic host interop, editor latency, and public API diffing.

@@ -127,6 +127,25 @@ target-design gate, not a claim that the prototype satisfies it.
 
 ## Prototype Evidence And Next Admission
 
+### October 8: exploration and selected assurance
+
+The latest direction reopens mandatory public annotations. Canonical
+[semantics](semantics.md#progressive-assurance) now accepts dynamic exploration
+with honest unknowns and checked interfaces whose complete contracts may be
+inferred locally or declared. Source semantics, selected checking restrictions,
+runtime authority and engine choice remain independent. The whole-program
+fixture includes an inferable public batch limit and a negative unknown-call
+boundary; neither supplies a general inference algorithm.
+
+The next executable discriminator is conservative scalar/direct-call module
+analysis: an unannotated invoice, output that defeats purity, and an unknown
+dependency that defeats closed evidence. Its type and purity requirements are
+independent. Call-context facts must not be generalized into public proofs;
+uncalled function effects must not become module effects. Satisfying this
+bounded experiment leaves D1/D2 and dynamic package adapters open. Research
+still routes through [the feature packet](../research/features/README.md) and
+[the bridge](../review/2026-09-29-language-synthesis.md).
+
 The October 4 delivery pass converts selected research into bounded runnable
 experiments and interaction repairs. It deliberately does not turn all research
 categories into language primitives. These observations constrain future design

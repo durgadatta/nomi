@@ -26,7 +26,7 @@ They matter only after a target choice survives this review.
 | Area | Decision | Rationale |
 | --- | --- | --- |
 | Evaluation | Eager, left-to-right, lexical scope | Predictable across scripts, services, notebooks, and backends. |
-| Typing | Progressive static typing; inferred locals, explicit public APIs, no implicit `Any` | Low ceremony without sacrificing package-scale contracts. |
+| Typing | Dynamic exploration; selected restrictions; checked public contracts inferred locally or declared | Begin without annotation ceremony; unknowns never become fabricated proof. |
 | Runtime types | Types and constraints remain inspectable; proven checks may be optimized away | Decode, diagnostics, interop, and explanation need runtime meaning. |
 | Memory | Garbage-collected general profile | Cognitive cost is better spent on domain logic than ownership syntax. |
 | Binding | Immutable `name = value`; mutation uses `var` and `set` | Creation and change are visually distinct. |
@@ -40,7 +40,7 @@ They matter only after a target choice survives this review.
 | Expected failure | `Result` and postfix `?` | Typed and concise at the call site. |
 | Unexpected failure | Panic/host failure kept separate | Bugs do not look like expected domain outcomes. |
 | Resource lifetime | Exactly-once `with` plus unconditional `defer` | Acquisition and cleanup remain lexical and deterministic. |
-| Effects | Public `uses` sets plus runtime capabilities | Reviewable APIs without ambient authority. |
+| Effects | Checked public effect contracts, inferred or declared with `uses`, plus separate runtime capabilities | Reviewable evidence without granting ambient authority. |
 | Concurrency | `async func`, `await`, structured task groups | Suspension and child lifetime remain explicit. |
 | Modules | Files are modules; private by default; explicit imports and `pub` | Scales from script to package with little ceremony. |
 | Packages | Manifest, exact lockfile, content addressing, sandboxed build | Reproducibility and supply-chain trust begin at ecosystem birth. |
@@ -142,9 +142,28 @@ event handlers, generators, and task scheduling do not borrow this syntax.
 
 ### Effect declarations
 
-Accepted on public APIs. Private inference reduces ceremony, but tooling must
-show the resolved effects. The exact initial effect taxonomy remains an
-experiment listed below.
+Accepted as explicit contracts. Inferred public effects are also allowed when
+the owner can establish and serialize them independently of private client
+code. Tooling must show resolved effects and unknowns separately. A selected
+annotation policy can demand written `uses`; it cannot change execution or
+grant authority. The exact effect taxonomy and general inference remain open.
+
+### Progressive assurance (October 8 revision)
+
+The user's exploration-first direction replaces mandatory public source
+annotations with complete checked interface evidence, inferred or declared.
+Dynamic exploration may proceed with honest unknowns and defined runtime
+checks. The [semantics](semantics.md#progressive-assurance) separates evidence,
+policy, authority and engines. Reject a universal strictness switch that changes
+successful meaning, invents proof, or implies native performance. Reject
+mandatory `Any` as the only exploratory starting path.
+
+The first experiment is scalar/direct-call analysis of module execution with
+independent type/purity obligations. It cannot accept generic public contracts,
+resource safety or deployment readiness. Public generalization, scoped policy
+composition and dynamic/checked adapters remain open. The binding law and
+`var`/`set` spellings remain current target choices; plain reassignment is a
+reopened experiment requiring closure and notebook re-execution comparisons.
 
 ## Library-First Decisions
 

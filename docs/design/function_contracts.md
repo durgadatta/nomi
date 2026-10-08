@@ -143,8 +143,9 @@ contract; it does not promise calls for remaining items. Purity is not totality.
 - Imported protocol/extension candidates must be locally inspectable. Ambiguity
   is an error naming both owners, not runtime order-dependent dispatch.
 - Exported generics quantify variables explicitly in interface artifacts;
-  no declaration syntax is chosen here. Recursive/ambiguous private functions
-  remain annotated under the existing inference policy.
+  no declaration syntax is chosen here. Recursive/ambiguous functions may stay
+  exploratory; a selected complete-contract policy needs annotations or other
+  sufficient evidence under the progressive assurance rules.
 
 ## Candidate Type Spellings
 

@@ -95,8 +95,14 @@ normal build.
 ## Modules And API Evolution
 
 Modules are private by default. Public APIs require explicit types, expected
-failure, effects, documentation, and stability metadata. Interface artifacts
-allow incremental builds and downstream analysis without running module code.
+failure, effects, documentation, and stability metadata in their checked
+interface artifact. These contracts may be inferred locally or declared in
+source; written annotations are a selectable policy, not the only way to
+produce a checked interface. Dynamic exploratory modules retain unknowns and
+need supported adapters or stronger evidence to cross a checked boundary.
+Interface artifacts allow incremental builds and downstream analysis without
+running module code. Their identity includes the resolved public contract;
+inference changes that contract visibly in API diffs.
 
 Before a stable release, Nomi may break source freely. After a stable release:
 
@@ -123,7 +129,7 @@ The prelude is intentionally small:
 - `print`, `check`, and a few universally understood operations.
 
 Prelude membership does not hide authority: `print` still contributes the
-`ConsoleWrite` effect, inferred for direct scripts and explicit on public APIs.
+`ConsoleWrite` effect, inferred or declared and exposed in checked public APIs.
 
 Everything else is explicitly imported. The standard library is organized by
 domain, not implementation history:

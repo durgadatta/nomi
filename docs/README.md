@@ -303,6 +303,7 @@ This list is intentionally complete and is checked by tests.
 ### Orientation
 
 - [Project Enhancement Roadmap](orientation/project_roadmap.md)
+- [Frontier Checkpoint 2026-10-08](orientation/frontier_checkpoint_2026-10-08.md)
 - [Project Action Notes](orientation/project_action_notes.md)
 - [AI Collaboration](orientation/ai_collaboration.md)
 - [Design Pass Workflow](orientation/design_pass_workflow.md)

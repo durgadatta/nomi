@@ -123,9 +123,17 @@ node kinds. Compiler IR may be smaller or larger.
 
 ### Friendly scripts, checked programs
 
-Types are inferred in local code. Public package APIs require annotations.
-There is no implicit `Any`: code that intentionally leaves the checked world
-uses `Any` explicitly.
+Exploratory scripts and functions may omit annotations and run with defined
+runtime checks. Static unknowns remain visible; they are not invented proofs.
+Checked public APIs require complete inspectable contracts, which may be
+inferred from the owning module or declared explicitly. An annotation policy
+may require written signatures without changing the program's meaning.
+
+Inference, declared promises, runtime checks and observed examples are distinct
+evidence. Dynamic code does not need an `Any` annotation merely to begin;
+crossing into a checked boundary requires supported evidence or an explicit
+checked adapter. The [progressive assurance rules](semantics.md#progressive-assurance)
+own this direction; general inference and package adapters remain design work.
 
 This gives scripts a low floor and libraries a firm ceiling:
 
@@ -159,9 +167,10 @@ The three do not share fallback or propagation semantics accidentally.
 
 ### Effects are public facts
 
-Pure code needs no marker. Public functions that touch files, clocks, random
-sources, processes, databases, or networks declare a `uses` set. The compiler
-checks that effects are available; the runtime supplies concrete capabilities.
+Pure code needs no marker. Checked public functions expose their resolved
+effects, whether inferred or declared with `uses`. The compiler checks the
+contract; the runtime supplies concrete capabilities. An unresolved call is
+not evidence of purity, and an effect declaration does not grant authority.
 
 ### Concurrency is structured and explicit
 
@@ -214,7 +223,7 @@ way to read an already-covered idea.
 The first serious target includes:
 
 - literals, bindings, functions, calls, modules, and a small prelude;
-- local type inference and explicit public signatures;
+- local type inference and checked, inspectable public signatures;
 - immutable product and variant data;
 - exhaustive patterns and `match`;
 - lists, maps, loops, and one pipeline vocabulary;

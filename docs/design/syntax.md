@@ -163,10 +163,13 @@ func normalize_email(email: Text) -> Text:
     return cleaned.lower()
 ```
 
-Published functions require complete parameter and result types. A private
-function may omit an annotation only when its signature is inferable from its
-body and direct lexical uses; recursive or ambiguous functions must annotate.
-Tooling always displays the resolved signature.
+Functions may omit annotations during exploration. A checked published
+interface requires complete parameter and result types, inferred from the
+owning module or explicitly declared; it cannot depend on clients' private
+calls. Recursive or ambiguous functions need additional direction when the
+selected policy requires a complete contract. Tooling displays resolved facts
+and unknown obligations separately. A package policy may require written
+annotations; there is no alternate function syntax for stricter checking.
 
 There is one anonymous expression function form. Parentheses are always
 present, including for one parameter:
@@ -471,7 +474,7 @@ resource scope, generators, and retries do not pretend to be concurrency.
 
 ## Effects And Capabilities
 
-Public functions declare the world capabilities they use:
+Functions can declare the world capabilities they use:
 
 ```nomi
 pub func write_report(path: Path, report: Report) -> Result[Unit, IoError]
@@ -481,14 +484,17 @@ uses Clock, FileWrite:
 ```
 
 The `uses` clause is part of the function contract. It is not an argument list
-and does not hide expected failures. Private functions may infer effects, but
-tooling always displays the resolved set. Tests and hosts supply capability
-implementations explicitly.
+and does not hide expected failures. Omitted effects may be inferred, including
+for checked public interfaces; unresolved dependencies remain obligations.
+Tooling displays the resolved set and its evidence. Tests and hosts supply
+capability implementations explicitly.
 
-Direct script statements also infer a module effect set; `nomi check` and the
-host display that set before execution. Published library modules cannot hide
-effectful initialization. Prelude `print` requires `ConsoleWrite`, even when a
-small script leaves that effect inferred.
+The target checker reports direct script effects before execution, including
+unknowns when a complete set cannot be established. A selected closed policy
+rejects unresolved obligations before external work. Published checked library
+modules cannot hide effectful initialization. Prelude `print` requires
+`ConsoleWrite`, even when a small script leaves that effect inferred. The
+current experimental checker covers a bounded subset, not this entire target.
 
 ## Modules
 
