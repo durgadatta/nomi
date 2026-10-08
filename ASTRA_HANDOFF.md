@@ -2,16 +2,25 @@
 
 > Status: temporary, user-requested handoff for the next GPT 6 Astra pass.
 > Prepared 2026-10-08 from `8b82d8a` and its linked delivery receipts.
+> Expanded 2026-10-08 with the user's broader ecosystem, optional-restriction
+> and independently optimized-backend direction below.
 > This document selects investigations; it is not language authority, a new
 > backlog, target acceptance, implementation evidence or release permission.
 
 ## Mission
 
 Push Nomi toward a coherent language and useful product, not a larger collection
-of features. Find the smallest semantic mechanisms that support readable scripts,
+of features. Build a coherent, learnable semantic foundation for readable scripts,
 checked libraries, data work, effects, failure, resources and rich tools together.
 Challenge the current design seriously: rejecting a recommendation, deleting an
 abstraction or replacing a bounded mechanism can be the most valuable outcome.
+
+The ambition is substantially larger than repairing the prototype or completing
+D1. Synthesize the experience of using computers into a coherent computational
+medium: a friendly language, extensible domain layers, useful representations,
+inspectable execution and independently improving engines. Pursue that vision
+through sustained design/implementation/review iterations. Bounded evidence units
+are checkpoints, not a ceiling on the project or a reason to avoid bold redesign.
 
 The completed preparation pass was documentation-only. The next user-authorized
 design/implementation pass should produce decisions and executable evidence,
@@ -25,12 +34,309 @@ to keep experiments inspectable and reversible. Larger rewrites are legitimate
 when a failed required program demonstrates their need; compare them against a
 narrow repair and bounded extraction on the same independent oracles.
 
-Quick route: [baseline](#baseline-and-evidence), [first session](#first-session),
+Quick route: [user north star](#user-north-star),
+[optional restrictions](#freedom-restrictions-and-strict-execution),
+[progressive intent](#intent-implicit-first-explicit-as-needed),
+[independent engines](#experience-and-engine-independence),
+[frontier experiments](#ambition-to-falsifiable-experiments),
+[logical conclusion](#what-logical-conclusion-means),
+[baseline](#baseline-and-evidence), [first session](#first-session),
 [semantic frontier](#lane-one-close-a-semantic-frontier),
 [continuation engineering](#lane-two-continuation-engineering),
 [domain extension](#extend-without-flattening-domains),
 [verification](#verification-and-product-gates),
 [next-pass request](#suggested-next-pass-request).
+
+## User North Star
+
+This section records the latest user direction, not an already accepted or
+implemented replacement specification. Use it to reopen inadequate assumptions
+in existing owners. Do not reduce its ambition to the current prototype's reach.
+
+Nomi already has an executable playground, extensive research, many proposals
+and unfinished implementation work. Treat that accumulated experience as material
+to synthesize, not as proof the present core, architecture or product is correct.
+Audit actual implementation defects as well as design gaps; fix or deliberately
+fence them without treating compatibility as the ultimate destination.
+
+The intended ecosystem should absorb, connect and improve experience from shell
+scripting, command lines, web programming, spreadsheets/Excel, visual design,
+architecture, design patterns, styling, Markdown/HTML, configuration, templates,
+notebooks, automation and everyday computer use, alongside data, AI/ML, databases,
+scientific work, messaging and the broader human-knowledge domains already studied.
+Users should not need to reconstruct incompatible mini-frameworks for each one.
+Interoperability with existing tools is part of the ambition, not a concession.
+
+Include ordinary interaction granularity: files and folders, search, clipboard,
+keyboard commands/macros, undo/history, repeated actions and repair after failure.
+These should compose with programmatic workflows without assuming that gestures,
+copied text or a conversational request automatically authorize their effects.
+
+Organize the proposed growth around these responsibilities, not necessarily six
+runtime packages or a single mandatory processing pipeline:
+
+| Responsibility | What should compose | What should not be flattened |
+| --- | --- | --- |
+| Coherent semantic core | Values, identity, naming/binding, calls, composition, change, outcomes, dependencies, effects, authority and observation | An eager call, inert plan, solver relation, reactive dependency and event subscription are different contracts |
+| Reusable semantic building blocks | Collections, protocols, constraints, resources, tasks, streams, modules and inspectable reductions | Every object need not support every operation; laws and capability requirements remain conditional |
+| Domain libraries and scoped languages | Data plans, shell commands, web/service models, tables, documents, layout/style and workflows | Domain-specific order, escaping, transaction, convergence, timing and persistence guarantees retain owners |
+| Human representations and tools | Text, tables, diagrams, forms, command palettes, rendered documents, traces and conversational assistance | A projection or proposed edit is not independent execution authority or automatic inverse editing |
+| Restriction and deployment policies | Gradual checking, effect/lifetime restrictions, reproducibility, closed builds and supported host capabilities | Restriction strength, engine selection, runtime permissions and semantic edition are independent dimensions |
+| Execution engines | Interpreted, browser, bytecode, native/AOT and specialized candidates | Engine implementation choices must not redefine source meaning or force their machinery into common code |
+
+Reuse foundations wherever that genuinely reduces concepts. Add a missing core
+primitive when multiple domains expose the same irreducible semantic gap; compare
+it against ordinary calls, protocols and scoped notation before admission. Do not
+simulate coherence by putting all domains into one universal DAG, ontology, object
+hierarchy, truth algebra or framework. Shared contracts and interoperable artifacts
+can unify an ecosystem without universalizing every payload.
+
+Keep the [interaction proposal's representation fork](docs/design/interaction_model.md#thesis-and-a-real-fork)
+open: text-primary with useful projections versus structured-document primary
+with equally usable text. The existing editor is evidence, not a requirement
+that every domain fit bare strings or that every view support inverse editing.
+
+Prefer readable, discoverable and repairable programs over clever compression.
+A slower but humane Python-like experience is preferable to a fast design that
+requires ugly everyday syntax. Rust-like execution performance is an engineering
+aspiration, not an existing result or a promise for arbitrary dynamic programs.
+The goal is both: make the experience pleasant now and preserve a credible path
+to highly efficient implementations without redesigning users' ordinary programs.
+
+## Freedom, Restrictions And Strict Execution
+
+The user wants a low-friction starting point: write useful programs freely,
+without Java-like upfront ceremony, then impose increasingly strong restrictions
+when useful, up to rigorous Haskell-/Java-like contracts and a fully strict build
+or execution policy. Those comparisons express desired freedom/control, not a
+requirement to inherit those languages' syntax, object model or evaluation strategy.
+
+**Explicit design tension:** the current [target typing rules](docs/design/semantics.md#values-and-types),
+[public-interface rules](docs/design/industrial.md#modules-and-api-evolution)
+and [ledger](docs/design/decisions.md#accepted-foundations) require complete public
+types/effects and reject implicit `Any`. The latest direction reopens how much
+of that is mandatory, where it applies and whether exploratory/public dynamic
+boundaries can be usable without source boilerplate. Do not present the existing
+rules as having already fulfilled this request, or quietly replace them in code.
+Compare candidates and reconcile the chosen contract in the canonical owners.
+
+Think of the entry experience as an evolved Python or TypeScript, learning from
+their successes and limitations and the wider research, not adopting every
+existing behavior. Users should be able to grow that same program toward
+Rust-/Java-level production rigor and ambitious execution performance through
+compiler-enforced policies. Do not make them switch to a different language or
+manually expose backend machinery to reach the higher tiers.
+
+Also challenge mandatory mutation/binding notation and other source restrictions
+where they obstruct the intended exploratory workflow. For example, compare
+simple reassignment with explicit create-versus-change under closures and notebook
+re-execution; do not assume either Python behavior or current `var`/`set` wins.
+Separate optional source ceremony from the stable binding/transition law it must
+still express, and name any true semantic conflict rather than hide it in a mode.
+
+Investigate a progression such as the following; these names are descriptive
+stages, not new flags, modes or accepted syntax:
+
+| Stage | User experience | Required explanation |
+| --- | --- | --- |
+| Explore | Unannotated scripts, cells and functions run with ordinary dynamic feedback | Runtime types, actual effects and unknown static facts remain inspectable; unchecked does not mean fabricated proof |
+| Describe | Add chosen types, field constraints, units, schemas and examples locally | Explain what is enforced at runtime, inferred statically, merely tested or still unknown |
+| Restrict | Require selected purity/effects, mutation/aliasing, lifetime, exhaustiveness, determinism or dependency policies | State the exact scope, evidence and consequences; do not require every unrelated restriction |
+| Close | Publish or deploy a checked boundary, possibly enclosing exploratory components behind adapters | Separate checking, dynamic-boundary checks, authority and versioned interfaces compose across packages |
+| Execute/Build Strictly | Demand sufficient closed evidence for the selected production/compiler/host policy | Report unfulfilled obligations and reject, adapt or use an explicitly allowed fallback; optimizers consume evidence independently of assurance strength |
+
+Compare inferred-but-checked exploration against genuinely dynamic exploration
+with checked boundaries. Test omitted annotations, heterogeneous values, imported
+dynamic APIs and evolving notebook definitions; do not let the proposed starting
+mode secretly require a complete static proof. Give users incremental diagnostics
+and fixes, not an all-or-nothing rewrite into a second language.
+
+Restrictions need not form one total ladder. A user might demand pure callbacks
+but permit dynamic types, or require a schema but permit effects. Explore scoped
+policies at expression/function/module/package/build boundaries, with explicit
+inheritance, composition, exported evidence and local overrides. Compare that
+cost against a smaller set of comprehensible presets. Avoid combinatorial modes
+whose interaction requires a new language manual for each combination.
+
+Separate three ideas: choosing to declare a restriction, choosing static versus
+runtime enforcement, and disabling an already promised check. Optimization may
+erase a redundant check only with adequate evidence; it must not quietly stop
+enforcing a user contract. Arbitrary user predicates may remain runtime-only,
+unknown or outside a strict compiler profile; user intent is not a universal
+decision procedure or authorization to assume an unproved property.
+
+Optional restrictions must not silently change evaluation order, values, default
+timing, cleanup, external authority or failure meaning. For programs satisfying
+the same declared contracts, compare all relevant observables across policies.
+An intentionally different numeric, unsafe or deployment semantics needs a named
+contract, not a hidden strict-mode switch. Relaxed checking does not create
+capabilities or bypass host-enforced limits. If the intended freedom actually
+requires semantic differences, expose that fork honestly instead of asserting
+that every progression is automatically meaning-preserving.
+
+## Intent: Implicit First, Explicit As Needed
+
+The language should take the user's intent and direction from ordinary code and
+context early, then let them express it explicitly as precision, guarantees or
+performance matter. Types are one form of direction, not the whole system.
+Inference should reduce initial ceremony; explicit intent should strengthen and
+clarify the existing program rather than force a parallel implementation.
+
+| Direction | Early low-ceremony candidate | Later explicit candidate |
+| --- | --- | --- |
+| Shape and meaning | Infer usable types/shapes from definitions, literals and operations where justified | Public types, nominal/domain models, schema, units and refinements |
+| Effects and mutation | Infer actual calls, captures and local state transitions; show unresolved dependencies | Pure/effect contracts, mutation/aliasing policies and capability requirements |
+| Lifetime and time | Track lexical use and visible suspension/dependencies where analysis supports it | Resource/region, task ownership, stream demand, observation and cleanup policies |
+| Architectural intent | Discover a computation, plan, adapter or component's actual relationships | Protocols, module boundaries, dependency rules and versioned domain descriptions |
+| Correctness and evidence | Use examples/checks and observed failures as evidence, not universal proofs | Invariants, pre/postconditions, laws and declared proof/runtime-check obligations |
+| Deployment and performance | Run with a friendly managed profile and report measured costs | Strict compiler policy, target capabilities, reproducibility and explicitly scoped budgets or specialization directions |
+
+These are candidate sources of intent, not syntax or inference features already
+implemented. Separate inferred facts supported by analysis, declared promises,
+runtime enforcement, observed examples and heuristic suggestions. A compiler may
+specialize using soundly established facts without making the user restate them;
+patterns, variable names, tests or conversational hints alone do not prove a law.
+Model-assisted suggestions must not make program meaning depend on a model's
+guess, invent external authority or silently commit a proposed change.
+
+When intent is genuinely ambiguous, preserve ordinary meaning and expose the
+unknown or request a targeted clarification rather than guessing a new evaluator.
+An exploratory run may proceed with defined runtime checks and honest unknown
+static facts. A strict policy must explain the exact blocking obligation, related
+source/dependency and the smallest explicit direction or boundary that resolves
+it. Compiler inference is allowed to eliminate ceremony; unknown evidence must
+not be relabelled inferred simply to admit a strict build.
+
+Make tier transitions ergonomic in text, CLI and the playground: explain current
+guarantees, preview the additional obligations, show local fixes and preserve the
+working source. Compare source annotations, ordinary declarations, module/project
+policy and structured-tool projections for expressing direction. Keep one owned
+contract rather than inconsistent tool-only flags. Allow tightening one useful
+dimension at a time and undoing policy/source changes without undoing unrelated
+work. No particular tier UI or compiler flag is accepted by this handoff.
+
+Production readiness is broader than a compiler accepting the file: supported
+dependencies/hosts, boundary checks, lifecycle, diagnostics, observability,
+packaging and actual operational evidence still matter. Strict assurance and
+speed are independent: checked code can be slow, and optimized dynamic code can
+retain runtime checks. Aim to make them reinforce each other, not advertise that
+a mode switch proves reliability or guarantees optimal speed for every program.
+
+## Experience And Engine Independence
+
+Keep the user-facing language, tools and policy distinct from execution strategy.
+Build on [existing engine boundaries](docs/orientation/implementation_layers.md)
+without treating their current artifact shapes as permanent. Define versioned
+interfaces for source identity, resolved/type/restriction facts, normal forms,
+runtime values, outcomes, capabilities, sessions and diagnostics. Establish a
+small executable producer/consumer contract before a broad architectural split.
+
+Make frontends independently replaceable too: text and structured producers must
+negotiate artifact versions, preserve source/referent identity and invalid-draft
+recovery, and agree with downstream consumers on the supported semantic slice.
+A faster parser or richer editor must not dictate backend selection or change
+the meaning of the same accepted program.
+
+Demand strong internal engineering too: memory-safe implementations, exhaustive
+state/outcome representations, explicit ownership at host boundaries, bounded
+resources and auditable transitions. Internal rigor should support freedom at
+the surface, not require ordinary users to manage backend memory or prove every
+property. Do not trade implementation safety for benchmark numbers.
+
+Ask whether one program can be interpreted immediately, checked progressively,
+then specialized/compiled behind the same source-level contracts. Make partial
+optimization useful: checked hot paths can coexist with dynamic orchestration
+where boundary checks and fallback are explicit. Compare AOT, JIT, bytecode,
+specialization, bulk/vectorized domain operations and other engines only where
+their measured workload warrants them; Rust is a candidate substrate, not a
+source-language requirement or automatic speed guarantee.
+
+Compiler-friendly restrictions can supply type/layout, effect, aliasing, escape,
+dispatch, dependency and numeric-law evidence. Track the provenance/scope of
+each assumption and reject invalid or stale evidence. Code from an unchecked
+dependency cannot inherit caller guarantees merely because the build is strict.
+If speculative specialization or fallback is used, preserve completed effects,
+resource ownership and once-only evaluation; restarting from an earlier phase
+must not duplicate real work. Strict policies must say whether fallback is allowed.
+
+Use independent semantic fixtures for engine equivalence, not the current
+interpreter as an unquestioned oracle. Preserve source-linked debugging, useful
+diagnostics, redaction, cancellation/cleanup and meaningful traces under optimized
+execution; an optimization may change instrumentation availability only under
+an explicit inspection contract. Runtime internals may become sophisticated;
+do not export allocation, ownership or scheduling ceremony into ordinary code
+merely because the backend would be easier to implement that way.
+
+Measure startup, interactive feedback, steady-state throughput, tail latency,
+allocation/peak memory, boundary/transport cost and inspection overhead. Use
+scripts, tabular pipelines, service/CLI work and composed workloads, cold and
+warm. Compare implementations doing the same job under stated contracts; a fast
+arithmetic loop is not evidence of Rust-like ecosystem performance. Record the
+case where a proposed speedup harms explanation or edit/run usability and reject
+it when the experience cost outweighs the benefit.
+
+## Ambition To Falsifiable Experiments
+
+Start with a broad experience-to-semantics synthesis, then execute a portfolio
+of discriminating experiments rather than another survey. Extend the existing
+packets and A/D owners; this table is a challenge set, not a second work queue.
+
+| Experiment | Pressure program | What would falsify the approach |
+| --- | --- | --- |
+| Freedom-to-strictness continuity | Grow one unannotated script/cell workflow into a checked reusable module and strict compiled component, retaining recognizable code | Strictness requires unrelated ceremony, changes successful behavior, assumes missing evidence or conceals a dynamic boundary |
+| Independent restriction composition | Apply type, effect, mutation, lifetime and deterministic-build restrictions separately and together | A policy silently grants authority, changes an unrelated policy or cannot explain a conflict locally |
+| Strict-build admission | Introduce a dynamic dependency, unresolved callback, unchecked FFI edge and effectful initializer; compare project policy with explicit run/build overrides | Strict execution begins external work before required admission, silently trusts unknown evidence or lets an override bypass a promised boundary |
+| Dynamic/checked interoperability | Move heterogeneous data, mutable captures and host callbacks through exploratory and checked modules, comparing runtime contracts and refusal policies | A boundary loses obligations, assigns misleading blame, invents proof or makes source-level explicit `Any` the only unexamined route |
+| Implicit-to-explicit intent | Run the evolved Python/TypeScript-like workflow with inferred facts, then add types, effects, invariants and project policy incrementally | Explicit direction requires a new language, overrides successful ordinary meaning, creates unsupported proof or causes nonlocal annotation cascades without an explanation |
+| Engine substitution | Execute the same closed slice through the reference and an independently optimized candidate, including failure-heavy cases | Value/order/cause/cleanup differences, lost source explanations or backend-specific source machinery |
+| Frontend substitution | Use independent text/structured producers with version changes, unknown extensions and malformed/recovered drafts | Source identity or comments disappear, consumers guess unsupported versions, or recovery guesses become executable meaning |
+| Shell-to-service composition | Start with a file/process pipeline, then expose a web/CLI job with events, config/templates, failures and deployment policy | Strings become hidden execution, quoting/grants leak across stages or framework adapters invent incompatible failure/lifetime rules |
+| Spreadsheet-to-data/ML composition | Edit a table, inspect dependencies/time, validate rows, construct a learning description and publish a result | Cell coordinates masquerade as durable identity, edits replay effects, graph reuse erases domain laws or confidence substitutes for evidence |
+| Document/design-to-application composition | Connect Markdown/HTML, styling/layout, structured form data, revisions and reviewable changes | Rendering changes meaning or authority, an inverse edit loses source/comments, or presentation becomes an alternate truth/execution model |
+| Architecture/pattern compression | Express strategy, observer/pub-sub, state transitions, resource scopes and workflow composition using the shared mechanisms | Every pattern needs a new core keyword, or a generic abstraction hides invocation, retention, order, state or failure facts |
+| Domain admission without evaluator surgery | Add a genuinely new domain package/scoped tool through published extension contracts | Each domain requires global engine branches, incompatible identities or a privileged escape from shared diagnostics/security |
+
+These are proposed programs/experiments, not current supported examples. Retain
+beginner, ordinary production and adversarial/failure-heavy variants. Review
+annotation burden, concept count, explanation quality and repair steps as well
+as correctness/performance. Automated measurements are not human usability proof.
+
+## What Logical Conclusion Means
+
+Do not stop after the two existing continuation repairs or a polished roadmap.
+Drive repeated synthesis, candidate comparison, implementation, independent
+review, correction and verification until the chosen milestone is coherent from
+user intent to installed/hosted execution. Carry the wider vision forward even
+when only one vertical contract can be implemented in a given checkpoint.
+
+The frontier pass should aim to leave:
+
+- A reconciled product/language thesis and an explicit accounting of what belongs
+  in core, reusable composition, domain libraries, scoped languages, projections,
+  policy and engines; every inclusion earns its cognitive/semantic cost.
+- A defensible freedom-to-strictness design, including its conflicts with current
+  target assumptions, implicit-to-explicit intent, dynamic/checked package
+  boundaries, ergonomic tier transitions and strict-build meaning.
+- A credible experience/engine separation demonstrated by a versioned executable
+  slice, plus measured optimization evidence where feasible, not a directory-only
+  reorganization or a promise that rewriting in Rust solves performance.
+- At least one complete, useful composed workflow in the CLI/playground, expanded
+  into additional domain slices as their contracts close; no fictional research
+  APIs presented as implemented functionality.
+- A disposition for consequential research and implementation gaps: adopted,
+  rejected, bounded experimental, repairable or deferred with a real trigger.
+  Research should change mechanisms, not merely become more navigation links.
+- Consistent source, typing/restriction, lowering, runtime, diagnostic, tool,
+  packaging and conformance owners, with explicit migration/rollback evidence.
+- Honest onboarding, supported profiles, performance/host evidence, remaining
+  release gates and the next precise checkpoint for sustained development.
+
+No finite pass completes all human knowledge or proves every optimization. A
+logical conclusion is a coherent, extensible foundation and demonstrated growth
+path, with unresolved obligations visible and removable. Seek the strongest
+feasible progress, not exhaustive feature accumulation or premature claims of
+completion. Plan boldly, implement deeply, revise honestly and keep going through
+the useful iterations authorized by the user.
 
 ## Start Here
 
@@ -108,9 +414,11 @@ Current behavior to retain or label explicitly:
 2. Validate packet structure and generated freshness using the startup commands
    below. Check capabilities/dispositions; refresh D0's census rather than assume
    its historical count of three unreviewed directions still holds.
-3. Select **one primary semantic question** through D1/the roadmap and **one
-   bounded engineering discriminator** if useful. Start from failed pressure,
-   not a list of interesting mechanisms. State deliverables and stop gates.
+3. Map the updated north star onto the existing agenda/owners, explicitly reopening
+   the freedom/public-contract tension. Then select a primary semantic question
+   and bounded engineering discriminator for the first checkpoint. D1 and the
+   continuation failures are high-leverage starting points, not the whole mission
+   or a veto over the latest user direction. State deliverables and stop gates.
 4. Delegate independent review/oracle preparation on disjoint files. Give each
    reviewer its exact contract, evidence limits and no-edit boundary as needed.
    A second implementation sharing assumptions is not an independent oracle.
@@ -332,11 +640,13 @@ acceptance, test reorganization, snapshots and backend replacement together.
 Update existing packet owners, registry next actions, bridge retrospective and
 roadmap receipt; do not make this temporary file permanent parallel authority.
 
-A successful frontier pass leaves fewer unexplained contracts, one or more
+A successful frontier pass advances the broad ecosystem thesis and leaves fewer
+unexplained contracts, one or more
 credible alternatives eliminated by evidence, and a demonstrably more useful or
 more honest supported path. An explicit rejection or narrowed unsupported fence
 counts; a bibliography-only expansion or broad rewrite without a pressure oracle
-does not. Domain breadth remains optional, not the next release obligation.
+does not. Broad domain coherence is a project goal; implemented breadth still
+needs staged evidence and is not automatically the next release obligation.
 
 At each checkpoint record:
 
@@ -359,11 +669,20 @@ Update its links in the docs index, roadmap and action notes if retiring the fil
 
 ## Suggested Next-Pass Request
 
-> Read `ASTRA_HANDOFF.md` and the named owners. Begin a bounded local design and
-> implementation frontier pass: challenge D1 on the three representative programs,
-> and reproduce the two remaining continuation failures before selecting a repair,
-> extraction or pre-effect fence. Iterate through independent review, verification
-> and coherent commits. Preserve runnable CLI/browser surfaces and distinguish
-> accepted target, supported prototype and unperformed evidence. Respect approval
-> boundaries for existing tests and external operations. End with decisions,
-> actual results, remaining risks and the exact next step, not another broad plan.
+> Read `ASTRA_HANDOFF.md`, especially the updated user north star, and the named
+> owners. Take Nomi toward its logical conclusion as a coherent computational
+> ecosystem: an evolved Python/TypeScript-like starting experience, implicit intent
+> and inference first, progressively explicit types and other directions, optional
+> composable restrictions up to compiler-enforced production policies, broad domain
+> layers and representations, and independently evolving frontends/engines aiming
+> for Rust-/Java-level rigor and speed without harming experience.
+> Challenge current target assumptions where this direction conflicts with them.
+> Synthesize the research into decisions and executable mechanisms; do not stop
+> at a new plan or the existing two runtime fixes. Use D1 and continuation failures
+> as initial discriminators where appropriate, then pursue the composed workflows
+> and frontier experiments through sustained design/implementation/review/fix
+> iterations and coherent commits. Keep runnable CLI/browser surfaces useful,
+> preserve meaningful debugging and distinguish accepted target, supported
+> prototype and unperformed evidence. Respect approval boundaries for existing
+> tests and external operations. End each checkpoint with actual results, remaining
+> obligations and the exact next step; keep ambitious scope and honest evidence.
