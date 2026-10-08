@@ -1,11 +1,151 @@
 # Nomi Frontier Handoff
 
-> Status: temporary, user-requested handoff for the next GPT 6 Astra pass.
+> Status: standalone, temporary, user-requested handoff for a fresh GPT 6 Astra
+> ULTRA session. No prior conversation is required.
 > Prepared 2026-10-08 from `8b82d8a` and its linked delivery receipts.
 > Expanded 2026-10-08 with the user's broader ecosystem, optional-restriction
 > and independently optimized-backend direction below.
 > This document selects investigations; it is not language authority, a new
 > backlog, target acceptance, implementation evidence or release permission.
+
+## Fresh Session Brief
+
+Read this section first. It supplies the context needed to begin; later sections
+contain the detailed mandate, experiments and evidence. All linked paths are
+relative to the repository root. The prior workspace was
+`/Users/durgakandel/Projects/nomi`; use the actual checkout, not a hardcoded path.
+The user's choice of model/effort is external to this repository; do not change
+tool/model configuration to implement that choice.
+
+### What Nomi Is Today
+
+Nomi is an experimental general-purpose programming language and computational
+ecosystem, currently packaged as pre-alpha `0.1.0`. It has working scripts, CLI
+and browser samples, extensive research, an aspirational target specification,
+and substantial gaps between those layers. It is not a finished production
+language, a native optimizing compiler, or a universal domain engine.
+
+The Python prototype parses with Lark, uses Python AST as a transitional
+representation, and evaluates through three custom interpreter modes: `python`,
+`nomi` and `reduced`. These names are implementation/test modes, **not** the
+proposed exploratory-to-strict user tiers. The default browser separately runs
+Rust/WASM parsing, structured JavaScript lowering and a JavaScript Core runtime.
+Legacy Pyodide runs the hosted Python path in the browser. A Rust parser does not
+mean Nomi already compiles programs into native Rust-speed executables.
+
+The preparation sessions completed research/action notes and this handoff, not
+the new ecosystem, compiler modes or intent-inference features. Four registered
+packets are `designing`: `function-contracts`, `cognitive-interfaces`,
+`language-coherence` and `resource-lifetime`. `pattern-matching` is
+`implementing` for its bounded accepted contract. Target and fictional `lab.*`
+programs are pressure fixtures, not runnable product samples. Refresh statuses
+from `config/design_passes.json` before using them as current facts.
+
+### What The User Wants Next
+
+The intended next pass is ambitious **local design and implementation**, not
+another notes-only survey or only the two pending compatibility fixes:
+
+1. Start from an evolved Python/TypeScript-like experience: useful programs with
+   little ceremony, inferred intent where justified, progressively explicit
+   types and other directions when needed.
+2. Let users choose composable restrictions and easily grow the same program
+   toward compiler-enforced production policies and Rust-/Java-level rigor and
+   ambitious performance. Strict assurance, optimization and runtime authority
+   remain different dimensions; do not promise universal optimal compilation.
+3. Connect shell/CLI, web, spreadsheets, documents, design/styling, architecture,
+   configuration/templates, everyday computer use, data, AI/ML and other domains
+   through a coherent foundation and extensive owned extension layers.
+4. Keep source experience, tools, frontends and execution engines independently
+   evolvable. Prefer a slower humane design over speed that forces ugly common
+   syntax; pursue efficient internals without exporting backend ceremony.
+5. Challenge current assumptions and architecture when they obstruct this
+   direction. In particular, mandatory public type/effect annotations, explicit
+   `Any`, and mandatory mutation notation are now questions to reconcile, not
+   premises that may override the latest direction. No replacement is accepted
+   merely by being described in this file.
+
+Preserve a working CLI/playground during migration. Synthesize research into
+coherent decisions, falsifiable experiments and executable mechanisms. Aim for
+complete useful workflows and a credible growth path, not every feature at once.
+Rejection, deletion and principled redesign are legitimate progress.
+
+### Authority And Permission
+
+Current user instructions govern the task. This file records their direction;
+it is a temporary brief, not a replacement specification. `AGENTS.md` supplies
+repository workflow; `docs/design/` owns reconciled target decisions;
+`docs/research/` supplies evidence; orientation and tests describe supported
+prototype behavior; dated reviews preserve historical observations. Read owners
+before changing their contracts. Name conflicts and update canonical owners
+deliberately rather than silently implementing a different meaning.
+
+When the user asks to resume from this brief, continue the requested local
+design/implementation/verification loop within the current session's permissions.
+Do not ask them to recover the old conversation or restate the vision. Ask only
+for genuinely missing decisions or required approvals. This file records **no
+transferable scoped approval to edit existing tests, weaken assertions, publish,
+push, deploy or choose a license**. Old successful receipts and broad ambition
+are not such approval. Add focused new tests; follow `nomi-test` and obtain the
+specific approval it requires for existing test edits. Reuse a scoped approval
+only if its actual grant is available and covers the exact proposed work.
+
+### First Checkpoint
+
+Resume from `e28dd98` plus the final standalone-handoff checkpoint or the newest
+descendant; inspect actual HEAD, branch and dirty work first. Do not check out an
+old revision or discard changes to match this prose. No prior agent IDs, tool
+bindings, process sessions or dev servers are required or assumed to survive.
+
+Read `AGENTS.md`, the target authority/decision spine, the updated north star
+below and the current roadmap receipt. Reconcile the freedom-to-strictness
+tension before selecting the first experiment. D1 callback contracts and the
+remaining continuation failures are strong discriminators, **not** predetermined
+full-session scope or a veto over the broader user direction.
+
+For the first implementation checkpoint, leave a short statement of the chosen
+pressure, semantic/engineering owner, competing contracts, independent expected
+judgments/traces, changed artifacts, verification surface and stop/rollback gate.
+Then execute the experiment or bounded implementation, review it independently,
+verify it and commit a coherent result. Continue useful iterations toward the
+milestone; do not end merely with an expanded plan. The detailed first-session
+procedure and verification commands below supply the operational route.
+
+### Compact Repository Map
+
+| Need | Starting owner |
+| --- | --- |
+| Setup, commands and workflow | [README](README.md), [AGENTS](AGENTS.md), [docs entrypoint](docs/README.md) |
+| Target/source/behavior/package laws | [Design](docs/design/README.md), [syntax](docs/design/syntax.md), [semantics](docs/design/semantics.md), [industrial model](docs/design/industrial.md), [decisions](docs/design/decisions.md) |
+| Design closure and real pressure programs | [Agenda](docs/design/redesign_agenda.md), [synthesis](docs/design/synthesis.md), [active target suite](docs/design/targets/README.md); the old `target.nomi` is superseded |
+| Current work/evidence and detailed future tasks | [Roadmap](docs/orientation/project_roadmap.md), [action notes](docs/orientation/project_action_notes.md), [packet registry](config/design_passes.json) |
+| Broad research and bounded questions | [Research overview](docs/research/README.md), [convergences](docs/research/convergences.md), [open questions](docs/research/open_questions.md); follow domain links only as selected pressure requires |
+| Implementation pipeline/ownership | [Artifact map](docs/orientation/artifacts_and_usage.md), [engine boundaries](docs/orientation/implementation_layers.md), `prototype/grammar/`, `prototype/parser/`, `prototype/syntax/`, `prototype/interpreter/`, `prototype/runtime/` |
+| Product and verification | `samples/`, `web/`, `scripts/`, `prototype/tests/`, `tools/jupyter/`, `tools/vscode/nomi/`; read the relevant `.agents/skills/*/SKILL.md` before edits |
+
+### Labels And Terms
+
+These are routing labels, not a collection of additional mandatory language modes:
+
+| Label | Meaning |
+| --- | --- |
+| D0 | Semantic agenda gate: accurate target/prototype authority and dispositions |
+| D1 | Callable/generic/protocol/effect contracts tested in composed programs |
+| D2 | Failure, resource and task completion, causes, escape and cancellation |
+| D3 | Portable scalar/Text/Bytes, codec and identity contracts |
+| D4 | Whole-program coherence across source, types, effects, lowering and tools |
+| D5 | Competing representations, accessibility and human creation/review/repair |
+| D6 | Capability-gated backend-neutral migration of a settled slice |
+| D7 | Conformance-backed runnable CLI/playground sample |
+| A01-A33 | Roadmap work areas; action notes decompose them, not a second queue |
+| Q IDs | Roadmap review-queue rows; some bounded slices are already completed |
+| GA1-GA8 | Generic-operation research experiments, not accepted APIs or laws |
+| Packet | Linked research, canonical design, pressure target, migration bridge and validation registry entry |
+| Surface / typed Surface | Source-level artifact / artifact retaining resolved type, binding, effect and other checked facts; no complete whole-target checker exists |
+| Core IR | Smaller executable representation behind frontends; current supported operations are narrower than the target |
+| Native Python / hosted modes | CPython execution used for selected compatibility oracles / Nomi's custom Python-based interpreter modes; not native compiled Nomi |
+| Err / abnormal completion | Expected typed failure value / distinct panic, cancellation or control-transfer story; target cause composition remains open |
+| Cold task | Task description not yet started; retained effects, authority and captures still require contracts |
 
 ## Mission
 
@@ -40,6 +180,7 @@ Quick route: [user north star](#user-north-star),
 [independent engines](#experience-and-engine-independence),
 [frontier experiments](#ambition-to-falsifiable-experiments),
 [logical conclusion](#what-logical-conclusion-means),
+[setup and commands](#local-setup-and-smoke-commands),
 [baseline](#baseline-and-evidence), [first session](#first-session),
 [semantic frontier](#lane-one-close-a-semantic-frontier),
 [continuation engineering](#lane-two-continuation-engineering),
@@ -369,10 +510,49 @@ discovery, not authority; reconcile every useful hit with the active owner.
 Do not restore the old corpus at `08f2aad` as parallel authority. Retrieve a
 historical detail only when a selected open question needs it.
 
+## Local Setup And Smoke Commands
+
+Run commands from the actual repository root. The package requires Python 3.12
+or newer; inspect the available environment rather than assume the historical
+tool versions below. Use existing dependencies first. If they are missing,
+install development extras in the intended environment, subject to the session's
+network/installation permissions:
+
+```bash
+python3 -m pip install -e '.[dev]'
+```
+
+Basic inspection and runnable-product entrypoints are:
+
+```bash
+git status --short
+git log -8 --oneline
+python3 --version
+python3 scripts/cli.py samples/demo.nomi --output program
+python3 -m tools.design_passes list
+```
+
+The existing web experience can be served with:
+
+```bash
+python3 scripts/launch_web.py --no-browser
+```
+
+Read the printed URL; do not assume a port or reuse an unrelated running service.
+Retain a requested usable server with its URL, otherwise stop verification
+processes cleanly. Browser checks may need Playwright/browser dependencies from
+the documented `web-test` extra; inspect the script/skill before installing them.
+Node supports the optional JS backend and browser tooling; Rust/Cargo is needed
+for Rust parser work/rebuilds, not for deciding language contracts. Do not install
+every optional tool, rebuild assets or run containers merely to begin the pass.
+The commands are instructions, not claims they were run in the new session.
+
 ## Baseline And Evidence
 
 | Checkpoint | What it establishes | What it does not establish |
 | --- | --- | --- |
+| `e28dd98` | Expanded user north star, progressive intent, production tiers and engine-independence handoff | Implementation or acceptance of that new direction; this standalone revision builds on it |
+| `9392f14` | Initial reviewed handoff and notes-only verification receipt | Runtime, browser or human evidence newly executed by that preparation |
 | `8b82d8a` | Comprehensive notes, A01-A33 decomposition, domain recipes, eleven research units, rewrite/evidence gates; repaired Q02-Q04 queue entries distinguished from residuals | Execution of proposed tasks or acceptance of any new contract |
 | `3184ef3` | Detailed research-gap and bounded experiment contracts | Execution of new comparisons, foreign adapters or human studies |
 | `f8209ea` | Once-only native displayed values and historical binding-name maps | Deep-owned snapshots of mutable values/handles; Pyodide displayed-value support |
@@ -384,8 +564,14 @@ completion comparisons. These are historical October 4 local observations, not
 checks run for this handoff or proof against a future revision. Local tools were
 Python 3.14.0rc3, Node 25.9.0 and Cargo 1.95.0; refresh actual versions.
 
-The notes preparation reran 127 documentation/packet/target-fixture checks,
-validated all five packet structures and checked 253 local links/anchors.
+At `8b82d8a`, the notes preparation ran 127 documentation/packet/target-fixture
+checks and scanned 253 links across the action notes, roadmap and docs index.
+At `9392f14`, the initial handoff preparation checked 300 links across those
+three documents plus this file, with 127 tests and 18 agent checks. The
+`e28dd98` expansion checked 54 links within this handoff, with 127 tests and
+18 agent checks. These are different historical scan scopes, not conflicting
+current counts; rerun the appropriate checks after changes. All five registered
+packet structures passed during preparation.
 Documentation checks do not parse/typecheck the whole target. The four affected
 design packets remain `designing`; pattern matching remains `implementing`.
 
@@ -619,8 +805,10 @@ git diff --check
 
 Preserve existing tests unless the user explicitly requests or approves the
 specific edit, as required by [nomi-test's rules](.agents/skills/nomi-test/SKILL.md#rules).
-Reuse recorded authorization for the same scoped work; do not request it again
-or generalize it to unrelated edits. Independent evidence must justify changes;
+Reuse recorded authorization without asking again only when its actual grant
+is available and covers the same scoped work; this handoff itself supplies no
+old test-edit grant. Do not generalize authorization to unrelated edits.
+Independent evidence must justify changes;
 follow `nomi-test` for new test placement and snapshot policy. Keep generated
 caches/reports/browser captures out of commits.
 Stop servers/processes used for verification; retain a requested usable dev
@@ -668,6 +856,17 @@ leave both its baseline and a newer receipt competing as live instructions.
 Update its links in the docs index, roadmap and action notes if retiring the file.
 
 ## Suggested Next-Pass Request
+
+The fresh session can start with this short request alone; the detailed mandate
+and pointers are already in the file:
+
+> Read `ASTRA_HANDOFF.md` and resume from its Fresh Session Brief. Begin the local
+> design and implementation frontier pass described there, including independent
+> review, verification and coherent commits. Treat its recorded latest user
+> direction as the task context; no previous conversation is available. Follow
+> current repository instructions and specific approval boundaries.
+
+Longer equivalent request:
 
 > Read `ASTRA_HANDOFF.md`, especially the updated user north star, and the named
 > owners. Take Nomi toward its logical conclusion as a coherent computational

@@ -31,11 +31,14 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
-The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares the next
-design/implementation pass from this notes checkpoint. It selects D1 and the
-remaining compatibility continuation discriminators, preserves independent
-maintenance lanes and names evidence/approval gates. It does not change the
-priorities here or accept new language contracts.
+The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
+design/implementation session with the latest broader ecosystem and
+freedom-to-strictness direction. Reconcile that direction with current target
+assumptions, then select the next checkpoint through the existing owners.
+D1 and the remaining compatibility continuation failures are recommended
+discriminators, not the whole mandate or a fixed priority lock. Independent
+maintenance lanes remain available; the handoff names evidence/approval gates
+but accepts no new language contracts.
 
 ## October 8 Notes And Frontier Preparation
 
