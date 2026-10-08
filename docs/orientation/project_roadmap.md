@@ -31,6 +31,10 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
+The active [frontier execution plan](../../FRONTIER_PLAN.md) records the current
+user-requested plan-first implementation sequence and its granular checkpoints.
+It routes decisions and receipts back to the owners in this roadmap.
+
 The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
 design/implementation session with the latest broader ecosystem and
 freedom-to-strictness direction. Reconcile that direction with current target
