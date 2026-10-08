@@ -108,3 +108,109 @@ results. Keep target decisions separate from compatibility fixes in Git.
 - Plan 1: big-picture plan prepared before implementation. Next: commit this
   plan, refine the checking and continuation slices with independent review,
   and commit those detailed plans before editing their implementation.
+
+## Slice plans, committed before implementation
+
+### S1 — source facts and independent restrictions
+
+Pressure: a user writes an unannotated invoice calculation, inspects what is
+known, then demands known values or absence of observable effects without
+rewriting it. An imported/dynamic call must remain an explained unknown.
+
+Owner: language-coherence / D0-D1; target laws in semantics/industrial and
+ledger; experimental producer under `prototype/analysis/`; public entry through
+`prototype/runtime/api.py`. This is source analysis, not an evaluator/backend
+mode or a whole-target checker. Transitional Python AST is a replaceable input
+adapter. No grammar or binding-law change is needed.
+
+Compare mandatory annotations (reject as universal entry requirement), static
+inference over all programs (reject unsupported proof), and dynamic exploration
+with conservative checked facts (selected bounded experiment). Accept the
+direction that interfaces may be inferred when sound and independently
+inspectable; leave generalization, dynamic package adapters and policy syntax
+open. Exported inferred contracts must not depend on callers' private code.
+
+Implement an actual AST analysis over a declared closed scalar/straight-line
+slice: literals, bindings, supported primitive operators and ordinary direct
+function calls where arguments/body can be analyzed safely. Keep annotations
+as declared information until checked. Unsupported nodes, dynamic imports,
+unknown calls, overloadable operations on unknown operands, recursion and
+captures outside the supported scope generate source-linked obligations.
+Never execute source, import its dependencies, or call host functions while
+checking. Keep module execution effects distinct from uncalled function effects.
+
+Use a versioned result with source digest, analyzer identity, fact provenance,
+inferred bindings/call results, known effects and unresolved obligations.
+Represent each independently selected restriction as data. Initially compare
+`known-types` and `pure` for the analyzed module execution, separately and
+together; neither claims complete public-interface or lifetime checking.
+Unknown evidence must block the restriction it could invalidate. No selected
+restrictions means an honest preview, not a claim of production readiness.
+
+Independent expectations prepared before producer implementation:
+
+- `price = 1200; quantity = 3; total = price * quantity`: Int facts; no effects;
+  both restrictions satisfied without annotations.
+- A directly called scalar invoice function: same result type; argument/body
+  analysis must not run the function or generalize one call into a public proof.
+- `print(total)`: ConsoleWrite known; purity fails, type restriction need not.
+- An unused function containing output: latent effect is not module output.
+- Unknown imported call or operator on an unknown operand: unresolved type and
+  effect obligations; no permission gained; strict selection fails before work.
+- Wrong annotation: a declaration is not proof; report a contradiction.
+- Reassignment, shadowing, recursion, closures and unsupported control: either
+  prove the supported semantics or report the precise unknown; never reuse a
+  stale fact from an earlier binding.
+- Same source under four policy combinations: identical facts, only obligation
+  selection/admission changes. Malformed policies/unknown versions fail closed.
+
+Tests: new analysis unit contracts and independent adversarial review; public
+API/CLI subprocess fixtures in S3. Rollback: remove this optional checker and
+CLI route without changing execution. Broader admission waits for a resolved
+symbol/type/effect contract; do not grow ad hoc inference to make a demo pass.
+
+### S2 — resumable operand and completion ownership
+
+Pressure: `mark('left', 10) + (yield 'ready')` must retain the left value/effect
+and combine with `send(5)` to produce 15. Nested `try`/`with` around a paused
+failing call must unwind inner/outer exits in order, reach the handler, run
+finally, and continue. `None` sent to a yield is a real value.
+
+Owner: hosted Python compatibility in generator_state/expressions and existing
+resumable statement owners; inherited Nomi/reduced behavior is verified without
+claiming target generators or D2 cause composition. Compare a narrow binary
+patch, a bounded child-result/completion mechanism, and a pre-effect fence for
+unsupported expression shapes. Prefer shared explicit state over operator-only
+replay logic. Record where support ends.
+
+Independent oracle: fixed expected native Python values and event sequences,
+then the same program in python/nomi/reduced. Include completed left effects,
+nested operands, child exceptions, suppression/handler/finally, return and
+repeated yields. Preserve existing documented skips; add new test files.
+Close/throw may be included only when the same mechanism supports explicit
+GeneratorExit/throw/replacement/cleanup fixtures; otherwise report the exact
+remaining limitation.
+
+Tests: new failing reproductions first, existing generator/context/exception
+neighbors, all hosted modes, full suite and affected legacy Pyodide workflow.
+Rollback: revert the coherent compatibility slice if order/cause/once-only
+behavior regresses; do not weaken existing expectations or silently re-evaluate
+already completed effects.
+
+### S3 — useful CLI, packaging and integration
+
+Pressure: inspect the invoice's inferred facts and selected obligations from an
+installed CLI, repair an unresolved dependency, and execute the same source.
+Add `--check` with repeatable `--require` restrictions and text/JSON rendering,
+using the public API; reject restriction flags without checking. Preserve the
+default runner and avoid implying an integrated sandbox or strict compiler.
+Use new fixture/example paths without changing existing regression snapshots.
+Document exact supported syntax and reproducible check/run commands in README
+and implementation orientation. Add new subprocess and installed-wheel checks.
+
+Independently review checker soundness, diagnostic provenance and continuation
+unwinding. Then run focused checks, full suite, packet/doc validation,
+manifest/WASM freshness, web/runtime and actual default/Pyodide browser checks.
+Explain any generated manifest inventory changes and record `--check` result.
+Commit implementations in separate slices and finish with a verified receipt,
+remaining obligations and the next exact source fixture.
