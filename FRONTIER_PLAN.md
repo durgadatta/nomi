@@ -108,6 +108,10 @@ results. Keep target decisions separate from compatibility fixes in Git.
 - Plan 1: big-picture plan prepared before implementation. Next: commit this
   plan, refine the checking and continuation slices with independent review,
   and commit those detailed plans before editing their implementation.
+- Checkpoint 2026-10-08: plan commits are `581b549` and `903aa97`; see
+  [the durable session note](docs/orientation/frontier_checkpoint_2026-10-08.md)
+  for evidence, reproductions, clean-state confirmation, and the exact next
+  implementation commands. S1/S2 implementation remains incomplete.
 
 ## Slice plans, committed before implementation
 
