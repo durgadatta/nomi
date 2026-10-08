@@ -1181,6 +1181,10 @@ as a substitute for an independent local oracle.
 
 ## Handoff And Task Closure
 
+The temporary [frontier handoff](../../ASTRA_HANDOFF.md) turns these notes into
+a bounded next-pass brief. It does not authorize this notes-only pass to implement
+the tasks or become a second scheduler/specification.
+
 - [ ] Choose the next task through the roadmap's existing dependencies, informed
   by current receipts and one failed user/program pressure; do not execute this
   document as a giant unchecked installation or feature list.

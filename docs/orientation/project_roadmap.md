@@ -31,6 +31,42 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
+The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares the next
+design/implementation pass from this notes checkpoint. It selects D1 and the
+remaining compatibility continuation discriminators, preserves independent
+maintenance lanes and names evidence/approval gates. It does not change the
+priorities here or accept new language contracts.
+
+## October 8 Notes And Frontier Preparation
+
+Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition
+of A01-A33: local tasks, dependencies, domain recipes, eleven research follow-ups,
+rewrite triggers and completion/removal evidence. Follow-up frontier preparation
+provides the temporary Astra brief and next-pass request. The proposed tasks
+remain unexecuted; neither document accepts a target contract or adds release scope.
+
+Two read-only reviews checked actionability, authority, latest repair boundaries
+and the frontier brief. Corrections separate co-design from cyclic prerequisites,
+retain accepted call/default laws, add executable example/check tasks, reconcile
+completed Q02-Q04 slices, and clarify protocol ambiguity, task-policy/bounds,
+approval scope and scoped-notation/core admission. Historical audit tables remain
+at-the-time evidence, not a new list of pending defects.
+
+| Executed preparation check | Observed result and limit |
+| --- | --- |
+| Documentation lifecycle, packet, boundary and target-fixture suites | **127 passed**; documentation/fixture consistency, not whole-target parsing or typing. |
+| Design-pass validation | All **five** packets coherent; statuses and registry unchanged. |
+| Local Markdown integrity scan | **300** local links/anchors across the notes, handoff, roadmap and docs index resolve; A01-A33 order, new-document tables, ASCII and whitespace checked. |
+| Web manifest freshness | **123 runtime files, 11 samples** fresh; no regeneration or manifest change needed for documentation edits. |
+| WASM freshness | All **eight** outputs fresh; parser sources/assets unchanged. |
+| Agent doctor and local retrieval | All **18** checks pass after rebuilding the ignored index; the initial stale-index warning was addressed. |
+| Whitespace | `git diff --check` passes; new/untracked documents additionally checked directly before staging. |
+
+No runtime suite, new program comparison, browser workflow, hosted CI, container
+run or human study was executed in this preparation pass. Prior runtime/browser
+receipts remain historical observations. The next pass must reproduce its chosen
+pressure at the selected revision and obtain any required test/external approval.
+
 ## October 4 Prototype Delivery Pass
 
 ### Deep-Scan Continuation Plan
