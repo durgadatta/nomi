@@ -115,6 +115,31 @@ results. Keep target decisions separate from compatibility fixes in Git.
 
 ## Slice plans, committed before implementation
 
+### S0 — execute and retain the feedback cycle
+
+The resumed user request explicitly asks for a self-improving development loop.
+Use the existing design-pass retrospective and checkpoint owners; avoid a
+parallel backlog. Each cycle starts with a falsifiable expectation, implements
+one owned change, seeks adversarial review, repairs the findings, runs relevant
+checks and records the smallest durable improvement and next exact fixture.
+
+Add a reusable feedback-cycle prompt and a small local check-receipt command
+under `.codex/`/`tools/`. The command runs explicitly supplied argv without a
+shell, records command/exit status/time/current Git identity plus dirty-state
+information, and stores logs/JSON under ignored `reports/`. Failed commands and
+interrupted runs must remain distinguishable from success. It does not choose
+tests, accept designs, change policy, claim attestation or automatically commit.
+Reuse receipt evidence in existing bridge/roadmap notes. Test real successful
+and failing subprocesses, invalid input and receipt preservation; integrate
+discovery through the existing agent docs/prompts rather than longer hooks.
+
+Apply the cycle immediately to S1/S2: independent expected values/judgments,
+implementation, separate review, targeted regression for each substantive
+finding, verification and commit. A repeated reasoning failure becomes a
+prompt/skill improvement; a deterministic failure becomes a test. No new rule
+is required when a one-off note suffices. Completion is measured by corrected
+behavior and honest evidence, not the volume of process artifacts.
+
 ### S1 — source facts and independent restrictions
 
 Pressure: a user writes an unannotated invoice calculation, inspects what is
