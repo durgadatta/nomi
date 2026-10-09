@@ -305,3 +305,38 @@ changed. No code/test/capture/target edits, full runtime suite, browser trial,
 new foreign-system execution or human study belong to this research-only pass.
 The dated source consultation notes remain October 4; registry review dates
 record October 5 completion, and all four affected packets remain `designing`.
+
+## Frontier Planning Continuation, 2026-10-09
+
+### Evidence That Changed The Design
+
+The pending scalar checker, CLI, feedback tooling and continuation candidate are
+preserved at 6aec9f3. The [checkpoint](../orientation/frontier_checkpoint_2026-10-08.md)
+records 146 passing focused checks and 24 failing/15 passing protocol-review
+cases. The scalar experiment supplies module-execution facts, not checked public
+interfaces. Reviewing the invoice/import/job journey exposed the next missing
+boundary: public compatibility, source verification and executable identity
+must remain distinct, including when private changes leave a signature unchanged.
+
+### Workflow Friction
+
+The old next action still requested the now-preserved scalar experiment, while
+the handoff described its code as unreconstructible local work. A high-level
+growth promise also lacked explicit transitions, policy scopes and repair cases.
+
+### Durable Improvement
+
+The [canonical growth journeys](../design/synthesis.md#growth-journeys-and-boundary-evidence)
+now own those comparisons and the typed/unknown/effect expectations. Existing
+target fixtures, research routes, registry and boundary map were updated. The
+frontier plan decomposes implementation with removal and verification gates.
+No new language law, runtime change or process automation belongs to this pass.
+
+### Next Pass
+
+When the fresh implementation session begins, compare the closed monomorphic
+contract with an independent client consumer, unknown-dependency refusal and
+changed-source/dependency cases. Reconcile the known continuation failures before
+relying on hosted execution. Keep all three journeys visible. This pass is
+self-reviewed planning; no independent reviewer, target typechecker or human
+study was run. Final document checks are recorded in the current checkpoint.

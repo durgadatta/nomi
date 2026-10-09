@@ -17,6 +17,19 @@ example "pure map keeps order and handles an empty input":
     check map([1, 2], (value) => value * 2) == [2, 4]
     check map([], double) == []
 
+# Exact-call-shape candidate: a unary adapter makes omission of the default
+# explicit. Default timing is call-time under the target, not the host model.
+func add_tax(value: Int, tax: Int = 2) -> Int:
+    return value + tax
+
+example "an explicit unary adapter preserves each call-time default":
+    check map([10, 20], (value) => add_tax(value)) == [12, 22]
+
+# map([10, 20], add_tax) remains a discriminator: exact shape requires an
+# adapter; compatible shape must carry the omitted default's type/effects.
+# A default with effects cannot become pure merely because it is optional.
+# Two positional parameters are not one tuple parameter under either candidate.
+
 data RemoteLine:
     id: Text
 

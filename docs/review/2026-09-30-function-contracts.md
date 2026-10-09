@@ -242,3 +242,35 @@ under D1/D3, including shared mutable captures, independent factories and
 immutable covariant results. Record rejection location and any lost useful
 inference. Only evidence that distinguishes the alternatives can select a rule;
 documentation checks or host-language examples do not prove Nomi soundness.
+
+## Frontier Planning Continuation, 2026-10-09
+
+### Evidence That Changed The Design
+
+The preserved scalar checker cannot certify an exported multiply from one Int
+client. A complete contract needs owner-local evidence, while optional defaults
+need call-time effect/timing facts. The shared-slot witness prevents an explicit
+wrapper from masquerading as fresh polymorphic storage. Pure-only map and an
+effectful resource callback are compatible because their API contracts differ.
+
+### Workflow Friction
+
+Selecting function-type typography before arity/default/storage rules would
+freeze ambiguity into source. A supplied contract consumer could also be
+misreported as a source-derived checker without an explicit producer boundary.
+
+### Durable Improvement
+
+The [bounded trial](../design/function_contracts.md#bounded-contract-comparison-for-implementation)
+now specifies monomorphic positive/negative cases, exact versus compatible call
+shapes, shared-storage judgments and hand-formatted candidates. The target adds
+an explicit unary-default adapter. Existing accepted syntax is unchanged; the
+proposal still admits no generic spelling, schema or inference rule.
+
+### Next Pass
+
+In the implementation session, make call/obligation and explanation consumers
+agree with independent supplied facts, then establish the same facts with one
+bounded source producer. Compare conservative generalization against justified
+relaxation before public generic export. This remains designing; self-review
+and document checks do not establish type soundness or a reader-study result.

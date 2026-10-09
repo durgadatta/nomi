@@ -137,12 +137,14 @@ runtime authority and engine choice remain independent. The whole-program
 fixture includes an inferable public batch limit and a negative unknown-call
 boundary; neither supplies a general inference algorithm.
 
-The next executable discriminator is conservative scalar/direct-call module
-analysis: an unannotated invoice, output that defeats purity, and an unknown
+The conservative scalar/direct-call module experiment is now preserved at
+6aec9f3: an unannotated invoice, output that defeats purity, and an unknown
 dependency that defeats closed evidence. Its type and purity requirements are
-independent. Call-context facts must not be generalized into public proofs;
-uncalled function effects must not become module effects. Satisfying this
-bounded experiment leaves D1/D2 and dynamic package adapters open. Research
+independent. The [checkpoint](../orientation/frontier_checkpoint_2026-10-08.md)
+distinguishes passing analysis/integration checks from unresolved hosted
+continuation failures. Call-context facts must not be generalized into public
+proofs; uncalled function effects must not become module effects. This bounded
+experiment leaves D1/D2 and dynamic package adapters open. Research
 still routes through [the feature packet](../research/features/README.md) and
 [the bridge](../review/2026-09-29-language-synthesis.md).
 
@@ -172,6 +174,148 @@ plan owners in the proposal below. A browser worker being terminated is not a
 language-level cancellation/cleanup implementation; a sequence of source edits
 is not data time travel. Those distinctions keep a cohesive language possible
 without claiming that small prototype experiments implement entire domains.
+
+## Growth Journeys And Boundary Evidence
+
+October 9 planning continuation. These are conditional design comparisons and
+prepared expectations, not executed target programs or additional accepted
+syntax. They connect the existing fixtures to the first reusable product slice.
+The [frontier plan](../../FRONTIER_PLAN.md) owns execution order; this section
+owns the whole-program questions. Do not replace the wider invoice/import/job
+journeys with the scalar prototype simply because it is runnable.
+
+### Invoice: Explore, Extract, Then Share
+
+Start with the runnable `scripts/check_invoice.nomi`: `subtotal(1200, 3) + 250`
+prints `3850`. Change quantity to 4 in a new source revision: the expected result
+is `5050`. No floating-point money, currency conversion or rounding claim is
+needed. The richer [invoice fixture](interaction_model_target.nomi) separately
+uses Tea/Cup rows and totals `1500`; keep the same inputs within each paired
+representation comparison.
+
+The important transition is extracting a reusable function. The unannotated
+`price * quantity` body does not by itself select Int multiplication from every
+possible protocol. One observed Int call cannot select a universal public type.
+Compare an inferred contract where the owner has sufficient evidence with an
+explicitly directed boundary:
+
+```nomi
+pub func subtotal(price: Int, quantity: Int) -> Int:
+    return price * quantity
+```
+
+This uses accepted target syntax but is not a claim the scalar checker can
+verify annotations or export modules. Scalar operations still need an owned
+numeric profile. The body and meaning stay the same; the public promise is now
+checkable independently of clients. Negative-price validation would be a new
+domain requirement, not something a stricter type policy may silently invent.
+
+| Step | Prepared observation | Failure and repair |
+| --- | --- | --- |
+| Create and inspect | Calculation facts are distinct from the ConsoleWrite action | Unknown arithmetic dispatch stays an obligation, not a guessed Int. |
+| Revise | New source gives 5050; old result keeps its source revision | A late 3850 result stays historical and cannot overwrite the new run. |
+| Restrict | Type and purity checks examine the same source facts | `print` blocks whole-script purity; inspect/extract the pure calculation, or retain the effectful script policy. |
+| Reuse | A checked consumer reads the exported contract without executing or inspecting private module code | Ambiguous public parameters require direction; do not specialize the library from its first client. |
+| Repair | Explain the call site, public promise and missing evidence together | Fix a mismatched argument or establish the owner contract; an annotation alone cannot certify an unknown host call. |
+
+Prepared policy matrix for the existing module-execution experiment:
+
+| Source | Preview | known-types | pure | both |
+| --- | --- | --- | --- | --- |
+| Scalar calculation only | Facts available | Satisfied | Satisfied | Satisfied |
+| Same calculation plus scalar print | Facts plus ConsoleWrite | Satisfied | Unfulfilled | Unfulfilled |
+| Used unknown external call | Unknowns visible | Unfulfilled | Unfulfilled | Unfulfilled |
+| Unknown call only in an uncalled plain function, with no defaults/annotations | Latent obligation visible | Module obligations can be satisfied | Module obligations can be satisfied | Module obligations can be satisfied |
+
+The last row would **not** satisfy a complete exported-function policy for that
+body. Every verdict names its scope. A malformed policy is a request error;
+unknown or contradicted evidence cannot satisfy an obligation. Preview success
+means a report was produced, not that the program is proved safe. Policy order
+must not affect facts, obligations or admission; there is no `pure wins` rule.
+Profiles may name sets of restrictions only if their expansion and prerequisites
+are inspectable. Package syntax and a general prerequisite solver remain open.
+
+Proposed terminal explanation for the reusable unannotated multiply:
+
+```text
+Cannot establish a checked public contract for subtotal.
+The multiplication does not determine price and quantity's parameter types.
+Declare the intended parameter types, or keep this definition exploratory.
+The observed call subtotal(1200, 3) is evidence for that call only.
+```
+
+The editor relates the public declaration and multiplication; the machine record
+needs an exported-function scope, unresolved parameter/protocol obligations,
+evidence origin and those source relations. Code names/schema are not assigned
+by this example. If the producer lacks real spans, show the function/source
+revision without inventing a location. Adding Int declarations directs checking;
+the body must still be verified against that contract.
+
+### Import And Report: Keep The Boundary While Growing The Program
+
+Use `decode_batch`, `eligible_customers` and `run` from
+[the overall fixture](targets/overall.nomi). An exploratory entry can inspect
+`decode_batch` on an in-memory Text and handle its Result; it does not bypass
+decode because static checking is relaxed. Reuse the same pure decode/filter
+functions in a module, then add the explicit file/network/write orchestrator.
+This separates data validation from permission and from package evidence.
+
+| Prepared input/event | Expected observation | Repair or unresolved owner |
+| --- | --- | --- |
+| Customer name empty and age -1 | Both indexed decode paths; zero profile requests and report writes | Correct both fields; do not offer only the first error as a sufficient repair. |
+| Valid customer below minimum age | Count skipped_ineligible, not malformed | Change the eligibility policy explicitly if intended. |
+| Host returns Text where a checked adapter promised Int | Boundary failure under the adapter's declared taxonomy | Decoder/result conversion must be explicit; annotation is not coercion. |
+| Profile response names a different customer | ProfileIdentity error; no report publication | Preserve expected/received identity and input row context. |
+| Network denied after a valid check | Runtime authority refusal before that network operation | Static evidence stays evidence; no cache hit recreates a grant. |
+| Report publication acknowledgment lost | External outcome unknown; local Stop is not rollback | Inspect/reconcile by the adapter's operation identity before retry. |
+| 128 rows containing one enormous Text | Row count alone does not bound bytes or decode work | File/response bytes, depth, per-field size and diagnostic budgets need explicit owners. |
+| Duplicate customer IDs | Fixture exposes an unresolved duplicate policy | Decide rejection, deduplication or allowed multiplicity before relying on identity for updates. |
+
+The whole-program target's pure `maximum_batch_size()` is the first small
+public-inference discriminator. Change a private comment, change its result
+from Int to Text, then change a dependency's effect footprint. Consumers must
+distinguish source freshness, contract compatibility and execution identity.
+Neither a backend switch nor downstream call observations may repair a missing
+public contract. Full import promotion additionally needs D1-D3, bounded task
+queues, codec laws and a real publication adapter; a good scalar demo does not
+close those gates.
+
+### Resource Job: Reuse The Operation Without Exporting Its Lease
+
+Use `read_text`, `copy_text` and `receive` from
+[the resource fixture](resource_lifetime_target.nomi). The library long form
+already separates resource description, enter, body and release. Exploration
+can omit static facts but cannot omit promised runtime revocation or cleanup.
+Checked reuse must carry callback effects, the fresh region and whole-completion
+non-escape; it may return owned Text or Bytes, never a hidden retained reader.
+
+Creation-to-repair story: read owned text; inspect the enter/body/release trace;
+extract the operation into a reusable function; select a lifetime obligation;
+reject an escaping callback; repair by returning an owned value while the
+resource is live. That repair changes when work happens and must be explained,
+not applied as an allegedly equivalent rewrite. Body error plus release error
+retains both causes. Cancellation is observed only after required join/cleanup,
+or as explicitly incomplete when the host cannot finish. The
+[resource discrimination table](resource_lifetime.md#remaining-completion-experiments)
+owns exact expectations and remaining choices.
+
+### Evidence That Must Survive All Three Journeys
+
+Proposed artifact distinction, refining the accepted assurance direction:
+
+| Record | Identity and validity basis | Consumer obligation |
+| --- | --- | --- |
+| Source evidence | Exact source revision, edition, producer/rule version, dependency basis and numeric/host assumptions actually used | Refuse unsupported or stale evidence; never promote supplied examples into inferred facts. |
+| Public contract | Module/declaration identity, exported types/effects/call shape and supported contract version | Check compatibility without private client code; a same-named type from another package is not automatically identical. |
+| Verification record | Contract plus the implementation/dependencies it was checked against | A private edit may preserve the contract while requiring a new verification record. |
+| Build/run selection | Exact executable content, profile and input snapshot | Recheck current authority at effect boundaries; static evidence is not a transferable grant. |
+| Explanation/view | Source or value epoch, completeness and redaction | Keep unavailable spans and omitted facts explicit; formatting a new revision cannot reuse old offsets blindly. |
+
+The first experiment should use a locally produced, closed monomorphic scalar
+contract. Unknown dependencies prevent checked export. An explicit dynamic
+adapter remains a challenger for later work: runtime shape checks alone cannot
+certify purity, non-escape or termination of arbitrary foreign code. Do not
+design a universal adapter before stating which of those guarantees it enforces.
 
 ## Domain Layer Proposal
 

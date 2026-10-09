@@ -229,6 +229,122 @@ The initial exact-contract rule is a candidate, not a retroactive restriction
 on ordinary named function calls. A formatter comparison without this rule
 would merely compare typography while leaving the actual call ambiguous.
 
+## Bounded Contract Comparison For Implementation
+
+October 9 planning recommendation, **not syntax or type-system admission**.
+The scalar prototype supplies call-context observations; the next comparison
+must establish what can cross a separate compilation boundary. Keep generic
+inference, callable spelling and execution independent enough to replace each.
+
+### First Contract And Refusal Boundary
+
+Compare one closed monomorphic interface before generalizing it: the overall
+fixture's `maximum_batch_size()` has result Int and no world effects under a
+named scalar profile. A declared `subtotal(Int, Int)` exercises parameter
+checking; an unannotated multiply without resolved operand protocols remains
+ambiguous. No consumer supplies hidden facts from its own call history.
+
+Prepare identical abstract contracts for two consumers: a type/effect judgment
+and a read-only interface explanation. At first their input may be explicitly
+supplied fixture facts; that tests consumers, not inference. A later source
+producer must establish each fact independently and identify unsupported cases.
+Neither consumer executes imports, annotations, defaults or user functions.
+
+| Case | Independent expected judgment |
+| --- | --- |
+| Public constant-return function, supported scalar profile | Complete monomorphic contract without written result annotation. |
+| Directed Int parameters and multiplication | Int result conditional on the declared scalar operation; implementation must satisfy the declaration. |
+| Public function body calls unknown provider | Incomplete effect/result obligations; no closed checked export. |
+| Consumer sees interface without private implementation | Same public call judgment as with the source present. |
+| Producer dependency changes from pure to ConsoleWrite | Reverify the owner; old purity evidence is invalid even when the consumer source is unchanged. |
+| Private comment/body changes but public contract remains the same | Contract compatibility may remain; implementation verification and exact build identity must refresh. |
+| Unknown contract version, missing evidence basis or wrong nominal owner | Refuse the artifact with a structured reason, never infer compatibility from display names. |
+
+This comparison does not require selecting a general function-type grammar.
+No artifact is an execution-admission token, and parsing its schema does not
+establish that its claims are true. Local producers and hand-authored fixtures
+must be visibly different evidence sources. Package verification/trust rules
+are a later industrial contract.
+
+### Call Shape: Prefer The Small Exact Rule For The First Trial
+
+Use invariant parameter/result types and exact positional callback arity as the
+initial candidate, retaining compatible-call-shape subtyping as the challenger.
+This is an experiment choice, not a restriction imposed on existing calls.
+The trial must include these distinctions:
+
+| Supplied function / requested callback | Exact candidate | Compatible-shape challenger |
+| --- | --- | --- |
+| `double(Int)` / unary Int transform | Accept | Accept |
+| `add_tax(Int, tax: Int = 2)` / unary transform | Require an explicit unary adapter | Accept only if omitted-default typing, effects and timing are preserved |
+| Two arguments / one tuple argument | Reject | Reject without explicit unpacking adapter |
+| Named invocation through an unlabeled abstract type | Reject; labels are missing | Reject unless the exposed contract includes the labels |
+| Effectful default omitted at the call | Account for its call-time effects | Same obligation; optionality cannot erase the default's effect |
+| Unknown capture or borrowed return | Remain unresolved/reject the selected obligation | Same; arity compatibility proves no capture or region property |
+
+The proposed explicit repair is `(value) => add_tax(value)`. The default runs
+once per callback invocation at call time, not when constructing the adapter.
+Empty input invokes it zero times but does not exempt the callback contract
+from static checking. State and effect eligibility are separate from call shape.
+An adapter around a shared stateful closure must not manufacture fresh state
+or universal quantification.
+
+The two leading spellings can use the same 80-column layout:
+
+```text
+pub func fold[A, S](
+    values: List[A],
+    initial: S,
+    combine: Fn[[S, A], S],
+) -> S:
+    ...
+
+pub func fold[A, S](
+    values: List[A],
+    initial: S,
+    combine: func(S, A) -> S,
+) -> S:
+    ...
+```
+
+At 100 columns both fit on one signature line; neither has a demonstrated
+recognition advantage. These are hand-formatted candidates, not formatter
+output. Compare zero arguments, one tuple, labels/defaults, a multiline effect
+contract and the resource callback before choosing one. A domain protocol is
+still appropriate when it owns behavior beyond call arity; it is not a way to
+avoid specifying those callable facts.
+
+### Generic Reuse Must Survive Shared Storage
+
+For the next D1 trial, compare conservative value restriction with the relaxed
+or effect/region-aware alternative in the
+[existing research](../research/features/functions.md#polymorphic-sharing-and-generalization).
+Do not treat unrestricted generalization as a viable implementation default.
+
+| Prepared witness | Required distinction |
+| --- | --- |
+| Stateless identity used at Int and Text | Quantified variable is instantiated independently, if generalization is justified. |
+| One delayed-identity closure storing its previous argument | One shared slot cannot acquire independent Int/Text contracts; reject the conflicting use. |
+| Declared wrapper around that same slot | Environment-fixed variables stay fixed despite the wrapper's function syntax. |
+| Two independently allocated factory results | Storage is distinct; one may serve Int and another Text under the factory contract. |
+| Harmless computed identity | Record conservative rejection and repair cost versus justified relaxation. |
+| Opaque imported collection or mutable function cell | Public variance/storage facts must suffice; missing facts are not presumed immutable. |
+| Returned Task, Err or cause retaining region R | Instantiation cannot erase R from any completion payload. |
+
+The supplied-state witness fixes first result `1`, then previous value `1` when
+called with `"next"`. An alleged independently instantiated Text result is
+therefore unsound. A repair that allocates a new slot each time changes the
+program and must be presented as such. A soundness claim needs more than this
+finite witness; the trial rejects bad candidates and measures useful inference
+lost, rather than proving a whole type system.
+
+Keep pure-only strict collection callbacks as the initial comparison baseline.
+The resource callback is deliberately allowed declared effects and has its own
+non-retention/lifetime contract; a pure-only map does not prohibit all effectful
+higher-order functions. Effect-polymorphic map wins only with complete call and
+capture judgments and better whole-program repair evidence, not merely fewer
+loops. Retain both candidates until those observations exist.
+
 ## Paper Derivations And Unclosed Obligations
 
 These are manual deductions **conditional on proposed library contracts**,

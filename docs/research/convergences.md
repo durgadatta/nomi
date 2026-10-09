@@ -28,8 +28,9 @@ failures, dependencies, and stable tools.
 contracts firm.
 
 **Nomi choice:** inferred script locals and direct top-level execution, then
-mandatory typed public package APIs. The language grows by adding information
-at boundaries, not by replacing beginner syntax.
+complete checked public contracts, locally inferred or declared. Exploration
+retains unknowns; selected boundary obligations require evidence. The language
+grows by adding information at boundaries, not by replacing beginner syntax.
 
 ## 2. Local Reasoning Requires Visible Change
 

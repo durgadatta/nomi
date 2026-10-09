@@ -190,6 +190,101 @@ methods remain a migration surface, but `CoroutineState` no longer drives their
 flattened paused-frame queue. A future Core continuation representation should
 consume the same independent traces before replacing this hosted adapter.
 
+## Planned Assurance And Representation Boundaries
+
+Status: October 9 implementation handoff, **not implemented interfaces or
+accepted JSON schemas**. The canonical questions are in the
+[growth journeys](../design/synthesis.md#growth-journeys-and-boundary-evidence),
+[function trial](../design/function_contracts.md#bounded-contract-comparison-for-implementation)
+and [interaction trial](../design/interaction_model.md#paired-representation-and-revision-trial).
+This map selects replaceable owners rather than a mandatory compiler framework.
+
+| Boundary | Producer / consumer | Minimum proposed contents | Refusal and extraction rule |
+| --- | --- | --- | --- |
+| Source document | Parser adapter / source analysis and tools | Exact revision, edition, text, real coordinate unit, recoverable unsupported regions | Do not fabricate spans from lowered host nodes; retain lossless source outside Core. |
+| Resolved facts | Bounded analysis producer / policy and explanation | Symbol/operation owner, type/effect/capture facts, scope, provenance, dependencies, unresolved obligations | Unsupported is explicit; facts do not depend on which restrictions were selected. |
+| Public interface | Owning-module checker / independent client checker | Complete exported contract, quantification if supported, call shape, nominal owners, version | No private client observations or execution to fill missing fields. Start monomorphic. |
+| Verification basis | Producer / evidence validator | Source, producer/rules, dependency interfaces, semantic/profile assumptions and verified contract identity | A declaration or well-formed record is not verification; stale/unknown versions refuse. |
+| Policy verdict | Obligation selector / CLI and eventual build/run admission | Normalized requirement set, scope, per-obligation evidence or blocker | Preview is not execution admission; a restriction cannot grant authority or change meaning. |
+| Execution | Runtime facade and host / result and observation tools | Exact selected source/build, input/run epoch, current grants, completion and events | Use-time authority, supported capabilities and cleanup belong to execution, not a cached verdict. |
+| Projection or change | Tool/domain adapter / reader or commit owner | Source/value identity, completeness, target and base context, explicit edit kind | Rendering never runs code; stale changes are rejected by the owner at publication. |
+
+One record need not contain every row. Separate source evidence, public contract
+compatibility and exact executable identity. Do not introduce a universal graph,
+shared mutable facts service or a mandatory sidecar file for a one-line script.
+Use in-memory passive records first; persist only when separate consumers expose
+a concrete cache or interchange need. A second independent consumer justifies
+extracting a shared schema; it does not justify generalizing unsupported types.
+
+### Invalidation And Failure Protocol
+
+The first trial may conservatively reanalyze an entire owning module. Selective
+dependency invalidation is later work and must earn its complexity.
+
+| Change or malformed input | Required first-trial behavior |
+| --- | --- |
+| Source changes while displayed name stays the same | Old report remains historical; fresh analysis before a current verdict. |
+| Private edit preserves the public contract | Reverify implementation; public compatibility may remain unchanged. |
+| Dependency changes result/effects or nominal owner | Reverify dependent facts; unchanged importer text is insufficient. |
+| Numeric profile or analysis rule version changes | Invalidate facts using that basis; never silently reuse host assumptions. |
+| Requirement order changes | Same facts and normalized verdict; unknown/duplicate policy handling is explicit. |
+| Runtime grant revoked | Existing static fact can remain true; subsequent effect authorization is independently refused. |
+| Missing spans or truncated trace | Retain filename/revision/context and completeness; no invented positions or implied full explanation. |
+| Malformed artifact, unsupported major version or unresolved contract field | Structured refusal; no fallback to execution to discover the answer. |
+| Budget exhausted or analysis cancelled | Incomplete obligations; never a successful strict verdict. |
+
+Distinguish violated contracts from insufficient evidence and from invalid
+requests. An eventual strict runner must bind its admitted source/build to the
+one executed; the existing `check()` result does not perform that binding.
+Checks and supplied fixtures are local evidence, not authenticated remote
+attestation. Do not add trust machinery before a package/host boundary needs it.
+
+### First Extraction And Migration Order
+
+Candidate file locations are deliberately tentative:
+
+1. Add a small passive contract model beside `prototype/analysis/model.py`,
+   for example `prototype/analysis/contracts.py`, plus new tests under
+   `prototype/tests/unit/analysis/`. Cover the canonical monomorphic cases,
+   evidence source and refusal boundaries before changing the scalar producer.
+2. Supply two independently specified consumers: call/obligation judgments and
+   human/machine inspection. Hand-authored facts stay labeled supplied. Do not
+   report this as a source checker or general type inference.
+3. Only after that comparison agrees, add one source adapter that establishes
+   the constant-return/explicit-scalar contract. Target `pub` and annotation
+   behavior need an explicit frontend profile; the current hosted annotation
+   evaluator is not that profile. Keep unsupported frontend claims false.
+4. Reuse `prototype.runtime.check` and the CLI for a bounded explanation only
+   after report scope and version compatibility are explicit. Preserve the
+   existing module-execution report; use a new scoped/versioned record if its
+   meaning changes rather than silently upgrading `ok`.
+5. Introduce browser checking or a projection only after its actual source/fact
+   producer is supported. A rendered supplied-fact study remains a study artifact.
+   Use existing runtime result/diagnostic boundaries; keep layout out of Core.
+
+Removal: an optional analysis experiment can be withdrawn without changing
+ordinary execution. A failed source adapter can be replaced while retaining
+the independent contract cases. An unsupported projection falls back to source.
+Do not migrate every frontend, implement generic syntax or write a universal
+policy engine just to preserve one candidate's internal data structures.
+
+### Hosted Continuation Maintenance Is A Separate Lane
+
+The committed adapter has 24 known protocol-review failures. Before relying on
+it for new product claims, compare the smallest source-exception carrier with
+explicit continuation frames and a narrower pre-effect support fence. Preserve
+the three existing counterexample families and the previously fixed operand/
+completion traces. Error provenance cannot be inferred from a RuntimeError's
+message or cause. Scope traversal must distinguish nested bodies from defaults,
+decorators, bases and other expressions evaluated in the enclosing scope.
+
+Use the existing new regression files as the independent compatibility oracle;
+do not weaken them to approve the committed mechanism. If the carrier needs
+exception-specific special cases across multiple layers, prefer a bounded frame
+experiment or explicit refusal. Document any reduced support before effects.
+The hosted choice does not settle target generators, typed resource completion
+or the architecture of a future scheduler.
+
 ## Next Bounded Steps
 
 The [Project Enhancement Roadmap](project_roadmap.md) now owns the shared

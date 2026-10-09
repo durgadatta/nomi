@@ -6,7 +6,7 @@
       "topic": "Generic callback contracts, effects, captures, and invocation",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-05",
+      "last_reviewed": "2026-10-09",
       "keywords": ["function contracts", "callback typing", "generic declarations", "effect polymorphism", "pure callbacks", "callback retention", "latent effects", "functional abstractions", "generic operations", "map reduce filter", "accumulate", "memoization", "caching", "tap", "fixed point", "serialization", "hashing", "value restriction", "polymorphic sharing", "generalization"],
       "artifacts": {
         "research": "docs/research/features/functions.md",
@@ -33,7 +33,8 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Use function_contracts.md as the live callback contract; select call-shape/default/label rules and compare its three generic/function-value candidates before accepting syntax.",
+        "Planning prepared through the October 9 bounded-contract comparison in function_contracts.md. When implementation starts, compare a closed monomorphic export, two passive consumers, unknown dependencies and verification invalidation before generalizing the source checker.",
+        "Compare exact positional call shape against compatible defaults/labels and invariant types against richer subtyping; source spelling remains open until call and shared-storage judgments agree.",
         "Type map/fold, derived decode and run_scope under pure-only and effect-polymorphic candidates, including mutable capture, retained regions and cold tasks.",
         "Use functions.md's polymorphic-sharing comparison to challenge D1/D3 generalization with delayed identity, shared mutable storage and independent factory calls; no value-restriction rule is selected.",
         "Use GA1-GA8 to challenge carrier-specific versus shared generic operations; first type seeded scan, context-bound cache and fallible observation without universal Object/Function methods or inferred merge/convergence laws.",
@@ -46,7 +47,7 @@
       "topic": "Cognitive representations, semantic commands, and inspectable change",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-05",
+      "last_reviewed": "2026-10-09",
       "keywords": ["cognitive design", "interface research", "spreadsheet", "excel", "keyboard shortcuts", "Leibniz", "Boole", "Dijkstra", "semantic commands", "language redesign", "dataframe", "pandas", "polars", "data workflow", "Airflow", "cross-disciplinary notation", "Venn", "Einstein notation", "chemical notation", "biological notation", "corner cases", "edge cases", "human computation", "philosophy", "interaction composition", "accessibility", "IME", "physical control", "text interface", "string API", "Unicode", "PowerShell", "templating", "codec", "source text", "natural language", "linguistics", "naming", "grammatical roles", "semantic roles", "pragmatics", "grounding", "quantifier scope", "localization", "controlled language", "calibrated reliance", "automation bias", "team handoff", "shared understanding", "contrastive explanation", "why-not", "diagnosis"],
       "artifacts": {
         "research": "docs/research/interfaces/README.md",
@@ -77,7 +78,8 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Use redesign_agenda.md for live closure gates; D0 inspection is implemented independently of execution, with three unreviewed directions remaining.",
+        "Use interaction_model.md's October 9 paired representation/revision trial and existing HX8 tasks: text and structured candidates receive identical evidence, unsupported-source/export tasks and stale/invalid/unknown-outcome cases. Planning is prepared; no user trial was performed.",
+        "Compare mutable capture, shadowing and old closures/tasks across notebook re-execution without changing binding meaning through a checking policy; keep the current var/set target until evidence selects a replacement.",
         "Close D1 callback/generic/effect contracts before claiming the invoice or import target is typeable.",
         "Use docs/research/data_workflows/nomi_candidates.md for DW1-DW8 order and data/notation pressure-program gates; do not start an engine before the description contracts close.",
         "Use docs/research/interfaces/composition_cases.md for HX1-HX8: context/repreparation, owner-enforced publication, review scope, bounded inspection, draft commands, inverse projection, Stop evidence, source maps, frame/clock/control context and the prepared U01-U07 study; local probes are motivating models, not Nomi conformance.",
@@ -94,7 +96,7 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-08",
+      "last_reviewed": "2026-10-09",
       "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty"],
       "artifacts": {
         "research": "docs/research/features/README.md",
@@ -122,7 +124,8 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Execute the progressive-assurance scalar/direct-call experiment with independent type/purity judgments, unknown-call and rebinding negatives; do not generalize call-context facts into public interface proof.",
+        "The scalar/direct-call experiment is preserved at 6aec9f3 with separate known continuation failures. Follow synthesis.md's October 9 growth journeys and FRONTIER_PLAN.md's fresh-session sequence; current session is planning only.",
+        "When implementation begins, establish closed monomorphic interface evidence with an independent consumer, unknown-dependency refusal and source/contract/verification invalidation; preserve module-versus-export policy scope and the three product journeys.",
         "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
         "Follow the research overview's gap-continuation routes for memory publication, predicate consistency, package-qualified nominal identity, adaptive evaluation, learned removal and correlated uncertainty; existing questions/experiments retain ownership and none is resolved by the documentation pass.",
@@ -138,7 +141,7 @@
       "topic": "Typed resource completion and scoped handle escape",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-05",
+      "last_reviewed": "2026-10-09",
       "keywords": ["resource lifetime", "cleanup outcome", "scope failure", "handle escape", "resource completion", "cleanup cancellation", "FFI", "foreign callbacks", "re-entry", "deregistration", "unwinding"],
       "artifacts": {
         "research": "docs/research/resource_lifetime.md",
@@ -160,8 +163,8 @@
         "python3 .codex/scripts/agent_doctor.py"
       ],
       "next_actions": [
-        "Specify Resource/callback/error/region metadata and type the three programs, including explicit heterogeneous nested error mapping.",
-        "Add binding failure after successful enter, lexical defer/capture timing, in-flight concurrent use, and cleanup timeout cases.",
+        "Use resource_lifetime.md's October 9 prepared completion schedules; compare phase-preserving heterogeneous adapters with a compound resource, jointly with D1 callback/region facts. No new traces or accepted semantics were produced by planning.",
+        "In the implementation session, add binding failure after enter, multiple failing defers, registration-versus-exit argument capture, in-flight use, repeated cancellation and cleanup deadline cases with explicit scheduler gates.",
         "Use features/resources.md's foreign-callback comparison for re-entry, foreign-thread attachment, in-flight deregistration and unwind boundaries; symbolic lease checks and hosted with compatibility do not establish an ABI or callback quiescence.",
         "Validate actual event-controlled async cancellation and cleanup join before accepting any fallible-with shorthand.",
         "Migrate one target-neutral scope/lease backend slice with typed diagnostics and CLI/browser conformance before promoting a playground sample."

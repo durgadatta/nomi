@@ -165,6 +165,18 @@ composition and dynamic/checked adapters remain open. The binding law and
 `var`/`set` spellings remain current target choices; plain reassignment is a
 reopened experiment requiring closure and notebook re-execution comparisons.
 
+The October 9 [growth-journey plan](synthesis.md#growth-journeys-and-boundary-evidence)
+and [function trial](function_contracts.md#bounded-contract-comparison-for-implementation)
+select **experiment baselines, not additional accepted rules**: closed
+monomorphic interface evidence before general public inference, exact positional
+callback contracts before callable-shape subtyping, and explicit rejection of
+unknown dependencies before dynamic adapters. Compare conservative
+generalization against justified relaxation using shared-storage witnesses.
+No Fn spelling, policy syntax or artifact schema is admitted. The paired
+[representation trial](interaction_model.md#paired-representation-and-revision-trial)
+keeps structured-document primary viable; prose comparisons do not select a
+usability winner. Resource/defer timing and cleanup precedence remain proposed.
+
 ## Library-First Decisions
 
 These are important capabilities but not grammar:

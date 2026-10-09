@@ -14,11 +14,14 @@ The 2026-10-09 user request explicitly authorizes committing all pending work,
 then continuing detailed planning until the remaining choices require executable
 experiments. Actual implementation belongs in a fresh session.
 
-Implementation and delegated fixes stopped. Continue with
-[FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), starting at its P1 growth-journey
-comparison after the strategy checkpoint. Do not automatically resume repairs,
-add infrastructure, or promote partial code. Committing the experiments preserves
-them; it does not accept the architecture or mark their milestones complete.
+Planning preparation P1-P5 is now complete: journeys, composed-contract
+comparisons, paired representation protocol, architecture/migration boundaries
+and adversarial self-review. This is not semantic acceptance or independent
+review. Continue through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
+[fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
+is the execution handoff. Do not automatically resume implementation here.
+Committing the experiments preserves them; it does not accept the architecture
+or mark their milestones complete.
 
 Read the latest user instruction and actual Git state first. The preservation
 checkpoint includes the source changes, new tests and supporting documentation
@@ -39,6 +42,7 @@ planning revision are:
 | 6f97222 | S0 feedback-cycle plan |
 | fcc0b2d | Canonical exploration plus inferred-or-declared checked-contract direction |
 | 8d80f34 | Prior high-level priorities, dependencies and feedback gates |
+| 6aec9f3 | All previously pending experiments and planning state; known failures preserved with current focused checks |
 
 The canonical direction has advanced beyond mandatory public annotations.
 General inference, public generic contracts, dynamic adapters and policy syntax
@@ -146,34 +150,72 @@ The generated web manifest changed only because it now lists three analysis
 modules and `continuation.py`; sample inventory and WASM are unchanged. No
 browser or full-suite rerun was performed for this preservation checkpoint.
 
+## Planning outcome: 2026-10-09
+
+Canonical additions stay with the four existing designing packets:
+
+- [Synthesis](../design/synthesis.md#growth-journeys-and-boundary-evidence):
+  invoice/import/job growth, policy scope, error/repair and evidence identity.
+- [Function contracts](../design/function_contracts.md#bounded-contract-comparison-for-implementation):
+  monomorphic public boundary, exact/default call shapes, shared-storage
+  generalization witnesses and producer/consumer separation.
+- [Resource completion](../design/resource_lifetime.md#remaining-completion-experiments):
+  missing schedules, heterogeneous causes, argument capture and async gates.
+- [Interaction model](../design/interaction_model.md#paired-representation-and-revision-trial):
+  matched text/structured tasks, notebook binding/epoch comparison and domain
+  challengers. No UI or human study was produced.
+- [Implementation map](implementation_layers.md#planned-assurance-and-representation-boundaries):
+  proposed artifacts, invalidation, refusal, extraction and continuation lane.
+
+The frontier plan contains ordered future work, exact first experiment,
+verification/removal gates and remaining evidence requirements. The registry,
+decision ledger, target-only fixtures and four bridges route to the same plan.
+No new grammar, type-system rule, schema, runtime behavior, test implementation
+or runnable sample was introduced after 6aec9f3. All four packets remain
+`designing`; pattern-matching keeps its independent implementing status.
+
+Planning verification: **127 passed** across the existing documentation
+lifecycle, design-pass, target-fixture coherence and malformed-packet suites.
+`python3 -m tools.design_passes check` passed all five packets. A read-only link
+and heading audit passed 554 local links across 17 changed Markdown files.
+Agent checks passed, initially warning that the local RAG index was stale;
+the ignored index is refreshed after the final prose edits. These checks validate
+document integrity, not the proposed typing, cleanup or representation contracts.
+No runtime, browser or research-capture rerun is attributed to these planning
+edits. The preservation results above remain the implementation evidence.
+
 ## Planning retrospective
 
 ### Evidence That Changed The Design
 
-Independent review showed that host continuation convenience can hide source
-exception boundaries. Strategic review found a separate mistake: the existing
-plan let scalar checking and compatibility work dominate the broader authoring
-and representation goals. Neither runnable code nor passing counts should choose
-the next language contract.
+Earlier independent review exposed host continuation exception boundaries.
+This session reproduced the findings and used adversarial self-review for the
+new plan. The growth journeys separated a successful scalar call from a public
+contract, and a stable API from fresh implementation verification. Shared
+storage, default timing and unknown external outcome remain concrete negative
+cases rather than assurances inferred from attractive source.
 
 ### Workflow Friction
 
-The plan reused milestone names with different meanings in the main roadmap,
-retained an outdated mandatory-annotation premise, and mixed future execution
-instructions with the user's newer planning-only request.
+The handoff still said code was uncommitted, packet routes requested an already
+preserved scalar experiment, and broad P1-P5 titles did not identify exact
+inputs, observations, files or stop conditions. The prior milestone/annotation
+corrections are retained; no new parallel backlog or study inventory was needed.
 
 ### Durable Improvement
 
-The revised plan names the active phase first, separates planning checkpoints
-from eventual outcomes, schedules human/domain comparisons early and records
-partial code as experimental. The handoff and roadmap route to that current
-instruction. No additional automation or skill growth is needed for this fix.
+Prepared comparisons now live with their canonical owners and link to bounded
+implementation work orders. The checkpoint is reconstructible from Git and
+distinguishes actual checks from proposed evidence. No additional automation,
+skill growth or runtime implementation was justified in this planning phase.
 
 ### Next Pass
 
-P1: compare exploratory, reusable and checked-boundary forms of the existing
-invoice and import/report programs, including one error/repair and one useful
-representation challenger. Move resulting decisions to their existing canonical
-owners; retain unresolved questions. Remain in planning until the user changes
-the current scope.
+Start the fresh implementation session with the frontier plan's closed
+monomorphic contract experiment: independent records, call/obligation and
+explanation consumers, then a bounded source producer. Unknown dependencies
+refuse checked export; supplied facts are never reported as inference. Keep
+continuation reconciliation as one bounded maintenance lane before relying on
+hosted execution. Remaining generic/resource/representation choices need real
+experimental or human evidence; no further global survey is required first.
 

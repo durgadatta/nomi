@@ -40,6 +40,12 @@ here. Earlier S0-S3 code is preserved as unfinished experimental work; the
 and historical checks. Do not resume implementation merely because an older
 handoff or receipt instructs a next code step.
 
+October 9 planning preparation is complete through P5, with self-review limits
+and unperformed experiments explicit. The frontier plan's fresh-session work
+order leads with monomorphic reusable contract evidence, plus bounded A11
+continuation reconciliation. D1/D2 co-design and early representation trials
+retain their existing owners; no roadmap milestone is completed by this plan.
+
 The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
 design/implementation session with the latest broader ecosystem and
 freedom-to-strictness direction. Reconcile that direction with current target

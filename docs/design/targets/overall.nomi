@@ -34,6 +34,12 @@ from std.task import TaskFailurePolicy, TaskGroup
 pub func maximum_batch_size():
     return 128
 
+# Separate-compilation discriminator: consumers see () -> Int and no world
+# effects without evaluating this function or reading its private body.
+# A private comment edit preserves contract compatibility but refreshes source
+# verification; returning Text or using a changed dependency invalidates the
+# corresponding result/effect promise. These are planned interface judgments.
+
 # Negative checked-boundary pressure (exploration may retain the unknown):
 # pub func external_score(value): return unknown_dependency(value)
 # A selected closed/pure policy must explain the unresolved dependency;

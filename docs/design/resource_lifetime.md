@@ -160,6 +160,73 @@ and null spans; it never invents parsed source locations.
 }
 ```
 
+## Remaining Completion Experiments
+
+October 9 planning continuation; the following expectations are conditional on
+this proposal. They prepare the next experiment rather than report new traces.
+Keep them separate from Python generator compatibility and its suppression rules.
+
+| Prepared schedule | Required observation | Choice or fact still needed |
+| --- | --- | --- |
+| Enter fails before acquisition completes | No body; no registered release for that scope; earlier scopes still unwind | A partially acquiring enter owns its internal rollback and causes. |
+| Enter succeeds, handle binding/constraint fails | Body absent; newly registered release attempted once; binding failure retained | Binding failure's abnormal category and source relation. |
+| Body Err plus two failing deferred releases | Body primary under the candidate priority; both cleanup causes in attempted LIFO order | No first-error abort of remaining cleanup. |
+| Body returns owned value, release returns Err | No successful value published; typed ScopeFailure | Pending value retained only as needed internally, not leaked in diagnostics. |
+| Body Err, release panics, cancellation arrives | Candidate panic primary; body error and cancellation retained with event order | Validate precedence rather than inherit host exception chaining. |
+| In-flight reader operation exists when scope exits | Join/cancel operation under its protocol before revoke and release | Safe sharing and an actual operation-completion acknowledgment. |
+| Cancellation arrives twice during suspended release | Latch request, do not restart release; observe only after join | Repeated requests are trace events, not duplicate root causes. |
+| Cleanup deadline expires | Explicit incomplete cleanup; no successful-release claim | Host policy for isolated abandonment and final observation; no hard exactly-once durability promise. |
+| Child Err returns normally | Group's abnormal-failure policy does not trigger solely from Err | Parent handling with `?` may then cause its own early exit/cancellation. |
+| Escaped Err, closure, task or diagnostic retains reader | Static whole-completion escape rejection; unsafe aliases remain revoked | Region producer and hostile host backstop are separate evidence. |
+
+For async cases, use explicit gates such as `release_started`,
+`cancel_requested`, `operation_finished` and `release_finished`. A deterministic
+test releases each gate and asserts the intermediate state. Sleeping long enough
+or killing a worker cannot establish the target ordering. Observation order must
+be defined by the contract, not wall-clock timestamps from unrelated workers.
+
+### Heterogeneous Errors Without Erasing Phases
+
+Compare two explicit designs on the copy-plus-network job:
+
+1. Resource adapters map expected enter/release errors and body callbacks map
+   expected operation errors into a declared nominal `JobError` with separate
+   File and Remote variants. The composed result is described as
+   `Result[A, ScopeFailure[JobError]]`.
+2. A compound resource owns staged acquisitions, rollback and those same mappings;
+   the caller receives one declared completion contract.
+
+Both must retain original causes, resource identities and phase labels. Mapping
+only the body's Result leaves a different release error unmapped. A nested
+ScopeFailure is not itself a leaf JobError: either map its typed cause tree with
+an explicit operation or retain a declared nested wrapper. Compare readability
+and losslessness before selecting flattening. These descriptions are contract
+metalanguage, not new `map_resource_error` exports or an automatic error union.
+Neither design converts panic/cancellation into JobError to satisfy the type.
+
+### Defer Registration Versus Deferred Lookup
+
+The target specifies LIFO execution but leaves argument capture timing open.
+Use this deliberately unaccepted timing discriminator:
+
+```text
+var target = first_resource
+defer close(target)
+set target = second_resource
+exit scope
+```
+
+Candidate A evaluates the callee and arguments once at registration and stores
+that action: it closes first_resource. Candidate B stores a computation evaluated
+at exit: it closes second_resource. A nested closure can still retain a mutable
+cell under A, so capturing the callable value alone does not prove immutability.
+Under A, capture explicitly supplied arguments; omitted defaults still follow
+the accepted call-time rule when the deferred callable is actually invoked.
+Also compare registration-time failure, effectful defaults, early return and two
+actions whose releases both fail. Prefer A for the first trial because the owned
+resource is visible at registration, but do not alter `defer` semantics until
+the source/formatter/diagnostic contract is reconciled in the broad spine.
+
 ## Admission Gate
 
 Before acceptance: resolve generic/error/callback/region contracts, type the

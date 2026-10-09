@@ -517,3 +517,35 @@ missing facts and repair separately from confidence/time. Treat dyads as linked
 observations and prompting as an intervention. A tabletop study of supplied
 facts and a later actual adapter/capture trial answer different questions;
 neither can justify population-wide or longitudinal claims without its own design.
+
+## Frontier Planning Continuation, 2026-10-09
+
+### Evidence That Changed The Design
+
+A representation comparison needs equal semantic inputs and equally demanding
+failure tasks. A structured candidate cannot postpone source export/merge, and
+a text candidate cannot silently replace unsupported source. Old closures across
+notebook reruns expose a separate binding/session question that a checking policy
+cannot decide.
+
+### Workflow Friction
+
+The implementation-led frontier plan risked postponing human/domain comparison
+until every compiler gate closed. Conversely, supplied-fact demonstrations could
+be mistaken for typed product evidence if their origin was not explicit.
+
+### Durable Improvement
+
+The [paired trial](../design/interaction_model.md#paired-representation-and-revision-trial)
+reuses HX8 with fixed invoice stimuli, underdetermined/stale/unsupported/late-run
+cases, keyboard/IME requirements and text-versus-structured costs. It includes
+binding/re-execution alternatives and a table/document challenger without adding
+another study inventory, renderer or source notation.
+
+### Next Pass
+
+Prepare comparable views under the existing HX8 protocol; supplied-fact trials
+can precede source typing if labeled, while production promotion needs actual
+contracts. Continue text-primary read-only as the reversible baseline and retain
+the structured challenger. No study, accessibility verification, independent
+review or measured representation winner was produced by this planning pass.

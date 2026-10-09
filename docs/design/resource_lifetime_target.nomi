@@ -84,3 +84,13 @@ pub async func receive(url: Url) -> Result[Bytes, ScopeFailure[IoError]] uses Ne
 #
 # Owned copies may be returned; unchecked aliases must be revoked even if close
 # fails. Failed release never restores ordinary authority to the handle.
+#
+# October 9 planned discriminators (not additional executed fixture inventory):
+# - Successful enter, then binding failure: no body, exactly one release attempt.
+# - Body Err plus two failing defers: all causes retained in attempted LIFO order.
+# - In-flight operation finishes before revoke/release and completion observation.
+# - Two cancellation requests during release do not start release twice.
+# - Cleanup deadline expiry reports incomplete, never successful release.
+# - Heterogeneous File/Remote failures need explicit phase-preserving mappings.
+# - Defer callee/arguments captured at registration versus lookup at exit must
+#   be compared before changing the accepted target's currently open timing.

@@ -43,12 +43,20 @@ locally or declared; inference cannot depend on clients' private calls. An
 unknown is not an inferred `Any` or proof. Constraint predicates retain runtime
 meaning. See the revised [assurance contract](../design/semantics.md#progressive-assurance).
 
-**First executable discriminator:** scalar/direct-call module analysis must
-infer an unannotated invoice's call results, reject unknown effects under a
-purity requirement, and retain identical facts under four type/purity policy
-combinations. Uncalled function effects stay latent. Rebinding, imported calls
-and unknown overload dispatch cannot retain stale proofs. This bounded analysis
-does not close public generic inference or the package boundary question.
+**First executable discriminator:** the scalar/direct-call experiment is
+preserved at 6aec9f3; see the [checkpoint](../orientation/frontier_checkpoint_2026-10-08.md)
+for current checks and separate continuation failures. It infers bounded
+invoice call results, checks independent type/purity obligations and keeps
+uncalled function effects latent. Rebinding and unknown operations must not
+retain stale proofs. This does not close public generic inference.
+
+**Next discriminator:** the [growth journeys](../design/synthesis.md#growth-journeys-and-boundary-evidence)
+and [bounded contract trial](../design/function_contracts.md#bounded-contract-comparison-for-implementation)
+prepare a closed monomorphic export, a consumer without private source, unknown
+dependency rejection and source/contract/verification invalidation. Unknown
+dynamic dependencies block the first checked trial; a runtime adapter remains
+a later challenger whose type/effect/lifetime guarantees must be named. Policy
+scope distinguishes module execution from complete exported callable evidence.
 
 **Test:** separate compilation, recursive local functions, generic collection
 helpers, dynamic host interop, editor latency, and public API diffing.
@@ -350,6 +358,11 @@ a structured document own equally editable textual/spatial projections?
 
 **Current hypothesis:** test text-primary, read-only views first; retain the
 structured-document alternative if inverse source edits repeatedly fail.
+
+The [paired trial](../design/interaction_model.md#paired-representation-and-revision-trial)
+now fixes inputs, repair tasks, unsupported-source obligations and comparison
+costs for both candidates. It also separates binding/capture syntax from notebook
+re-execution policy. This is prepared protocol, not performed usability evidence.
 
 **Test:** the [invoice target](../design/interaction_model_target.nomi) across
 text, table, dependency diagram, form and semantic commands. Include stale edits,

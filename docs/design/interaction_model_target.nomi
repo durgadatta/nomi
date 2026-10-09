@@ -9,6 +9,25 @@
 from std.collections import all_unique, filter, fold, map
 from std.data import DecodeErrors, Value
 
+# Growth journey companion to scripts/check_invoice.nomi. Both forms below are
+# target-only; the prototype checker does not verify annotated public contracts.
+# The unannotated body has known call-context results, not a generic export proof.
+func exploratory_subtotal(price, quantity):
+    return price * quantity
+
+pub func subtotal(price: Int, quantity: Int) -> Int:
+    return price * quantity
+
+example "exploration and a directed reusable boundary agree":
+    check exploratory_subtotal(1200, 3) + 250 == 3850
+    check subtotal(1200, 3) + 250 == 3850
+    check subtotal(1200, 4) + 250 == 5050
+
+# Same source under preview/type/pure/both policies must retain the same facts.
+# Adding scalar print introduces ConsoleWrite without changing the calculation.
+# Public subtotal with unknown parameters cannot be inferred from one client.
+# These policy/contract expectations are paper judgments, not executed checks.
+
 data Line:
     id: Text where id.trim() != ""
     label: Text

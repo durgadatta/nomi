@@ -278,6 +278,92 @@ explanation. Values and evidence honor existing redaction. The formatter renders
 ordinary Nomi, never a hidden diagram serialization inside comments. Narrow
 views may wrap labels but cannot change the represented expression.
 
+## Paired Representation And Revision Trial
+
+October 9 planning specification. No interface, user trial or new semantic law
+is implemented by this section. Reuse HX8 and its U01-U07 fixtures; the rows
+below specify how to compare candidates on the growth journeys without creating
+a competing study inventory. D1-D3 still gate claims of checked target behavior.
+Paper comparisons and explicitly supplied-fact mockups can proceed earlier.
+
+Candidate T keeps lossless source primary and derives views. Candidate S keeps
+a structured document primary with equally usable text import/export. Both get
+the same model, diagnostics, command preconditions and available evidence.
+Neither gets permission to execute from rendering a view. A read-only fallback
+is a legitimate result; an unsupported inverse edit must not be guessed.
+
+| Task and fixed stimulus | Observable outcome in both candidates | Cost to record separately |
+| --- | --- | --- |
+| Create Tea quantity 2 at 400 and Cup quantity 1 at 700 | Total 1500; explain both contributions | Concepts, setup actions, source/view navigation; no learnability claim from agent judgment. |
+| Sort rows, change Tea quantity to 3 | Tea ID changes, Cup remains 1; total 1900 | Target discovery and whether sorting confused identity. |
+| Enter quantity text `three` | Preserve draft; explain decode path; committed model unchanged | Recovery actions and whether source/data editing were confused. |
+| Request only `make the total 2000` | Expose underdetermined inputs; no invented quantity/price mutation | Clarification and explicit-input selection costs. |
+| Apply a revision-7 edit after revision 8 commits | Conflict at publication owner; retain recoverable draft | Explanation, reprepare effort and accidental duplicate actions. |
+| Open an unsupported source construct with comments | Preserve exact source or an opaque lossless segment; indicate read-only region | Escape hatches, export/merge failure and comment movement. |
+| Inspect old report after an edit; older run finishes late | Old epoch stays visible and never masquerades as current | Reader's prediction of what actually ran and what evidence is missing. |
+| Stop after remote publication loses acknowledgment | Local state and unknown remote outcome remain distinct | Whether the reader incorrectly predicts rollback or safe blind retry. |
+| Repeat with keyboard, screen reader and active IME draft | Same target/command meaning; composition/cancellation retains input | Blocked tasks, focus loss and assisted versus unassisted completion. |
+
+For S, export/import and a stale concurrent text edit are mandatory tasks, not
+optional infrastructure deferred until after a favorable demonstration. A
+structured document needs a declared merge owner and durable identity story.
+For T, lossless parsing and editable-literal selection are mandatory before
+claiming inverse source edits; syntax offsets alone are not stable identity.
+Neither candidate may count replacing unsupported code with a generated stub
+as a successful round trip.
+
+Predictions are made before showing outcomes. Record correctness of target,
+value, effects, epoch and repair; then record time/actions and qualitative
+confusion. Unsupported tasks remain in the results, not removed as outliers.
+Use the existing counterbalanced HX8 protocol; this paper pass has no participants
+and establishes no empirical winner. Continue T as the cheaper reversible first
+implementation trial. Trigger S if T repeatedly needs lossy/ambiguous rewrites
+for the selected useful task, and compare both before adopting a storage format.
+
+### Binding Syntax And Notebook Re-execution
+
+Keep the current target `var`/`set` while comparing simpler reassignment under
+the same closure and revision questions. This is an open experiment, not a
+policy toggle that changes source meaning.
+
+```nomi
+var quantity = 2
+read_quantity = () => quantity
+set quantity = 3
+```
+
+Under accepted mutable-cell capture, calling read_quantity now observes 3.
+Contrast immutable `quantity = 2` followed by a nested scope's new quantity:
+the existing closure retains the original binding and observes 2. The simpler
+candidate `quantity = 2; ...; quantity = 3` must say whether it updates one cell
+or creates a new binding before its syntax can be compared fairly. Keep it in
+metalanguage until such a rule is selected; checking policy cannot choose it.
+
+Notebook revision is a separate axis. Compare whole-cell re-execution creating
+a fresh evaluation epoch with explicit updates of persistent session cells.
+An old closure/task does not silently acquire the new binding merely because
+the name is unchanged. Dependency invalidation must say which results are
+historical and whether recomputation is requested. Never rerun effectful cells
+merely to make a projection current. Record rename, shadowing, reset, an old
+closure held by a task, and an invalid new draft as the minimum counterexamples.
+Prefer fresh-epoch re-execution for the first trial; persistent mutation remains
+an explicitly different session operation, pending a notebook contract.
+
+### Domain Challengers With Owned Payloads
+
+Use the same import/report data for a table and a rendered document. The table
+owns schema, row identity, ordering and null/duplicate policy. The document owns
+layout, escaping, reference/version identity and exported form. Share source/
+value epochs and change descriptions only where they mean the same thing.
+A cell reordering is not a document rewrite or a database transaction. A
+document's display string is not its machine codec.
+
+One shell variant consumes an explicit argument vector and one AI-assisted
+variant proposes an input/source change. Both retain preview versus execution,
+current grants and unknown external outcome. Neither needs a new language
+keyword or a universal graph executor. Add scheduling or collaborative editing
+only if this pair fails to expose a specific ownership/time distinction.
+
 ## Ordered Playground Experiments
 
 | Order | Deliverable/owner | Acceptance evidence | Stop or removal condition |

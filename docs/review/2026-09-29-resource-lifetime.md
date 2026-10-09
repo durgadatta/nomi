@@ -175,3 +175,35 @@ completion under two explicit contracts. Establish authority and thread/region
 ownership before invoking user code, and prove quiescence before freeing state.
 Only then consider one pinned host adapter; even that cannot justify a portable
 cross-language unwind guarantee without a declared ABI profile.
+
+## Frontier Planning Continuation, 2026-10-09
+
+### Evidence That Changed The Design
+
+The committed hosted continuation candidate still fails source exception and
+pre-effect suspension-boundary cases. That evidence concerns compatibility,
+not target resource completion. The target plan must separately close binding
+failure after acquisition, in-flight use, repeated cancellation, heterogeneous
+causes and the observation of incomplete cleanup.
+
+### Workflow Friction
+
+"Exactly once" can conceal an unsupported host guarantee, and body-only error
+mapping can conceal a different cleanup error type. Defer timing also remained
+an unspecified implementation choice despite changing which resource closes.
+
+### Durable Improvement
+
+The [remaining completion experiments](../design/resource_lifetime.md#remaining-completion-experiments)
+now give event schedules, expected observations, heterogeneous adapter/compound
+alternatives and a registration-versus-exit capture discriminator. Target
+comments and registry routes preserve their unperformed status. No new traces,
+runtime semantics or cleanup precedence were accepted.
+
+### Next Pass
+
+Jointly with D1, prepare typed phase/callback/region facts for these schedules,
+then run an event-controlled implementation comparison. Keep the existing
+foreign-callback/quiescence work with its explicit ABI owner. This planning
+self-review does not validate actual async cleanup, escape checking or source
+`defer` timing.
