@@ -196,6 +196,11 @@ locals do not supply their names. Arity rejection happens before defaults and
 the body, and failed default evaluation restores the caller's frame. These are
 prototype runtime contracts, not enforcement of target restrictions on default
 effects or references to only module constants and earlier parameters.
+The supported legacy equation overloads reduce to a Core `Match`: an `_`
+parameter is a wildcard `Load("_")`, while `None` is a nil literal pattern.
+This distinction preserves a fallback's return for zero and negative inputs.
+It is compatibility lowering, not admission of piecewise equations to the
+target; retire it with the legacy source form when that migration is selected.
 Legacy Python-style lambda defaults likewise enter their lexical call frame;
 the prototype's call-time default rule remains, not Python's definition-time
 default evaluation.

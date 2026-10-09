@@ -1859,7 +1859,7 @@ function mergeIntoMatchFunction(name, funcs) {
 // Convert a function param string to a match pattern.
 // "1" → Literal(1), "n" → Load("n"), '"x"' → Literal("x")
 function paramToPattern(p) {
-  if (p === "_") return NIL;
+  if (p === "_") return load("_");
   if (p === "None") return NIL;
   if (p === "True") return literal(true, "bool");
   if (p === "False") return literal(false, "bool");
