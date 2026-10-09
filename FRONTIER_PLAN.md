@@ -57,6 +57,82 @@ expected judgments/traces, changed files, tests, and removal/rollback gate.
 Then implement, independently review, repair, verify, commit, and record actual
 results. Keep target decisions separate from compatibility fixes in Git.
 
+## Completed high-level delivery strategy
+
+This section completes the high-level plan requested on resumption. It is a
+dependency and acceptance map, not a promise that all milestones fit one turn.
+The existing roadmap A01-A33 and design agenda D0-D7 retain detailed ownership.
+This plan is complete enough to execute; later evidence may revise its sequence.
+
+| Priority / milestone | Deliverable | Depends on | Completion gate |
+| --- | --- | --- | --- |
+| M0: trustworthy feedback | Reusable experiment/review/repair/check loop; command receipts; concise durable retrospectives | Existing agent and design-pass owners | A real failure is reproduced, repaired and rechecked; receipt failures survive; stale/dirty evidence is identifiable. |
+| M1: exploratory checking | Bounded actual inference, honest unknowns, independent restrictions, CLI/API, one installed invoice workflow | Reconciled exploration/checked-contract direction | Independent policy matrix; no user-code execution while checking; no stale fact or annotation treated as proof; supported/unsupported source documented. |
+| M2: reliable hosted execution | Operand/phase continuation and child completion delivered through lexical cleanup | Fixed native/hosted compatibility oracles | Once-only effects, sent values, handler/finally/with traces in all hosted modes; unsupported paths fenced; old and new tests agree. |
+| M3: composed typed foundation | Function/generic/protocol/effect contracts, checked interface producer/consumer, resource/task completion and escape | M1 evidence plus D1/D2 candidate comparisons | Map/fold, decode and scoped-resource programs type consistently; failure/capture negatives reject for the right reason; interfaces do not execute dependencies. |
+| M4: portable product slice | Versioned source/fact/Core/value/diagnostic boundaries, CLI and browser parity, inspectable repair | One closed M3 slice; D3 numeric/Text/Bytes decisions for its values | Two frontend/engine routes agree on independent values, order, failures and spans; malformed/unsupported versions refuse; actual installed and browser workflows pass. |
+| M5: domain composition | One ordinary library workflow at a time: file/process/report, table/data, document/style, then AI/ML where justified | Shared identity, outcomes, authority, lifetime and domain-specific laws | A complete useful workflow, inert description before execution, bounded resources, explicit external effects and repair; no evaluator surgery for each domain. |
+| M6: performance and deployment | Measured specialization/bytecode/native candidates, package closure and supported release profiles | Stable bounded artifacts, workload evidence, dependency/host contracts | Equivalent semantics and explainability; measured end-to-end benefit; declared host/version evidence, exact artifact identity and rollback. |
+
+M1 and M2 can advance independently; M0 supports every milestone. M3 is not a
+reason to postpone useful bounded M1/M2 repairs, and no milestone requires
+implementing every domain. Optimize a measured workload only after its semantic
+contract is stable enough to compare engines honestly.
+
+### Architecture decisions and unresolved forks
+
+- Keep user-facing orchestration in the public runtime facade. Frontends produce
+  owned versioned artifacts; analyzers supply facts with scope/provenance;
+  policies select obligations; engines consume admitted operations. Retain
+  current backends as migration surfaces while validating replacements.
+- Prefer registries/spec data for restrictions, operations and capability
+  selection. Imperative code implements those contracts; avoid a universal
+  framework before two real consumers expose a shared need.
+- Inference lowers ceremony. Public generic inference, callbacks, dynamic
+  package adapters and policy inheritance require their own counterexamples.
+  A concrete scalar call is never promoted to a generic public proof.
+- Binding syntax, representation choice (text or structured document primary),
+  resource completion, task policy and numeric portability remain explicit
+  forks with existing owners. Implement neither side merely because it is
+  easier in Python, JavaScript or Rust.
+- Shared identity, revisions, outcomes and capability boundaries connect domain
+  layers. Scheduling, transactions, styling, solver laws, timing and learning
+  semantics stay with their domain; a single graph does not unify those laws.
+
+### The self-improving cycle used at every milestone
+
+1. Select one user pressure and the smallest discriminating expected outcome.
+2. Commit a granular plan before widening implementation scope.
+3. Preserve a failing reproduction or explicit negative judgment, then implement.
+4. Review against adversarial cases independently of the implementation's tests.
+5. Correct substantive findings and retain a focused regression where useful.
+6. Run the checks appropriate to changed owners, retaining actual receipts and
+   source identity; broaden only for promotion or unresolved risk.
+7. Commit a coherent result and update its existing owner with what changed,
+   what remains, and the next exact fixture. Promote repeated reasoning to a
+   prompt/skill, deterministic gaps to tests, and one-off facts to the receipt.
+8. Reassess the next milestone using evidence. Delete a weak approach, narrow an
+   unsupported boundary or change architecture when the pressure proves it.
+
+A green test count cannot close an untested contract. A process change earns
+its place by reducing repeated mistakes or making evidence more reliable.
+Automatic tools record/check facts; they do not accept semantics, rewrite tests
+to hide failures, grant authority or publish releases.
+
+### Current execution state
+
+High-level/granular plan commits: `581b549`, `903aa97`, `6f97222`.
+Canonical exploration/checked-contract direction: `fcc0b2d`, validated by 127
+documentation/packet/target-fixture checks. The initial lifecycle failure was
+repaired by indexing the previously committed checkpoint.
+
+M0/M1/M2 implementations are work in progress in the shared tree, not promoted
+results. Initial analyzer, facade and continuation tests have passed, but
+independent review, full integration, generated manifest updates, browser checks
+and final receipts remain. Preserve these edits; do not reset to the earlier
+documentation-only checkpoint. Next: finish adversarial review and concrete
+CLI/installed checks, then commit M0, M1 and M2 in separately verified slices.
+
 ## Investigation baseline
 
 - Working tree was clean on `main`; HEAD is `7db4ed5`.
