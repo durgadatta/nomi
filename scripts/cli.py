@@ -34,7 +34,47 @@ def parse_args(argv):
         default=None,
         help=("Optional Nomi parser frontend; omitted uses the runtime default"),
     )
-    return parser.parse_args(argv)
+    parser.add_argument(
+        "--check", action="store_true",
+        help="Preview experimental source facts and obligations without execution",
+    )
+    parser.add_argument(
+        "--require", action="append", default=[], metavar="RESTRICTION",
+        help="Require an analysis restriction with --check (known-types or pure; repeatable)",
+    )
+    args = parser.parse_args(argv)
+    if args.require and not args.check:
+        parser.error("--require needs --check; restrictions do not change ordinary execution")
+    return args
+
+
+def report_check(result, output):
+    record = result.to_record()
+    if output == "json":
+        print(json.dumps(record))
+        return 0 if result.ok else 1
+    label = record["source"]["filename"]
+    analysis = record["analysis"]
+    if analysis is None:
+        for diagnostic in record["diagnostics"]:
+            print(f"{label}: {diagnostic['code']}: {diagnostic['message']}", file=sys.stderr)
+        return 1
+    print(f"Checking {label} (experimental module-execution analysis; no code ran)")
+    for fact in analysis["facts"]:
+        if fact["kind"] == "binding" and fact.get("scope") == "module":
+            print(f"  {fact['name']}: {fact['type'] or 'unknown'}")
+    print("Effects: " + (", ".join(analysis["effects"]) or "none known"))
+    for obligation in analysis["obligations"]:
+        span = obligation.get("span") or {}
+        position = f":{span['line']}:{span['column']}" if span.get("line") else ""
+        print(f"{label}{position}: {obligation['code']}: {obligation['message']}")
+        print(f"  {obligation['repair']}")
+    for restriction in analysis["restrictions"]:
+        status = "satisfied" if restriction["satisfied"] else "unfulfilled"
+        print(f"{restriction['name']}: {status}")
+    if not analysis["restrictions"]:
+        print("Preview only; no restrictions selected.")
+    return 0 if result.ok else 1
 
 
 def report_setup_error(message, output):
@@ -78,14 +118,19 @@ def main():
     else:
         mode = "python"
 
-    if args.output == "debug":
+    if args.output == "debug" and not args.check:
         print(f"Running: {filename}")
         print("-" * 40)
 
-    from prototype.runtime import execute
+    from prototype.runtime import check, execute
 
     options = {"parser_frontend": args.parser_frontend} if args.parser_frontend else {}
     try:
+        if args.check:
+            return report_check(
+                check(filename=file_path, mode=mode, requirements=tuple(args.require), **options),
+                args.output,
+            )
         result = execute(filename=file_path, mode=mode, raise_on_error=False, **options)
     except (ValueError, LookupError, OSError, ImportError) as error:
         return report_setup_error(str(error), args.output)

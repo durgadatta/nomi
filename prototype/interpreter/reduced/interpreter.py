@@ -39,6 +39,7 @@ for _node_type in sorted(get_removed_node_types(), key=lambda t: t.__name__):
                 f"{node_type.__name__} should be desugared at parse time. "
                 f"Check the desugar pipeline in prototype/parser/nomi/desugar/."
             )
+        _stub._nomi_requires_desugaring = True
         return _stub
 
     setattr(Interpreter, _method_name, _make_stub(_node_type))

@@ -69,3 +69,10 @@ native shims under `.claude/agents/*.md` point back to those prompts.
 Reusable prompt templates, including the registered design-pass loop, are
 canonical under `.codex/prompts/*.md`. Claude
 Code command shims under `.claude/commands/*.md` point back to those templates.
+
+Use `.codex/prompts/feedback-cycle.md` for the implementation loop: independent
+oracle, owned change, review, repair, checks, retrospective and next exact task.
+`python3 -m tools.check_receipt -- COMMAND [ARG ...]` retains actual command
+outcomes and logs in unique ignored `reports/checks/` directories. It runs only
+explicit argv and performs no shell expansion, test selection or commits. See
+`docs/orientation/ai_collaboration.md` for evidence limits and usage.

@@ -73,6 +73,28 @@ debug output remains the default. Try `samples/data_pipeline.nomi` for ordered
 exploration. These are runnable prototype library operations, not a static
 callback checker, strict CSV decoder or data/ML engine.
 
+The experimental checker can inspect a small scalar calculation without running
+it. The same unannotated invoice runs normally and supports independent checks:
+
+```bash
+python3 scripts/cli.py scripts/check_invoice.nomi --output program
+python3 scripts/cli.py scripts/check_invoice.nomi --check --require known-types
+python3 scripts/cli.py scripts/check_invoice.nomi --check --require pure --output json
+```
+
+Execution prints `3850`. The type check succeeds; the purity check explains that
+`print` uses `ConsoleWrite`. Remove the output statement to check both
+restrictions together. `--require` is repeatable and requires `--check`.
+Checking with no requirements previews facts and unresolved obligations.
+
+This checks normal-completion facts for scalar expressions, simple bindings and
+direct functions called with known scalar arguments. It does not execute imports
+or infer general public interfaces. Unsupported operations, annotations, captures
+and control flow produce explicit obligations. A successful check does not prove
+termination or absence of runtime failures, grant permissions, or authorize a
+later run. Check output is separate from execution. See the
+[analysis boundary](docs/orientation/implementation_layers.md#experimental-source-analysis).
+
 The current runtime parses source with Lark, lowers through Python AST and
 Nomi-owned artifacts, and evaluates it with layered interpreters. Python is a
 bootstrap substrate, not the future language definition.

@@ -1,6 +1,6 @@
 """Public runtime facade for Nomi execution, inspection, and sessions."""
 
-from .api import ExecutionResult, InspectionResult, create_session, execute, inspect
+from .api import CheckResult, ExecutionResult, InspectionResult, check, create_session, execute, inspect
 from .decode import DecodeError, DecodeErrorList
 from .diagnostics import (
     SEMANTIC_EVENT_KINDS,
@@ -20,6 +20,7 @@ __all__ = [
     "Diagnostic",
     "DecodeError",
     "DecodeErrorList",
+    "CheckResult",
     "ExecutionResult",
     "InspectionResult",
     "PipelineSpec",
@@ -29,6 +30,7 @@ __all__ = [
     "RuntimeSession",
     "SEMANTIC_EVENT_KINDS",
     "build_pipeline_spec",
+    "check",
     "create_session",
     "execute",
     "inspect",

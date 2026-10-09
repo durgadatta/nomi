@@ -1,0 +1,8 @@
+# Same ordinary source can be run or checked. Amounts are integer cents.
+func subtotal(price, quantity):
+    return price * quantity
+
+goods = subtotal(1200, 3)
+delivery = 250
+total = goods + delivery
+print(total)

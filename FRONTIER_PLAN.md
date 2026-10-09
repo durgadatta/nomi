@@ -1,321 +1,265 @@
-# Nomi frontier execution plan
+# Nomi frontier strategy and staged plan
 
-> Active, user-requested implementation plan, started 2026-10-08 from
-> `7db4ed5`. This consumes the direction in [ASTRA_HANDOFF.md](ASTRA_HANDOFF.md).
-> It records execution order and evidence; canonical language decisions remain
-> in `docs/design/`, and the [roadmap](docs/orientation/project_roadmap.md) owns
-> project-wide delivery. This is not a second language specification.
+> Active, user-requested strategy, started 2026-10-08 from 7db4ed5.
+> This consumes the direction in [ASTRA_HANDOFF.md](ASTRA_HANDOFF.md).
+> Canonical language decisions remain in [docs/design/](docs/design/README.md);
+> the [roadmap](docs/orientation/project_roadmap.md) owns project-wide delivery.
+> This is a temporary planning and continuity surface, not another specification.
+
+## Current scope: planning only
+
+The latest user direction is to focus on **plan and strategy**, with hints of
+potential implementation, before proceeding with implementation. This overrides
+the earlier instruction to keep implementing after each plan commit. Finish and
+commit the strategy; do not automatically begin or repair an implementation.
+
+Partial implementation is preserved in the 2026-10-09 checkpoint. Treat it as
+unfinished experimental evidence, not an accepted architecture or a completed
+milestone. The [current checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md)
+records its inventory, known failures and checks. The user's latest request
+explicitly includes committing the previously uncommitted work. The preservation
+commit includes code, tests, product documentation and generated inventory;
+subsequent work in this session is planning only.
+A future implementation phase must first reconcile that work with the selected
+contract; its existence is not a reason to select its architecture.
 
 ## Big picture
 
 Build a humane computational language that starts with useful ordinary code,
-admits progressively stronger contracts, and can grow through domain libraries,
-tools and independently replaceable engines. Optimize for coherent complete
+admits progressively stronger contracts, and grows through domain libraries,
+tools and independently replaceable engines. Optimize coherent complete
 workflows rather than feature count. Preserve an operational CLI and playground
-while changing their foundations deliberately.
+during deliberate migration.
 
-The current design mandates annotated public APIs and explicit mutation. The
-latest user direction reopens those choices. Resolve annotation requirements
-first: compare checked inference, dynamic exploration with checked boundaries,
-and mandatory annotations against the same programs. Keep simple reassignment
-versus `var`/`set` as a separate experiment; a checking switch must not change
-capture, evaluation or mutation meaning.
+The first audience is someone creating a script, notebook or small automation
+who later needs to share, inspect and depend on it. The next audience is the
+library author who must make that reuse trustworthy. Both should be able to
+understand source, boundaries, errors and proposed changes without learning a
+backend's machinery.
+
+The canonical direction now admits exploratory code and inferred-or-declared
+checked public contracts (fcc0b2d). This settles the direction, not a general
+inference algorithm, generic interface rules or dynamic package adapters.
+Explicit mutation remains the current target. Compare simple reassignment
+against var/set separately; a checking switch cannot change capture, evaluation
+or mutation meaning.
 
 Keep four dimensions independent: source semantics, selected checking policy,
-runtime authority, and execution engine. A strict check must neither invent
-proof nor grant permissions; choosing an engine must not change source meaning.
-An unknown fact is useful diagnostic information, not `Any` inferred as proof.
+runtime authority and execution engine. A stricter check must neither invent
+proof nor grant permissions. Choosing an engine must not change source meaning.
+An unknown fact is useful diagnostic information, never Any inferred as proof.
 
-## Delivery waves
+The broader ambition includes shell, data, tables, documents, web, design,
+automation and AI/ML. Shared foundations should connect those domains while
+retaining their distinct laws for ordering, transactions, layout, timing and
+learning. A universal graph or a large common object hierarchy is not a
+prerequisite. Current Python AST, Lark, Rust/WASM, JavaScript and Core IR are
+replaceable laboratory tools.
 
-| Wave | Outcome and owners | Completion evidence / next dependency |
+## Product strategy and success criteria
+
+The first product bet is a small program that can grow into a reusable,
+checked, explainable workflow without being rewritten in a second language.
+The invoice is the entry point, not sufficient evidence for that promise.
+Carry three existing pressure programs through design together:
+
+| Journey | What the person should accomplish | Required design evidence |
 | --- | --- | --- |
-| 1. Establish the direction | Reconcile exploratory code, inferred interfaces and selected restrictions in syntax/semantics/industrial/decisions; reuse language-coherence and function-contracts packets (A01/A02/A05/A09, D0/D1). | Beginner, reusable and adversarial source examples; independent judgments; all unsupported inference explicitly identified. |
-| 2. Make checking useful | A bounded source-analysis producer and versioned inspection result; composable restrictions; CLI preview that executes no user code. Reuse runtime facade and diagnostics (A18/A19). | Same source runs as before; adding a policy reports precise obligations; unknown calls/imports/captures cannot pass as pure or checked. |
-| 3. Make execution trustworthy | Repair the reproduced generator operand/phase and failed-child completion boundary in the hosted compatibility lane (A08/A11). Audit backend refusal before effects (A02/A06). | New native/hosted value and event oracles across three modes; neighboring tests; unsupported shapes remain explicit. This does not accept target generators or D2 cleanup semantics. |
-| 4. Demonstrate a whole workflow | Grow a small invoice/report computation from unannotated execution to inspectable checks, and demonstrate refusal of an unresolved dependency. Verify actual CLI, installed artifact and affected browser surfaces (A17/A20/A28). | Runnable source, documented commands/output and honest limits; generated assets fresh; no fictional APIs. |
-| 5. Close composed contracts | Use map/fold, decode and resource programs to decide generic callbacks, capture/generalization and lifetime/completion (D1/D2). | Independent positive/negative type and trace judgments before a wider checker; retain existing packet status until the whole contract closes. |
-| 6. Extend engines and domains | Admit versioned producer/consumer contracts, portable scalar boundaries, then measured specialization and owned domain layers (D3-D7, A25/A33). | Equivalence including failure/order/cleanup; cold/warm cost measurements; a new domain composes without global evaluator surgery. |
+| Beginner invoice | Create, inspect and revise a calculation; select a restriction; reuse a function | Before/after source, facts versus unknowns, one useful error and repair, stable meaning |
+| Import and report | Decode imperfect external data, reuse a library, produce a table or document | Path errors, public contract, dependency evidence, effects/authority, explainable output |
+| Resource-heavy job | Use a file/service, start dependent work, handle failure or cancellation | Ownership, exit/cause order, bounded lifetime, stale-result behavior, understandable recovery |
 
-Waves are dependency-guided rather than a requirement to settle the entire
-language before improving one supported slice. Each iteration can reject a
-candidate or replace a mechanism when its pressure program demands it.
+Reuse the [target suite](docs/design/targets/README.md) and focused packet fixtures.
+For each journey, compare create → inspect → revise → restrict → reuse → repair.
+Include text plus a table/form or notebook view where useful. Show what survives
+a revision: names, identities, comments, contracts and pending effects.
 
-## First milestone
+Table, document, shell and AI-assisted variants can challenge composition now
+at the design level. They need not wait for every compiler feature. A scheduling
+or collaborative-editing case is a challenger when the three journeys miss a
+fundamental distinction. Do not turn every challenger into a simultaneous
+implementation project.
 
-Deliver waves 1-4 as a bounded local frontier checkpoint: a reconciled target
-direction, actual conservative source analysis with useful CLI output, a
-complete small checking/execution workflow, and verified continuation repairs
-where a coherent mechanism can support them. Document later obligations with
-their exact experiment and trigger. Do not claim a complete compiler, general
-type/effect inference, permission sandbox, native optimization, or target-wide
-conformance from this milestone.
+Judge candidates in this order:
 
-Before implementing each slice, append its granular plan here and commit it.
-Each plan must identify pressure, owner, competing mechanisms, independent
-expected judgments/traces, changed files, tests, and removal/rollback gate.
-Then implement, independently review, repair, verify, commit, and record actual
-results. Keep target decisions separate from compatibility fixes in Git.
+1. Coherent observable meaning and honest guarantees.
+2. Understandable creation, review and repair.
+3. Composition, interoperability and cost of changing the design.
+4. Portability and inspectability across supported profiles.
+5. Measured startup, memory and execution cost for a supported workload.
 
-## Completed high-level delivery strategy
+A hard semantic failure cannot be averaged away by syntax convenience or a speed
+estimate. Record concepts introduced, required annotations, facts a reader must
+find elsewhere, repair steps and unsupported cases. These are design observations
+until real user trials measure learnability; agent agreement is critique, not
+usability evidence. Keep novice and library-author experience visible separately.
 
-This section completes the high-level plan requested on resumption. It is a
-dependency and acceptance map, not a promise that all milestones fit one turn.
-The existing roadmap A01-A33 and design agenda D0-D7 retain detailed ownership.
-This plan is complete enough to execute; later evidence may revise its sequence.
+## Strategic strands and dependencies
 
-| Priority / milestone | Deliverable | Depends on | Completion gate |
+| Strand | Near-term design deliverable | Later runnable outcome |
+| --- | --- | --- |
+| Humane authoring and representations | Three growth journeys; text/structured-document comparison; diagnostic and repair sketches | Coherent CLI, notebook and selected projections with inspectable edits |
+| Semantic assurance and interoperability | Composed callable/boundary/effect/lifetime contracts; honest evidence and policy rules | Reusable checked interfaces, controlled dynamic boundaries and portable artifacts |
+| Dependable execution and engines | Independent value/effect/completion expectations; supported-operation boundaries | Reliable hosted execution, equivalent alternative engines and measured specialization |
+
+These strands inform one another. Human interaction and domain comparisons can
+begin with paper examples and supplied facts. Executable guarantees still require
+their specific semantic prerequisites. A hosted generator repair does not gate
+target function/resource or representation design. A scalar checker does not
+close the generic callable contract.
+
+Keep one leading product question per iteration and, during a future
+implementation phase, at most one independent maintenance slice alongside it.
+Reassess priorities after each checkpoint. Convenient tests and accumulated code
+must not displace the selected user pressure.
+
+## Design-only checkpoints
+
+| Checkpoint | Work and existing owner | Finished when |
+| --- | --- | --- |
+| P0: strategy and state | This plan, roadmap routing and current checkpoint | Vision, priorities, unresolved forks, deferred implementation and dirty work are explicit; docs committed |
+| P1: growth journeys | Language-coherence and cognitive-interfaces packets; existing target suite | Beginner, reusable and failure-heavy forms include diagnostics, formatting and review/repair; unfamiliar APIs are labeled proposed |
+| P2: composed contracts | Function-contracts and resource-lifetime packets; D1/D2 | Credible alternatives face map/fold, decode and scoped-resource calls; independent type judgments, effect obligations, capture/escape and completion traces distinguish them |
+| P3: representation challenge | Cognitive-interfaces packet and existing domain research | Text-primary and structured-document-primary candidates face the same task, including unsupported source, stale edits and effects; table/document laws retain owners |
+| P4: architecture and migration | Implementation-layer map, roadmap owners and canonical decision ledger where needed | A bounded contract has producer/consumer boundaries, refusal behavior, inspection, migration/removal cost and one proposed implementation slice |
+| P5: reviewed planning checkpoint | Existing bridge retrospective and this plan | Independent critique is resolved or named, changed judgments are recorded, next exact task is scoped, documents committed |
+
+P1 supplies the shared programs for P2/P3, which can proceed independently.
+P4 incorporates both. A broad question may stay open if it does not affect the
+bounded contract under consideration. P5 may conclude that more design is needed.
+Finishing a plan does not restart implementation under the current request.
+
+**Next exact planning task:** start P1 with the existing invoice and import/report
+targets. Show their exploratory, reusable and checked-boundary forms; identify
+the first place where a public callable contract or representation choice becomes
+necessary. Sketch one failure and repair in each. No new checker, runtime, editor
+or process tool is needed to write that comparison.
+
+## Decisions that could invalidate substantial work
+
+These are comparisons to make, not newly accepted language choices. Record
+positive and negative examples before choosing a mechanism; update the named
+canonical owner when evidence actually settles a target decision.
+
+| Priority / question | Credible candidates | Discriminating case and consequence | Owner / present disposition |
 | --- | --- | --- | --- |
-| M0: trustworthy feedback | Reusable experiment/review/repair/check loop; command receipts; concise durable retrospectives | Existing agent and design-pass owners | A real failure is reproduced, repaired and rechecked; receipt failures survive; stale/dirty evidence is identifiable. |
-| M1: exploratory checking | Bounded actual inference, honest unknowns, independent restrictions, CLI/API, one installed invoice workflow | Reconciled exploration/checked-contract direction | Independent policy matrix; no user-code execution while checking; no stale fact or annotation treated as proof; supported/unsupported source documented. |
-| M2: reliable hosted execution | Operand/phase continuation and child completion delivered through lexical cleanup | Fixed native/hosted compatibility oracles | Once-only effects, sent values, handler/finally/with traces in all hosted modes; unsupported paths fenced; old and new tests agree. |
-| M3: composed typed foundation | Function/generic/protocol/effect contracts, checked interface producer/consumer, resource/task completion and escape | M1 evidence plus D1/D2 candidate comparisons | Map/fold, decode and scoped-resource programs type consistently; failure/capture negatives reject for the right reason; interfaces do not execute dependencies. |
-| M4: portable product slice | Versioned source/fact/Core/value/diagnostic boundaries, CLI and browser parity, inspectable repair | One closed M3 slice; D3 numeric/Text/Bytes decisions for its values | Two frontend/engine routes agree on independent values, order, failures and spans; malformed/unsupported versions refuse; actual installed and browser workflows pass. |
-| M5: domain composition | One ordinary library workflow at a time: file/process/report, table/data, document/style, then AI/ML where justified | Shared identity, outcomes, authority, lifetime and domain-specific laws | A complete useful workflow, inert description before execution, bounded resources, explicit external effects and repair; no evaluator surgery for each domain. |
-| M6: performance and deployment | Measured specialization/bytecode/native candidates, package closure and supported release profiles | Stable bounded artifacts, workload evidence, dependency/host contracts | Equivalent semantics and explainability; measured end-to-end benefit; declared host/version evidence, exact artifact identity and rollback. |
+| First: dynamic/checked boundaries | Reject unresolved dependencies at a checked boundary; admit an explicit runtime adapter with limited guarantees | A library with an unknown host dependency changes without its consumer changing; what evidence is invalidated? | Language-coherence, industrial; checked contracts accepted in principle, adapter/export rules open |
+| First: policy composition | Independent restrictions with explicit prerequisite closure; named profiles expanding to the same obligations | Same source under no restriction, types, purity and both; unsupported evidence must remain visible and policy order must not alter meaning | Semantics/industrial; dimensions separated, public policy surface open |
+| First: generic callable contracts | Inferred public schemes within stated limits; required annotations at ambiguous/higher-order boundaries | Map/fold, decoder callback and captured resource type consistently; one scalar call cannot prove a generic interface | Function-contracts D1; designing |
+| First: binding and revision | Existing explicit mutation with value/cell capture rules; simpler reassignment with equally explicit binding identity | Rename/re-execute a notebook cell while a closure or task holds an older binding; what does it observe? | Semantics/cognitive-interfaces; current var/set target, alternative unresolved |
+| First: lifetime and completion | Static non-escape; scoped dynamic revocation; candidate cause/completion rules already in resource packet | Body failure plus release failure plus cancellation; escaped callback or task; reader can predict ownership and cause order | Resource-lifetime D2; symbolic evidence, type/runtime admission open |
+| Early and parallel: representation | Text-primary with projections; structured-document-primary with equally usable text | Edit a table/document, preserve comments and unsupported source, merge stale edits, inspect a proposed effect | Cognitive-interfaces D5; genuine fork, existing editor does not decide it |
+| After bounded contract: artifact boundaries | Frontend adapters to owned versioned facts/Core; temporary host-AST adapter behind the same declared scope | Two producers disagree on source positions or scalar meaning; consumer refuses incompatible evidence | Implementation layers / D3-D6; current substrates replaceable |
+| Parallel challenger: domain extension | Ordinary libraries/protocols; scoped notation where long form fails real work | A table transform and document change share identity/outcomes but retain ordering/layout/transaction laws | Existing domain research and synthesis; no universal executor selected |
+| After workload: optimization | Improve current interpretation; bytecode/native/specialized candidate | Same workload, cold and warm cost, failure/order/cleanup equivalence, inspection overhead | Roadmap runtime/profile owners; no performance winner assumed |
 
-M1 and M2 can advance independently; M0 supports every milestone. M3 is not a
-reason to postpone useful bounded M1/M2 repairs, and no milestone requires
-implementing every domain. Optimize a measured workload only after its semantic
-contract is stable enough to compare engines honestly.
+Compare alternatives on the same source and expected observations. Mark a claim
+as proposed, deduced under assumptions, observed in a prototype, or measured with
+users. Keep the smallest unresolved question when evidence cannot choose.
+Research further only when a missing fact could change that choice; do not
+repeat the bibliography to postpone a decision.
 
-### Architecture decisions and unresolved forks
+## Eventual delivery map
 
-- Keep user-facing orchestration in the public runtime facade. Frontends produce
-  owned versioned artifacts; analyzers supply facts with scope/provenance;
-  policies select obligations; engines consume admitted operations. Retain
-  current backends as migration surfaces while validating replacements.
-- Prefer registries/spec data for restrictions, operations and capability
-  selection. Imperative code implements those contracts; avoid a universal
-  framework before two real consumers expose a shared need.
-- Inference lowers ceremony. Public generic inference, callbacks, dynamic
-  package adapters and policy inheritance require their own counterexamples.
-  A concrete scalar call is never promoted to a generic public proof.
-- Binding syntax, representation choice (text or structured document primary),
-  resource completion, task policy and numeric portability remain explicit
-  forks with existing owners. Implement neither side merely because it is
-  easier in Python, JavaScript or Rust.
-- Shared identity, revisions, outcomes and capability boundaries connect domain
-  layers. Scheduling, transactions, styling, solver laws, timing and learning
-  semantics stay with their domain; a single graph does not unify those laws.
+F0-F6 below are **frontier outcome labels**, not the roadmap's M1/M2 milestones.
+The roadmap remains the scheduling authority; D0-D7 remain design-closure gates.
+P0-P5 above are the current planning sequence. S0-S3 below retain names from
+earlier granular plans solely to identify parked experiments.
 
-### The self-improving cycle used at every milestone
+| Outcome | Deliverable | Dependency for promotion | Completion evidence |
+| --- | --- | --- | --- |
+| F0: useful feedback | Existing retrospective plus justified evidence tooling | An actual recurring process failure | A changed judgment or corrected behavior, durable evidence, less repeated friction |
+| F1: exploratory checking | Bounded source facts, independent restrictions, CLI/API and installed workflow | Settled scope and evidence contract for that slice | Independent policy matrix; no user execution or false proof; useful repair; supported boundary documented |
+| F2: reliable hosted execution | Operand/phase retention and lexical cleanup in the compatibility lane | Native/hosted value and event oracles | Once-only effects, sent values, failure/cleanup traces; unsupported paths fenced; neighboring behavior preserved |
+| F3: composed typed foundation | Function/generic/effect interfaces and resource/task contracts | Closed D1/D2 slice, informed by F1 and pressure examples | Map/fold, decode and resource programs agree; negative capture/failure cases reject for the right reason |
+| F4: portable product slice | Versioned source/fact/Core/value/diagnostic boundaries and CLI/browser experience | One F3 slice plus its D3 scalar/codec laws and representation decision | Independent values/order/failures/spans across routes; invalid artifacts refused; installed/browser workflow evidence |
+| F5: domain composition | One complete file/report, table/data or document/change workflow at a time | Shared identity/outcomes/authority/lifetime plus that domain's laws | Useful creation-to-repair workflow, bounded resources, explicit external effects, inspectable extensions |
+| F6: performance/deployment | Measured engine candidates, package closure, supported profiles | Stable bounded artifacts and workload/host evidence | Equivalent behavior, end-to-end benefit, exact artifact identity and rollback |
 
-1. Select one user pressure and the smallest discriminating expected outcome.
-2. Commit a granular plan before widening implementation scope.
-3. Preserve a failing reproduction or explicit negative judgment, then implement.
-4. Review against adversarial cases independently of the implementation's tests.
-5. Correct substantive findings and retain a focused regression where useful.
-6. Run the checks appropriate to changed owners, retaining actual receipts and
-   source identity; broaden only for promotion or unresolved risk.
-7. Commit a coherent result and update its existing owner with what changed,
-   what remains, and the next exact fixture. Promote repeated reasoning to a
-   prompt/skill, deterministic gaps to tests, and one-off facts to the receipt.
-8. Reassess the next milestone using evidence. Delete a weak approach, narrow an
-   unsupported boundary or change architecture when the pressure proves it.
+F1 and F2 can advance independently in a later implementation phase; F0 supports
+every outcome. F5 design probes begin early, while F5 executable guarantees depend
+on the contracts they actually use. No outcome requires implementing every domain.
+Publishing, licensing and support commitments remain separate owner decisions.
 
-A green test count cannot close an untested contract. A process change earns
-its place by reducing repeated mistakes or making evidence more reliable.
-Automatic tools record/check facts; they do not accept semantics, rewrite tests
-to hide failures, grant authority or publish releases.
+## Implementation hints, not instructions to begin
 
-### Current execution state
+The earlier S0-S3 implementation plans are preserved in Git (903aa97, 6f97222).
+They are hypotheses to reassess after P1-P4, not commitments created by partial
+implementation. Keep each future hint to a boundary, minimal experiment,
+independent expected result and replacement trigger.
 
-High-level/granular plan commits: `581b549`, `903aa97`, `6f97222`.
-Canonical exploration/checked-contract direction: `fcc0b2d`, validated by 127
-documentation/packet/target-fixture checks. The initial lifecycle failure was
-repaired by indexing the previously committed checkpoint.
+| Candidate | Boundary and likely owner | Small experiment / independent expectation | Replacement or stop trigger |
+| --- | --- | --- | --- |
+| S0: feedback evidence | Explicit command → local receipt; existing agent workflow and tools owner | Successful, failing and interrupted checks retain status, source identity and output | Tooling creates more maintenance than avoided friction, or receipts are mistaken for attestation |
+| S1: conservative checking | Source adapter → scoped versioned facts → selected obligations; runtime facade and analysis owner | Invoice facts, latent effects and unknown call; changing restrictions changes admission, not facts or execution | Host-AST assumptions leak into language law; stale facts or a declaration pass as proof; widening needs unresolved generic rules |
+| S2: hosted continuation | Suspended evaluation → retained state/completion → lexical handler/cleanup; hosted interpreter owner | Native/hosted operand, send, failure and cleanup traces; unsupported suspension refused before effects | Protocol support requires unbounded patches, source exception identity/order changes, or compatibility begins deciding target D2 |
+| S3: product integration | Public check/run facade → CLI/installed workflow; product and packaging owners | Same source can run and be inspected; actionable unknown dependency; malformed policy refused | Demo needs private APIs, hidden execution or claims beyond the producer's scope |
+| Later domain projection | Owned values/revisions/change descriptions → domain renderer/executor | One table and one document example can be inspected, edited and repaired | Common layer erases domain laws or makes every edit depend on global evaluator changes |
 
-M0/M1/M2 implementations are work in progress in the shared tree, not promoted
-results. Initial analyzer, facade and continuation tests have passed, but
-independent review, full integration, generated manifest updates, browser checks
-and final receipts remain. Preserve these edits; do not reset to the earlier
-documentation-only checkpoint. Next: finish adversarial review and concrete
-CLI/installed checks, then commit M0, M1 and M2 in separately verified slices.
+For S2, compare explicit interpreter frames, a bounded host-generator adapter and
+a narrower supported-shape fence. The current adapter has unresolved exception
+and definition-time-expression defects (checkpoint). A source-exception carrier
+is one possible experiment, not an accepted fix; an accumulating series of
+protocol patches is evidence to reconsider the mechanism.
 
-## Investigation baseline
+Prefer declarative capability/operation metadata where independent consumers
+justify it. Keep the imperative implementation behind that contract. Avoid
+building a universal framework before two real consumers expose a shared need.
 
-- Working tree was clean on `main`; HEAD is `7db4ed5`.
-- Available tools: Python 3.14.0rc3, Node 25.9.0, Cargo 1.95.0.
-- All five registered design packets validate; four remain `designing` and
-  pattern matching remains `implementing`.
-- No existing general typechecker or public-interface inference producer was
-  found. Runtime host metadata is not proof that an arbitrary source operation
-  is pure: overloaded operators, conversion and iteration can call user code.
-- Independent probes reproduced lost binary operands and lost failed-child
-  unwinding across all hosted modes. `close()` is currently a no-op; its full
-  semantics require separate evidence rather than an incidental promise.
-- The default web path and legacy Pyodide are distinct verification surfaces.
-  Earlier test counts in the handoff are historical, not current receipts.
+## Self-improving feedback cycle
 
-## Verification and checkpoint discipline
+Use the existing [design-pass workflow](docs/orientation/design_pass_workflow.md)
+and its four-part retrospective. The cycle applies during planning without
+writing code:
 
-1. Prepare independent expected outcomes before implementing a producer.
-2. Add new focused tests; preserve existing tests and snapshots for these
-   slices. Run relevant focused and neighboring suites before full promotion.
-3. Validate registered packets and documentation boundaries after design edits.
-4. Regenerate the web manifest when its runtime inventory changes, explain the
-   reason, and run `--check`. Rebuild WASM only when its inputs change.
-5. Run the full Python suite, web/runtime checks, actual affected browser
-   workflows, and installed CLI evidence before recording milestone completion.
-6. Keep generated reports, caches and screenshots out of commits. Check the
-   staged diff and whitespace before each coherent local commit.
-7. Record failed checks and evidence limits; do not silently weaken an oracle.
+1. Choose one user pressure and the smallest example that distinguishes choices.
+2. State the candidates, expected judgments and unknowns before preferring a
+   mechanism. Identify which observation could reverse the preference.
+3. Seek independent critique of the same examples, including a negative case and
+   a representation/domain challenger. Record disagreements rather than voting.
+4. Revise the contract or narrow its claim. State what changed and why; rejected
+   alternatives count as progress.
+5. Check document coherence and authority, then commit the planning result.
+6. Record the exact next task and ask whether convenient implementation displaced
+   the selected user pressure. Remove or consolidate guidance made obsolete.
 
-## Deferred obligations and activation triggers
+During a later implementation phase, add failing reproductions, bounded changes,
+adversarial review, relevant verification and coherent implementation commits.
+Command receipts identify what ran on which source; they do not prove soundness,
+usability or architectural merit.
 
-- General callback/type/effect/region inference: activate on the three D1
-  composed programs after call shapes, generalization and capture laws settle.
-- Mutation surface: compare reassignments, explicit change and notebook edits
-  with closure/cell traces before changing syntax or binding meaning.
-- Dynamic package boundaries: specify exported evidence, runtime adapters,
-  separate checking and stale dependency invalidation before package strictness.
-- Resource/task completion: use D2 body/release/panic/cancel and escape cases;
-  Python exception compatibility does not choose the target cause algebra.
-- Native/AOT/JIT performance: measure a supported workload and versioned engine
-  contract first; do not equate Rust parsing with native Nomi compilation.
-- Shell, tables, documents, styling and AI/ML: select one complete workflow and
-  ordinary inert descriptions before adding an executor or scoped syntax.
-- Publishing, licensing and release policy remain owner decisions; local
-  implementation and Git commits do not require a public release.
+Promote repeated reasoning needs to a skill/prompt and deterministic repeated
+failures to a check. Leave one-off observations in the existing bridge.
+A process addition must name the friction it removes and when it should be
+deleted. Do not add automation solely because a feedback cycle was requested.
 
-## Checkpoints
+This pass already exercised the planning loop: review exposed conflicting
+milestone labels, a stale annotation premise and implementation-led priorities.
+This revision corrects those, introduces early human/domain comparisons and
+makes the user's phase boundary explicit. It adds no new automation.
 
-- Plan 1: big-picture plan prepared before implementation. Next: commit this
-  plan, refine the checking and continuation slices with independent review,
-  and commit those detailed plans before editing their implementation.
-- Checkpoint 2026-10-08: plan commits are `581b549` and `903aa97`; see
-  [the durable session note](docs/orientation/frontier_checkpoint_2026-10-08.md)
-  for evidence, reproductions, clean-state confirmation, and the exact next
-  implementation commands. S1/S2 implementation remains incomplete.
+## Evidence, continuity and gates
 
-## Slice plans, committed before implementation
+Earlier planning commits: 581b549, 903aa97 and 6f97222.
+Canonical exploration/checked-contract direction: fcc0b2d.
+The prior high-level dependency plan: 8d80f34.
+The current checkpoint distinguishes completed documentation, partial code,
+historical passing checks and newly exposed failures. Do not use an older green
+suite as proof the latest worktree is ready.
 
-### S0 — execute and retain the feedback cycle
+For this planning phase, review links, authority, terminology, dependencies and
+unresolved choices; validate registered packet integrity and staged whitespace.
+No implementation is admitted, no packet becomes validated merely from this
+plan, and no runtime/browser test is needed for these prose-only changes.
 
-The resumed user request explicitly asks for a self-improving development loop.
-Use the existing design-pass retrospective and checkpoint owners; avoid a
-parallel backlog. Each cycle starts with a falsifiable expectation, implements
-one owned change, seeks adversarial review, repairs the findings, runs relevant
-checks and records the smallest durable improvement and next exact fixture.
+A later implementation plan must name pressure, owner, alternatives, independent
+expectations, files, verification surface and removal criteria before editing.
+Preserve existing tests unless their scoped modification is authorized; add
+focused reproductions without weakening expectations. Verify the affected
+installed/CLI/browser routes, refresh generated manifests when their inventory
+changes, and distinguish actual checks from intended checks.
 
-Add a reusable feedback-cycle prompt and a small local check-receipt command
-under `.codex/`/`tools/`. The command runs explicitly supplied argv without a
-shell, records command/exit status/time/current Git identity plus dirty-state
-information, and stores logs/JSON under ignored `reports/`. Failed commands and
-interrupted runs must remain distinguishable from success. It does not choose
-tests, accept designs, change policy, claim attestation or automatically commit.
-Reuse receipt evidence in existing bridge/roadmap notes. Test real successful
-and failing subprocesses, invalid input and receipt preservation; integrate
-discovery through the existing agent docs/prompts rather than longer hooks.
-
-Apply the cycle immediately to S1/S2: independent expected values/judgments,
-implementation, separate review, targeted regression for each substantive
-finding, verification and commit. A repeated reasoning failure becomes a
-prompt/skill improvement; a deterministic failure becomes a test. No new rule
-is required when a one-off note suffices. Completion is measured by corrected
-behavior and honest evidence, not the volume of process artifacts.
-
-### S1 — source facts and independent restrictions
-
-Pressure: a user writes an unannotated invoice calculation, inspects what is
-known, then demands known values or absence of observable effects without
-rewriting it. An imported/dynamic call must remain an explained unknown.
-
-Owner: language-coherence / D0-D1; target laws in semantics/industrial and
-ledger; experimental producer under `prototype/analysis/`; public entry through
-`prototype/runtime/api.py`. This is source analysis, not an evaluator/backend
-mode or a whole-target checker. Transitional Python AST is a replaceable input
-adapter. No grammar or binding-law change is needed.
-
-Compare mandatory annotations (reject as universal entry requirement), static
-inference over all programs (reject unsupported proof), and dynamic exploration
-with conservative checked facts (selected bounded experiment). Accept the
-direction that interfaces may be inferred when sound and independently
-inspectable; leave generalization, dynamic package adapters and policy syntax
-open. Exported inferred contracts must not depend on callers' private code.
-
-Implement an actual AST analysis over a declared closed scalar/straight-line
-slice: literals, bindings, supported primitive operators and ordinary direct
-function calls where arguments/body can be analyzed safely. Keep annotations
-as declared information until checked. Unsupported nodes, dynamic imports,
-unknown calls, overloadable operations on unknown operands, recursion and
-captures outside the supported scope generate source-linked obligations.
-Never execute source, import its dependencies, or call host functions while
-checking. Keep module execution effects distinct from uncalled function effects.
-
-Use a versioned result with source digest, analyzer identity, fact provenance,
-inferred bindings/call results, known effects and unresolved obligations.
-Represent each independently selected restriction as data. Initially compare
-`known-types` and `pure` for the analyzed module execution, separately and
-together; neither claims complete public-interface or lifetime checking.
-Unknown evidence must block the restriction it could invalidate. No selected
-restrictions means an honest preview, not a claim of production readiness.
-
-Independent expectations prepared before producer implementation:
-
-- `price = 1200; quantity = 3; total = price * quantity`: Int facts; no effects;
-  both restrictions satisfied without annotations.
-- A directly called scalar invoice function: same result type; argument/body
-  analysis must not run the function or generalize one call into a public proof.
-- `print(total)`: ConsoleWrite known; purity fails, type restriction need not.
-- An unused function containing output: latent effect is not module output.
-- Unknown imported call or operator on an unknown operand: unresolved type and
-  effect obligations; no permission gained; strict selection fails before work.
-- Wrong annotation: a declaration is not proof; report a contradiction.
-- Reassignment, shadowing, recursion, closures and unsupported control: either
-  prove the supported semantics or report the precise unknown; never reuse a
-  stale fact from an earlier binding.
-- Same source under four policy combinations: identical facts, only obligation
-  selection/admission changes. Malformed policies/unknown versions fail closed.
-
-Tests: new analysis unit contracts and independent adversarial review; public
-API/CLI subprocess fixtures in S3. Rollback: remove this optional checker and
-CLI route without changing execution. Broader admission waits for a resolved
-symbol/type/effect contract; do not grow ad hoc inference to make a demo pass.
-
-### S2 — resumable operand and completion ownership
-
-Pressure: `mark('left', 10) + (yield 'ready')` must retain the left value/effect
-and combine with `send(5)` to produce 15. Nested `try`/`with` around a paused
-failing call must unwind inner/outer exits in order, reach the handler, run
-finally, and continue. `None` sent to a yield is a real value.
-
-Owner: hosted Python compatibility in generator_state/expressions and existing
-resumable statement owners; inherited Nomi/reduced behavior is verified without
-claiming target generators or D2 cause composition. Compare a narrow binary
-patch, a bounded child-result/completion mechanism, and a pre-effect fence for
-unsupported expression shapes. Prefer shared explicit state over operator-only
-replay logic. Record where support ends.
-
-Independent oracle: fixed expected native Python values and event sequences,
-then the same program in python/nomi/reduced. Include completed left effects,
-nested operands, child exceptions, suppression/handler/finally, return and
-repeated yields. Preserve existing documented skips; add new test files.
-Close/throw may be included only when the same mechanism supports explicit
-GeneratorExit/throw/replacement/cleanup fixtures; otherwise report the exact
-remaining limitation.
-
-Tests: new failing reproductions first, existing generator/context/exception
-neighbors, all hosted modes, full suite and affected legacy Pyodide workflow.
-Rollback: revert the coherent compatibility slice if order/cause/once-only
-behavior regresses; do not weaken existing expectations or silently re-evaluate
-already completed effects.
-
-### S3 — useful CLI, packaging and integration
-
-Pressure: inspect the invoice's inferred facts and selected obligations from an
-installed CLI, repair an unresolved dependency, and execute the same source.
-Add `--check` with repeatable `--require` restrictions and text/JSON rendering,
-using the public API; reject restriction flags without checking. Preserve the
-default runner and avoid implying an integrated sandbox or strict compiler.
-Use new fixture/example paths without changing existing regression snapshots.
-Document exact supported syntax and reproducible check/run commands in README
-and implementation orientation. Add new subprocess and installed-wheel checks.
-
-Independently review checker soundness, diagnostic provenance and continuation
-unwinding. Then run focused checks, full suite, packet/doc validation,
-manifest/WASM freshness, web/runtime and actual default/Pyodide browser checks.
-Explain any generated manifest inventory changes and record `--check` result.
-Commit implementations in separate slices and finish with a verified receipt,
-remaining obligations and the next exact source fixture.
+Commit only the current owned slice after inspecting the staged diff. Keep
+generated reports, caches and screenshots out of Git. Preserve unfinished edits
+and their inventory when work stops; report explicitly when a clean checkout
+cannot reconstruct them.

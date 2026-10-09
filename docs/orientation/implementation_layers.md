@@ -110,6 +110,86 @@ There is no new Rust dependency or replacement engine in this pass. The shared
 transport is an extraction point, not evidence that arbitrary native engines
 can already execute Nomi or preserve its session semantics.
 
+## Experimental Source Analysis
+
+Owner: `prototype/analysis/`; public facade: `prototype.runtime.check`; CLI:
+`--check` with repeatable `--require known-types` / `--require pure`. This is
+the first S1 producer for progressive assurance, not a whole-target checker or
+a runtime/backend mode. The source analyzer uses passive Python AST; replacing
+that input adapter does not change the obligation/report contract.
+
+`AnalysisPolicy` validates restriction names and version 1. `AnalysisResult`
+records a source SHA256, producer identity/version, module-execution scope,
+facts, known effects, latent function summaries, unresolved obligations and each
+selected restriction's blockers. `CheckResult.to_record()` wraps this as
+`nomi.check` v1 with parse diagnostics. Unknown policy versions/names and
+unsupported frontend selection fail instead of silently falling back. Reports
+are descriptive local evidence, not transferable admission or execution tokens.
+
+The supported primitive rules are owned in `prototype/analysis/source.py`:
+scalar literals, simple assignments, selected arithmetic/comparisons, direct
+known-scalar calls and scalar `print`. Calls are analyzed in their argument
+context; the report explicitly leaves public/polymorphic contracts unproved.
+Unused function bodies stay latent. Unknown operations invalidate environmental
+knowledge, so a later call cannot reuse a proof that a dependency may have
+changed. Work, input and call-depth limits produce obligations, not guessed
+results. No user function, import or annotation is executed while analyzing.
+
+Annotations are currently fenced, including scalar-looking ones: the hosted
+Nomi prototype can interpret them as executable constraints. Wrong scalar
+declarations additionally report a contradiction. Captures, containers,
+branches, recursive/generator functions and richer argument conventions need
+their own analysis contracts. Optional restrictions have identical inferred
+facts and differ only in which obligations block admission. `known-types`
+concerns analyzed execution, not complete latent callable signatures; `pure`
+does not prove termination or freedom from panic. A preview with no selected
+restrictions can succeed while listing unknowns.
+
+The Nomi adapter uses the default Lark frontend. Its lowered AST currently loses
+accurate source positions, so analysis spans are unavailable rather than guessed
+from synthetic line-1 fields; filename, source digest and binding/call context
+remain. Python checking uses CPython's syntax AST and converts UTF-8 offsets to
+one-based Unicode code-point columns. That parser is independent of the hosted
+Python execution parser. Other parser routes are not yet accepted for checking.
+The checker is CLI/API only; the invoice itself uses existing runnable syntax.
+
+Extraction/promotion gate: a shared resolved symbol/type/effect artifact and
+independent frontend fixtures before admitting public generic contracts or
+browser checking. Removing this optional analysis package and CLI route leaves
+execution semantics unchanged. Strict build/run admission and dynamic package
+adapters remain target work.
+
+## Hosted Generator Continuations
+
+Owner: `prototype/interpreter/python/continuation.py` and `generator_state.py`;
+Nomi/reduced inherit this compatibility adapter. Host generator frames preserve
+AST child values and errors, without compiling or executing source as Python.
+Suspension-free subtrees still use the existing interpreter. Admitted suspended
+paths are declared in the adapter handler table: yield/from, expression,
+assignment, return, binary operator, call, if/for/while, try and with. Other
+suspended shapes are intended to fail before generator-body effects, but the
+current validator misses definition-time expressions (defaults, decorators,
+class bases and lambda defaults). The adapter also has unresolved source
+`StopIteration` identity and thrown `GeneratorExit` subclass defects. The
+[preservation checkpoint](frontier_checkpoint_2026-10-08.md) records 24 failing
+protocol-review cases. This is an unfinished candidate, not a reliable support
+fence. Reduced desugaring guards remain active; raw `With` cannot bypass its
+reduction.
+
+The adapter owns `send`, `throw`, `close` and child completion. A private close
+carrier travels through implementation frames and becomes `GeneratorExit` at
+the source suspension point; otherwise host `yield from` would close every
+adapter frame and lose a yielded cleanup continuation. Finalization restores
+the source environment. Independent tests compare operand order, `None`,
+child failures, handlers, cleanup replacement/suppression, active exceptions,
+delegation, ignored close and attached Nomi blocks against native Python.
+
+This does not accept target generators, arbitrary suspended AST shapes, async
+cleanup or D2's typed all-cause completion contract. The old resumable evaluator
+methods remain a migration surface, but `CoroutineState` no longer drives their
+flattened paused-frame queue. A future Core continuation representation should
+consume the same independent traces before replacing this hosted adapter.
+
 ## Next Bounded Steps
 
 The [Project Enhancement Roadmap](project_roadmap.md) now owns the shared

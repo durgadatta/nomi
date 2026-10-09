@@ -1,6 +1,9 @@
 {
   "files": [
     "prototype/__init__.py",
+    "prototype/analysis/__init__.py",
+    "prototype/analysis/model.py",
+    "prototype/analysis/source.py",
     "prototype/grammar/__init__.py",
     "prototype/grammar/assemble.py",
     "prototype/grammar/layer.py",
@@ -27,6 +30,7 @@
     "prototype/interpreter/python/binding.py",
     "prototype/interpreter/python/class_.py",
     "prototype/interpreter/python/context_managers.py",
+    "prototype/interpreter/python/continuation.py",
     "prototype/interpreter/python/control.py",
     "prototype/interpreter/python/ds.py",
     "prototype/interpreter/python/env.py",

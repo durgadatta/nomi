@@ -31,9 +31,14 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
-The active [frontier execution plan](../../FRONTIER_PLAN.md) records the current
-user-requested plan-first implementation sequence and its granular checkpoints.
-It routes decisions and receipts back to the owners in this roadmap.
+The active [frontier strategy](../../FRONTIER_PLAN.md) records the current
+user-requested **planning-only** phase, design comparisons and eventual delivery
+sequence. Its P0-P5 planning checkpoints and F0-F6 outcome labels do not rename
+this roadmap's milestones. It routes decisions and receipts back to the owners
+here. Earlier S0-S3 code is preserved as unfinished experimental work; the
+[current checkpoint](frontier_checkpoint_2026-10-08.md) records its known failures
+and historical checks. Do not resume implementation merely because an older
+handoff or receipt instructs a next code step.
 
 The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
 design/implementation session with the latest broader ecosystem and

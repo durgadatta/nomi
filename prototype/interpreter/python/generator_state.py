@@ -1,206 +1,87 @@
-import ast
-from typing import List, Optional, Any
+"""Public generator protocol for the hosted AST continuation adapter."""
 
-from .signals import YieldException, ReturnException
+from .continuation import Continuation, InjectedGeneratorExit
+
 
 class CoroutineState:
-    """
-    Manages state for generator functions.
-
-    Handles resumable execution of compound statements (For, While, Try)
-    and supports exception injection via throw() for context managers.
-
-    NOTE:
-    This is the most fragile piece
-
-    Tricky part in handling exception withing with-blocks.
-    Also check the python's implementation of contextmanager.contextlib -
-    there are several subtle comments and potential issues.
-    specially review the "throw" method.
-    https://stackoverflow.com/questions/11485591/what-is-generator-throw-good-for
-
-    """
-
     __slots__ = (
-        'interpreter', 'body', 'env', 'index', 'return_value',
-        'injected_exception', 'paused_frames', '_processing_frame', '_pause_insertion_index',
-        'sent_value', 'is_first_iteration',
+        "interpreter", "body", "env", "index", "return_value", "is_first_iteration",
+        "paused_frames", "_processing_frame", "_pause_insertion_index", "_runner",
     )
 
-    def __init__(self, interpreter: 'Interpreter', body: List[ast.stmt], env: 'Environment'):
+    def __init__(self, interpreter, body, env):
         self.interpreter = interpreter
         self.body = body
         self.env = env
         self.index = 0
-        self.return_value: Optional[Any] = None
-
-        # this will received by throw() and executed at the resumable
-        # node at the beginning, if present; maybe this needs to be
-        # node specific (stack) - review later
-        self.injected_exception: Optional[Exception] = None
-
-        # TODO(NOMI-ARCH-014): Move paused-frame bookkeeping into a dedicated
-        # resumable-frame type.
-        # This is only for compound statements (For/While/Try).
-        self.paused_frames = []
-        self._processing_frame = None  # Frame currently being evaluated 
-        self._pause_insertion_index = 0
-
-        # for implementing send()
-        self.sent_value = None
+        self.return_value = None
         self.is_first_iteration = True
-
-    def _frame(self, node, state):
-        return {
-            'node': node,
-            'state': state,
-        }
-
-    def _queue_paused_frame(self, node, state) -> None:
-        self.paused_frames.append(self._frame(node, state))
-
-    def _queue_current_frame(self, node, state) -> None:
-        self.paused_frames.insert(self._pause_insertion_index, self._frame(node, state))
-        self._pause_insertion_index += 1
-
-    def pause(self, node, state):
-        self.sent_value = None
-        if self._processing_frame is not None:
-            # Re-yielding descendants must finish before already-waiting ancestors.
-            self._queue_current_frame(node, state)
-        else:
-            # New frame yielding - add to end (normal nesting)
-            self._queue_paused_frame(node, state)
-
-    def resume(self):
-        # ALWAYS process compound statement stack first
-        if self.pending_compound_state:
-            while self.pending_compound_state:
-                node, state = self.frame_to_resume()
-                try:
-                    self.eval(node, state)
-                finally:
-                    self._processing_frame = None
-                    self._pause_insertion_index = 0
-            # only advance if there was a pending state and is completed
-            self.index += 1 
-
-        while self.index < len(self.body):
-            stmt = self.body[self.index]
-            self.eval(stmt, state=None)
-            self.index += 1
-
-    def frame_to_resume(self):
-        # TODO(NOMI-ARCH-014): Replace raw paused-frame dictionaries with a
-        # named resumable-frame/policy model before adding richer block policies.
-        # TODO(NOMI-ARCH-014): Make the pause/resume policy explicit instead of
-        # relying on list order here.
-        if self.paused_frames:
-            frame = self.paused_frames.pop(0)
-            self._processing_frame = frame  # Track what we're processing
-            self._pause_insertion_index = 0
-            return (frame['node'], frame['state'])
-        return None
-        
-    def current_frame(self):
-        if self.paused_frames:
-            return self.paused_frames[0]
-        return None
-        
-    @property
-    def pending_compound_state(self):
-        return len(self.paused_frames) > 0
+        # Retain these read-only-by-convention inspection fields for existing
+        # clients. Continuation ownership no longer depends on a flattened queue.
+        self.paused_frames = []
+        self._processing_frame = None
+        self._pause_insertion_index = 0
+        self._runner = Continuation(interpreter, self).run()
 
     def __iter__(self):
         return self
-    
-    def __next__(self):        
-        try:
-            self.is_first_iteration = False
-            self.resume()
-        except YieldException as ye:
-            return ye.value
-        
-        raise StopIteration(self.return_value)
-    
-    def send(self, value):
-        if self.is_first_iteration and value is not None:
-            raise TypeError("can't send non-None value to a just-started generator")
-        
-        self.sent_value = value
-        self.is_first_iteration = False
-        result =  self.__next__()
-        return result
-    
-    def get_sent_value(self):
-        ''' get sent value alongside critical reset'''
-        value = self.sent_value
-        self.sent_value = None 
-        return value 
-    
-    def eval(self, node, state):
+
+    def __del__(self):
+        # Host generator finalization must restore the source frame too.
+        if hasattr(self, "_runner"):
+            self.close()
+
+    def __next__(self):
+        return self.send(None)
+
+    def _advance(self, operation, *args):
         with self.interpreter.this_env(self.env):
             try:
-                self.interpreter.eval(node, state=state, generator_state=self)
-            except ReturnException as re:
-                self.return_value = re.value
-                raise StopIteration(self.return_value)
-            except YieldException as ye:
-                # Compound statement yielded - return the value
-                self._handle_yield(ye.value)
-                raise ye # so that next() can return
+                value = operation(*args)
+                self.is_first_iteration = False
+                while True:
+                    try:
+                        self._handle_yield(value)
+                    except Exception as error:
+                        value = self._runner.throw(error)
+                    else:
+                        return value
+            except StopIteration as stopped:
+                self.return_value = stopped.value
+                raise
+            finally:
+                if self._runner.gi_frame is None:
+                    self.is_first_iteration = False
 
-    def _handle_yield(self, yield_value=None):
-        """Handle a yield exception and update state accordingly.
-        
-        This is a hook; nomi overrides this method to handle ruby-like
-        yielding to block
-        """
+    def send(self, value):
+        return self._advance(self._runner.send, value)
 
-        # compound statement are handled in stack
-        # only advance to next for simple ones (non-resumable)
-        if not self.pending_compound_state:
-            self.index += 1
-
-    def _handle_other_exception(self, e: Exception):
-        """Handle other exceptions by inserting a raise statement.
-
-        Currently unused — the throw() path and contextlib integration
-        handle exception propagation through a different mechanism.
-        Kept as a hook point for future resumable-frame error handling.
-        """
-        raise_node = ast.Raise(exc=e, cause=None)
-        self.body.insert(self.index, raise_node)
-
-    def raise_injected_exception(self):
-        '''
-        exception raised within the passed block or with-block
-        should be at the resumption point
-        '''
-        if self.injected_exception is not None:
-            exc = self.injected_exception
-            self.injected_exception = None
-            raise exc
-
-    def throw(self, exc_value: Exception):
-        """Inject exception into generator for context manager exception handling."""        
-        self.injected_exception = exc_value
-        
-        try:
-            self.__next__()
-        finally:
-            self.injected_exception = None
+    def throw(self, exception, *args):
+        if exception is GeneratorExit or isinstance(exception, GeneratorExit):
+            error = exception(*args) if isinstance(exception, type) else exception
+            if self.is_first_iteration or self._runner.gi_frame is None:
+                return self._advance(self._runner.throw, error)
+            return self._advance(self._runner.throw, InjectedGeneratorExit(error))
+        return self._advance(self._runner.throw, exception, *args)
 
     def close(self):
-        """Implement generator.close() to allow proper cleanup."""
-        # Could be extended to handle generator cleanup
-        pass
+        with self.interpreter.this_env(self.env):
+            if self.is_first_iteration:
+                self.is_first_iteration = False
+                return self._runner.close()
+            try:
+                self._runner.throw(InjectedGeneratorExit(GeneratorExit()))
+            except (GeneratorExit, InjectedGeneratorExit):
+                return None
+            except StopIteration as stopped:
+                self.return_value = stopped.value
+                return stopped.value
+            raise RuntimeError("generator ignored GeneratorExit")
 
-    def get_lineno(self) -> int:
-        """Get current line number for error reporting."""
-        # TODO(NOMI-ARCH-014): Derive line info from the active paused-frame
-        # stack, not just the current index.
+    def _handle_yield(self, value=None):
+        """Nomi overrides this hook to run an attached block at a yield."""
+
+    def get_lineno(self):
         if self.index < len(self.body):
-            return getattr(self.body[self.index], 'lineno', 1)
-        
-        return 
+            return getattr(self.body[self.index], "lineno", 1)
+        return None

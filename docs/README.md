@@ -304,6 +304,7 @@ This list is intentionally complete and is checked by tests.
 
 - [Project Enhancement Roadmap](orientation/project_roadmap.md)
 - [Frontier Checkpoint 2026-10-08](orientation/frontier_checkpoint_2026-10-08.md)
+  — current planning-only scope, parked implementation and unresolved findings.
 - [Project Action Notes](orientation/project_action_notes.md)
 - [AI Collaboration](orientation/ai_collaboration.md)
 - [Design Pass Workflow](orientation/design_pass_workflow.md)

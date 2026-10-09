@@ -91,7 +91,8 @@ clear semantics, tests, examples, and documentation.
 - `.claude/agents/`: Claude Code native subagent shims that point back to the
   `.codex/agents/` prompts.
 - `.codex/prompts/`: canonical reusable prompt templates for task start,
-  registered design passes, checkpoints, review, and snapshot regeneration.
+  registered design passes, feedback cycles, checkpoints, review, and snapshot
+  regeneration.
 - `.claude/commands/`: Claude Code command shims that point back to
   `.codex/prompts/`.
 - `AGENTS.md`: project-level operating manual for AI coding agents.
@@ -150,9 +151,12 @@ For substantial work, prefer a loop that leaves durable traces:
 1. Read `AGENTS.md` and the relevant active design notes.
 2. State the concrete goal and expected files.
 3. Create a short plan.
-4. Implement one coherent increment.
-5. Run focused checks.
-6. Checkpoint what changed, what passed, and what remains.
+4. Establish independent expected judgments/traces, then implement one coherent
+   increment with a named support boundary.
+5. Review against the oracle, repair findings and run focused checks. Add a
+   regression for each substantive behavior finding; widen checks as warranted.
+6. Checkpoint what changed, failed, passed and remains. Promote observed friction
+   into the smallest durable improvement, or state why none is justified.
 7. Continue from the checkpoint instead of relying on chat memory.
 
 For language design, first check `config/design_passes.json`. Resume a matching
@@ -169,6 +173,54 @@ Run `python3 -m tools.design_passes check` whenever packet artifacts change.
 This is especially useful for parser, interpreter, constraint, and
 yield-to-block changes, where a half-remembered intent can easily become a
 semantic regression.
+
+### Retaining Actual Check Evidence
+
+The reusable [feedback-cycle prompt](../../.codex/prompts/feedback-cycle.md)
+connects the loop to the existing checkpoint and design-pass retrospective.
+Capture actual checks with explicit argv:
+
+```bash
+python3 -m tools.check_receipt --timeout 120 -- python3 -m tools.design_passes check
+python3 -m tools.check_receipt -- python3 -m pytest -o addopts= prototype/tests/unit/tools/test_check_receipt.py
+```
+
+Each invocation creates a unique ignored `reports/checks/check-*/` directory.
+`receipt.json` records a versioned local result: command argv, working directory,
+UTC start/end times, elapsed seconds, optional timeout, child return code, runner
+exit code, and Git HEAD/status before and after. Status includes staged,
+unstaged and untracked paths as Git porcelain v1 NUL-separated records stored
+in a JSON list; rename records retain Git's following original-path record.
+`output.log` captures combined stdout/stderr while streaming it to the console.
+Output goes directly to disk with bounded reads for console streaming; logs are
+not size-limited. The command runs from the caller's directory, with inherited
+environment and no stdin, without a shell. Do not put secrets in command argv
+or output that should not be retained locally.
+
+Successful commands have `status=passed` and `returncode=0`. Failures remain in
+their own directories when a later check succeeds. The runner returns the child
+exit code (128 + signal for signal termination), 124 on timeout, 128 + signal
+when interrupted, 127 on launch failure, and 1 on an internal runner error.
+Timeout and interruption stay distinct even if termination makes the child exit
+zero. On POSIX the runner stops its command's process group; elsewhere it stops
+the direct child. It is not a sandbox for detached processes. Abrupt termination
+that prevents finalization can leave a `running` receipt, which is incomplete
+evidence and never success.
+
+A receipt is editable local evidence, not attestation or a freshness certificate.
+The receipt also fingerprints the index and nonignored tracked/untracked files
+before and after execution. Symlink contents are not followed. A missing
+fingerprint is unknown evidence, and `worktree_changed` flags content changes
+even when HEAD and dirty filenames match. This is not a transactional snapshot
+or a fingerprint of dependencies, ignored inputs or external state.
+Git status alone captures paths and status, not file contents; identical status can
+hide intervening edits. Read the log, compare the command, cwd, times and Git
+state, and rerun affected checks after changes. Missing Git metadata is reported
+as unknown. The runner does not automatically execute registry commands, choose
+an oracle, change validation policy, approve a design or commit. Summarize the
+results and remaining obligations in the existing tracked bridge/checkpoint;
+leave raw receipts and logs ignored. Remove or consolidate process guidance
+when a smaller durable check captures the same lesson.
 
 ## Checkpoint Note Shape
 

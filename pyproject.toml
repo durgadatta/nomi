@@ -53,7 +53,7 @@ exclude = ["prototype.tests*", "*.node_modules*", "*.target*"]
     "host_capabilities.json", "js/*.js", "js/pkg/*.js",
     "js/pkg/*.wasm", "js/pkg/*.json",
 ]
-"scripts" = ["demo.nomi"]
+"scripts" = ["demo.nomi", "check_invoice.nomi"]
 
 [project.scripts]
 nomi = "scripts.cli:main"

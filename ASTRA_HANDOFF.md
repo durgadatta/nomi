@@ -1,5 +1,12 @@
 # Nomi Frontier Handoff
 
+> **Current phase override, 2026-10-08:** the user now requests planning and
+> strategy only, with implementation hints. The implementation-first directions
+> below are historical context and must not restart coding. Continue through
+> [FRONTIER_PLAN.md](FRONTIER_PLAN.md) and the
+> [current checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md), which
+> record committed decisions, parked local work and unresolved review findings.
+
 > Status: standalone, temporary, user-requested handoff for a fresh GPT 6 Astra
 > ULTRA session. No prior conversation is required.
 > Prepared 2026-10-08 from `8b82d8a` and its linked delivery receipts.

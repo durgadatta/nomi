@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import contextlib
+import hashlib
 import io
 import json
 from dataclasses import dataclass, field
@@ -78,6 +79,86 @@ class InspectionResult:
     stage: str
     output: str
     timings: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class CheckResult:
+    """Read-only experimental source facts, separate from execution results."""
+
+    mode: str
+    parser_frontend: str
+    filename: str
+    source_sha256: str
+    analysis: Any | None = None
+    diagnostics: tuple[Diagnostic, ...] = ()
+
+    @property
+    def ok(self) -> bool:
+        return self.analysis is not None and self.analysis.admitted
+
+    def to_record(self) -> dict[str, Any]:
+        return {
+            "schema": "nomi.check",
+            "version": 1,
+            "ok": self.ok,
+            "mode": self.mode,
+            "parser_frontend": self.parser_frontend,
+            "source": {"filename": self.filename, "sha256": self.source_sha256},
+            "analysis": self.analysis.to_dict() if self.analysis is not None else None,
+            "diagnostics": [item.to_record() for item in self.diagnostics],
+        }
+
+
+def check(
+    *,
+    source: str | None = None,
+    filename: str | Path | None = None,
+    mode: str = "nomi",
+    parser_frontend: str = DEFAULT_FRONTEND,
+    requirements: tuple[str, ...] = (),
+) -> CheckResult:
+    """Analyze a bounded source subset without loading an execution backend.
+
+    This is a preview/obligation check, not an execution admission token. The
+    default Nomi frontend and CPython syntax AST are the initial producers.
+    Other frontends need their own analysis/span contract before admission.
+    """
+    from prototype.analysis import AnalysisPolicy, analyze_ast
+
+    if (source is None) == (filename is None):
+        raise ValueError("Provide exactly one of source or filename for checking")
+    if mode not in {"nomi", "python"}:
+        raise ValueError(f"Unsupported checking mode: {mode!r}; use nomi or python")
+    if parser_frontend != DEFAULT_FRONTEND:
+        raise ValueError(f"Unsupported checking frontend: {parser_frontend!r}")
+    policy = AnalysisPolicy(requirements=requirements)
+    label = str(filename) if filename is not None else "<input>"
+    if filename is not None:
+        source = Path(filename).read_text(encoding="utf-8")
+    if not isinstance(source, str):
+        raise TypeError("Checking source must be text")
+    digest = hashlib.sha256(source.encode("utf-8")).hexdigest()
+    frontend = "cpython-ast" if mode == "python" else parser_frontend
+    try:
+        if mode == "python":
+            tree = ast.parse(source, filename=label)
+        elif not source.strip():
+            tree = ast.Module(body=[], type_ignores=[])
+        else:
+            tree = get_parser_frontend(parser_frontend).generate_python_ast(
+                code=source
+            )
+    except Exception as exc:
+        collector = RuntimeEventCollector()
+        record_runtime_exception(
+            collector, exc, phase="parse", frontend=frontend,
+            source=source, filename=label,
+        )
+        return CheckResult(mode, frontend, label, digest, diagnostics=tuple(collector.diagnostics))
+    analysis = analyze_ast(
+        tree, source=source, filename=label, frontend=frontend, policy=policy
+    )
+    return CheckResult(mode, frontend, label, digest, analysis=analysis)
 
 
 def execute(

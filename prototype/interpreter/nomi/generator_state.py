@@ -19,8 +19,4 @@ class CoroutineState(PythonCoroutineState):
                 self.interpreter.eval(block.body)
 
     def _handle_yield(self, yield_value=None):
-        super()._handle_yield()
-        try:
-            self._handle_yield_to_block(yield_value)
-        except Exception as e:
-            self.throw(e)
+        self._handle_yield_to_block(yield_value)
