@@ -8,22 +8,122 @@ runtime remains the browser implementation target.
 
 from __future__ import annotations
 
+import math
+import re
 import shutil
 from pathlib import Path
 
 from prototype.runtime.backends import (
     EvalBackendCapabilities,
+    EvalBackendExecutionError,
+    EvalBackendProtocolError,
     EvalBackendResult,
     EvalBackendSpec,
     register_backend,
 )
 from prototype.runtime.backends.json_process import run_json_process
+from prototype.runtime.diagnostics import Diagnostic
 from prototype.syntax.core import Module, verify_core
 from prototype.syntax.core_json import core_to_json
 
 
 ROOT = Path(__file__).resolve().parents[3]
 JS_RUNTIME_PATH = ROOT / "prototype" / "runtime" / "js" / "core_runtime.js"
+EVAL_RESULT_SCHEMA = "nomi.eval-result"
+EVAL_RESULT_VERSION = 1
+_RESULT_FIELDS = {
+    "schema", "version", "ok", "backend", "bindings", "value", "has_value",
+    "diagnostics", "stdout", "stderr",
+}
+_DIAGNOSTIC_FIELDS = {
+    "phase", "severity", "message", "code", "span", "source_excerpt",
+    "node_type", "capability", "frontend", "backend", "details",
+}
+
+
+def _protocol_error(reason: str) -> EvalBackendProtocolError:
+    return EvalBackendProtocolError(f"js-core-runtime returned invalid result: {reason}")
+
+
+def _validate_json_value(value) -> None:
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if item is None or isinstance(item, (str, bool, int)):
+            continue
+        if isinstance(item, float) and math.isfinite(item):
+            continue
+        if isinstance(item, list):
+            pending.extend(item)
+            continue
+        if isinstance(item, dict) and all(isinstance(key, str) for key in item):
+            pending.extend(item.values())
+            continue
+        raise _protocol_error("value is not finite JSON data")
+
+
+def _decode_result(payload: dict) -> EvalBackendResult:
+    if not isinstance(payload, dict) or set(payload) != _RESULT_FIELDS:
+        raise _protocol_error("missing or unknown envelope fields")
+    if (
+        payload["schema"] != EVAL_RESULT_SCHEMA
+        or type(payload["version"]) is not int
+        or payload["version"] != EVAL_RESULT_VERSION
+    ):
+        raise _protocol_error("unsupported schema or version")
+    if payload["backend"] != "js-core-runtime":
+        raise _protocol_error("wrong backend identity")
+    if type(payload["ok"]) is not bool or type(payload["has_value"]) is not bool:
+        raise _protocol_error("ok and has_value must be Bool")
+    if (
+        not isinstance(payload["bindings"], dict)
+        or not isinstance(payload["diagnostics"], list)
+    ):
+        raise _protocol_error("bindings and diagnostics have invalid shapes")
+    if not all(isinstance(payload[name], str) for name in ("stdout", "stderr")):
+        raise _protocol_error("stdout and stderr must be Text")
+    _validate_json_value(payload["bindings"])
+    _validate_json_value(payload["value"])
+    if not payload["has_value"] and payload["value"] is not None:
+        raise _protocol_error("an absent result cannot carry a value")
+    if payload["ok"]:
+        if payload["diagnostics"]:
+            raise _protocol_error("successful evaluation cannot carry failure diagnostics")
+        return EvalBackendResult(
+            bindings=payload["bindings"],
+            value=payload["value"],
+            has_value=payload["has_value"],
+            stdout=payload["stdout"],
+            stderr=payload["stderr"],
+        )
+    if payload["bindings"] or payload["has_value"] or len(payload["diagnostics"]) != 1:
+        raise _protocol_error("failure must carry one diagnostic and no result")
+    record = payload["diagnostics"][0]
+    if not isinstance(record, dict) or set(record) != _DIAGNOSTIC_FIELDS:
+        raise _protocol_error("missing or unknown diagnostic fields")
+    if (
+        record["phase"] != "eval"
+        or record["severity"] != "error"
+        or record["backend"] != "js-core-runtime"
+        or record["capability"] != "js-core-runtime.eval"
+    ):
+        raise _protocol_error("invalid diagnostic phase, severity or owner")
+    if not isinstance(record["message"], str) or not record["message"]:
+        raise _protocol_error("diagnostic message must be nonempty Text")
+    if (
+        not isinstance(record["code"], str)
+        or re.fullmatch(r"NOMI-[A-Z0-9-]+", record["code"]) is None
+    ):
+        raise _protocol_error("invalid diagnostic code")
+    if not isinstance(record["node_type"], str) or not record["node_type"]:
+        raise _protocol_error("invalid exception type")
+    if record["details"] != {"exception_type": record["node_type"]}:
+        raise _protocol_error("invalid exception details")
+    if any(record[name] is not None for name in ("span", "source_excerpt", "frontend")):
+        raise _protocol_error("this producer cannot supply source positions or a frontend")
+    raise EvalBackendExecutionError(
+        Diagnostic(**record), stdout=payload["stdout"], stderr=payload["stderr"]
+    )
 
 
 JS_CORE_BACKEND_SPEC = EvalBackendSpec(
@@ -31,7 +131,7 @@ JS_CORE_BACKEND_SPEC = EvalBackendSpec(
     status="prototype",
     ir_contract="Core IR JSON (nomi.core-ir v1)",
     implementation="Node.js wrapper around prototype/runtime/js/core_runtime.js",
-    output_contract="bindings + optional value + stdout/stderr",
+    output_contract="nomi.eval-result v1: success or typed failure + stdout/stderr",
     capabilities=EvalBackendCapabilities(
         evaluates_native_ir=True,
         supports_full_language=False,
@@ -82,25 +182,22 @@ class JsCoreRuntimeBackend:
         command = [self._node(), str(self._runtime_path)]
         if display_last_expr:
             command.append("--display-last-expr")
-        payload = run_json_process(
-            command,
-            core_to_json(core_ir),
-            cwd=ROOT,
-            label="js-core-runtime",
-        )
-        return EvalBackendResult(
-            bindings=dict(payload.get("bindings", {})),
-            value=payload.get("value"),
-            has_value=bool(payload.get("has_value")),
-            diagnostics=tuple(payload.get("diagnostics", ())),
-            stdout=str(payload.get("stdout", "")),
-            stderr=str(payload.get("stderr", "")),
-        )
+        try:
+            payload = run_json_process(
+                command,
+                core_to_json(core_ir),
+                cwd=ROOT,
+                label="js-core-runtime",
+                reject_duplicate_keys=True,
+            )
+        except RuntimeError as error:
+            raise EvalBackendProtocolError(str(error)) from error
+        return _decode_result(payload)
 
     def _node(self) -> str:
         node = self._node_executable or shutil.which("node")
         if node is None:
-            raise RuntimeError(
+            raise EvalBackendProtocolError(
                 "js-core-runtime requires Node.js on PATH"
             )
         return node

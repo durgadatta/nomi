@@ -325,6 +325,17 @@ runtime backends are explicitly runnable by name but remain unpromoted as
 defaults until host capability policy and broader fixture parity are settled.
 Enable verification without changing the eval path with `NOMI_VERIFY_CORE=1`.
 
+The Node process adapter consumes `nomi.eval-result` v1. A successful record
+contains bindings, an optional displayed value and captured output. A runtime
+failure contains one typed diagnostic and the output completed before failure;
+it cannot contain a successful value or bindings. The public session preserves
+that output and the diagnostic code without embedding a JavaScript stack.
+Malformed, duplicate-field or unsupported-version responses instead produce
+`NOMI-BACKEND-PROTOCOL`; their output is not accepted as program output. This
+producer has no source-position map, so spans remain absent. Replace this
+adapter when another transport implements the same explicit result contract,
+rather than making process exit status stand in for source evaluation.
+
 Useful files:
 
 -   **Grammar and Parsing:** Lark is used to define the grammar and

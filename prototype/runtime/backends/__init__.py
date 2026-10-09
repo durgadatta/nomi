@@ -15,6 +15,22 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from prototype.runtime.diagnostics import Diagnostic
+
+
+class EvalBackendExecutionError(RuntimeError):
+    """A validated evaluation failure returned by an external backend."""
+
+    def __init__(self, diagnostic: Diagnostic, *, stdout: str = "", stderr: str = ""):
+        super().__init__(diagnostic.message)
+        self.diagnostic = diagnostic
+        self.stdout = stdout
+        self.stderr = stderr
+
+
+class EvalBackendProtocolError(RuntimeError):
+    """A process or artifact failed the external backend protocol."""
+
 
 @dataclass(frozen=True, slots=True)
 class EvalBackendCapabilities:

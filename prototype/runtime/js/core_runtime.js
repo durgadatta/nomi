@@ -1128,6 +1128,57 @@ function evaluateCorePayload(payload, options = {}) {
   return new CoreRuntime(options.hostCalls || {}).evaluate(payload, options);
 }
 
+function validateCoreRequest(payload) {
+  if (!payload || payload.schema !== CORE_IR_JSON_SCHEMA || payload.version !== CORE_IR_JSON_VERSION) {
+    throw new Error("Unsupported Core IR JSON schema or version");
+  }
+  const root = payload.root;
+  if (!root || root.type !== "Module" || !Array.isArray(root.body)) {
+    throw new Error("Core IR request must contain a Module with a body array");
+  }
+  for (const node of root.body) {
+    if (!node || typeof node !== "object" || typeof node.type !== "string") {
+      throw new Error("Core IR module body must contain nodes");
+    }
+    if (node.type === "Diagnostic") throw new Error(`Unexecutable Core diagnostic: ${node.message || "unsupported lowering"}`);
+    if (node.type === "Spread") throw new Error("Spread can only be evaluated inside Sequence");
+    if (node.type === "PatternTest") throw new Error("PatternTest can only be evaluated inside Match or Handle");
+  }
+}
+
+function evaluateCoreEnvelope(payload, options = {}) {
+  validateCoreRequest(payload);
+  const runtime = new CoreRuntime(options.hostCalls || {});
+  const envelope = { schema: "nomi.eval-result", version: 1, backend: "js-core-runtime" };
+  try {
+    return { ...envelope, ok: true, ...runtime.evaluate(payload, options), stderr: "" };
+  } catch (error) {
+    const exceptionType = error.name || "Error";
+    return {
+      ...envelope,
+      ok: false,
+      bindings: {},
+      value: null,
+      has_value: false,
+      stdout: runtime.stdout.join(""),
+      stderr: "",
+      diagnostics: [{
+        phase: "eval",
+        severity: "error",
+        message: error.message || "Runtime evaluation failed",
+        code: error.code || "NOMI-RUNTIME",
+        span: null,
+        source_excerpt: null,
+        node_type: exceptionType,
+        capability: "js-core-runtime.eval",
+        frontend: null,
+        backend: "js-core-runtime",
+        details: { exception_type: exceptionType },
+      }],
+    };
+  }
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     CORE_IR_JSON_SCHEMA,
@@ -1150,12 +1201,17 @@ if (typeof require !== "undefined" && require.main === module) {
   const fs = require("node:fs");
   const args = process.argv.slice(2);
   const sourcePath = args.find((arg) => !arg.startsWith("--"));
-  const source = sourcePath
-    ? fs.readFileSync(sourcePath, "utf8")
-    : fs.readFileSync(0, "utf8");
-  const payload = JSON.parse(source);
-  const displayLastExpr = args.includes("--display-last-expr");
-  process.stdout.write(
-    `${JSON.stringify(evaluateCorePayload(payload, { displayLastExpr }), null, 2)}\n`,
-  );
+  try {
+    const source = sourcePath
+      ? fs.readFileSync(sourcePath, "utf8")
+      : fs.readFileSync(0, "utf8");
+    const payload = JSON.parse(source);
+    const displayLastExpr = args.includes("--display-last-expr");
+    process.stdout.write(
+      `${JSON.stringify(evaluateCoreEnvelope(payload, { displayLastExpr }), null, 2)}\n`,
+    );
+  } catch (error) {
+    process.stderr.write(`js-core-runtime request failed: ${error.message}\n`);
+    process.exitCode = 1;
+  }
 }

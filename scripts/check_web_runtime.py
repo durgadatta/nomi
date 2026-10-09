@@ -62,6 +62,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_loop_completion_boundaries.py",
                 "prototype/tests/contracts/test_release_browser_semantics.py",
                 "prototype/tests/contracts/test_calculation_scalar_boundaries.py",
+                "prototype/tests/contracts/test_js_failure_envelope.py",
                 "prototype/tests/contracts/test_text_sequence_boundaries.py",
                 "prototype/tests/contracts/test_js_dictionary_keys.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",

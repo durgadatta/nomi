@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -465,6 +465,29 @@ def record_runtime_exception(
     filename: str | Path | None = None,
 ) -> None:
     """Prefer semantic diagnostics, otherwise preserve the failing phase/source."""
+    from prototype.runtime.backends import (
+        EvalBackendExecutionError,
+        EvalBackendProtocolError,
+    )
+
+    if isinstance(error, EvalBackendExecutionError):
+        collector.add_diagnostic(replace(
+            error.diagnostic,
+            frontend=frontend,
+            backend=backend or error.diagnostic.backend,
+        ))
+        return
+    if isinstance(error, EvalBackendProtocolError):
+        collector.diagnostic(
+            str(error),
+            phase="transport",
+            code="NOMI-BACKEND-PROTOCOL",
+            node_type=type(error).__name__,
+            frontend=frontend,
+            backend=backend,
+            details={"exception_type": type(error).__name__},
+        )
+        return
     known_error = _known_semantic_error(error)
     if _is_binding_error(known_error):
         record_binding_error(

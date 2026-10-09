@@ -15,6 +15,15 @@ def _reject_json_constant(value: str) -> None:
     raise ValueError(f"Non-JSON numeric constant: {value}")
 
 
+def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate JSON field: {key}")
+        result[key] = value
+    return result
+
+
 def run_json_process(
     command: list[str],
     payload: str,
@@ -22,6 +31,7 @@ def run_json_process(
     cwd: Path,
     label: str,
     timeout: float | None = None,
+    reject_duplicate_keys: bool = False,
 ) -> dict[str, Any]:
     try:
         completed = subprocess.run(
@@ -49,7 +59,11 @@ def run_json_process(
     except UnicodeDecodeError as exc:
         raise RuntimeError(f"{label} returned invalid UTF-8") from exc
     try:
-        response = json.loads(response_text, parse_constant=_reject_json_constant)
+        response = json.loads(
+            response_text,
+            parse_constant=_reject_json_constant,
+            object_pairs_hook=_unique_json_object if reject_duplicate_keys else None,
+        )
     except ValueError as exc:
         raise RuntimeError(f"{label} returned invalid JSON") from exc
     if not isinstance(response, dict):

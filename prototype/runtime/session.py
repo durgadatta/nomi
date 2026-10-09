@@ -20,7 +20,7 @@ from typing import Any
 
 from prototype.parser.nomi.frontend import DEFAULT_FRONTEND, get_parser_frontend
 from prototype.runtime.api import ExecutionResult
-from prototype.runtime.backends import get_eval_backend
+from prototype.runtime.backends import EvalBackendExecutionError, get_eval_backend
 from prototype.runtime.backends.python_ast import make_python_ast_backend_for_mode
 from prototype.runtime.diagnostics import RuntimeEventCollector, record_runtime_exception
 from prototype.runtime.pipeline import PipelineSpec, build_pipeline_spec
@@ -389,7 +389,14 @@ class RuntimeSession:
     ) -> tuple[bool, Any]:
         core = lower_python_ast_to_core(tree)
         verify_core(core, strict=True)
-        result = self.backend.evaluate(core, display_last_expr=display_last_expr)
+        try:
+            result = self.backend.evaluate(core, display_last_expr=display_last_expr)
+        except EvalBackendExecutionError as error:
+            if error.stdout:
+                print(error.stdout, end="")
+            if error.stderr:
+                print(error.stderr, end="", file=sys.stderr)
+            raise
         if result.stdout:
             print(result.stdout, end="")
         if result.stderr:
