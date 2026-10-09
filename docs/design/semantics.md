@@ -53,6 +53,106 @@ Nominal `data` types are the default for program concepts. Structural types are
 limited to external values, protocols, and explicit patterns. The initial
 language uses named variant data rather than untagged unions for alternatives.
 
+## First Product Scalar Contract
+
+Accepted target, October 9: the calculation and local-report profile uses exact
+`Int`, distinct `Bool`, and exact Unicode `Text`. Acceptance fixes their meaning;
+it does not certify the current Python, Core, WASM or browser implementation.
+The [synthesis](synthesis.md#bounded-closure-before-coding-the-target-slice)
+separates this decision from the remaining codec, callable and host-run work.
+
+`Int` denotes a mathematical integer. Its admitted operations compute exact
+results, without wrapping, saturating, silently rounding or promoting to Float.
+Checked fixed width is rejected as the meaning of this default type. A later
+fixed-width type or host conversion must declare its own range and failure.
+Finite implementation capacity is a resource limit, not a second Int meaning.
+A backend must report unsupported capacity or an exhausted declared budget
+instead of returning a different value. The first portable release still needs
+common measured limits; this decision assigns no unmeasured budget values.
+
+The initial primitive set is deliberately bounded:
+
+| Operation | Result and rule |
+| --- | --- |
+| Unary `+`, `-` on Int; Int `+`, `-`, `*` Int | Exact Int. |
+| Int `<`, `<=`, `>`, `>=` Int | Bool using mathematical integer order. |
+| Scalar `==`, `!=` for Int, Bool and Text | Bool using the same runtime scalar type and equal exact value; distinct scalar types compare unequal. |
+| Text `+` Text | Text concatenation, preserving both scalar sequences. |
+| Text `<`, `<=`, `>`, `>=` Text | Bool using lexicographic Unicode scalar-value order; a proper prefix sorts first. |
+| Bool `not`, `and`, `or`; Bool conditions and guards | Bool-only evaluation, with the documented left-to-right short circuit. |
+
+Bool is not an Int subtype: `true` does not mean `1`, and `false` does not mean
+`0`. Arithmetic, Int parameters and Int-valued indexing/count boundaries never
+coerce Bool, Text or a fractional value. A typed boundary checks before entering
+the body or committing a binding. Unsupported operand combinations produce a
+structured type/contract diagnostic. An expected external decode failure stays
+a Result error. Static facts describe normal completion; neither an Int fact
+nor purity proves available capacity, termination or freedom from failure.
+
+Division, remainder, exponentiation, bitwise operations, Text repetition,
+Float/Decimal interaction and explicit numeric conversion are not settled by
+this initial operation set. Existing experimental support remains a separately
+described migration surface, rather than proof that those target contracts are
+closed. No checking policy changes successful source meaning.
+
+Text is a sequence of Unicode scalar values, excluding lone surrogates. Literal,
+format and foreign boundaries must reject invalid text explicitly. Equality,
+concatenation and ordering do not normalize or use locale-specific collation.
+Length and text indexing/slicing units are code points, not grapheme clusters,
+UTF-8 bytes or UTF-16 code units; admitting a particular indexing/slicing API
+still requires its bounds contract. Normalization, case conversion and trimming
+are explicit library operations. The finite whitespace set and version for the
+report's proposed `.trim()` remain pending: Python `strip` and JavaScript `trim`
+do not agree on all characters, so neither host default establishes the rule.
+
+Source spans retain half-open UTF-8 byte offsets. Terminal code-point columns
+and editor UTF-16 columns are derived views with named coordinate units and the
+same source revision. A supplementary character occupies one Text code point,
+four UTF-8 bytes and two UTF-16 code units; these quantities are not interchangeable.
+
+### Independent Scalar Vectors
+
+These are target oracles, independent of any runtime's result. They must become
+conformance fixtures before the relevant capability is advertised. Source uses
+the canonical scalar spellings; a backend's refusal is recorded separately.
+
+| Input or operation | Exact expectation |
+| --- | --- |
+| `1200 * 3 + 250`; edited `1200 * 4 + 250` | Int `3850`; Int `5050`. |
+| `1200 * 0 + 250`; `1200 * (-1) + 250` | Int `250`; Int `-950`. A non-negative quantity constraint separately rejects the negative argument. |
+| `9007199254740993 + 1` | Int `9007199254740994`, beyond JavaScript Number's exact range. |
+| `9223372036854775807 + 1` | Int `9223372036854775808`, beyond signed 64-bit range. |
+| `1000000000000000000000000000001 * 3` | Int `3000000000000000000000000000003`. |
+| `true == 1`; `false == 0`; `1 == "1"` | Bool `false` in every case. |
+| `true + 1`; `1 + "2"`; `7 - "2"`; `+"2"`; `not 1` | Operand/type refusal, without coercion. |
+| `"a" + "😀"`; length of `"😀"` | Text `"a😀"`; Int `1`. |
+| Precomposed U+00E9 versus U+0065 followed by U+0301 | Unequal Text, with lengths `1` and `2`. |
+| One-character Text U+1F600 compared with U+E000 | U+1F600 sorts after U+E000. |
+| Lone high or low surrogate at a Text boundary | Explicit invalid-text refusal, never replacement or silent acceptance. |
+
+### Wire And Capacity Admission Still Required
+
+External format encoding and internal compiler/runtime transport have separate
+owners. An external JSON Int field must round-trip exactly or refuse explicitly;
+ordinary host JSON parsing is insufficient when it rounds an accepted integer.
+Bool, numeric-looking Text and fractional input never silently decode as Int.
+Whether an integral decimal/exponent token can decode as Int remains part of the
+strict JSON contract, alongside duplicate keys, error paths and encoding shape.
+
+The planned internal transport uses a versioned, explicitly tagged canonical
+decimal representation for Int literals and recursive result values. Producers
+and consumers must validate the tag and payload and refuse an unknown major
+version before effects. This is a migration requirement, not an accepted schema
+number or a claim that existing Core JSON implements it. A supplied tag is not
+evidence of correct source checking. External JSON field shape cannot be inferred
+from this internal representation or from human display.
+
+Shared source/input byte, nesting, evaluation-work, integer-capacity, collection
+growth and output budgets remain admission work. Publish only measured supported
+limits, identify them in run/evidence records, and distinguish malformed input,
+unsupported backend capacity and host budget exhaustion. Never produce a success
+report, rounded value or invented cleanup guarantee after refusal.
+
 ## Progressive Assurance
 
 Accepted direction: users can start with dynamic exploration and select

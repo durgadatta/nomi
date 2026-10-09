@@ -65,7 +65,7 @@ forms while the release profile remains explicit.
 | Include for the first product | Coherent rule | Boundary on the commitment |
 | --- | --- | --- |
 | Names and local state | Lexical binding; immutable by default; mutation uses `var`/`set` | No separate reactive assignment, automatic dependency tracking or hidden shared state. |
-| Values | Int, Bool, Text, Unit; strict List; structural `Value` at external boundaries | Numeric/text details must pass the bounded closure below; Float/Decimal/Bytes/time APIs are later scope. |
+| Values | Exact Int, distinct Bool, exact Unicode Text, Unit; strict List; structural `Value` at external boundaries | The bounded scalar meaning is accepted; portable execution, codecs and measured capacity still need closure. Float/Decimal/Bytes/time APIs are later scope. |
 | Calls | One `func` form, ordinary calls, explicit expression lambdas, accepted argument/default laws | No currying, holes, overload resolution or user generic/protocol declaration syntax required for release. |
 | Owned concepts | Nominal immutable products and closed variants with explicit constraints | A small declared shape is enough; no universal object hierarchy or arbitrary schema generator. |
 | Choice and repetition | Bool `if`, exhaustive `match`, ordinary loops | Ship the needed accepted pattern subset honestly; advanced pattern optimization is not a gate. |
@@ -101,14 +101,21 @@ merely to keep extension possible.
 
 ### Bounded Closure Before Coding The Target Slice
 
-These are the remaining first-product decisions. Recommendations are starting
-candidates; their owners must accept concrete rules and independent vectors
-before a runtime implements them. Broader D1-D3 questions remain open outside
-this profile without blocking it.
+October 9 accepts the bounded Int/Bool/Text meaning in
+[semantics](semantics.md#first-product-scalar-contract), with
+[independent vectors](semantics.md#independent-scalar-vectors) and a decision in
+[the ledger](decisions.md#first-product-scalars-october-9-acceptance). Exact Int
+avoids both browser rounding and an arbitrary fixed-width overflow law. Bool
+is distinct; Text has explicit code-point units and scalar-value ordering.
+This does not establish portable implementation or accept every scalar API.
 
-| Owner / decision | Starting candidate | Discriminator and required result |
+The other rows remain starting candidates. Their owners must accept concrete
+rules and independent vectors before implementation. Broader D1-D3 questions
+remain open outside this profile without blocking it.
+
+| Owner / decision | Target disposition | Discriminator and required result |
 | --- | --- | --- |
-| D3 / scalar and text contract | Exact Int semantics; reject unsupported numeric inputs without rounding; Text operations have explicit units and no hidden normalization | Compare exact Int with checked fixed width using literal/arithmetic/JSON round trips, bool-versus-Int, huge/negative/fractional values, supplementary characters and offsets. Choose one meaning, document host limits and budget failures; no browser-specific silent range or rounding. |
+| D3 / scalar and text contract | Accepted: exact Int, Bool distinction, bounded primitive operations, exact scalar Text/code-point units and lexicographic order. Pending: trim, wire implementations and measured limits | Execute the canonical literal/arithmetic/Bool/Unicode vectors on each declared route; exact JSON round trips and source offsets still need admission. Record refusal separately from correct values, never rounding or browser-specific Int meaning. |
 | D3 / data and codecs | Strict declared fields, duplicate JSON keys rejected, no coercion; explicit normalization; derived codecs limited to supported data shapes | Missing/extra/wrong fields, two simultaneous row errors, empty/128/129 rows, repeated IDs, constrained values and decode/encode round trips. Fix wire shape, path/order rules and bounded-error truncation before promotion. |
 | D1 / callable and module boundary | Closed monomorphic public exports; checked pure synchronous library callbacks; local module identity | The invoice and report must resolve every call, default, capture and imported effect. Two passive consumers agree; unknown/private/changed-dependency cases cannot manufacture proof. Explicit adapters are preferable to unexplained inference. |
 | D4/D5 / run and host contract | One selected source entry, explicit input/options, a Result inspector, user-requested encode/save; text remains authoritative | Pin entry binding and errors, data limits, source/input/run revisions, stop/restart and host failure behavior. A stale run cannot replace a new result; save failure cannot be shown as completed publication. |
@@ -117,6 +124,18 @@ If a candidate fails, simplify the program or library contract first. Any new
 language law still needs its canonical syntax/semantics/decision update. A
 handwritten demo result, a supplied type record or a passing link checker cannot
 close these gates. No new general survey is needed before making the comparisons.
+
+The calculation migration begins with reproduced JS host coercion, while
+preserving separately supported prototype operations. It then closes exact Int
+transport and execution, Bool boundaries, canonical scalar source spelling and
+coordinate conversion before claiming target conformance. The current Python
+runner still uses `True`/`False` and does not establish target `true`/`false` or
+`none`; the current scalar analyzer can certify host truth testing and comparisons
+whose successful values disagree across hosts. Checking policy cannot repair
+these differences by changing source meaning. The report's `.trim()` predicate
+and exact external JSON shape remain blocking library decisions. Internal
+tagged decimal transport is planned and distinct from external JSON encoding;
+no budget measurements or new implemented transport version are asserted.
 
 ## One Coherent Model
 
@@ -226,11 +245,11 @@ but do not settle its open contracts:
 
 | Research pressure | Runnable evidence | Still unresolved |
 | --- | --- | --- |
-| Text as a composable interface | `samples/text_pipeline.nomi.nb`: explicit whitespace trimming, delimiter split, conversion, ordered state and bounded windows; code-point access fixtures in both JS parser routes | Strict format decoding, complete Unicode/offset/normalization contract, localization and safe rendering |
+| Text as a composable interface | `samples/text_pipeline.nomi.nb`: explicit whitespace trimming, delimiter split, conversion, ordered state and bounded windows; code-point access fixtures in both JS parser routes | Exact scalar-sequence meaning and code-point units are accepted; validity, portable ordering, offsets, explicit trim/normalization, localization and safe rendering still need implementation evidence |
 | Pragmatic generic operations | Ordinary `fold(items, seed, combine)` and seeded `scan`; empty, order, callback-failure and reference-history tests | Typed generic callbacks, effect checking, immutable history, parallel merge laws and conditional object protocols |
 | Data dependencies and time | `samples/data_pipeline.nomi`: visible filter/map/fold stages and integer cents | Typed dependency descriptions, snapshot/time axes, incremental execution and durable provenance |
 | Cognitive repair and observation | Source-linked known errors, per-execution output, document/run generations and stale-result labels; inspection distinguishes missing evidence from known empty/zero records | Full source maps, semantic commands, task unwinding, usability/accessibility study and durable revision identity |
-| Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Target numeric tower, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance |
+| Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Exact first-product Int is accepted; tagged transport, measured capacity, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance remain unfinished |
 | Eager failure and callable boundaries | Portable errors stop later eager work; partial Core call shapes reject unsupported names/parameter kinds before effects | Versioned named/default/callback binding, typed expected outcomes and composed abnormal completion |
 
 The next language step is the bounded first-product closure above. Use runnable

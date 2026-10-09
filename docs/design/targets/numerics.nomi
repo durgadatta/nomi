@@ -1,5 +1,21 @@
 # Status: target-only category fixture with proposed numeric APIs.
 # Comparison: docs/research/features/numerics.md
+# Accepted first-product scalar meaning: docs/design/semantics.md
+
+example "integer calculation is exact across host widths":
+    check 1200 * 3 + 250 == 3850
+    check 1200 * 4 + 250 == 5050
+    check 9007199254740993 + 1 == 9007199254740994
+    check 9223372036854775807 + 1 == 9223372036854775808
+
+example "Bool and Text remain distinct from Int":
+    check (true == 1) == false
+    check (false == 0) == false
+    check (1 == "1") == false
+
+# Rejected typed operations: true + 1; 1 + "2"; not 1.
+# These target vectors do not claim current prototype conformance.
+# Decimal and the APIs below remain proposed and outside the first profile.
 from std.decimal import DecimalError, Rounding, decimal
 
 data Money:

@@ -28,6 +28,7 @@ They matter only after a target choice survives this review.
 | Evaluation | Eager, left-to-right, lexical scope | Predictable across scripts, services, notebooks, and backends. |
 | Typing | Dynamic exploration; selected restrictions; checked public contracts inferred locally or declared | Begin without annotation ceremony; unknowns never become fabricated proof. |
 | Runtime types | Types and constraints remain inspectable; proven checks may be optimized away | Decode, diagnostics, interop, and explanation need runtime meaning. |
+| First-product scalars | Exact mathematical Int; Bool distinct; Text is an exact Unicode scalar sequence | Same successful values across hosts, explicit capacity refusal, no numeric coercion or hidden normalization. |
 | Memory | Garbage-collected general profile | Cognitive cost is better spent on domain logic than ownership syntax. |
 | Binding | Immutable `name = value`; mutation uses `var` and `set` | Creation and change are visually distinct. |
 | Constraints | `where` attaches executable predicates to bindings and data | One validation vocabulary, retained source, no schema mini-language. |
@@ -177,6 +178,40 @@ No Fn spelling, policy syntax or artifact schema is admitted. The paired
 keeps structured-document primary viable; prose comparisons do not select a
 usability winner. Resource/defer timing and cleanup precedence remain proposed.
 
+### First-product scalars (October 9 acceptance)
+
+Accept [the bounded scalar contract](semantics.md#first-product-scalar-contract):
+default Int is exact mathematical integer arithmetic; Bool is a distinct type;
+Text is an exact Unicode scalar-value sequence with code-point units and
+lexicographic scalar-value ordering. The initial Int arithmetic is unary
+`+`/`-` and binary `+`/`-`/`*`, with the explicitly listed comparisons and Bool/Text
+operations. Cross-type scalar equality never numerically identifies Bool with
+Int. Implicit numeric coercion and hidden text normalization remain rejected.
+
+The invoice, arithmetic beyond JavaScript Number and signed 64-bit ranges, Bool
+separation and supplementary-character vectors distinguish this choice from
+checked fixed width and host text behavior. Fixed width is rejected as default
+Int meaning: it would introduce an arbitrary overflow boundary and still need
+an exact representation on the browser route. Explicit fixed-width host types
+and conversions remain possible later. This is a semantic choice, not a
+performance result or full numeric-tower admission.
+
+Budget exhaustion and unsupported backend capacity must refuse visibly rather
+than change a successful value. Common limit values, `.trim()` whitespace,
+strict JSON numeric token rules, exact encoding and tagged transport remain
+implementation/admission work. The planned internal wire has validated Int tags
+and decimal payloads, and refuses unknown major versions; no new schema version
+is claimed implemented or accepted here. The current JS safe-integer fence,
+Python Bool arithmetic and prototype `True`/`False` spellings are migration
+facts, not target laws. Canonical source remains `true`/`false` and `none`.
+
+The [independent vectors](semantics.md#independent-scalar-vectors) are acceptance
+oracles. Keep separate capability evidence for source acceptance, checking,
+lowering, execution, diagnostics and formatting. A passing operand-coercion
+repair is not complete exact-Int or typed-call conformance; the existing
+[synthesis bridge](../review/2026-09-29-language-synthesis.md#bounded-scalar-continuation-2026-10-09)
+owns migration and unresolved work.
+
 ## Library-First Decisions
 
 These are important capabilities but not grammar:
@@ -245,7 +280,7 @@ These choices are not yet strong enough for permanent syntax:
 | Async resource scope | `async with` | Cancellation and cleanup conformance tests. |
 | Generators | Dedicated design using reserved `yield` or streams | Cases where iterator objects are materially worse. |
 | Table planning | Ordinary verbs on typed plan values | CSV, dataframe, SQL, and distributed execution prototypes. |
-| Numeric tower | Exact defaults and overflow policy | Scientific, finance, and systems-profile benchmarks. |
+| Numeric tower beyond the first-product Int contract | Exact Int is accepted; Float/Decimal, explicit fixed width and conversion remain open | Scientific, finance, and systems-profile laws and benchmarks. |
 | Data openness | Explicit rest field or decoder policy | API evolution and forward-compatible config programs. |
 | Edition boundaries | Per-package editions normalized to Core | First real breaking migration. |
 

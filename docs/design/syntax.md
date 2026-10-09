@@ -83,6 +83,10 @@ completion without a payload. It is distinct from `none`, which means absence
 inside `Option`. Collection types are `List[T]`, `Map[K, V]`, `Set[T]`, and
 tuples such as `(Int, Text)`.
 
+The first-product Int/Bool/Text meaning and independent vectors live in
+[semantics](semantics.md#first-product-scalar-contract). Exact Int and distinct
+Bool do not imply that every listed scalar API or current backend is supported.
+
 ## Bindings And Mutation
 
 An ordinary assignment creates a new immutable lexical binding:

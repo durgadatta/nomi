@@ -340,3 +340,86 @@ changed-source/dependency cases. Reconcile the known continuation failures befor
 relying on hosted execution. Keep all three journeys visible. This pass is
 self-reviewed planning; no independent reviewer, target typechecker or human
 study was run. Final document checks are recorded in the current checkpoint.
+
+## Bounded Scalar Continuation, 2026-10-09
+
+The strategy committed at `bc8f0c8` authorizes iterative calculation, report and
+reuse work. This bounded pass accepts scalar meaning in
+[semantics](../design/semantics.md#first-product-scalar-contract), records the
+[decision](../design/decisions.md#first-product-scalars-october-9-acceptance), and
+updates the [synthesis closure](../design/synthesis.md#bounded-closure-before-coding-the-target-slice).
+The packet remains `designing`: callable, codec and host-run contracts are still
+open. Target acceptance here is not a claim that the active overall fixture
+parses, typechecks or executes.
+
+### Evidence That Changed The Design
+
+Independent read-only probes of the continuation baseline found more than an
+invoice-specific failure. JS Core produced `"12"` for `1 + "2"`, `5` for
+`7 - "2"`, `3` for `7 // "2"`, `1` for `7 % "2"` and `49` for `7 ** "2"`;
+unary `+"2"` produced Int `2`. Public Python execution refused those operands.
+Both routes already support `7 * "2"` as Text repetition; the repair must not
+erase that separate compatibility operation through a blanket numeric guard.
+Core nil plus Int also fell through to host coercion on JS.
+
+Python and JS disagree on Bool/numeric equality and on Text ordering: Python
+places U+1F600 after U+E000, while JS's UTF-16 comparison places it before.
+Public Python checking admitted this Text comparison and `not 1`. These are
+bounded type facts over host execution, not evidence of canonical portable
+meaning. Initial target `true` and `none` sources parsed as names then failed
+Python lookup; prototype Bool fixtures require explicit `True`/`False` labels.
+JS exposes `.strip()` using host trim rather than the target `.trim()` contract.
+
+The selected target is exact mathematical Int, distinct Bool, and Unicode scalar
+Text with code-point units, exact equality and scalar lexicographic ordering.
+The [golden vectors](../design/semantics.md#independent-scalar-vectors) separately
+pin invoice edits, zero/negative arithmetic, integers beyond 53 and signed
+64 bits, mixed operands, supplementary characters and invalid text. Checked
+fixed width would add an arbitrary default overflow boundary while still needing
+an exact browser representation beyond 53 bits. Exact Int therefore wins this
+bounded product comparison; no speed, allocation or numeric-tower claim follows.
+
+### Workflow Friction
+
+The old closure table treated all scalar questions as one open comparison,
+while implemented range refusal could be mistaken for the target's numeric law.
+A JS-only fix could also wrongly remove valid Text repetition or advertise
+typed Int boundaries that Python still executes using Bool arithmetic.
+`known-types` records establish result types on normal completion, not exact
+values, runtime capacity or an accepted public callable contract. Source
+spelling and coordinate units need their own evidence rather than an inferred
+claim from a passing Core vector.
+
+### Durable Improvement
+
+The existing semantic owner now has an explicit primitive table and independent
+oracles. Target decision, runtime observation and remaining admission work are
+separate. No new document, framework, syntax or test rewrite was required. The
+following map identifies migration ownership; scheduling and actual check
+receipts remain in the frontier plan and current checkpoint.
+
+| Boundary | Current owner and migration obligation |
+| --- | --- |
+| Source and checking | `prototype/parser/` and `prototype/analysis/source.py`: accept canonical scalar spellings; align primitive/Bool facts without treating declarations or observed calls as proof. |
+| Python execution | `prototype/runtime/backends/core_runtime.py` and the hosted interpreter layers: replace reliance on Bool's host numeric subtype, preserve exact Int and diagnose invalid operands at the semantic boundary. |
+| JS evaluation and lowering | `prototype/runtime/js/core_runtime.js` and `lower_to_core_ir.js`: first remove reproduced coercion; then implement exact Int capacity, scalar text validity/order and Bool-only boundaries. |
+| Internal wire | `prototype/syntax/core_json.py`, `prototype/runtime/backends/js_core.py`, JS lowering and result envelopes: introduce a planned versioned tagged decimal Int transport, validate payloads recursively and refuse unknown major versions before effects. No new version is currently specified or implemented. |
+| External codecs | The forthcoming supported `std.json`/declared-data slice and `prototype/runtime/api.py`: preserve accepted integer values exactly, distinguish external JSON shape from internal tags/display, and settle integral decimal/exponent tokens with independent decode/encode vectors. |
+| Source and run evidence | Runtime diagnostics, `prototype/runtime/js/worker.js` and the web host: preserve UTF-8 byte spans/source revision and convert explicitly to code-point or UTF-16 columns; record measured profile limits and capacity/budget refusals. |
+
+Current Core JSON numbers and JS safe-integer refusal remain explicitly bounded
+migration support. Planned recursive tagged Int transport is not yet a schema
+contract or measured implementation. Common byte/depth/work/integer/output
+limits, trim whitespace, strict JSON shapes and typed-call/source-surface
+agreement remain pending. No budget number is invented to close this pass.
+
+### Next Pass
+
+Verify the reproduced coercion repair against public Python, Python-produced
+Core/Node and committed WASM-produced Core with independent expected outcomes.
+Then admit exact transport/execution, Bool/text/source boundaries and measured
+capacity before claiming calculation target conformance. The report separately
+needs explicit trim and strict codec closure. Existing Text repetition,
+compatibility Bool behavior and unsupported scalar operations must remain
+honestly classified during migration. Document/packet checks verify these edits;
+they do not supply the missing runtime, browser, benchmark or human evidence.
