@@ -528,20 +528,39 @@ The experiment's provisional limits are 256 KiB input UTF-8 bytes, 32 nested
 map/list containers, 8,192 structural Value nodes, 64 retained errors and 64 KiB
 encoded UTF-8 bytes. Depth counts simultaneously nested map/list containers;
 the root container counts as one and primitive leaves add no depth. Each
-structural Value scalar/container counts once; map keys are not nodes and are
+structural Value scalar/container occurrence counts once, including repeated
+acyclic references; map keys are not nodes and are
 bounded by the byte limit.
 Validate scalar Text before computing bytes. Supplied Value trees receive the
 same structural limits. These numbers are experimental configuration, not
 measured support, language meaning or a general execution-work bound. Measure
 limit/limit-plus-one cases on pinned hosts before advertising capacity.
 
-Keep the first 64 errors. Observing a 65th error stops accumulation and returns
+Keep the first 64 schema errors within the diagnostic byte allowance. Observing
+a 65th error stops accumulation and returns
 failure with `complete=false`; do not invent an omitted total count or a
 successful partial batch. Exactly 64 errors remain complete if validation
 finishes with no omissions. Other resource refusals distinguish incomplete
 validation explicitly. An encoding limit preserves the inspectable report.
 Source/evaluation work, UI display retention, worker Stop and host save remain
 separate runner contracts; byte/row bounds alone do not establish them.
+
+The selected lab's [records and accounting](synthesis.md#selected-lab-failure-and-entry-records)
+make these boundaries concrete: options-first validation with a named outer
+input boundary; operation kind plus stable error codes; a common escaped path
+grammar; strict lexical JSON and deterministic escapes; fresh structural
+adapters; and a run-owned boundary allowance. Parse/encode and invalid supplied
+trees fail fast without claiming complete validation. Numeric capacity and
+resource failures return only that refusal, marked incomplete, rather than a
+partially validated report. The 64-error accumulation rule applies to independent
+schema failures, not resource exhaustion.
+
+The lab adds provisional shared work and diagnostic-byte limits and charges
+repeated calls explicitly. These are inspectable implementation-profile choices,
+not a general execution cost model or hidden effects granted to the source.
+An input-size setting alone cannot imply the same size is supported through
+every parse/decode stage. Target nominal failure/data/codec contracts remain
+independent of the lab's record encoding and chosen scanner.
 
 ## Resources And Scope
 

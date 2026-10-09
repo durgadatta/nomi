@@ -1,0 +1,169 @@
+{
+  "schema": "nomi.report-boundary-cases",
+  "version": 1,
+  "status": "prepared-not-executed",
+  "owner": "docs/design/synthesis.md#report-admission-gaps",
+  "notes": "Literal independent expectations. operations names the sequential calls; only the last outcome is expected. Each case starts a fresh explicit allowance. No report library implementation or conformance is asserted.",
+  "cases": [
+    {
+      "id": "parse-number-spelling",
+      "operations": ["parse_json"],
+      "input": {"text": "[20,20.0,2e1,-0]"},
+      "expected": {"ok": true, "value": {"schema": "nomi.json-value", "version": 1, "root": {"kind": "list", "items": [{"kind": "number", "token": "20"}, {"kind": "number", "token": "20.0"}, {"kind": "number", "token": "2e1"}, {"kind": "number", "token": "-0"}]}}}
+    },
+    {
+      "id": "duplicate-decoded-key",
+      "operations": ["parse_json"],
+      "input": {"text": "{\"name\":\"Ada\",\"\\u006eame\":\"Bo\"}"},
+      "expected": {"ok": false, "kind": "input-format", "errors": [{"code": "NOMI-JSON-DUPLICATE-KEY", "path": ["name"], "path_text": "$.name", "expected": "unique object key", "message": "Remove the duplicate object key."}], "complete": false}
+    },
+    {
+      "id": "trailing-content",
+      "operations": ["parse_json"],
+      "input": {"text": "{} true"},
+      "expected": {"ok": false, "kind": "input-format", "errors": [{"code": "NOMI-JSON-SYNTAX", "path": [], "path_text": "$", "expected": "one JSON value", "message": "Remove trailing content after the JSON value."}], "complete": false}
+    },
+    {
+      "id": "lone-escaped-surrogate",
+      "operations": ["parse_json"],
+      "input": {"text": "\"\\ud800\""},
+      "expected": {"ok": false, "kind": "input-format", "errors": [{"code": "NOMI-TEXT-INVALID", "path": [], "path_text": "$", "expected": "Unicode scalar Text", "message": "Replace the lone surrogate with valid Unicode text."}], "complete": false}
+    },
+    {
+      "id": "surrogate-pair",
+      "operations": ["parse_json"],
+      "input": {"text": "\"\\ud83d\\ude00\""},
+      "expected": {"ok": true, "value": {"schema": "nomi.json-value", "version": 1, "root": {"kind": "text", "value": "😀"}}}
+    },
+    {
+      "id": "options-default",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{}", "schema_name": "report-options"},
+      "expected": {"ok": true, "value": {"minimum_age": 13}, "defaults_applied": [["minimum_age"]]}
+    },
+    {
+      "id": "options-explicit",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{\"minimum_age\":13}", "schema_name": "report-options"},
+      "expected": {"ok": true, "value": {"minimum_age": 13}, "defaults_applied": []}
+    },
+    {
+      "id": "options-negative-zero",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{\"minimum_age\":-0}", "schema_name": "report-options"},
+      "expected": {"ok": true, "value": {"minimum_age": 0}, "defaults_applied": []}
+    },
+    {
+      "id": "options-lexical-int",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{\"minimum_age\":13.0}", "schema_name": "report-options"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-TYPE", "path": ["minimum_age"], "path_text": "$.minimum_age", "expected": "integer-form JSON number", "message": "Use an integer-form JSON number for this field."}], "complete": true}
+    },
+    {
+      "id": "wrong-root-shape",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "null", "schema_name": "report-batch"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-TYPE", "path": [], "path_text": "$", "expected": "object", "message": "Use an object at this boundary."}], "complete": true}
+    },
+    {
+      "id": "missing-customers",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{}", "schema_name": "report-batch"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-MISSING", "path": ["customers"], "path_text": "$.customers", "expected": "required field", "message": "Provide the required field."}], "complete": true}
+    },
+    {
+      "id": "extra-dotted-key",
+      "operations": ["parse_json", "decode_data"],
+      "input": {"text": "{\"customers\":[],\"a.b\":1}", "schema_name": "report-batch"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-EXTRA", "path": ["a.b"], "path_text": "$[\"a.b\"]", "expected": "declared field", "message": "Remove the unexpected field."}], "complete": true}
+    },
+    {
+      "id": "supplied-tree-version",
+      "operations": ["decode_data"],
+      "input": {"tree": {"schema": "nomi.json-value", "version": 2, "root": {"kind": "map", "entries": []}}, "schema_name": "report-options"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-VALUE-TREE", "path": [], "path_text": "$", "expected": "nomi.json-value version 1", "message": "Provide a supported structural Value tree."}], "complete": false}
+    },
+    {
+      "id": "wide-int-refusal",
+      "operations": ["parse_json", "decode_data"],
+      "profile": "js-safe-int",
+      "input": {"text": "{\"minimum_age\":9007199254740993}", "schema_name": "report-options"},
+      "expected": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-NUMERIC-CAPACITY", "path": ["minimum_age"], "path_text": "$.minimum_age", "expected": "Int within backend capacity", "message": "Use a backend that supports this exact integer."}], "complete": false}
+    },
+    {
+      "id": "report-default-options",
+      "operations": ["build_report"],
+      "input": {"text": "{\"customers\":[{\"id\":\" c-1 \",\"name\":\" Ada \",\"age\":20},{\"id\":\"c-2\",\"name\":\"Bo\",\"age\":12}]}", "options_text": "{}"},
+      "expected": {"ok": true, "report": {"received": 2, "eligible": 1, "skipped_ineligible": 1, "customers": [{"id": {"value": "c-1"}, "name": "Ada", "age": 20}]}, "defaults_applied": [["minimum_age"]]}
+    },
+    {
+      "id": "report-empty",
+      "operations": ["build_report"],
+      "input": {"text": "{\"customers\":[]}", "options_text": "{}"},
+      "expected": {"ok": true, "report": {"received": 0, "eligible": 0, "skipped_ineligible": 0, "customers": []}, "defaults_applied": [["minimum_age"]]}
+    },
+    {
+      "id": "report-repeated-id",
+      "operations": ["build_report"],
+      "input": {"text": "{\"customers\":[{\"id\":\"c-1\",\"name\":\"Ada\",\"age\":20},{\"id\":\"c-1\",\"name\":\"Bo\",\"age\":19}]}", "options_text": "{\"minimum_age\":0}"},
+      "expected": {"ok": true, "report": {"received": 2, "eligible": 2, "skipped_ineligible": 0, "customers": [{"id": {"value": "c-1"}, "name": "Ada", "age": 20}, {"id": {"value": "c-1"}, "name": "Bo", "age": 19}]}, "defaults_applied": []}
+    },
+    {
+      "id": "report-two-independent-errors",
+      "operations": ["build_report"],
+      "input": {"text": "{\"customers\":[{\"id\":\"c-1\",\"name\":\"\",\"age\":-1}]}", "options_text": "{}"},
+      "expected": {"ok": false, "boundary": "customers", "failure": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-CONSTRAINT", "path": ["customers", 0, "name"], "path_text": "$.customers[0].name", "expected": "nonblank Text", "message": "Provide text that is nonblank after the declared trim."}, {"code": "NOMI-DECODE-CONSTRAINT", "path": ["customers", 0, "age"], "path_text": "$.customers[0].age", "expected": "non-negative Int", "message": "Use an integer greater than or equal to zero."}], "complete": true}}
+    },
+    {
+      "id": "options-failure-precedes-batch",
+      "operations": ["build_report"],
+      "input": {"text": "not JSON", "options_text": "{\"minimum_age\":-1}"},
+      "expected": {"ok": false, "boundary": "options", "failure": {"ok": false, "kind": "decode", "errors": [{"code": "NOMI-DECODE-CONSTRAINT", "path": ["minimum_age"], "path_text": "$.minimum_age", "expected": "non-negative Int", "message": "Use an integer greater than or equal to zero."}], "complete": true}}
+    },
+    {
+      "id": "report-wire",
+      "operations": ["encode_json"],
+      "input": {"value": {"received": 2, "eligible": 1, "skipped_ineligible": 1, "customers": [{"id": {"value": "c-1"}, "name": "Ada", "age": 20}]}},
+      "expected": {"ok": true, "text": "{\"customers\":[{\"age\":20,\"id\":{\"value\":\"c-1\"},\"name\":\"Ada\"}],\"eligible\":1,\"received\":2,\"skipped_ineligible\":1}"}
+    },
+    {
+      "id": "encode-scalar-key-order-and-escapes",
+      "operations": ["encode_json"],
+      "input": {"value": {"😀": "\u0000\n/", "": "x"}},
+      "expected": {"ok": true, "text": "{\"\":\"x\",\"😀\":\"\\u0000\\n/\"}"}
+    },
+    {
+      "id": "parse-byte-limit",
+      "operations": ["parse_json"],
+      "limits": {"input_bytes_per_call": 2},
+      "input": {"text": "{}"},
+      "expected": {"ok": true, "value": {"schema": "nomi.json-value", "version": 1, "root": {"kind": "map", "entries": []}}}
+    },
+    {
+      "id": "parse-byte-limit-plus-one",
+      "operations": ["parse_json"],
+      "limits": {"input_bytes_per_call": 2},
+      "input": {"text": "{ }"},
+      "expected": {"ok": false, "kind": "input-format", "errors": [{"code": "NOMI-BOUNDARY-LIMIT", "path": [], "path_text": "$", "expected": "bounded input bytes", "message": "Input exceeds the configured byte budget."}], "complete": false}
+    },
+    {
+      "id": "encode-escaped-byte-limit",
+      "operations": ["encode_json"],
+      "limits": {"encoded_bytes_per_run": 3},
+      "input": {"value": "\n"},
+      "expected": {"ok": false, "kind": "encode", "errors": [{"code": "NOMI-BOUNDARY-LIMIT", "path": [], "path_text": "$", "expected": "bounded encoded output", "message": "Encoded output exceeds the configured byte budget."}], "complete": false}
+    },
+    {
+      "id": "finite-trim",
+      "operations": ["trim_text"],
+      "input": {"text": " \tAda\r\n"},
+      "expected": "Ada"
+    },
+    {
+      "id": "trim-preserves-nonascii",
+      "operations": ["trim_text"],
+      "input": {"text": " \u0085\ufeff "},
+      "expected": "\u0085\ufeff"
+    }
+  ]
+}

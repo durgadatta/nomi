@@ -1,8 +1,8 @@
 # Nomi product synthesis and handoff
 
 > Active plan and execution handoff, refreshed 2026-10-09. The latest user
-> instruction prioritizes deeper planning and committing the plans and gaps.
-> This pass ends with a documentation checkpoint. The complete frontier remains
+> instruction asks to finish planning through synthesis and commit completion.
+> This pass ends with the synthesized implementation brief. The complete frontier remains
 > in scope; implementation continues from the gates below in a later increment.
 > This replaces the earlier contract-first execution order at `915aea1`.
 > Canonical selection: [synthesis](docs/design/synthesis.md#first-product-contract).
@@ -11,17 +11,20 @@
 
 ## Resume Here
 
-Planning baseline: `52deae4`. The overall strategy is committed at `bc8f0c8`;
+Implementation baseline: `e4209c8`. The overall strategy is committed at `bc8f0c8`;
 the compatibility calculation journey shipped at `9d2f87d`, followed by the
 Unicode scalar-order repair. Those results do not complete the first-product
-target profile. The current pass commits the report plan and remaining gaps;
-it does not repeat calculation implementation or claim a healthy full suite.
-Separate uncommitted continuation-runtime changes and their new source-transport
-tests remain outside this documentation commit and need their own review.
+target profile. The plans/gaps checkpoint is `5728c96`; the separately completed
+continuation repair is `e4209c8`, with 3,392 passing full-suite cases and actual
+default/legacy browser checks. The latest checkpoint records skips, warnings
+and the limits of that evidence.
 
-The next preparation task is to close the report's
-[remaining admission gaps](docs/design/synthesis.md#report-admission-gaps)
-with literal expected records, then implement the bounded library experiment.
+The report's [admission choices](docs/design/synthesis.md#report-admission-gaps)
+are now selected and its first literal oracles are materialized. Planning has
+reached an implementation handoff: implement the bounded library comparison,
+then integrate the report journey and replace compatibility adapters in the
+target order below. Reopen a selected rule only when a concrete vector fails or
+an actual integration exposes a missing semantic distinction.
 The roadmap's [active queue](docs/orientation/project_roadmap.md#first-reviewable-work-queue)
 owns ordering. Keep three outcomes distinct: a working compatibility report,
 the target report with checked nominal contracts, and reusable local modules.
@@ -250,9 +253,11 @@ escapes. Target Result/nominal data/derived codec/import obligations remain open
 | Public source report | Register ordinary pure provider calls through existing metadata/adapters; implement readable Nomi transformation and explicit encode | Facade/CLI/committed WASM/JS agree on supported cases and explicit wide-Int refusals. Compatibility outcome records and current source syntax are labeled; `overall.nomi` stays target-only. |
 | User repair and target handoff | Explicit input/options and structured error navigation; sample/regression/assets/browser promotion after the whole path works | Repair/rerun/export and stale-run cases are real. Source checker unknowns stay unknown. Replace manual schema/outcome adapters when admitted DataDecl/Result/module contracts and independent consumers supply the same evidence. |
 
-Provisional experiment configuration is 256 KiB input UTF-8 bytes, 32 simultaneous
+Provisional per-call experiment configuration is 256 KiB input UTF-8 bytes, 32 simultaneous
 map/list containers, 8,192 Value scalar/container nodes (keys excluded), 64
-retained errors and 64 KiB encoded UTF-8 bytes. These are unmeasured candidates;
+retained errors and 64 KiB encoded UTF-8 bytes. The selected synthesis additionally
+defines shared input/work/output accounting and a diagnostic-byte ceiling.
+These are unmeasured candidates;
 test each limit and limit-plus-one, pin host/toolchain and record time/memory
 before advertising supported capacity. Source/evaluation work and worker Stop
 remain separate gates. Failed encode/save preserves an inspectable success.
@@ -260,17 +265,19 @@ No report implementation or capacity measurement is claimed by this plan.
 
 ### Commit Boundaries And Stop Rules
 
-1. **Planning checkpoint (this pass):** commit the selected boundary laws,
-   proposed adapters, open decisions, target pressure and updated queue. Run
-   document/packet/target-fixture checks. Keep runtime edits separately visible.
-2. **Finish report admission:** settle the gaps marked “before library code” in
-   synthesis. Add literal success/failure records and exact UTF-8 encoding
-   expectations; record which candidate lost each comparison. Do not generate
-   the expected records with either implementation under test.
+1. **Planning closure (this pass):** selected laws, adapters, decision rationale,
+   literal records, target pressure and delivery gates are ready. Commit them
+   with document/packet/fixture-integrity evidence. The pending continuation
+   repair is already verified and committed separately.
+2. **Materialize executable boundary checks:** consume the prepared literal
+   cases and add limit, graph, boxing and error-category vectors from the same
+   contract. Do not generate expected records with either implementation under
+   test. A fixture-integrity check alone is not report conformance.
 3. **Library comparison:** implement exact-token parse, supplied-tree validation,
    closed decode, trim and encode in replaceable Python/JS modules. Review
    library results before provider wiring. An unresolved failure envelope or
-   budget rule returns this increment to step 2.
+   budget rule returns this increment to its canonical owner with the exact
+   failing vector; it does not justify a new global planning pass.
 4. **Public report integration:** wire ordinary providers, source-owned
    transformation and explicit inputs; establish facade/CLI/committed-WASM
    agreement, then real browser repair/export/recovery. Promote a compatibility
@@ -325,20 +332,20 @@ selection has **146 passing**. These are recorded earlier checks, not freshly
 rerun by this synthesis. The last planning integrity suite had **127 passing**.
 Current-pass results belong in the checkpoint below.
 
-Continuation reconciliation is bounded maintenance when its hosted path is
-relied upon. Compare explicit source-exception transport, explicit continuation
-frames and a pre-effect support fence using the same existing oracle. Do not
-let Python compatibility absorb the main product work or claim target resource
-completion from a host-generator fix.
+The later continuation completion is recorded at `e4209c8`; the counts above
+are historical. New host-protocol leakage or a newly required suspension family
+reopens the carrier/frame/fence comparison. This compatibility repair does not
+select target generator semantics or typed resource completion.
 
 ## What Is Ready And What Remains
 
-Ready for handoff: the delivered compatibility calculation, selected report
-laws, independent prepared oracles, named admission gaps, dependency/commit
-boundaries and target replacement gates. New planning is self-reviewed; no
+Ready for handoff: the delivered compatibility calculation and continuation
+repair, selected report laws and lab interface, literal independent oracles,
+dependency/commit boundaries and target replacement gates. The eight planning
+gaps have explicit dispositions. New planning is self-reviewed; no
 independent user study or report implementation is claimed.
 
-Still required: the report admission decisions, executable library/public-path
+Still required: executable report library/public-path
 evidence, target scalar/data/Result/call migration, checked local reuse, measured
 capacity, product trials and distribution checks. Existing owners contain these
 tasks; another global survey or planning layer is unnecessary.
@@ -348,8 +355,8 @@ Continue this session or start a fresh one with this instruction:
 > Read this plan, canonical first-product synthesis and the checkpoint. Keep
 > the playground working, but adapt examples freely. Confirm the selected
 > profile and actual baseline. The strategy and compatibility calculation are
-> already committed. Close the report's outstanding admission decisions with
-> independent records, implement its bounded libraries, then integrate real
+> already committed, and continuation compatibility is repaired. Implement the
+> selected report libraries against independent records, then integrate real
 > report/repair/export and target migration toward checked local reuse. Consult broader
 > research only for a concrete blocker. Do not silently accept proposed APIs,
 > change tests to hide failures or restart a general redesign. Continue through

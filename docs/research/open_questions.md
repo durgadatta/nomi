@@ -204,8 +204,9 @@ is not default Int meaning. Exact transport/execution and shared measured
 capacity remain admission work. The
 [first-report boundary](../design/semantics.md#first-report-boundary-contract)
 selects integer-form JSON tokens and finite ASCII trim; its
-[remaining gaps](../design/synthesis.md#report-admission-gaps) include concrete
-failure records, budget accounting and library/target integration. General
+[synthesis closure](../design/synthesis.md#report-admission-gaps) selects concrete
+failure records and budget accounting; library/target implementation and measured
+capacity remain open. General
 numeric conversion and Unicode trimming remain open, as do Float,
 Decimal, units, arrays and the richer numeric operations below.
 

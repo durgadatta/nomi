@@ -483,3 +483,65 @@ Result, checked callbacks and local modules follow the roadmap gates; prepare
 the scalar reuse producer/consumer comparison independently where possible.
 Continuation compatibility still needs separate review and tests. Measured
 capacity, full-suite health, human trials and hosted distribution remain open.
+
+## Planning Closure Toward Synthesis, 2026-10-09
+
+The follow-up instruction is to finish this planning line through synthesis.
+The eight gap comparisons now have selected dispositions in
+[synthesis](../design/synthesis.md#report-admission-gaps), with exact lab records,
+lexical/encoding rules and capacity accounting. The
+[literal handoff](../../prototype/tests/data/report_boundary/v1.json) contains
+prepared expected results, not captured implementation output. The
+[synthesis conclusion](../design/synthesis.md#october-9-planning-synthesis)
+states what is ready to implement and the concrete triggers for reopening it.
+The language-coherence packet remains `designing`; planning completion is a
+bounded deliverable, not the packet's conformance status.
+
+### Evidence That Changed The Design
+
+Local probes on Python 3.14.0rc3 and Node 25.9.0 show why host JSON defaults
+cannot supply the contract. Python's ordinary parse of duplicate `age` fields
+keeps only the second value; its token/pair hooks preserve both entries and
+their `9007199254740993` / `20.0` spellings. Node's ordinary parser rounds
+`9007199254740993` to `9007199254740992`, keeps only the last duplicate field,
+and turns `20.0` into Number 20. A bounded scanner is selected to preserve these
+facts and enforce early limits consistently; a hook adapter remains replaceable
+if it later supplies the same evidence and limits. No scanner was implemented
+or benchmarked by these probes.
+
+Record review selected stage-scoped completeness and options-first entry
+validation. Lossless paths can themselves exceed output budgets, so the plan
+now specifies explicit diagnostic refusal rather than truncating authoritative
+paths. A single run-owned boundary allowance closes resettable-call and shared-
+graph loopholes; this is still distinct from general source-execution limits.
+The limits are unmeasured settings, with a concrete measurement protocol.
+
+The earlier pending continuation work was separately completed at `e4209c8`.
+Its 258 focused and 3,392 full-suite passes plus real default/legacy browser
+checks refresh implementation health; they do not validate report libraries.
+
+### Workflow Friction
+
+The previous plan named the right questions but still required the next agent
+to invent failure/completeness, options identity and accounting while coding.
+Repeated “commit the plan, then decide” instructions also obscured the fact
+that the requested planning deliverable could itself reach completion.
+
+### Durable Improvement
+
+Existing canonical owners now contain selected decisions and rejected
+alternatives. Literal JSON fixtures make the handoff inspectable without
+requiring a prototype decoder. The roadmap, frontier brief, registry and
+checkpoint distinguish completed planning, verified compatibility and pending
+target implementation. No new agent process or parallel planning document was
+needed. Final planning checks are recorded in the checkpoint.
+
+### Next Pass
+
+Implement the two closed boundary libraries and consume the literal expectations
+in real conformance tests; extend them with the listed limit, graph and adapter
+cases. Then integrate ordinary providers and the options-first source report,
+followed by real repair/export, target extraction and checked local reuse.
+Measure capacities before publishing support limits. Human and hosted release
+evidence remain separately scheduled. Further global planning is not a
+prerequisite; reopen only against the stated concrete counterexamples.

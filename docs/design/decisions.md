@@ -230,7 +230,7 @@ Use [the ordinary-call experiment](synthesis.md#report-library-experiment) befor
 any schema framework: a versioned closed structural JSON tree with Number tokens,
 two declarative `report-batch`/`report-options` descriptors, fresh validated compatibility records
 and source-owned transformations. These library APIs/tree/outcome records are
-proposed lab interfaces, not newly admitted syntax, nominal Value/Result/data,
+selected lab interfaces, not newly admitted syntax, nominal Value/Result/data,
 derived codecs or source-inferred purity. Validate supplied trees rather than
 trusting tags. Manual metadata must be replaced by admitted DataDecl contracts
 when they can represent the same rules and independent evidence. Options are a
@@ -244,6 +244,20 @@ success report, fabricate a total error count or alter exact Int meaning.
 Keep target promotion and runner/host/human gates explicit; a useful compatibility
 sample is not completion of the canonical report. No general schema language,
 numeric tower, package system or new evaluator feature is selected here.
+
+The [October 9 synthesis closure](synthesis.md#report-admission-gaps) selects the
+remaining bounded plan: operation kind plus stable codes, stage-scoped
+completeness, options-first entry failure, escaped lossless paths, a
+token-preserving scanner, deterministic writing, whitelisted structural
+adapters and shared boundary accounting. Reject host-default JSON conversion,
+resettable per-call budgets as proof of a bounded run, and guessed nominal
+identity. Simultaneous options/batch error aggregation is deferred until a
+repair journey demonstrates a need for its extra partial-stage states.
+
+Prepared literal records are an implementation oracle; they have not been run
+against report libraries. Planning closure means the next implementation does
+not need to invent these rules. It does not close measured capacity, target
+typing, source/tooling conformance or the language-coherence packet.
 
 ## Library-First Decisions
 

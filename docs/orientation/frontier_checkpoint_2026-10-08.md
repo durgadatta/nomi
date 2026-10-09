@@ -6,10 +6,11 @@
 
 ## Latest instruction and next step
 
-The latest 2026-10-09 instruction requests more depth on plans and gaps and a
-commit of that work. This pass ends at a documentation checkpoint. The wider
-iterative implementation mandate remains the context, with current delivery
-order in the roadmap; no new runtime work is included in this pass.
+The latest 2026-10-09 instruction requests finishing the planning line through
+synthesis and committing completion. The pending continuation work is separately
+completed at `e4209c8`; the current synthesis closes the bounded report decisions
+and prepares implementation evidence. Current delivery order remains in the
+roadmap. No report runtime is claimed by the planning closure.
 
 Planning preparation P1-P5 is historical planning context, not semantic
 acceptance or independent review. The current product-first handoff narrows the
@@ -17,8 +18,8 @@ first release to calculation, local JSON report/repair and local reuse. Continue
 through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
 [fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
 is the execution handoff. Strategy `bc8f0c8` and calculation `9d2f87d` are already
-committed. Resume with the report admission gaps and its library comparison,
-then target migration and checked reuse. The latest gap-review receipt below
+committed. Report admission choices are now selected; resume with executable
+library comparison, then target migration and checked reuse. The latest synthesis receipt below
 supersedes historical “next pass” instructions; earlier counts remain historical.
 Committing the experiments preserves them; it does not accept their architecture
 or mark their milestones complete.
@@ -412,4 +413,51 @@ These checks complete the pending compatibility repair and refresh local
 prototype health. They are not report implementation, hosted deployment,
 minimum-version execution or user-study evidence. The next work is the requested
 report planning closure and synthesis checkpoint.
+
+## Synthesis Completion Receipt: 2026-10-09
+
+The requested planning line reaches a concrete handoff after `5728c96` and
+the separate continuation completion `e4209c8`. All eight bounded report gaps
+have selected dispositions in
+[synthesis](../design/synthesis.md#report-admission-gaps): failure records and
+completeness, options-first input ownership, shared accounting, escaped paths,
+structural adapters, token-preserving parsing/writing, provider trust and target
+replacement. Decisions remain in canonical owners; the roadmap owns execution.
+
+The [26 literal cases](../../prototype/tests/data/report_boundary/v1.json) cover
+token spelling, decoded-key duplication, syntax/text errors, default provenance,
+field/schema failures, unsupported numeric capacity, source report outcomes,
+exact encoding, trim and byte boundaries. They are prepared independent
+expectations, not executed report conformance. Remaining graph, interruption,
+provider and full limit vectors are named implementation coverage, not unknown
+semantic policies. No report library, target checker or general schema framework
+was implemented in this planning closure.
+
+Read-only host probes justify rejecting default JSON parsing: Python preserves
+number tokens/duplicate entries only with explicit hooks, while Node's default
+parse loses wide-Int precision and duplicate/fraction-token evidence. These are
+bounded observations on the hosts named in the continuation receipt, not a
+benchmark or claim about every possible host adapter.
+
+The [planning synthesis](../design/synthesis.md#october-9-planning-synthesis)
+connects the product to ordinary libraries and a small target core. It names
+when to replace temporary schemas/outcome records and when to reopen a decision.
+The first product still needs implementation, target migration, checked reuse,
+measured support, human trials and exact release evidence. General D1/D2,
+representation and domain questions retain their existing owners; no whole-
+frontier conformance or usability completion is claimed.
+
+Next exact work: implement the two boundary libraries and run the prepared
+records against them, add the listed boundary/graph cases, then integrate
+ordinary providers and the source report. Further global planning is not a
+prerequisite. The current user-requested planning pass ends with this commit.
+
+Planning validation: **127** existing document/packet/target-integrity tests
+pass; all **five** design packets remain coherent; **215** local links/anchors
+resolve across the eight changed Markdown files. A read-only audit of the
+**26** literal cases verifies unique identities, scalar-safe fixture storage,
+exact failure/path shapes, report count invariants and literal encoding
+consistency. That audit does not execute Nomi or a report implementation.
+Whitespace checks pass. Runtime and browser results belong to the separate
+continuation receipt above and were not rerun for prose-only closure.
 
