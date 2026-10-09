@@ -1,0 +1,11 @@
+{
+  "subtotal": "subtotal:class=<class 'function'>",
+  "price": 1200,
+  "quantity": 3,
+  "delivery": 250,
+  "total": 3850,
+  "stdout": [
+    "3850",
+    ""
+  ]
+}

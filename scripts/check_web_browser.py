@@ -51,6 +51,7 @@ def playground_url(remote_url: str | None):
 def check_browser(
     url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
 ) -> None:
+    from scripts.check_calculation_scenarios import check_calculation_scenarios
     from scripts.check_legacy_call_scenarios import check_legacy_call_scenarios
     from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
     from scripts.check_editor_startup_scenarios import (
@@ -143,6 +144,7 @@ def check_browser(
             expect(output).to_be_visible()
             expect(output).to_have_text("42")
             expect(page.locator("#status")).to_have_text("ready")
+            check_calculation_scenarios(page, expect, artifacts)
             check_workbench_scenarios(page, expect, artifacts)
             check_editor_startup_scenarios(page, expect, artifacts)
             check_sample_manifest_startup_scenarios(page, expect, artifacts)

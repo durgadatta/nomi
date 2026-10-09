@@ -1,0 +1,12 @@
+# Calculate an invoice in integer cents.
+# Run, change quantity from 3 to 4, and run again: 3850 becomes 5050.
+# Try "three" as the quantity, inspect the error, then repair it to 3.
+
+func subtotal(price, quantity):
+    return price * quantity
+
+price = 1200
+quantity = 3
+delivery = 250
+total = subtotal(price, quantity) + delivery
+print(total)

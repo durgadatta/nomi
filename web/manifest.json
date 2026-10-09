@@ -130,6 +130,7 @@
   ],
   "samples": [
     "samples/block.nomi",
+    "samples/calculate.nomi",
     "samples/collections.nomi",
     "samples/comprehensive.nomi",
     "samples/constraint.nomi",

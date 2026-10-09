@@ -245,3 +245,64 @@ Then accept the bounded scalar/Text and run rules before advertising target
 conformance, and advance the same loop through report and local reuse. The
 broader frontier remains open through the roadmap's closure ledger.
 
+## Calculation delivery receipt: 2026-10-09
+
+The strategy was committed first at `bc8f0c8`. Independent calculation vectors
+then exposed and removed JS operand coercion at `a1813f6`: wrong text operands
+now fail, compatible Text/List operations retain their meaning and evaluation
+occurs once in source order. `02de067` accepts bounded target exact-Int,
+Bool/Text distinctions and Unicode scalar rules; it does not claim those laws
+are completely implemented by the compatibility runtimes.
+
+`e0c2102` gives the public Node adapter a validated `nomi.eval-result` v1
+success/failure contract. Completed output survives a source failure, semantic
+codes are preserved and malformed transport cannot manufacture success.
+Source positions remain unavailable. `200ee98` repairs the legacy equation
+wildcard's Core reduction after strict arithmetic revealed that a fallback
+had incorrectly returned None. Existing expectations were retained.
+
+The promoted `samples/calculate.nomi` delivers run (3850), edit (5050), wrong
+quantity, inspect error and repair (3850). Saving source downloads the actual
+current source. Editing labels the prior result stale; failure does not retain
+5050 as current output. This is an executable compatibility journey; full
+target Int capacity, strict Bool control, checked calls and source maps remain
+separate obligations.
+
+| Capability | Current evidence | Limit |
+| --- | --- | --- |
+| Parse/lower | Python frontend and committed Rust/WASM producer lower the calculation | No new target source spelling admitted. |
+| Check | Existing independent `known-types` experiment refuses the invoice's wrong argument without execution | Not a verified public contract or full type checker. |
+| Run | Public Python/Core/Node and browser agree on 3850/5050 and wrong-argument refusal | JS explicitly refuses wide Int; Python Bool arithmetic remains compatibility behavior. |
+| Diagnose | JS preserves `NOMI-OPERAND-TYPE`, readable kinds and completed stdout | No invented source span; Python diagnostics retain their existing shape. |
+| Format/save | Browser exports current source and preserves edits/drafts | No canonical whole-language formatter or separate input editor claimed. |
+
+Checks for this increment:
+
+- Public JS backend, session, numeric and collection selection: **217 passed**.
+- Independent scalar, wildcard and WASM pipeline/parity selection: **68 passed**.
+- New sample regressions: **4 passed, 2 existing skips**. Only
+  `test_eval_loop_nomi_sample_calculate_nomi_.txt` and
+  `test_eval_loop_reduced_sample_calculate_nomi_.txt` were generated, because
+  sample promotion requires snapshots. Existing snapshots were unchanged.
+- Actual CLI `--output program`: **3850**.
+- Actual browser: calculation/edit/error/repair/source download plus existing
+  sample, notebook, diagnostics, cancellation, draft and desktop/mobile checks
+  passed. The repaired calculation screenshot was inspected. Artifacts are
+  ignored under `reports/web-browser-calculation/`.
+- The pre-change browser baseline also passed with the optional legacy Pyodide
+  route under `reports/web-browser-frontier-baseline/`. This is local evidence,
+  not a deployed artifact or a human usability trial.
+- `scripts/make_web.py` regenerated the manifests solely to add the calculation
+  sample: **127 runtime files, 12 samples**. `--check` passed. The manifest-list
+  digest is `a988067f012cf841409cca63a840bf35609690826bbdc120b22966ce2fe3ce7f`;
+  it identifies inventory, not runtime file contents. WASM was not rebuilt.
+- Changed-file Ruff and whitespace checks passed.
+
+An exploratory full-suite run during concurrent backend edits found transient
+envelope failures and the real wildcard defect. It is not a passing receipt;
+rerun the full suite after the continuation candidate and adapters settle.
+Next exact work: finish independently reviewed continuation transport, pin and
+commit the report's strict JSON/decoder/budget contract, then implement its
+decode-before-filter, accumulated-error and explicit-encode path. Target-only
+report and reuse fixtures are not yet runnable product claims.
+

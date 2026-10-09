@@ -73,6 +73,12 @@ debug output remains the default. Try `samples/data_pipeline.nomi` for ordered
 exploration. These are runnable prototype library operations, not a static
 callback checker, strict CSV decoder or data/ML engine.
 
+Start with `samples/calculate.nomi` in the CLI or playground. It prints `3850`
+integer cents; change quantity from 3 to 4 for `5050`. A text quantity reports
+an operand error; repair it and rerun. This is a supported compatibility example,
+not complete target Int typing or exact-integer portability. The local JSON
+report and checked module-reuse journeys remain implementation work.
+
 The experimental checker can inspect a small scalar calculation without running
 it. The same unannotated invoice runs normally and supports independent checks:
 

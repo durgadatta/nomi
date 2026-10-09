@@ -1,9 +1,9 @@
 {
   "file_count": 127,
   "generated_by": "scripts/make_web.py",
-  "manifest_digest": "378b5fefe9e624efc230a9c988f64849b7a991e04818f5572cd0cc94a1795643",
+  "manifest_digest": "a988067f012cf841409cca63a840bf35609690826bbdc120b22966ce2fe3ce7f",
   "runtime_profile": "browser-wasm-js",
-  "sample_count": 11,
+  "sample_count": 12,
   "schema": "nomi.web-manifest-metadata",
   "version": 1
 }
