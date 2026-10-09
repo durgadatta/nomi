@@ -50,6 +50,7 @@ JS_CORE_BACKEND_SPEC = EvalBackendSpec(
         "dispatches every currently registered CoreNode in JavaScript",
         "integers limited to +/-9007199254740991; unsupported literals fail before execution, overflow fails at the operation",
         "finite floats only; this prototype boundary does not define the target numeric tower",
+        "arithmetic dispatch checks tagged operands before host evaluation; mixed text/numeric coercion is refused",
     ),
 )
 

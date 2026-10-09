@@ -27,6 +27,14 @@ function accessError(kind, message) {
   return error;
 }
 
+function operandError(op, ...values) {
+  const names = { int: "Int", float: "Float", bool: "Bool", str: "Text", nil: "None", sequence: "List", mapping: "Map" };
+  const types = values.map((value) => names[value.kind] || value.kind).join(" and ");
+  const error = new TypeError(`Operator ${op} does not accept ${types}. Use compatible operands or convert external text explicitly.`);
+  error.code = "NOMI-OPERAND-TYPE";
+  return error;
+}
+
 function sequenceIndex(value) {
   if (!value || !["int", "bool"].includes(value.kind)) {
     throw new TypeError("sequence index must be an integer");
@@ -491,6 +499,9 @@ class CoreRuntime {
     const operand = this.eval(node.operand);
     if (isAbrupt(operand)) return operand;
     const value = unbox(operand);
+    if (["+", "-"].includes(node.op) && !["int", "bool", "float"].includes(operand.kind)) {
+      throw operandError(node.op, operand);
+    }
     if (node.op === "+") return box(+value, operand.kind);
     if (node.op === "-") return box(-value, operand.kind);
     if (node.op === "~") {
@@ -510,6 +521,12 @@ class CoreRuntime {
   }
 
   binaryValue(op, left, right) {
+    if (op === "+" && left.kind === "sequence" && right.kind === "sequence") {
+      return { kind: "sequence", elements: left.elements.concat(right.elements) };
+    }
+    if (op === "+" && left.kind === "str" && right.kind === "str") {
+      return box(left.value + right.value);
+    }
     if (op === "*" && (left.kind === "sequence" || right.kind === "sequence")) {
       const items = left.kind === "sequence" ? left : right;
       const count = left.kind === "sequence" ? right : left;
@@ -518,6 +535,16 @@ class CoreRuntime {
       for (let n = 0; n < Number(count.value); n++) elements.push(...items.elements);
       return { kind: "sequence", elements };
     }
+    if (op === "*" && (left.kind === "str" || right.kind === "str")) {
+      const text = left.kind === "str" ? left : right;
+      const count = left.kind === "str" ? right : left;
+      if (!["int", "bool"].includes(count.kind)) throw operandError(op, left, right);
+      return box(text.value.repeat(Math.max(0, count.value)));
+    }
+    // Bool arithmetic is retained only for the compatibility profile. Target
+    // Bool/Int separation still needs a profile-wide migration, not a JS-only law.
+    const numericInputs = [left.kind, right.kind].every((kind) => ["int", "bool", "float"].includes(kind));
+    if (!numericInputs) throw operandError(op, left, right);
     const integerInputs = [left.kind, right.kind].every((kind) => kind === "int" || kind === "bool");
     const a = unbox(left), b = unbox(right);
     if (["<<", ">>", "|", "^", "&"].includes(op) && !integerInputs) throw new TypeError("bitwise operators require integers");
@@ -1049,16 +1076,9 @@ class CoreRuntime {
 
   applyBinaryOp(op, left, right) {
     if (["/", "//", "%"].includes(op) && right === 0) zeroDivision();
-    if (op === "+") {
-      if (Array.isArray(left) && Array.isArray(right)) return left.concat(right);
-      return left + right;
-    }
+    if (op === "+") return left + right;
     if (op === "-") return left - right;
-    if (op === "*") {
-      if (typeof left === "string" && Number.isSafeInteger(right)) return left.repeat(Math.max(0, right));
-      if (typeof right === "string" && Number.isSafeInteger(left)) return right.repeat(Math.max(0, left));
-      return left * right;
-    }
+    if (op === "*") return left * right;
     if (op === "/") return left / right;
     if (op === "//") return Math.floor(left / right);
     if (op === "%") {

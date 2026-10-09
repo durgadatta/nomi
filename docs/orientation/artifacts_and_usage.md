@@ -89,6 +89,17 @@ These are current operational contracts, not target typing/effect admission.
 The [generic-operation research](../research/generic_operations.md) motivates
 ordinary calls rather than additional grammar or Core nodes.
 
+JavaScript scalar arithmetic checks tagged operand kinds before evaluation.
+Mixed Text/numeric, absent/numeric and collection/scalar arithmetic fails rather
+than inheriting JavaScript coercion. Text concatenation/repetition and strict
+list concatenation/repetition retain their compatibility rules. The error
+names the operand types and suggests an explicit conversion; the worker exposes
+`NOMI-OPERAND-TYPE`. Operands still run once, left to right, before the failure.
+The first calculation's independent vectors use both Python-produced Core and
+the committed WASM producer. Bool arithmetic remains a documented compatibility
+behavior, outside the checked Int claim; this repair does not implement the
+target's complete scalar/call profile or public-contract inference.
+
 | Operation | Current contract |
 | --- | --- |
 | `fold(items, seed, combine)` | Strict ordered left traversal; `combine(state, item)` once per visited item; empty input returns the seed; first callback failure stops traversal. |
