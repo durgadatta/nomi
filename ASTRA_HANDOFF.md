@@ -1,12 +1,13 @@
 # Nomi Frontier Handoff
 
-> **Current phase override, 2026-10-09:** the user requests detailed planning
-> now and implementation in a fresh session. Pending work is preserved at
+> **Current phase override, 2026-10-09:** the latest user requests a committed
+> overall strategy followed by iterative implementation over multiple commits;
+> the complete frontier is in scope. Pending work is preserved at
 > **6aec9f3**, including 24 known generator protocol failures. The current
 > product-first selection is calculation, local JSON report/repair and local
 > reuse; broader contract comparisons remain later evidence work. The
-> implementation-first directions below are historical context and must not
-> restart coding in this session. Continue through
+> older phase restrictions below are historical context. The latest user
+> instruction authorizes implementation after the reviewed plan is committed. Continue through
 > [FRONTIER_PLAN.md](FRONTIER_PLAN.md) and the
 > [current checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md), which
 > record the exact fresh-session work order, evidence and unresolved findings.

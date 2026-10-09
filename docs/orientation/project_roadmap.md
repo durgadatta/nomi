@@ -32,31 +32,32 @@ the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
 The active [product synthesis and handoff](../../FRONTIER_PLAN.md) records the
-current user-requested **planning-only** phase and eventual delivery sequence.
-It now uses this roadmap's M0-M5 milestones; earlier P/F labels are historical
-planning organization. It routes decisions and receipts back to the owners
-here. Earlier S0-S3 code is preserved as unfinished experimental work; the
-[current checkpoint](frontier_checkpoint_2026-10-08.md) records its known failures
-and historical checks. Do not resume implementation merely because an older
-handoff or receipt instructs a next code step.
+latest user authorization: finish a careful overall plan, commit it, then
+continue implementation in reviewable commits. The whole frontier remains in
+scope; the first product supplies its dependency order rather than deleting
+later obligations. This supersedes earlier planning-only/fresh-session phase
+instructions. M0-M5 are the delivery milestones; earlier P/F labels are
+historical planning organization. Earlier S0-S3 code remains unfinished
+experimental work, with known failures and historical checks recorded in the
+[current checkpoint](frontier_checkpoint_2026-10-08.md). Preserving code does
+not select its architecture or complete a milestone.
 
 The latest October 9 direction starts from the end product. The first release
 selects calculation, local JSON report/repair and local function reuse. The
 [canonical product contract](../design/synthesis.md#first-product-contract)
-defines its coherent core and exclusions. Close only the contracts needed by
-that profile, then deliver complete browser/CLI journeys. Monomorphic interface
-evidence supports reuse; it is no longer the first user outcome by default.
-General D1/D2 work remains available for later resource/network workflows.
-No delivery milestone is completed by this planning revision.
+defines its coherent core and release exclusions. Close each journey's blocking
+contracts immediately before implementing that journey, then extend the same
+programs through local reuse. Monomorphic interface evidence supports reuse;
+it is no longer the first user outcome by default. General D1/D2 and the wider
+frontier are scheduled below with concrete prerequisites, discriminators and
+closure gates. No delivery milestone is completed by this planning revision.
 
-The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
-design/implementation session with the latest broader ecosystem and
-freedom-to-strictness direction. Reconcile that direction with current target
-assumptions, then select the next checkpoint through the existing owners.
-D1 and the remaining compatibility continuation failures are recommended
-discriminators, not the whole mandate or a fixed priority lock. Independent
-maintenance lanes remain available; the handoff names evidence/approval gates
-but accepts no new language contracts.
+The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) preserves the broader
+ecosystem and freedom-to-strictness direction. Continue through the existing
+owners after each committed result. D1 and compatibility continuation failures
+are discriminators rather than a fixed priority lock. Bounded maintenance and
+independent frontier comparisons can proceed when their own prerequisites are
+ready; neither can replace the complete calculation/report/reuse outcomes.
 
 ## October 8 Notes And Frontier Preparation
 
@@ -1305,47 +1306,118 @@ does not satisfy that later conformance gate.
 
 ## Delivery Order And Dependencies
 
-Start with the selected product and close its minimum contracts. Dependable
-current behavior remains a maintenance lane; independent work does not require
-concurrent agents. A01-A33 is an inventory of owned opportunities, not a promise
-to complete every item for the first release.
+Finish and commit the strategy before the first new runtime change. Then close
+the minimum contract for a complete calculation, implement it, and repeat that
+loop for report/repair and reuse. Every broader A01-A33 lane remains in the
+authorized frontier. Its investigation and implementation follow actual
+dependencies; scope does not make every lane a first-release requirement.
+Dependable current behavior remains a bounded maintenance lane.
+
+The plan is ready to implement when pressure programs, independent expected
+outcomes, current support/known failures, candidate owners, the first change
+boundary, verification and rollback are explicit. An open semantic choice needs
+a bounded discriminator. Commit the reviewed plan, then commit comparison,
+decision, implementation and integration at coherent boundaries. If an
+experiment falsifies the plan, revise its existing owner before extending code.
 
 ```mermaid
 flowchart TD
-    U[Calculate, validate a report, reuse a function] --> S[Select first profile and baseline]
-    S --> C[Close scalar, codec, closed-call and host-run contracts]
-    C --> I[Implement complete calculation and report paths]
-    I --> R[Local reuse and matching browser/CLI behavior]
+    U[Commit the overall strategy] --> S[M0: verify profile and baseline]
+    S --> C[M1: calculation contracts]
+    C --> I[M2: complete calculation path]
+    I --> B[M1: report and codec contracts]
+    B --> V[M2: report and repair path]
+    V --> L[M1: closed local interface contracts]
+    L --> R[M2: local reuse on CLI and browser]
     R --> P[Curated examples, repair, recovery and usability]
     P --> D[Verify installed and deployed artifacts]
-    D --> X[Choose next workflow from observed need]
-    X --> E[Resource, task and domain extensions when required]
+    D --> X[M5: execute owned frontier comparisons]
+    X --> E[Admit, implement, reject or defer with an exact trigger]
+    E --> X
     S --> H[Bounded maintenance of relied-upon prototype paths]
+    R --> X
 ```
 
 | Milestone | Deliverable | Exit gate |
 | --- | --- | --- |
 | M0 — Baseline and honesty | Selected product profile, three journeys, support inventory and last working playground artifact | Expected values/errors, known failures, revision and rollback route are explicit; target source is not advertised as runnable. |
-| M1 — Close the blocking contracts | Selected D1 closed-call/module and D3 scalar/codec rules, plus host entry/run contract | Every operation in the selected programs has an owner and independent vectors; general resources/tasks/generics may remain open outside the profile. |
-| M2 — Implement one accepted slice | Complete calculation, then report/repair, then local reuse across required source/check/lower/run/diagnostic layers | A person can complete each task; declared frontend/backend paths agree; retired forms have explicit rejection/migration. |
+| M1 — Close the next journey's contracts | First scalar/direct-call/run rules; next strict data/codec/library rules; finally closed interface/module evidence | The next journey's operations have owners, independent vectors and refusal rules. M1 repeats before each M2 increment; general resources/tasks/generics do not block the first calculation. |
+| M2 — Implement the accepted journey | Complete calculation, then report/repair, then local reuse across required source/check/lower/run/diagnostic layers | A person can complete each task on declared paths, with matching values/errors and revision identity. A parser, analyzer or schema alone is not completion; retired forms have explicit rejection/migration. |
 | M3 — Make the slice usable | Browser and CLI, formatter, three curated examples, input/result inspection, error repair, save and recovery | Actual user-path, keyboard, installed/browser evidence and fresh assets; unfamiliar-user trials record remaining confusion. |
 | M4 — Trust distribution | Declared hosted CI, installed-wheel profiles, tested Pages artifact, owner release metadata | Exact artifact/revision is traceable and reproducible under its declared inputs; rollback is documented. |
-| M5 — Expand carefully | Stdlib, local modules/builds, streams/tables/domain tools and later engines | Each addition passes its own program/contract/conformance gate; breadth does not bypass semantic closure. |
+| M5 — Close the wider frontier in owned increments | Execute the frontier ledger below: contracts, resource/task growth, domains, representations, engines and industrial delivery | Each lane records evidence and a disposition. Implement admitted slices through public paths; refusal/defer/removal has a concrete reason and trigger. No exhaustive language/ecosystem completion claim. |
 
 The accepted pattern subset and existing diagnostic contracts are reusable
 foundations. Implement only the metadata each selected path consumes. General
-resource/task completion, richer generic interfaces, notebook/editor breadth
-and domain tools wait for a concrete next workflow. Preserve working playground
-artifacts throughout; examples may be adapted or retired deliberately. The
-[handoff](../../FRONTIER_PLAN.md) supplies the storyboard, bounded work orders,+verification and migration details.
+resource/task completion, richer interfaces, notebook/editor breadth and domain
+tools retain concrete pressure programs and dependency gates in the ledger.
+Their comparisons can begin independently when the needed facts exist. Preserve
+working playground artifacts; examples may be adapted or retired deliberately.
+The [handoff](../../FRONTIER_PLAN.md) supplies the storyboard, bounded work orders,
+verification and migration details.
 
 ## First Reviewable Work Queue
 
-This queue began as proposed patches; the planning pass implemented none of
-them. Subsequent receipts completed Q01's documentary/local-probe slice and
-the bounded Q02-Q04 repairs, as marked below. Their broader target and host
-obligations remain open. Reproduce other historical tasks at the selected
-revision before scheduling; current-behavior repairs need not accept open notation.
+This is the active queue. Existing Q identifiers route to earlier evidence;
+they do not create new milestones or close wider obligations. Execute the rows
+in order, repeating M1/M2 by journey. Reproduce historical findings at the
+selected revision before treating them as current defects. The
+[handoff work orders](../../FRONTIER_PLAN.md) supply the commit-sized detail.
+
+| Order / existing owners | Concrete work and first artifacts | Commit and evidence gate |
+| --- | --- | --- |
+| M0; Q05/Q06; A01/A02/A24/A28 | Record exact Git/build/sample identity, parse/check/lower/run/diagnose/format support and known continuation failures. Inspect `prototype/syntax/features.py`, `web/manifest_metadata.json`, execution-result/backend fixtures and the actual browser artifact. | Factual baseline/rollback receipt. Historical green counts stay historical; target-only fixtures are never called runnable. Fix selector/support lies before relying on affected checks. |
+| M1 calculation; Q03/Q07; A03/A05/A08/A19 | Use `scripts/check_invoice.nomi`: 3850, edit to 5050, wrong argument, repair. Close its scalar/Bool distinction, direct-call/default timing, explanation and host-run rules. Challenge huge integers, unknown operations and non-executing checking in existing analysis/API suites. | Canonical bounded decision plus independent positive/refused cases. Call-site facts differ from a public contract; no general inference or numeric tower is implied. |
+| M2 calculation; Q02/Q09; A06/A18-A21 | Implement the accepted path through `prototype/runtime/api.py`, `scripts/cli.py` and the actual browser runtime/worker. Carry source/input/run identity and useful errors through JS worker, `web/app.js` and `web/editor.js` where the baseline finds gaps. | Complete edit/error/repair with CLI/browser evidence and fresh assets; retain the old working artifact. Missing source positions stay explicit. |
+| M1 report; Q07/Q08; A09-A12/A16/A17 | Use `docs/design/targets/overall.nomi`. Close field/variant/value shapes, original error paths/order, constrained construction, normalization and selected pure/non-retaining callback instances. Prepare malformed name+age, duplicate IDs/keys, empty/128/129 rows and byte/depth/work/output vectors. | Accepted codec/library contracts before implementing those behaviors. A row bound is not a resource budget; filtering cannot hide malformed data. Simplify unexplained proposed APIs. |
+| M2 report; Q08/Q09; A04-A07/A09-A12/A18-A21 | Implement only accepted source/check/value/codec/diagnostic families needed for report/repair. Keep `overall.nomi` target-only until its supported subset runs; promote runnable samples with facade/CLI/browser agreement. | Successful report and both malformed-input paths through real public runners. Encode and host save are separate outcomes; failed save preserves the report. |
+| M1/M2 reuse; Q07/Q09; A05/A08/A13/A26 | Produce closed source-derived evidence for `maximum_batch_size()` and directed subtotal. Two passive judgment/explanation consumers use it without private source; compare unknown providers and source/contract/dependency changes. Then import calculation/report in a second local module. Begin with `prototype/analysis/`, Surface and the facade. | Independent contract/verification identities plus local CLI/browser reuse. Supplied facts stay supplied; checking does not execute imports/defaults/annotations/bodies. Unknown effects cannot be purity; client arguments cannot determine an export. |
+| M3; Q10; A19-A23/A25/A30/A31 | Curate Calculate/Validate/Reuse, formatting, explicit input/options, error navigation, inspect/export, stop/restart and draft recovery. Use actual browser/kernel/extension paths for declared profiles and the cognitive packet's trial. | Verified keyboard/focus/recovery journeys and measured limits. Human/IME/screen-reader claims need actual observations; screenshots and fixture answers do not close them. |
+| M4; Q11; A24/A28-A30 | Verify a wheel outside checkout, declared toolchain jobs and exact static/Pages artifact. Prepare version/release inputs, limits, rollback and synthetic-secret cases through existing packaging/workflow/Docker owners. | Reproducible artifacts and actual receipts. Hosted/container availability, root license/publisher and publication remain explicit owner/external gates. |
+| Bounded maintenance; Q12; A08/A11/A14/A18 | Before relying on the preserved continuation candidate, reproduce `test_generator_protocol_review.py`. Compare source-exception transport, explicit frames and a pre-effect fence with one native/hosted oracle. | Separate compatibility commit preserves error identity, once-only operands and required cleanup, or refuses unsupported shapes before effects. A host-generator repair cannot certify D2; this lane cannot indefinitely absorb the main product. |
+
+### Whole-Frontier Disposition And Closure
+
+All A01-A33 obligations remain accounted for below. These are routes to existing
+owners, not copied specifications. Every lane must reach a reviewable
+disposition: a verified supported slice, evidence-based rejection, a bounded
+alternative under test, or deferral naming the missing prerequisite, next
+discriminator and exact re-entry trigger. "Later" or "wait for demand" alone
+is insufficient for the authorized frontier.
+
+Select the next slice whose technical prerequisites close. Prepared pressure
+programs justify investigations before adoption evidence exists; observed need
+determines product expansion, while the broader user authorization already
+permits bounded frontier comparisons. Experimental libraries/profiles stay out
+of default samples until their promotion gates pass. An external M4 gate does
+not block independent M5 comparisons or local implementation.
+
+| Owned lane / complete A coverage | Dependency and next discriminator | Concrete files / fixtures | Closure, refusal and removal gate |
+| --- | --- | --- | --- |
+| Product, support and learning; A01/A02/A31; D0/D4 | M0 first; challenge the promise and unsupported areas with Calculate/Validate/Reuse, then beginner/production/failure-heavy variants. | `docs/design/synthesis.md`, `targets/overall.nomi`, `prototype/syntax/features.py`, `tools/syntax/inspect.py`, docs/target coherence suites. | One current support/authority map and honest runnable examples. Retire conflicting live orientation; target-only status and measured comprehension remain separate from self-review. |
+| Source, values and lowering; A03-A07/A09/A10; D1/D3/D6; pattern packet | Calculation/report supply scalar/name/data pressure; next compare structured source families, nominal identity, atomic binding and transactional/exhaustive match across frontends. | `docs/design/targets/README.md`, `docs/design/pattern_matching_target.nomi`, `prototype/syntax/surface.py`, `core.py`, `core_json.py`, `pattern_surface.py`, Lark/Rust parity fixtures. | Versioned source/artifact/span/value/diagnostic parity, including rejected/corrupt inputs. Recovery guesses remain non-executable. Remove Raw/host fallback only after replacement evidence; wider scalar/text operations need their own vectors. |
+| Calls, authority and checked reuse; A08/A13/A26; D1 | Extend closed reuse through exact/default/label compatibility, pure-only/effect-polymorphic callbacks, shared-storage generalization and protocol/module identity. Co-design region-dependent forms with D2 to avoid circular prerequisites. | Function-contracts packet/target, `docs/research/features/functions.md`, `prototype/analysis/`, industrial contracts, local multi-module/unknown-provider cases. | Checked three-program contracts, passive compatibility, narrowed authority and deterministic local/offline builds. Reject invented purity and same-spelling nominal identity. Registry/signing/fetch need a threat/ownership contract; external writes retain permission gates. |
+| Failure, resources and structured time; A11/A14/A15; D2; resource packet | Closed callback/error/effect facts enable one resource long form; compare completion carriers, heterogeneous causes, regions/revocation and group failure policies with controlled events. | Resource-lifetime packet/target, `docs/design/targets/resources.nomi`, `concurrency.nomi`, `tools/resource_scope_experiment.py`, generator/context/exception suites. | Actual enter/body/release/cancel/join traces, binding-after-enter failures, multiple defers and error/task escape cases. Bound active, queued and retained evidence separately. Worker termination/deadlines are not cleanup; replace the symbolic lab only after conformance evidence exists. |
+| Codecs, collections and domains; A12/A16/A17/A33; D3/D4 | Start with report JSON/eager collections. Closed callback/value/identity facts enable existing DW1-DW8, DT1-DT5, ML1-ML6, DC1-DC6, MSG1-MSG6 and T1-T10 comparisons; choose one inert description/adapter before an engine or syntax. | Target category map, `docs/research/data_workflows/`, `docs/research/domain_composition.md`, `docs/research/dsls/text_as_interface.md`, existing composition/messaging probes. | Useful ordinary-call slices with independent order/error/schema/time/ownership fixtures and explicit disposition of prepared comparisons. Reject universal evaluator/IR shortcuts that erase domain laws. Remote/scientific/device integrations need pinned host evidence; scoped notation needs long-form failure and removal criteria. |
+| Runtime and public interaction; A18-A21; D4/D5/D7; cognitive packet | Calculation run identity enables report, invalidation, bounded transport and read-only projections; challenge stale/invalid/unknown outcomes before inverse edits. | `prototype/runtime/api.py`, JS worker/runtime, `scripts/cli.py`, `web/app.js`, `web/editor.js`, cognitive packet/target, result/session/browser suites. | Real run/stop/repair/recovery plus shared bounded/redacted records; no inspection effect or stale publication. Format only supported lossless source. Remove duplicate paths after equivalent producers/consumers exist; human benefit remains pending until observed. |
+| Notebook and editor growth; A22/A23; D5/D7 | Shared source/result/session identity enables notebook re-execution/capture and resolved navigation comparisons. Harness repair can proceed independently. | `tools/jupyter/`, `tools/vscode/nomi/`, interaction model's notebook comparison, actual kernel/extension host checks. | Real state/silence/failure/interrupt/reset and multi-root/unsaved/cancellation cases. Old closures/cells retain epochs; no effectful auto-rerun or refactoring of unrelated names. Unsupported OS/assistive-device claims stay explicit pending host/human evidence. |
+| Conformance, cost and budgets; A24/A25; D6 | M0 first; each slice adds independent expectations and measured input/output/work/retention bounds. Choose one bottleneck from pinned cold/warm/full-journey measurements. | `prototype/tests/conftest.py`, backend/WASM-JS fixture ladders, web runtime/browser checks, existing performance tools/corpus. | Invalid selectors fail and exclusions remain accounted for. Optimization preserves semantics with reproducible end-to-end benefit; remove timing claims/optimization when evidence fails. No unexplained skip or snapshot change hides a regression. |
+| Engines and foreign boundaries; A27; D6 | Verified portable slice plus measured bottleneck enables one independent producer/consumer or typed FFI adapter before bytecode/native/component choice. | `docs/orientation/implementation_layers.md`, `prototype/runtime/backends/`, JS Core runtime, Core JSON/ladders, industrial FFI and foreign-callback research. | Independent values/failures/order/explanations and conversion/ownership/re-entry rules on declared hosts. Directory changes or Rust choice alone are insufficient. Preserve fallback/removal; native/device/foreign-thread probes require actual host and scoped authorization. |
+| Distribution, hosts and privacy; A28-A30; D7 | Prepare at M0; supported artifact enables clean install/Node-absent execution, CI/Pages identity, container lifecycle and synthetic secret comparisons. | `.github/workflows/`, `pyproject.toml`, `scripts/make_web.py`, build/launcher scripts, Docker/Jupyter owners, logging/context/security fixtures. | Actual installed/hosted/container receipts, bounded resources, redaction sinks and rollback. Root license/publisher/version/support/deployment remain named gates. No real credentials or untested isolation claim; remove unsupported distribution claims until exact artifact evidence exists. |
+| Agent workflow and retrieval; A32 | Read-only scenarios can run now; after source/artifact changes, challenge context/routing/retrieval, clean-checkpoint resumption and unsupported-profile refusal. | `.agents/skills/`, agent doctor, `tools/rag_mcp/`, `config/rag_sources.json`, hooks/packet/lifecycle suites, `tools/check_receipt.py`. | Demonstrated discovery/resumption with direct-source/revision evidence and private-data exclusion. Doctor/configuration success is not client consumption. Extract repeated deterministic checks and remove redundant instruction machinery when shared owners replace it. |
+
+After each comparison, update its canonical owner, registered packet where
+present and this roadmap's receipt with actual disposition. A finite frontier
+conclusion accounts for every row, completes the first-product journeys and
+demonstrates growth through selected additional slices. It does not require all
+research mechanisms to ship. External/human gates remain explicitly pending;
+a plan, supplied fixture answer or unavailable host cannot count them complete.
+
+### Historical Queue Status
+
+The original Q01-Q12 inventory remains for receipt continuity. It no longer sets
+the next global priority. Completed documentary/prototype substeps do not close
+wider target or host obligations.
 
 | Slice | Exact task | Depends on | Evidence / stop criterion |
 | --- | --- | --- | --- |
@@ -1393,6 +1465,7 @@ artifact freshness/revision identity, and synthetic-secret sink checks.
 Do not replace these with raw feature count, a declining skip count or an
 unqualified percentage of language completion.
 
-The planning-only pass changes documentation and navigation. Its successful
-baseline establishes current prototype health; it does not validate the proposed
-future milestones or execute aspirational target programs.
+The strategy revision changes documentation and navigation. Planning checks
+establish document consistency; they do not establish prototype health, validate
+future milestones or execute aspirational target programs. New implementation
+and host receipts must name the actual revision/profile and known failures.

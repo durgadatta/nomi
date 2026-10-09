@@ -1,7 +1,9 @@
 # Nomi product synthesis and handoff
 
-> Active planning handoff, refreshed 2026-10-09 after the user's product-first
-> synthesis request. Implementation belongs in a fresh session.
+> Active plan and execution handoff, refreshed 2026-10-09. The latest user
+> instruction authorizes iterative planning and implementation over multiple
+> commits, with the complete frontier in scope. Commit the reviewed overall
+> strategy before changing implementation.
 > This replaces the earlier contract-first execution order at `915aea1`.
 > Canonical selection: [synthesis](docs/design/synthesis.md#first-product-contract).
 > Project-wide delivery: [roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies).
@@ -102,11 +104,63 @@ number of features implemented.
 | Milestone | Concrete work | Exit evidence |
 | --- | --- | --- |
 | M0: fix the promise and baseline | Confirm the three journeys and first-product profile; inventory selected feature support and the last known working playground artifact; classify existing failures | Source examples, expected outputs/errors, explicit unsupported areas, baseline revision and a practical rollback path. No claim that current target source runs. |
-| M1: close only the blocking contracts | Resolve scalar/text, strict codecs, closed callable/module evidence and host entry/run rules for these programs | Independent positive/negative vectors and canonical decisions; every proposed API in the selected path is explained. General D1/D2 can remain open outside this profile. |
+| M1: close the next journey's blocking contracts | First scalar/direct-call/run rules; next strict codec/data rules; finally closed callable/module evidence | Independent positive/negative vectors and canonical decisions explain every API in the next slice. Repeat before each M2 increment; general D1/D2 can remain open outside this profile. |
 | M2: implement complete vertical slices | First calculate/edit/error/repair, then decode/report/repair, then local reuse; each crosses source, checking, lowering, runtime and diagnostics as required | A user can perform the slice; expected values and errors agree across declared routes. A parser, schema or analyzer alone is not completion. |
 | M3: make the product comfortable | Curate three examples; format, input editing, error navigation, result inspection, save/export, stop/restart and draft recovery | Real browser and CLI journeys, keyboard/focus checks, installed execution, stale-result tests and fresh generated artifacts. Observe unfamiliar users attempting the tasks; record remaining confusion. |
 | M4: release a traceable artifact | Verify actual hosted/installed artifacts, support profile, version/source identity, documented limits and rollback | Reproducible build inputs, deployment smoke, release notes and recoverable previous artifact. No invented benchmark or hosted result. |
 | M5: expand from observed need | Choose one new workflow, starting with ordinary libraries | A concrete missing capability, its owner and extension tests; new syntax only after ordinary code fails the task. |
+
+M1 and M2 interleave by journey. Close calculation's scalar/call/run rules, then
+deliver calculation; close report's codec/data rules, then deliver report;
+close reusable boundary rules, then deliver reuse. Every journey has a plan
+before code, but calculation does not wait for unrelated report or generic
+contracts. M3/M4 collect evidence from these increments rather than arriving as
+an end-of-project testing phase.
+
+### Iterative Commit Strategy
+
+The roadmap's [active work queue](docs/orientation/project_roadmap.md#first-reviewable-work-queue)
+owns scheduling; its whole-frontier ledger keeps the wider mandate visible.
+The following work orders make the first increments concrete. Each row is one
+or more independently reviewable commits, not a promise of a single giant patch.
+
+| Order | Preparation and implementation boundary | Acceptance and next decision |
+| --- | --- | --- |
+| 1. Reconcile the plan | Remove superseded phase restrictions, record the baseline and three journeys, connect all frontier lanes to owners and closure gates | Commit documentation only after packet/fixture integrity checks. No runtime or target-conformance claim follows from this commit. |
+| 2. Establish executable calculation evidence | Use `scripts/check_invoice.nomi`; independently pin 3850, edited 5050, wrong argument, repair, negative/zero/huge Int, Bool, Unicode text and mixed-operation cases | Exercise the public Python runner, Node Core and committed WASM producer. Classify value disagreement, explicit unsupported range and checking obligations separately. Fix reproduced host coercion without teaching a new source spelling. |
+| 3. Reconcile relied-upon continuation | Compare an explicit exception carrier, explicit frames and a support fence against existing native/hosted protocol traces | Preserve exception identity/active state and fence unsupported definition-time suspension before effects. All 24 known failures must pass without weakened tests; no target-resource guarantee follows. This maintenance lane can run beside calculation work. |
+| 4. Close the calculation profile | Decide exact Int versus fixed width with independent vectors; document Bool/Text distinctions, range refusals, error/source units and run limits in existing canonical owners | Accept only the bounded laws actually tested. Inventory parse/check/lower/run/diagnose/format separately; unsupported or unavailable evidence stays explicit. General inference is not a dependency. |
+| 5. Deliver calculate/edit/error/repair | Repair the accepted missing runner/runtime/diagnostic behavior, then expose the same supported source in the playground | Values and failures agree in CLI and actual browser; a stale result is labeled, repair succeeds, check does not execute. Promote the sample with regression, manifest and browser evidence in the same increment. |
+| 6. Close and deliver report | Specify strict JSON/declared data wire shapes, error order/path/truncation, constraints and byte/depth/work/output budgets; implement decode before filter and explicit encode | Empty/128/129 rows, duplicate IDs/keys, missing/extra fields, Bool/fraction/huge Int, two malformed fields and round trips. Inspect success independently of save; never construct a success report on decode error. |
+| 7. Close and deliver reuse | Specify closed exports, local module/private identity, dependencies and source/contract/verification invalidation; add a bounded source producer and two passive consumers | Identical calculation/report results without consumers executing or reading private bodies. Unknown, modified dependency, forged supplied facts and unsupported versions refuse checked evidence. |
+| 8. Complete product and distribution evidence | Curate the three journeys, formatting/error navigation, explicit input/save, stop/restart and recovery; verify wheel and actual hosted artifact when authorized | Record exact tested revisions and budgets; keyboard and fresh-asset checks pass. Human trials, publication and owner metadata remain separately named gates until actually performed. |
+| 9. Carry the frontier through closure | Follow the roadmap ledger through callbacks/effects, resource/task completion, representation trials, domains, packaging and engine substitution | Each lane reaches accepted-and-verified, rejected with evidence, or a bounded experiment/deferment with a concrete trigger. An unimplemented research API or a passing host model is never reported as a shipped capability. |
+
+Before each implementation commit, name the semantic owner, normal form,
+affected capability axes, expected independent cases, inspection surface and
+removal criterion. Keep producers and consumers replaceable; extract a shared
+mechanism only when a second actual consumer demonstrates the need. Finish
+focused checks first, then broaden for changed semantics and unresolved risks.
+Record actual evidence and the next exact step in the existing checkpoint;
+do not create another live backlog or treat historical check counts as current.
+
+### Baseline And Recovery
+
+Start revision is `40c365e`, with a clean working tree. A fresh read-only
+calculation probe gives 3850 and 5050 on Python/Core/JS, but text quantity
+`"three"` fails in Python/Core and produces concatenated text in JS. Bool
+quantity executes as 1450 in the compatibility runtimes while the scalar
+checker refuses it; this is an explicit target/prototype mismatch to settle,
+not a reason to advertise typed Int calls. A huge integer is exact on Python
+and refused on JS. The selected analysis/API/CLI/completion selection again
+gives 146 passed; protocol review again gives 24 failed and 15 passed.
+
+The last recorded actual playground check predates the latest preservation
+tests. Retain `40c365e` as the source recovery point, but do not call it a freshly
+validated browser artifact. Run the actual browser gate before promotion,
+record its build/source identity, and keep the previous supported artifact
+available through Git and the release procedure. No deployment occurred in
+this planning increment. Preserve drafts/source export during migration.
 
 ### M1 Work Orders
 
@@ -203,12 +257,14 @@ Still required: four bounded contract decisions, executable cross-host evidence,
 actual product trials and distribution checks. These are specific evidence
 tasks, not a reason to reopen all research or add more planning layers.
 
-Start a fresh session with this instruction:
+Continue this session or start a fresh one with this instruction:
 
 > Read this plan, canonical first-product synthesis and the checkpoint. Keep
 > the playground working, but adapt examples freely. Confirm the selected
-> profile and actual baseline, close the calculation's scalar/call rules with
+> profile and actual baseline, commit the overall strategy, close the calculation's scalar/call rules with
 > independent cases, then implement its complete browser/CLI edit-error-repair
 > slice. Continue toward the local report and reuse journeys. Consult broader
 > research only for a concrete blocker. Do not silently accept proposed APIs,
-> change tests to hide failures or restart a general redesign.
+> change tests to hide failures or restart a general redesign. Continue through
+> the ordered commits and the whole-frontier closure ledger; report incomplete
+> evidence as incomplete rather than declaring the entire frontier finished.

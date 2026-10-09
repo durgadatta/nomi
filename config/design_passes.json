@@ -124,7 +124,7 @@
         "git diff --check"
       ],
       "next_actions": [
-        "The scalar/direct-call experiment is preserved at 6aec9f3 with separate known continuation failures. Follow synthesis.md's October 9 first-product contract and FRONTIER_PLAN.md's product-first fresh-session sequence; current session is planning only.",
+        "The scalar/direct-call experiment is preserved at 6aec9f3 with separate known continuation failures. Follow synthesis.md's October 9 first-product contract and FRONTIER_PLAN.md's iterative commit strategy: commit the overall plan, then calculate/report/reuse and the roadmap's whole-frontier closure lanes. The latest user instruction authorizes implementation in this session.",
         "When implementation reaches local reuse, establish closed monomorphic interface evidence with an independent consumer, unknown-dependency refusal and source/contract/verification invalidation; first deliver the calculation and local report journeys, then preserve the larger import/resource/job pressures.",
         "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",

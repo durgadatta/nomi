@@ -1,25 +1,25 @@
 # Frontier checkpoint: 2026-10-08
 
-> Status: current planning-only handoff, refreshed 2026-10-09. This supersedes the earlier
+> Status: active iterative execution checkpoint, refreshed 2026-10-09. This supersedes the earlier
 > documentation-only checkpoint at 22c7bbd; that historical record remains in Git.
 > It preserves context, not a claim that unfinished code is ready.
 
 ## Latest instruction and next step
 
-The user first requested committed plans followed by sustained implementation,
-then explicitly narrowed the current phase: **focus on plan and strategy, with
-potential implementation hints, before further implementation**.
-
-The 2026-10-09 user request explicitly authorizes committing all pending work,
-then continuing detailed planning until the remaining choices require executable
-experiments. Actual implementation belongs in a fresh session.
+The latest 2026-10-09 instruction requests careful plans and strategy, committed
+before implementation, then iterative work over multiple commits with everything
+in scope and the frontier carried to its logical conclusions. This supersedes
+the prior planning-only/fresh-session restriction. No further permission is
+needed for the authorized local planning, fixes, checks and commits.
 
 Planning preparation P1-P5 is historical planning context, not semantic
 acceptance or independent review. The current product-first handoff narrows the
 first release to calculation, local JSON report/repair and local reuse. Continue
 through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
 [fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
-is the execution handoff. Do not automatically resume implementation here.
+is the execution handoff. Commit the reconciled strategy before implementation;
+then deliver the calculation, report and reuse increments and carry the wider
+frontier through the roadmap's owned closure gates.
 Committing the experiments preserves them; it does not accept their architecture
 or mark their milestones complete.
 
@@ -51,16 +51,16 @@ calculation/report/reuse closes only the scalar, codec, callable and host-run
 contracts it needs. Explicit mutation remains the current target. Interpreter
 modes are implementation/test choices, not user assurance tiers.
 
-The frontier plan now uses F0-F6 outcome labels so they cannot be confused with
-the roadmap's M1/M2 milestones. P0-P5 are planning checkpoints; S0-S3 identify
+The frontier plan uses the roadmap's M0-M5 milestones, with M1/M2 interleaved
+by journey. Earlier P/F labels are historical planning organization; S0-S3 identify
 older experimental implementation slices. Existing A and D owners remain
 authoritative.
 
 ## Preserved experimental inventory
 
 All rows below are **experimental work included in the preservation checkpoint**,
-including their related documentation and tests. They remain unfinished; this
-session does not change their implementation or weaken the failing expectations.
+including their related documentation and tests. They remain unfinished at the
+start of this continuation; retain the failing expectations while repairing them.
 
 | Slice | Files/areas | State and limitation |
 | --- | --- | --- |
@@ -213,11 +213,35 @@ skill growth or runtime implementation was justified in this planning phase.
 
 ### Next Pass
 
-Start the fresh implementation session with the frontier plan's closed
-monomorphic contract experiment: independent records, call/obligation and
-explanation consumers, then a bounded source producer. Unknown dependencies
-refuse checked export; supplied facts are never reported as inference. Keep
-continuation reconciliation as one bounded maintenance lane before relying on
-hosted execution. Remaining generic/resource/representation choices need real
-experimental or human evidence; no further global survey is required first.
+Commit the reconciled plan, then establish independent calculation vectors and
+repair the reproduced JS mixed-type arithmetic mismatch. Reconcile the 24
+known continuation failures in a separate bounded maintenance lane. Close and
+deliver calculation, report and local reuse in that order; closed public evidence
+belongs to reuse, not the first outcome. Unknown dependencies refuse checked
+export; supplied facts are never reported as inference. The roadmap ledger
+retains the wider generic/resource/representation/domain frontier and its real
+experimental, human and external gates. No further global survey is required.
+
+## Iterative strategy receipt: 2026-10-09
+
+Start revision `40c365e` was clean. Independent read-only reviews reproduced
+the 146 passing analysis/API/CLI/completion cases and 24 failing / 15 passing
+protocol-review cases, and probed the invoice through three public backends.
+3850 and edited 5050 agree. Text quantity exposed JS coercion; Bool arithmetic,
+wide Int capacity, Unicode ordering and whitespace normalization remain named
+target/prototype mismatches. These observations do not establish the complete
+first-product profile.
+
+The committed strategy reconciles the current phase, interleaves M1/M2 by
+journey, and accounts for A01-A33 in eleven owned closure lanes. Reviews changed
+the order and gates rather than adding a new backlog. The existing documentation,
+packet and target-fixture selection passes **127 tests**, with all **five**
+design packets coherent and whitespace clean. These are planning-integrity
+checks; the actual browser baseline is a separate check in progress.
+
+Next exact work: pin independent invoice/mixed-operand vectors, repair JS host
+coercion, and reconcile hosted continuation transport in a separate commit.
+Then accept the bounded scalar/Text and run rules before advertising target
+conformance, and advance the same loop through report and local reuse. The
+broader frontier remains open through the roadmap's closure ledger.
 
