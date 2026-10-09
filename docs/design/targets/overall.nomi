@@ -17,6 +17,11 @@
 # json.encode(derived-codec data) -> Result[Text, EncodeError];
 # map/filter and Result.map_error use synchronous non-retaining pure callbacks.
 # These closed uses need checked library contracts, not user generic syntax.
+# trim_text is this report's finite library operation: remove only leading and
+# trailing U+0009..U+000D and U+0020; retain U+0085/U+FEFF and interior scalars.
+# The bounded laws live in ../semantics.md#first-report-boundary-contract;
+# compatibility interfaces and open admission gaps live in ../synthesis.md.
+# This fixture uses target typed options, not compatibility options JSON.
 #
 # Preserve input order and duplicate IDs: each row is an observation, not an
 # update to a unique customer registry. No deduplication or merging is implied.
@@ -26,6 +31,7 @@
 from std.collections import filter, map
 from std.data import DecodeErrors, Value
 from std.json import EncodeError, JsonError, json
+from std.text import trim_text
 
 
 # Inferred checked interface pressure: () -> Int, no world effects.
@@ -41,18 +47,18 @@ pub func maximum_batch_size():
 
 
 pub data CustomerId:
-    value: Text where value.trim() != ""
+    value: Text where trim_text(value) != ""
 
 pub data Customer:
     id: CustomerId
-    name: Text where name.trim() != ""
+    name: Text where trim_text(name) != ""
     age: Int where age >= 0
 
 # Trimming preserves these exact nonempty predicates. A different transform
 # needs another validation step if it can invalidate a predicate.
 data CustomerInput:
-    id: Text where id.trim() != ""
-    name: Text where name.trim() != ""
+    id: Text where trim_text(id) != ""
+    name: Text where trim_text(name) != ""
     age: Int where age >= 0
 
 data BatchInput:
@@ -77,8 +83,8 @@ pub data ImportError:
 
 func normalize(input: CustomerInput) -> Customer:
     return Customer(
-        id=CustomerId(value=input.id.trim()),
-        name=input.name.trim(),
+        id=CustomerId(value=trim_text(input.id)),
+        name=trim_text(input.name),
         age=input.age,
     )
 
@@ -135,5 +141,16 @@ example "malformed data cannot be hidden by eligibility filtering":
 # Additional independent vectors: empty input list; 128/129 rows; repeated IDs;
 # unknown/missing fields; bool/fraction/text where Int is expected; duplicate
 # JSON keys; huge integer; excessive bytes/depth; malformed UTF/text; stale run.
-# Exact numbers/text, decoder/encoder shape, source/type/effect checking and
-# host budgets are M1 admission work, not guarantees established by this file.
+# Lexical Int fields reject 1.0/1e0 even when mathematically whole. The report
+# encoder projects CustomerId as {"value": Text}; it never flattens the ID or
+# treats display text as JSON. Explicit options age 13 and the default have the
+# same eligibility but distinct construction-default provenance.
+# Exact numbers/text and bounded codec laws are selected in semantics; runtime,
+# source/type/effect checking, derived metadata and measured host budgets remain
+# admission work, not guarantees established by this file.
+
+example "report normalization uses a finite explicit policy":
+    check trim_text("  Ada\t") == "Ada"
+    check trim_text("A da") == "A da"
+    # Further scalar vectors: U+0085 and U+FEFF remain nonblank; invalid scalar
+    # Text is rejected at its boundary, never repaired by trimming.

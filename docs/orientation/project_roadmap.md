@@ -32,8 +32,9 @@ the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
 The active [product synthesis and handoff](../../FRONTIER_PLAN.md) records the
-latest user authorization: finish a careful overall plan, commit it, then
-continue implementation in reviewable commits. The whole frontier remains in
+latest direction: deepen the plans and gaps, then commit that documentation
+checkpoint. Implementation resumes in reviewable increments from its gates.
+The whole frontier remains in
 scope; the first product supplies its dependency order rather than deleting
 later obligations. This supersedes earlier planning-only/fresh-session phase
 instructions. M0-M5 are the delivery milestones; earlier P/F labels are
@@ -1306,9 +1307,10 @@ does not satisfy that later conformance gate.
 
 ## Delivery Order And Dependencies
 
-Finish and commit the strategy before the first new runtime change. Then close
-the minimum contract for a complete calculation, implement it, and repeat that
-loop for report/repair and reuse. Every broader A01-A33 lane remains in the
+The strategy is committed at `bc8f0c8`, and the compatibility calculation journey
+at `9d2f87d`. Continue the contract/implementation loop for report/repair and
+reuse. The current planning pass closes with a plans-and-gaps commit; it does
+not bundle the pending continuation candidate. Every broader A01-A33 lane remains in the
 authorized frontier. Its investigation and implementation follow actual
 dependencies; scope does not make every lane a first-release requirement.
 Dependable current behavior remains a bounded maintenance lane.
@@ -1360,21 +1362,53 @@ verification and migration details.
 
 This is the active queue. Existing Q identifiers route to earlier evidence;
 they do not create new milestones or close wider obligations. Execute the rows
-in order, repeating M1/M2 by journey. Reproduce historical findings at the
+whose gates remain open in order, repeating M1/M2 by journey. Reproduce historical findings at the
 selected revision before treating them as current defects. The
 [handoff work orders](../../FRONTIER_PLAN.md) supply the commit-sized detail.
 
 | Order / existing owners | Concrete work and first artifacts | Commit and evidence gate |
 | --- | --- | --- |
-| M0; Q05/Q06; A01/A02/A24/A28 | Record exact Git/build/sample identity, parse/check/lower/run/diagnose/format support and known continuation failures. Inspect `prototype/syntax/features.py`, `web/manifest_metadata.json`, execution-result/backend fixtures and the actual browser artifact. | Factual baseline/rollback receipt. Historical green counts stay historical; target-only fixtures are never called runnable. Fix selector/support lies before relying on affected checks. |
-| M1 calculation; Q03/Q07; A03/A05/A08/A19 | Use `scripts/check_invoice.nomi`: 3850, edit to 5050, wrong argument, repair. Close its scalar/Bool distinction, direct-call/default timing, explanation and host-run rules. Challenge huge integers, unknown operations and non-executing checking in existing analysis/API suites. | Canonical bounded decision plus independent positive/refused cases. Call-site facts differ from a public contract; no general inference or numeric tower is implied. |
-| M2 calculation; Q02/Q09; A06/A18-A21 | Implement the accepted path through `prototype/runtime/api.py`, `scripts/cli.py` and the actual browser runtime/worker. Carry source/input/run identity and useful errors through JS worker, `web/app.js` and `web/editor.js` where the baseline finds gaps. | Complete edit/error/repair with CLI/browser evidence and fresh assets; retain the old working artifact. Missing source positions stay explicit. |
-| M1 report; Q07/Q08; A09-A12/A16/A17 | Use `docs/design/targets/overall.nomi`. Close field/variant/value shapes, original error paths/order, constrained construction, normalization and selected pure/non-retaining callback instances. Prepare malformed name+age, duplicate IDs/keys, empty/128/129 rows and byte/depth/work/output vectors. | Accepted codec/library contracts before implementing those behaviors. A row bound is not a resource budget; filtering cannot hide malformed data. Simplify unexplained proposed APIs. |
-| M2 report; Q08/Q09; A04-A07/A09-A12/A18-A21 | Implement only accepted source/check/value/codec/diagnostic families needed for report/repair. Keep `overall.nomi` target-only until its supported subset runs; promote runnable samples with facade/CLI/browser agreement. | Successful report and both malformed-input paths through real public runners. Encode and host save are separate outcomes; failed save preserves the report. |
+| M0; Q05/Q06; A01/A02/A24/A28 | Baseline and local calculation browser evidence are recorded in the checkpoint. Planning now starts at `52deae4` with separate dirty continuation work; the full-suite health and deployed artifact remain unverified. | Refresh revision/build/profile evidence at each implementation boundary. The 12-sample manifest inventory is not a content attestation or hosted receipt. |
+| M1 calculation; Q03/Q07; A03/A05/A08/A19 | Bounded scalar meaning accepted at `02de067`; scalar Text ordering repaired at `52deae4`. Keep exact Int execution, strict Bool boundaries, checked calls/defaults, spans and budgets in the target migration gates below. | Target contract accepted in part; portable target conformance remains open. Observed call-site types are not a public function contract. |
+| M2 calculation; Q02/Q09; A06/A18-A21 | Compatibility journey delivered at `9d2f87d`: 3850, edit to 5050, wrong argument, repair and source save through real CLI/browser. Retain these vectors during report integration. | Bounded journey delivered; do not reimplement it or mark all of M2 complete. No complete target profile or new full-suite claim follows. |
+| M1 report; Q07/Q08; A09-A12/A16/A17 | Commit the selected boundary laws, proposed library bridge and synthesis admission gaps. Then pin failure envelopes, path grammar, parser choice, local resource accounting and independent fixtures before library code. | Report plan prepared; remaining choices have explicit dependent gates. Full target field/variant/constraint/callback contracts remain in target migration below. |
+| M2 report; Q08/Q09; A04-A07/A09-A12/A18-A21 | Implement the closed library comparison, wire ordinary providers and source logic, then real input/repair/export. Keep the compatibility sample and the target report as distinct delivery states. | Independent Python/JS boundary results, public CLI/WASM/browser journeys and measured budgets; no filtering before successful decode. Failed encode/save preserves the report. |
 | M1/M2 reuse; Q07/Q09; A05/A08/A13/A26 | Produce closed source-derived evidence for `maximum_batch_size()` and directed subtotal. Two passive judgment/explanation consumers use it without private source; compare unknown providers and source/contract/dependency changes. Then import calculation/report in a second local module. Begin with `prototype/analysis/`, Surface and the facade. | Independent contract/verification identities plus local CLI/browser reuse. Supplied facts stay supplied; checking does not execute imports/defaults/annotations/bodies. Unknown effects cannot be purity; client arguments cannot determine an export. |
 | M3; Q10; A19-A23/A25/A30/A31 | Curate Calculate/Validate/Reuse, formatting, explicit input/options, error navigation, inspect/export, stop/restart and draft recovery. Use actual browser/kernel/extension paths for declared profiles and the cognitive packet's trial. | Verified keyboard/focus/recovery journeys and measured limits. Human/IME/screen-reader claims need actual observations; screenshots and fixture answers do not close them. |
 | M4; Q11; A24/A28-A30 | Verify a wheel outside checkout, declared toolchain jobs and exact static/Pages artifact. Prepare version/release inputs, limits, rollback and synthetic-secret cases through existing packaging/workflow/Docker owners. | Reproducible artifacts and actual receipts. Hosted/container availability, root license/publisher and publication remain explicit owner/external gates. |
 | Bounded maintenance; Q12; A08/A11/A14/A18 | Before relying on the preserved continuation candidate, reproduce `test_generator_protocol_review.py`. Compare source-exception transport, explicit frames and a pre-effect fence with one native/hosted oracle. | Separate compatibility commit preserves error identity, once-only operands and required cleanup, or refuses unsupported shapes before effects. A host-generator repair cannot certify D2; this lane cannot indefinitely absorb the main product. |
+
+### Report And Target Delivery Gates
+
+The selected laws live in [semantics](../design/semantics.md#first-report-boundary-contract);
+the proposed bridge, exact prepared report output and unresolved decisions live
+in [synthesis](../design/synthesis.md#report-admission-gaps). These gates refine
+the queue rather than creating another milestone series. Preparation can advance
+independently; an integration claim requires every preceding dependency it uses.
+
+| Next reviewable boundary | Prerequisite and concrete deliverable | Completion / stop evidence |
+| --- | --- | --- |
+| Report admission and literal fixtures | Resolve the “before library code” gaps. Name the error taxonomy, completeness meaning, JSON lexical/escape rules, path rendering and exact budget units. Put fixtures under `prototype/tests/contracts/` and small boundary tests under `prototype/tests/unit/runtime/` when implementation begins. | Literal records/bytes include positive, invalid and capacity cases; expectations are not regenerated from a candidate implementation. Any undecided field remains a named blocker. |
+| Closed Python/JS libraries | Exact-token parse and supplied-tree validation, two descriptors, detached decode, finite trim and bounded encode. Start under `prototype/runtime/` and `prototype/runtime/js/`; describe shared metadata without coupling consumers to either evaluator. | Each candidate passes the same independent cases, including forged trees and escaping/cycle limits. A failed candidate is narrowed or replaced before provider integration. |
+| Ordinary providers and source report | Pin outer report outcome and input/options ordering; adapt tagged Core values and register arity/boxing/failure facts in `host_capabilities.json`. Source code owns transformation; no report branch in Core eval. | Public facade, CLI and both Core producers agree on supported cases/refusals. Source check remains explicitly unknown until its library facts are justified. |
+| Real report journey | Add explicit source/input/options revisions, current-run errors and separate inspect/encode/save actions. Measure budgets; test both bad fields, repair, stale replies, save failure, stop and recovery. | Real browser and CLI evidence, then sample/regression/manifest promotion. A saved source file does not implicitly include private pasted input. Input persistence/export must be an explicit host action. |
+| Portable target scalars and source | Admit versioned exact-Int transport across producer/consumer boundaries, strict Bool behavior, canonical literals and reliable source coordinates. Keep arithmetic and wire fixtures independent. | Equivalent target values and meaningful refusal on every declared route; no JSON-number rounding, Bool-as-Int or host-dependent ordering. Unsupported source rejects before effects. |
+| Nominal construction and decoder extraction | Use `CustomerId`, `CustomerInput`, `BatchInput`, `ReportOptions`, `ImportReport`; implement ordered fields, named/default binding, immutable identity and atomic constraints from admitted declaration metadata. Needs target scalars and bounded call binding. | Direct invalid construction and external decode have distinct failures. Nominal ownership survives transport; supplied tags cannot forge it. Compare derived decode with the two manual descriptors, then remove the duplicate metadata. |
+| Closed outcomes and structural choice | Give Option/Result/ImportError real nominal cases; implement exhaustive transactional match, explicit `map_error` and nearest-function propagation with source explanations. Reuse the pattern packet; coordinate cleanup obligations with D2. | All report success/error branches work without truthy outcome maps. Declared unsupported resource combinations refuse; target propagation cannot bypass required cleanup. Remove compatibility outcome adapters once consumers migrate. |
+| Checked calls and full target report | Establish only the closed data-first map/filter/map_error instances and pure, synchronous, non-retaining callbacks used here. Verify defaults/captures/constraints and source-independent library facts through the D1 owner. | The target report's calls have complete evidence and the same independent report/error/encoding oracles. Formatter preserves supported source/comments; diagnostics have real locations or explicit unavailability. General user generics remain a separate comparison. |
+| Checked local reuse | Prototype source-derived `maximum_batch_size` and directed subtotal evidence early in parallel; integrate report reuse after the preceding target boundaries. Resolve private/public identity and dependencies without running imports while checking. | Two passive consumers, two local source modules and CLI/browser execution; changed private source invalidates verification even if the public contract is unchanged. Unknown, tampered or unsupported evidence refuses. |
+
+The target migration gates are dependencies of the first target release, not
+optional polish after a compatibility report. Each can be delivered as a small
+source-to-diagnostic slice. The producer/consumer comparison for closed reuse
+can begin before report integration; there is no need to wait for general
+inference or complete every data feature first.
+
+Independent frontier work still follows the ledger below. In particular, actual
+resource/task schedules need D1/D2 facts, editable projections need proven
+revision/evidence handling, and native/FFI adoption needs a measured bottleneck
+and portable semantics. Human observations and exact hosted artifact checks
+remain separate M3/M4 evidence. None is closed by this planning commit.
 
 ### Whole-Frontier Disposition And Closure
 

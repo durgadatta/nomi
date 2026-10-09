@@ -197,9 +197,9 @@ and conversions remain possible later. This is a semantic choice, not a
 performance result or full numeric-tower admission.
 
 Budget exhaustion and unsupported backend capacity must refuse visibly rather
-than change a successful value. Common limit values, `.trim()` whitespace,
-strict JSON numeric token rules, exact encoding and tagged transport remain
-implementation/admission work. The planned internal wire has validated Int tags
+than change a successful value. The bounded report decision below selects its
+trim/numeric/encoding laws; common measured capacities and tagged transport
+remain implementation/admission work. The planned internal wire has validated Int tags
 and decimal payloads, and refuses unknown major versions; no new schema version
 is claimed implemented or accepted here. The current JS safe-integer fence,
 Python Bool arithmetic and prototype `True`/`False` spellings are migration
@@ -211,6 +211,39 @@ lowering, execution, diagnostics and formatting. A passing operand-coercion
 repair is not complete exact-Int or typed-call conformance; the existing
 [synthesis bridge](../review/2026-09-29-language-synthesis.md#bounded-scalar-continuation-2026-10-09)
 owns migration and unresolved work.
+
+### First-report boundary (October 9 planning decision)
+
+Select [the closed report rules](semantics.md#first-report-boundary-contract):
+exact JSON numeric token preservation, integer-form tokens for Int fields,
+duplicate decoded-key rejection, strict declared fields, independent ordered
+errors before filtering, explicit normalization and bounded structural encoding.
+Reject host JSON numeric conversion/overwrite and display-as-wire shortcuts.
+Repeated customer IDs remain distinct ordered observations.
+
+The initial report trim removes only U+0009 through U+000D and U+0020. U+0085
+and U+FEFF remain intact and nonblank under this finite predicate. This narrow
+choice gives the same inspectable operation on both hosts without accepting a
+general Unicode whitespace API or inheriting their differing defaults.
+
+Use [the ordinary-call experiment](synthesis.md#report-library-experiment) before
+any schema framework: a versioned closed structural JSON tree with Number tokens,
+two declarative `report-batch`/`report-options` descriptors, fresh validated compatibility records
+and source-owned transformations. These library APIs/tree/outcome records are
+proposed lab interfaces, not newly admitted syntax, nominal Value/Result/data,
+derived codecs or source-inferred purity. Validate supplied trees rather than
+trusting tags. Manual metadata must be replaced by admitted DataDecl contracts
+when they can represent the same rules and independent evidence. Options are a
+separate boundary with a recorded default `minimum_age=13`; customer fields have
+no defaults. Do not translate malformed options into a row error or pretend the
+compatibility JSON entry implements target `ReportOptions` construction.
+
+The input/depth/node/error/encode limits are provisional experiment values,
+subject to pinned measurements. A budget/capacity refusal cannot create a
+success report, fabricate a total error count or alter exact Int meaning.
+Keep target promotion and runner/host/human gates explicit; a useful compatibility
+sample is not completion of the canonical report. No general schema language,
+numeric tower, package system or new evaluator feature is selected here.
 
 ## Library-First Decisions
 

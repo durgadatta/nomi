@@ -200,9 +200,14 @@ are unperformed and do not replace the existing owner-enforced publication law.
 **October 9 bounded closure:** default mathematical Int, distinct Bool and the
 initial scalar operations are accepted in
 [semantics](../design/semantics.md#first-product-scalar-contract). Fixed width
-is not default Int meaning. Exact transport/execution, shared measured capacity,
-strict JSON numbers and trim remain implementation/admission work; Float,
-Decimal, units, arrays and richer numeric operations remain open below.
+is not default Int meaning. Exact transport/execution and shared measured
+capacity remain admission work. The
+[first-report boundary](../design/semantics.md#first-report-boundary-contract)
+selects integer-form JSON tokens and finite ASCII trim; its
+[remaining gaps](../design/synthesis.md#report-admission-gaps) include concrete
+failure records, budget accounting and library/target integration. General
+numeric conversion and Unicode trimming remain open, as do Float,
+Decimal, units, arrays and the richer numeric operations below.
 
 **Question:** What are the default integer, decimal, float, overflow, unit,
 shape, and broadcasting rules?

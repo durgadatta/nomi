@@ -1,13 +1,31 @@
 # Nomi product synthesis and handoff
 
 > Active plan and execution handoff, refreshed 2026-10-09. The latest user
-> instruction authorizes iterative planning and implementation over multiple
-> commits, with the complete frontier in scope. Commit the reviewed overall
-> strategy before changing implementation.
+> instruction prioritizes deeper planning and committing the plans and gaps.
+> This pass ends with a documentation checkpoint. The complete frontier remains
+> in scope; implementation continues from the gates below in a later increment.
 > This replaces the earlier contract-first execution order at `915aea1`.
 > Canonical selection: [synthesis](docs/design/synthesis.md#first-product-contract).
 > Project-wide delivery: [roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies).
 > Preserved code and actual checks: [checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md).
+
+## Resume Here
+
+Planning baseline: `52deae4`. The overall strategy is committed at `bc8f0c8`;
+the compatibility calculation journey shipped at `9d2f87d`, followed by the
+Unicode scalar-order repair. Those results do not complete the first-product
+target profile. The current pass commits the report plan and remaining gaps;
+it does not repeat calculation implementation or claim a healthy full suite.
+Separate uncommitted continuation-runtime changes and their new source-transport
+tests remain outside this documentation commit and need their own review.
+
+The next preparation task is to close the report's
+[remaining admission gaps](docs/design/synthesis.md#report-admission-gaps)
+with literal expected records, then implement the bounded library experiment.
+The roadmap's [active queue](docs/orientation/project_roadmap.md#first-reviewable-work-queue)
+owns ordering. Keep three outcomes distinct: a working compatibility report,
+the target report with checked nominal contracts, and reusable local modules.
+The first cannot silently substitute for the other two.
 
 ## End Goal
 
@@ -108,7 +126,7 @@ number of features implemented.
 | M2: implement complete vertical slices | First calculate/edit/error/repair, then decode/report/repair, then local reuse; each crosses source, checking, lowering, runtime and diagnostics as required | A user can perform the slice; expected values and errors agree across declared routes. A parser, schema or analyzer alone is not completion. |
 | M3: make the product comfortable | Curate three examples; format, input editing, error navigation, result inspection, save/export, stop/restart and draft recovery | Real browser and CLI journeys, keyboard/focus checks, installed execution, stale-result tests and fresh generated artifacts. Observe unfamiliar users attempting the tasks; record remaining confusion. |
 | M4: release a traceable artifact | Verify actual hosted/installed artifacts, support profile, version/source identity, documented limits and rollback | Reproducible build inputs, deployment smoke, release notes and recoverable previous artifact. No invented benchmark or hosted result. |
-| M5: expand from observed need | Choose one new workflow, starting with ordinary libraries | A concrete missing capability, its owner and extension tests; new syntax only after ordinary code fails the task. |
+| M5: close the owned frontier | Execute the roadmap's owned comparisons in dependency order; use observed need to select product expansion | Every lane has verified support, evidence-based rejection or a bounded alternative/deferral with an exact trigger; new syntax only after ordinary code fails a concrete task. |
 
 M1 and M2 interleave by journey. Close calculation's scalar/call/run rules, then
 deliver calculation; close report's codec/data rules, then deliver report;
@@ -144,9 +162,9 @@ focused checks first, then broaden for changed semantics and unresolved risks.
 Record actual evidence and the next exact step in the existing checkpoint;
 do not create another live backlog or treat historical check counts as current.
 
-### Baseline And Recovery
+### Historical Baseline And Recovery
 
-Start revision is `40c365e`, with a clean working tree. A fresh read-only
+The strategy pass started at `40c365e`, with a clean working tree. Its read-only
 calculation probe gives 3850 and 5050 on Python/Core/JS, but text quantity
 `"three"` fails in Python/Core and produces concatenated text in JS. Bool
 quantity executes as 1450 in the compatibility runtimes while the scalar
@@ -155,17 +173,18 @@ not a reason to advertise typed Int calls. A huge integer is exact on Python
 and refused on JS. The selected analysis/API/CLI/completion selection again
 gives 146 passed; protocol review again gives 24 failed and 15 passed.
 
-The last recorded actual playground check predates the latest preservation
-tests. Retain `40c365e` as the source recovery point, but do not call it a freshly
-validated browser artifact. Run the actual browser gate before promotion,
-record its build/source identity, and keep the previous supported artifact
-available through Git and the release procedure. No deployment occurred in
-this planning increment. Preserve drafts/source export during migration.
+The later [calculation receipt](docs/orientation/frontier_checkpoint_2026-10-08.md#calculation-delivery-receipt-2026-10-09)
+records actual local browser checks and 12 samples. Keep `40c365e` as the
+historical source recovery point and `9d2f87d` as the calculation delivery
+checkpoint. Neither identifies a verified hosted deployment. Rebuild and verify
+the chosen recovery revision before serving it; retain source/draft export
+during migration. This planning pass performs no new browser or deployment run.
 
 ### M1 Work Orders
 
-These are planning candidates, not newly accepted semantic laws. Update the
-canonical owner when independent evidence settles each rule.
+These work orders retain the comparisons behind M1. The scalar and bounded
+report decisions are now recorded in their canonical owners; their implemented
+support still needs the evidence below. Callable, module and run gaps stay open.
 
 | Decision / owner | Exact comparison | Failure or removal condition |
 | --- | --- | --- |
@@ -174,8 +193,8 @@ canonical owner when independent evidence settles each rule.
 | Closed calls and reuse, A05/A08/D1 | Directed subtotal and inferable constant; map/filter/fold/map_error instances; default/capture/effect behavior; two passive consumers plus unknown and changed-dependency cases | Supplied metadata is called inference, client arguments determine a public promise, checking executes user code, or unresolved effects become purity. |
 | Host/run experience, A19-A23/D4/D5 | Explicit entry/input/options; source/input/run identity; host read/save failures; bounded input/depth/work/output; stop/restart/draft recovery | New source displays old results as current, inspection runs effects, save falsely claims publication, or worker termination is claimed as language cleanup. |
 
-Prefer exact Int and strict codecs as starting candidates, but do not implement
-a numeric tower or general schema system before accepting the bounded rules.
+Use the selected exact Int and strict report laws; do not infer acceptance of a
+numeric tower or general schema system from those bounded decisions.
 Runner budgets need documented values and a pinned measurement environment
 during M1/M2; 128 rows alone is not a resource bound. General callback, resource
 and representation comparisons already live in
@@ -183,13 +202,13 @@ and representation comparisons already live in
 [resource completion](docs/design/resource_lifetime.md#remaining-completion-experiments)
 and [the paired interface trial](docs/design/interaction_model.md#paired-representation-and-revision-trial).
 
-### First Actual Implementation Slice
+### Calculation Slice And Its Remaining Target Gap
 
-After M0/M1 select and accept the calculation's needed rules, make
-calculate → edit → wrong argument → repair work through the public runner and
-the browser path. Reuse the invoice source and independent expected values.
-Keep an explicit capability table for parse/check/lower/run/diagnose/format;
-unsupported target constructs must refuse clearly.
+The compatibility calculate → edit → wrong argument → repair journey is
+delivered. Its checkpoint table records parse/check/lower/run/diagnose/format
+evidence separately. Exact portable Int execution, Bool-only boundaries,
+verified public calls, real source spans and canonical formatting remain open.
+Use the same independent invoice vectors when closing those target gaps.
 
 Likely owners are `prototype/analysis/`, `prototype/runtime/api.py`,
 `prototype/parser/`, `prototype/runtime/js/`, `scripts/cli.py` and
@@ -198,10 +217,75 @@ not an assumption that every layer needs a rewrite. Use the existing module
 check report only within its actual scope. Add public-contract evidence when
 the reuse slice needs it; it is no longer the first product outcome by default.
 
-Then add the report's decode/repair path and finally local reuse of both.
+Next add the report's decode/repair path and then local reuse of both.
 For each increment, provide expected values/errors, source maps, formatting,
 refusal cases and appropriate differential checks. Avoid a long sequence of
 disconnected infrastructure milestones before a person can complete a task.
+
+### Report Boundary Work Order
+
+Commit the selected [boundary laws](docs/design/semantics.md#first-report-boundary-contract)
+and [library proposal](docs/design/synthesis.md#report-library-experiment) before
+report code. The first library APIs are ordinary `parse_json`,
+`decode_data(value, schema_name)`, `encode_json`, `trim_text` calls. Source
+`build_report` owns normalization, eligibility and counts; there is no native
+whole-report builtin or general schema language.
+
+The parser emits a validated versioned structural Value tree whose Number nodes
+retain exact token Text; no Float conversion occurs. Decode accepts integer-form
+tokens, rejecting Bool/Text/`1.0`/`1e0`, with explicit per-host numeric capacity.
+The two declarative schemas are strict batch/row and separate options; options
+alone apply the recorded default `minimum_age=13`. The compatibility entry is
+`build_report(text, options_text="{}")`; it parses/decodes both explicit inputs.
+Trim removes only
+U+0009..U+000D and U+0020; U+0085/U+FEFF remain intact. Errors carry exact ordered
+paths and no raw input echo. Encoding accepts the bounded structural family,
+sorts map keys by scalar-value order and emits minimal UTF-8 JSON with required
+escapes. Target Result/nominal data/derived codec/import obligations remain open.
+
+| Increment | Concrete owner and independent evidence | Gate / next step |
+| --- | --- | --- |
+| Boundary fixtures and libraries | Small replaceable Python/JS library owners under `prototype/runtime/`, a closed declarative schema registry and new contract fixtures; reuse `decode.py` through an explicit record adapter | Exact tokens, duplicate/escape-equivalent keys with original paths, supplied-tree schema/version/tag rejection, surrogate refusal and deterministic encoding. No general evaluator/schema rewrite. |
+| Closed batch/options decode | Only `report-batch`/`report-options`; original Text retained, fresh detached records, 128-row cardinality before children, field/error ordering and independent predicates | Two errors for blank name plus age -1; malformed ineligible row still fails; empty/128 succeeds, 129 fails; repeated IDs/order retained. Omitted versus supplied `13` records different default provenance; invalid options remain separate. Observe the 65th error before returning first 64 with `complete=false`. |
+| Public source report | Register ordinary pure provider calls through existing metadata/adapters; implement readable Nomi transformation and explicit encode | Facade/CLI/committed WASM/JS agree on supported cases and explicit wide-Int refusals. Compatibility outcome records and current source syntax are labeled; `overall.nomi` stays target-only. |
+| User repair and target handoff | Explicit input/options and structured error navigation; sample/regression/assets/browser promotion after the whole path works | Repair/rerun/export and stale-run cases are real. Source checker unknowns stay unknown. Replace manual schema/outcome adapters when admitted DataDecl/Result/module contracts and independent consumers supply the same evidence. |
+
+Provisional experiment configuration is 256 KiB input UTF-8 bytes, 32 simultaneous
+map/list containers, 8,192 Value scalar/container nodes (keys excluded), 64
+retained errors and 64 KiB encoded UTF-8 bytes. These are unmeasured candidates;
+test each limit and limit-plus-one, pin host/toolchain and record time/memory
+before advertising supported capacity. Source/evaluation work and worker Stop
+remain separate gates. Failed encode/save preserves an inspectable success.
+No report implementation or capacity measurement is claimed by this plan.
+
+### Commit Boundaries And Stop Rules
+
+1. **Planning checkpoint (this pass):** commit the selected boundary laws,
+   proposed adapters, open decisions, target pressure and updated queue. Run
+   document/packet/target-fixture checks. Keep runtime edits separately visible.
+2. **Finish report admission:** settle the gaps marked “before library code” in
+   synthesis. Add literal success/failure records and exact UTF-8 encoding
+   expectations; record which candidate lost each comparison. Do not generate
+   the expected records with either implementation under test.
+3. **Library comparison:** implement exact-token parse, supplied-tree validation,
+   closed decode, trim and encode in replaceable Python/JS modules. Review
+   library results before provider wiring. An unresolved failure envelope or
+   budget rule returns this increment to step 2.
+4. **Public report integration:** wire ordinary providers, source-owned
+   transformation and explicit inputs; establish facade/CLI/committed-WASM
+   agreement, then real browser repair/export/recovery. Promote a compatibility
+   sample only with its profile, regressions and generated assets.
+5. **Target migration and reuse:** follow the roadmap's target gates. Replace
+   manual schemas and outcome maps as nominal data, Result and checked calls
+   become available. Do not add a third report schema or second ad hoc module
+   loader to extend the bridge; that need triggers the corresponding target
+   contract comparison first.
+
+Each implementation receipt names the exact revision plus dirty-file scope,
+host/toolchain, input vectors, declared route, results/refusals and unresolved
+capabilities. Historical counts and manifest path digests cannot establish
+current runtime or hosted-artifact identity. Revert an unsuccessful experiment
+as its own reviewed change; do not erase unrelated continuation work.
 
 ## Keeping The Playground Working
 
@@ -222,7 +306,8 @@ disconnected infrastructure milestones before a person can complete a task.
 The current JS/WASM route and hosted compatibility routes are implementation
 assets, not the language definition. A prototype feature is not worth preserving
 solely because tests exist, but retiring it must be explicit and reviewable.
-No examples, web code or generated assets changed in this planning pass.
+Only target-only examples change in this planning pass; runnable samples, web
+code and generated assets retain their existing revisions.
 
 ## Verification And Release Gates
 
@@ -248,22 +333,24 @@ completion from a host-generator fix.
 
 ## What Is Ready And What Remains
 
-Ready for handoff: product promise, selected core, explicit deferrals and
-extension boundaries, a narrowed target, screen/storyboard, milestone gates,
-first work orders and playground migration policy. The selection is
-self-reviewed planning; no independent user study or new implementation exists.
+Ready for handoff: the delivered compatibility calculation, selected report
+laws, independent prepared oracles, named admission gaps, dependency/commit
+boundaries and target replacement gates. New planning is self-reviewed; no
+independent user study or report implementation is claimed.
 
-Still required: four bounded contract decisions, executable cross-host evidence,
-actual product trials and distribution checks. These are specific evidence
-tasks, not a reason to reopen all research or add more planning layers.
+Still required: the report admission decisions, executable library/public-path
+evidence, target scalar/data/Result/call migration, checked local reuse, measured
+capacity, product trials and distribution checks. Existing owners contain these
+tasks; another global survey or planning layer is unnecessary.
 
 Continue this session or start a fresh one with this instruction:
 
 > Read this plan, canonical first-product synthesis and the checkpoint. Keep
 > the playground working, but adapt examples freely. Confirm the selected
-> profile and actual baseline, commit the overall strategy, close the calculation's scalar/call rules with
-> independent cases, then implement its complete browser/CLI edit-error-repair
-> slice. Continue toward the local report and reuse journeys. Consult broader
+> profile and actual baseline. The strategy and compatibility calculation are
+> already committed. Close the report's outstanding admission decisions with
+> independent records, implement its bounded libraries, then integrate real
+> report/repair/export and target migration toward checked local reuse. Consult broader
 > research only for a concrete blocker. Do not silently accept proposed APIs,
 > change tests to hide failures or restart a general redesign. Continue through
 > the ordered commits and the whole-frontier closure ledger; report incomplete

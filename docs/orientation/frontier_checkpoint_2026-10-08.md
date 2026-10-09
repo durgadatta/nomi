@@ -6,20 +6,20 @@
 
 ## Latest instruction and next step
 
-The latest 2026-10-09 instruction requests careful plans and strategy, committed
-before implementation, then iterative work over multiple commits with everything
-in scope and the frontier carried to its logical conclusions. This supersedes
-the prior planning-only/fresh-session restriction. No further permission is
-needed for the authorized local planning, fixes, checks and commits.
+The latest 2026-10-09 instruction requests more depth on plans and gaps and a
+commit of that work. This pass ends at a documentation checkpoint. The wider
+iterative implementation mandate remains the context, with current delivery
+order in the roadmap; no new runtime work is included in this pass.
 
 Planning preparation P1-P5 is historical planning context, not semantic
 acceptance or independent review. The current product-first handoff narrows the
 first release to calculation, local JSON report/repair and local reuse. Continue
 through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
 [fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
-is the execution handoff. Commit the reconciled strategy before implementation;
-then deliver the calculation, report and reuse increments and carry the wider
-frontier through the roadmap's owned closure gates.
+is the execution handoff. Strategy `bc8f0c8` and calculation `9d2f87d` are already
+committed. Resume with the report admission gaps and its library comparison,
+then target migration and checked reuse. The latest gap-review receipt below
+supersedes historical “next pass” instructions; earlier counts remain historical.
 Committing the experiments preserves them; it does not accept their architecture
 or mark their milestones complete.
 
@@ -239,11 +239,40 @@ packet and target-fixture selection passes **127 tests**, with all **five**
 design packets coherent and whitespace clean. These are planning-integrity
 checks; the actual browser baseline is a separate check in progress.
 
-Next exact work: pin independent invoice/mixed-operand vectors, repair JS host
-coercion, and reconcile hosted continuation transport in a separate commit.
-Then accept the bounded scalar/Text and run rules before advertising target
-conformance, and advance the same loop through report and local reuse. The
-broader frontier remains open through the roadmap's closure ledger.
+## Report plan handoff: 2026-10-09
+
+The next reviewed plan closes the bounded report laws in
+[semantics](../design/semantics.md#first-report-boundary-contract), records the
+decision in [the ledger](../design/decisions.md#first-report-boundary-october-9-planning-decision),
+and specifies the proposed library/value/outcome bridge in
+[synthesis](../design/synthesis.md#report-library-experiment). Commit these
+owners before report code; use the
+[frontier work order](../../FRONTIER_PLAN.md#report-boundary-work-order).
+
+Read-only probes reproduced missing `pub`/variant/`?` source support, unsupported
+Core imports/named data calls, absent Ok/Err/map_error/trim owners and divergent
+host stripping. Passive DecodeError records are not a decoder. The selected
+bridge therefore uses finite ordinary-call Python/JS libraries, a closed
+structural JSON tree with exact Number tokens, two declarative batch/options schemas and
+source-owned report transformations. Compatibility outcome/record adapters do
+not implement target nominal data/Result, checked modules or derived codecs.
+
+Independent fixtures must distinguish duplicate keys from duplicate IDs, retain
+both malformed name/age paths, enforce 128/129 rows before filtering, reject
+Bool/Text/fraction/exponent Int fields, and preserve/refuse wide Int explicitly.
+Options default to `13` only through their separate descriptor, recording actual
+application; no default fills a missing row field or hides invalid options.
+Finite ASCII trim retains U+0085/U+FEFF; deterministic structural encoding is
+separate from display. The five configured limits remain provisional until
+measured limit/limit-plus-one evidence exists. No report code, measured support,
+user trial or target sample promotion is attributed to this planning addition.
+
+Next exact step: after the plan commit, close the remaining admission gaps and
+add literal boundary vectors before the replaceable parser/closed decoder
+libraries, then integrate ordinary providers
+and source report logic. Validate CLI and committed WASM/JS before promoting a
+compatibility sample. Keep general schema, Result/data/module/checker migration,
+runner work bounds and target-format support visible as later obligations.
 
 ## Calculation delivery receipt: 2026-10-09
 
@@ -301,8 +330,46 @@ Checks for this increment:
 An exploratory full-suite run during concurrent backend edits found transient
 envelope failures and the real wildcard defect. It is not a passing receipt;
 rerun the full suite after the continuation candidate and adapters settle.
-Next exact work: finish independently reviewed continuation transport, pin and
-commit the report's strict JSON/decoder/budget contract, then implement its
-decode-before-filter, accumulated-error and explicit-encode path. Target-only
-report and reuse fixtures are not yet runnable product claims.
+The next action recorded at calculation delivery was continuation review and
+report-contract planning. The gap-review receipt below now owns the next step.
+Target-only report and reuse fixtures are not yet runnable product claims.
+
+## Plans And Gaps Receipt: 2026-10-09
+
+Planning starts at `52deae4`. This documentation checkpoint includes the pending
+report contract, deepens its admission gaps and replaces stale active-queue
+instructions. It leaves five modified continuation/interpreter files and the
+untracked `test_generator_source_transport.py` outside the commit; those changes
+are not validated or accepted by document tests.
+
+The [synthesis gaps](../design/synthesis.md#report-admission-gaps) name eight
+concrete decision/integration boundaries, their owners and discriminating cases.
+Independent report oracles now include exact encoded output. The
+[roadmap gates](project_roadmap.md#report-and-target-delivery-gates) order library
+comparison, ordinary providers, real report repair, target scalars, nominal data,
+Result/match, checked callbacks and local reuse. The compatibility report cannot
+close the target release; a third manual schema triggers target extraction work.
+The target fixture uses explicit finite trim, and the registry/research route
+agree with the selected report laws and remaining work.
+
+Next exact step: settle library failure classification/completeness, path/code
+rendering, JSON lexical/escape rules and local budget accounting, then materialize
+literal fixtures. Implement no unresolved envelope by guessing inside a host.
+Options-versus-input identity and the outer report outcome must close before
+source integration. Continuation review stays separate; full-suite health,
+capacity measurements, human trials and hosted distribution remain unverified.
+
+Validation for this planning checkpoint:
+
+- Documentation lifecycle, design-pass, target-fixture coherence and malformed
+  packet suites: **127 passed** (`python3 -m pytest -o addopts= -q` on their
+  four existing test files). These checks do not execute target programs.
+- `python3 -m tools.design_passes check`: all **five** packets coherent.
+- Read-only Markdown scan: **205** local links/anchors resolve across the
+  **eight** changed Markdown files.
+- `python3 .codex/scripts/agent_doctor.py`: setup checks pass; the ignored local
+  RAG index is stale after documentation changes. Rebuild it before relying on
+  retrieval in the next session; no index content is committed.
+- `git diff --check`: passes. No runtime, browser, benchmark, generated-asset,
+  hosted or human-study check was run in this planning pass.
 

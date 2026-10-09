@@ -109,14 +109,16 @@ avoids both browser rounding and an arbitrary fixed-width overflow law. Bool
 is distinct; Text has explicit code-point units and scalar-value ordering.
 This does not establish portable implementation or accept every scalar API.
 
-The other rows remain starting candidates. Their owners must accept concrete
-rules and independent vectors before implementation. Broader D1-D3 questions
-remain open outside this profile without blocking it.
+The first report's [bounded boundary rules](semantics.md#first-report-boundary-contract)
+now select strict shapes, lexical Int decoding, finite ASCII trim, error order
+and explicit encoding. The library bridge below is a proposed experiment, not
+implemented target support. Remaining callable/run choices need independent
+evidence; broader D1-D3 questions stay open outside this profile.
 
 | Owner / decision | Target disposition | Discriminator and required result |
 | --- | --- | --- |
-| D3 / scalar and text contract | Accepted: exact Int, Bool distinction, bounded primitive operations, exact scalar Text/code-point units and lexicographic order. Pending: trim, wire implementations and measured limits | Execute the canonical literal/arithmetic/Bool/Unicode vectors on each declared route; exact JSON round trips and source offsets still need admission. Record refusal separately from correct values, never rounding or browser-specific Int meaning. |
-| D3 / data and codecs | Strict declared fields, duplicate JSON keys rejected, no coercion; explicit normalization; derived codecs limited to supported data shapes | Missing/extra/wrong fields, two simultaneous row errors, empty/128/129 rows, repeated IDs, constrained values and decode/encode round trips. Fix wire shape, path/order rules and bounded-error truncation before promotion. |
+| D3 / scalar and text contract | Accepted: exact Int, Bool distinction, bounded operations, scalar Text/code-point units/order; finite ASCII trim for the report. Pending: portable wire and measured limits | Execute canonical scalar vectors plus retained U+0085/U+FEFF and original numeric-token tests; record capacity refusal separately from wrong values. |
+| D3 / data and codecs | Selected closed report shapes, duplicate decoded-key refusal, lexical Int fields, original ordered paths and explicit report wire. Derived target codecs remain unimplemented | Missing/extra/wrong fields, two simultaneous errors, empty/128/129 rows, repeated IDs and limit/limit-plus-one cases through independent parser/decoder producers. A lab success does not admit general schemas or target data. |
 | D1 / callable and module boundary | Closed monomorphic public exports; checked pure synchronous library callbacks; local module identity | The invoice and report must resolve every call, default, capture and imported effect. Two passive consumers agree; unknown/private/changed-dependency cases cannot manufacture proof. Explicit adapters are preferable to unexplained inference. |
 | D4/D5 / run and host contract | One selected source entry, explicit input/options, a Result inspector, user-requested encode/save; text remains authoritative | Pin entry binding and errors, data limits, source/input/run revisions, stop/restart and host failure behavior. A stale run cannot replace a new result; save failure cannot be shown as completed publication. |
 
@@ -132,10 +134,148 @@ coordinate conversion before claiming target conformance. The current Python
 runner still uses `True`/`False` and does not establish target `true`/`false` or
 `none`; the current scalar analyzer can certify host truth testing and comparisons
 whose successful values disagree across hosts. Checking policy cannot repair
-these differences by changing source meaning. The report's `.trim()` predicate
-and exact external JSON shape remain blocking library decisions. Internal
-tagged decimal transport is planned and distinct from external JSON encoding;
-no budget measurements or new implemented transport version are asserted.
+these differences by changing source meaning. Report implementation now follows
+the selected finite trim and external shape below. Internal tagged decimal
+transport is distinct from the proposed structural JSON Value experiment;
+no budget measurements or implemented transport version follow from this plan.
+
+### Report Library Experiment
+
+Commit this bounded plan before report code. Its normal form is ordinary library
+calls: parse, decode, source-defined report transformation, inspect, then encode.
+No native `build_report` may hide filtering, normalization or counting. The
+[semantic owner](semantics.md#first-report-boundary-contract) holds the rules;
+this section owns the proposed bridge and target promotion obligations.
+
+| Proposed compatibility call | Closed outcome / scope |
+| --- | --- |
+| `parse_json(text)` | `{ok: true, value: tree}` or `{ok: false, kind: "input-format", errors: [...], complete: Bool}`; exact tokens, duplicate paths and strict scalar Text. |
+| `decode_data(tree, schema_name)` | `{ok: true, value: record, defaults_applied: [...]}` or `{ok: false, kind: "decode", errors: [...], complete: Bool}`; only `report-batch` and `report-options` descriptors produce fresh detached structural records. |
+| `encode_json(value)` | `{ok: true, text: Text}` or `{ok: false, kind: "encode", errors: [...], complete: Bool}`; only the bounded structural output family in semantics. |
+| `trim_text(text)` | Text trimmed by the selected six ASCII scalars, with no normalization; wrong call types refuse. |
+
+Parse success has exactly `ok` and `value`; encode success has `ok` and `text`.
+Decode success has exactly `ok`, `value`, `defaults_applied`, recording applied
+default paths (empty for batch, `[["minimum_age"]]` for omitted options age).
+Failure records have exactly `ok`, `kind`, `errors`, `complete`. Each error has exactly
+`code`, `path`, `path_text`, `expected`, `message`; no raw input/value echo or
+fabricated source span. These records are compatibility outcomes, not target `Result` or evidence of
+nominal immutable `data`. Decoding does not trim the returned fields; the Nomi
+function applies `trim_text`, eligibility and report counts after success.
+Its proposed compatibility form is `build_report(text, options_text="{}")`:
+parse/decode the separately supplied options JSON through `report-options`,
+whose only field is non-negative Int `minimum_age` with declared default `13`.
+Record actual default application; invalid options remain separate from row
+errors and defaults never fill missing batch/row fields.
+Unknown schema names refuse without executing arbitrary predicates. Manual
+schema metadata is a fenced extraction point for admitted `DataDecl`
+descriptors, not a user schema DSL or an alternate language specification.
+
+The proposed lab tree is `{schema: "nomi.json-value", version: 1, root: node}`.
+All node records have exactly the listed fields:
+
+| `kind` | Other fields |
+| --- | --- |
+| `null` | None. |
+| `bool` | `value: Bool`. |
+| `text` | `value: Text`. |
+| `number` | `token: Text`, validated against JSON number grammar without conversion. |
+| `list` | `items: List[node]`. |
+| `map` | `entries: List[[Text, node]]`, preserving input key order. |
+
+The decoder validates schema/version, exact record fields, every scalar/tag,
+number token, duplicate key, cycle and structural limit before applying the
+batch descriptor. Supplied trees are untrusted structured data: matching a
+tag cannot certify source checking or host identity. Ordinary untagged input
+maps cannot impersonate Number through JSON content; they parse as `map` nodes.
+Unknown versions/kinds and malformed records refuse, with no guessed defaults.
+The tree contains numeric spelling evidence; it is not a runtime numeric tower
+or the target's nominal `Value` implementation.
+
+Prepare literal independent expected vectors for the two-row report, both
+malformed field paths, below-threshold malformed rows, duplicate IDs versus
+duplicate/escape-equivalent keys, missing/extra fields, Bool/Text/`1.0`/`1e0`
+age, empty/128/129 rows, supplementary and invalid Text, and exact-or-refused
+wide Int. Pin error ordering and nested CustomerId encoding. The five limits
+in semantics remain provisional; measure boundaries and retained error/output
+behavior before a supported-capacity claim.
+
+Use `prototype/runtime/decode.py` for error records and existing provider
+metadata for the ordinary calls. Add small replaceable Python/JS library
+owners and a two-descriptor closed schema registry; do not add report branches to Core eval.
+Source remains responsible for the report. A compatibility sample may use
+current dictionaries, explicit returns and callback-first APIs, with an honest
+profile label and real CLI/browser evidence. Keep `overall.nomi` target-only.
+
+Target promotion still needs `pub`/checked local modules, named checked data
+construction/defaults/constraints, nominal variants and Option/Result,
+`map_error`/`?`, data-first checked library instances, canonical Bool source,
+immutable binding rules, source explanations and formatting. Current probes
+refuse these forms or lack their runtime/library owners. The scalar analyzer's
+unknown library call is not purity proof. Remove manual schema/outcome adapters
+only when declaration-derived target contracts and independent consumers replace
+them. Neither a useful compatibility report nor passing library tests completes
+the first-product target or general D1/D3 contracts.
+
+### Report Admission Gaps
+
+The laws above are selected; the lab interface is still a proposal. The following
+decisions must close before their dependent increment. A table entry with an
+unperformed comparison is an open gap, not authorization to guess the answer
+inside a backend. Scheduling stays in the
+[roadmap](../orientation/project_roadmap.md#report-and-target-delivery-gates).
+
+| Gap / existing owner | Bounded comparison and required evidence | Blocking gate |
+| --- | --- | --- |
+| Failure classification and completeness; A11/A12/A19 | Retain operation-level `kind` with distinct error codes versus a separate failure-category field. Pin literal records for syntax, duplicate key, invalid supplied tree, schema/type, constraint, numeric capacity and resource refusal. Define `complete` for a parser that stops at its first error and a decoder that stops on capacity; it must never imply unseen input was validated. | Before library code. Update the proposed envelopes above after comparison; no host exception is silently relabeled as malformed input. |
+| Two input boundaries; A12/A18/A19 | Options-first fail-fast versus independent validation of both inputs with boundary-qualified errors. Feed malformed options and malformed rows together; preserve which source/revision owns `$` and defaults. Specify the outer `build_report` outcome, including success and options failure, which is not yet defined by the four library-call envelopes. | Before source report integration. Do not concatenate indistinguishable paths or invent an options case in target `ImportError`; target callers already supply a valid `ReportOptions`. |
+| Budgets across stages; A12/A25 | Compare per-call allowances with one run allowance; test repeated parse calls, two inputs each below their individual limit, huge numeric tokens, escaping expansion and a DAG with shared children. Define how supplied trees incur byte/node/work cost without relying on their host object count. | Before library code: exact local accounting and safe refusal. Before sample promotion: measured run/retention limits and interrupt behavior; the five provisional numbers alone are insufficient. |
+| Error and path protocol; A19/A30 | Pin codes and renderings for root, list index, empty key, dotted key, control characters and supplementary characters. Compare lossless machine paths plus bounded display against refusing oversized diagnostic records; input-controlled keys can be large or sensitive even without value echo. | Before library code: escaped path grammar, stable codes and message limits. Before UI: source/input/options identity outside or inside the versioned error envelope, with no fabricated spans. |
+| Structural adapter safety; A03/A09/A12 | Pin null versus absent, exact Bool/Int boxing, plain maps versus nominal/foreign objects, cycles versus shared acyclic children, and unknown record fields. Mutation of a supplied tree after decode cannot change the decoded result. Encode of nominal data requires the declared projection, not name/field guessing. | Before provider wiring. Compare each Python/Core/JS adapter with independent literal records; a correct standalone library does not certify the adapter. |
+| JSON parser and encoder selection; A12/A17 | Compare a token-preserving adapter over an existing parser with a bounded scanner. Require original duplicate-key paths, exact Number tokens, strict text, early budgets and deterministic output; reject any adapter that discards evidence before validation. Pin accepted JSON lexical cases, BOM/trailing content, negative zero and escape output before selection. | Before library code. Host convenience or shorter code cannot settle observable wire behavior. A shared schema may describe shapes, but expected fixture results must remain independent of it. |
+| Provider/checker trust; A05/A08/A13/A17 | Ordinary pure operations need declared arity, boxing, failure and capacity facts in the current provider inventory. Challenge unknown providers, wrong argument types and changed provider contracts; distinguish supplied trusted-library facts from facts inferred from user source. | Before public integration; checked-pure promotion waits for verified call/default/capture facts. Adding `pure: true` to a manifest is not source verification. |
+| Replacement and target conformance; A04-A10/A26 | Run the same report vectors through the compatibility library and declaration-derived target data/Result/callback/module path. Explain every remaining spelling/value/error difference. Scope the first extractor to the two existing descriptors. | Before claiming the target report or checked reuse. A third schema, dynamic predicates or generalized bridge imports trigger design review rather than growing a parallel type system. |
+
+Implementations can begin a closed library slice once its prerequisite rows are
+settled; the whole wider frontier need not close first. Preserve the distinction
+between parse rejection, decode accumulation, failed source contracts, backend
+capacity, interrupted execution and host save failure in both inspection and
+tests. A first-error parser need not promise recovery from malformed JSON.
+
+### Independent Report Oracles To Materialize
+
+These expectations come from the selected report laws and target program, not
+captured output. They are prepared fixtures; none has been executed as a report
+in this planning pass. The error-code spelling and outer outcome record remain
+subject to the admission decisions above.
+
+| Input / action | Expected value or refusal |
+| --- | --- |
+| The target's Ada/Bo input; omitted options age | `received=2`, `eligible=1`, `skipped_ineligible=1`; one customer with ID `c-1`, name `Ada`, age `20`; record options default path `["minimum_age"]`. |
+| Same input, explicit minimum age `0` | Both rows in original order; counts `2/2/0`; no applied default. |
+| Empty batch, valid options | Counts `0/0/0` and an empty customer list; no special empty-result failure. |
+| One row with ID `c-1`, blank name and age `-1` | Name path then age path; no report, even though age is ineligible. Repair both fields and rerun without reusing the old failure. |
+| Same valid ID on two eligible rows | Two customers, original order and independent normalized names; no merge or uniqueness failure. |
+| Options `{}` versus `{"minimum_age":13}` | Same eligibility, distinct default provenance. Missing `age` in a row still fails. |
+| Age token `true`, `"20"`, `20.0` or `2e1` | Int-field refusal. None becomes Int `20`; each independently valid neighboring field still receives its checks. |
+| Duplicate `name`/`\u006eame` in one object | Format failure at the decoded `name` path before schema decode; repeated IDs remain permitted. |
+| An eligible age token `9007199254740993` | Exact value where supported; explicit numeric-capacity refusal otherwise. Cross-host equality of rounded output is never a pass. |
+| 128 valid rows versus 129 | First is admitted if resource budgets also allow it; second reports cardinality at `["customers"]` without row decode. |
+| 64 versus 65 independent validation errors | Exactly 64 retained; `complete=true` only when validation finishes without omission. On observing error 65 return the first 64 and `complete=false`, with no invented total. |
+| Successful report, failed encode or host save | The report remains inspectable. Encode/save failure cannot become a successful export or rerun the computation implicitly. |
+
+For the first row, the selected deterministic encoder's exact UTF-8 text is:
+
+```json
+{"customers":[{"age":20,"id":{"value":"c-1"},"name":"Ada"}],"eligible":1,"received":2,"skipped_ineligible":1}
+```
+
+Add vectors for every admission decision as it closes, including limit-minus-one,
+limit and limit-plus-one for the chosen accounting units. Compare four routes:
+standalone boundary functions, public Python execution, Python-produced Core/JS,
+and committed-WASM-produced Core/browser. Two consumers of the same lowering are
+not independent parser evidence. A refused unsupported route is recorded as
+refused, not skipped silently or counted as conformance.
 
 ## One Coherent Model
 

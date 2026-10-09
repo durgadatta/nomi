@@ -423,3 +423,63 @@ needs explicit trim and strict codec closure. Existing Text repetition,
 compatibility Bool behavior and unsupported scalar operations must remain
 honestly classified during migration. Document/packet checks verify these edits;
 they do not supply the missing runtime, browser, benchmark or human evidence.
+
+## Report Planning And Gap Review, 2026-10-09
+
+This continuation starts at `52deae4` and fulfills the request to deepen and
+commit plans and gaps. The calculation delivery at `9d2f87d` is historical
+bounded evidence; no new runtime or browser execution is attributed to this
+pass. Existing uncommitted continuation changes remain outside its commit.
+The packet stays `designing`.
+
+The [report decision](../design/decisions.md#first-report-boundary-october-9-planning-decision)
+and [semantic owner](../design/semantics.md#first-report-boundary-contract)
+select the closed data rules. The [library proposal and admission gaps](../design/synthesis.md#report-library-experiment)
+separate the lab's structural records from target nominal data and Result.
+The active [overall target](../design/targets/overall.nomi) now calls the explicit
+finite `trim_text` library operation instead of leaving host-like `.trim()`
+ambiguous. The proposed `std.text` export is target-only.
+
+### Evidence That Changed The Design
+
+Reading the actual `prototype/runtime/decode.py` confirms that it contains
+passive error records, not decoding. Its path renderer also lacks the proposed
+`$` root and escaping, so reuse needs an adapter rather than relabeling existing
+output. The provider inventory describes current callback-first collection
+calls and supplied effect facts. Core value records alone do not establish
+target immutable nominal ownership, distinct Unit/Option, or a checked library.
+
+Reviewing the proposed report records exposes missing outer outcome and input
+identity rules: the same `$` can refer to batch or options input. Parse-first
+failure and bounded accumulated decode errors also need different completeness
+explanations. Node/byte limits need accounting for supplied trees, shared
+children, repeated calls and escaped output; row count cannot bound a run.
+These findings add concrete admission gaps, not invented executed failures.
+
+### Workflow Friction
+
+The active queue still requested calculation implementation after its delivery,
+and historical “next” instructions disagreed with the report handoff. A working
+compatibility report could also have been mistaken for target completion because
+the missing data/Result/callback/module steps were listed without delivery order.
+
+### Durable Improvement
+
+The existing roadmap now owns explicit report-to-target dependency gates; the
+frontier plan has a current resume point and commit boundaries. Synthesis owns
+the remaining decisions and literal prepared oracles, including exact report
+JSON. The registry and numeric research route point to the same state. Manual
+schema/outcome adapters have replacement triggers before they grow into a
+parallel type system. No new planning document, agent rule or automation was
+needed. The checkpoint records actual documentation validation separately.
+
+### Next Pass
+
+Close failure classification/completeness, path rendering, parser/encoder
+lexical details and local budget accounting; materialize independent records
+before implementing the closed libraries. Then settle two-input/outer-outcome
+identity, adapt ordinary providers and deliver the source report. Target data,
+Result, checked callbacks and local modules follow the roadmap gates; prepare
+the scalar reuse producer/consumer comparison independently where possible.
+Continuation compatibility still needs separate review and tests. Measured
+capacity, full-suite health, human trials and hosted distribution remain open.

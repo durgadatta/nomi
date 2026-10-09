@@ -101,9 +101,10 @@ concatenation and ordering do not normalize or use locale-specific collation.
 Length and text indexing/slicing units are code points, not grapheme clusters,
 UTF-8 bytes or UTF-16 code units; admitting a particular indexing/slicing API
 still requires its bounds contract. Normalization, case conversion and trimming
-are explicit library operations. The finite whitespace set and version for the
-report's proposed `.trim()` remain pending: Python `strip` and JavaScript `trim`
-do not agree on all characters, so neither host default establishes the rule.
+are explicit library operations. The first report selects the finite ASCII
+operation below; broader Unicode trimming remains open. Python `strip` and
+JavaScript `trim` do not agree on all characters, so neither host default
+establishes the rule.
 
 Source spans retain half-open UTF-8 byte offsets. Terminal code-point columns
 and editor UTF-16 columns are derived views with named coordinate units and the
@@ -136,8 +137,9 @@ External format encoding and internal compiler/runtime transport have separate
 owners. An external JSON Int field must round-trip exactly or refuse explicitly;
 ordinary host JSON parsing is insufficient when it rounds an accepted integer.
 Bool, numeric-looking Text and fractional input never silently decode as Int.
-Whether an integral decimal/exponent token can decode as Int remains part of the
-strict JSON contract, alongside duplicate keys, error paths and encoding shape.
+Integral decimal/exponent conversion remains part of the general numeric codec
+contract. The first report's bounded rule below accepts integer-form tokens
+only, alongside explicit duplicate-key/path/encoding rules.
 
 The planned internal transport uses a versioned, explicitly tagged canonical
 decimal representation for Int literals and recursive result values. Producers
@@ -432,6 +434,114 @@ objects, and network protocols can share the same type boundary.
 Encoding is also explicit. Protocol-specific encoders decide field names,
 versions, omission, and compatibility. Default display is never treated as a
 wire format.
+
+### First-Report Boundary Contract
+
+The selected first report is a closed JSON batch, not a general schema system.
+These rules guide the next library experiment; they do not establish a working
+target decoder, nominal values, `Result`, checked imports or derived codecs.
+The target remains [the overall program](targets/overall.nomi). Its compatibility
+bridge is specified in [synthesis](synthesis.md#report-library-experiment).
+
+Parse before decode, decode the complete admitted batch before filtering, and
+normalize only valid rows. JSON objects must reject duplicate decoded keys,
+including escape-equivalent spellings such as `name` and `\u006eame`. Distinct
+Unicode scalar sequences remain distinct keys. A duplicate is a format error
+with its original structural path; it is not overwritten or confused with a
+repeated customer ID. The parser rejects invalid syntax and lone surrogates in
+text/keys, with no replacement or normalization.
+
+Every number preserves its original JSON token as Text in the parser's
+structural output. Parsing performs no Float conversion. Int decoding accepts
+only the grammar `-?(0|[1-9][0-9]*)`; `1.0` and `1e0` retain non-integer-token
+identity and fail an Int field even though their mathematical values are whole.
+Bool and numeric Text fail likewise. Accepted Int values are exact. A backend
+that cannot represent a value must return an explicit capacity refusal, never
+round it or turn that capacity into a new age constraint. Python exact Int and
+the current JS safe range remain different implementation capacities; complete
+portable exact-Int execution is still pending.
+
+For this report, trim removes only leading/trailing U+0009 through U+000D and
+U+0020. It retains interior characters and all other scalar values. In
+particular U+0085 and U+FEFF are retained and do not count as blank under this
+finite predicate. This deliberate initial operation is not a general Unicode
+whitespace claim. A later Unicode-aware policy needs another named, versioned
+library contract; changing a checking policy cannot silently change trimming.
+
+The initial schema is exactly:
+
+| Shape | Required fields and checks |
+| --- | --- |
+| Batch | A map containing only `customers`, a strict list of at most 128 rows. |
+| Row | A map containing only `id`, `name`, `age`; no absent-field defaults. |
+| `id`, `name` | Text whose finite trim is nonempty; decoding retains the original Text. |
+| `age` | Integer-form Number token decoded exactly as Int, then checked `>= 0`. |
+| Report options | A separate closed map containing only `minimum_age`, an integer-form Number decoded as Int `>= 0`; an absent field applies and records the declared default `13`. |
+
+Options and customer input are separate boundaries. Invalid options do not
+become customer-row errors, and the options default does not grant defaults to
+missing batch/row fields. Decode records whether `minimum_age` was supplied or
+defaulted; explicit `13` and omitted input have the same value but different
+default provenance. The compatibility entry takes explicit options JSON,
+`build_report(text, options_text="{}")`, parses and decodes it through the
+options descriptor before report construction. This is not the target typed
+`ReportOptions` constructor or an implicit global input binding.
+
+Container shape and cardinality are prerequisites for its child checks. A
+129-row list reports the batch-size error at `customers` and does not apply row
+schema checks or construct decoded rows. Parsing and structural validation of
+the supplied Value tree still precede schema decoding. Within an admitted list,
+rows are checked in index
+order; each row checks `id`, `name`, `age`, then unexpected fields in Unicode
+scalar-value key order. Root unexpected fields follow its known field's checks.
+Missing/wrong fields and validly typed constraint failures accumulate
+independently. A failed field type suppresses that field's predicate, not
+neighboring checks. No partially decoded row/batch escapes.
+
+Error paths are ordered Text/Int segments, for example
+`["customers", 0, "name"]`; these segments are authoritative. Display begins
+at `$`, renders indexes in brackets, and quotes/escapes non-identifier keys.
+Diagnostics refer to the original input revision; unavailable source spans
+remain unavailable. Syntax/duplicate-key/invalid-text, schema/constraint,
+unsupported numeric capacity and resource limits need distinct error rules.
+The compatibility error record has exactly `code`, `path`, `path_text`,
+`expected`, `message`: a stable rule code, authoritative segment list, escaped
+`$` rendering, expectation and repair explanation. Do not echo raw field values
+or entire input. Existing passive DecodeError fields may be adapted to this
+record; their presence does not establish a decoder or nominal error value.
+
+The first encoding experiment accepts only null, Bool, Int, Text, strict List
+and Text-keyed maps. It rejects Float, foreign/callable objects, cycles,
+non-Text keys, invalid Text and unsupported numeric capacity. Only plain
+structural records cross this compatibility boundary; foreign class instances
+and host objects cannot borrow map status. Encoding does not
+parse human display or infer a codec from runtime nominal tags. The report wire
+contains `received`, `eligible`, `skipped_ineligible`, `customers`; each customer
+has `id: {"value": Text}`, `name: Text`, `age: Int`. A flat ID needs an explicit
+different codec. Rows and repeated IDs retain original order. Every map is
+encoded in Unicode scalar-value key order, with minimal separators and literal
+UTF-8 scalar characters except required JSON escapes for control characters,
+quotation marks and backslashes. Do not use insertion order, host locale or
+JavaScript's default UTF-16 sort. Int encoding uses canonical decimal spelling.
+
+The experiment's provisional limits are 256 KiB input UTF-8 bytes, 32 nested
+map/list containers, 8,192 structural Value nodes, 64 retained errors and 64 KiB
+encoded UTF-8 bytes. Depth counts simultaneously nested map/list containers;
+the root container counts as one and primitive leaves add no depth. Each
+structural Value scalar/container counts once; map keys are not nodes and are
+bounded by the byte limit.
+Validate scalar Text before computing bytes. Supplied Value trees receive the
+same structural limits. These numbers are experimental configuration, not
+measured support, language meaning or a general execution-work bound. Measure
+limit/limit-plus-one cases on pinned hosts before advertising capacity.
+
+Keep the first 64 errors. Observing a 65th error stops accumulation and returns
+failure with `complete=false`; do not invent an omitted total count or a
+successful partial batch. Exactly 64 errors remain complete if validation
+finishes with no omissions. Other resource refusals distinguish incomplete
+validation explicitly. An encoding limit preserves the inspectable report.
+Source/evaluation work, UI display retention, worker Stop and host save remain
+separate runner contracts; byte/row bounds alone do not establish them.
 
 ## Resources And Scope
 
