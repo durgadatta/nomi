@@ -167,20 +167,23 @@ AST child values and errors, without compiling or executing source as Python.
 Suspension-free subtrees still use the existing interpreter. Admitted suspended
 paths are declared in the adapter handler table: yield/from, expression,
 assignment, return, binary operator, call, if/for/while, try and with. Other
-suspended shapes are intended to fail before generator-body effects, but the
-current validator misses definition-time expressions (defaults, decorators,
-class bases and lambda defaults). The adapter also has unresolved source
-`StopIteration` identity and thrown `GeneratorExit` subclass defects. The
-[preservation checkpoint](frontier_checkpoint_2026-10-08.md) records 24 failing
-protocol-review cases. This is an unfinished candidate, not a reliable support
-fence. Reduced desugaring guards remain active; raw `With` cannot bypass its
-reduction.
+suspended shapes fail before generator-body effects. Scope traversal includes
+definition-time defaults, decorators and class bases while excluding nested
+function bodies. The October 9 completion receipt in the
+[checkpoint](frontier_checkpoint_2026-10-08.md#continuation-completion-receipt-2026-10-09)
+closes the previously recorded 24 protocol-review failures. This remains a
+bounded compatibility adapter; reduced desugaring guards stay active and raw
+`With` cannot bypass its reduction.
 
-The adapter owns `send`, `throw`, `close` and child completion. A private close
-carrier travels through implementation frames and becomes `GeneratorExit` at
-the source suspension point; otherwise host `yield from` would close every
-adapter frame and lose a yielded cleanup continuation. Finalization restores
-the source environment. Independent tests compare operand order, `None`,
+The adapter owns `send`, `throw`, `close` and child completion. A private
+`SourceException` carrier preserves actual `StopIteration`/`GeneratorExit`
+objects through implementation frames. Source handlers and context protocols
+receive the original active error; only an unhandled StopIteration crossing the
+public generator boundary becomes RuntimeError. Native child RuntimeErrors
+are never guessed back into source errors. Delegation lookup failure and ignored
+close warnings have separate transport records. Nested context cleanup clears
+a suppressed error before the outer protocol runs. Finalization restores the
+source environment. Independent tests compare operand order, `None`,
 child failures, handlers, cleanup replacement/suppression, active exceptions,
 delegation, ignored close and attached Nomi blocks against native Python.
 
@@ -270,18 +273,20 @@ policy engine just to preserve one candidate's internal data structures.
 
 ### Hosted Continuation Maintenance Is A Separate Lane
 
-The committed adapter has 24 known protocol-review failures. Before relying on
-it for new product claims, compare the smallest source-exception carrier with
-explicit continuation frames and a narrower pre-effect support fence. Preserve
-the three existing counterexample families and the previously fixed operand/
-completion traces. Error provenance cannot be inferred from a RuntimeError's
-message or cause. Scope traversal must distinguish nested bodies from defaults,
-decorators, bases and other expressions evaluated in the enclosing scope.
+The carrier repair closes the existing protocol counterexamples and adds
+independent native/hosted source-transport cases. It retains the handler-table
+support fence. An explicit-frame rewrite remains an alternative if supported
+source shapes cannot be represented without more host-protocol leakage; no such
+rewrite was needed for these cases. Withdrawing previously supported handlers
+would avoid rather than repair their relied-upon behavior. Error provenance is
+never inferred from a RuntimeError's message or cause.
 
 Use the existing new regression files as the independent compatibility oracle;
-do not weaken them to approve the committed mechanism. If the carrier needs
-exception-specific special cases across multiple layers, prefer a bounded frame
-experiment or explicit refusal. Document any reduced support before effects.
+do not weaken them to approve the committed mechanism. Keep protocol transport
+in the continuation/public adapter; ordinary evaluator operators only preserve
+the original source error. New carrier-aware branches elsewhere or new supported
+suspension families trigger the frame-versus-fence comparison again. Document
+any reduced support before effects.
 The hosted choice does not settle target generators, typed resource completion
 or the architecture of a future scheduler.
 

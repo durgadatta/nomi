@@ -373,3 +373,43 @@ Validation for this planning checkpoint:
 - `git diff --check`: passes. No runtime, browser, benchmark, generated-asset,
   hosted or human-study check was run in this planning pass.
 
+## Continuation Completion Receipt: 2026-10-09
+
+The continuation changes left outside `5728c96` are now reviewed and verified
+as a separate compatibility completion. The private source-exception carrier
+preserves StopIteration/GeneratorExit identity and active exception context,
+delegation lookup failures retain suspension, and multi-context cleanup clears
+suppressed errors before outer cleanup. Definition-time suspension is rejected
+before generator-body effects. Existing regression expectations are unchanged.
+The source-transport test file supplies native/hosted counterexamples across all
+three interpreter modes.
+
+The carrier plus explicit support fence is sufficient for this bounded repair;
+an explicit-frame rewrite is not selected without another reproduced limitation.
+This does not accept target generators, async cleanup or D2's typed completion
+model. Inspection and replacement boundaries are documented in
+[implementation layers](implementation_layers.md#hosted-generator-continuations).
+
+Executed on Python **3.14.0rc3**, with Node **25.9.0** available:
+
+- Focused protocol review, completion ownership and source transport:
+  **258 passed**; all 24 previously failing protocol cases now pass.
+- Full suite, `python3 -m pytest -n 4 -q --tb=short`: **3,392 passed,
+  83 skipped**, four existing Jupyter path warnings, 74.40 seconds.
+- `python3 scripts/check_web_runtime.py`: **1,287 passed, one skipped**;
+  manifest **127 runtime files / 12 samples** and all **eight** WASM outputs
+  fresh. No generated artifact changed.
+- `python3 scripts/check_web_browser.py --legacy-pyodide`: default Chromium
+  journeys and opt-in legacy Pyodide quick tour/pipeline/call boundaries pass.
+  The test HTTP server also logged a BrokenPipeError; the browser gate completed
+  successfully. Ignored artifacts remain under `reports/web-browser/`.
+- Ruff passes for the continuation, context, function, public adapter and new
+  tests. `expressions.py` retains **13 pre-existing E741** naming findings,
+  confirmed against HEAD; it passes with that existing rule excluded.
+  Whitespace checks pass. No existing test or snapshot was changed.
+
+These checks complete the pending compatibility repair and refresh local
+prototype health. They are not report implementation, hosted deployment,
+minimum-version execution or user-study evidence. The next work is the requested
+report planning closure and synthesis checkpoint.
+

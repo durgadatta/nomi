@@ -7,17 +7,70 @@ adapter. This is a backend mechanism, not Nomi's target completion contract.
 """
 
 import ast
+import sys
 from contextlib import ExitStack
 
 from .context_managers import context_methods
 from .signals import BreakException, ContinueException, ControlException, ReturnException
 
 
-class InjectedGeneratorExit(BaseException):
-    """Carry close through adapter frames without closing each host frame."""
+class SourceException(BaseException):
+    """Transport an actual source error through private host generator frames."""
 
     def __init__(self, error):
         self.error = error
+
+    def restore_context(self, context=None):
+        restore_source_context(self.error, self.__context__ if context is None else context)
+        return self.error
+
+
+class ProtocolFailure:
+    """Expose a delegation lookup failure without resuming the source yield."""
+
+    def __init__(self, error):
+        self.error = error
+
+
+class ProtocolWarning:
+    """Report an ignored delegation close lookup failure in the public adapter."""
+
+    def __init__(self, error, iterator):
+        self.error = error
+        self.iterator = iterator
+
+
+def restore_source_context(error, context):
+    while isinstance(context, (SourceException, ControlException)):
+        context = context.error if isinstance(context, SourceException) else context.__context__
+    if context is not None and context is not error:
+        error.__context__ = context
+
+
+def source_operation(operation, /, *args, **kwargs):
+    """Keep host generator protocol exceptions from escaping a source operation."""
+    try:
+        return operation(*args, **kwargs)
+    except (StopIteration, GeneratorExit) as error:
+        raise SourceException(error) from None
+
+
+def enclosing_scope_children(node):
+    """Visit definition-time expressions without visiting nested function bodies."""
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+        return iter([
+            *getattr(node, "decorator_list", []), *node.args.defaults,
+            *(item for item in node.args.kw_defaults if item is not None),
+        ])
+    if isinstance(node, ast.ClassDef):
+        return iter([*node.decorator_list, *node.bases, *node.keywords, *node.body])
+    return ast.iter_child_nodes(node)
+
+
+def contains_scope_yield(node):
+    if isinstance(node, (ast.Yield, ast.YieldFrom)):
+        return True
+    return any(contains_scope_yield(child) for child in enclosing_scope_children(node))
 
 
 class Continuation:
@@ -31,7 +84,6 @@ class Continuation:
         ast.Try: "_try", ast.With: "_with",
     }
     _CONTAINERS = (ast.keyword, ast.Starred, ast.ExceptHandler, ast.withitem)
-    _SCOPES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)
 
     def __init__(self, interpreter, owner):
         self.interpreter = interpreter
@@ -41,19 +93,25 @@ class Continuation:
     def run(self):
         for statement in self.owner.body:
             self._validate(statement)
+        source_error = None
         try:
             for index, statement in enumerate(self.owner.body):
                 self.owner.index = index
                 yield from self.evaluate(statement)
         except ReturnException as transfer:
             return transfer.value
+        except SourceException as transfer:
+            source_error = transfer.restore_context()
         finally:
             self.owner.index = len(self.owner.body)
+        if source_error is not None:
+            # Only this public generator boundary applies host StopIteration rules.
+            raise source_error
 
     def _validate(self, node):
-        if not isinstance(node, ast.AST) or isinstance(node, self._SCOPES):
+        if not isinstance(node, ast.AST):
             return False
-        children = [self._validate(child) for child in ast.iter_child_nodes(node)]
+        children = [self._validate(child) for child in enclosing_scope_children(node)]
         active = isinstance(node, (ast.Yield, ast.YieldFrom)) or any(children)
         if not active:
             return False
@@ -79,7 +137,7 @@ class Continuation:
 
     def evaluate(self, node):
         if node not in self.active:
-            return self.interpreter.eval(node)
+            return source_operation(self.interpreter.eval, node)
         try:
             return (yield from getattr(self, self._HANDLERS[type(node)])(node))
         except self.interpreter.pass_through_exceptions:
@@ -96,43 +154,73 @@ class Continuation:
 
     def _yield(self, node):
         value = yield from self.evaluate(node.value)
+        active_error = sys.exception()
         try:
             return (yield value)
-        except InjectedGeneratorExit as signal:
-            error = signal.error
-        # Leave the carrier's except block before raising the source exception.
-        raise error
+        except SourceException as transfer:
+            transfer.restore_context(active_error)
+            raise
+        except BaseException as error:
+            if not isinstance(error, ControlException):
+                restore_source_context(error, active_error)
+            raise
+
+    def _receive(self, value):
+        try:
+            return (yield value), None
+        except SourceException as transfer:
+            return None, transfer.restore_context()
+        except BaseException as error:
+            return None, error
 
     def _yield_from(self, node):
-        iterator = iter((yield from self.evaluate(node.value)))
+        iterator = source_operation(iter, (yield from self.evaluate(node.value)))
         try:
             value = next(iterator)
         except StopIteration as stopped:
             return stopped.value
         while True:
-            closing = None
-            try:
-                sent = yield value
-            except InjectedGeneratorExit as signal:
-                closing = signal.error
-            except BaseException as error:
-                throw = getattr(iterator, "throw", None)
-                if throw is None:
-                    raise
-                try:
-                    value = throw(error)
-                except StopIteration as stopped:
-                    return stopped.value
-            else:
-                try:
-                    value = next(iterator) if sent is None else iterator.send(sent)
-                except StopIteration as stopped:
-                    return stopped.value
-            if closing is not None:
-                close = getattr(iterator, "close", None)
-                if close is not None:
-                    close()
-                raise closing
+            sent, injected = yield from self._receive(value)
+            while True:
+                if injected is not None:
+                    if isinstance(injected, GeneratorExit):
+                        lookup_error = None
+                        try:
+                            close = getattr(iterator, "close", None)
+                        except BaseException as error:
+                            lookup_error = error
+                        if lookup_error is not None:
+                            yield ProtocolWarning(lookup_error, iterator)
+                            close = None
+                        if close is not None:
+                            source_operation(close)
+                        raise SourceException(injected) from None
+                    lookup_error = None
+                    try:
+                        throw = getattr(iterator, "throw", None)
+                    except BaseException as error:
+                        lookup_error = error
+                    if lookup_error is not None:
+                        sent, injected = yield from self._receive(ProtocolFailure(lookup_error))
+                        continue
+                    if throw is None:
+                        if isinstance(injected, StopIteration):
+                            raise SourceException(injected) from None
+                        raise injected
+                    try:
+                        value = throw(injected)
+                    except StopIteration as stopped:
+                        return stopped.value
+                    except GeneratorExit as error:
+                        raise SourceException(error) from None
+                else:
+                    try:
+                        value = next(iterator) if sent is None else iterator.send(sent)
+                    except StopIteration as stopped:
+                        return stopped.value
+                    except GeneratorExit as error:
+                        raise SourceException(error) from None
+                break
 
     def _expr(self, node):
         return (yield from self.evaluate(node.value))
@@ -140,7 +228,7 @@ class Continuation:
     def _assign(self, node):
         value = yield from self.evaluate(node.value)
         for target in node.targets:
-            self.interpreter.assign_target(target, value)
+            source_operation(self.interpreter.assign_target, target, value)
 
     def _return(self, node):
         value = yield from self.evaluate(node.value)
@@ -149,7 +237,7 @@ class Continuation:
     def _binary(self, node):
         left = yield from self.evaluate(node.left)
         right = yield from self.evaluate(node.right)
-        return self.interpreter.apply_operator(left, node.op, right, node)
+        return source_operation(self.interpreter.apply_operator, left, node.op, right, node)
 
     def _call(self, node):
         interpreter = self.interpreter
@@ -158,23 +246,24 @@ class Continuation:
         for argument in node.args:
             value_node = argument.value if isinstance(argument, ast.Starred) else argument
             value = yield from self.evaluate(value_node)
-            interpreter._append_positional_value(arguments, argument, value)
+            source_operation(interpreter._append_positional_value, arguments, argument, value)
         for keyword in node.keywords:
             if keyword.value in self.active:
                 value = yield from self.evaluate(keyword.value)
             else:
-                value = interpreter._keyword_value(keyword)
-            interpreter._merge_keyword_value(keywords, keyword, value, call_node=node)
-        return function(*arguments, **keywords)
+                value = source_operation(interpreter._keyword_value, keyword)
+            source_operation(interpreter._merge_keyword_value, keywords, keyword, value,
+                             call_node=node)
+        return source_operation(function, *arguments, **keywords)
 
     def _if(self, node):
         condition = yield from self.evaluate(node.test)
-        yield from self.block(node.body if condition else node.orelse)
+        yield from self.block(node.body if source_operation(bool, condition) else node.orelse)
 
     def _for(self, node):
         iterable = yield from self.evaluate(node.iter)
-        for value in iterable:
-            self.interpreter.assign_target(node.target, value)
+        for value in source_operation(iter, iterable):
+            source_operation(self.interpreter.assign_target, node.target, value)
             try:
                 yield from self.block(node.body)
             except ContinueException:
@@ -185,7 +274,7 @@ class Continuation:
             yield from self.block(node.orelse)
 
     def _while(self, node):
-        while (yield from self.evaluate(node.test)):
+        while source_operation(bool, (yield from self.evaluate(node.test))):
             try:
                 yield from self.block(node.body)
             except ContinueException:
@@ -203,54 +292,86 @@ class Continuation:
 
     def _try(self, node):
         pending_transfer = None
+        body_error = None
+        completion_error = None
         try:
             try:
                 pending_transfer = yield from self._transfer_block(node.body)
-            except BaseException as error:
-                for handler in node.handlers:
-                    kind = yield from self.evaluate(handler.type)
-                    if handler.type is None or self.interpreter._matches_exception(error, kind):
-                        if handler.name:
-                            self.interpreter.current_env.set(handler.name, error)
-                        pending_transfer = yield from self._transfer_block(handler.body)
-                        break
-                else:
-                    raise
-            else:
-                if pending_transfer is None:
-                    pending_transfer = yield from self._transfer_block(node.orelse)
-        finally:
-            yield from self.block(node.finalbody)
+            except BaseException as transfer:
+                body_error = transfer.restore_context() if isinstance(transfer, SourceException) else transfer
+            if body_error is not None:
+                try:
+                    raise body_error
+                except BaseException as error:
+                    for handler in node.handlers:
+                        kind = yield from self.evaluate(handler.type)
+                        if handler.type is None or self.interpreter._matches_exception(error, kind):
+                            if handler.name:
+                                source_operation(self.interpreter.current_env.set,
+                                                 handler.name, error)
+                            pending_transfer = yield from self._transfer_block(handler.body)
+                            break
+                    else:
+                        raise
+            elif pending_transfer is None:
+                pending_transfer = yield from self._transfer_block(node.orelse)
+        except BaseException as transfer:
+            completion_error = transfer.restore_context() if isinstance(transfer, SourceException) else transfer
+        try:
+            try:
+                if completion_error is not None:
+                    raise completion_error
+            finally:
+                yield from self.block(node.finalbody)
+        except (StopIteration, GeneratorExit) as error:
+            raise SourceException(error) from None
         if pending_transfer is not None:
             raise pending_transfer
 
     def _with(self, node):
+        yield from self._with_scope(node.items, node.body)
+
+    def _with_scope(self, items, body):
+        if not items:
+            yield from self.block(body)
+            return
         state = {"stack": ExitStack(), "suppressed_cleanup": False}
         pending_transfer = None
+        completion_error = None
         try:
-            for item in node.items:
-                context = yield from self.evaluate(item.context_expr)
-                enter, exit_method = context_methods(context)
-                value = enter()
+            item = items[0]
+            context = yield from self.evaluate(item.context_expr)
+            enter, exit_method = source_operation(context_methods, context)
+            value = source_operation(enter)
 
-                def release(*info, method=exit_method):
-                    result = method(*info)
-                    if info[1] is None:
-                        return False
-                    suppressed = bool(result)
-                    if suppressed:
-                        state["suppressed_cleanup"] = True
-                    return suppressed
+            def release(*info):
+                result = exit_method(*info)
+                if info[1] is None:
+                    return False
+                suppressed = bool(result)
+                if suppressed:
+                    state["suppressed_cleanup"] = True
+                return suppressed
 
-                state["stack"].push(release)
-                if item.optional_vars:
-                    self.interpreter.assign_target(item.optional_vars, value)
-            yield from self.block(node.body)
+            state["stack"].push(release)
+            if item.optional_vars:
+                source_operation(self.interpreter.assign_target, item.optional_vars, value)
+            yield from self._with_scope(items[1:], body)
         except ControlException as transfer:
             pending_transfer = transfer
-        except BaseException as error:
-            if not state["stack"].__exit__(type(error), error, error.__traceback__):
-                raise
+        except BaseException as transfer:
+            completion_error = transfer.restore_context() if isinstance(transfer, SourceException) else transfer
+        if completion_error is not None:
+            # Restore the actual active source error for host context protocols.
+            try:
+                raise completion_error
+            except BaseException as error:
+                if not source_operation(state["stack"].__exit__,
+                                        type(error), error, error.__traceback__):
+                    if isinstance(error, (StopIteration, GeneratorExit)):
+                        raise SourceException(error) from None
+                    raise
             return
-        if not self.interpreter._close_without_error(state) and pending_transfer is not None:
+        suppressed = source_operation(self.interpreter._close_without_error, state)
+        if not suppressed and pending_transfer is not None:
             raise pending_transfer

@@ -95,7 +95,7 @@ class ExpressionMixin:
                 raise TypeError(f"Unsupported operator {type(op).__name__}")
         except Exception as e:
             # Don't wrap common Python exceptions
-            if isinstance(e, (ZeroDivisionError, TypeError, ValueError, AttributeError)):
+            if isinstance(e, (StopIteration, ZeroDivisionError, TypeError, ValueError, AttributeError)):
                 # Re-raise built-in exceptions as-is so they can be caught by try/except
                 raise
             else:
@@ -110,6 +110,8 @@ class ExpressionMixin:
             raise NotImplementedError(f"Unary operator {type(node.op).__name__} not supported at line {self.get_lineno(node)}")
         try:
             return func(operand)
+        except StopIteration:
+            raise
         except Exception as e:
             raise TypeError(f"Unsupported operand type for {type(node.op).__name__}: '{type(operand).__name__}' at line {self.get_lineno(node)}") from e
 

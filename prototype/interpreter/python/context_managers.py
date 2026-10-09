@@ -1,5 +1,6 @@
 import ast
 import sys
+from copy import copy
 from contextlib import ExitStack
 
 from .signals import ControlException, YieldException, YieldFromException
@@ -29,11 +30,17 @@ def context_methods(context_obj):
 class ContextManagerMixin:
     def eval_With(self, node: ast.With, *, state=None, generator_state=None) -> None:
         if state is None:
+            items, body = node.items, node.body
+            if len(items) > 1:
+                nested = copy(node)
+                nested.items = items[1:]
+                items, body = items[:1], [nested]
             stack = ExitStack()
-            state = {'stack': stack, 'body_index': 0, 'node': node, 'suppressed_cleanup': False}
+            state = {'stack': stack, 'body_index': 0, 'node': node,
+                     'body': body, 'suppressed_cleanup': False}
             pending_transfer = None
             try:
-                for item in node.items:
+                for item in items:
                     enter, exit_method = context_methods(self.eval(item.context_expr))
                     value = enter()
 
@@ -61,7 +68,7 @@ class ContextManagerMixin:
                     raise pending_transfer
                 return
 
-        self._execute_with_body(node.body, state=state, generator_state=generator_state)
+        self._execute_with_body(state.get('body', node.body), state=state, generator_state=generator_state)
 
     def _execute_with_body(self, body, *, state, generator_state=None):
         stack = state['stack']

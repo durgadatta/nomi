@@ -6,6 +6,7 @@ from typing import List, Any
 from ..constants import BLOCK_KWARG
 from .signals import ReturnException
 from .function_call import FunctionCallMixin
+from .continuation import contains_scope_yield
 
 class FunctionMixin(FunctionCallMixin):
     FUNCTION_METADATA_ATTRS = ('__name__', 'ast_node', 'func_env')
@@ -48,27 +49,9 @@ class FunctionMixin(FunctionCallMixin):
         if cached is not None:
             return cached
 
-        class _YieldFinder(ast.NodeVisitor):
-            def __init__(self):
-                self.found = False
-
-            def visit_Yield(self, node):
-                self.found = True
-
-            def visit_YieldFrom(self, node):
-                self.found = True
-
-            def visit_FunctionDef(self, node):
-                pass  # do not descend into nested functions
-
-            def visit_ClassDef(self, node):
-                pass  # do not descend into nested classes
-
-        finder = _YieldFinder()
-        for stmt in node.body:
-            finder.visit(stmt)
-        node._nomi_is_generator = finder.found
-        return finder.found
+        found = any(contains_scope_yield(statement) for statement in node.body)
+        node._nomi_is_generator = found
+        return found
     
 
     def eval_generator_obj(self, body, local_env, block=None):
