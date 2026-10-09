@@ -220,21 +220,39 @@ way to read an already-covered idea.
 
 ## First Usable Language
 
-The first serious target includes:
+The first product is **small scripts and trustworthy local data reports**.
+A person should open the playground, change a calculation, validate imperfect
+JSON, repair its errors, and reuse the same report function from the CLI.
+That is the first release boundary; the broader general-purpose promise above
+remains the destination. The [product synthesis](synthesis.md#first-product-contract)
+owns selection and the [roadmap](../orientation/project_roadmap.md#delivery-order-and-dependencies)
+owns delivery. Neither is a claim that target programs run today.
 
-- literals, bindings, functions, calls, modules, and a small prelude;
-- local type inference and checked, inspectable public signatures;
-- immutable product and variant data;
-- exhaustive patterns and `match`;
-- lists, maps, loops, and one pipeline vocabulary;
-- `Option`, `Result`, postfix propagation, and deterministic cleanup;
-- explicit decode/encode boundaries with accumulated errors;
-- console, files, JSON, text, time, process, and HTTP through
-  capability-checked APIs;
-- examples, structured diagnostics, formatting, REPL, package tooling, and LSP;
-- structured asynchronous tasks.
+The selected release scope is:
 
-The first target does not require:
+- lexical bindings, visible local mutation, ordinary functions and calls;
+- Int, Bool, Text, Unit, strict lists and the structural values needed for JSON;
+- nominal immutable products/closed variants, constraints, `if`, `match`, loops;
+- `Option`, `Result`, explicit error mapping and postfix propagation;
+- strict decode/encode, original input paths and a small pure collection library;
+- local module reuse with inspectable closed public contracts, inferred where
+  supported and declared where needed;
+- explicit host input/output, source-linked diagnostics, formatting and a
+  small set of complete examples shared by the browser and CLI.
+
+This scope still needs bounded scalar, codec, callable and host-run contracts
+before implementation can claim conformance. It does not require a complete
+generic inference system or every accepted convenience on day one. An omitted
+feature is unsupported in the release profile, never silently given a different
+meaning. Exploration remains available; stronger checking does not alter it.
+
+Network clients, structured tasks, fallible language-managed resources, broad
+package distribution, notebooks/LSP polish and additional numeric/domain APIs
+follow after this release is useful. Existing working surfaces can remain as
+clearly described prototype capabilities; they do not enlarge release promises.
+Their focused fixtures continue to challenge extension boundaries.
+
+The broader target also does not require:
 
 - user-defined syntax or global macros;
 - dependent types or theorem proving;
@@ -248,6 +266,11 @@ Those ideas remain possible only if the ordinary language proves a clean
 extension boundary.
 
 ## Success Tests
+
+For the first release, require the calculation, invalid-input repair and local
+reuse journeys in [synthesis](synthesis.md#first-product-contract). The following
+tests describe success as the language grows; they are not all prerequisites
+for the first useful playground release.
 
 The design succeeds when all of these are true:
 

@@ -1,49 +1,43 @@
-# Status: aspirational whole-program fixture, not runnable or typechecked.
+# Status: aspirational first-product fixture, not runnable or typechecked.
 # Packet: docs/research/features/README.md; docs/design/synthesis.md;
 # docs/review/2026-09-29-language-synthesis.md
 # Category map: docs/design/targets/README.md
-# Resource continuation: docs/design/resource_lifetime.md (still designing).
-# Domain continuation: docs/design/targets/research/domain_layers.nomi;
-# docs/research/domain_composition.md (candidate APIs, not executable).
 #
-# Story: read a small JSON batch, validate every input before network access,
-# skip valid but ineligible customers, enrich eligible customers concurrently,
-# and publish a report. Any decode or enrichment Err aborts publication.
+# Story: paste a small JSON batch, validate it, select eligible rows, inspect
+# a report, repair bad input, and reuse the same pure function from the CLI.
+# Input/output transport belongs to an explicit host adapter. This module
+# neither opens files nor starts network requests or background tasks.
+# Resource and concurrent-job pressure remains in resources.nomi,
+# concurrency.nomi and ../resource_lifetime_target.nomi.
 #
 # Proposed library contracts, not current exports:
-# files.open_reader -> Result[ReaderResource, IoError], infallible release;
-# reader.read_all -> Result[Text, IoError]; json.parse -> Result[Value, JsonError];
+# json.parse -> Result[Value, JsonError], without numeric rounding;
+# BatchInput.decode -> Result[BatchInput, DecodeErrors], strict fields and
+# accumulated independent errors with original input paths;
 # json.encode(derived-codec data) -> Result[Text, EncodeError];
-# http.post_text(url, body, bearer) -> cold Task[Result[Text, HttpError]];
-# TaskGroup.start -> scoped typed task handle; CancelSiblings applies to panic,
-# not ordinary returned Err. Group abnormal/cleanup envelopes remain open.
-# files.write_text_atomic -> Result[Unit, IoError]; crash durability is open.
-# Collection callbacks below are pure. No constructor-as-function assumption.
+# map/filter and Result.map_error use synchronous non-retaining pure callbacks.
+# These closed uses need checked library contracts, not user generic syntax.
+#
+# Preserve input order and duplicate IDs: each row is an observation, not an
+# update to a unique customer registry. No deduplication or merging is implied.
+# The 128-row limit is a domain rule, not a byte/depth/work/output budget.
+# Runner limits and scalar/text/codec rules must close before sample promotion.
 
-from std.collections import filter, map, sort_by
+from std.collections import filter, map
 from std.data import DecodeErrors, Value
-from std.files import FileRead, FileWrite, IoError, Path, files
-from std.http import HttpError, Network, Url, http
 from std.json import EncodeError, JsonError, json
-from std.secret import Secret
-from std.task import TaskFailurePolicy, TaskGroup
 
 
 # Inferred checked interface pressure: () -> Int, no world effects.
-# This target example does not claim the prototype exports checked interfaces.
+# Consumers must not execute this function or inspect private code to use its
+# verified public contract. The current prototype does not export that proof.
 pub func maximum_batch_size():
     return 128
-
-# Separate-compilation discriminator: consumers see () -> Int and no world
-# effects without evaluating this function or reading its private body.
-# A private comment edit preserves contract compatibility but refreshes source
-# verification; returning Text or using a changed dependency invalidates the
-# corresponding result/effect promise. These are planned interface judgments.
 
 # Negative checked-boundary pressure (exploration may retain the unknown):
 # pub func external_score(value): return unknown_dependency(value)
 # A selected closed/pure policy must explain the unresolved dependency;
-# neither an omitted annotation nor a caller's concrete argument proves it pure.
+# a caller's concrete argument cannot establish a public contract or purity.
 
 
 pub data CustomerId:
@@ -54,8 +48,8 @@ pub data Customer:
     name: Text where name.trim() != ""
     age: Int where age >= 0
 
-# Input normalization preserves these same nonempty predicates. If a future
-# transform can invalidate a field, it needs a fallible validation step.
+# Trimming preserves these exact nonempty predicates. A different transform
+# needs another validation step if it can invalidate a predicate.
 data CustomerInput:
     id: Text where id.trim() != ""
     name: Text where name.trim() != ""
@@ -65,43 +59,20 @@ data BatchInput:
     customers: List[CustomerInput]
     where customers.length <= maximum_batch_size() note "a batch contains at most 128 customers"
 
-pub data ImportConfig:
-    input: Path
-    output: Path
-    profile_service: Url
-    api_key: Secret[Text]
+pub data ReportOptions:
     minimum_age: Int where minimum_age >= 0 = 13
-    concurrency: Int where 1 <= concurrency and concurrency <= 16 = 4
-
-data ProfileRequest:
-    customer_id: Text
-
-data ProfileInput:
-    customer_id: Text
-    score: Int where 0 <= score and score <= 100
-
-pub data EnrichedCustomer:
-    customer: Customer
-    score: Int where 0 <= score and score <= 100
 
 pub data ImportReport:
     received: Int where received >= 0
     eligible: Int where eligible >= 0
     skipped_ineligible: Int where skipped_ineligible >= 0
-    customers: List[EnrichedCustomer]
+    customers: List[Customer]
     where eligible + skipped_ineligible == received and customers.length == eligible
 
 pub data ImportError:
-    InputFile(path: Path, cause: IoError)
     InputFormat(cause: JsonError)
     Rows(errors: DecodeErrors)
-    RequestEncoding(customer_id: CustomerId, cause: EncodeError)
-    ProfileTransport(customer_id: CustomerId, cause: HttpError)
-    ProfileFormat(customer_id: CustomerId, cause: JsonError)
-    ProfileFields(customer_id: CustomerId, errors: DecodeErrors)
-    ProfileIdentity(expected: CustomerId, received: Text)
     ReportEncoding(cause: EncodeError)
-    OutputFile(path: Path, cause: IoError)
 
 
 func normalize(input: CustomerInput) -> Customer:
@@ -111,123 +82,58 @@ func normalize(input: CustomerInput) -> Customer:
         age=input.age,
     )
 
-func read_input(path: Path) -> Result[Text, ImportError] uses FileRead:
-    resource = files.open_reader(path)
-        .map_error((error) => ImportError.InputFile(path=path, cause=error))?
-    with resource as reader:
-        return reader.read_all()
-            .map_error((error) => ImportError.InputFile(path=path, cause=error))
-
-func decode_batch(text: Text) -> Result[List[Customer], ImportError]:
-    raw = json.parse(text)
+func decode_batch(text: Text) -> Result[BatchInput, ImportError]:
+    raw: Value = json.parse(text)
         .map_error((error) => ImportError.InputFormat(error))?
-    batch = BatchInput.decode(raw)
-        .map_error((errors) => ImportError.Rows(errors))?
-    return Ok(map(batch.customers, normalize))
+    return BatchInput.decode(raw)
+        .map_error((errors) => ImportError.Rows(errors))
 
-func eligible_customers(
-    customers: List[Customer],
-    minimum_age: Int,
-) -> List[Customer]:
-    return customers
-        |> filter((customer) => customer.age >= minimum_age)
-        |> sort_by((customer) => customer.id.value)
+pub func build_report(
+    text: Text,
+    options: ReportOptions,
+) -> Result[ImportReport, ImportError]:
+    batch = decode_batch(text)?
+    eligible = filter(batch.customers, (row) => row.age >= options.minimum_age)
+    customers = map(eligible, normalize)
+    return Ok(ImportReport(
+        received=batch.customers.length,
+        eligible=customers.length,
+        skipped_ineligible=batch.customers.length - customers.length,
+        customers=customers,
+    ))
 
-async func enrich(
-    customer: Customer,
-    config: ImportConfig,
-) -> Result[EnrichedCustomer, ImportError] uses Network:
-    body = json.encode(ProfileRequest(customer_id=customer.id.value))
-        .map_error((error) => ImportError.RequestEncoding(
-            customer_id=customer.id,
-            cause=error,
-        ))?
-    response = await http.post_text(
-        config.profile_service,
-        body,
-        bearer=config.api_key,
-    )
-    text = response.map_error((error) => ImportError.ProfileTransport(
-        customer_id=customer.id,
-        cause=error,
-    ))?
-    raw = json.parse(text).map_error((error) => ImportError.ProfileFormat(
-        customer_id=customer.id,
-        cause=error,
-    ))?
-    profile = ProfileInput.decode(raw).map_error((errors) => ImportError.ProfileFields(
-        customer_id=customer.id,
-        errors=errors,
-    ))?
-    if profile.customer_id != customer.id.value:
-        return Err(ImportError.ProfileIdentity(
-            expected=customer.id,
-            received=profile.customer_id,
-        ))
-    return Ok(EnrichedCustomer(customer=customer, score=profile.score))
-
-async func enrich_batch(
-    customers: List[Customer],
-    config: ImportConfig,
-) -> Result[List[EnrichedCustomer], ImportError] uses Network:
-    # At most 128 validated rows: bounded handles here, NOT a streaming API.
-    async with TaskGroup(
-        limit=config.concurrency,
-        failure=TaskFailurePolicy.CancelSiblings,
-    ) as tasks:
-        var pending = []
-        for customer in customers:
-            set pending = pending + [tasks.start(enrich(customer, config))]
-        var enriched: List[EnrichedCustomer] = []
-        for task in pending:
-            outcome = await task
-            item = outcome?
-            set enriched = enriched + [item]
-        return Ok(enriched)
-    # Any parent ? exit must cancel/join remaining children before observation.
-    # Child panic/cancellation is not representable as ImportError by omission.
-
-pub async func run(config: ImportConfig) -> Result[ImportReport, ImportError]
-uses FileRead, FileWrite, Network:
-    text = read_input(config.input)?
-    customers = decode_batch(text)?
-    eligible = eligible_customers(customers, config.minimum_age)
-    outcome = await enrich_batch(eligible, config)
-    enriched = outcome?
-    report = ImportReport(
-        received=customers.length,
-        eligible=eligible.length,
-        skipped_ineligible=customers.length - eligible.length,
-        customers=enriched,
-    )
-    encoded = json.encode(report)
-        .map_error((error) => ImportError.ReportEncoding(error))?
-    files.write_text_atomic(config.output, encoded)
-        .map_error((error) => ImportError.OutputFile(path=config.output, cause=error))?
-    return Ok(report)
+# The UI can inspect a successful report before any export. Export uses an
+# explicit encoder, not the human display of a data value. Filesystem/download
+# failures belong to the host adapter; they are not fabricated ImportErrors.
+pub func report_json(report: ImportReport) -> Result[Text, ImportError]:
+    return json.encode(report)
+        .map_error((error) => ImportError.ReportEncoding(error))
 
 
-example "valid but ineligible is not malformed":
-    customers = [
-        Customer(id=CustomerId(value="a"), name="Ada", age=36),
-        Customer(id=CustomerId(value="b"), name="Bea", age=9),
-    ]
-    chosen = eligible_customers(customers, 13)
-    check chosen.length == 1
-    check chosen == [Customer(id=CustomerId(value="a"), name="Ada", age=36)]
+example "valid rows retain order and distinguish policy from malformed input":
+    text = '{"customers":[{"id":" c-1 ","name":" Ada ","age":20},{"id":"c-2","name":"Bo","age":12}]}'
+    result = build_report(text, ReportOptions())
+    match result:
+        Ok(report):
+            check report.received == 2
+            check report.eligible == 1
+            check report.skipped_ineligible == 1
+            check report.customers[0].id.value == "c-1"
+            check report.customers[0].name == "Ada"
+        Err(_):
+            check false
 
-example "batch decoding retains row context":
-    raw = Value.Map({"customers": Value.List([
-        Value.Map({"id": Value.Text("a"), "name": Value.Text(""), "age": Value.Number(-1)}),
-    ])})
-    rejected = match BatchInput.decode(raw):
+example "malformed data cannot be hidden by eligibility filtering":
+    text = '{"customers":[{"id":"c-1","name":"","age":-1}]}'
+    rejected = match build_report(text, ReportOptions()):
         Ok(_) => false
         Err(_) => true
     check rejected
-    # Required transcript: $.customers[0].name AND $.customers[0].age.
-    # Run rejection -> zero profile requests, zero report writes.
+    # Required diagnostic: $.customers[0].name AND $.customers[0].age.
+    # No successful report or report export; never silently drop the bad row.
 
-# Review gates: duplicate input identity policy; request/response limits and
-# deadlines; typed generics/task handles; secret-safe encoding and diagnostics;
-# group/cleanup outcomes; actual filesystem publication guarantees; formatter.
-# This is a design pressure fixture, not a production-ready import service.
+# Additional independent vectors: empty input list; 128/129 rows; repeated IDs;
+# unknown/missing fields; bool/fraction/text where Int is expected; duplicate
+# JSON keys; huge integer; excessive bytes/depth; malformed UTF/text; stale run.
+# Exact numbers/text, decoder/encoder shape, source/type/effect checking and
+# host budgets are M1 admission work, not guarantees established by this file.

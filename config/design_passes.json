@@ -33,7 +33,7 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Planning prepared through the October 9 bounded-contract comparison in function_contracts.md. When implementation starts, compare a closed monomorphic export, two passive consumers, unknown dependencies and verification invalidation before generalizing the source checker.",
+        "The October 9 product synthesis makes closed local calculation/report reuse the first product boundary. When implementation starts, close only the scalar, codec, callable and host-run contracts that boundary needs; then compare a closed monomorphic export and independent consumers before generalizing the source checker.",
         "Compare exact positional call shape against compatible defaults/labels and invariant types against richer subtyping; source spelling remains open until call and shared-storage judgments agree.",
         "Type map/fold, derived decode and run_scope under pure-only and effect-polymorphic candidates, including mutable capture, retained regions and cold tasks.",
         "Use functions.md's polymorphic-sharing comparison to challenge D1/D3 generalization with delayed identity, shared mutable storage and independent factory calls; no value-restriction rule is selected.",
@@ -124,8 +124,8 @@
         "git diff --check"
       ],
       "next_actions": [
-        "The scalar/direct-call experiment is preserved at 6aec9f3 with separate known continuation failures. Follow synthesis.md's October 9 growth journeys and FRONTIER_PLAN.md's fresh-session sequence; current session is planning only.",
-        "When implementation begins, establish closed monomorphic interface evidence with an independent consumer, unknown-dependency refusal and source/contract/verification invalidation; preserve module-versus-export policy scope and the three product journeys.",
+        "The scalar/direct-call experiment is preserved at 6aec9f3 with separate known continuation failures. Follow synthesis.md's October 9 first-product contract and FRONTIER_PLAN.md's product-first fresh-session sequence; current session is planning only.",
+        "When implementation reaches local reuse, establish closed monomorphic interface evidence with an independent consumer, unknown-dependency refusal and source/contract/verification invalidation; first deliver the calculation and local report journeys, then preserve the larger import/resource/job pressures.",
         "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
         "Follow the research overview's gap-continuation routes for memory publication, predicate consistency, package-qualified nominal identity, adaptive evaluation, learned removal and correlated uncertainty; existing questions/experiments retain ownership and none is resolved by the documentation pass.",

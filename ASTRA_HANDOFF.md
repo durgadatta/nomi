@@ -2,8 +2,9 @@
 
 > **Current phase override, 2026-10-09:** the user requests detailed planning
 > now and implementation in a fresh session. Pending work is preserved at
-> **6aec9f3**, including 24 known generator protocol failures. Planning
-> preparation P1-P5 is complete with explicit unperformed experiments. The
+> **6aec9f3**, including 24 known generator protocol failures. The current
+> product-first selection is calculation, local JSON report/repair and local
+> reuse; broader contract comparisons remain later evidence work. The
 > implementation-first directions below are historical context and must not
 > restart coding in this session. Continue through
 > [FRONTIER_PLAN.md](FRONTIER_PLAN.md) and the

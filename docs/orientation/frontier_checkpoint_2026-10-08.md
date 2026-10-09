@@ -14,13 +14,13 @@ The 2026-10-09 user request explicitly authorizes committing all pending work,
 then continuing detailed planning until the remaining choices require executable
 experiments. Actual implementation belongs in a fresh session.
 
-Planning preparation P1-P5 is now complete: journeys, composed-contract
-comparisons, paired representation protocol, architecture/migration boundaries
-and adversarial self-review. This is not semantic acceptance or independent
-review. Continue through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
+Planning preparation P1-P5 is historical planning context, not semantic
+acceptance or independent review. The current product-first handoff narrows the
+first release to calculation, local JSON report/repair and local reuse. Continue
+through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
 [fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
 is the execution handoff. Do not automatically resume implementation here.
-Committing the experiments preserves them; it does not accept the architecture
+Committing the experiments preserves them; it does not accept their architecture
 or mark their milestones complete.
 
 Read the latest user instruction and actual Git state first. The preservation
@@ -46,7 +46,9 @@ planning revision are:
 
 The canonical direction has advanced beyond mandatory public annotations.
 General inference, public generic contracts, dynamic adapters and policy syntax
-remain unresolved. Explicit mutation remains the current target. Interpreter
+remain unresolved. The first product profile is deliberately narrower: local
+calculation/report/reuse closes only the scalar, codec, callable and host-run
+contracts it needs. Explicit mutation remains the current target. Interpreter
 modes are implementation/test choices, not user assurance tiers.
 
 The frontier plan now uses F0-F6 outcome labels so they cannot be confused with

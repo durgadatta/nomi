@@ -31,20 +31,23 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
-The active [frontier strategy](../../FRONTIER_PLAN.md) records the current
-user-requested **planning-only** phase, design comparisons and eventual delivery
-sequence. Its P0-P5 planning checkpoints and F0-F6 outcome labels do not rename
-this roadmap's milestones. It routes decisions and receipts back to the owners
+The active [product synthesis and handoff](../../FRONTIER_PLAN.md) records the
+current user-requested **planning-only** phase and eventual delivery sequence.
+It now uses this roadmap's M0-M5 milestones; earlier P/F labels are historical
+planning organization. It routes decisions and receipts back to the owners
 here. Earlier S0-S3 code is preserved as unfinished experimental work; the
 [current checkpoint](frontier_checkpoint_2026-10-08.md) records its known failures
 and historical checks. Do not resume implementation merely because an older
 handoff or receipt instructs a next code step.
 
-October 9 planning preparation is complete through P5, with self-review limits
-and unperformed experiments explicit. The frontier plan's fresh-session work
-order leads with monomorphic reusable contract evidence, plus bounded A11
-continuation reconciliation. D1/D2 co-design and early representation trials
-retain their existing owners; no roadmap milestone is completed by this plan.
+The latest October 9 direction starts from the end product. The first release
+selects calculation, local JSON report/repair and local function reuse. The
+[canonical product contract](../design/synthesis.md#first-product-contract)
+defines its coherent core and exclusions. Close only the contracts needed by
+that profile, then deliver complete browser/CLI journeys. Monomorphic interface
+evidence supports reuse; it is no longer the first user outcome by default.
+General D1/D2 work remains available for later resource/network workflows.
+No delivery milestone is completed by this planning revision.
 
 The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) prepares a fresh
 design/implementation session with the latest broader ecosystem and
@@ -652,9 +655,10 @@ new staffing assignments. All work is proposed unless the evidence says complete
 The target promise is clear, but the runnable prototype and aspirational suite
 still describe substantially different languages.
 
-- Define the first supported target profile using a beginner calculation,
-  boundary-heavy import and cleanup-heavy job. Give each an explicit supported
-  subset and list of unresolved APIs.
+- Use the selected first profile: beginner calculation, local JSON report and
+  local function reuse. Give each an explicit supported subset and unresolved
+  API list. Keep the cleanup-heavy job as an extension challenge, not a launch
+  prerequisite.
 - Use user outcomes: time to first result, ability to locate/repair an error,
   ability to explain mutation/failure/authority, and CLI/browser agreement.
 - Review target fixtures for unresolved call contracts before promoting them.
@@ -1301,44 +1305,39 @@ does not satisfy that later conformance gate.
 
 ## Delivery Order And Dependencies
 
-Two tracks can progress independently: dependable current behavior and design
-closure. Independent work does not require concurrent agents.
+Start with the selected product and close its minimum contracts. Dependable
+current behavior remains a maintenance lane; independent work does not require
+concurrent agents. A01-A33 is an inventory of owned opportunities, not a promise
+to complete every item for the first release.
 
 ```mermaid
 flowchart TD
-    B[Verified prototype baseline] --> H[Diagnostics, precision, capability and security repairs]
-    B --> F[D1 callback, generic and protocol comparison]
-    B --> P[Accepted Pattern Surface fragment migration]
-    B --> DSL[Dedicated DSL and string research]
-    F --> O[D2 failure, resource and task contracts]
-    F --> S[D3 scalar, codec and identity contract]
-    DSL --> S
-    F --> V[D4 one coherent vertical program]
-    O --> V
-    S --> V
-    P --> V
-    H --> I[Typed Surface and verified Core slice]
-    V --> I
-    I --> C[Differential CLI, browser and tooling evidence]
-    C --> U[One supported target sample]
-    U --> R[Installed and deployed artifact validation]
-    U --> X[Library and advanced domain experiments]
+    U[Calculate, validate a report, reuse a function] --> S[Select first profile and baseline]
+    S --> C[Close scalar, codec, closed-call and host-run contracts]
+    C --> I[Implement complete calculation and report paths]
+    I --> R[Local reuse and matching browser/CLI behavior]
+    R --> P[Curated examples, repair, recovery and usability]
+    P --> D[Verify installed and deployed artifacts]
+    D --> X[Choose next workflow from observed need]
+    X --> E[Resource, task and domain extensions when required]
+    S --> H[Bounded maintenance of relied-upon prototype paths]
 ```
 
 | Milestone | Deliverable | Exit gate |
 | --- | --- | --- |
-| M0 — Baseline and honesty | Current failure/precision reproducers, diagnostic/support evidence, token/context fixes, current doc corrections | No silent loss for the bounded repaired domain; failed source has a record; inspection does not confuse target disposition and execution. |
-| M1 — Close the blocking contracts | D1 callback decisions, D2 completion/task policies, D3 scalar/codec rules; DSL research supplies string/domain pressure | Three representative programs have real checked contracts or clearly bounded remaining gaps; no open API is silently accepted. |
-| M2 — Implement one accepted slice | Source/CST/Surface/type/Core/diagnostic fixtures and one runtime producer | Two frontend paths and declared backends agree; retired forms have an explicit migration/rejection route. |
-| M3 — Make the slice usable | CLI, formatter, editor/notebook/browser consumers and one sample | Real user-path evidence plus fresh generated assets and regressions; target fixture is promoted only within supported coverage. |
+| M0 — Baseline and honesty | Selected product profile, three journeys, support inventory and last working playground artifact | Expected values/errors, known failures, revision and rollback route are explicit; target source is not advertised as runnable. |
+| M1 — Close the blocking contracts | Selected D1 closed-call/module and D3 scalar/codec rules, plus host entry/run contract | Every operation in the selected programs has an owner and independent vectors; general resources/tasks/generics may remain open outside the profile. |
+| M2 — Implement one accepted slice | Complete calculation, then report/repair, then local reuse across required source/check/lower/run/diagnostic layers | A person can complete each task; declared frontend/backend paths agree; retired forms have explicit rejection/migration. |
+| M3 — Make the slice usable | Browser and CLI, formatter, three curated examples, input/result inspection, error repair, save and recovery | Actual user-path, keyboard, installed/browser evidence and fresh assets; unfamiliar-user trials record remaining confusion. |
 | M4 — Trust distribution | Declared hosted CI, installed-wheel profiles, tested Pages artifact, owner release metadata | Exact artifact/revision is traceable and reproducible under its declared inputs; rollback is documented. |
 | M5 — Expand carefully | Stdlib, local modules/builds, streams/tables/domain tools and later engines | Each addition passes its own program/contract/conformance gate; breadth does not bypass semantic closure. |
 
-The accepted pattern fragment, test harness, editor runner, Docker logging,
-documentation and current diagnostic repairs can advance during D1 design.
-Full typed match, codec derivation, scoped resources and semantic editor views
-must wait for the specific metadata they consume. Library/package/FFI work is
-sequenced by prerequisites rather than by an arbitrary promise to finish it all.
+The accepted pattern subset and existing diagnostic contracts are reusable
+foundations. Implement only the metadata each selected path consumes. General
+resource/task completion, richer generic interfaces, notebook/editor breadth
+and domain tools wait for a concrete next workflow. Preserve working playground
+artifacts throughout; examples may be adapted or retired deliberately. The
+[handoff](../../FRONTIER_PLAN.md) supplies the storyboard, bounded work orders,+verification and migration details.
 
 ## First Reviewable Work Queue
 

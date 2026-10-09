@@ -8,12 +8,14 @@ Packet: `docs/research/features/README.md`,
 
 ## Read The Language
 
-Start with [the overall import program](targets/overall.nomi), then the
-[category suite](targets/README.md). Read the [44 language reviews](../research/languages/README.md)
-for critical evidence and the [13 feature comparisons](../research/features/README.md)
-for mechanisms along one dimension. The scope is selected, not exhaustive.
-The reviews distinguish observed behavior from design judgment; no usability
-study or comparative benchmark was conducted.
+Start with the [first-product contract](#first-product-contract) and
+[local report program](targets/overall.nomi), then consult the relevant
+[category fixture](targets/README.md). The
+[language reviews](../research/languages/README.md) and
+[feature comparisons](../research/features/README.md) supply evidence when a
+concrete fork needs it. Reading or implementing the entire research inventory
+is not a release prerequisite. No usability study or comparative benchmark was
+conducted by this synthesis.
 
 This synthesis connects those views. Accepted source and behavior still belong
 to [syntax](syntax.md), [semantics](semantics.md), [industrial contracts](industrial.md),
@@ -25,6 +27,96 @@ The [cognitive/interface expansion](interaction_model.md) adds 18 non-standard
 interface threads and a second coherence fixture without admitting grammar.
 Use the [design-first agenda](redesign_agenda.md) for cross-cutting gaps and
 closure order; the sequence below continues to own import-workflow admission.
+
+## First Product Contract
+
+October 9 synthesis selects **small scripts and trustworthy local data reports**
+as the first useful product. The primary user is a person who can read simple
+code and wants a calculation or a small data transformation to work, explain
+mistakes, and become reusable. Local library authors are the next user, reached
+through the same journey. Services, research computing, notebooks and larger
+automation remain destinations, not simultaneous launch requirements.
+
+The product promise is: **start with a short script; turn imperfect input into
+an understandable result; reuse that logic without changing its meaning**.
+This is a scope decision and a contract to validate, not evidence of adoption
+or a claim that the prototype already supplies it.
+
+| Journey | Concrete result | Evidence required before release |
+| --- | --- | --- |
+| Calculate | Change invoice quantity from 3 to 4; result changes from 3850 to 5050 integer cents | Correct calculation, visible source/result revision, useful wrong-argument error, no annotation ceremony to begin. |
+| Validate and report | Paste two customer rows; obtain received=2, eligible=1, skipped_ineligible=1; inspect Ada's normalized row | Decode precedes filtering; malformed name and age produce both original input paths; no success report on error. |
+| Reuse | Import the calculation/report function in a second local module and run the same inputs in the CLI and browser | Same values/errors and checked boundary, no private-body access by consumers, unknown dependencies remain visible. |
+
+The report is local and pure: Text and options enter, a typed Result leaves.
+The host explicitly supplies input and saves an encoded output on request.
+Inspecting a report, encoding it and successfully saving it are three distinct
+outcomes. No public network service, secret, task scheduler or language resource
+scope is needed to explain this first complete workflow.
+
+### Selected Core And Library Boundary
+
+This selects an initial supported profile from the target. It neither invents
+a second language nor reverses accepted semantics for omitted features. Each
+row must have source, diagnostics, formatting and portable behavior before
+being advertised. The existing prototype may support additional experimental
+forms while the release profile remains explicit.
+
+| Include for the first product | Coherent rule | Boundary on the commitment |
+| --- | --- | --- |
+| Names and local state | Lexical binding; immutable by default; mutation uses `var`/`set` | No separate reactive assignment, automatic dependency tracking or hidden shared state. |
+| Values | Int, Bool, Text, Unit; strict List; structural `Value` at external boundaries | Numeric/text details must pass the bounded closure below; Float/Decimal/Bytes/time APIs are later scope. |
+| Calls | One `func` form, ordinary calls, explicit expression lambdas, accepted argument/default laws | No currying, holes, overload resolution or user generic/protocol declaration syntax required for release. |
+| Owned concepts | Nominal immutable products and closed variants with explicit constraints | A small declared shape is enough; no universal object hierarchy or arbitrary schema generator. |
+| Choice and repetition | Bool `if`, exhaustive `match`, ordinary loops | Ship the needed accepted pattern subset honestly; advanced pattern optimization is not a gate. |
+| Expected outcomes | Option and Result as closed alternatives; explicit mapping and `?` | Panic remains separate; no implicit Err filtering, exception-to-Result conversion or changed evaluation order. |
+| Data boundary | Strict JSON parse/decode, accumulated independent errors, explicit encode | JSON only initially; CSV conversion, rolling schemas and arbitrary host objects need separate adapters. |
+| Collection library | Ordered eager map/filter/fold; synchronous, non-retaining pure callbacks for the selected checked path | Closed type instances still require real contracts and effect checking; user polymorphism is not inferred from examples. |
+| Reuse | Local modules, private/public boundary, inferred-or-declared closed public contracts | No registry, solver, remote package install or general public inference algorithm needed first. |
+| Touching the world | Explicit console and host input/save adapters with ordinary operation failures | Host-owned transport does not silently introduce source-level File/Network authority or pretend to settle fallible `with`. |
+| Understanding | Format, run, inspect a value, follow an error to source/input, inspect a public signature | Explain actual facts; advanced graphs, editable projections and agent-suggested changes are later experiments. |
+
+The notation budget stays the one in [syntax](syntax.md). Accepted conveniences
+such as interpolation, `?` and `|>` can share their existing normal forms; they
+do not justify extra spellings. The first report uses named intermediate values
+and ordinary collection calls so its stages remain easy to inspect. Remove a
+convenience from the initial profile if it adds disproportionate implementation
+work without improving these journeys; retain its target disposition explicitly.
+
+### What Waits And What Keeps It Possible
+
+| Later capability | Why it waits | Re-entry pressure and preserved boundary |
+| --- | --- | --- |
+| HTTP, services and concurrent jobs | They add authority, timing, cancellation and remote outcome to an otherwise local task | A second real workflow needs remote work; resource/task packets own grants, bounds and completion. |
+| Fallible scoped resources and regions | Host adapters can own the first bounded read/save operations | User code must manage a live handle; preserve explicit owned-value versus scoped-handle distinction. |
+| Public generics, protocols and effect polymorphism | Closed exports and checked library instances cover the selected examples | Repeated local libraries cannot express a useful contract; use the existing callback/shared-storage witnesses. |
+| Rich numeric, table, array, ML and document APIs | Domain laws and performance costs differ | Add ordinary packages with explicit codecs and effects; only consider scoped notation after calls fail a real program. |
+| Editable tables/graphs, notebook semantics and collaboration | Source plus read-only results can complete the first task | Measured creation/repair trouble triggers the paired representation trial; source/revision identity remains available. |
+| Package registry, native optimizing engine and multiple polished IDEs | Distribution breadth is not needed to test a small reusable program | Local module identity, portable conformance and versioned producer/consumer contracts leave room for these later. |
+
+Existing research is a reserve of alternatives. Reuse it when a selected
+program exposes a missing contract; do not turn every mechanism surveyed into
+a required subsystem. No generic plugin framework or universal IR is needed
+merely to keep extension possible.
+
+### Bounded Closure Before Coding The Target Slice
+
+These are the remaining first-product decisions. Recommendations are starting
+candidates; their owners must accept concrete rules and independent vectors
+before a runtime implements them. Broader D1-D3 questions remain open outside
+this profile without blocking it.
+
+| Owner / decision | Starting candidate | Discriminator and required result |
+| --- | --- | --- |
+| D3 / scalar and text contract | Exact Int semantics; reject unsupported numeric inputs without rounding; Text operations have explicit units and no hidden normalization | Compare exact Int with checked fixed width using literal/arithmetic/JSON round trips, bool-versus-Int, huge/negative/fractional values, supplementary characters and offsets. Choose one meaning, document host limits and budget failures; no browser-specific silent range or rounding. |
+| D3 / data and codecs | Strict declared fields, duplicate JSON keys rejected, no coercion; explicit normalization; derived codecs limited to supported data shapes | Missing/extra/wrong fields, two simultaneous row errors, empty/128/129 rows, repeated IDs, constrained values and decode/encode round trips. Fix wire shape, path/order rules and bounded-error truncation before promotion. |
+| D1 / callable and module boundary | Closed monomorphic public exports; checked pure synchronous library callbacks; local module identity | The invoice and report must resolve every call, default, capture and imported effect. Two passive consumers agree; unknown/private/changed-dependency cases cannot manufacture proof. Explicit adapters are preferable to unexplained inference. |
+| D4/D5 / run and host contract | One selected source entry, explicit input/options, a Result inspector, user-requested encode/save; text remains authoritative | Pin entry binding and errors, data limits, source/input/run revisions, stop/restart and host failure behavior. A stale run cannot replace a new result; save failure cannot be shown as completed publication. |
+
+If a candidate fails, simplify the program or library contract first. Any new
+language law still needs its canonical syntax/semantics/decision update. A
+handwritten demo result, a supplied type record or a passing link checker cannot
+close these gates. No new general survey is needed before making the comparisons.
 
 ## One Coherent Model
 
@@ -65,65 +157,44 @@ The [legacy target](target.nomi) exposed useful ambitions but hid interactions:
 7. Constructor values and callback generics/effects were assumed by examples
    before their declaration and dispatch rules were settled.
 
-The revised fixture uses a maximum-128-row JSON batch, validates it as one
-owned wrapper before network access, preserves nested decoder paths, and counts
-`skipped_ineligible` separately. Trim normalization preserves its stated
-nonempty constraints. Explicit lambdas avoid constructor-value assumptions.
-Task start is in a loop rather than an apparently pure effectful map callback.
-The response identity is checked. No report is written after an ordinary input
-or enrichment error. The input bound limits handles in this example; it is not
-a substitute for a future streaming/backpressure contract.
+The earlier combined fixture improved those boundaries, but still made a useful
+local report depend on network, task, resource and publication design. The
+October 9 product synthesis removes that dependency from the active
+[overall fixture](targets/overall.nomi). It now validates a maximum-128-row
+batch, preserves original error paths, filters valid rows, normalizes names,
+and returns an owned report. Repeated IDs are retained in source order because
+rows are observations, not updates to an identity registry.
 
-The program still relies on **proposed** codecs, task handles, HTTP/file APIs,
-and publication guarantees. It deliberately leaves task panic/cancellation
-outside ImportError and marks the missing envelope. This is honest pressure on
-the design, not a claim the program is already well typed end to end.
+The pure function does not publish files. An explicit encoder and host save
+operation follow inspection. Proposed codecs and callback contracts remain
+labeled; byte/depth/work limits are not implied by a row count. The richer
+network/resource program remains in Git at `915aea1`; category and focused
+resource/concurrency fixtures retain its extension pressure.
 
 ## Interactions To Resolve First
 
-| Gate | Competing Nomi-compatible choices | Evidence required |
-| --- | --- | --- |
-| Cleanup outcome | Domain-visible release Result versus distinct composed abnormal envelope | Body Err + release Err + cancellation, without losing any cause. |
-| Handle escape | Static non-escape/lifetime rule versus runtime closed-handle checks | Return, callback capture, and child-task transfer, with exact diagnostic behavior. |
-| Callback effects | Pure-only verbs initially versus explicit effect-polymorphic signatures | map/fold, resource callback, query translation, and effect diagnostics. |
-| Task policy | Cancel siblings versus collect all on abnormal failure | Event traces separating returned Err, panic, cancellation, and multiple failures. |
-| Bounds | Explicit bounded producer/queue versus whole finite batch | Peak active/queued counts and no children after lexical exit. |
-| Numeric defaults | Arbitrary-precision Int versus checked fixed-width default | Native/JS/Wasm vectors, narrowing diagnostics, measured representation costs. |
-| Boundary evolution | Strict closed schema versus explicit version/rest policy | Typos, unknown tags, rolling deployment, indexed errors, non-projectable constraints. |
-
-Do not answer these with more broad language tours. Use the
-[open experiment agenda](../research/open_questions.md). The per-language
-exercises are candidate evidence, not 44 independent implementation tasks.
-
-The first gate now has an [executed resource experiment](../research/resource_lifetime.md)
-and [focused proposal](resource_lifetime.md): 32 candidate traces and 14
-supplied-fact escape predictions. Recommendation: typed recoverable completion
-and static scoped use backed by revocation. Status remains `designing`;
-generic/callback/region typing and actual asynchronous cleanup are not validated.
+Use the four [bounded closure decisions](#bounded-closure-before-coding-the-target-slice)
+for this product. General cleanup outcomes, handle escape, task failure policy,
+queue bounds, effect polymorphism and schema evolution remain owned by their
+existing packets. They become release blockers only when a selected workflow
+requires those guarantees. The executed resource comparison is useful symbolic
+evidence for later expansion, not a prerequisite for a pure local report.
 
 ## Action Sequence
 
-Each step owns one reviewable deliverable and a visible user outcome. The
-[dated bridge](../review/2026-09-29-language-synthesis.md) records the snapshot
-and exact continuation, while this sequence is the live synthesis route.
+| Order | Reviewable deliverable | Visible outcome and admission |
+| --- | --- | --- |
+| 1 | Agree the three first-product journeys, source fixture and explicit exclusions | A person can explain the promised product before reading compiler plans. |
+| 2 | Close the selected scalar, codec, closed-call/module and host-run contracts | Every operation in the local report has an owner, independent expected behavior and a useful failure. |
+| 3 | Implement the smallest complete calculation path, then report decode/repair | Source, checking, lowering, formatting and diagnostics agree on the supported subset; no disconnected subsystem counts as a finished product slice. |
+| 4 | Add reusable local boundaries to those same programs | Two consumers can use checked public evidence; unknown dependencies remain honest. |
+| 5 | Promote supported examples and complete the browser/CLI journey | Actual user-path checks, matching values/errors, fresh assets and installed/browser evidence. |
+| 6 | Validate distribution, then select the next real workflow | Traceable artifact and rollback; only measured pressure admits later resource, task or domain work. |
 
-| Order | Action and ownership | Acceptance | User-facing connection |
-| --- | --- | --- | --- |
-| 1 | Language design: settle cleanup carrier and handle escape together | Three representative programs, all exit traces, formatter renderings, diagnostic JSON, accepted/rejected escape cases | A failed import explains both body and release causes; no use-after-close surprise. |
-| 2 | Language design: specify callback types/effects and minimal generic/protocol surface | Pure/effectful map, conflicting extensions, task handle typing, inspectable resolved calls | Editor hover and playground explain show the actual call/effects. |
-| 3 | Runtime design: close cold-task/group policy and bounded queue contract | Deterministic scheduler traces for Err/panic/cancel; active and queued bounds; no lifetime escape | Run/stop is trustworthy and failures are not silently dropped. |
-| 4 | Boundary/numeric design: specify codecs and portable scalar vectors | Indexed accumulated decode errors, no coercion, normalization tests, large integers/rounding agree across hosts | Users see accurate values and actionable input paths. |
-| 5 | Frontend/tooling: admit the smallest completed category contract | Accepted/rejected source fixtures, typed Surface/Core, source maps, formatter, structured diagnostics | One honest new runnable playground category, not the whole aspirational suite. |
-| 6 | CLI/browser owners: promote after cross-backend conformance | Add supported sample to `samples/`, regression coverage, fresh web manifest, browser smoke and CI | GitHub playground sample can actually run and reproduce documented results. |
-| 7 | Product/design review: repeat the overall workflow | Locked host profile, bounded inputs, no secret leaks, publication/failure checks | A coherent import/report workflow rather than isolated feature demos. |
-
-Keep the existing registered pattern pass moving in parallel; do not rewrite
-its accepted contract from this survey. Current project-wide delivery and
-playground work are routed through the
-[project roadmap](../orientation/project_roadmap.md), with the
-[September playground plan](../review/2026-09-29-github-playground-agentic-plan.md)
-retained as evidence. The import-workflow admission route above remains a
-target-design gate, not a claim that the prototype satisfies it.
+The [project roadmap](../orientation/project_roadmap.md#delivery-order-and-dependencies)
+owns M0-M5 scheduling. The pattern pass continues within the accepted subset;
+a whole-pattern rewrite, every callback mechanism and a new interface framework
+are not prerequisites. The dated bridge records why this order changed.
 
 ## Prototype Evidence And Next Admission
 
@@ -162,12 +233,10 @@ but do not settle its open contracts:
 | Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Target numeric tower, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance |
 | Eager failure and callable boundaries | Portable errors stop later eager work; partial Core call shapes reject unsupported names/parameter kinds before effects | Versioned named/default/callback binding, typed expected outcomes and composed abnormal completion |
 
-The next language step remains D1: type one ordered collection callback, one
-decoder callback and one scoped resource callback together under a resolved
-generic/protocol/effect model. Use the runnable collection traces as behavioral
-fixtures, not as a reason to erase target typing requirements. D2 must then
-preserve all completion causes, and D3 must give values and transport one
-explicit contract before D4 composes the import program.
+The next language step is the bounded first-product closure above. Use runnable
+collection traces as behavioral evidence, not as proof of typed callbacks.
+Co-design general callbacks and resources when the later resource workflow is
+selected; do not make their full D1/D2 resolution a prerequisite for this report.
 
 AI/ML, web, scientific and documentary domains retain their distinct library/
 plan owners in the proposal below. A browser worker being terminated is not a
@@ -253,32 +322,29 @@ the body must still be verified against that contract.
 
 ### Import And Report: Keep The Boundary While Growing The Program
 
-Use `decode_batch`, `eligible_customers` and `run` from
-[the overall fixture](targets/overall.nomi). An exploratory entry can inspect
-`decode_batch` on an in-memory Text and handle its Result; it does not bypass
-decode because static checking is relaxed. Reuse the same pure decode/filter
-functions in a module, then add the explicit file/network/write orchestrator.
-This separates data validation from permission and from package evidence.
+Use `build_report` and `report_json` from
+[the overall fixture](targets/overall.nomi). Inspect a Result on in-memory Text,
+repair the input, then reuse the same function through an explicit host adapter.
+Relaxed static checking never bypasses decoding.
 
-| Prepared input/event | Expected observation | Repair or unresolved owner |
+| Prepared input/event | Expected observation | Repair or owner |
 | --- | --- | --- |
-| Customer name empty and age -1 | Both indexed decode paths; zero profile requests and report writes | Correct both fields; do not offer only the first error as a sufficient repair. |
-| Valid customer below minimum age | Count skipped_ineligible, not malformed | Change the eligibility policy explicitly if intended. |
-| Host returns Text where a checked adapter promised Int | Boundary failure under the adapter's declared taxonomy | Decoder/result conversion must be explicit; annotation is not coercion. |
-| Profile response names a different customer | ProfileIdentity error; no report publication | Preserve expected/received identity and input row context. |
-| Network denied after a valid check | Runtime authority refusal before that network operation | Static evidence stays evidence; no cache hit recreates a grant. |
-| Report publication acknowledgment lost | External outcome unknown; local Stop is not rollback | Inspect/reconcile by the adapter's operation identity before retry. |
-| 128 rows containing one enormous Text | Row count alone does not bound bytes or decode work | File/response bytes, depth, per-field size and diagnostic budgets need explicit owners. |
-| Duplicate customer IDs | Fixture exposes an unresolved duplicate policy | Decide rejection, deduplication or allowed multiplicity before relying on identity for updates. |
+| Empty name and age -1 | Both indexed paths, no successful report | Fix both fields; filtering may not hide malformed rows. |
+| Valid age 12 with minimum 13 | received=1, eligible=0, skipped_ineligible=1 | Change the eligibility policy explicitly if intended. |
+| Duplicate customer IDs | Preserve both rows in original order | This is a report over observations, not an update registry. |
+| 128 rows with an enormous Text | Row count is insufficient to admit the input | Host/codec byte, depth, work and diagnostic budgets apply. |
+| Unknown field, duplicate JSON key or rounded host number | Refusal under the selected strict codec contract | Never silently coerce, drop information or fabricate exactness. |
+| New source/input while an old run finishes | Old result remains historical | Run identity prevents replacement of the current result. |
+| Encode succeeds but host save fails | Report remains inspectable; save is failed or explicitly uncertain | Repair the host destination; do not rerun pure computation unnecessarily or claim publication. |
 
-The whole-program target's pure `maximum_batch_size()` is the first small
-public-inference discriminator. Change a private comment, change its result
-from Int to Text, then change a dependency's effect footprint. Consumers must
-distinguish source freshness, contract compatibility and execution identity.
-Neither a backend switch nor downstream call observations may repair a missing
-public contract. Full import promotion additionally needs D1-D3, bounded task
-queues, codec laws and a real publication adapter; a good scalar demo does not
-close those gates.
+The pure `maximum_batch_size()` remains the first small public-inference
+discriminator. Private comments may preserve its contract while invalidating
+source verification; result/effect changes may break compatibility. Consumer
+observations and backend switches cannot repair an incomplete public contract.
+
+Network grants, response identity, lost remote acknowledgment and task cleanup
+remain important later pressure in the resource/concurrency fixtures. They do
+not belong to the first report's error type or release dependency chain.
 
 ### Resource Job: Reuse The Operation Without Exporting Its Lease
 
@@ -311,8 +377,8 @@ Proposed artifact distinction, refining the accepted assurance direction:
 | Build/run selection | Exact executable content, profile and input snapshot | Recheck current authority at effect boundaries; static evidence is not a transferable grant. |
 | Explanation/view | Source or value epoch, completeness and redaction | Keep unavailable spans and omitted facts explicit; formatting a new revision cannot reuse old offsets blindly. |
 
-The first experiment should use a locally produced, closed monomorphic scalar
-contract. Unknown dependencies prevent checked export. An explicit dynamic
+At the local-reuse milestone, the contract experiment should use a locally
+produced, closed monomorphic scalar contract. Unknown dependencies prevent checked export. An explicit dynamic
 adapter remains a challenger for later work: runtime shape checks alone cannot
 certify purity, non-escape or termination of arbitrary foreign code. Do not
 design a universal adapter before stating which of those guarantees it enforces.

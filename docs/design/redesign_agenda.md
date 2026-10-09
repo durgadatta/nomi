@@ -100,6 +100,16 @@ that cost instead of defending a small core as a goal independent of users.
 
 ## Ordered Design Closure
 
+The October 9 [first-product contract](synthesis.md#first-product-contract)
+selects calculation, local JSON report/repair and local reuse. Apply these gates
+to the guarantees that profile promises. D1 needs closed calls and the selected
+library callbacks; D3 needs portable scalars and strict codecs. General public
+generics, fallible resources and structured tasks remain later design work.
+D2 is not a global prerequisite for a pure report with host-owned transport.
+D5 starts with text and read-only results; its richer alternatives remain
+challengers. The table inventories owners, not mandatory completion of every
+research topic before one useful product can ship.
+
 | Gate | Deliverable | Acceptance and visible outcome |
 | --- | --- | --- |
 | D0 | Accurate authority map and prototype/target dispositions | No supported feature falsely presented as an accepted target form. |

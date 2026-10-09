@@ -3,7 +3,7 @@
 > Status: aspirational design fixtures, not runnable samples or conformance claims.
 
 These programs make the target readable at two scales: one category at a time,
-then an integrated import workflow. Read [the synthesis](../synthesis.md) for
+then an integrated local import/report workflow. Read [the synthesis](../synthesis.md) for
 the reasoning and [syntax](../syntax.md) and [semantics](../semantics.md) for
 authority. The programs are independent modules; repeated small declarations
 are intentional so each can be reviewed alone.
@@ -23,13 +23,19 @@ are intentional so each can be reviewed alone.
 | Numerical work | [numerics.nomi](numerics.nomi) | Make rounding, overflow, and shape meaningful. | [Numerics](../../research/features/numerics.md) |
 | Package boundaries | [modules.nomi](modules.nomi) | Publish a small stable interface. | [Modules and tooling](../../research/features/modules_tooling.md) |
 | Explainable behavior | [tooling.nomi](tooling.nomi) | Turn examples and mistakes into shared diagnostics. | [Modules and tooling](../../research/features/modules_tooling.md) |
-| Whole program | [overall.nomi](overall.nomi) | Import, validate, enrich, and publish one report. | [Synthesis](../synthesis.md) |
+| Whole program | [overall.nomi](overall.nomi) | Validate local input, inspect a report, repair it and reuse the function. | [Synthesis](../synthesis.md) |
 
 The detailed [pattern fixture](../pattern_matching_target.nomi) still owns the
 registered pattern pass. `patterns.nomi` is a short user-story view, not a
 second pattern specification. [The legacy target](../target.nomi) is retained
 as a superseded predecessor for historical links; this suite owns the active
 overall fixture.
+
+The October 9 product synthesis narrows `overall.nomi` to the first useful
+release. Network enrichment, task groups and fallible resources remain later
+pressure in their category/focused fixtures; they are not prerequisites for
+this pure report. The earlier combined program is preserved in Git at `915aea1`.
+The suite is a design pressure set, not a promise to ship every category together.
 
 The [research pressure programs](research/README.md) extend category/overall
 comparison for data, workflows and cross-disciplinary notation. They use
