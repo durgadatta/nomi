@@ -1104,6 +1104,26 @@ class CoreRuntime {
   applyCompareOp(op, left, right) {
     if (op === "==") return left === right;
     if (op === "!=") return left !== right;
+    if (typeof left === "string" && typeof right === "string" && ["<", "<=", ">", ">="].includes(op)) {
+      let leftIndex = 0;
+      let rightIndex = 0;
+      let order = 0;
+      while (leftIndex < left.length && rightIndex < right.length) {
+        const leftScalar = left.codePointAt(leftIndex);
+        const rightScalar = right.codePointAt(rightIndex);
+        if (leftScalar !== rightScalar) {
+          order = leftScalar < rightScalar ? -1 : 1;
+          break;
+        }
+        leftIndex += leftScalar > 0xffff ? 2 : 1;
+        rightIndex += rightScalar > 0xffff ? 2 : 1;
+      }
+      if (order === 0) order = (leftIndex < left.length ? 1 : 0) - (rightIndex < right.length ? 1 : 0);
+      if (op === "<") return order < 0;
+      if (op === "<=") return order <= 0;
+      if (op === ">") return order > 0;
+      return order >= 0;
+    }
     if (op === "<") return left < right;
     if (op === "<=") return left <= right;
     if (op === ">") return left > right;

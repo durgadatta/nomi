@@ -64,6 +64,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_calculation_scalar_boundaries.py",
                 "prototype/tests/contracts/test_js_failure_envelope.py",
                 "prototype/tests/contracts/test_legacy_equation_wildcard.py",
+                "prototype/tests/contracts/test_text_scalar_order.py",
                 "prototype/tests/contracts/test_text_sequence_boundaries.py",
                 "prototype/tests/contracts/test_js_dictionary_keys.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",

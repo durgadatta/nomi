@@ -341,6 +341,12 @@ producer has no source-position map, so spans remain absent. Replace this
 adapter when another transport implements the same explicit result contract,
 rather than making process exit status stand in for source evaluation.
 
+JS Text ordering compares Unicode scalar values lexicographically, including
+supplementary characters and prefix length. It does not use host UTF-16 ordering
+or normalize combining sequences. Independent source/Core/WASM vectors cover
+all four relational operators. Full strict Text admission and the report's
+normalization operation remain separate work.
+
 Useful files:
 
 -   **Grammar and Parsing:** Lark is used to define the grammar and
