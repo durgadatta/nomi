@@ -668,3 +668,61 @@ the growing model's creation/revision/handoff and a contrasting creative or
 scientific activity. Allow the evidence to revise the model and schedule. Use
 the cognitive packet's [direction retrospective](2026-09-30-cognitive-interfaces.md#whole-system-vision-continuation-2026-10-10)
 for discovery scope and the roadmap's existing target gates for implemented claims.
+
+## Maintainer Language Research Continuation, 2026-10-10
+
+### Pass Retrospective
+
+#### Evidence That Changed The Design
+
+The user's next direction is a research/synthesis pass for the developer,
+maintainer, and designer before deeper language choices. Primary documentation
+now expands Wolfram, Haskell, Scala, Kotlin, Rust, Julia, and TypeScript across
+several composing mechanisms; Mojo fills a genuinely missing review. The
+[maintainer synthesis guide](../research/synthesis_guide.md) brings those routes,
+a candidate worksheet, whole-program cases, depth gaps, and integration rules
+into one entry point. Python/Cython/Codon/PyPy and OCaml/Lean provide bounded
+adjacent leads without adding unreviewed full matrix columns.
+
+The evidence sharpens the existing owners for operation selection, representation
+and aliases, stages/binding, numeric transformation laws, and definition visibility.
+No new target feature was accepted. The exact default Int closure was reconciled
+with stale numeric research; the representation question now permits a direct
+text/structured comparison in line with the broader vision.
+
+#### Workflow Friction
+
+One-mechanism language summaries made deeper integration questions hard to find.
+Mixing compiler checking, library conventions, runtime behavior, and unexecuted
+experiments would make the synthesis overclaim. Moving documentation also needs
+version scope: Haskell 2010 and GHC 9.12.2 are distinct, Mojo evidence is from
+consulted 1.1.0 docs, Scala capture/separation checking is experimental, and
+Julia's version-specific world-age binding changes are fenced.
+
+#### Durable Improvement
+
+The new guide consolidates the repeatable research loop instead of introducing
+a separate backlog. Five existing feature owners carry the new comparisons.
+Language indexes, the exact semantic transpose, syntax matrix, complete document
+inventory, open questions, and registry routes agree on 45 language reviews and
+13 feature categories. Existing checks enforce that coverage; no new validation
+framework or agent instructions were needed.
+
+Verification at this checkpoint: 130 focused matrix/document/packet/target checks
+passed; all five registered packets passed integrity validation; 2,094 local file
+links across 164 documents resolved; `git diff --check` passed. These are
+repository coherence checks. The new foreign-language cases and user activities
+remain prepared, and no compiler comparison, benchmark, Nomi semantic checker,
+or human study was executed by this pass.
+
+#### Next Pass
+
+Review the guide's interaction matrix and select one concrete synthesis
+comparison after the user considers the alternatives. Start from its explicit
+value/call baseline and independent expected observations. Operation-value versus
+protocol/multimethod selection is a bounded first option; symbolic theory/staging
+or scientific buffer ownership are independent alternatives. Preserve existing
+question and packet ownership. Promote only the settled contract through design,
+ledger, whole-program target, and a reversible implementation bridge. The packet
+remains `designing`; broader target implementation and distribution work retain
+their existing readiness gates.

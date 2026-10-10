@@ -129,6 +129,7 @@ not run yet. Runnable examples live in [samples](samples/).
 | See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [Changelog](CHANGELOG.md) |
 | Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
 | Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |
+| Research and integrate language mechanisms | [Maintainer synthesis guide](docs/research/synthesis_guide.md) |
 
 ## Web Playground
 

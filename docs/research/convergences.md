@@ -262,8 +262,11 @@ or identical displays conceal changed context. The
 language conformance and usability. Breadth reveals pressures, while a bounded
 comparison must earn any change to the target.
 
-The old corpus is broad enough. Remaining uncertainty sits in specific design
-forks, not missing language families. The next unit of evidence is:
+The corpus is broad enough to start bounded comparisons. New mechanisms and
+disciplines can still reveal pressures it does not contain. The
+[maintainer synthesis guide](synthesis_guide.md) deepens selected languages and
+routes those discoveries into shared feature owners. The next unit of evidence
+for a mature language choice is:
 
 ```text
 a target program
@@ -274,5 +277,6 @@ a lowering/explain view
 a user or implementation experiment
 ```
 
-Another broad survey should be rejected unless it answers an open question the
-current corpus cannot.
+Broad discovery remains useful when it exposes a new pressure or genuine
+alternative. Before admitting a feature, connect it to an explicit contract,
+whole program, and discriminator; additional language names alone are insufficient.

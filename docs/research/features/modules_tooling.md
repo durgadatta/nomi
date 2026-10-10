@@ -214,3 +214,34 @@ checks solve the measured pressure with less recognition/interface cost.
 producer, compatibility proof, generative typechecker, loader integration or
 reader study executed these cases. Existing lock/artifact infrastructure and
 documentation validation do not settle this semantic identity contract.
+
+## Definition Visibility During Interactive Change
+
+> Research continuation 2026-10-10: questions 14/17 with identity from question
+> 13; no live-reload semantics selected here.
+
+[Julia's world-age review](../languages/julia.md) supplies primary evidence that
+interactive redefinition needs a visibility model. This is a different question
+from whether two package declarations share nominal identity. It also interacts
+with Nomi's lexical capture and the existing
+[representation/revision trial](../../design/interaction_model.md#paired-representation-and-revision-trial).
+
+Compare three candidates: a run keeps a frozen definition revision; a running
+computation explicitly adopts a newer revision at a named boundary; or calls
+consult current definitions dynamically. Separate a closure's captured values
+from its referenced definition versions. A stable displayed function name is
+insufficient evidence that two executions used the same implementation.
+
+**Prepared schedule:** revision A starts a task and creates a closure; revision
+B changes a helper; the old task resumes, the old closure runs, a new call runs,
+and an inspected cached result is requested. Fix the definition/input/context
+identity expected at each observation under each candidate. Recompute authority
+and resource validity where required; changing code must not renew an expired
+handle or reuse a revoked grant. Include a change to a public variant/constraint
+that makes an old value incompatible, without silently migrating it.
+
+Inspection must distinguish a result produced under A from a fresh B result,
+explain the dependency that invalidated a cache, and identify a suspended task's
+version. Compare predictability, restart cost, edit-to-feedback time, retained
+memory, and repair complexity. No method-table implementation, reload engine,
+or usability study was executed by this documentation pass.

@@ -101,7 +101,7 @@
       "owner": "language-design",
       "status": "designing",
       "last_reviewed": "2026-10-10",
-      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty"],
+      "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty", "maintainer synthesis guide", "Wolfram", "Mathematica", "Haskell", "Scala", "Kotlin", "Rust", "Mojo", "Julia", "TypeScript", "dispatch coherence", "staging", "world age"],
       "artifacts": {
         "research": "docs/research/features/README.md",
         "design": "docs/design/synthesis.md",
@@ -115,6 +115,8 @@
         "docs/research/open_questions.md"
       ],
       "validation": [
+        "pytest -n 0 prototype/tests/unit/tools/test_research_matrices.py",
+        "python3 scripts/check_doc_links.py",
         "python3 -m tools.design_passes check",
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "python3 docs/research/data_workflows/probe_composition.py --check docs/research/data_workflows/composition_probe_results.json",
@@ -132,6 +134,7 @@
         "git diff --check"
       ],
       "next_actions": [
+        "Use docs/research/synthesis_guide.md for the requested deeper language synthesis: compare operation values/coherence, evaluation carriers, nominal representation, borrowing/captures, staging, numeric transformation laws and definition visibility through existing questions. New review cases are prepared, not foreign-runtime executions; choose one discriminator before promoting any mechanism.",
         "Bounded report planning completed at 7684950; 8081e93 delivers the closed Python/JS libraries, ordinary source sample and default-browser repair/JSON download against independent records. Resume with target scalar/data/Result/call gates and source-derived closed reuse; do not extend manual schemas or introduce a whole-report builtin. Compatibility delivery leaves target conformance incomplete.",
         "Prepare closed monomorphic interface evidence for local reuse with independent consumers, unknown-dependency refusal and source/contract/verification invalidation. Integrate report reuse after its target dependencies close; preserve the larger import/resource/job pressures.",
         "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",

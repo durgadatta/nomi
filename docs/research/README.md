@@ -15,6 +15,12 @@ ambition. This corpus is a selected evidence map, not a boundary around valid
 research. New observations, disciplines and competing models can change its
 taxonomy and the target. Discovery and feature admission have different gates.
 
+For developers, maintainers, and designers, start with the
+[research and synthesis guide](synthesis_guide.md). It brings together the
+research loop, candidate worksheet, eight deeper language comparisons,
+composition discriminators, depth gaps, and integration handoff. It routes into
+the existing evidence owners and accepted contracts rather than adding a backlog.
+
 1. [Language Families](families.md) - what major traditions contribute and
    what Nomi should not inherit.
 2. [Design Convergences](convergences.md) - findings that recur across
@@ -64,8 +70,8 @@ taxonomy and the target. Discovery and feature admission have different gates.
 
 The [language synthesis](../design/synthesis.md) links that evidence to category
 targets, the revised overall program, and user-facing playground gates. The
-44 language reviews and 13 matrix feature categories are deliberately indexed
-evidence, not independent specifications or 44 new implementation backlogs.
+45 language reviews and 13 matrix feature categories are deliberately indexed
+evidence, not independent specifications or 45 new implementation backlogs.
 The [generic-operation continuation](generic_operations.md) deepens
 the function category with a property hierarchy, GA1-GA8 and bounded local
 counterexamples rather than adding another matrix axis or paradigm requirement.
@@ -76,6 +82,18 @@ The decisions drawn from this evidence live in
 decides.
 
 ## Research Gap Continuation
+
+The [October 10 synthesis guide](synthesis_guide.md#where-the-features-must-compose)
+deepens Wolfram, Haskell, Scala, Kotlin, Rust, Mojo, Julia, and TypeScript around
+dispatch coherence, demand, representation, access/ownership, staging, numerical
+laws, and definition visibility. The detailed continuations stay with
+[functions](features/functions.md#dispatch-coherence-and-operation-values),
+[types/data](features/types_data.md#identity-representation-and-read-only-access),
+[metaprogramming](features/metaprogramming.md#phases-binding-and-rewrite-laws),
+[numerics](features/numerics.md#transformations-need-a-stated-theory), and
+[modules/tooling](features/modules_tooling.md#definition-visibility-during-interactive-change).
+These are sourced comparisons and prepared experiments; no foreign runtime or
+human study executed the new cases.
 
 The research-only audit on 2026-10-04 identified sharper contracts inside
 already covered topics, not eleven wholly missing fields. The ten reported

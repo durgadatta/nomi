@@ -274,7 +274,7 @@ inferences**, not an assertion that past thinkers endorse this design.
 | Engelbart/Suchman: situated augmentation | Let people inspect, revise and repair the model with bounded authority | Support runbook's assumptions fail; observed state, checked proposal and human escalation |
 
 Modern programming-language mechanisms are compared through the existing
-[44-language matrix](language_feature_matrix.md) and
+[45-language matrix](language_feature_matrix.md) and
 [cross-language convergences](convergences.md): algebraic data, explicit effects,
 structured concurrency, protocol composition, staged descriptions and domain
 notation. Borrow laws and pressure-test interactions; fame is not admission

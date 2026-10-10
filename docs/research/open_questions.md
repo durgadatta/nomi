@@ -82,6 +82,14 @@ algorithms.
 **Test:** numeric types, collection iteration, display/redaction, decoding,
 HTTP adapters, and two libraries that define colliding extensions.
 
+**October 10 comparative pressure:** the
+[dispatch continuation](features/functions.md#dispatch-coherence-and-operation-values)
+compares explicit operation values, coherent nominal protocols, scoped selection,
+and open multimethods using Haskell, Scala, Rust, Julia, Kotlin, and Mojo evidence.
+Preserve multiple intentional behaviors for one concept, inspect implementation
+origins, and reject unexplained overlap. These are prepared subexperiments under
+questions 3/10/13, not accepted protocol syntax or a new typechecker.
+
 **September pressure:** the target suite assumes map/map_error and typed task
 handles but cannot yet declare their full generic/function-value contracts.
 Compare pure-only collection callbacks with explicit effect-polymorphic types;
@@ -264,6 +272,11 @@ extensions and numeric algorithms demonstrate a clear need.
 backends, and geometry. Require deterministic ambiguity diagnostics and a
 locally inspectable candidate set.
 
+Use the [operation-value comparison](features/functions.md#dispatch-coherence-and-operation-values)
+for intersecting two-argument methods and independently authored adapter packages.
+Compare selection/checking stage and public-contract inspection before choosing
+receiver notation or a generic dispatch model.
+
 ## 11. Structural Openness And Versioned Data
 
 **Question:** How does strict closed decode coexist with forward-compatible APIs
@@ -286,6 +299,14 @@ through tooling. Many use cases should remain code generation or protocols.
 
 **Test:** deriving equality/codec, route tables, parser declarations, symbolic
 math, and eliminating boilerplate in data APIs.
+
+**October 10 phase pressure:** [the staged comparison](features/metaprogramming.md#phases-binding-and-rewrite-laws)
+separates expression values, schema derivation, static parameters, and typed code
+transformation. Compare capture avoidance, unavailable runtime inputs, denied
+build-time world access, cyclic rewriting, and dependency invalidation. Numeric
+rewrites also require the [stated theory](features/numerics.md#transformations-need-a-stated-theory)
+under question 9; typing or increased precision labels cannot supply missing
+algebraic or input-accuracy evidence.
 
 **DSL/string pressure:** [the dedicated dossier](dsls/README.md) compares typed
 libraries, explicitly parsed foreign DSL values and scoped notation. E1-E3/E7
@@ -369,8 +390,9 @@ changing the focused target.
 **Question:** Should source text remain primary with derived views, or should
 a structured document own equally editable textual/spatial projections?
 
-**Current hypothesis:** test text-primary, read-only views first; retain the
-structured-document alternative if inverse source edits repeatedly fail.
+**Current hypothesis:** compare text-primary and structured-document candidates
+directly through the prepared paired trial. Text-primary read-only views remain
+a bounded baseline; structured authorship need not wait for that baseline to fail.
 
 The [paired trial](../design/interaction_model.md#paired-representation-and-revision-trial)
 now fixes inputs, repair tasks, unsupported-source obligations and comparison
@@ -406,7 +428,8 @@ projection or exact inverse source mapping is claimed.
 
 **Text-interface pressure:** [the focused extension](dsls/text_as_interface.md)
 distinguishes display, inspection, formatting, rendering, encoding, parsing and
-execution while retaining text as the universal authored/fallback form. T1-T10
+execution while retaining text as the authored/fallback form of the text-primary
+candidate. T1-T10
 test representation intent, strict decode, offset units, structured encoding,
 template trust, argv, framing, lossless versus semantic formatting,
 localization, and the text/structured-primary fork. Before promoting a text API,

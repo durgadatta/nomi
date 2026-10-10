@@ -56,7 +56,7 @@ not silently multiply A. This is a designed oracle, not an executed benchmark.
 Coverage is mechanism-led. A framework can supply several mechanisms, and two
 frameworks can use identical call syntax for different mechanisms. This dossier
 does not add one new language-review file per library or replace the existing
-44-language/13-feature matrices.
+45-language/13-feature matrices.
 
 Official documentation, standards, and primary papers support foreign-system
 claims next to each comparison. Original snippets demonstrate source shape;

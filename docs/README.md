@@ -16,7 +16,7 @@ Choose a reading path based on what you want to do:
 | Understand what will be added | [Current Support And Growth](guide/status.md) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
 | Explore the broader ambition | [Computational Medium Vision](design/vision.md) | [Cognitive Foundations](research/cognition.md) and [Design-First Agenda](design/redesign_agenda.md). |
 | Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
-| Investigate a language decision | [Design references](#design-and-research-references) | [Research](research/README.md) and [open questions](research/open_questions.md). |
+| Research or integrate a language mechanism | [Maintainer Synthesis Guide](research/synthesis_guide.md) | [Language reviews](research/languages/README.md), [feature comparisons](research/features/README.md), and [open questions](research/open_questions.md). |
 
 The getting-started guide describes runnable prototype examples. Design
 documents describe the intended language, including features that do not run
@@ -56,6 +56,9 @@ For language design, read:
     [Design-First Agenda](design/redesign_agenda.md)
 
 For the evidence and unresolved forks behind those choices, read:
+
+Start with the [maintainer synthesis guide](research/synthesis_guide.md) for one
+research loop, candidate worksheet, composition cases, and existing topic owners.
 
 1. [Research Overview](research/README.md)
 2. [Language Families](research/families.md)
@@ -236,6 +239,7 @@ This list is intentionally complete and is checked by tests.
 ### Research
 
 - [Research Overview](research/README.md)
+- [Maintainer Synthesis Guide](research/synthesis_guide.md)
 - [Language Families](research/families.md)
 - [Design Convergences](research/convergences.md)
 - [Pattern Matching Research](research/pattern_matching.md)
@@ -315,6 +319,7 @@ This list is intentionally complete and is checked by tests.
 - [Gleam](research/languages/gleam.md)
 - [Roc](research/languages/roc.md)
 - [Rust](research/languages/rust.md)
+- [Mojo](research/languages/mojo.md)
 - [Go](research/languages/go.md)
 - [Zig](research/languages/zig.md)
 - [Swift](research/languages/swift.md)

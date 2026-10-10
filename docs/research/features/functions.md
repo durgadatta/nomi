@@ -215,3 +215,59 @@ the explicit conservative rule as a challenger, not as accepted semantics.
 public-interface producer, or reader study executed these cases. The original
 counterexample is a proposed oracle obligation. Existing generic-operation
 probes do not establish this generalization rule.
+
+## Dispatch Coherence And Operation Values
+
+> Research continuation 2026-10-10: questions 3/10 with package identity from
+> question 13; candidates below are unselected and unexecuted.
+
+The expanded [Haskell](../languages/haskell.md), [Scala](../languages/scala.md),
+[Rust](../languages/rust.md), [Julia](../languages/julia.md),
+[Kotlin](../languages/kotlin.md), and [Mojo](../languages/mojo.md) reviews expose
+several distinct mechanisms often grouped under “methods.” Contextual argument
+selection, trait conformance, static receiver extensions, and runtime multiple
+dispatch solve different problems. Receiver spelling does not identify which
+one is in force. The reviews carry the primary evidence; this section owns the
+Nomi comparison.
+
+Begin with an ordinary function receiving an operation value. In contract
+metalanguage, an ordering supplies `compare(T, T) -> Ordering`, and a decoder
+supplies `decode(Value) -> Result[T, DecodeErrors]`. Explicitly passing two
+orderings for the same T establishes the need for more than one meaningful
+behavior without requiring ambient implementation search. These are proposed
+interfaces, not accepted Nomi protocol syntax.
+
+| Candidate | What chooses behavior | Benefit | Price |
+| --- | --- | --- | --- |
+| Explicit operation value | Caller's lexical value | Multiple behaviors are locally nameable | Plumbing through helpers and public contracts |
+| Globally coherent nominal protocol | Declared conformance plus ownership/overlap rules | Separate package reasoning and conventional defaults | Limits independent foreign-type retrofits |
+| Scoped implementation selection | Explicit scope/import plus checked search | Convenient alternate interpretations | Search complexity and import-sensitive review |
+| Open multiple dispatch | Applicable argument-type tuple and specificity | Extensible cross-type algorithms | Intersection ambiguity and dependency/version interactions |
+
+Do not collapse this choice into higher-kinded inference or method notation.
+Those are additional axes. A program can use explicit operation values with
+ordinary generics; a protocol can be coherent without being an algebraic proof.
+An operation value can capture state, fail, or carry a resource region. Its
+contract must preserve those facts across generic instantiation, including the
+shared-state counterexample above.
+
+**Prepared comparison:** two independent adapter packages provide decoding for
+one foreign concept; two orderings intentionally coexist; two numeric methods
+specialize opposite positions of a pair. Add and reorder imports, introduce a
+third package, and inspect a consumer without private implementation source.
+Compare selection/rejection at the declared checking/linking/runtime stage.
+No candidate may use source order as an unexplained ambiguity tie-breaker.
+
+Required inspection identifies the operation declaration, supplying package or
+lexical value, applicable candidates, selected implementation, relevant type
+substitutions, and expected failure/effect/capture contract. A useful diagnostic
+names both origins and a repair: explicitly pass a behavior, qualify a function,
+remove an overlap, or define the intended intersection where the candidate
+permits it. It must not suggest changing nominal identity to make search succeed.
+
+Remove a candidate if adding an unrelated dependency silently changes a checked
+call, if selection needs clients' private source, or if preserving region/effect
+facts requires unchecked erasure. Keep the explicit-value baseline unless its
+measured whole-program cost is outweighed by a challenger that passes these
+cases. Continue under the existing function-contract D1-D3 work and
+[maintainer guide](../synthesis_guide.md); no protocol implementation was added.

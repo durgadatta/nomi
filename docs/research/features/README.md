@@ -5,6 +5,10 @@
 Packet: `docs/design/synthesis.md`, `docs/design/targets/overall.nomi`,
 `docs/review/2026-09-29-language-synthesis.md`.
 
+Start with the [maintainer synthesis guide](../synthesis_guide.md) to research
+and integrate mechanisms. Its eight expanded language comparisons feed these
+existing semantic owners; the guide is a working route, not another specification.
+
 Read across a feature row or down a language column in the
 [single synthesis matrix](../language_feature_matrix.md), then follow a feature
 page below or an individual language in [the language index](../languages/README.md).
