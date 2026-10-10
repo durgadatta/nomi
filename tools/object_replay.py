@@ -89,8 +89,8 @@ def _unique_names(values):
         raise ReplayError("duplicate reference")
 
 
-def replay(vocabulary, graph, receipt):
-    for artifact in (vocabulary, graph, receipt):
+def _reconstruct(vocabulary, graph):
+    for artifact in (vocabulary, graph):
         _artifact(artifact)
     if _digest(vocabulary) != VOCABULARY:
         raise ReplayError("independent consumer does not admit this vocabulary")
@@ -191,6 +191,12 @@ def replay(vocabulary, graph, receipt):
                 _encode(raw["attributes"]),
             )
         )
+    return objects, normal, terms
+
+
+def replay(vocabulary, graph, receipt):
+    _artifact(receipt)
+    _, normal, terms = _reconstruct(vocabulary, graph)
     _keys(
         receipt,
         (
@@ -258,6 +264,110 @@ def replay(vocabulary, graph, receipt):
     }
 
 
+def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None):
+    objects, normal, terms = _reconstruct(vocabulary, graph)
+    _artifact(requirements)
+    _artifact(receipt)
+    _keys(requirements, ("version", "graph", "owner", "revision", "requirements"))
+    graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
+    if (
+        type(requirements["version"]) is not int
+        or requirements["version"] != 1
+        or requirements["graph"] != graph_context
+    ):
+        raise ReplayError("unsupported or stale requirement context")
+    _identity(requirements["owner"])
+    _identity(requirements["revision"])
+    obligations = requirements["requirements"]
+    if type(obligations) is not list or not 1 <= len(obligations) <= 512:
+        raise ReplayError("requirement count budget exceeded")
+    supplied = {} if bindings is None else bindings
+    _artifact(supplied)
+    if type(supplied) is not dict:
+        raise ReplayError("binding evidence must be input records")
+    for identity, value in supplied.items():
+        if identity not in objects:
+            raise ReplayError("unknown input binding")
+        family, role, _ = RULES[objects[identity]["op"]]
+        if role != "input" or type(value) is not (int if family == "ExactInt" else str):
+            raise ReplayError("incompatible abstract input binding")
+    seen, results = set(), []
+    for obligation in obligations:
+        _keys(obligation, ("id", "rule", "subject"))
+        identity = _identity(obligation["id"])
+        if identity in seen:
+            raise ReplayError("duplicate requirement identity")
+        seen.add(identity)
+        rule = obligation["rule"]
+        if type(rule) is not str or rule not in (
+            "exact.positive-v1",
+            "text.nonempty-v1",
+        ):
+            raise ReplayError("independent consumer does not admit this predicate")
+        subject = obligation["subject"]
+        if type(subject) is not str or subject not in objects:
+            raise ReplayError("unknown requirement subject")
+        family = "ExactInt" if rule == "exact.positive-v1" else "Text"
+        if RULES[objects[subject]["op"]][0] != family:
+            raise ReplayError("incompatible predicate subject family")
+        term = terms[normal[subject]]
+        _, role, _ = RULES[term[0]]
+        known, value, basis = False, None, "unresolved expression"
+        if role == "literal":
+            known, value, basis = True, json.loads(term[4])["value"], "declared literal"
+        elif role == "input" and term[2] in supplied:
+            known, value, basis = True, supplied[term[2]], "explicit input snapshot"
+        passed = (
+            (value > 0 if family == "ExactInt" else len(value) > 0) if known else False
+        )
+        results.append(
+            {
+                "id": identity,
+                "subject": subject,
+                "rule": rule,
+                "status": "satisfied"
+                if known and passed
+                else "refuted"
+                if known
+                else "pending",
+                "basis": basis,
+            }
+        )
+    statuses = {result["status"] for result in results}
+    verdict = (
+        "refuted"
+        if "refuted" in statuses
+        else "pending"
+        if "pending" in statuses
+        else "satisfied"
+    )
+    context = _digest(
+        {"requirements": requirements, "checker": "literal-input-predicates-v1"}
+    )
+    expected = {
+        "version": 1,
+        "context": context,
+        "graph": graph_context,
+        "status": verdict,
+        "evidence_phase": "static" if bindings is None else "binding",
+        "binding_digest": None if bindings is None else _digest(bindings),
+        "requirements": results,
+        "scope": "closed representation predicates, not scientific assumptions or a general solver",
+    }
+    if _encode(receipt) != _encode(expected):
+        raise ReplayError(
+            "predicate evidence disagrees with independently reconstructed verdict"
+        )
+    return {
+        "status": "verified",
+        "verdict": verdict,
+        "context": context,
+        "graph": graph_context,
+        "independent_checker": True,
+        "scope": "pinned lab predicates; no engine or scientific validity claim",
+    }
+
+
 def _pairs(pairs):
     result = {}
     for key, value in pairs:
@@ -285,14 +395,30 @@ def main(argv=None):
     parser.add_argument("vocabulary")
     parser.add_argument("graph")
     parser.add_argument("receipt")
+    parser.add_argument(
+        "--requirements",
+        help="replay requirement evidence rather than a composition comparison",
+    )
+    parser.add_argument(
+        "--bindings", help="explicit input evidence for requirement replay"
+    )
     args = parser.parse_args(argv)
     try:
-        print(
-            json.dumps(
-                replay(load(args.vocabulary), load(args.graph), load(args.receipt)),
-                indent=2,
+        if args.requirements:
+            result = replay_requirements(
+                load(args.vocabulary),
+                load(args.graph),
+                load(args.requirements),
+                load(args.receipt),
+                None if args.bindings is None else load(args.bindings),
             )
-        )
+        else:
+            if args.bindings:
+                raise ReplayError(
+                    "binding evidence requires an explicit requirement artifact"
+                )
+            result = replay(load(args.vocabulary), load(args.graph), load(args.receipt))
+        print(json.dumps(result, indent=2))
         return 0
     except (ReplayError, OSError) as exc:
         print(json.dumps({"status": "refused", "message": str(exc)}), file=sys.stderr)

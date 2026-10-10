@@ -1001,3 +1001,42 @@ refinement consumers. A statistical computation adapter should reuse graph
 identity/inspection while retaining domain masks, schemas, numeric theory and
 the existing independent v1 proof boundary. A documentary witness should test
 requirements beyond text length before the shared protocol is generalized.
+
+## Independent Obligation Evidence — 2026-10-10
+
+### Evidence That Changed The Design
+
+The object consumer now independently admits the two initial predicates as
+well as composition definitions. It reconstructs source types, alias/literal
+evidence, supplied input slots, rule identity, graph/requirement contexts and
+the actual verdict without importing `Graph` or `Requirements`. Verifying
+pending or refuted evidence preserves that verdict; it cannot authorize a
+required realization that lacks satisfied input conditions.
+
+### Workflow Friction
+
+Source validation was duplicated when adding a second receipt kind. The
+independent consumer now shares its own source reconstruction between
+composition and predicate replay, while remaining independent of producer code.
+Binding evidence requires an explicit requirement artifact, preventing CLI
+flags from being silently ignored or interpreted as computation results.
+
+### Durable Improvement
+
+Twenty-four new cases cover all three verdicts, planner-free replay, forged
+truth/status/phase/binding claims, changed rules, invalid nominal bindings,
+literal aliases, unresolved computed subjects and the independent CLI.
+The canonical owner and registered checks include the separate evidence route.
+No predicate execution or data discovery was added to object inspection.
+Final combined validation passed 336 focused cases; Ruff, all five design
+packets and 2163 local file links passed. The original statistical tests remain
+unchanged and passing. The broader interpreter/browser suites were not needed
+for this isolated, source-checkout artifact framework.
+
+### Next Pass
+
+Test a richer documentary or schema refinement through this protocol before
+admitting another generic predicate. Preserve specialized domain contracts and
+their independent consumers when adapting statistical computation. The current
+generic foundation is runnable and remains a removable library/artifact
+experiment rather than a source-language semantic commitment.

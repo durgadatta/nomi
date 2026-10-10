@@ -210,10 +210,19 @@ assert result.receipt["requirement_evidence"]["status"] == "satisfied"
 The realization receipt retains the static checkpoint under `requirements`
 and binding evidence under `requirement_evidence`, with distinct phase labels.
 An evidence replay reports its actual verdict; verifying a pending receipt does
-not make its conditions satisfied. This is same-checker replay. Independent
-generic comparison currently covers the pinned vocabulary's definitions, not
-these obligation predicates. Richer domain validators and their independent
-consumers remain separate admission work.
+not make its conditions satisfied. `Requirements.verify` uses the same checker.
+The separate standard-library consumer now also independently admits these two
+predicates, reconstructing the source, rule, type, context and binding evidence:
+
+```bash
+python3 -m tools.object_interface requirements docs/research/object_framework/composition.json docs/research/object_framework/requirements.json --bindings docs/research/object_framework/bindings.json > /tmp/nomi-object-conditions.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/composition.json /tmp/nomi-object-conditions.json --requirements docs/research/object_framework/requirements.json --bindings docs/research/object_framework/bindings.json
+```
+
+It verifies satisfied, refuted and pending verdicts without changing them.
+Supplying computed values as if they were input slots, an asserted satisfied
+status, or a changed predicate definition is refused. Richer domain validators
+and their independent consumers remain separate admission work.
 
 ### Domain Integration Order
 
@@ -251,7 +260,7 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Richer domain refinement protocol | Positive Int and nonempty Text now exercise literal/input evidence and binding gates. Add domain-owned parameter, schema or documentary refinements with independent consumers; assertions cannot become proof. |
+| Richer domain refinement protocol | Positive Int and nonempty Text now exercise literal/input evidence, binding gates and independent replay. Add domain-owned parameter, schema or documentary refinements with independent consumers; assertions cannot become proof. |
 | More useful object composition | A small reusable parameterized workflow and a document specification; domain contracts survive inspection, serialization and rebinding. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | The pinned lab vocabulary now has independent replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
