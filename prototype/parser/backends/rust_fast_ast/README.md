@@ -318,9 +318,17 @@ them fresh as work lands.
 
 - JSON emission now escapes every C0 control character in source/value fields;
   dedicated payload vectors cover the full U+0000–U+001F range. The October 10
-  text-method probe exposed literal U+000B/U+001C transport failures. Keep
-  Python-style `\x`/`\u` source escape decoding as a separate parity follow-up;
-  correcting JSON serialization does not claim those spellings are equivalent.
+  text-method probe exposed literal U+000B/U+001C transport failures. The later
+  source-escape repair separately decodes common prototype control/hexadecimal/
+  Unicode-scalar/octal escapes, preserves raw/unknown escapes, and explicitly
+  refuses malformed, surrogate/out-of-range and unsupported named escapes.
+  This feeds the existing String literal normal form and preserves token source.
+  It does not admit a target escape grammar or claim complete Python parity.
+  Follow up bytes/formatted prefix value handling, named escapes, single-quoted
+  line-continuation acceptance (Lark differs), and multiline boundary behavior.
+  Eight route-parity literal vectors plus explicit browser refusals live in
+  `prototype/tests/unit/runtime/test_source_text_escapes.py`; lexical probes live
+  in `src/string_escape_tests.rs`. WASM assets must be rebuilt after changes.
 
 - Replace remaining `Raw` payloads feature by feature with structured nodes.
   The Python adapter currently lowers the shared parity matrix, including

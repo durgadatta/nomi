@@ -24,6 +24,10 @@ data/ML engine is promised.
   hosted path. Escaped all C0 controls in Rust parser JSON and rebuilt WASM
   artifacts after text vectors exposed invalid transport. Target Unicode
   trimming and Python-style source escape parity remain separate work.
+- Repaired the browser parser's bounded prototype text-escape decoder:
+  common numeric/control escapes decode, raw/unknown escapes keep backslashes,
+  and malformed or unsupported named escapes refuse instead of changing text.
+  Rebuilt WASM artifacts; complete target escape rules remain design work.
 - Aligned the local Jupyter launcher and editor activation with the beginner
   calculation task. Added a clean calculation notebook, labeled older notebook
   tours as experiments, and added actual-kernel notebook checking without

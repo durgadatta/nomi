@@ -6,6 +6,9 @@ mod pattern;
 mod payload;
 #[cfg(test)]
 mod payload_control_tests;
+mod string_escape;
+#[cfg(test)]
+mod string_escape_tests;
 pub(crate) mod token;
 
 use wasm_bindgen::prelude::*;

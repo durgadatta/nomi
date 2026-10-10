@@ -397,7 +397,7 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, ParseError> {
                 offset += ch.len_utf8();
             }
             '"' | '\'' => {
-                let (value, next_offset) = read_string(source, offset, ch)?;
+                let (value, next_offset) = read_string(source, offset, ch, false)?;
                 tokens.push(Token {
                     kind: TokenKind::String {
                         value,
@@ -531,7 +531,10 @@ fn read_prefixed_string(source: &str, start: usize) -> Result<(String, usize), P
             .next()
             .expect("valid char boundary");
         if ch == '"' || ch == '\'' {
-            return read_string(source, quote_offset, ch);
+            let raw = source[start..quote_offset]
+                .chars()
+                .any(|c| c == 'r' || c == 'R');
+            return read_string(source, quote_offset, ch, raw);
         }
         quote_offset += ch.len_utf8();
     }
@@ -556,7 +559,12 @@ fn is_string_prefix_at(source: &str, start: usize) -> bool {
     false
 }
 
-fn read_string(source: &str, start: usize, quote: char) -> Result<(String, usize), ParseError> {
+fn read_string(
+    source: &str,
+    start: usize,
+    quote: char,
+    raw: bool,
+) -> Result<(String, usize), ParseError> {
     let quote_len = quote.len_utf8();
     let triple = source[start + quote_len..].starts_with(quote)
         && source[start + quote_len * 2..].starts_with(quote);
@@ -574,21 +582,19 @@ fn read_string(source: &str, start: usize, quote: char) -> Result<(String, usize
             .next()
             .expect("valid char boundary");
         if escaped {
-            let decoded = match ch {
-                'n' => '\n',
-                'r' => '\r',
-                't' => '\t',
-                '\\' => '\\',
-                '"' => '"',
-                '\'' => '\'',
-                other => other,
-            };
-            value.push(decoded);
+            value.push(ch);
             escaped = false;
             offset += ch.len_utf8();
         } else if ch == '\\' {
-            escaped = true;
-            offset += ch.len_utf8();
+            if raw {
+                value.push(ch);
+                escaped = true;
+                offset += ch.len_utf8();
+            } else {
+                let (decoded, next) = crate::string_escape::decode(source, offset)?;
+                value.push_str(&decoded);
+                offset = next;
+            }
         } else if triple
             && ch == quote
             && source[offset + quote_len..].starts_with(quote)

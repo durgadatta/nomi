@@ -96,6 +96,7 @@ def main() -> int:
                 "prototype/tests/unit/runtime/test_js_numeric_safety.py",
                 "prototype/tests/unit/runtime/test_collection_operations.py",
                 "prototype/tests/unit/runtime/test_text_strip_compatibility.py",
+                "prototype/tests/unit/runtime/test_source_text_escapes.py",
                 "prototype/tests/unit/runtime/test_release_diagnostics.py",
                 "prototype/tests/unit/runtime/test_js_core_runtime_backend.py",
             ],

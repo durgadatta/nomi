@@ -87,12 +87,20 @@ set of characters to remove at the two ends; `None` selects whitespace.
 Wrong argument types or extra arguments fail. This is a bounded prototype
 library contract; target Unicode trimming remains a separate library decision.
 
-Use literal Unicode text in browser examples. Python-style `\x`/`\u` source
-escape spellings still differ in the WASM parser and may lose their backslash;
-they are not a supported cross-engine spelling. Parser JSON now escapes literal
-control characters correctly, but that transport repair does not fix source
-escape decoding. The [readiness follow-up](../orientation/project_roadmap.md#text-compatibility-follow-up)
-tracks this remaining gap.
+Literal Unicode text is usually the clearest spelling. The current prototype
+also decodes `\n`, `\r`, `\t`, `\a`, `\b`, `\f`, `\v`, escaped quotes/backslashes,
+two-digit `\x`, four-digit `\u`, eight-digit `\U`, and up to three octal digits
+consistently on the tested routes. For example, `"\u00e9"` contains `é`.
+Raw text such as `r"\n"` preserves the backslash. Unknown escapes preserve it
+too, but the hosted parser warns; use raw text or an escaped backslash instead.
+
+The browser refuses malformed numeric escapes, surrogate/out-of-range scalar
+escapes, and named Unicode escapes such as `\N{...}`. Named escapes remain a
+hosted-only compatibility form. Bytes/formatted-string prefixes and multiline
+edge cases are outside this bounded text guarantee. These are prototype
+compatibility spellings, not acceptance of a complete target escape grammar.
+The [escape repair receipt](../orientation/project_roadmap.md#source-text-escape-repair--october-10)
+records the tested scope and remaining work.
 
 ## The Guarantees Being Built
 

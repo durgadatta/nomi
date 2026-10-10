@@ -374,6 +374,38 @@ Heading anchors, remote availability, accessibility and human comprehension
 remain separate evidence requirements. Exact guide outputs retain their
 separate runtime checker.
 
+### Source Text Escape Repair — October 10
+
+A separate decoder now feeds the existing Rust String literal payload. It
+preserves original token source and decodes common control, hexadecimal,
+Unicode-scalar and octal spellings; raw and unknown escapes retain backslashes.
+Malformed numeric escapes, surrogate/out-of-range scalars and unsupported named
+Unicode escapes refuse explicitly. No target escape grammar, syntax promotion
+or general Python-literal parity is accepted. The guide names the supported
+prototype scope and recommends literal Unicode or raw text for clarity.
+
+Two lexical contracts failed before the repair; all **eight crate checks** now
+pass. Eight independent literal vectors across five execution routes, the Rust
+hosted route and six browser refusals pass **54 checks**. The source-continuation
+probe exposed an existing Lark difference for single-quoted strings; the shared
+route vector uses supported multiline text instead. Single-quoted continuation,
+bytes/formatted prefix semantics, named Unicode lookup and multiline boundaries
+remain explicit follow-ups. In particular, the JavaScript lowerer currently
+ignores bytes/formatted prefixes in String payloads: add capability refusal
+before those values can be silently interpreted as ordinary text in the next
+bounded pass.
+
+Rust frontend/parity/acceptance passes **189 checks**. Rebuilt committed
+browser/worker WASM binaries and metadata reflect this decoder source change;
+`build_wasm.sh --check` verifies eight outputs. The web manifest is unchanged,
+and `make_web.py --check` passes (129 runtime files, 13 samples). The expanded
+web/runtime gate passes **1,669 tests, one skipped**, plus **24/24** exact guide
+outputs; optional Python Core adds **8/8**. Unknown escape vectors intentionally
+expose the hosted Python SyntaxWarning rather than implying a future guarantee.
+Actual default/legacy Chromium journeys pass against the rebuilt assets.
+Cargo formatting, selected Ruff and the offline documentation file-link gate
+pass. This repairs source decoding separately from the earlier JSON serializer.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition
