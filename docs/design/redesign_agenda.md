@@ -55,15 +55,17 @@ The whole next-generation language is not settled by this pass.
 Use three recurring programs: a beginner invoice, a boundary-heavy import/report,
 and a cancellation/resource-heavy job. Add a symbolic scheduling model and
 multiplayer/editing scenario as challenger programs when the ordinary language
-fails them. The [target suite](targets/README.md) is the source pressure set,
+fails them or a broader activity suggests a credible alternative. The
+[target suite](targets/README.md) is the source pressure set,
 not a claim all proposed APIs typecheck.
 
 ## What A Language Must Decide
 
 The table is an agenda of questions, not a feature wish list. "Owner" points to
 the single live contract/question family; detail should move there rather than
-be copied into this document. Challenger topics extend those families unless
-three real programs justify a new registered packet.
+be copied into this document. Extend an existing family when it fits; create a
+new packet when a durable cross-cutting question cannot fit its current owners.
+Neither route requires discovery to fit the present program inventory first.
 
 | Dimension | Question and credible fork | Evidence/deliverable | Owner |
 | --- | --- | --- | --- |

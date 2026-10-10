@@ -1,25 +1,28 @@
 ---
 name: nomi-language-design
-description: Refine Nomi's target language through syntax-first whole-program design, consolidated cross-language evidence, bounded experiments, explicit tradeoffs, and canonical docs updates. Use for language semantics, syntax admission, research synthesis, target programs, and design reviews.
+description: Refine Nomi's language and computational-medium design through broad discovery, whole-activity comparisons, semantic admission, and canonical docs updates. Use for language semantics, interaction/design hypotheses, research synthesis, target programs, and design reviews.
 compatibility: codex, opencode, deepseek-tui, claude-code
 ---
 
 # Nomi Language Design
 
-Use this skill for target-language choices, syntax/semantic reviews,
-cross-language synthesis, feature admission, and aspirational programs.
+Use this skill for target-language choices, interaction/design hypotheses,
+syntax/semantic reviews, cross-disciplinary synthesis and feature admission.
 
 ## Authority
 
 Read in this order:
 
 1. `docs/design/README.md` - product promise and language shape.
+   For broad discovery, also read `docs/design/vision.md` - guiding purpose,
+   competing directions and the current gap.
 2. `docs/design/syntax.md` - canonical target source forms.
 3. `docs/design/semantics.md` - behavior independent of backends.
 4. `docs/design/industrial.md` - package, effect, concurrency, security,
    tooling, and deployment contracts.
 5. `docs/design/decisions.md` - accepted, rejected, deferred, and open choices.
-6. `docs/design/target.nomi` - whole-language pressure fixture.
+6. `docs/design/targets/overall.nomi` and `docs/design/targets/README.md` - active
+   whole-language pressure fixture and category suite. `target.nomi` is superseded.
 7. `config/design_passes.json` - registered focused-pass routing and status.
 8. `docs/orientation/design_pass_workflow.md` - packet and retrospective
    contract.
@@ -66,18 +69,22 @@ touch the world
 understand
 ```
 
-Classify a proposal into one of four layers:
+For source/semantic proposals, compare placement in the current four layers:
 
 1. core surface;
 2. standard mechanically reducible convenience;
 3. ordinary library/protocol;
 4. explicitly scoped language tool.
 
-If the feature does not need source syntax, stop at layer 3.
+Interaction tools need not become source syntax. These layers are a working
+placement hypothesis, not a limit on discovery. Name the cost or hidden law when
+a candidate requires a different division; do not silently change accepted meaning.
 
 ## Syntax-First Review
 
-For each proposal, inspect the code shape before abstract virtues.
+For a source-syntax proposal, inspect the code shape before abstract virtues.
+For an interaction/model proposal, inspect the actual activity, representation
+and changes first; do not require every idea to begin as a code abbreviation.
 
 1. Write the explicit long form.
 2. Write the proposed form in a beginner example, production function, and
@@ -87,7 +94,7 @@ For each proposal, inspect the code shape before abstract virtues.
 5. Compare interactions with binding, types, data, match, Result, effects,
    resources, async, modules, and formatting.
 6. Sketch at least one diagnostic and one formatter rendering.
-7. Put the form into `docs/design/target.nomi` or a focused target fragment.
+7. Put the form into an active category/overall target or a focused target fragment.
 8. Prefer deletion when two forms ask the reader to recognize the same act.
 
 Desugarability is necessary but insufficient. A shorthand that lowers cleanly
@@ -119,11 +126,16 @@ composition operators, or universal block/yield control without new evidence.
 Start with `docs/research/families.md` and
 `docs/research/convergences.md`. Ask whether the question is already answered.
 
-Do new research only when:
+Separate discovery from admission. Discovery can start from an observed activity,
+an unfamiliar discipline, a primary mechanism or a speculative model. Use the
+existing corpus for discovery and continuity; revise its taxonomy when necessary.
+It need not already fit a registered packet or have two formed answers.
 
-- a concrete target program exposes a deficiency;
-- two credible Nomi-compatible choices remain;
-- the choice changes syntax, semantics, or an industrial contract;
+Before promoting a mature fork into a language obligation, establish:
+
+- a concrete activity or target program exposes a deficiency or opportunity;
+- credible competing choices, with conflicts against current decisions named;
+- consequences for meaning, representation, tooling or an industrial contract;
 - a bounded experiment can distinguish them.
 
 Research unit:
@@ -156,6 +168,7 @@ design, target fixture, and implementation bridge must link one another and
 remain consistent with the broad design spine. New focused documents are
 justified only when a cross-cutting feature contract no longer fits cleanly in
 the consolidated files.
+Registration organizes a bounded question; it is not a prerequisite for discovery.
 
 At the end of every pass, update status, validation, exact next actions, and
 the bridge retrospective required by
@@ -235,11 +248,11 @@ must be earned by table-specific programs.
 
 ## Whole-Language Test
 
-After any global decision:
+After a global source or semantic decision:
 
 1. update `docs/design/syntax.md` and/or `semantics.md`;
 2. update `docs/design/decisions.md`;
-3. update `docs/design/target.nomi`;
+3. update the active `docs/design/targets/overall.nomi` and affected category targets;
 4. scan the target for punctuation or constructs that now conflict;
 5. update `docs/research/open_questions.md` if an experiment closed;
 6. update `docs/README.md` only if the document topology changed;
@@ -278,7 +291,7 @@ workflow and the parser/interpreter/test/web skills for implementation.
 
 ## Stop Conditions
 
-Stop and keep a proposal open when:
+Keep a source/semantic promotion open when:
 
 - its best argument is fewer keystrokes;
 - it reuses punctuation with an unrelated meaning;
@@ -286,4 +299,7 @@ Stop and keep a proposal open when:
 - its diagnostics require backend implementation vocabulary;
 - it works in a snippet but makes the target program less coherent;
 - ordinary functions or data have not been tried;
-- more research would only add examples rather than distinguish choices.
+- its current evidence only adds examples without explaining the choice.
+
+That does not stop discovery of a different question, model or activity. Distinguish
+stability of the reviewed contract from unperformed implementation or human validation.

@@ -19,6 +19,12 @@ The important design pressure is not feature accumulation. Nomi should grow by
 making small semantic primitives combine into richer forms while preserving
 local reasoning, readable syntax, and inspectable reduction.
 
+The guiding purpose is `docs/design/vision.md`: design the language and
+environment around how people create, understand, revise, share and authorize
+computational work. Current primitives, source-first authoring, research packets
+and release milestones are revisable means. Discovery may challenge that map;
+accepted source/semantic contracts change through explicit, coherent revisions.
+
 Nomi is still an early exploratory language-design initiative. Implementation
 work should preserve optionality: prefer declarative/spec-driven metadata,
 registries, schemas, capability tables, and inspectable reductions over
@@ -40,21 +46,24 @@ Start with these files before broad design or implementation changes:
   surfaces.
 - `docs/README.md`: documentation authority and task routes.
 - `docs/design/README.md`: canonical product and language target.
+- `docs/design/vision.md`: broader purpose, candidate directions and current gaps.
 - `docs/design/syntax.md`: accepted target source forms and notation budget.
 - `docs/design/semantics.md`: implementation-independent behavior.
 - `docs/design/pattern_matching.md`: first registered focused design contract.
 - `docs/design/industrial.md`: package, effect, concurrency, security, tooling,
   deployment, and conformance target.
 - `docs/design/decisions.md`: accepted, rejected, deferred, and open choices.
-- `docs/design/target.nomi`: aspirational coherence fixture; not expected to run
-  today.
+- `docs/design/targets/overall.nomi` and `docs/design/targets/README.md`: active
+  aspirational coherence program and category suite; not expected to run today.
+  `docs/design/target.nomi` is a superseded predecessor.
 - `config/design_passes.json` and
   `docs/orientation/design_pass_workflow.md`: registered topic packets,
   validation, migration status, and retrospective loop.
 - `docs/research/convergences.md`: consolidated cross-language evidence.
 - `docs/research/open_questions.md`: bounded experiments; start here before new
   research.
-- `docs/review/2026-07-16.md`: current design judgment and ordered actions.
+- `docs/review/2026-07-16.md`: historical reset judgment; current priorities and
+  receipts belong to `docs/orientation/project_roadmap.md`.
 - `docs/orientation/artifacts_and_usage.md`: current runtime pipeline and
   artifact map.
 - `docs/orientation/exploratory_implementation_doctrine.md`: reversible

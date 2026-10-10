@@ -122,6 +122,27 @@ checks pass. These checks validate maintained documents and fixtures, not the ne
 human, architectural or temporal hypotheses. Existing runtime receipts retain
 their earlier scope; runtime code and generated browser assets are unchanged.
 
+### Iterative Vision Refinement
+
+The follow-up asks for repeated refinement over coherent commits. The first
+review found broad-discovery guidance contradicted by the shared design skill,
+critic and agent entrypoint, including superseded target routes. Those surfaces
+now distinguish discovery from source/semantic admission and use the active suite.
+The docs authority explanation separates purpose, accepted laws and proposals;
+the agenda removes an arbitrary program-count threshold for registration.
+
+This is a local stabilization exercise: close contradictions and make the next
+comparisons reviewable. It cannot establish that the whole language or human
+benefit has stabilized. Later review increments and verification belong here,
+with their detailed retrospective in the cognitive packet.
+
+First increment verification: 17 docs/packet/agent-hook checks pass; repository
+agent metadata, shims and routing checks pass. Local file links and whitespace
+pass. The generic skill-creator validator rejects the pre-existing shared
+`compatibility` frontmatter key, which the repository's cross-tool format retains;
+this is a validator-format mismatch, not a new skill failure. RAG freshness is
+refreshed after the sequence rather than claiming each interim index is current.
+
 ## User-Facing Documentation Pass
 
 The later [whole-system direction](#whole-system-direction--october-10) broadens

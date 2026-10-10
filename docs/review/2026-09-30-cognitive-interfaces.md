@@ -613,3 +613,35 @@ evidence warrants it; a release milestone cannot settle the broader vision.
 five design packets remain coherent. Local file-link and whitespace checks pass.
 The roadmap records the same scope. These checks cannot validate the new
 hypotheses, establish target conformance or substitute for observations of people.
+
+## Iterative Vision Refinement, 2026-10-10
+
+### Evidence That Changed The Design
+
+The first consistency review found the canonical vision permits open discovery
+while the shared design skill still requires an already formed language fork.
+The agent entrypoint and critic also route to the superseded target. A purpose
+statement and an accepted semantic law need different roles to avoid silently
+changing source meaning under a broader ambition.
+
+### Workflow Friction
+
+Correcting canonical prose alone leaves conflicting operational instructions.
+A fixed program count also confuses registering a durable question with admitting
+a language mechanism. Repeated review must examine actual routes and obligations,
+not repeatedly expand the same vision language.
+
+### Durable Improvement
+
+The design skill, critic, agent entrypoint and collaboration route now separate
+discovery, comparison and semantic admission and name the active target suite.
+The docs authority paragraph names purpose, accepted laws and unresolved proposals.
+Existing notation and runtime promises retain their status; no new agent surface,
+hook, packet, syntax or runtime behavior is introduced.
+
+### Next Pass
+
+Sharpen the vision's proposed mechanisms into comparable alternatives with concrete
+activity, semantic expectations and evidence boundaries. Investigate composition
+costs and try the creative timing comparison as a bounded model experiment;
+retain actual language execution and observations of people as separate gaps.

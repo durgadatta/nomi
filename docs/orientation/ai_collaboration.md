@@ -28,6 +28,13 @@ Focused language work follows the linked packet and retrospective contract in
 
 ## Vision Over Snapshot
 
+The [guiding vision](../design/vision.md) covers the language and whole activity.
+Discovery may begin outside the current targets, packet taxonomy or release
+profile. A mature source/semantic change still needs a coherent owned contract;
+an exploratory question does not need to satisfy that admission packet first.
+Use the [active target suite](../design/targets/README.md), including
+`targets/overall.nomi`; the older `target.nomi` is superseded.
+
 Every tool invocation should carry this bias:
 
 ```text
@@ -80,7 +87,7 @@ clear semantics, tests, examples, and documentation.
   | `nomi-test` | Write tests with multi-interpreter patterns |
   | `nomi-web` | Work with the web playground and Monaco editor |
   | `nomi-rust-parser` | Maintain Rust/Wasm parser frontends, structural payload contracts, and parity |
-  | `nomi-language-design` | Refine Nomi syntax/design from other languages by reducing ideas to shared normal forms |
+  | `nomi-language-design` | Broad language/interaction discovery, whole-activity synthesis and semantic admission |
   | `nomi-ai-native` | Improve AI-agent setup: skills, hooks, MCP/RAG, subagents, commands, context hygiene, and workflow audits |
   If an agent has a skill loader, load the matching skill from this directory.
   If it does not, or if the loader's current session inventory omits a

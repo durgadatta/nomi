@@ -30,7 +30,7 @@ Current skills:
 - `caveman`: ultra-concise output for low-context or terse models.
 - `nomi-interp`: interpreter runtime changes.
 - `nomi-ai-native`: AI-agent setup, hooks, MCP/RAG, skills, subagents, and workflow audits.
-- `nomi-language-design`: language design synthesis and syntax critique.
+- `nomi-language-design`: broad language/interaction discovery, synthesis and semantic admission.
 - `nomi-parse`: parser, grammar, and AST lowering changes.
 - `nomi-reduce`: syntactic reduction/desugar work.
 - `nomi-rust-parser`: Rust/Wasm parser frontends, payload contracts, and parity.
@@ -44,6 +44,11 @@ research document, canonical focused design, target fixture, implementation
 bridge, validation list, and exact next actions. The process contract is
 `docs/orientation/design_pass_workflow.md`; the registry is navigation, not a
 language specification.
+
+The guiding purpose is `docs/design/vision.md`. Discovery can precede a bounded
+packet and can revise the taxonomy; source/semantic promotion still needs its
+owned contract and evidence. The active whole-language fixture is
+`docs/design/targets/overall.nomi`, not the superseded `target.nomi`.
 
 Inspect it with:
 

@@ -108,6 +108,12 @@ current user decision
 Tests remain authoritative for what a supported implementation does today.
 They are not a veto over a new target-language decision.
 
+Within target design, the [vision](design/vision.md) owns the purpose and outcomes;
+accepted syntax/semantics own the current intended laws. Designing proposals own
+unresolved alternatives. A new direction can revise those laws explicitly; it
+does not silently reinterpret existing source, change runtime behavior or turn
+a proposed mechanism into an accepted one.
+
 Target-only source belongs under `docs/design/targets/` or a registered focused
 target. `design/target.nomi` is a superseded predecessor retained for historical
 links. Files under `samples/` are runnable product fixtures
