@@ -152,6 +152,33 @@ responsiveness, throughput, precision, bounded work, data movement and retained
 evidence alongside readability. “Fast” needs a workload and measurement; a
 friendly abstraction should reveal relevant costs when the task depends on them.
 
+## Synthesize Through Meaning And Boundaries
+
+The useful connection between PL and HCI is a person working with a model whose
+meaning, consequences and limits remain recoverable. Functions, types, algebraic
+data, constraints, effects, resources, relations and incremental computation are
+mechanisms to investigate for that purpose. They are not independent trophies.
+The [generic-operation research](../research/generic_operations.md) shows how
+small capabilities enable different compositions; the
+[domain synthesis](../research/domain_composition.md) preserves their distinct laws.
+
+Compare mechanisms at the boundaries where people otherwise reconstruct meaning:
+
+| Boundary | Facts the composition must retain or explicitly change |
+| --- | --- |
+| Values and models | Units, identity, schema, uncertainty and omitted assumptions; equal displays need not denote equal concepts. |
+| Computations | Evaluation/demand, order, cardinality, failure, time and cost; the same verb does not imply the same schedule or algebra. |
+| Representations | What an edit changes, its coordinate/model basis, incomplete states and what cannot round trip. |
+| Actions | Current authority, ownership, proposed versus committed state and observed external outcome. |
+| Evidence | Which source, model, run or observation supports a claim, under which assumptions and coverage. |
+| Growth | Which public meaning remains stable, which verification becomes invalid and which change requires migration. |
+
+A shared envelope may help inspection without making every payload have the same
+meaning. A richer type may expose a useful law while increasing entry cost.
+A diagram may reveal structure while hiding action order. Evaluate these joins
+in one whole activity; place each mechanism where it best supports that activity.
+This is a synthesis method, not acceptance of a universal object, evaluator or IR.
+
 ## Pressure Programs That Can Change The Direction
 
 Use the existing targets where they fit, but allow new programs to challenge the
@@ -170,6 +197,10 @@ The [creative timing challenger](../research/interfaces/music_timing.md#creative
 develops one prompt into fixed beat/time facts and creation, ambiguous-goal,
 unfinished-duration, stale-edit, handoff and playback questions. It is prepared
 material; no Nomi implementation, participant or device outcome is claimed.
+The [explained-report challenger](../research/interfaces/structured_documents.md#explained-report-challenger)
+separates measurement, missingness, calibration assumptions and derived summaries
+under supplied facts. Together they test temporal creation and evidence-rich
+interpretation beyond the existing runnable report.
 
 A program is valuable here when it exposes a missing concept, a costly translation
 between representations or a credible alternative. It does not need to fit an
@@ -229,3 +260,30 @@ For each increment, retain the pressure, alternatives, mechanism, interaction
 cost, independent expectations, observed outcome and next uncertainty. Say what
 changed and what did not become established. A useful first release is an
 instrument for this continuing synthesis, not the final definition of Nomi.
+
+## What Can Stabilize In A Refinement Pass
+
+Stabilize a scoped proposal by making its purpose, alternatives, meaning,
+evidence and unresolved choices consistent. The
+[hypothesis comparisons](redesign_agenda.md#comparison-and-falsification)
+name ways the current candidates can fail. A stable description keeps a credible
+fork open when evidence cannot decide it.
+
+Different comparisons need different controls:
+
+- **Models:** compare different rules and assumptions explicitly. Identical initial
+  output does not make beat-anchored and time-anchored models equivalent.
+- **Representations:** hold the selected model and semantic task facts constant;
+  compare expression, prediction, repair, change and handoff costs.
+- **Automation:** disclose the same available evidence; preserve ambiguity and
+  measure detection/repair of wrong advice, not acceptance alone.
+- **Execution profiles:** pin declared rules and capacities; compare values,
+  events, failures and refusals on the supported overlap.
+
+Review until the same question receives the same scoped answer through the vision,
+target, research, guide and operational instructions; remaining choices have a
+real next discriminator; and counterexamples no longer require an unrecorded
+exception. Remove duplicate wording and machinery that add no distinct help.
+Stop adding claims when the missing evidence requires execution or observations
+that this pass has not produced. Record that frontier instead of declaring the
+whole language stabilized or manufacturing a winner.

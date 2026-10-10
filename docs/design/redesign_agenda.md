@@ -127,6 +127,31 @@ lossy; a shared command abstraction may be too broad; proofs may be unusable;
 library-first may produce more concepts than a well-scoped notation. Measure
 that cost instead of defending a small core as a goal independent of users.
 
+### Comparison And Falsification
+
+The seven hypotheses above reuse existing owners. The table makes their burden
+of evidence concrete; it adds no accepted mechanism or numbered experiment.
+Meaning/refusal obligations must hold before a usability comparison can favor
+a candidate. A formative observation can expose a problem without proving a
+population-wide winner.
+
+| Hypothesis | Comparable alternatives and activity | What would weaken or require changing it | Detailed route |
+| --- | --- | --- | --- |
+| Evidence-aware explanations | Plain bounded source/trace versus provenance-tagged, question-bound facts; explain a known blocker, false premise and unknown outcome using equal evidence | Tags obscure the question, imply proof from an observation or expose protected facts; correct prediction/repair does not improve enough to justify the complexity | C09/HX2/HX8; query/search, explained report |
+| Semantic commands | Separate domain operations versus a shared command family across source/form/pointer/agent; make the same revision-bound edit | The common envelope erases domain laws, hides target identity, prevents useful expression or costs more than the separate operations | HX1/HX3/HX4; invoice and timing |
+| Typed change sets | Ordinary explicit edits/diffs versus checked candidates carrying base and consequences; invalid, stale, ambiguous and concurrent attempts | Candidate validity is confused with publication/permission; the promised atomic boundary cannot be enforced, or review machinery adds confusion without useful consequence information | Interaction model; publication and handoff |
+| Epoch-explicit exploration | Explicit Run/last-good inspection versus supported pure recomputation; incomplete source, changed captures and late completion | Pure inspection repeats effects, dependencies are incomplete, stale work replaces current work or retained history overwhelms response/understanding | Notebook comparison; reactive time |
+| Relation values | Explicit predicates/loops versus relation/constraint plans; allocation with several, no or budget-incomplete solutions | A solver hides policy, claims complete absence from incomplete search, loses witnesses or makes the ordinary model harder to understand than the loop | Logic/search; domain models |
+| Projected notation | Text with read-only views, bounded inverse edits and structured/mixed authoring; create, revise, export and hand off an invoice or timed score | Meaning/comments/identity are lost, ambiguity is silently resolved, access excludes users, or transition/export costs erase the task benefit | HX4/HX8; paired representation and creative timing |
+| Semantic migration receipts | Textual diff versus contract/effect/boundary changes with qualified evidence; hand off a changed rule or public interface | Unchanged contracts are mistaken for unchanged verification, omitted assumptions hide changed meaning or the receipt invents compatibility; maintainers cannot use it to predict consequences | Edition/module laws; team handoff |
+
+Avoid changing several mechanisms at once and attributing the outcome to one.
+For example, a structured editor supplied with better diagnostics than the text
+candidate cannot isolate representation benefit. A beat/time model comparison
+must first expose its different rules; only then can matched views compare those
+rules' presentation. Use the [vision's comparison scopes](vision.md#what-can-stabilize-in-a-refinement-pass)
+to keep interpretation, semantic conformance and actual host observations separate.
+
 ## Ordered Design Closure
 
 The October 9 [first-product contract](synthesis.md#first-product-contract)

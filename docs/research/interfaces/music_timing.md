@@ -48,6 +48,8 @@ Use two notes with distinct stable identities. Note A starts at beat 0; note B
 starts at beat 1. Both last half a beat. The declared initial tempo is 120 beats
 per minute with a constant beat-to-time mapping and no expressive timing.
 The literal expectations below follow that supplied model:
+they are reviewer oracles, withheld until initial predictions are recorded for
+tasks that ask the person to calculate the result.
 
 | Model revision | A starts / ends | B starts / ends |
 | --- | --- | --- |

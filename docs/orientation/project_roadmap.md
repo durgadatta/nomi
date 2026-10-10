@@ -143,6 +143,17 @@ pass. The generic skill-creator validator rejects the pre-existing shared
 this is a validator-format mismatch, not a new skill failure. RAG freshness is
 refreshed after the sequence rather than claiming each interim index is current.
 
+Second increment: the vision now identifies value, computation, representation,
+action, evidence and growth boundaries as the joins to investigate. The seven
+existing hypotheses have concrete alternatives, weakening evidence and owner
+routes. Comparison scopes separate model choice from representation, automation
+and execution profiles. An explained-report challenger supplies measurement,
+missingness and calibration oracles; the creative case also separates reviewer
+answers from initial participant predictions. These remain prepared comparisons.
+Second increment verification: 136 docs/packet/interaction/domain/target-coherence
+checks pass, all five packets are coherent, 1,934 local file links and whitespace
+pass. This validates consistency and existing fixtures, not the new human hypotheses.
+
 ## User-Facing Documentation Pass
 
 The later [whole-system direction](#whole-system-direction--october-10) broadens

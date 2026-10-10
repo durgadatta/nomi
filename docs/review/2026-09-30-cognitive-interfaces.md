@@ -624,6 +624,11 @@ The agent entrypoint and critic also route to the superseded target. A purpose
 statement and an accepted semantic law need different roles to avoid silently
 changing source meaning under a broader ambition.
 
+The second review found outcome lists do not explain which mechanism to try or
+what would weaken it. Identical initial output can hide different temporal or
+missingness rules. A representation comparison must first pin that model; an
+oracle shown before a prediction would measure copying instead of understanding.
+
 ### Workflow Friction
 
 Correcting canonical prose alone leaves conflicting operational instructions.
@@ -638,6 +643,13 @@ discovery, comparison and semantic admission and name the active target suite.
 The docs authority paragraph names purpose, accepted laws and unresolved proposals.
 Existing notation and runtime promises retain their status; no new agent surface,
 hook, packet, syntax or runtime behavior is introduced.
+
+The vision now names composition boundaries and scopes of comparison. The agenda
+links the seven existing hypotheses to alternatives and falsification pressures;
+the explained-report case supplies literal measurement/missingness/calibration
+facts. Both it and the timing case identify reviewer oracles and initial predictions.
+Stabilization means a consistent scoped description and honest remaining forks,
+not a claim that the whole language or human benefit is settled.
 
 ### Next Pass
 
