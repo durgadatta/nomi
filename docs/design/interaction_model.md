@@ -402,6 +402,13 @@ and repair scoring, incident categories, and blocked-task reporting. It remains
 unperformed. Maintained research tests and capture verification establish the
 integrity of those documents and finite models, not empirical success.
 
+The [creative timing continuation](../research/interfaces/music_timing.md#bounded-model-experiment)
+executes a separate supplied-model profile. Identical initial schedules diverge
+under beat versus absolute-time rules; retained runs keep their old model basis;
+local Stop may leave an unmatched note-on. These observations motivate explicit
+model/revision/delivery explanations. They do not implement shared adapters,
+acknowledged release, source/timeline authoring or any HX human comparison.
+
 The [U01-U07 fixture set](../research/interfaces/study_cases.json) keeps supplied
 facts, hidden controls, and answer keys distinct. P23's identical observations
 with different hidden action outcomes guard against grading unknown as either

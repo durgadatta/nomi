@@ -1,0 +1,1094 @@
+{
+  "schema_version": 1,
+  "scope": "Literal oracles for a finite supplied-model experiment; not Nomi conformance or human results.",
+  "models": {
+    "beat": {
+      "incarnation": "score-one",
+      "revision": 1,
+      "basis": "beats",
+      "tempo": [
+        120,
+        1
+      ],
+      "notes": [
+        {
+          "id": "A",
+          "onset": [
+            0,
+            1
+          ],
+          "duration": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "B",
+          "onset": [
+            1,
+            1
+          ],
+          "duration": [
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    "absolute": {
+      "incarnation": "absolute-one",
+      "revision": 1,
+      "basis": "milliseconds",
+      "tempo": [
+        120,
+        1
+      ],
+      "notes": [
+        {
+          "id": "A",
+          "onset": [
+            0,
+            1
+          ],
+          "duration": [
+            250,
+            1
+          ]
+        },
+        {
+          "id": "B",
+          "onset": [
+            500,
+            1
+          ],
+          "duration": [
+            250,
+            1
+          ]
+        }
+      ]
+    },
+    "reset": {
+      "incarnation": "score-two",
+      "revision": 1,
+      "basis": "beats",
+      "tempo": [
+        120,
+        1
+      ],
+      "notes": [
+        {
+          "id": "A",
+          "onset": [
+            0,
+            1
+          ],
+          "duration": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "B",
+          "onset": [
+            1,
+            1
+          ],
+          "duration": [
+            1,
+            2
+          ]
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "beat-baseline",
+      "model": "beat",
+      "steps": [],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "runs": {}
+      }
+    },
+    {
+      "id": "absolute-baseline",
+      "model": "absolute",
+      "steps": [],
+      "expect": {
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "model.basis": "milliseconds"
+      }
+    },
+    {
+      "id": "beat-tempo-change",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "tempo",
+          "value": [
+            60,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "model.tempo": "60",
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "500",
+            "off",
+            "A"
+          ],
+          [
+            "1000",
+            "on",
+            "B"
+          ],
+          [
+            "1500",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "committed"
+        ]
+      }
+    },
+    {
+      "id": "absolute-tempo-change",
+      "model": "absolute",
+      "steps": [
+        {
+          "op": "tempo",
+          "value": [
+            60,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "model.tempo": "60",
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "fractional-time",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "tempo",
+          "value": [
+            180,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "500/3",
+            "off",
+            "A"
+          ],
+          [
+            "1000/3",
+            "on",
+            "B"
+          ],
+          [
+            "500",
+            "off",
+            "B"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "move-with-known-basis",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "1000",
+            "on",
+            "B"
+          ],
+          [
+            "1250",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "committed"
+        ]
+      }
+    },
+    {
+      "id": "stale-tempo-edit",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "tempo",
+          "value": [
+            60,
+            1
+          ]
+        },
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "500",
+            "off",
+            "A"
+          ],
+          [
+            "1000",
+            "on",
+            "B"
+          ],
+          [
+            "1500",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "committed",
+          "stale_revision"
+        ]
+      }
+    },
+    {
+      "id": "wrong-coordinate-basis",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "milliseconds",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "wrong_basis"
+        ]
+      }
+    },
+    {
+      "id": "unknown-note",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "missing",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "unknown_note"
+        ]
+      }
+    },
+    {
+      "id": "unfinished-duration-draft",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "duration",
+          "value": "1/"
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "invalid_draft"
+        ],
+        "drafts": [
+          {
+            "note_id": "B",
+            "value": "1/",
+            "field": "duration"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negative-coordinate",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            -1,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "invalid_draft"
+        ]
+      }
+    },
+    {
+      "id": "boolean-tempo",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "tempo",
+          "value": [
+            true,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "model.tempo": "120",
+        "statuses": [
+          "invalid_tempo"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-slower-request",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "ambiguous",
+          "request": "make the second note slower"
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "needs_clarification"
+        ]
+      }
+    },
+    {
+      "id": "replayed-edit",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        },
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "statuses": [
+          "committed",
+          "stale_revision"
+        ]
+      }
+    },
+    {
+      "id": "reset-counter-reuse",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "reset",
+          "model": "reset"
+        },
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            2,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.incarnation": "score-two",
+        "model.revision": 1,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "reset",
+          "wrong_incarnation"
+        ]
+      }
+    },
+    {
+      "id": "incarnation-cannot-be-restored",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "reset",
+          "model": "reset"
+        },
+        {
+          "op": "reset",
+          "model": "beat"
+        }
+      ],
+      "expect": {
+        "model.incarnation": "score-two",
+        "statuses": [
+          "reset",
+          "reused_incarnation"
+        ]
+      }
+    },
+    {
+      "id": "passive-inspection",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "run",
+          "run_id": "old"
+        },
+        {
+          "op": "inspect"
+        },
+        {
+          "op": "inspect"
+        }
+      ],
+      "expect": {
+        "runs.old.clock": "0",
+        "runs.old.delivered": [],
+        "runs.old.external_outcome": "unobserved",
+        "model.revision": 1,
+        "inspections": [
+          [
+            [
+              "0",
+              "on",
+              "A"
+            ],
+            [
+              "250",
+              "off",
+              "A"
+            ],
+            [
+              "500",
+              "on",
+              "B"
+            ],
+            [
+              "750",
+              "off",
+              "B"
+            ]
+          ],
+          [
+            [
+              "0",
+              "on",
+              "A"
+            ],
+            [
+              "250",
+              "off",
+              "A"
+            ],
+            [
+              "500",
+              "on",
+              "B"
+            ],
+            [
+              "750",
+              "off",
+              "B"
+            ]
+          ]
+        ],
+        "runs.old.all_planned_events_delivered": false
+      }
+    },
+    {
+      "id": "late-run-keeps-old-basis",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "run",
+          "run_id": "old"
+        },
+        {
+          "op": "tempo",
+          "value": [
+            60,
+            1
+          ]
+        },
+        {
+          "op": "advance",
+          "run_id": "old",
+          "milliseconds": [
+            1000,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "500",
+            "off",
+            "A"
+          ],
+          [
+            "1000",
+            "on",
+            "B"
+          ],
+          [
+            "1500",
+            "off",
+            "B"
+          ]
+        ],
+        "runs.old.delivered": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "750",
+            "off",
+            "B"
+          ]
+        ],
+        "runs.old.revision": 1,
+        "runs.old.relation_to_current": "older_revision",
+        "runs.old.external_outcome": "unobserved",
+        "runs.old.all_planned_events_delivered": true
+      }
+    },
+    {
+      "id": "local-stop-is-not-release",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "run",
+          "run_id": "old"
+        },
+        {
+          "op": "advance",
+          "run_id": "old",
+          "milliseconds": [
+            0,
+            1
+          ]
+        },
+        {
+          "op": "stop",
+          "run_id": "old"
+        },
+        {
+          "op": "advance",
+          "run_id": "old",
+          "milliseconds": [
+            1000,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "runs.old.delivery_stopped": true,
+        "runs.old.delivered": [
+          [
+            "0",
+            "on",
+            "A"
+          ]
+        ],
+        "runs.old.unclosed_note_ids": [
+          "A"
+        ],
+        "runs.old.external_outcome": "unobserved",
+        "runs.old.all_planned_events_delivered": false
+      }
+    },
+    {
+      "id": "clock-does-not-replay-events",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "run",
+          "run_id": "old"
+        },
+        {
+          "op": "advance",
+          "run_id": "old",
+          "milliseconds": [
+            500,
+            1
+          ]
+        },
+        {
+          "op": "advance",
+          "run_id": "old",
+          "milliseconds": [
+            0,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "statuses": [
+          "run_snapshot_created",
+          "advanced",
+          "time_reversal_refused"
+        ],
+        "runs.old.clock": "500",
+        "runs.old.delivered": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "equal-time-order",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "onset",
+          "value": [
+            1,
+            2
+          ]
+        }
+      ],
+      "expect": {
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "250",
+            "on",
+            "B"
+          ],
+          [
+            "500",
+            "off",
+            "B"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "longer-duration",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "duration",
+          "value": [
+            1,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 2,
+        "schedule": [
+          [
+            "0",
+            "on",
+            "A"
+          ],
+          [
+            "250",
+            "off",
+            "A"
+          ],
+          [
+            "500",
+            "on",
+            "B"
+          ],
+          [
+            "1000",
+            "off",
+            "B"
+          ]
+        ],
+        "statuses": [
+          "committed"
+        ]
+      }
+    },
+    {
+      "id": "zero-duration",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "duration",
+          "value": [
+            0,
+            1
+          ]
+        }
+      ],
+      "expect": {
+        "model.revision": 1,
+        "statuses": [
+          "invalid_draft"
+        ]
+      }
+    }
+  ]
+}

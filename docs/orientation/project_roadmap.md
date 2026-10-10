@@ -154,6 +154,20 @@ Second increment verification: 136 docs/packet/interaction/domain/target-coheren
 checks pass, all five packets are coherent, 1,934 local file links and whitespace
 pass. This validates consistency and existing fixtures, not the new human hypotheses.
 
+Third increment: a checkout-only timing/revision model executes literal cases
+for beat versus absolute coordinates, fresh and stale edits, retained drafts,
+incarnation reuse, passive inspection, old-run delivery and local Stop. It records
+delivery progress and unclosed notes without claiming device release. Its scope
+and remaining alternatives are in the
+[model profile](../research/interfaces/music_timing.md#bounded-model-experiment).
+The existing P-series capture and packet status are unchanged. The registered
+cognitive validation route includes the new model checks.
+Third increment verification: 184 docs/packet/interaction/domain/target and new
+model tests pass; 23 timing cases match their independent literal expectations;
+the historical 23-probe capture verifies without rewriting. Formatter, lint and
+five-packet coherence checks pass. No Nomi evaluator, authoring UI, concurrent
+publisher, participant or device was exercised by the timing model.
+
 ## User-Facing Documentation Pass
 
 The later [whole-system direction](#whole-system-direction--october-10) broadens

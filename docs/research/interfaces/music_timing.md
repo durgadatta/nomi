@@ -38,9 +38,11 @@ causality and timing without promising low-latency audio or hardware access.
 ## Creative Authoring Challenger — October 10
 
 The [broader vision](../../design/vision.md) needs creation pressure beyond a
-finished invoice or data report. This is a prepared comparison, not an executed
-Nomi score, new API, fake-clock result or human study. It extends the existing
-timing question without introducing a new global experiment ID.
+finished invoice or data report. The authoring comparison is prepared; the
+[bounded model experiment](#bounded-model-experiment) now executes selected
+schedule and revision cases. Neither executes a Nomi score, new API or device,
+or supplies a human study. It extends the existing timing question without
+introducing a new global experiment ID.
 
 ### Fixed Starting Facts
 
@@ -102,3 +104,63 @@ through a domain representation. Repeated difficulty may justify changes to
 the library model, inspection surface, primary authoring representation or scoped
 notation. The result must be allowed to challenge the architecture, while no
 prepared answer here settles real-time behavior or representation superiority.
+
+## Bounded Model Experiment
+
+From a repository checkout, run:
+
+```bash
+python3 -m tools.creative_timing_experiment --check
+python3 -m tools.creative_timing_experiment --case late-run-keeps-old-basis
+pytest -n 0 prototype/tests/unit/tools/test_creative_timing_experiment.py
+```
+
+The standard-library [driver](../../../tools/creative_timing_experiment.py)
+compares selected observations with independently written literal expectations
+in [timing_cases.json](timing_cases.json). The
+[tests](../../../prototype/tests/unit/tools/test_creative_timing_experiment.py)
+also challenge empty selections, unknown paths, lost run identity and host
+boolean/number coercion. The [experiment receipt](experiments.md#creative-timing-continuation-2026-10-10)
+owns the case inventory. No generated outcome capture replaces the expectations.
+Checking is non-writing; a mismatch returns failure. An unknown case or malformed
+fixture is an error, rather than an empty successful check.
+
+### Declared Profile
+
+- Onsets, durations and tempo are exact rational numbers supplied as integer
+  numerator/positive-denominator pairs. Onsets are nonnegative; durations and
+  tempo are positive. This does not choose Nomi's scalar system or draft codec.
+- Beat coordinates scale by tempo; millisecond coordinates do not. Equal-time
+  events use the laboratory rule off before on, then note identity. Neither
+  this tie rule nor rejecting zero-duration notes is a music/device standard.
+- A note change names the model incarnation, revision, coordinate basis, stable
+  note identity and field. The serialized owner rejects a stale or mismatched
+  base. Invalid field values remain raw drafts beside the unchanged model.
+- A reset supplies a distinct incarnation; this driver refuses previously used
+  incarnations within the case. Supplied tokens do not establish authenticated
+  identity, global fork history or an atomic concurrent publication operation.
+- A run captures a model snapshot. Advancing its monotonic simulated clock
+  records each due event once; opening an inspection does not advance it.
+  Editing the model does not replace a retained run's basis or revision.
+- Stop prevents later local delivery. It does not synthesize note-off events or
+  establish device cleanup. Records expose unclosed note identities and whether
+  all planned events were delivered; the external outcome remains unobserved.
+
+The ambiguous-request case supplies an ambiguity label; it does not understand
+natural language. The observations expose the Python host version and explicitly
+exclude Nomi, device, concurrent and human execution. A deterministic delivery
+record is neither real-time scheduling nor evidence that a person understands it.
+
+### What The Model Changes And Leaves Open
+
+Equal initial schedules do not establish equivalent change rules: beat and
+absolute-time models diverge after a tempo edit. A late run can finish delivering
+its old schedule without becoming evidence about the current revision. A stopped
+run can retain an unmatched note-on. These distinctions sharpen model selection,
+revision inspection and the Stop contract before an interface comparison.
+
+Strict stale-base refusal is one candidate. Selective revalidation or an explicit
+coordinate conversion may be better; those alternatives are not executed here.
+Last-good inspection versus typed partial programs, tie policy, schedule ownership,
+overlapping voices and acknowledged release remain open. Source, structured and
+mixed authoring views still require actual construction, matched tasks and people.

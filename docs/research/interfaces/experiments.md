@@ -160,3 +160,36 @@ The research remains `designing`. Probes now supply deterministic motivating
 evidence; HX1-HX8 and the human study are still unperformed Nomi candidate
 comparisons. Generated web assets, runtime capability tables, grammar, and
 supported samples do not change because of this capture.
+
+## Creative Timing Continuation, 2026-10-10
+
+The [creative challenger](music_timing.md#creative-authoring-challenger--october-10)
+now has a separate, executed finite model comparison. Its
+[23 literal cases](timing_cases.json) are not additional P-series probes, a
+replacement for the historical capture, or an HX authoring/human trial. The
+[model profile and commands](music_timing.md#bounded-model-experiment) state the
+supplied rational-time, serialized-change and delivery policies. The driver
+reports current host identity and explicit execution exclusions.
+
+| Cases | Observed distinction | Limit |
+| --- | --- | --- |
+| Beat/absolute baselines and tempo changes | Equal initial schedules diverge after the same tempo metadata change | Two explicit models; no inferred intent or automatic conversion |
+| Fractional time | The supplied 180 beats/minute case retains exact thirds of milliseconds | Host rational arithmetic; not Nomi scalar or audio-clock conformance |
+| Onset/duration changes and replay | Named, basis-matched, current-base edits change the model; replay/stale/wrong-basis/unknown-note edits do not | Serialized owner; no shared-state atomicity, selective revalidation or graph merge |
+| Unfinished, negative and zero-duration drafts; boolean tempo | Invalid input preserves the checked model and records note-field drafts | Imposed domain and pair format; not a source parser, locale codec or typed partial-program system |
+| Ambiguous request | The supplied ambiguous label leaves the model unchanged | No natural-language interpretation or human intent evidence |
+| Reset and incarnation reuse | A reused revision counter does not validate the old proposal in a different incarnation; restoring a used incarnation is refused | Case-local supplied identities, not global history/identity enforcement |
+| Passive inspection and old run | Inspecting does not deliver events; a retained old run delivers its old schedule after a current-model change | Pure computation and local records; no frontend or asynchronous worker |
+| Local Stop, clock replay and equal-time order | Stop leaves an unmatched note-on; the cursor avoids redelivery; ties follow the declared rule | No release acknowledgment, scheduler timing or device standard |
+
+The literal expectation paths test named observations, not every possible output
+or every model state. A pass establishes consistency with this finite profile.
+The independently authored oracle cannot establish that the profile is desirable.
+All planned local events delivered is distinct from external success, just as
+refusing further local delivery is distinct from acknowledged cleanup.
+
+Next compare strict refusal with explicitly revalidated coordinate edits and
+choose matched model rules before constructing authoring alternatives. A human
+comparison must withhold reviewer answers until initial predictions and preserve
+the distinction between selected-model understanding and representation benefit.
+The cognitive packet remains `designing`; no target or runnable sample is promoted.

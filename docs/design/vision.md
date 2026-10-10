@@ -195,8 +195,10 @@ map. These are exploration prompts, not APIs, release promises or additional gat
 
 The [creative timing challenger](../research/interfaces/music_timing.md#creative-authoring-challenger--october-10)
 develops one prompt into fixed beat/time facts and creation, ambiguous-goal,
-unfinished-duration, stale-edit, handoff and playback questions. It is prepared
-material; no Nomi implementation, participant or device outcome is claimed.
+unfinished-duration, stale-edit, handoff and playback questions. Its
+[finite model experiment](../research/interfaces/music_timing.md#bounded-model-experiment)
+executes selected schedule, draft and revision cases; authoring views and human
+comparisons remain prepared. No Nomi implementation or device outcome is claimed.
 The [explained-report challenger](../research/interfaces/structured_documents.md#explained-report-challenger)
 separates measurement, missingness, calibration assumptions and derived summaries
 under supplied facts. Together they test temporal creation and evidence-rich
@@ -220,7 +222,7 @@ coherent computational medium described above.
 | Human reasoning | Cognitive/interaction research, prepared counterexamples and finite probes | No recorded human study establishes learning, comprehension, repair, handoff or accessibility benefits. |
 | Representations and creation | Source editing, notebooks, output/diagnostic views, draft retention | Comparable authoring alternatives, typed partial work and transitions from concrete examples to reusable models remain unvalidated. |
 | Evidence and explanation | Structured runtime diagnostics, capability/support records and checked subsets | No integrated user path connects intent, assumptions, source meaning, dependencies, observations and change consequences. |
-| Composition and growth | A bounded JSON report and local calculations; target/domain pressure programs | Checked local reuse and the broader domain/time/collaboration combinations are still design or experiment work. |
+| Composition and growth | A bounded JSON report and local calculations; finite timing/revision models; target/domain pressure programs | Checked local reuse and the broader domain/time/collaboration combinations are still design or experiment work. |
 | Automation and agency | Agent/retrieval tooling; proposal, authority and reliance contracts | Development tooling does not demonstrate a user-facing delegation system or calibrated reliance. |
 | Operation and distribution | Local tests, browser/kernel receipts and build/freshness checks | Clean supported-host installs, current public artifact, performance envelopes and long-lived recovery have incomplete evidence. |
 

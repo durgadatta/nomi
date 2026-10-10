@@ -103,6 +103,7 @@ marks extrapolation. Unverified neighbors remain experiment candidates.
 | [Composition cases](composition_cases.md) | Twelve combined pressures, ordinary-call candidates, diagnostics, real-file handoff and HX1-HX8 | Accepted APIs, another project backlog, or an implemented interface |
 | [Executed probes](experiments.md) | Inputs, results, limits, reproduction and promotion rules | Nomi/browser/solver/device conformance or human comprehension |
 | [Probe script](probe_interactions.py) and [capture](probe_results.json) | Original finite models and named host observations with explicit execution flags | A shared runtime or universal interaction IR |
+| [Timing cases](timing_cases.json) and [model profile](music_timing.md#bounded-model-experiment) | Literal schedule/draft/revision expectations checked by a checkout-only driver | Nomi score execution, a sequencer UI, actual audio or human benefit |
 | [Study fixtures](study_cases.json) | U01-U07 supplied stimuli, paired evidence controls and answer facts | Actual participants, real adapters, automatic grading, or human comprehension |
 
 Obvious entry cases include invalid quantity, stale revision, and row sorting.
@@ -122,9 +123,11 @@ human act -> relation -> representation -> explicit Nomi long form
          -> law and counterexample -> failure -> destination -> experiment
 ```
 
-Destinations are core, reducible convenience, library/protocol, scoped tool, or
-editor/view with no source-language addition. A view is not a fifth syntax
-extension layer: it projects a contract from one of the existing four layers.
+Working destinations are core, reducible convenience, library/protocol, scoped
+tool, or editor/view. The current four-layer hypothesis treats a view as a
+projection of a contract, not a fifth syntax extension layer. An alternative
+primary authoring representation may challenge that placement; compare it rather
+than forcing every discovered interaction into the current taxonomy.
 The [interaction synthesis](../../design/interaction_model.md) compares the
 threads and orders playground experiments. The
 [redesign agenda](../../design/redesign_agenda.md) covers wider language gaps.

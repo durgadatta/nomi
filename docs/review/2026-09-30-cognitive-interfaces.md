@@ -629,6 +629,11 @@ what would weaken it. Identical initial output can hide different temporal or
 missingness rules. A representation comparison must first pin that model; an
 oracle shown before a prediction would measure copying instead of understanding.
 
+The third review executes the timing model's selected distinctions. Equal initial
+schedules diverge under a tempo change; an old run remains old even after all its
+events are locally delivered. Stop after note-on can leave it unmatched. Planned
+delivery, recorded delivery and acknowledged external release need different facts.
+
 ### Workflow Friction
 
 Correcting canonical prose alone leaves conflicting operational instructions.
@@ -651,9 +656,15 @@ facts. Both it and the timing case identify reviewer oracles and initial predict
 Stabilization means a consistent scoped description and honest remaining forks,
 not a claim that the whole language or human benefit is settled.
 
+The [bounded timing driver](../../tools/creative_timing_experiment.py) uses exact
+host rationals, a serialized owner and supplied identities. Literal expectations
+and false-success checks preserve the evidence boundary; the registry and research
+routes reproduce it without replacing the old probe capture. 184 focused checks,
+23 model cases, historical capture verification, lint and packet checks pass.
+
 ### Next Pass
 
-Sharpen the vision's proposed mechanisms into comparable alternatives with concrete
-activity, semantic expectations and evidence boundaries. Investigate composition
-costs and try the creative timing comparison as a bounded model experiment;
-retain actual language execution and observations of people as separate gaps.
+Review the refined routes once more for discovery/delivery conflicts and duplicate
+claims. Stabilize this scoped description, then compare revalidated coordinate
+edits and authoring alternatives through the existing owners. Actual target
+integration, views, hosts and observations of people remain separate gaps.
