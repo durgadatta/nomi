@@ -1,324 +1,121 @@
 # Nomi
 
-Nomi is an experimental general-purpose programming language exploring a
-simple question: can a language keep Python's cognitive ease while making
-types, data boundaries, failure, effects, concurrency, diagnostics, and
-packages coherent enough for large systems?
+Nomi is an experimental programming language for starting with small, readable
+scripts and gradually growing them into dependable programs. It aims to combine
+Python's ease of use with clearer types, data validation, failures, and control
+over operations such as reading files or making network requests.
 
-The project is intentionally willing to break everything before stability.
-Current implementations are laboratories; the target language is defined in
-[docs/design](docs/design/README.md).
+Today you can try calculations, functions, collections, and a local JSON report
+in the browser or from the command line. The broader language is still being
+designed and built. Syntax and behavior may change as the project develops.
 
-> **Try the current prototype:**
-> [durgadatta.github.io/nomi/web/](https://durgadatta.github.io/nomi/web/)
-
-## Two Truths
-
-Nomi distinguishes:
-
-- **Target design:** the language being designed, independent of current
-  parser/runtime limitations. Start with [Syntax](docs/design/syntax.md),
-  [Semantics](docs/design/semantics.md), and the aspirational
-  [target suite](docs/design/targets/README.md) and
-  [overall program](docs/design/targets/overall.nomi).
-- **Current prototype:** runnable syntax implemented through Python/Lark and a
-  browser Rust/WASM-to-JavaScript path. Runnable examples live in `samples/`
-  and are covered by regression and web checks.
-
-Do not assume target-only syntax runs today. Do not assume implemented syntax
-will remain in the target.
-
-## Target Shape
-
-The current design direction favors:
-
-```text
-direct scripts and inferred local code
-checked public contracts, inferred or declared
-immutable names and data by default
-nominal data with explicit external decode
-one named function form and one match form
-Option, Result, and panic as separate failure stories
-visible mutation, effects, resources, and suspension
-structured concurrency
-shared structured diagnostics
-reproducible, content-addressed packages and builds
-```
-
-The full rationale and action sequence are in the
-[2026-07-16 language-design review](docs/review/2026-07-16.md).
+**[Try Nomi in your browser](https://durgadatta.github.io/nomi/web/)** ·
+**[Getting started](docs/guide/getting_started.md)** ·
+**[Documentation](docs/README.md)**
 
 ## Quick Start
 
-Use Python 3.12 or newer; CI is configured to test Python 3.14. The bootstrap
-interpreter needs `ast.TypeAlias`, which Python 3.11 does not provide.
+### Try a calculation
 
-Install the current Python-hosted prototype in editable mode:
+Open the [playground](https://durgadatta.github.io/nomi/web/), choose
+`calculate.nomi`, and run it. This program calculates an invoice in integer cents:
+
+```nomi
+func subtotal(price, quantity):
+    return price * quantity
+
+price = 1200
+quantity = 3
+delivery = 250
+total = subtotal(price, quantity) + delivery
+print(total)
+```
+
+It prints `3850`. Change `quantity` to `4` and run again to get `5050`.
+Try `"three"` to see an error, then repair it by restoring a number.
+
+### Run it locally
+
+From a checkout of this repository, use Python 3.12 or newer:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 python3 -m pip install -e .
-nomi samples/demo.nomi
+nomi samples/calculate.nomi --output program
 ```
 
-Run without installation:
+You can also run directly from the checkout without installing the package:
 
 ```bash
-python3 scripts/cli.py samples/demo.nomi
+python3 scripts/cli.py samples/calculate.nomi --output program
 ```
 
-For program-only output, add `--output program`; `--output json` returns
-diagnostics and inspected binding strings separately from stdout. The legacy
-debug output remains the default. Try `samples/data_pipeline.nomi` for ordered
-`fold`/seeded `scan`, or `samples/text_pipeline.nomi.nb` for delimited-text
-exploration. These are runnable prototype library operations, not a static
-callback checker, strict CSV decoder or data/ML engine.
+Continue with [Getting Started](docs/guide/getting_started.md) to validate JSON,
+repair invalid input, inspect results, and try the experimental source checker.
 
-Start with `samples/calculate.nomi` in the CLI or playground. It prints `3850`
-integer cents; change quantity from 3 to 4 for `5050`. A text quantity reports
-an operand error; repair it and rerun. This is a supported compatibility example,
-not complete target Int typing or exact-integer portability.
+## What You Can Use Today
 
-Try `samples/report.nomi` for a local JSON batch: validate both input boundaries,
-normalize eligible rows, inspect counts, and encode deterministic JSON. Change
-Ada's name to `""` and age to `-1` to see both original field paths, then repair
-them. In the default playground, open Bindings and choose Download JSON beside
-`wire`; stale results cannot be downloaded. Encoding or download failure leaves
-the successful report available. Download initiation is observable; a durable
-filesystem save is not acknowledged by the browser.
+These capabilities belong to the current prototype. The examples are a useful
+starting point for the syntax supported by each execution path.
 
-This is a bounded compatibility library and ordinary-source sample, using
-structural outcomes and callback-first collections. Python permits up to 4,300
-decimal digits at this boundary (or a lower configured host limit); JavaScript
-refuses integers beyond its exact safe range. These are provisional lab limits.
-The opt-in Pyodide route runs report/repair but has no Bindings download control.
-Nominal target data/Result, checked callbacks and local module reuse remain open;
-see the [delivery gates](docs/orientation/project_roadmap.md#report-and-target-delivery-gates).
+| Task | Start here | Current scope |
+| --- | --- | --- |
+| Write a calculation with a reusable function | [Calculation](samples/calculate.nomi) | Run, change values, and inspect output or errors. |
+| Validate input and produce a JSON report | [Report walkthrough](docs/guide/getting_started.md#validate-a-json-report) | Two built-in report schemas; repair field errors and export JSON in the default browser route. |
+| Transform collections and explore text | [Data pipeline](samples/data_pipeline.nomi), [text notebook](samples/text_pipeline.nomi.nb) | Prototype collection operations and delimited-text examples. |
+| Check a calculation before running it | [Source checking](docs/guide/getting_started.md#check-a-program-without-running-it) | A limited experimental checker for scalar values and direct functions. |
+| Work in notebooks or an editor | [Jupyter](tools/jupyter/README.md), [VS Code](docs/orientation/vscode_extension.md) | Local notebook kernel and an extension with highlighting and run commands. |
 
-The experimental checker can inspect a small scalar calculation without running
-it. The same unannotated invoice runs normally and supports independent checks:
+The browser and Python execution paths cover different subsets and have
+different numeric limits. The [getting-started guide](docs/guide/getting_started.md#current-limits)
+explains the limits relevant to these examples.
 
-```bash
-python3 scripts/cli.py scripts/check_invoice.nomi --output program
-python3 scripts/cli.py scripts/check_invoice.nomi --check --require known-types
-python3 scripts/cli.py scripts/check_invoice.nomi --check --require pure --output json
-```
+## How Nomi Will Grow
 
-Execution prints `3850`. The type check succeeds; the purity check explains that
-`print` uses `ConsoleWrite`. Remove the output statement to check both
-restrictions together. `--require` is repeatable and requires `--check`.
-Checking with no requirements previews facts and unresolved obligations.
+The first useful language is focused on **small scripts and trustworthy local
+data reports**. The goal is to let you add stronger guarantees as a program
+grows, while keeping ordinary code readable.
 
-This checks normal-completion facts for scalar expressions, simple bindings and
-direct functions called with known scalar arguments. It does not execute imports
-or infer general public interfaces. Unsupported operations, annotations, captures
-and control flow produce explicit obligations. A successful check does not prove
-termination or absence of runtime failures, grant permissions, or authorize a
-later run. Check output is separate from execution. See the
-[analysis boundary](docs/orientation/implementation_layers.md#experimental-source-analysis).
+| Stage | What it should let you do | Status |
+| --- | --- | --- |
+| Explore a small script | Calculate, call functions, and see results immediately. | Runnable prototype examples. |
+| Turn imperfect input into a useful report | Validate fields, repair errors, and export the result. | A bounded report workflow runs today; general typed data and decoding remain work in progress. |
+| Grow a script into a reusable local library | Check inputs, outputs, expected failures, and operations that touch the outside world. | Limited source checking exists; checked local module reuse is still planned. |
+| Build larger applications and domain tools | Add services, structured concurrent work, packages, and libraries for data and other domains. | Later delivery work; supporting research and target designs exist. |
 
-The current runtime parses source with Lark, lowers through Python AST and
-Nomi-owned artifacts, and evaluates it with layered interpreters. Python is a
-bootstrap substrate, not the future language definition.
+These stages describe direction and dependencies, with no release dates promised.
+The [target design](docs/design/README.md) explains the intended language;
+the [delivery roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies)
+tracks the steps toward it. Code in design documents may use features that do
+not run yet. Runnable examples live in [samples](samples/).
 
-For a distributable wheel, run `python3 -m pip wheel --no-deps .`. The package
-includes grammars, host capability data, JavaScript/WASM runtime assets, and
-the default demo. Running `nomi` without arguments uses that packaged demo,
-independent of the current directory. Node.js is only needed for the optional
-`js-core-runtime` backend. Repository development tools (Rust spikes, browser
-launching, and RAG indexing) still need their checkout/configuration.
+## Find Your Next Step
 
-See [Implementation Layers](docs/orientation/implementation_layers.md) for
-the readable orchestration and replaceable engine boundaries.
+| If you want to… | Read… |
+| --- | --- |
+| Learn by running and changing examples | [Getting Started](docs/guide/getting_started.md) |
+| Find guides, design references, or research | [Documentation](docs/README.md) |
+| Understand the intended language | [Target Design](docs/design/README.md) |
+| See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [Changelog](CHANGELOG.md) |
+| Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
+| Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |
 
 ## Web Playground
 
-The live playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
-runtime. Its sample list is generated from runnable files under `samples/`.
-The optional Pyodide path loads required Python modules and explicitly registered
-runtime data from the same manifest. Add `--legacy-pyodide` to the browser gate
-to check that slower network-bootstrap path too.
+The [online playground](https://durgadatta.github.io/nomi/web/) lets you edit and
+run examples, inspect output and diagnostics, and download source. Notebook
+examples use `# %%` cell markers: `Shift+Enter` runs the current cell and
+`Run All` starts again from the top.
 
-The JS prototype rejects integers outside +/-9007199254740991 rather than
-rounding them; Python supports wider integers. Target scalar semantics and
-typed callbacks remain design work.
-
-Browser text length, iteration, indexing and slicing count Unicode code points,
-not grapheme clusters; normalization is not implicit. Invalid indices and
-missing mapping keys fail rather than becoming `None`. The text notebook also
-shows negative indices and bounded/reverse slices. Inspection distinguishes
-unavailable bindings or timings from captured empty results or observed zero.
-
-Run it locally:
+To run the playground locally from the repository root:
 
 ```bash
 python3 scripts/launch_web.py
 ```
 
-Useful variants:
+Local setup, Rust/WASM build requirements, and browser checks are described in
+[Developing Nomi](docs/orientation/development.md#web-playground).
 
-```bash
-python3 scripts/launch_web.py --no-browser
-python3 scripts/launch_web.py --port 8090
-python3 scripts/make_web.py --check
-scripts/build_wasm.sh --check
-python3 scripts/check_web_runtime.py
-```
-
-The launcher opens the browser only after its HTTP server accepts connections
-and reaps the server on interruption or failed startup. Ports must be 1-65535;
-if a port is busy it selects another unless `--strict-port` is set.
-
-Notebook-style cells use `# %%`. `Shift+Enter` runs the current cell in a
-persistent browser session; `Run All` restarts and evaluates top to bottom.
-
-Check the actual browser experience (optional local dependencies):
-
-```bash
-python3 -m pip install -e '.[web-test]'
-python3 -m playwright install chromium
-python3 scripts/check_web_browser.py
-python3 scripts/check_web_browser.py --legacy-pyodide
-```
-
-The check starts and stops its own local server and exercises the quick tour,
-data/text examples, notebook export, source-linked diagnostics and repair,
-worker cancellation, delayed replies, local draft recovery, keyboard controls
-and desktop/mobile layouts.
-It uses the committed WASM files and the same CDN assets as the live site.
-Screenshots, a Playwright trace, and browser logs go to ignored
-`reports/web-browser/`. Add `--headed` to watch it run, or
-`--url https://durgadatta.github.io/nomi/web/` to check the published site.
-Browser installation and CDN loading require network access.
-
-The workbench opens local UTF-8 source without running it and downloads current
-source, preserving notebook titles and framing. Edited results are visibly
-marked as previous-source results. Drafts use browser-local storage; storage
-failures are reported, and downloads do not depend on that storage. Stopping a
-worker resets it; this is not the target language's resource-cleanup guarantee.
-
-See [Unreleased Changes](CHANGELOG.md) and the
-[delivery roadmap](docs/orientation/project_roadmap.md). This is an experimental
-preview, not a stable or target-conforming release.
-
-`.github/workflows/playground-ci.yml` runs the full Python suite, fast smoke
-tests, the web/runtime gate, and Chromium checks on pull requests and pushes
-to `main`. A separate Python 3.12 job verifies installed-wheel/CLI behavior;
-the full regression corpus runs on Python 3.14. Browser
-evidence is uploaded as the `playground-browser` artifact. This workflow checks
-the checkout; publishing to GitHub Pages remains a separate step.
-CI uses Python 3.14 and Node.js 24. Python 3.11 cannot import the current
-interpreter because it lacks `ast.TypeAlias`.
-
-## Jupyter
-
-Install and launch the current Nomi kernel:
-
-```bash
-python3 tools/jupyter/launch_nomi_notebook.py
-```
-
-The kernel preserves definitions between cells and supports `%run`, `%who`,
-`%reset`, and `%ast`. Start with
-[notebooks/nomi_syntax_tour.ipynb](notebooks/nomi_syntax_tour.ipynb).
-
-For the Dockerized notebook path:
-
-```bash
-python3 scripts/run_nomi_docker.py
-```
-
-This is a local development image, not a hardened service. The host launcher
-binds localhost, generates a token for each new container, and redacts its own
-credential-bearing output. Use `--token` or `NOMI_JUPYTER_TOKEN` to configure one;
-blank tokens are rejected. Reuse checks the image tag, localhost port binding
-and credential; incompatible containers require an explicit restart. For
-`--no-browser`, retrieve the token with `docker exec nomi-jupyter jupyter server list`.
-Jupyter's own logs still contain credentials; never expose this image publicly.
-
-See [tools/jupyter/README.md](tools/jupyter/README.md) for details.
-
-## VS Code
-
-The local extension provides `.nomi` registration, syntax highlighting,
-snippets, run commands, symbols, hover information, and first-pass navigation.
-
-```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
-```
-
-For extension development:
-
-```bash
-python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
-```
-
-See [VS Code Extension](docs/orientation/vscode_extension.md).
-
-## Tests
-
-Install development dependencies and run the full suite:
-
-```bash
-python3 -m pip install -e '.[dev]'
-pytest
-```
-
-Useful focused checks:
-
-```bash
-pytest --interpreter-modes reduced
-python3 scripts/check_web_runtime.py
-python3 -m tools.jupyter.check_nomi_kernel
-python3 -m tools.design_passes check
-python3 .codex/scripts/agent_doctor.py
-```
-
-The default pytest configuration uses parallel workers. Runnable sample files
-participate in regression tests; changing them may require snapshot
-regeneration.
-
-## Repository Map
-
-- `docs/design/`: canonical target language.
-- `docs/research/`: consolidated evidence and bounded open questions.
-- `docs/orientation/`: current implementation and collaboration maps.
-- `docs/review/`: dated evidence and decisions awaiting promotion.
-- `prototype/grammar/`: current Lark grammars.
-- `prototype/parser/`: parser and lowering experiments.
-- `prototype/interpreter/`: Python-compatible, Nomi, and reduced interpreters.
-- `prototype/syntax/`: feature metadata, Surface artifacts, and Core IR.
-- `prototype/runtime/`: runtime sessions, result contracts, and backend APIs.
-- `prototype/tests/`: unit, regression, e2e, and conformance-oriented tests.
-- `samples/`: runnable user-facing programs used by regression and web checks.
-- `web/`: browser playground and JavaScript runtime.
-- `tools/jupyter/`: notebook kernel.
-- `tools/vscode/nomi/`: editor extension.
-- `tools/rag_mcp/`: local retrieval/indexing tools.
-- `config/design_passes.json`: linked research/design/target/bridge pass registry.
-- `.agents/skills/`: repository-local agent workflows.
-
-See [Artifacts And Usage](docs/orientation/artifacts_and_usage.md) for the
-current pipeline and [AGENTS.md](AGENTS.md) for engineering guidance.
-
-## Research And AI Collaboration
-
-The design research compares everyday, functional, typed, systems,
-concurrent, data, scientific, pedagogical, security, and deployment traditions.
-It is now consolidated under [docs/research](docs/research/README.md); the old
-deep-dive corpus remains available in Git history at `08f2aad`.
-
-AI systems are used for exploration, critique, synthesis, implementation, and
-validation. Their output is design material, not authority. Repository code,
-tests, target decisions, and human judgment remain the checks. See
-[AI Collaboration](docs/orientation/ai_collaboration.md). Cross-cutting
-language work uses the linked packet and retrospective contract in the
-[Design Pass Workflow](docs/orientation/design_pass_workflow.md); inspect the
-current passes with `python3 -m tools.design_passes list`.
-
-## Project Posture
-
-Nomi is early, ambitious, and explicitly unstable. There is no current source
-compatibility promise. The near-term goal is not feature count: it is one
-coherent target, a small trustworthy implementation, a good first hour, and
-tooling that tells the truth across CLI, notebook, browser, and future native
-backends.
+Nomi is an early experimental preview. There is no source compatibility promise
+yet, and the prototype does not implement the complete target language.

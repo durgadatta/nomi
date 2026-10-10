@@ -86,6 +86,28 @@ with their existing design owners and engineering dependencies in
 [the delivery gates](#report-and-target-delivery-gates). This is a change of
 perspective, not target-language or release completion.
 
+### First Documentation Increment, 2026-10-10
+
+The root README now introduces Nomi, leads with a runnable calculation,
+distinguishes current capabilities from gradual additions, and routes readers
+to deeper pages. [Getting Started](../guide/getting_started.md) owns the
+calculation/repair, JSON report/export, and limited checking walkthroughs.
+[Developing Nomi](development.md) preserves the detailed tooling and verification
+instructions moved out of the root. The docs index puts reader goals before
+design/research reference routes and retains its complete inventory.
+
+Verification: 127 documentation/packet/target-fixture checks pass; all five
+registered packets remain coherent. CLI runs confirm the calculation, changed
+quantity, invalid quantity, report output and two-field repair. The documented
+type check succeeds; the purity request refuses console output as expected.
+Browser instructions retain the existing completion receipt's scope; no new
+browser run, install, deployment or human study is claimed for these prose edits.
+
+Next increment: add a basic language walkthrough for values, functions, choices
+and collections using verified prototype examples, then link it after Getting
+Started. Explain target-only differences separately and keep the reference
+inventory behind the reader-oriented entry path.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

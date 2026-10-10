@@ -8,11 +8,21 @@
 
 ## Start Here
 
-To try what runs today, start with the repository
-[Quick Start](../README.md#quick-start) and its calculation/report examples.
-The next [user-facing documentation pass](orientation/project_roadmap.md#user-facing-documentation-pass)
-will build the introductory reading path and explain gradual additions;
-the design and research routes below remain reference material.
+Choose a reading path based on what you want to do:
+
+| Your goal | Start with | Then explore |
+| --- | --- | --- |
+| Try Nomi for the first time | [Quick Start](../README.md#quick-start) | [Getting Started](guide/getting_started.md): calculations, input repair, report export, and source checking. |
+| Understand what will be added | [Growth path](../README.md#how-nomi-will-grow) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
+| Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
+| Investigate a language decision | [Design references](#design-and-research-references) | [Research](research/README.md) and [open questions](research/open_questions.md). |
+
+The getting-started guide describes runnable prototype examples. Design
+documents describe the intended language, including features that do not run
+yet. Research explains evidence and alternatives. You can learn the examples
+without reading the research corpus first.
+
+## Design And Research References
 
 For language design, read:
 
@@ -91,6 +101,7 @@ and browser execution.
 
 | Location | Purpose | May decide target semantics? |
 | --- | --- | --- |
+| `docs/guide/` | User walkthroughs of supported examples and tools | No; explains current behavior |
 | `docs/design/` | Canonical target language and industrial contracts | Yes |
 | `docs/research/` | Consolidated evidence and bounded open questions | No; informs decisions |
 | `docs/orientation/` | Current implementation, tooling, and collaboration | No |
@@ -117,6 +128,8 @@ For a registered cross-cutting feature, use the complete
 
 ## Implementation Orientation
 
+- [Developing Nomi](orientation/development.md): checkout setup, local playground,
+  notebook/editor tools, packaging, and verification commands.
 - [Project Enhancement Roadmap](orientation/project_roadmap.md): project-wide
   audit, priorities, dependencies, detailed workstreams and delivery gates;
   semantic decisions remain with the existing design owners.
@@ -163,6 +176,10 @@ For a registered cross-cutting feature, use the complete
 ## Complete Markdown Inventory
 
 This list is intentionally complete and is checked by tests.
+
+### User Guides
+
+- [Getting Started](guide/getting_started.md)
 
 ### Design
 
@@ -308,6 +325,7 @@ This list is intentionally complete and is checked by tests.
 
 ### Orientation
 
+- [Developing Nomi](orientation/development.md)
 - [Project Enhancement Roadmap](orientation/project_roadmap.md)
 - [Frontier Checkpoint 2026-10-08](orientation/frontier_checkpoint_2026-10-08.md)
   — committed experimental baseline, detailed planning handoff and unresolved findings.
