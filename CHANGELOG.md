@@ -28,6 +28,8 @@ data/ML engine is promised.
   common numeric/control escapes decode, raw/unknown escapes keep backslashes,
   and malformed or unsupported named escapes refuse instead of changing text.
   Rebuilt WASM artifacts; complete target escape rules remain design work.
+- Made the browser refuse unsupported bytes/formatted literals with a
+  source-linked capability diagnostic instead of treating them as plain text.
 - Aligned the local Jupyter launcher and editor activation with the beginner
   calculation task. Added a clean calculation notebook, labeled older notebook
   tours as experiments, and added actual-kernel notebook checking without

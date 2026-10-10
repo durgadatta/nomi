@@ -96,8 +96,10 @@ too, but the hosted parser warns; use raw text or an escaped backslash instead.
 
 The browser refuses malformed numeric escapes, surrogate/out-of-range scalar
 escapes, and named Unicode escapes such as `\N{...}`. Named escapes remain a
-hosted-only compatibility form. Bytes/formatted-string prefixes and multiline
-edge cases are outside this bounded text guarantee. These are prototype
+hosted-only compatibility form. The browser refuses bytes (`b"..."`) and
+formatted (`f"..."`) literals, including raw-prefix combinations; join ordinary
+text explicitly instead of using a formatted literal. Multiline edge cases
+are outside this bounded text guarantee. These are prototype
 compatibility spellings, not acceptance of a complete target escape grammar.
 The [escape repair receipt](../orientation/project_roadmap.md#source-text-escape-repair--october-10)
 records the tested scope and remaining work.

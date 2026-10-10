@@ -406,6 +406,33 @@ Actual default/legacy Chromium journeys pass against the rebuilt assets.
 Cargo formatting, selected Ruff and the offline documentation file-link gate
 pass. This repairs source decoding separately from the earlier JSON serializer.
 
+### Browser Literal Capability Refusal — October 10
+
+The JavaScript lowerer now checks original String source prefixes before
+constructing a text literal. Bytes/formatted prefixes, including raw combinations
+and case variants, produce `NOMI-UNSUPPORTED-LITERAL` with the original literal
+and the missing capability. Supported ordinary/raw/Unicode compatibility
+prefixes still lower. This is honest prototype refusal, not implementation of
+bytes or interpolation, and leaves the hosted compatibility path unchanged.
+No new Core node, target syntax decision or capability promotion is introduced.
+
+Sixteen negative prefix contracts failed before the change; all **21** prefix
+checks now pass. Combined escape/prefix checks pass **75 tests**. The expanded
+web/runtime gate passes **1,690 tests, one skipped**, plus **24/24** exact guide
+outputs. Actual Chromium checks show bytes/formatted refusal, preserved source
+in the diagnostic record, no execution of earlier print calls when lowering
+fails, and a successful explicit text-joining repair. Both default and legacy
+journeys pass. The diagnostic screenshot was inspected; its message is concise
+and source remains visible. Machine diagnostic codes are preserved in records,
+not assumed to be rendered as a UI label.
+
+The web manifest remains unchanged and fresh (129 runtime files, 13 samples).
+WASM freshness still passes for the prior decoder rebuild; this pass changes
+only JavaScript lowering and browser-check source, not Rust parser artifacts.
+The guide/changelog reflect refusal. Prefix semantic implementation, the wider
+literal admission contract and a target interpolation implementation remain
+separate work. Local checks do not establish public-site deployment parity.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

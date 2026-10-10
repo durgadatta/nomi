@@ -76,6 +76,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_legacy_equation_wildcard.py",
                 "prototype/tests/contracts/test_text_scalar_order.py",
                 "prototype/tests/contracts/test_text_sequence_boundaries.py",
+                "prototype/tests/contracts/test_browser_text_literal_capabilities.py",
                 "prototype/tests/contracts/test_js_dictionary_keys.py",
                 "prototype/tests/contracts/test_workbench_document_contract.py",
                 "prototype/tests/contracts/test_editor_startup_boundary.py",

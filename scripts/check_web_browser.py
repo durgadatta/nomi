@@ -53,6 +53,7 @@ def check_browser(
 ) -> None:
     from scripts.check_calculation_scenarios import check_calculation_scenarios
     from scripts.check_learning_path_scenarios import check_learning_path_scenarios
+    from scripts.check_text_literal_scenarios import check_text_literal_scenarios
     from scripts.check_report_scenarios import check_report_scenarios
     from scripts.check_legacy_call_scenarios import check_legacy_call_scenarios
     from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
@@ -149,6 +150,7 @@ def check_browser(
             expect(page.locator("#status")).to_have_text("ready")
             check_calculation_scenarios(page, expect, artifacts)
             check_report_scenarios(page, expect, artifacts)
+            check_text_literal_scenarios(page, expect, artifacts)
             check_workbench_scenarios(page, expect, artifacts)
             check_editor_startup_scenarios(page, expect, artifacts)
             check_sample_manifest_startup_scenarios(page, expect, artifacts)

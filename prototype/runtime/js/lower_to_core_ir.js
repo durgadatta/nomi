@@ -130,7 +130,7 @@ function lowerExpr(expr) {
   switch (expr.type) {
     case "Name":     return load(expr.id);
     case "Number":   return lowerNumber(expr.value);
-    case "String":   return literal(expr.value, "str");
+    case "String":   return lowerString(expr);
     case "Constant": return lowerConstant(expr.value);
 
     case "List":
@@ -206,6 +206,25 @@ function lowerExpr(expr) {
     default:
       return diagnostic("unknown expr type: " + expr.type, { node_type: expr.type });
   }
+}
+
+function lowerString(expr) {
+  const prefix = /^([a-z]*)["']/i.exec(expr.source || "");
+  if (prefix && /[bf]/i.test(prefix[1])) {
+    const formatted = /f/i.test(prefix[1]);
+    return diagnostic(
+      formatted
+        ? "Formatted string literals are not supported by the browser prototype; join text explicitly."
+        : "Bytes literals are not supported by the browser prototype.",
+      {
+        code: "NOMI-UNSUPPORTED-LITERAL",
+        capability: formatted ? "text.formatted-literal" : "text.bytes-literal",
+        node_type: "String",
+        source_excerpt: expr.source,
+      }
+    );
+  }
+  return literal(expr.value, "str");
 }
 
 function lowerNumber(raw) {
