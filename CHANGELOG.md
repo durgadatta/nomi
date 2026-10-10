@@ -8,6 +8,8 @@ data/ML engine is promised.
 
 - Added a hierarchical user guide for first use, language basics, complete
   examples, tool workflows, troubleshooting, current support, and gradual growth.
+- Added an offline local-document link gate to catch moved or missing pages
+  in CI; heading anchors and remote URL availability remain outside its scope.
 - Made the local playground start with the calculation task on a first visit,
   preserve returning selections, group examples by learning path, label older
   experiments, and link the user guide from the sidebar.

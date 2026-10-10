@@ -62,6 +62,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14'
+      - run: python3 scripts/check_doc_links.py
       - run: python3 -m pip install -e '.[dev]'
       - run: python3 -m pytest -n 0 prototype/tests/smoke prototype/tests/contracts/test_web_no_pyodide_default_contract.py
 

@@ -16,6 +16,21 @@ Run the commands below from the repository root. Use Python 3.12 or newer;
 CI runs the full suite on Python 3.14 and checks installed-package behavior on
 Python 3.12. These are prototype tools; supported syntax differs by execution path.
 
+## Documentation Checks
+
+Check navigation after moving a page or changing a link:
+
+```bash
+python3 scripts/check_doc_links.py
+```
+
+This dependency-free check scans the root README/changelog, `docs/`, and the
+Jupyter/VS Code guides for missing local file destinations. It ignores code
+examples and remote URLs. It does not validate heading anchors or remote link
+availability. CI runs it in the fast smoke job. Pass Markdown filenames to
+check selected pages. Executable beginner programs are checked separately by
+`scripts/check_guide_examples.py`, described below.
+
 ## Python Setup And Packaging
 
 Use a virtual environment and install the development dependencies:

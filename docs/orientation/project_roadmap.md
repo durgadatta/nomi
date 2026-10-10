@@ -358,6 +358,22 @@ down. A fresh real-kernel calculation still prints **3850**, then **5050**.
 No notebook files were saved or global kernelspecs modified. Clean installation,
 interrupt behavior, Docker and actual desktop UI evidence remain open.
 
+### Repeatable Documentation Navigation Check — October 10
+
+The documentation file-link audit is now a dependency-free command,
+`python3 scripts/check_doc_links.py`, and a fast-smoke CI step. It scans the root
+README/changelog, documentation tree, and notebook/editor guides; selected
+filenames are also supported. Inline links, images, reference definitions,
+angle-bracket/encoded paths and repository-root destinations are covered.
+Fenced/inline code is ignored. Seven focused tool checks verify missing-file
+refusal and source-line reporting as well as avoiding remote network calls or
+execution of examples. The current scan finds **1,886 local file links across
+161 documents**, with no missing destinations. The count is the checker's
+bounded Markdown scan, not the earlier ad hoc audit's count or a full renderer.
+Heading anchors, remote availability, accessibility and human comprehension
+remain separate evidence requirements. Exact guide outputs retain their
+separate runtime checker.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition
