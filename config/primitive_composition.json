@@ -759,8 +759,8 @@
         "option-result"
       ],
       "owner": "docs/design/object_framework.md",
-      "law": "Literal and explicit input evidence can discharge closed rules; computed subjects stay pending.",
-      "gate": "Cross-object relations, quantification and scientific assumptions require separately owned rules.",
+      "law": "Literal and explicit input evidence discharge closed unary and cross-object representation rules; every computed operand stays pending.",
+      "gate": "Quantification, contract-only input dependencies and scientific assumptions require separately owned laws.",
       "placement": "library",
       "status": "experiment",
       "fixtures": [

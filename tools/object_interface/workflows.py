@@ -145,26 +145,55 @@ class Workflow(Frozen):
             if previous is None or previous.requirements is None
             else previous.requirements.document["requirements"]
         )
+        version = (
+            3
+            if previous is not None
+            and previous.requirements is not None
+            and previous.requirements.document["version"] == 3
+            else 2
+        )
         if self._requirements is not None:
             source = self._requirements.document
+            if source["version"] == 3:
+                version = 3
             for condition in source["requirements"]:
-                conditions.append(
-                    {
-                        **condition,
-                        "id": name(
-                            namespace + "." + condition["id"],
-                            "instantiated requirement identity",
-                        ),
-                        "subject": substitutions[condition["subject"]],
-                        "path": condition.get("path", []),
-                    }
-                )
+                copied = {
+                    **condition,
+                    "id": name(
+                        namespace + "." + condition["id"],
+                        "instantiated requirement identity",
+                    ),
+                }
+                if source["version"] == 3:
+                    copied["operands"] = [
+                        {**operand, "subject": substitutions[operand["subject"]]}
+                        for operand in condition["operands"]
+                    ]
+                else:
+                    copied.update(
+                        subject=substitutions[condition["subject"]],
+                        path=condition.get("path", []),
+                    )
+                conditions.append(copied)
+        if version == 3:
+            conditions = [
+                condition
+                if "operands" in condition
+                else {
+                    "id": condition["id"],
+                    "rule": condition["rule"],
+                    "operands": [
+                        {"subject": condition["subject"], "path": condition["path"]}
+                    ],
+                }
+                for condition in conditions
+            ]
         required = (
             None
             if not conditions
             else Requirements.from_document(
                 {
-                    "version": 2,
+                    "version": version,
                     "graph": revised.context,
                     "owner": "nomi.workflow-composition",
                     "revision": "v1",

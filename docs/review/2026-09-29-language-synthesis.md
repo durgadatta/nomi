@@ -1254,3 +1254,42 @@ Select a bounded cross-object relation only after identifying its owner and
 independent rule; fixed paths cannot stand in for quantification. The generic
 framework is ahead of the statistical adapter, while source-language admission,
 operational scopes, physical engines and human outcomes remain open.
+
+## Cross-Object Requirement Relations — 2026-10-10
+
+### Evidence That Changed The Design
+
+Unary predicates could not express an ordered pair of abstract bounds or a
+document title matching a separately requested title. Version 3 now makes rule
+operands explicit, ordered and individually typed by declared structural
+paths. This adds no semantic family: value references, contracts and evidence
+compose into a larger requirement. Representation comparison deliberately
+does not establish nominal identity, units or scientific validity.
+
+### Workflow Friction
+
+Workflow reuse previously rewired one subject per condition. Relations require
+rewiring every operand and promoting older unary records when a composition
+contains v3. Both orders of mixed-version composition now replay independently.
+An empty array's missing indexed operand refutes the existence-requiring
+relation even while its peer remains pending. Binding gates check every operand
+before callbacks. Condition-only inputs expose a remaining distinction between
+value dependencies and contract dependencies.
+
+### Durable Improvement
+
+The closed producer and independently implemented consumer retain v1/v2
+receipts and contexts, reject unsupported rules and forged evidence, and never
+execute computed operands. New tests cover static aliases, partial snapshots,
+operand reversal/repetition, nested absence, exact Unicode/text comparison,
+mixed-version workflow substitution and an isolated consumer process that
+cannot import the producer. A tracked bounds example is runnable through the
+existing requirement/run/replay CLIs. The hierarchy and packet route these
+checks without turning the lab protocol into source syntax or a universal IR.
+
+### Next Pass
+
+Compare an explicit extension for contract-only inputs with keeping the
+selected realization closed. Then express bounded universal structural
+requirements with explicit empty-container and missing-path laws; do not
+introduce implicit evaluation, Cartesian products or scientific assertions.

@@ -33,14 +33,34 @@ PATH_RULES = {
     "text.nonempty-v1": ("text",),
     "array.nonempty-v1": ("array", "text_list"),
 }
+RELATION_RULES = {
+    **{rule: (kinds,) for rule, kinds in PATH_RULES.items()},
+    "exact.le-v1": (("int", "positive_int"), ("int", "positive_int")),
+    "text.equal-v1": (("text",), ("text",)),
+}
+CHECKERS = {
+    1: "literal-input-predicates-v1",
+    2: "structural-path-predicates-v2",
+    3: "structural-operand-relations-v3",
+}
+SCOPES = {
+    1: "closed representation predicates, not scientific assumptions or a general solver",
+    2: "closed structural path predicates, not scientific assumptions or a general solver",
+    3: "closed structural operand relations, not nominal equality, scientific assumptions or a general solver",
+}
+
+
+@dataclass(frozen=True)
+class Operand:
+    subject: str
+    path: tuple[str | int, ...] = ()
 
 
 @dataclass(frozen=True)
 class Obligation:
     id: str
     rule: str
-    subject: str
-    path: tuple[str | int, ...] = ()
+    operands: tuple[Operand, ...]
 
 
 class Requirements(Frozen):
@@ -57,7 +77,7 @@ class Requirements(Frozen):
             ("version", "graph", "owner", "revision", "requirements"),
             "requirements",
         )
-        if type(document["version"]) is not int or document["version"] not in (1, 2):
+        if type(document["version"]) is not int or document["version"] not in CHECKERS:
             raise ContractError("unsupported requirement envelope")
         if document["graph"] != graph.context:
             raise ContractError("requirements belong to a different graph context")
@@ -75,7 +95,9 @@ class Requirements(Frozen):
                 requirement,
                 ("id", "rule", "subject")
                 if version == 1
-                else ("id", "rule", "subject", "path"),
+                else ("id", "rule", "subject", "path")
+                if version == 2
+                else ("id", "rule", "operands"),
                 "requirement",
             )
             identity = name(requirement["id"], "requirement identity")
@@ -84,9 +106,33 @@ class Requirements(Frozen):
             identities.add(identity)
             rule = requirement["rule"]
             if type(rule) is not str or rule not in (
-                RULES if version == 1 else PATH_RULES
+                RULES
+                if version == 1
+                else PATH_RULES
+                if version == 2
+                else RELATION_RULES
             ):
                 raise ContractError("unknown refinement rule")
+            if version == 3:
+                raw_operands = requirement["operands"]
+                kinds = RELATION_RULES[rule]
+                if type(raw_operands) is not list or len(raw_operands) != len(kinds):
+                    raise ContractError("relation requires its declared operand count")
+                operands = []
+                for raw_operand, admitted in zip(raw_operands, kinds):
+                    keys(raw_operand, ("subject", "path"), "requirement operand")
+                    subject = graph.ref(raw_operand["subject"])
+                    family = graph._objects[subject.id].type
+                    codec = manifest["types"][family]["value"]
+                    if codec is None:
+                        raise ContractError("relation operand has no value codec")
+                    if schema_at(codec, raw_operand["path"])["kind"] not in admitted:
+                        raise ContractError(
+                            "relation disagrees with the declared operand kind"
+                        )
+                    operands.append(Operand(subject.id, tuple(raw_operand["path"])))
+                obligations.append(Obligation(identity, rule, tuple(operands)))
+                continue
             subject = graph.ref(requirement["subject"])
             actual_family = graph._objects[subject.id].type
             actual_codec = manifest["types"][actual_family]["value"]
@@ -106,16 +152,14 @@ class Requirements(Frozen):
                         "refinement rule disagrees with the declared path kind"
                     )
                 path = tuple(requirement["path"])
-            obligations.append(Obligation(identity, rule, subject.id, path))
+            obligations.append(Obligation(identity, rule, (Operand(subject.id, path),)))
         result = cls()
         result._graph, result._document = graph, encoded
         result._obligations = tuple(obligations)
         result._context = digest(
             {
                 "requirements": document,
-                "checker": "literal-input-predicates-v1"
-                if document["version"] == 1
-                else "structural-path-predicates-v2",
+                "checker": CHECKERS[document["version"]],
             }
         )
         result._sealed = True
@@ -144,43 +188,43 @@ class Requirements(Frozen):
             value_check(value, codec, f"refinement binding.{identity}")
         results = []
         for obligation in self._obligations:
-            term = self._graph._terms[self._graph._normal[obligation.subject]]
-            op, _, identity, _, attributes = term
-            role = manifest["operations"][op]["role"]
-            known, value, basis = False, None, "unresolved expression"
-            if role == "literal":
-                known, value, basis = (
-                    True,
-                    json.loads(attributes)["value"],
-                    "declared literal",
-                )
-            elif role == "input" and identity in supplied:
-                known, value, basis = (
-                    True,
-                    supplied[identity],
-                    "explicit input snapshot",
-                )
-            if known:
-                exists, selected = value_at(value, obligation.path)
-                passed = exists and (
-                    selected > 0
-                    if obligation.rule == "exact.positive-v1"
-                    else len(selected) > 0
-                )
-                if not exists:
-                    basis += "; missing path"
-                status = "satisfied" if passed else "refuted"
-            else:
+            evidence = [
+                self._operand_evidence(operand, supplied, manifest)
+                for operand in obligation.operands
+            ]
+            if any(item[0] == "missing" for item in evidence):
+                status = "refuted"
+            elif any(item[0] == "pending" for item in evidence):
                 status = "pending"
-            result = {
-                "id": obligation.id,
-                "subject": obligation.subject,
-                "rule": obligation.rule,
-                "status": status,
-                "basis": basis,
-            }
-            if version == 2:
-                result["path"] = list(obligation.path)
+            else:
+                values = [item[1] for item in evidence]
+                passed = (
+                    values[0] <= values[1]
+                    if obligation.rule == "exact.le-v1"
+                    else values[0] == values[1]
+                    if obligation.rule == "text.equal-v1"
+                    else values[0] > 0
+                    if obligation.rule == "exact.positive-v1"
+                    else len(values[0]) > 0
+                )
+                status = "satisfied" if passed else "refuted"
+            result = {"id": obligation.id, "rule": obligation.rule, "status": status}
+            if version == 3:
+                result["operands"] = [
+                    {
+                        "subject": operand.subject,
+                        "path": list(operand.path),
+                        "status": item[0],
+                        "basis": item[2],
+                    }
+                    for operand, item in zip(obligation.operands, evidence)
+                ]
+            else:
+                result.update(
+                    subject=obligation.operands[0].subject, basis=evidence[0][2]
+                )
+                if version == 2:
+                    result["path"] = list(obligation.operands[0].path)
             results.append(result)
         statuses = {item["status"] for item in results}
         status = (
@@ -198,10 +242,34 @@ class Requirements(Frozen):
             "evidence_phase": "static" if bindings is None else "binding",
             "binding_digest": None if bindings is None else digest(supplied),
             "requirements": results,
-            "scope": "closed representation predicates, not scientific assumptions or a general solver"
-            if version == 1
-            else "closed structural path predicates, not scientific assumptions or a general solver",
+            "scope": SCOPES[version],
         }
+
+    def _operand_evidence(self, operand, supplied, manifest):
+        term = self._graph._terms[self._graph._normal[operand.subject]]
+        op, _, identity, _, attributes = term
+        role = manifest["operations"][op]["role"]
+        known, value, basis = False, None, "unresolved expression"
+        if role == "literal":
+            known, value, basis = (
+                True,
+                json.loads(attributes)["value"],
+                "declared literal",
+            )
+        elif role == "input" and identity in supplied:
+            known, value, basis = (
+                True,
+                supplied[identity],
+                "explicit input snapshot",
+            )
+        if not known:
+            return "pending", None, basis
+        exists, selected = value_at(value, operand.path)
+        return (
+            ("known", selected, basis)
+            if exists
+            else ("missing", None, basis + "; missing path")
+        )
 
     def inspect(self, identity):
         if type(identity) is not str:

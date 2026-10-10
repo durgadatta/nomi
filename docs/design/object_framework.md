@@ -260,6 +260,72 @@ Supplying computed values as if they were input slots, an asserted satisfied
 status, or a changed predicate definition is refused. Richer domain validators
 and their independent consumers remain separate admission work.
 
+### Relate Several Objects Without An Engine
+
+Version 3 uses ordered `operands`, each naming a subject and an explicit codec
+path. It retains the three unary rules and adds two closed relations:
+
+| Rule | Operands | Meaning |
+| --- | --- | --- |
+| `exact.le-v1` | Two integer representations | The first is less than or equal to the second, using exact integer order. |
+| `text.equal-v1` | Two text representations | Exact text equality, preserving case, whitespace and Unicode representation. |
+
+These are representation requirements, not nominal object identity or domain
+equality. Matching document titles does not identify two documents; an integer
+order does not establish compatible units or a valid statistical population.
+Neither rule installs an operation in a vocabulary or calls an implementation.
+Version-1/2 artifacts and receipt contexts retain their earlier contracts.
+
+The [ordered bounds example](../research/object_framework/ordered_bounds_requirements.json)
+relates separately named inputs before their addition is realized:
+
+```json
+{
+  "id": "ordered",
+  "rule": "exact.le-v1",
+  "operands": [
+    {"subject": "lower", "path": []},
+    {"subject": "upper", "path": []}
+  ]
+}
+```
+
+Operand order and repeated references are preserved. Every subject and path
+must be declared even if another operand is pending. Operand evidence records
+`known`, `missing` or `pending`, with its source and path but no copied value.
+A known missing path refutes the requirement, including when its peer remains
+unbound: the relation requires both operands to exist. Otherwise any pending
+operand keeps the relation pending. Only all-known operands can satisfy or
+refute the actual comparison. Comparing an unbound input with itself stays
+pending; this protocol is an evidence check, not an identity-law prover.
+
+```bash
+python3 -m tools.object_interface requirements docs/research/object_framework/ordered_bounds.json docs/research/object_framework/ordered_bounds_requirements.json --bindings docs/research/object_framework/ordered_bounds_bindings.json
+python3 -m tools.object_interface run docs/research/object_framework/ordered_bounds.json docs/research/object_framework/ordered_bounds_bindings.json --backend python-exact-text --requirements docs/research/object_framework/ordered_bounds_requirements.json
+python3 -m tools.object_interface requirements docs/research/object_framework/ordered_bounds.json docs/research/object_framework/ordered_bounds_requirements.json --bindings docs/research/object_framework/ordered_bounds_bindings.json > /tmp/nomi-ordered-bounds.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/ordered_bounds.json /tmp/nomi-ordered-bounds.json --requirements docs/research/object_framework/ordered_bounds_requirements.json --bindings docs/research/object_framework/ordered_bounds_bindings.json
+```
+
+The example satisfies the input relation and returns `total = 5`. Omitting
+bindings leaves it pending. Reversing the supplied bounds refutes it, and an
+attached required condition stops execution before any backend callback. Every
+operand must belong to the selected realization and normalize to an input or
+literal; computed operands remain pending and cannot be attached as preconditions.
+A condition-only input currently needs explicit output selection to belong to
+the realization; separating contract dependencies from value dependencies is a
+next experiment, not an implicit enlargement of execution.
+
+Workflow substitution rewires **all** operands. A composition containing v3
+conditions promotes older unary conditions to single-operand records in v3;
+a composition containing only older conditions retains v2. Component inspection
+retains each source owner, revision and context. Independent replay checks the
+promotion, reference substitution and evidence without importing the producer.
+
+Keep three questions separate: vocabulary definitions can establish symbolic
+composition equality without inputs; requirement artifacts can validate
+explicit snapshots; backend executions produce values. Relations do not
+generalize the first into a solver or the third into a proof of a domain law.
+
 ### Domain Integration Order
 
 1. Define nominal families and inert constructors in a versioned vocabulary.
@@ -441,7 +507,7 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Richer domain refinement protocol | Nested documentary paths now exercise static/input evidence, binding gates and independent replay. Cross-object relations, quantification and domain proofs require separate rules; assertions cannot become proof. |
+| Richer domain refinement protocol | Nested paths and v3 cross-object integer/text relations have static/input evidence, binding gates and independent replay. Quantification, contract-only input dependencies and domain proofs need separate laws; assertions cannot become proof. |
 | More useful object composition | Parameterized multi-output workflows preserve reference arguments, namespaced intermediates and carried conditions, with independent pinned substitution replay. Compare authoring/repair costs with inline composition before generalizing the interface. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |

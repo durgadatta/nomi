@@ -342,6 +342,95 @@ def replay(vocabulary, graph, receipt):
     }
 
 
+def _relation_results(vocabulary, objects, normal, terms, rules, obligations, supplied):
+    """Reviewed v3 admission, independent of producer rule tables and evaluators."""
+    admitted = {
+        "exact.positive-v1": (("int",),),
+        "text.nonempty-v1": (("text",),),
+        "array.nonempty-v1": (("array", "text_list"),),
+        "exact.le-v1": (("int", "positive_int"), ("int", "positive_int")),
+        "text.equal-v1": (("text",), ("text",)),
+    }
+    identities, results = set(), []
+    for obligation in obligations:
+        _keys(obligation, ("id", "rule", "operands"))
+        identity = _identity(obligation["id"])
+        if identity in identities:
+            raise ReplayError("duplicate requirement identity")
+        identities.add(identity)
+        rule = obligation["rule"]
+        if type(rule) is not str or rule not in admitted:
+            raise ReplayError("independent consumer does not admit this relation")
+        operands = obligation["operands"]
+        if type(operands) is not list or len(operands) != len(admitted[rule]):
+            raise ReplayError("incorrect relation operand count")
+        evidence, values = [], []
+        for operand, kinds in zip(operands, admitted[rule]):
+            _keys(operand, ("subject", "path"))
+            subject, path = operand["subject"], operand["path"]
+            if type(subject) is not str or subject not in objects:
+                raise ReplayError("unknown relation operand subject")
+            family = rules[objects[subject]["op"]][0]
+            codec = vocabulary["types"][family]["value"]
+            if _path_codec(codec, path)["kind"] not in kinds:
+                raise ReplayError("incompatible relation operand kind")
+            term = terms[normal[subject]]
+            role = rules[term[0]][1]
+            state, value, basis = "pending", None, "unresolved expression"
+            if role == "literal":
+                state, value, basis = (
+                    "known",
+                    json.loads(term[4])["value"],
+                    "declared literal",
+                )
+            elif role == "input" and term[2] in supplied:
+                state, value, basis = (
+                    "known",
+                    supplied[term[2]],
+                    "explicit input snapshot",
+                )
+            if state == "known":
+                for segment in path:
+                    if (
+                        type(segment) is str
+                        and type(value) is dict
+                        and segment in value
+                    ):
+                        value = value[segment]
+                    elif (
+                        type(segment) is int
+                        and type(value) is list
+                        and segment < len(value)
+                    ):
+                        value = value[segment]
+                    else:
+                        state, value, basis = "missing", None, basis + "; missing path"
+                        break
+            evidence.append(
+                {"subject": subject, "path": path, "status": state, "basis": basis}
+            )
+            values.append(value)
+        states = {item["status"] for item in evidence}
+        if "missing" in states:
+            status = "refuted"
+        elif "pending" in states:
+            status = "pending"
+        else:
+            if rule == "exact.le-v1":
+                passed = values[0] <= values[1]
+            elif rule == "text.equal-v1":
+                passed = values[0] == values[1]
+            elif rule == "exact.positive-v1":
+                passed = values[0] > 0
+            else:
+                passed = bool(len(values[0]))
+            status = "satisfied" if passed else "refuted"
+        results.append(
+            {"id": identity, "rule": rule, "status": status, "operands": evidence}
+        )
+    return results
+
+
 def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     objects, normal, terms = _reconstruct(vocabulary, graph)
     rules = _rules_for(vocabulary)
@@ -350,7 +439,7 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
     if (
         type(requirements["version"]) is not int
-        or requirements["version"] not in (1, 2)
+        or requirements["version"] not in (1, 2, 3)
         or requirements["graph"] != graph_context
     ):
         raise ReplayError("unsupported or stale requirement context")
@@ -373,6 +462,11 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
         ):
             raise ReplayError("incompatible abstract input binding")
     seen, results = set(), []
+    if version == 3:
+        results = _relation_results(
+            vocabulary, objects, normal, terms, rules, obligations, supplied
+        )
+        obligations = []
     for obligation in obligations:
         _keys(
             obligation,
@@ -462,7 +556,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
             "requirements": requirements,
             "checker": "literal-input-predicates-v1"
             if version == 1
-            else "structural-path-predicates-v2",
+            else "structural-path-predicates-v2"
+            if version == 2
+            else "structural-operand-relations-v3",
         }
     )
     expected = {
@@ -475,7 +571,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
         "requirements": results,
         "scope": "closed representation predicates, not scientific assumptions or a general solver"
         if version == 1
-        else "closed structural path predicates, not scientific assumptions or a general solver",
+        else "closed structural path predicates, not scientific assumptions or a general solver"
+        if version == 2
+        else "closed structural operand relations, not nominal equality, scientific assumptions or a general solver",
     }
     return expected
 
@@ -548,6 +646,7 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
         raise ReplayError("invalid workflow component count")
     graph = json.loads(_encode(base_graph))
     conditions, expected_components, namespaces = [], [], set()
+    requirement_version = 2
     exports = {}
     for component in components:
         _keys(
@@ -618,11 +717,17 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
             else _requirement_receipt(vocabulary, workflow["graph"], source)
         )
         if source is not None:
+            if source["version"] == 3:
+                requirement_version = 3
             for requirement in source["requirements"]:
                 copied = json.loads(_encode(requirement))
                 copied["id"] = _identity(namespace + "." + requirement["id"])
-                copied["subject"] = substitution[requirement["subject"]]
-                copied["path"] = requirement.get("path", [])
+                if source["version"] == 3:
+                    for operand in copied["operands"]:
+                        operand["subject"] = substitution[operand["subject"]]
+                else:
+                    copied["subject"] = substitution[requirement["subject"]]
+                    copied["path"] = requirement.get("path", [])
                 conditions.append(copied)
         expected_components.append(
             {
@@ -642,11 +747,30 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
             }
         )
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
+    if requirement_version == 3:
+        promoted = []
+        for condition in conditions:
+            if "operands" in condition:
+                promoted.append(condition)
+            else:
+                promoted.append(
+                    {
+                        "id": condition["id"],
+                        "rule": condition["rule"],
+                        "operands": [
+                            {
+                                "subject": condition["subject"],
+                                "path": condition["path"],
+                            },
+                        ],
+                    }
+                )
+        conditions = promoted
     required = (
         None
         if not conditions
         else {
-            "version": 2,
+            "version": requirement_version,
             "graph": graph_context,
             "owner": "nomi.workflow-composition",
             "revision": "v1",

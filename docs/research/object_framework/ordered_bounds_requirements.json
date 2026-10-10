@@ -1,0 +1,22 @@
+{
+  "version": 3,
+  "graph": "15501b7c8ab959ddfef568741ff3701fd69831317eea9a3e101508d40a67b42a",
+  "owner": "example.ordered-bounds",
+  "revision": "v1",
+  "requirements": [
+    {
+      "id": "ordered",
+      "rule": "exact.le-v1",
+      "operands": [
+        {
+          "subject": "lower",
+          "path": []
+        },
+        {
+          "subject": "upper",
+          "path": []
+        }
+      ]
+    }
+  ]
+}

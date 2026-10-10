@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "vocabulary": "261a416c00ab73b7849ce085ed9c4436b9fe941fcc4414dd384216d6552d782a",
+  "objects": [
+    {"id": "lower", "op": "exact.input", "ports": {}, "attributes": {}},
+    {"id": "upper", "op": "exact.input", "ports": {}, "attributes": {}},
+    {"id": "total", "op": "exact.add", "ports": {"left": "lower", "right": "upper"}, "attributes": {}}
+  ],
+  "outputs": ["total"]
+}

@@ -148,16 +148,17 @@ class Compiled(Frozen):
             )
         manifest = self._graph.vocabulary.document
         for obligation in requirements._obligations:
-            index = self._graph._normal[obligation.subject]
-            if index not in self._terms:
-                raise ContractError(
-                    "requirement subject is outside selected realization"
-                )
-            term = self._graph._terms[index]
-            if manifest["operations"][term[0]]["role"] not in ("input", "literal"):
-                raise ContractError(
-                    "computed preconditions need a richer validator; they cannot be enforced before execution"
-                )
+            for operand in obligation.operands:
+                index = self._graph._normal[operand.subject]
+                if index not in self._terms:
+                    raise ContractError(
+                        "requirement subject is outside selected realization"
+                    )
+                term = self._graph._terms[index]
+                if manifest["operations"][term[0]]["role"] not in ("input", "literal"):
+                    raise ContractError(
+                        "computed preconditions need a richer validator; they cannot be enforced before execution"
+                    )
         if requirements.check()["status"] == "refuted":
             raise ContractError("required literal condition is refuted")
         result = Compiled()
