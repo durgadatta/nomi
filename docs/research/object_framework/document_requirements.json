@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "graph": "7f7493839958821808c8f87055f04fee5e868a26d58fd7e319d50efccdfb6a79",
+  "owner": "nomi.document-lab",
+  "revision": "v1",
+  "requirements": [
+    {
+      "id": "title_has_content",
+      "rule": "text.nonempty-v1",
+      "subject": "draft",
+      "path": [
+        "title"
+      ]
+    },
+    {
+      "id": "sections_present",
+      "rule": "array.nonempty-v1",
+      "subject": "draft",
+      "path": [
+        "sections"
+      ]
+    },
+    {
+      "id": "first_heading_has_content",
+      "rule": "text.nonempty-v1",
+      "subject": "draft",
+      "path": [
+        "sections",
+        0,
+        "heading"
+      ]
+    }
+  ]
+}

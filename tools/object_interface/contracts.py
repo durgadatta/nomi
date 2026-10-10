@@ -1,6 +1,6 @@
 """Small engine-free obligation protocol, separate from generic type checking.
 
-Only two representation predicates are admitted in this lab. Literal and alias
+Closed scalar and structural-path predicates are admitted in this lab. Literal and alias
 evidence can discharge them without inputs. Explicit input snapshots can
 discharge them at binding. Computed expressions stay pending: no evaluator,
 solver, engine callback, or assertion is run to manufacture static evidence.
@@ -18,6 +18,8 @@ from .documents import (
     keys,
     name,
     snapshot,
+    schema_at,
+    value_at,
     value_check,
 )
 from .model import Graph
@@ -26,6 +28,11 @@ RULES = {
     "exact.positive-v1": ("ExactInt", {"kind": "int"}),
     "text.nonempty-v1": ("Text", {"kind": "text"}),
 }
+PATH_RULES = {
+    "exact.positive-v1": ("int",),
+    "text.nonempty-v1": ("text",),
+    "array.nonempty-v1": ("array", "text_list"),
+}
 
 
 @dataclass(frozen=True)
@@ -33,6 +40,7 @@ class Obligation:
     id: str
     rule: str
     subject: str
+    path: tuple[str | int, ...] = ()
 
 
 class Requirements(Frozen):
@@ -49,7 +57,7 @@ class Requirements(Frozen):
             ("version", "graph", "owner", "revision", "requirements"),
             "requirements",
         )
-        if type(document["version"]) is not int or document["version"] != 1:
+        if type(document["version"]) is not int or document["version"] not in (1, 2):
             raise ContractError("unsupported requirement envelope")
         if document["graph"] != graph.context:
             raise ContractError("requirements belong to a different graph context")
@@ -62,29 +70,53 @@ class Requirements(Frozen):
         identities = set()
         manifest = graph.vocabulary.document
         for requirement in raw:
-            keys(requirement, ("id", "rule", "subject"), "requirement")
+            version = document["version"]
+            keys(
+                requirement,
+                ("id", "rule", "subject")
+                if version == 1
+                else ("id", "rule", "subject", "path"),
+                "requirement",
+            )
             identity = name(requirement["id"], "requirement identity")
             if identity in identities:
                 raise ContractError("duplicate requirement identity")
             identities.add(identity)
             rule = requirement["rule"]
-            if type(rule) is not str or rule not in RULES:
+            if type(rule) is not str or rule not in (
+                RULES if version == 1 else PATH_RULES
+            ):
                 raise ContractError("unknown refinement rule")
             subject = graph.ref(requirement["subject"])
-            family, codec = RULES[rule]
-            if (
-                graph._objects[subject.id].type != family
-                or manifest["types"][family]["value"] != codec
-            ):
-                raise ContractError(
-                    f"{identity}: refinement rule requires {family} with its declared value codec"
-                )
-            obligations.append(Obligation(identity, rule, subject.id))
+            actual_family = graph._objects[subject.id].type
+            actual_codec = manifest["types"][actual_family]["value"]
+            path = ()
+            if version == 1:
+                family, codec = RULES[rule]
+                if actual_family != family or actual_codec != codec:
+                    raise ContractError(
+                        f"{identity}: refinement rule requires {family} with its declared value codec"
+                    )
+            else:
+                if actual_codec is None:
+                    raise ContractError("path requirement subject has no value codec")
+                selected = schema_at(actual_codec, requirement["path"])
+                if selected["kind"] not in PATH_RULES[rule]:
+                    raise ContractError(
+                        "refinement rule disagrees with the declared path kind"
+                    )
+                path = tuple(requirement["path"])
+            obligations.append(Obligation(identity, rule, subject.id, path))
         result = cls()
         result._graph, result._document = graph, encoded
         result._obligations = tuple(obligations)
         result._context = digest(
-            {"requirements": document, "checker": "literal-input-predicates-v1"}
+            {
+                "requirements": document,
+                "checker": "literal-input-predicates-v1"
+                if document["version"] == 1
+                else "structural-path-predicates-v2",
+            }
         )
         result._sealed = True
         return result
@@ -94,6 +126,7 @@ class Requirements(Frozen):
         return json.loads(self._document)
 
     def check(self, bindings=None):
+        version = self.document["version"]
         supplied = {} if bindings is None else json.loads(snapshot(bindings))
         if type(supplied) is not dict:
             raise ContractError("refinement bindings must be input-slot records")
@@ -128,23 +161,27 @@ class Requirements(Frozen):
                     "explicit input snapshot",
                 )
             if known:
-                passed = (
-                    value > 0
+                exists, selected = value_at(value, obligation.path)
+                passed = exists and (
+                    selected > 0
                     if obligation.rule == "exact.positive-v1"
-                    else len(value) > 0
+                    else len(selected) > 0
                 )
+                if not exists:
+                    basis += "; missing path"
                 status = "satisfied" if passed else "refuted"
             else:
                 status = "pending"
-            results.append(
-                {
-                    "id": obligation.id,
-                    "subject": obligation.subject,
-                    "rule": obligation.rule,
-                    "status": status,
-                    "basis": basis,
-                }
-            )
+            result = {
+                "id": obligation.id,
+                "subject": obligation.subject,
+                "rule": obligation.rule,
+                "status": status,
+                "basis": basis,
+            }
+            if version == 2:
+                result["path"] = list(obligation.path)
+            results.append(result)
         statuses = {item["status"] for item in results}
         status = (
             "refuted"
@@ -154,14 +191,16 @@ class Requirements(Frozen):
             else "satisfied"
         )
         return {
-            "version": 1,
+            "version": version,
             "context": self._context,
             "graph": self._graph.context,
             "status": status,
             "evidence_phase": "static" if bindings is None else "binding",
             "binding_digest": None if bindings is None else digest(supplied),
             "requirements": results,
-            "scope": "closed representation predicates, not scientific assumptions or a general solver",
+            "scope": "closed representation predicates, not scientific assumptions or a general solver"
+            if version == 1
+            else "closed structural path predicates, not scientific assumptions or a general solver",
         }
 
     def inspect(self, identity):

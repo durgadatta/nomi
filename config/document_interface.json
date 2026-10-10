@@ -1,0 +1,404 @@
+{
+  "version": 1,
+  "id": "nomi.document-lab",
+  "revision": "v1",
+  "types": {
+    "ExactInt": {
+      "value": {
+        "kind": "int"
+      }
+    },
+    "Text": {
+      "value": {
+        "kind": "text"
+      }
+    },
+    "Document": {
+      "value": null
+    },
+    "DocumentSpec": {
+      "value": {
+        "kind": "record",
+        "fields": {
+          "title": {
+            "kind": "text"
+          },
+          "sections": {
+            "kind": "array",
+            "items": {
+              "kind": "record",
+              "fields": {
+                "heading": {
+                  "kind": "text"
+                },
+                "paragraphs": {
+                  "kind": "array",
+                  "items": {
+                    "kind": "text"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "RenderedText": {
+      "value": {
+        "kind": "text"
+      }
+    }
+  },
+  "operations": {
+    "exact.input": {
+      "role": "input",
+      "ports": {},
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.literal": {
+      "role": "literal",
+      "ports": {},
+      "attributes": {
+        "value": {
+          "kind": "int"
+        }
+      },
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.alias": {
+      "role": "alias",
+      "ports": {
+        "target": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "text.input": {
+      "role": "input",
+      "ports": {},
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "text.literal": {
+      "role": "literal",
+      "ports": {},
+      "attributes": {
+        "value": {
+          "kind": "text"
+        }
+      },
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "text.alias": {
+      "role": "alias",
+      "ports": {
+        "target": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "exact.add": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.multiply": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "text.concat": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "exact.double": {
+      "role": "derived",
+      "ports": {
+        "value": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": {
+        "objects": [
+          {
+            "id": "expanded",
+            "op": "exact.add",
+            "ports": {
+              "left": "$value",
+              "right": "$value"
+            },
+            "attributes": {}
+          }
+        ],
+        "output": "expanded"
+      }
+    },
+    "exact.square": {
+      "role": "derived",
+      "ports": {
+        "value": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": {
+        "objects": [
+          {
+            "id": "expanded",
+            "op": "exact.multiply",
+            "ports": {
+              "left": "$value",
+              "right": "$value"
+            },
+            "attributes": {}
+          }
+        ],
+        "output": "expanded"
+      }
+    },
+    "document.describe": {
+      "role": "description",
+      "ports": {
+        "title": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        },
+        "body": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {
+        "purpose": {
+          "kind": "text"
+        }
+      },
+      "result": "Document",
+      "effects": [],
+      "definition": null
+    },
+    "document.spec.input": {
+      "role": "input",
+      "ports": {},
+      "attributes": {},
+      "result": "DocumentSpec",
+      "effects": [],
+      "definition": null
+    },
+    "document.spec.literal": {
+      "role": "literal",
+      "ports": {},
+      "attributes": {
+        "value": {
+          "kind": "record",
+          "fields": {
+            "title": {
+              "kind": "text"
+            },
+            "sections": {
+              "kind": "array",
+              "items": {
+                "kind": "record",
+                "fields": {
+                  "heading": {
+                    "kind": "text"
+                  },
+                  "paragraphs": {
+                    "kind": "array",
+                    "items": {
+                      "kind": "text"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "result": "DocumentSpec",
+      "effects": [],
+      "definition": null
+    },
+    "document.spec.alias": {
+      "role": "alias",
+      "ports": {
+        "target": {
+          "accepts": [
+            "DocumentSpec"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "DocumentSpec",
+      "effects": [],
+      "definition": null
+    },
+    "document.spec.describe": {
+      "role": "description",
+      "ports": {
+        "spec": {
+          "accepts": [
+            "DocumentSpec"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {
+        "purpose": {
+          "kind": "text"
+        }
+      },
+      "result": "Document",
+      "effects": [],
+      "definition": null
+    },
+    "document.render_text": {
+      "role": "apply",
+      "ports": {
+        "spec": {
+          "accepts": [
+            "DocumentSpec"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "RenderedText",
+      "effects": [],
+      "definition": null
+    },
+    "document.title": {
+      "role": "apply",
+      "ports": {
+        "spec": {
+          "accepts": [
+            "DocumentSpec"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "document.paragraph_count": {
+      "role": "apply",
+      "ports": {
+        "spec": {
+          "accepts": [
+            "DocumentSpec"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "rendered.as_text": {
+      "role": "apply",
+      "ports": {
+        "value": {
+          "accepts": [
+            "RenderedText"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    }
+  }
+}

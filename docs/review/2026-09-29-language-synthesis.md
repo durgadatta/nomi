@@ -1072,3 +1072,36 @@ callback is run during shape validation.
 Add obligations on declared nested parts, then use a document specification
 with an explicit render request to challenge nominal boundaries and independent
 consumer admission. Keep schemas separate from meaningful domain constraints.
+
+## Documentary Composition And Nested Obligations — 2026-10-10
+
+### Evidence That Changed The Design
+
+A document specification now composes required fields and ordered items without
+an engine. A version-2 obligation selects a declared path and checks a closed
+predicate. Empty structured drafts stay valid while explicit publication
+conditions can remain pending or be refuted. Rendering is a distinct typed
+request, followed by an explicit conversion to Text.
+
+### Workflow Friction
+
+Every intermediate was referable in Python but the CLI could execute only the
+default outputs. Repeatable `--output` now makes selected realization available
+without editing an artifact. Path conditions remain deliberately limited: an
+indexed condition is not an all-items assertion, and computed subjects cannot
+be made static evidence by supplying their inputs.
+
+### Durable Improvement
+
+Twenty-two new cases challenge nested paths, absence, nominal conversions,
+pre-callback gates, detached evidence and two renderer profiles against expected
+outputs including Unicode, embedded newlines and empty parts. All 65 selected
+new/obligation cases and Ruff passed; original v1 receipts and tests are intact.
+The domain profile is separate from the original vocabulary fingerprint.
+
+### Next Pass
+
+Independently admit the document vocabulary and version-2 path evidence before
+claiming replay for this richer domain. Then distill the documented language
+into a dependency hierarchy, naming reductions, operational laws and unclosed
+gates instead of treating the framework's six roles as language primitives.

@@ -1,0 +1,20 @@
+{
+  "draft": {
+    "title": "Research plan",
+    "sections": [
+      {
+        "heading": "Purpose",
+        "paragraphs": [
+          "Keep meaning separate from execution."
+        ]
+      },
+      {
+        "heading": "Next",
+        "paragraphs": [
+          "Compose contracts.",
+          "Compare implementations."
+        ]
+      }
+    ]
+  }
+}

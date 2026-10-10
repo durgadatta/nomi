@@ -7,6 +7,7 @@ import sys
 from . import ContractError, Graph, Requirements, Vocabulary, load_document
 from .backend import BackendFailure, Cancelled
 from .documents import ValueContractError
+from .documentary import document_backend, document_vocabulary
 from .examples import lab_vocabulary, python_backend
 
 
@@ -26,7 +27,14 @@ def main(argv=None):
             child.add_argument("right")
         if command in ("compile", "run"):
             child.add_argument(
-                "--backend", required=True, choices=("python-exact-text",)
+                "--backend",
+                required=True,
+                choices=("python-exact-text", "document-blocks", "document-stream"),
+            )
+            child.add_argument(
+                "--output",
+                action="append",
+                help="select a named object; repeat for multiple outputs",
             )
             child.add_argument(
                 "--requirements", help="explicit required input/literal conditions"
@@ -61,8 +69,17 @@ def main(argv=None):
             )
         else:
             # This explicitly selected example adapter accepts only its pinned vocabulary.
-            backend = python_backend(lab_vocabulary())
-            compiled = backend.compile(graph)
+            backend = (
+                python_backend(lab_vocabulary())
+                if args.backend == "python-exact-text"
+                else document_backend(
+                    document_vocabulary(), args.backend.removeprefix("document-")
+                )
+            )
+            compiled = backend.compile(
+                graph,
+                None if args.output is None else [graph.ref(i) for i in args.output],
+            )
             if args.requirements:
                 compiled = compiled.require(
                     Requirements.from_document(load_document(args.requirements), graph)

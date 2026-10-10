@@ -158,7 +158,11 @@
         "pytest -n 0 prototype/tests/unit/tools/test_object_requirement_replay.py",
         "ruff check prototype/tests/unit/tools/test_object_requirement_replay.py",
         "pytest -n 0 prototype/tests/unit/tools/test_object_structural_codecs.py",
-        "ruff check prototype/tests/unit/tools/test_object_structural_codecs.py"
+        "ruff check prototype/tests/unit/tools/test_object_structural_codecs.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_object_documentary.py",
+        "ruff check prototype/tests/unit/tools/test_object_documentary.py",
+        "python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/document.json docs/research/object_framework/document_bindings.json --backend document-blocks --requirements docs/research/object_framework/document_requirements.json",
+        "python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/document.json docs/research/object_framework/document_bindings.json --backend document-stream --output title"
       ],
       "next_actions": [
         "Establish the generic engine-free object framework before extending data/statistics. Typed references, passive descriptions, closed composition, explicit pure realization, independent pinned-lab composition/predicate replay, numeric/text obligation states and binding gates, and a 35-family statistical descriptor adapter now run. Next preserve richer domain contracts with separately admitted consumer rules, then adapt statistical computation without weakening observation domains, missingness, exact theory or independent v1 replay. Units, paired moments and physical data engines remain later domain gates.",

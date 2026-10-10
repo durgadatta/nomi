@@ -187,9 +187,18 @@ validity does not establish an object's scientific or documentary suitability.
 The [obligation protocol](../../tools/object_interface/contracts.py) adds a
 separate engine-free artifact: named conditions referring to objects in one
 graph context, with an owner, revision and rule. The initial lab admits only
-two representation predicates: a strictly positive ExactInt and a nonempty
-Text. These are witnesses for the protocol, not a general constraint language.
+two version-1 representation predicates: a strictly positive ExactInt and a nonempty
+Text. Version 2 additionally admits nonempty arrays and paths through declared
+record fields and typed array items. These are witnesses for the protocol,
+not a general constraint language.
 Nonempty Text includes whitespace; no trim or normalization is implied.
+
+A version-2 requirement carries an explicit `path`, including `[]` for the
+whole value. Every segment must follow the subject family's declared codec;
+unknown fields, negative indices and predicates of the wrong kind are refused.
+A declared array item path can be absent in an actual value: that refutes the
+condition, while an unknown root input remains pending. A fixed index checks
+that item only; it does not quantify over every section or paragraph.
 
 Each condition is `satisfied`, `refuted` or `pending`. Literals and aliases of
 literals can supply static evidence without inputs. An unknown input remains
@@ -270,6 +279,45 @@ domain authority. These descriptions cannot execute merely because someone
 provides a backend. Statistical computation graphs and their exact mean proof
 still use the existing specialized checker; they have not been migrated into
 generic arithmetic or weakened to nominal-family checking.
+
+## A Document Domain With Explicit Rendering
+
+The [document vocabulary](../../config/document_interface.json) owns a nominal
+`DocumentSpec`: a title and ordered sections, each with a heading and ordered
+text paragraphs. All fields are required; empty strings and arrays are
+structurally valid. The separate [publication conditions](../research/object_framework/document_requirements.json)
+require a nonempty title, a section and its first heading. Those optional,
+explicit conditions do not claim every heading has content.
+
+The [document graph](../research/object_framework/document.json) has named input,
+description, title, paragraph count, render request, conversion and published
+objects. None contains an engine. Describing a document remains passive;
+`document.render_text` is a separate request returning nominal `RenderedText`.
+An explicit `rendered.as_text` converts it to ordinary Text. Equal string
+representations do not make these types interchangeable.
+
+The bounded plain-text profile preserves all Unicode, whitespace, embedded
+newlines and empty parts. It orders blocks as title, then each section heading
+and its paragraphs; adjacent blocks have two newline separators and the result
+has one added trailing newline. Paragraph count counts items, not lines.
+The [two explicit renderers](../../tools/object_interface/documentary.py) use
+block joining and incremental concatenation. They are trusted local callbacks,
+tested against independent expected values; agreement is not a formal engine
+conformance proof or evidence of equal performance.
+
+```bash
+python3 -m tools.object_interface --vocabulary config/document_interface.json check docs/research/object_framework/document.json
+python3 -m tools.object_interface --vocabulary config/document_interface.json requirements docs/research/object_framework/document.json docs/research/object_framework/document_requirements.json --bindings docs/research/object_framework/document_bindings.json
+python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/document.json docs/research/object_framework/document_bindings.json --backend document-blocks --requirements docs/research/object_framework/document_requirements.json
+python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/document.json docs/research/object_framework/document_bindings.json --backend document-stream --output title
+```
+
+Both renderers return the fixture's complete text and `paragraph_count = 3`.
+The last command selects only the `title` intermediate and returns
+`"Research plan"`. `--output` is repeatable on compile/run; omitted outputs use
+the graph's selection. Selecting the description for execution is refused.
+The existing independent consumer still admits only the original lab profile
+at this checkpoint; a separate admission is required for documentary evidence.
 
 ## Limits And Next Discriminators
 

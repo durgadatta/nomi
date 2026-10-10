@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "vocabulary": "e928fb99763004ed80bbf6f194d922abf96a908ead0ce0ceb5ce78890829d3c8",
+  "objects": [
+    {
+      "id": "draft",
+      "op": "document.spec.input",
+      "ports": {},
+      "attributes": {}
+    },
+    {
+      "id": "description",
+      "op": "document.spec.describe",
+      "ports": {
+        "spec": "draft"
+      },
+      "attributes": {
+        "purpose": "A referable document intention; no execution requested."
+      }
+    },
+    {
+      "id": "title",
+      "op": "document.title",
+      "ports": {
+        "spec": "draft"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "paragraph_count",
+      "op": "document.paragraph_count",
+      "ports": {
+        "spec": "draft"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "rendered",
+      "op": "document.render_text",
+      "ports": {
+        "spec": "draft"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "content",
+      "op": "rendered.as_text",
+      "ports": {
+        "value": "rendered"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "published",
+      "op": "text.alias",
+      "ports": {
+        "target": "content"
+      },
+      "attributes": {}
+    }
+  ],
+  "outputs": [
+    "published",
+    "paragraph_count"
+  ]
+}

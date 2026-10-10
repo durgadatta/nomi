@@ -241,6 +241,52 @@ def value_check(value, contract, where):
         raise ValueContractError(where, report)
 
 
+def schema_at(contract, path):
+    """Resolve a declared field/item path without inspecting any input value."""
+    schema(contract)
+    if type(path) is not list or len(path) > MAX_DEPTH:
+        raise ContractError("expected bounded structural path")
+    current = contract
+    for segment in path:
+        if type(segment) is str:
+            name(segment, "path field")
+            if (
+                current["kind"] != "record"
+                or "fields" not in current
+                or segment not in current["fields"]
+            ):
+                raise ContractError("path does not select a declared record field")
+            current = current["fields"][segment]
+        elif type(segment) is int and 0 <= segment <= MAX_BYTES:
+            if current["kind"] == "text_list":
+                current = {"kind": "text"}
+            elif current["kind"] == "array" and "items" in current:
+                current = current["items"]
+            else:
+                raise ContractError("path does not select a declared array item")
+        else:
+            raise ContractError(
+                "path segments must be named fields or bounded nonnegative indices"
+            )
+    return json.loads(encode(current))
+
+
+def value_at(value, path):
+    current = value
+    for segment in path:
+        if type(segment) is str and type(current) is dict and segment in current:
+            current = current[segment]
+        elif (
+            type(segment) is int
+            and type(current) is list
+            and 0 <= segment < len(current)
+        ):
+            current = current[segment]
+        else:
+            return False, None
+    return True, current
+
+
 def _pairs(pairs):
     result = {}
     for key, value in pairs:
