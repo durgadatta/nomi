@@ -145,6 +145,9 @@ class RuntimeSession:
                         display_last_expr=display_last_expr,
                     )
                 else:
+                    begin_run = getattr(self.interpreter, "begin_run", None)
+                    if begin_run is not None:
+                        begin_run()
                     has_value, value = self._eval_tree(
                         tree,
                         display_last_expr=display_last_expr,

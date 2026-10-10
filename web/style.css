@@ -923,6 +923,23 @@ body.sidebar-hidden .resize-handle {
   color: var(--muted);
 }
 
+.result-download {
+  display: block;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  color: var(--blue);
+  background: #171c19;
+  font: inherit;
+  cursor: pointer;
+}
+
+.result-download:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .binding-table > :nth-last-child(-n + 2),
 .pipeline-grid > :nth-last-child(-n + 2) {
   border-bottom: 0;

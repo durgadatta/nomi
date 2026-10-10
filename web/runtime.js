@@ -87,6 +87,32 @@ function emptyResultMarkup(icon, label) {
   return `<div class="empty-result"><div class="empty-result-inner"><i data-lucide="${icon}"></i><span>${esc(label)}</span></div></div>`;
 }
 
+function encodedJsonText(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const keys = Object.keys(value);
+  return keys.length === 2 && keys.includes("ok") && keys.includes("text")
+    && value.ok === true && typeof value.text === "string" ? value.text : null;
+}
+
+function downloadResultJson(button, text, name) {
+  if (_executionBusy || button.closest(".nb-cell-output").classList.contains("stale")) return;
+  let url;
+  const link = document.createElement("a");
+  try {
+    url = URL.createObjectURL(new Blob([text], { type: "application/json;charset=utf-8" }));
+    link.href = url;
+    link.download = `${name.replace(/[^A-Za-z0-9_-]/g, "_") || "result"}.json`;
+    document.body.appendChild(link);
+    link.click();
+    showToast("Download started");
+  } catch (error) {
+    showToast("Could not download JSON. The result is still available.");
+  } finally {
+    link.remove();
+    if (url) setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+}
+
 function renderBindings(view, entries, available) {
   view.innerHTML = "";
   if (!entries.length) {
@@ -102,6 +128,17 @@ function renderBindings(view, entries, available) {
     const rendered = document.createElement("div");
     rendered.className = "binding-value";
     rendered.textContent = formatInspectableValue(value);
+    const text = encodedJsonText(value);
+    if (text !== null) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "result-download";
+      button.textContent = "Download JSON";
+      button.setAttribute("aria-label", `Download ${name} as JSON`);
+      button.disabled = _executionBusy || view.closest(".nb-cell-output").classList.contains("stale");
+      button.addEventListener("click", () => downloadResultJson(button, text, name));
+      rendered.appendChild(button);
+    }
     table.append(key, rendered);
   });
   view.appendChild(table);
@@ -257,6 +294,7 @@ function markResultsStale() {
     if (!pane) return;
     pane.classList.add("stale");
     pane.querySelector(".result-stale").hidden = false;
+    pane.querySelectorAll(".result-download").forEach((button) => { button.disabled = true; });
   });
 }
 

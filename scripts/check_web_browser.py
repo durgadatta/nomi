@@ -52,6 +52,7 @@ def check_browser(
     url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
 ) -> None:
     from scripts.check_calculation_scenarios import check_calculation_scenarios
+    from scripts.check_report_scenarios import check_report_scenarios
     from scripts.check_legacy_call_scenarios import check_legacy_call_scenarios
     from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
     from scripts.check_editor_startup_scenarios import (
@@ -145,6 +146,7 @@ def check_browser(
             expect(output).to_have_text("42")
             expect(page.locator("#status")).to_have_text("ready")
             check_calculation_scenarios(page, expect, artifacts)
+            check_report_scenarios(page, expect, artifacts)
             check_workbench_scenarios(page, expect, artifacts)
             check_editor_startup_scenarios(page, expect, artifacts)
             check_sample_manifest_startup_scenarios(page, expect, artifacts)
@@ -180,6 +182,7 @@ def check_browser(
                         legacy_page.locator('[data-result-count="bindings"]')
                     ).to_have_text("-")
                     check_legacy_call_scenarios(legacy_page, expect, artifacts)
+                    check_report_scenarios(legacy_page, expect, artifacts, legacy=True)
                 except Exception:
                     legacy_page.screenshot(
                         path=str(artifacts / "legacy-failure.png"), full_page=True
@@ -227,10 +230,10 @@ def main() -> int:
         print(f"Checking playground: {url}", flush=True)
         check_browser(url, args.artifacts, args.headed, args.legacy_pyodide)
     print(
-        f"Browser checks passed: samples, notebook, diagnostics, cancellation, drafts, desktop/mobile. Artifacts: {args.artifacts}"
+        f"Browser checks passed: samples, report repair/JSON download, notebook, diagnostics, cancellation, drafts, desktop/mobile. Artifacts: {args.artifacts}"
     )
     if args.legacy_pyodide:
-        print("Opt-in legacy Pyodide quick tour, pipeline and call boundaries passed.")
+        print("Opt-in legacy Pyodide quick tour, pipeline, call boundaries and report repair passed.")
     return 0
 
 

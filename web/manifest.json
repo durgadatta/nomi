@@ -119,6 +119,7 @@
     "prototype/runtime/modes.py",
     "prototype/runtime/pipeline.py",
     "prototype/runtime/report_boundary.py",
+    "prototype/runtime/report_boundary_adapter.py",
     "prototype/runtime/session.py",
     "prototype/syntax/__init__.py",
     "prototype/syntax/core.py",
@@ -141,6 +142,7 @@
     "samples/demo_verbose.nomi",
     "samples/notebook_intro.nomi.nb",
     "samples/others.nomi",
+    "samples/report.nomi",
     "samples/text_pipeline.nomi.nb"
   ]
 }

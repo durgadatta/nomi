@@ -1003,11 +1003,8 @@ function lowerRawExpr(raw) {
     return unaryOp("not", lowerRawExpr(text.slice(4).trim()));
   }
 
-  const hasComp = /[=!]/.test(text) ||
-    /(?<![<>])[<>](?![<>])/.test(text) ||
-    /\bis\b/.test(text) ||
-    /\bin\b/.test(text);
-	if (hasComp) return lowerComparisonExpr(text);
+  const comparison = lowerComparisonExpr(text);
+  if (comparison) return comparison;
 
   // Binary operators: left + right, left - right, etc.
   // Must come before unary so -x + y parses as (-x) + y, not -(x + y).
@@ -1031,10 +1028,8 @@ function lowerRawExpr(raw) {
     }
   }
 
-  // Subscript with slice: name[start:end] or name[start:end:step]
-  if (/\[\s*[^\]]*:[^\]]*\]/.test(text) || /\[\s*:\s*\]/.test(text)) {
-    return lowerSliceExpr(text);
-  }
+  const postfix = lowerRawPostfixItem(text);
+  if (postfix) return postfix;
 
   // Unary operators: -x, +x (but not -5 which is a number literal)
   if (/^[+\-]/.test(text) && !/^[+\-]\d/.test(text)) {
@@ -1048,6 +1043,48 @@ function lowerRawExpr(raw) {
     source_excerpt: text.slice(0, 120),
     capability: "js-lowerer.raw-expression",
   });
+}
+
+function lowerRawPostfixItem(text) {
+  let depth = 0, quote = null, escaped = false, start = -1, end = -1;
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+    if (quote !== null) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (char === '"' || char === "'") quote = char;
+    else if (char === "[" || char === "(" || char === "{") {
+      if (char === "[" && depth === 0) start = index;
+      depth++;
+    } else if (char === "]" || char === ")" || char === "}") {
+      depth--;
+      if (char === "]" && depth === 0 && start >= 0) end = index;
+    }
+  }
+  if (depth !== 0 || quote !== null || start <= 0 || end !== text.length - 1) return null;
+  const objectText = text.slice(0, start).trim(), inner = text.slice(start + 1, end).trim();
+  if (!objectText || !inner) return null;
+  depth = 0; quote = null; escaped = false;
+  let slice = false;
+  for (const char of inner) {
+    if (quote !== null) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = null;
+    } else if (char === '"' || char === "'") quote = char;
+    else if ("([{".includes(char)) depth++;
+    else if (")]}".includes(char)) depth--;
+    else if (char === ":" && depth === 0) slice = true;
+  }
+  const object = lowerRawExpr(objectText);
+  if (!slice) return getItem(object, lowerRawExpr(inner));
+  const parts = splitTopLevel(inner, ":");
+  if (parts.length > 3) return diagnostic("malformed slice", { capability: "js-lowerer.slice" });
+  return call(load("slice"), [object, parts[0] ? lowerRawExpr(parts[0]) : NIL,
+    parts[1] ? lowerRawExpr(parts[1]) : NIL, parts[2] ? lowerRawExpr(parts[2]) : literal(1, "int")]);
 }
 
 function findTopLevelConditional(text) {
@@ -1116,46 +1153,6 @@ function findTopLevelBoolOp(text) {
     return { op: "and", left: text.slice(0, lastAnd).trim(), right: text.slice(lastAnd + 5).trim() };
   }
   return null;
-}
-
-function lowerSliceExpr(text) {
-  // Rust parser adds spaces: "items2 [ 1 : ]" or "name [ start : end : step ]"
-  let bracketStart = -1, bracketEnd = -1;
-  let pdepth = 0, quote = null, escaped = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (quote !== null) {
-      if (escaped) escaped = false;
-      else if (ch === "\\") escaped = true;
-      else if (ch === quote) quote = null;
-      continue;
-    }
-    if (ch === "'" || ch === '"') { quote = ch; }
-    else if (ch === "(" || ch === "{") { pdepth++; }
-    else if (ch === ")" || ch === "}") { pdepth--; }
-    else if (ch === "[" && pdepth === 0) {
-      if (bracketStart < 0) bracketStart = i;
-      pdepth++;
-    }
-    else if (ch === "]" && pdepth === 1 && bracketStart >= 0) {
-      bracketEnd = i;
-      break;
-    }
-  }
-  if (bracketStart < 0 || bracketEnd < 0) {
-    return diagnostic("malformed slice: " + text.slice(0, 60), {
-      source_excerpt: text.slice(0, 120),
-      capability: "js-lowerer.slice",
-    });
-  }
-  const objText = text.slice(0, bracketStart).trim();
-  const inner = text.slice(bracketStart + 1, bracketEnd).trim();
-  const parts = inner.split(":").map(s => s.trim());
-  const args = [lowerRawExpr(objText), NIL, NIL, literal(1, "int")];
-  if (parts[0]) args[1] = lowerRawExpr(parts[0]);
-  if (parts[1]) args[2] = lowerRawExpr(parts[1]);
-  if (parts[2]) args[3] = lowerRawExpr(parts[2]);
-  return call(load("slice"), args);
 }
 
 function lowerSliceSubscript(value, sliceNode) {
@@ -1602,25 +1599,30 @@ function lowerDictExpr(text) {
 }
 
 function lowerComparisonExpr(text) {
-  // Try multi-char ops first, then single-char
-  const ops = ["not in", "is not", ">=", "<=", "!=", "==", " in ", " is ", ">", "<"];
-  for (const op of ops) {
-    const idx = op.includes(" ") ? text.indexOf(op) : text.indexOf(op);
-    if (idx > 0) {
-      const left = text.slice(0, idx).trim();
-      const right = text.slice(idx + op.length).trim();
-      if (left && right) {
-        const opName = op.trim();
-        const opMap = { ">=": ">=", "<=": "<=", "!=": "!=", "==": "==", ">": ">", "<": "<",
-                         "in": "in", "not in": "not in", "is": "is", "is not": "is not" };
-        return compareOp(lowerRawExpr(left), [opMap[opName] || opName], [lowerRawExpr(right)]);
+  const ops = [" not in ", " is not ", ">=", "<=", "!=", "==", " in ", " is ", ">", "<"];
+  let depth = 0, quote = null, escaped = false;
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+    if (quote !== null) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (char === '"' || char === "'") quote = char;
+    else if ("([{".includes(char)) depth++;
+    else if (")]}".includes(char)) depth--;
+    else if (depth === 0) {
+      for (const op of ops) {
+        if (!text.startsWith(op, index)) continue;
+        if ((op === "<" && (text[index + 1] === "<" || text[index - 1] === "<")) ||
+            (op === ">" && (text[index + 1] === ">" || text[index - 1] === ">"))) continue;
+        const left = text.slice(0, index).trim(), right = text.slice(index + op.length).trim();
+        if (left && right) return compareOp(lowerRawExpr(left), [op.trim()], [lowerRawExpr(right)]);
       }
     }
   }
-  return diagnostic("raw comparison not handled: " + text.slice(0, 60), {
-    source_excerpt: text.slice(0, 120),
-    capability: "js-lowerer.comparison",
-  });
+  return null;
 }
 
 function lowerRawStmt(text) {

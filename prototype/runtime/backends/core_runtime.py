@@ -33,13 +33,8 @@ from prototype.runtime.backends.values import (
     unbox_value,
 )
 from prototype.runtime.host_capabilities import validate_host_call_names
-from prototype.runtime.report_boundary import (
-    BoundaryBudget,
-    decode_data,
-    encode_json,
-    parse_json,
-    trim_text,
-)
+from prototype.runtime.report_boundary import BoundaryBudget
+from prototype.runtime.report_boundary_adapter import ARITIES as BOUNDARY_ARITIES, invoke as invoke_boundary
 from prototype.runtime.collections import fold, scan
 from prototype.syntax.core import (
     BinaryOp,
@@ -108,6 +103,7 @@ class CoreRuntimeEvaluator:
 
     def __init__(self, host_calls: dict[str, Any] | None = None) -> None:
         self._report_boundary_budget = BoundaryBudget()
+        self._custom_host_calls = dict(host_calls or {})
         default_host_calls = self._default_host_calls()
         self._default_host_names = frozenset(default_host_calls)
         self._raw_host_calls = {
@@ -127,7 +123,7 @@ class CoreRuntimeEvaluator:
 
     def fork(self) -> CoreRuntimeEvaluator:
         """Return a fresh evaluator with the same host-call configuration."""
-        return CoreRuntimeEvaluator(host_calls=self._raw_host_calls)
+        return CoreRuntimeEvaluator(host_calls=self._custom_host_calls)
 
     def evaluate(
         self, core_ir: Module, *, display_last_expr: bool = False
@@ -670,16 +666,6 @@ class CoreRuntimeEvaluator:
         calls = {
             "abs": NativeValue("abs", lambda value: abs(unbox_value(value)), True),
             "bool": NativeValue("bool", lambda value: is_truthy(value), True),
-            "decode_data": NativeValue(
-                "decode_data",
-                lambda tree, schema_name: decode_data(
-                    unbox_value(tree), unbox_value(schema_name), self._report_boundary_budget
-                ),
-            ),
-            "encode_json": NativeValue(
-                "encode_json",
-                lambda value: encode_json(unbox_value(value), self._report_boundary_budget),
-            ),
             "Exception": NativeValue(
                 "Exception",
                 lambda msg: ErrorValue(str(unbox_value(msg)), kind="Exception"),
@@ -697,16 +683,17 @@ class CoreRuntimeEvaluator:
             "list": NativeValue("list", self._host_list, True),
             "map": NativeValue("map", self._host_map, True),
             "print": NativeValue("print", self._host_print, True),
-            "parse_json": NativeValue(
-                "parse_json",
-                lambda text: parse_json(unbox_value(text), self._report_boundary_budget),
-            ),
             "range": NativeValue("range", self._host_range, True),
             "scan": NativeValue("scan", self._host_scan, True),
             "str": NativeValue("str", self._host_str, True),
             "sum": NativeValue("sum", lambda value: sum(unbox_value(value)), True),
-            "trim_text": NativeValue("trim_text", lambda text: trim_text(unbox_value(text))),
         }
+        for name in BOUNDARY_ARITIES:
+            calls[name] = NativeValue(
+                name, lambda *args, operation=name: invoke_boundary(
+                    operation, args, self._report_boundary_budget
+                ), True,
+            )
         validate_host_call_names("core-runtime", set(calls))
         return calls
 

@@ -131,6 +131,9 @@ function setControlsDisabled(disabled) {
     button.disabled = disabled || !_ready;
   });
   document.querySelectorAll(".nb-cell-delete, #add-cell-btn").forEach((button) => { button.disabled = disabled; });
+  document.querySelectorAll(".result-download").forEach((button) => {
+    button.disabled = disabled || button.closest(".nb-cell-output").classList.contains("stale");
+  });
 }
 
 function beginExecution() {

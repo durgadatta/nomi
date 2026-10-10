@@ -76,8 +76,23 @@ callback checker, strict CSV decoder or data/ML engine.
 Start with `samples/calculate.nomi` in the CLI or playground. It prints `3850`
 integer cents; change quantity from 3 to 4 for `5050`. A text quantity reports
 an operand error; repair it and rerun. This is a supported compatibility example,
-not complete target Int typing or exact-integer portability. The local JSON
-report and checked module-reuse journeys remain implementation work.
+not complete target Int typing or exact-integer portability.
+
+Try `samples/report.nomi` for a local JSON batch: validate both input boundaries,
+normalize eligible rows, inspect counts, and encode deterministic JSON. Change
+Ada's name to `""` and age to `-1` to see both original field paths, then repair
+them. In the default playground, open Bindings and choose Download JSON beside
+`wire`; stale results cannot be downloaded. Encoding or download failure leaves
+the successful report available. Download initiation is observable; a durable
+filesystem save is not acknowledged by the browser.
+
+This is a bounded compatibility library and ordinary-source sample, using
+structural outcomes and callback-first collections. Python permits up to 4,300
+decimal digits at this boundary (or a lower configured host limit); JavaScript
+refuses integers beyond its exact safe range. These are provisional lab limits.
+The opt-in Pyodide route runs report/repair but has no Bindings download control.
+Nominal target data/Result, checked callbacks and local module reuse remain open;
+see the [delivery gates](docs/orientation/project_roadmap.md#report-and-target-delivery-gates).
 
 The experimental checker can inspect a small scalar calculation without running
 it. The same unannotated invoice runs normally and supports independent checks:

@@ -1,0 +1,38 @@
+{
+  "maximum_batch_size": "maximum_batch_size:class=<class 'function'>",
+  "normalize_customer": "normalize_customer:class=<class 'function'>",
+  "decode_report_input": "decode_report_input:class=<class 'function'>",
+  "build_report": "build_report:class=<class 'function'>",
+  "report_json": "report_json:class=<class 'function'>",
+  "text": "{\"customers\":[{\"id\":\" c-1 \",\"name\":\" Ada \",\"age\":20},{\"id\":\"c-2\",\"name\":\"Bo\",\"age\":12}]}",
+  "result": {
+    "ok": true,
+    "report": {
+      "received": 2,
+      "eligible": 1,
+      "skipped_ineligible": 1,
+      "customers": [
+        {
+          "id": {
+            "value": "c-1"
+          },
+          "name": "Ada",
+          "age": 20
+        }
+      ]
+    },
+    "defaults_applied": [
+      [
+        "minimum_age"
+      ]
+    ]
+  },
+  "wire": {
+    "ok": true,
+    "text": "{\"customers\":[{\"age\":20,\"id\":{\"value\":\"c-1\"},\"name\":\"Ada\"}],\"eligible\":1,\"received\":2,\"skipped_ineligible\":1}"
+  },
+  "stdout": [
+    "{\"customers\":[{\"age\":20,\"id\":{\"value\":\"c-1\"},\"name\":\"Ada\"}],\"eligible\":1,\"received\":2,\"skipped_ineligible\":1}",
+    ""
+  ]
+}

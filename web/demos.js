@@ -3,6 +3,7 @@ const DEMOS = Object.create(null);
 
 const SAMPLE_DESCRIPTIONS = {
   "samples/calculate.nomi": "Calculate an invoice. Change quantity, inspect a mistake, and repair it.",
+  "samples/report.nomi": "Validate a local JSON batch. Repair both fields, inspect the report, and download JSON from Bindings.",
   "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
   "samples/demo_terse.nomi": "Browser-safe quick tour: functions, flow, records, match, and output.",
   "samples/collections.nomi": "Collection examples from samples/collections.nomi.",

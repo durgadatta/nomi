@@ -160,6 +160,98 @@ function truthy(value) {
   }
 }
 
+// Library values cross this seam explicitly. A user map's `kind` field is data.
+function boxBoundaryValue(value) {
+  if (value === null) return NIL;
+  if (typeof value === "boolean") return { kind: "bool", value };
+  if (typeof value === "number") return { kind: "int", value: safeInteger(value) };
+  if (typeof value === "string") return { kind: "str", value };
+  if (Array.isArray(value)) return { kind: "sequence", elements: value.map(boxBoundaryValue) };
+  const entries = new Map();
+  for (const [key, child] of Object.entries(value)) entries.set(key, boxBoundaryValue(child));
+  return { kind: "mapping", entries };
+}
+
+function boundaryTagKeys(item) {
+  if (!item || typeof item !== "object" || Object.getPrototypeOf(item) !== Object.prototype) return null;
+  const keys = Reflect.ownKeys(item);
+  if (!keys.every(key => typeof key === "string" && "value" in Object.getOwnPropertyDescriptor(item, key))) return null;
+  return keys.sort().join(",");
+}
+
+function boundaryText(item) {
+  return boundaryTagKeys(item) === "kind,value" && item.kind === "str" && typeof item.value === "string";
+}
+
+function boundaryElements(elements) {
+  if (!Array.isArray(elements) || Object.getPrototypeOf(elements) !== Array.prototype) return false;
+  if (Reflect.ownKeys(elements).length !== elements.length + 1) return false;
+  for (let index = 0; index < elements.length; index++) {
+    if (!Object.hasOwn(elements, index) || !("value" in Object.getOwnPropertyDescriptor(elements, index))) return false;
+  }
+  return true;
+}
+
+function boundaryHostValue(value, budget) {
+  const copies = new Map(), pending = [];
+  function convert(item) {
+    if (!budget.charge("work", 1, budget.workLimit)) throw new reportBoundary.BoundaryRefusal("NOMI-BOUNDARY-LIMIT", "bounded boundary work", "Boundary processing exceeds the configured work budget.");
+    const keys = boundaryTagKeys(item);
+    if (keys === null) return reportBoundary.UNSUPPORTED;
+    if (item.kind === "nil" && keys === "kind") return null;
+    if (keys === "kind,value") {
+      if (item.kind === "bool" && typeof item.value === "boolean") return item.value;
+      if (item.kind === "int" && Number.isSafeInteger(item.value)) return item.value;
+      if (item.kind === "str" && typeof item.value === "string") return item.value;
+    }
+    let result;
+    if (item.kind === "sequence" && keys === "elements,kind" && boundaryElements(item.elements)) result = [];
+    else if (item.kind === "mapping" && keys === "entries,kind" && item.entries instanceof Map
+      && Object.getPrototypeOf(item.entries) === Map.prototype && Reflect.ownKeys(item.entries).length === 0) {
+      for (const key of item.entries.keys()) {
+        if (!budget.charge("work", 1, budget.workLimit)) throw new reportBoundary.BoundaryRefusal("NOMI-BOUNDARY-LIMIT", "bounded boundary work", "Boundary processing exceeds the configured work budget.");
+        if (typeof key !== "string") return reportBoundary.UNSUPPORTED;
+      }
+      result = Object.create(null);
+    } else return reportBoundary.UNSUPPORTED;
+    if (copies.has(item)) return copies.get(item);
+    copies.set(item, result);
+    pending.push([item, result]);
+    return result;
+  }
+  const result = convert(value);
+  for (let index = 0; index < pending.length; index++) {
+    const [item, target] = pending[index];
+    if (item.kind === "sequence") {
+      for (const child of item.elements) target.push(convert(child));
+    } else {
+      for (const [key, child] of item.entries) target[key] = convert(child);
+    }
+  }
+  return result;
+}
+
+const BOUNDARY_ARITIES = { parse_json: 1, decode_data: 2, encode_json: 1, trim_text: 1 };
+
+function invokeReportBoundary(operation, args, budget) {
+  if (args.length !== BOUNDARY_ARITIES[operation]) throw new TypeError(`${operation} expects ${BOUNDARY_ARITIES[operation]} arguments`);
+  if (["parse_json", "trim_text"].includes(operation)) {
+    if (!boundaryText(args[0])) throw new TypeError(`${operation} expects Text`);
+    return boxBoundaryValue(operation === "parse_json" ? reportBoundary.parseJson(args[0].value, budget) : reportBoundary.trimText(args[0].value, budget));
+  }
+  if (operation === "decode_data") {
+    if (!boundaryText(args[1])) throw new TypeError("decode_data schema name must be Text");
+    if (!["report-options", "report-batch"].includes(args[1].value)) throw valueError("Choose a supported report schema.");
+  }
+  let value;
+  try { value = boundaryHostValue(args[0], budget); }
+  catch (error) {
+    if (!(error instanceof reportBoundary.BoundaryRefusal)) throw error;
+    return boxBoundaryValue(reportBoundary.failure(operation === "decode_data" ? "decode" : "encode", error, { budget }));
+  }
+  return boxBoundaryValue(operation === "decode_data" ? reportBoundary.decodeData(value, args[1].value, budget) : reportBoundary.encodeJson(value, budget));
+}
+
 class Frame {
   constructor(parent = null) {
     this.parent = parent;
@@ -971,11 +1063,9 @@ class CoreRuntime {
   }
 
   defaultHostCalls() {
-    return {
+    const calls = {
       abs: (value) => Math.abs(value),
       bool: native("bool", (value) => truthy(value), true),
-      decode_data: native("decode_data", (tree, schema) => reportBoundary.decodeData(unbox(tree), unbox(schema), this.reportBoundaryBudget)),
-      encode_json: native("encode_json", (value) => reportBoundary.encodeJson(unbox(value), this.reportBoundaryBudget)),
       Exception: native("Exception", (msg) => ({ kind: "error", errorKind: "Exception", message: String(msg) }), true),
       filter: native("filter", (func, sequence) => {
         const kept = [];
@@ -1023,7 +1113,6 @@ class CoreRuntime {
         this.stdout.push(`${values.map((value) => this.displayValue(value)).join(" ")}\n`);
         return null;
       }, true),
-      parse_json: native("parse_json", (text) => reportBoundary.parseJson(unbox(text), this.reportBoundaryBudget)),
       slice: native("slice", (...args) => this.sliceCollection(args), true),
       range: (...args) => {
         if (args.length < 1 || args.length > 3) throw new TypeError("range expects 1..3 arguments");
@@ -1037,7 +1126,6 @@ class CoreRuntime {
         return values;
       },
       str: native("str", (value) => this.displayValue(value), true),
-      trim_text: native("trim_text", (text) => reportBoundary.trimText(unbox(text))),
       scan: native("scan", (...args) => this.reduceCollection("scan", args), true),
       sum: native("sum", (values) => {
         let total = box(0);
@@ -1048,6 +1136,10 @@ class CoreRuntime {
         return total;
       }, true),
     };
+    for (const operation of Object.keys(BOUNDARY_ARITIES)) {
+      calls[operation] = native(operation, (...args) => invokeReportBoundary(operation, args, this.reportBoundaryBudget), true);
+    }
+    return calls;
   }
 
   reduceCollection(operation, args) {

@@ -4,39 +4,39 @@
   "capabilities": [
     {
       "name": "decode_data",
-      "runtimes": ["core-runtime", "js-core-runtime"],
+      "runtimes": ["core-runtime", "js-core-runtime", "python-ast"],
       "arity": "2",
       "argument_shape": ["value tree", "schema name"],
-      "return_shape": "Result<detached data record, decode errors>",
+      "return_shape": "structural-outcome<detached data record, decode errors>",
       "value_boxing": "core-values",
       "error_kind": "structured-boundary-result",
       "determinism": "deterministic",
       "side_effects": [],
       "minimum_host": "core-runtime",
-      "expects_values": false,
+      "expects_values": true,
       "pure": true,
       "may_print": false,
       "may_throw": true,
       "available_in_browser": true,
-      "notes": "Closed report-boundary library operation; shares the evaluator-owned boundary allowance."
+      "notes": "Closed structural outcome record; strict tagged adapters and hosted Nomi/reduced prelude share a run-owned allowance. Python declares up to 4300 native decimal digits; JS declares 16 digits and its exact safe-integer range. These are provisional profiles, not measured support."
     },
     {
       "name": "encode_json",
-      "runtimes": ["core-runtime", "js-core-runtime"],
+      "runtimes": ["core-runtime", "js-core-runtime", "python-ast"],
       "arity": "1",
       "argument_shape": ["structural value"],
-      "return_shape": "Result<Text, encode errors>",
+      "return_shape": "structural-outcome<Text, encode errors>",
       "value_boxing": "core-values",
       "error_kind": "structured-boundary-result",
       "determinism": "deterministic",
       "side_effects": [],
       "minimum_host": "core-runtime",
-      "expects_values": false,
+      "expects_values": true,
       "pure": true,
       "may_print": false,
-      "may_throw": false,
+      "may_throw": true,
       "available_in_browser": true,
-      "notes": "Closed report-boundary library operation; shares the evaluator-owned boundary allowance."
+      "notes": "Closed structural outcome record; strict tagged adapters and hosted Nomi/reduced prelude share a run-owned allowance. Python declares up to 4300 native decimal digits; JS declares 16 digits and its exact safe-integer range. These are provisional profiles, not measured support."
     },
     {
       "name": "Exception",
@@ -212,21 +212,21 @@
     },
     {
       "name": "parse_json",
-      "runtimes": ["core-runtime", "js-core-runtime"],
+      "runtimes": ["core-runtime", "js-core-runtime", "python-ast"],
       "arity": "1",
       "argument_shape": ["Text"],
-      "return_shape": "Result<nomi.json-value, input errors>",
+      "return_shape": "structural-outcome<nomi.json-value, input errors>",
       "value_boxing": "core-values",
       "error_kind": "structured-boundary-result",
       "determinism": "deterministic",
       "side_effects": [],
       "minimum_host": "core-runtime",
-      "expects_values": false,
+      "expects_values": true,
       "pure": true,
       "may_print": false,
-      "may_throw": false,
+      "may_throw": true,
       "available_in_browser": true,
-      "notes": "Closed report-boundary library operation; shares the evaluator-owned boundary allowance."
+      "notes": "Closed structural outcome record; strict tagged adapters and hosted Nomi/reduced prelude share a run-owned allowance. Python declares up to 4300 native decimal digits; JS declares 16 digits and its exact safe-integer range. These are provisional profiles, not measured support."
     },
     {
       "name": "print",
@@ -317,7 +317,7 @@
     },
     {
       "name": "trim_text",
-      "runtimes": ["core-runtime", "js-core-runtime"],
+      "runtimes": ["core-runtime", "js-core-runtime", "python-ast"],
       "arity": "1",
       "argument_shape": ["Text"],
       "return_shape": "Text",
@@ -326,12 +326,12 @@
       "determinism": "deterministic",
       "side_effects": [],
       "minimum_host": "core-runtime",
-      "expects_values": false,
+      "expects_values": true,
       "pure": true,
       "may_print": false,
       "may_throw": true,
       "available_in_browser": true,
-      "notes": "Finite six-scalar Text trim selected for the first report boundary."
+      "notes": "Finite six-scalar Text trim; strict tagged adapters and hosted Nomi/reduced prelude share run-owned work. Wrong call types, invalid Text and resource exhaustion refuse."
     },
     {
       "name": "sum",

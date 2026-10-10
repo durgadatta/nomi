@@ -1,0 +1,59 @@
+# Closed report experiment: validate every row before filtering.
+# The ordinary boundary calls use the run's shared allowance.
+# This compatibility program uses structural records and callback-first
+# map/filter with explicit list materialization; target Data, Result,
+# checked imports and codecs remain pending.
+
+func maximum_batch_size():
+    return 128
+
+func normalize_customer(row):
+    return {
+        "id": {"value": trim_text(row["id"])},
+        "name": trim_text(row["name"]),
+        "age": row["age"],
+    }
+
+func decode_report_input(text, schema_name):
+    parsed = parse_json(text)
+    if parsed["ok"]:
+        return decode_data(parsed["value"], schema_name)
+    return parsed
+
+func build_report(text, options_text="{}"):
+    options = decode_report_input(options_text, "report-options")
+    if options["ok"]:
+        batch = decode_report_input(text, "report-batch")
+    else:
+        return {"ok": False, "boundary": "options", "failure": options}
+    if batch["ok"]:
+        rows = batch["value"]["customers"]
+    else:
+        return {"ok": False, "boundary": "customers", "failure": batch}
+    minimum_age = options["value"]["minimum_age"]
+    func eligible(row):
+        return row["age"] >= minimum_age
+    customers = list(map(normalize_customer, filter(eligible, rows)))
+    report = {
+        "received": len(rows),
+        "eligible": len(customers),
+        "skipped_ineligible": len(rows) - len(customers),
+        "customers": customers,
+    }
+    return {"ok": True, "report": report, "defaults_applied": options["defaults_applied"]}
+
+func report_json(report):
+    return encode_json(report)
+
+# Demonstration: change Ada's name to "" and age to -1, run, then repair both.
+text = '{"customers":[{"id":" c-1 ","name":" Ada ","age":20},{"id":"c-2","name":"Bo","age":12}]}'
+result = build_report(text)
+wire = None
+if result["ok"]:
+    wire = report_json(result["report"])
+    if wire["ok"]:
+        print(wire["text"])
+    else:
+        print(wire)
+else:
+    print(result["failure"])
