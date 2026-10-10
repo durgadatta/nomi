@@ -1,9 +1,9 @@
 # Nomi product synthesis and handoff
 
-> Active plan and execution handoff, refreshed 2026-10-09. The latest user
-> instruction asks to finish planning through synthesis and commit completion.
-> This pass ends with the synthesized implementation brief. The complete frontier remains
-> in scope; implementation continues from the gates below in a later increment.
+> Active plan and execution handoff, refreshed 2026-10-10. Planning reached
+> synthesis at `7684950`; continued execution now delivers the bounded
+> compatibility report. The complete frontier remains in scope and follows
+> the target and reuse gates below.
 > This replaces the earlier contract-first execution order at `915aea1`.
 > Canonical selection: [synthesis](docs/design/synthesis.md#first-product-contract).
 > Project-wide delivery: [roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies).
@@ -11,7 +11,8 @@
 
 ## Resume Here
 
-Implementation baseline: `e4209c8`. The overall strategy is committed at `bc8f0c8`;
+Implementation checkpoint: `8081e93`, superseding the incomplete library slice
+`1d218ff`. The overall strategy is committed at `bc8f0c8`;
 the compatibility calculation journey shipped at `9d2f87d`, followed by the
 Unicode scalar-order repair. Those results do not complete the first-product
 target profile. The plans/gaps checkpoint is `5728c96`; the separately completed
@@ -20,11 +21,15 @@ default/legacy browser checks. The latest checkpoint records skips, warnings
 and the limits of that evidence.
 
 The report's [admission choices](docs/design/synthesis.md#report-admission-gaps)
-are now selected and its first literal oracles are materialized. Planning has
-reached an implementation handoff: implement the bounded library comparison,
-then integrate the report journey and replace compatibility adapters in the
-target order below. Reopen a selected rule only when a concrete vector fails or
-an actual integration exposes a missing semantic distinction.
+are selected and their literal oracles now execute through the closed libraries
+and ordinary source. `samples/report.nomi` works through hosted Python, Core,
+both JS producers, CLI and real default/legacy browser repair. The default
+browser also downloads exact encoded JSON and blocks stale publication.
+The [latest receipt](docs/orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
+supersedes the incomplete library checkpoint. Next close target scalar/data/
+Result/callback contracts and prepare source-derived closed reuse evidence;
+do not expand the two manual schemas or add a whole-report builtin.
+Reopen a selected rule only for a concrete failed discriminator.
 The roadmap's [active queue](docs/orientation/project_roadmap.md#first-reviewable-work-queue)
 owns ordering. Keep three outcomes distinct: a working compatibility report,
 the target report with checked nominal contracts, and reusable local modules.
@@ -220,7 +225,8 @@ not an assumption that every layer needs a rewrite. Use the existing module
 check report only within its actual scope. Add public-contract evidence when
 the reuse slice needs it; it is no longer the first product outcome by default.
 
-Next add the report's decode/repair path and then local reuse of both.
+The compatibility report decode/repair path is delivered. Next replace its
+manual data/outcome adapters in target order and establish checked local reuse.
 For each increment, provide expected values/errors, source maps, formatting,
 refusal cases and appropriate differential checks. Avoid a long sequence of
 disconnected infrastructure milestones before a person can complete a task.
@@ -257,11 +263,12 @@ Provisional per-call experiment configuration is 256 KiB input UTF-8 bytes, 32 s
 map/list containers, 8,192 Value scalar/container nodes (keys excluded), 64
 retained errors and 64 KiB encoded UTF-8 bytes. The selected synthesis additionally
 defines shared input/work/output accounting and a diagnostic-byte ceiling.
-These are unmeasured candidates;
-test each limit and limit-plus-one, pin host/toolchain and record time/memory
-before advertising supported capacity. Source/evaluation work and worker Stop
-remain separate gates. Failed encode/save preserves an inspectable success.
-No report implementation or capacity measurement is claimed by this plan.
+These remain candidate support settings. The reproducible
+`scripts/measure_report_boundary.py --browser` probes local Python, Node and
+Chromium workers; the checkpoint distinguishes traced allocations, process RSS
+and unavailable browser memory. Broader deployment/capacity claims still need
+representative pinned hosts. Source/evaluation work and worker Stop remain
+separate gates. Failed encode/save preserves an inspectable success.
 
 ### Commit Boundaries And Stop Rules
 
@@ -313,8 +320,9 @@ as its own reviewed change; do not erase unrelated continuation work.
 The current JS/WASM route and hosted compatibility routes are implementation
 assets, not the language definition. A prototype feature is not worth preserving
 solely because tests exist, but retiring it must be explicit and reviewable.
-Only target-only examples change in this planning pass; runnable samples, web
-code and generated assets retain their existing revisions.
+Planning changed only target fixtures. The subsequent compatibility increment
+promotes `samples/report.nomi`, providers, browser JSON download and generated
+assets together, with independent source/runtime and real browser evidence.
 
 ## Verification And Release Gates
 
@@ -339,25 +347,26 @@ select target generator semantics or typed resource completion.
 
 ## What Is Ready And What Remains
 
-Ready for handoff: the delivered compatibility calculation and continuation
-repair, selected report laws and lab interface, literal independent oracles,
-dependency/commit boundaries and target replacement gates. The eight planning
-gaps have explicit dispositions. New planning is self-reviewed; no
-independent user study or report implementation is claimed.
+Delivered: compatibility calculation and continuation repair, planning
+synthesis, closed report libraries and source-owned report/repair/encode,
+default-browser JSON download, independent oracles and local capacity probes.
+The eight planning gaps have explicit dispositions and implementation evidence.
 
-Still required: executable report library/public-path
-evidence, target scalar/data/Result/call migration, checked local reuse, measured
-capacity, product trials and distribution checks. Existing owners contain these
-tasks; another global survey or planning layer is unnecessary.
+Still required: target scalar/data/Result/call migration, source-derived checked
+local reuse, representative capacity support, separate input/options editing
+and persistence controls, product trials and distribution checks. The current
+sample edits JSON inside source; changing it changes the source revision.
+Existing owners contain these tasks; another global planning layer is unnecessary.
 
 Continue this session or start a fresh one with this instruction:
 
 > Read this plan, canonical first-product synthesis and the checkpoint. Keep
 > the playground working, but adapt examples freely. Confirm the selected
 > profile and actual baseline. The strategy and compatibility calculation are
-> already committed, and continuation compatibility is repaired. Implement the
-> selected report libraries against independent records, then integrate real
-> report/repair/export and target migration toward checked local reuse. Consult broader
+> already committed, and continuation compatibility is repaired. The bounded
+> compatibility report and default-browser repair/export are delivered. Close
+> target scalar/data/Result/checked calls in the roadmap order and prepare the
+> source-derived closed reuse comparison with two passive consumers. Consult broader
 > research only for a concrete blocker. Do not silently accept proposed APIs,
 > change tests to hide failures or restart a general redesign. Continue through
 > the ordered commits and the whole-frontier closure ledger; report incomplete

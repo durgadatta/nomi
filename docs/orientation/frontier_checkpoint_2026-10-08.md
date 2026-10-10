@@ -1,16 +1,17 @@
 # Frontier checkpoint: 2026-10-08
 
-> Status: active iterative execution checkpoint, refreshed 2026-10-09. This supersedes the earlier
+> Status: active iterative execution checkpoint, refreshed 2026-10-10. This supersedes the earlier
 > documentation-only checkpoint at 22c7bbd; that historical record remains in Git.
 > It preserves context, not a claim that unfinished code is ready.
 
 ## Latest instruction and next step
 
-The latest 2026-10-09 instruction requests finishing the planning line through
-synthesis and committing completion. The pending continuation work is separately
-completed at `e4209c8`; the current synthesis closes the bounded report decisions
-and prepares implementation evidence. Current delivery order remains in the
-roadmap. No report runtime is claimed by the planning closure.
+The latest instruction requests continuing with available tokens. Planning
+reached synthesis at `7684950`; continuation compatibility is separately
+complete at `e4209c8`. The first library checkpoint `1d218ff` is superseded by
+the October 10 compatibility report receipt below: libraries, ordinary source,
+real browser repair/export and local capacity probes. Current delivery order
+remains in the roadmap; compatibility delivery does not close target conformance.
 
 Planning preparation P1-P5 is historical planning context, not semantic
 acceptance or independent review. The current product-first handoff narrows the
@@ -18,8 +19,8 @@ first release to calculation, local JSON report/repair and local reuse. Continue
 through [FRONTIER_PLAN.md](../../FRONTIER_PLAN.md), whose
 [fresh-session sequence](../../FRONTIER_PLAN.md#fresh-implementation-session-sequence)
 is the execution handoff. Strategy `bc8f0c8` and calculation `9d2f87d` are already
-committed. Report admission choices are now selected; resume with executable
-library comparison, then target migration and checked reuse. The latest synthesis receipt below
+committed. Report admission choices now have executable compatibility evidence;
+resume with target migration and source-derived closed reuse. The latest report receipt below
 supersedes historical “next pass” instructions; earlier counts remain historical.
 Committing the experiments preserves them; it does not accept their architecture
 or mark their milestones complete.
@@ -460,4 +461,112 @@ exact failure/path shapes, report count invariants and literal encoding
 consistency. That audit does not execute Nomi or a report implementation.
 Whitespace checks pass. Runtime and browser results belong to the separate
 continuation receipt above and were not rerun for prose-only closure.
+
+## Report Compatibility Completion Receipt: 2026-10-10
+
+Implementation is committed at `8081e93`, superseding the incomplete first
+library checkpoint `1d218ff`. The planning synthesis remains complete at `7684950`; its selected
+laws now have a bounded runnable compatibility slice. The changed code scope
+is the two report libraries and tagged/provider adapters, hosted run reset,
+ordinary capability metadata, WASM raw accessor lowering, one report sample,
+new contracts/edge/graph/adapter tests, browser download/scenario checks,
+measurement tool and generated manifest. No existing test file or prior
+snapshot expectation was edited.
+
+### Delivered Behavior And Independent Evidence
+
+- Exact-token scanning rejects decoded duplicate keys before the second value,
+  preserving original nested paths. Supplied trees have exact schema/version/
+  tag/field checks; Float, Bool-as-Int, null/missing confusion, lone surrogates,
+  cycles and unsupported projections cannot silently become accepted data.
+- Two strict descriptors preserve original Text and detached records, default
+  provenance, known-field/error order and scalar-sorted extras. Cardinality
+  rejects 129 rows before child validation. The 65th independent error returns
+  the first 64 incomplete; resource/numeric refusal instead stops with its sole
+  refusal. A bounded diagnostic writer emits the explicit root fallback.
+- One run-owned allowance spans parse, supplied-tree validation, trim and
+  encode. Each acyclic occurrence charges again; cycle detection uses active
+  ancestors. Numeric capacity is checked before native conversion/formatting.
+  Python uses a maximum 4,300-digit decimal profile or the lower host setting;
+  JS uses 16 digits plus the exact safe-integer range. These are lab profiles.
+- `samples/report.nomi` owns options-first validation, decode-before-filter,
+  explicit normalization, retained duplicate IDs, counts and separate encoding.
+  Its five prepared report outcomes and further source cases agree across
+  hosted Python AST, Core, Python-produced JS and committed-WASM-produced JS.
+  Literal expected records remain independent of these implementations.
+- The actual default browser loads that sample, repairs both original field
+  paths, inspects the report and downloads byte-identical `wire.json` without
+  a terminal newline. Edits disable old download controls. An encode failure
+  and injected download-initiation failure each preserve the successful report.
+  Actual legacy Pyodide report/repair also passes; Bindings/download remains
+  unavailable there. Browser worker Stop/restart, late-reply exclusion and draft
+  recovery are verified by the existing shared workbench scenarios.
+
+The new sample initializes `wire = None` before the success branch so an input
+failure cannot reuse an earlier encoded success. Input/options are presently
+source literals or function arguments; edits share the source revision.
+Separate input/options editor revisions, explicit private-input persistence/
+export, path-to-input navigation and human task trials remain open. JSON download
+is an explicit host action and reports initiation only, not durable save success.
+
+### Actual Checks
+
+Executed on Python **3.14.0rc3**, Node **25.9.0** and macOS arm64; Chromium
+**153.0.8010.12** runs the actual browser and measurement worker:
+
+| Check | Result / scope |
+| --- | --- |
+| Final focused report library/source/producer selection | **113 passed**. Includes independent graph/tagged-adapter cases and two pre-formatting capacity regressions. The original edge selection first exposed **23 failures**; six producer accessor cases also failed before repair. |
+| Full suite, `python3 -m pytest -n 4 -q --tb=short` | **3,509 passed, 85 skipped**, four existing Jupyter path warnings, **47.16 seconds**. This is current local compatibility health, not target conformance. |
+| `python3 scripts/check_web_runtime.py` | **1,400 passed, one skipped**. Includes the final pre-formatting capacity tests. Manifest and all **eight** WASM outputs are fresh. |
+| `python3 scripts/check_web_browser.py --legacy-pyodide` | Actual default and legacy routes pass, including new report repair; exact default-browser JSON download, stale blocking and encode/save failure are observed. Existing desktop/mobile/stop/recovery/startup/lifecycle scenarios pass. Report screenshot inspected; no uncaught page errors. |
+| New sample snapshots | Created `test_eval_loop_nomi_sample_report_nomi_.txt` and `test_eval_loop_reduced_sample_report_nomi_.txt`. They record validated/normalized counts, default provenance and deterministic wire bytes. First creation reported missing baselines; the final full suite verifies them. Python-mode `.nomi` cases remain intentionally skipped; alternate frontend parity also passes. |
+| Generated artifacts | Added `report_boundary_adapter.py` and `samples/report.nomi`; `make_web.py` regenerates manifest/metadata to **129 runtime files / 13 samples**. `python3 scripts/make_web.py --check` passes. Path inventory digest is not runtime content attestation. |
+| Planning/packet integrity | **127 passed**, all **five** packets coherent; **162** local links/anchors across seven changed Markdown files resolve. Language-coherence stays `designing`; registry validation includes the new durable report surfaces. |
+| Static checks | Ruff on changed Python/test/scripts, Node syntax checks on modified runtime/lowering libraries, and `git diff --check` pass. |
+| CLI | `python3 scripts/cli.py samples/report.nomi --output program` emits the exact prepared report JSON. |
+
+### Pinned Local Capacity Measurements
+
+`python3 scripts/measure_report_boundary.py --browser` verifies **32 independently
+specified cases on each of three hosts**. It covers below/at/above input/output,
+node/depth/row limits, 63/64/65 errors, shared-work exhaustion, repeated-call
+input/output, escaped expansion, diagnostic overflow, safe-Int and huge-token
+refusal. The raw ignored receipt is
+`reports/report-boundary/measurements.json`; it records host versions, UTC
+observation, source SHA-256, counters, elapsed time and available memory measures.
+It exercises the library in a Chromium worker, separately from the real UI test.
+
+| Operation | Python elapsed / Node elapsed / Chromium worker elapsed | Charged receipt |
+| --- | --- | --- |
+| Parse 262,144-byte scalar Text | **413.41 / 12.09 / 8.50 ms** | 262,144 admitted bytes; 524,289 work units. One byte more refuses. |
+| Encode 65,536-byte Text output | **252.18 / 4.06 / 3.70 ms** | 65,536 output bytes; 196,607 work units. One byte more refuses. |
+| Parse/decode 128 small rows | **48.58 / 2.73 / 2.70 ms** | 8,478 admitted bytes; Python 31,609 / JS 31,097 work units. Algorithm/profile counters may differ. |
+| Parse/decode a 5,000-digit options integer | **10.92 / 0.53 / 0.50 ms** | Single incomplete numeric-capacity refusal on each profile; no native conversion leak. |
+
+Python's maximum per-case traced allocation peak is **2,575,134 bytes**, with
+inputs constructed before tracing. Node's whole-process peak RSS is **98,640
+KiB**, including all cases/runtime/input material; heap deltas may be negative
+after GC and are not allocation peaks. Chromium worker peak memory is explicitly
+unavailable. Python tracing changes its timing, and these one-shot observations
+ran alongside checks: they are not speed comparisons, worst-case proofs, or
+production supported-capacity claims. The default schema path charges parse
+and decode separately, so a full report does not inherit the standalone parser's
+256 KiB acceptance threshold. Source loops, output transport/retention and wider
+runner limits remain separate admission work.
+
+### Next Exact Gate And Removal Criteria
+
+Keep this compatibility report as the independent migration oracle. Close
+portable target scalars/source, nominal construction/derived decoder, closed
+Result/match and the checked data-first callback instances in roadmap order.
+Replace the manual descriptors and outcome adapters only when those admitted
+contracts produce the same values, paths, default provenance and JSON bytes.
+Prepare closed source-derived constant/subtotal evidence and two passive reuse
+consumers independently; checking cannot execute bodies/imports/defaults/
+annotations, and supplied facts or unknown effects cannot become inference.
+Do not add a third schema or a second ad hoc module loader to extend this bridge.
+Representative capacity/peak-memory validation, separate host input controls,
+local module reuse, human trials and exact release/deployment evidence remain
+explicit gaps. No whole-frontier or target-language completion is claimed.
 

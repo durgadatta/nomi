@@ -290,6 +290,44 @@ any reduced support before effects.
 The hosted choice does not settle target generators, typed resource completion
 or the architecture of a future scheduler.
 
+## Closed Report Compatibility Boundary
+
+Owners: `prototype/runtime/report_boundary.py` and
+`prototype/runtime/js/report_boundary.js`. These replaceable libraries implement
+the selected [report laws](../design/synthesis.md#report-admission-gaps): exact
+JSON number tokens, strict versioned trees, two closed schema descriptors,
+ordered accumulated decode errors, explicit finite trim, deterministic encode
+and shared input/work/output accounting. They own no report transformation.
+
+Hosted Nomi/reduced interpreters use a run-reset provider. Core uses the strict
+`report_boundary_adapter.py` whitelist; JS uses its corresponding tagged seam.
+The adapters preserve aliases/cycles for library validation and refuse implicit
+nominal, Float, callable or foreign projections. Caller contract errors precede
+budget consumption. Each evaluator/session run has its own allowance; a fork
+retains custom calls while creating fresh default-provider closures.
+`host_capabilities.json` records ordinary call shape and supported routes, not
+source-derived purity evidence or target typechecking.
+
+`samples/report.nomi` owns options-first validation, full batch decode before
+filtering, normalization, counts and separate `report_json` encoding. Its
+structural outcomes and callback-first `map`/`filter` with explicit `list`
+materialization are compatibility forms. The default browser renders result
+bindings and offers an explicit download for an exact `{ok: true, text: Text}`
+outcome. That shape is a host presentation convention, not authenticity or JSON
+validation; the library-produced bytes have independent encoding fixtures.
+Download cannot start from stale/busy results, and initiation failure preserves
+the report. The browser cannot attest a durable filesystem save. Legacy Pyodide
+executes the source but keeps Bindings/download unavailable.
+
+Removal gates: derive the two descriptors from admitted Data declarations,
+replace outcome maps with nominal Result, justify closed checked callbacks and
+local imports, then compare the same independent values/errors/bytes before
+removing adapters. A third schema or general schema syntax requires returning
+to the target owner. Separate input/options editing and persistence, source
+locations/formatting, browser peak memory and supported release capacity remain
+open. The [October 10 receipt](frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
+records actual verification; broader target conformance is not inferred.
+
 ## Next Bounded Steps
 
 The [Project Enhancement Roadmap](project_roadmap.md) now owns the shared

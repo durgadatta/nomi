@@ -226,6 +226,14 @@ nominal data, Result, checked libraries and modules retain their own admission
 gates. Scheduling stays in the
 [roadmap](../orientation/project_roadmap.md#report-and-target-delivery-gates).
 
+October 10 execution receipt: the bounded compatibility library/source and
+default-browser repair/export slice now runs against independent records.
+See the [implementation receipt](../orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
+for routes, limits, measurements and remaining gaps. The table below retains
+the admission obligations: structural outcomes and two manual descriptors are
+still a bridge, while source-derived trust, nominal target contracts, separate
+input/options host controls and supported production capacity remain open.
+
 | Gap / existing owner | Selected plan and reason | Evidence still required |
 | --- | --- | --- |
 | Failure classification and completeness; A11/A12/A19 | Keep operation `kind` plus stable rule codes. This identifies the failed stage without duplicating a second category field that could disagree. `complete` describes completed validation at that stage, as defined below. | Literal records for each code, first-error parse, full decode, truncation and capacity refusal; no host crash translated into an input error. |
@@ -338,8 +346,9 @@ total is invented. Checking this ceiling uses a separate bounded writer and
 does not consume the report-export allowance; the fixed fallback always fits.
 The 64-error cap continues to apply when diagnostic bytes fit.
 
-All numeric limits are provisional lab settings, not measured supported
-capacities. Measurement is now an execution gate, not an undecided accounting
+All numeric limits are provisional lab settings, not supported-capacity
+claims. Local measurements are recorded in the implementation receipt;
+representative host validation remains an execution gate, not an undecided accounting
 rule: test below/at/above each limit, repeated calls, escaped expansion, shared
 graphs and huge tokens on pinned Python/Node/browser hosts; record peak memory,
 elapsed time, refusal stage and preserved output. Source/evaluation work,

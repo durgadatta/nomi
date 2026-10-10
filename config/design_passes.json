@@ -96,7 +96,7 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-09",
+      "last_reviewed": "2026-10-10",
       "keywords": ["language research", "language comparison", "feature comparison", "synthesis", "target suite", "whole-program coherence", "domain layers", "data domain", "DAG", "time travel", "dependency graph", "AI/ML", "machine learning", "knowledge ecosystem", "messaging", "publish subscribe", "pub/sub", "queue", "Kafka", "event driven", "outbox", "saga", "durable workflow", "memory model", "publication visibility", "serializability", "write skew", "predicate consistency", "nominal identity", "adaptive evaluation", "holdout reuse", "machine unlearning", "correlated uncertainty"],
       "artifacts": {
         "research": "docs/research/features/README.md",
@@ -115,6 +115,10 @@
         "pytest -n 0 prototype/tests/unit/tools/test_docs_lifecycle.py prototype/tests/unit/tools/test_design_passes.py",
         "python3 docs/research/data_workflows/probe_composition.py --check docs/research/data_workflows/composition_probe_results.json",
         "pytest -n 0 prototype/tests/unit/tools/test_target_fixture_coherence.py prototype/tests/unit/tools/test_design_packet_boundaries.py",
+        "pytest -n 4 prototype/tests/unit/runtime/test_report_boundary.py prototype/tests/unit/runtime/test_report_boundary_edges.py prototype/tests/unit/runtime/test_report_boundary_graphs.py prototype/tests/unit/runtime/test_report_boundary_adapters.py prototype/tests/contracts/test_report_source.py prototype/tests/contracts/test_wasm_report_accessors.py",
+        "python3 scripts/check_web_runtime.py",
+        "python3 scripts/check_web_browser.py --legacy-pyodide",
+        "python3 scripts/measure_report_boundary.py --browser",
         "pytest -n 0 prototype/tests/unit/tools/test_domain_composition_research.py",
         "ruff check docs/research/data_workflows/probe_composition.py prototype/tests/unit/tools/test_domain_composition_research.py",
         "python3 docs/research/data_workflows/probe_messaging.py --check docs/research/data_workflows/messaging_probe_results.json",
@@ -124,7 +128,7 @@
         "git diff --check"
       ],
       "next_actions": [
-        "Bounded report planning is complete in synthesis.md: eight admission choices have selected dispositions and prototype/tests/data/report_boundary/v1.json contains independent prepared records. Implement and compare the closed Python/JS boundary libraries, then ordinary providers and real report repair. Calculation compatibility is delivered at 9d2f87d and continuation compatibility at e4209c8; target conformance remains incomplete.",
+        "Bounded report planning completed at 7684950; 8081e93 delivers the closed Python/JS libraries, ordinary source sample and default-browser repair/JSON download against independent records. Resume with target scalar/data/Result/call gates and source-derived closed reuse; do not extend manual schemas or introduce a whole-report builtin. Compatibility delivery leaves target conformance incomplete.",
         "Prepare closed monomorphic interface evidence for local reuse with independent consumers, unknown-dependency refusal and source/contract/verification invalidation. Integrate report reuse after its target dependencies close; preserve the larger import/resource/job pressures.",
         "Use the resource-lifetime packet's executed candidate comparison; close callback/error/region metadata and type its three resource programs before accepting the recommendation.",
         "Use DT1-DT5, ML1-ML6 and DC1-DC6 to type one inert data/learning description and temporal basis, then compare data/numeric/documentary adapters without a universal IR or new domain keywords.",
@@ -132,7 +136,7 @@
         "Use MSG1-MSG6 to challenge delivery/position/ownership/local atomicity/replay contracts with the messaging target; after D1-D3 typing, select one pinned adapter and independent crash/recovery/settlement fixtures, not a universal broker API.",
         "Establish the report's closed checked callback/library contracts before claiming the overall target is typeable. General generic/protocol/effect-polymorphic and scoped task-handle contracts remain prerequisites of the wider function/resource/job fixtures, not of the first compatibility report.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
-        "Follow the selected failure-envelope, path, lexical and budget-accounting rules through the roadmap's report and target delivery gates: compatibility libraries, nominal data/Result/checked callbacks and local reuse. Measure capacity and retain exact-or-refused numeric evidence across CLI and browser hosts; reopen planning only for a concrete failed discriminator.",
+        "Retain the selected failure-envelope, path, lexical and accounting vectors while replacing compatibility adapters with nominal data/Result/checked callbacks and local reuse. Local capacity probes now run on pinned Python/Node/Chromium; browser peak memory, representative support validation, separate input/options revisions and host release evidence remain open. Reopen planning only for a concrete failed discriminator.",
         "Promote only a completed category contract through Surface/Core, diagnostics, formatter, runtime conformance, supported samples, and GitHub playground smoke coverage."
       ]
     },

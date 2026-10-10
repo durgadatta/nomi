@@ -577,3 +577,60 @@ call-boundary smoke checks pass. Measure pinned hosts against the provisional
 capacities and record any unsupported route as refused. The next step is to
 finish those boundary cases and gaps before wiring the ordinary source report
 and its explicit encode/save stages.
+
+## Report Compatibility Completion, 2026-10-10
+
+The continuation instruction advances the selected planning handoff to the
+bounded implementation at `8081e93`. This supersedes the incomplete October 9 library
+checkpoint: the closed libraries, ordinary providers, source-owned report and
+actual default-browser repair/JSON download now have independent evidence.
+The canonical laws remain unchanged; no syntax or whole-report builtin was
+admitted. Exact counts, pinned measurements and route limits are in the
+[completion receipt](../orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10).
+
+### Evidence That Changed The Implementation
+
+Independent negative probes first exposed nested duplicate paths, null/missing
+confusion, depth/node/work accounting, truncation/completeness and numeric
+conversion leaks. Token-preserving scanners, strict supplied-tree validation
+and bounded writers now meet the selected records. A 129-row batch is a
+cardinality constraint with suppressed child validation; an observed 65th
+error instead makes the first 64 incomplete. Resource/numeric refusals discard
+earlier schema errors and stop, while diagnostic overflow becomes an explicit
+root refusal. Shared acyclic occurrences charge again and decode independently.
+
+Ordinary source exposed two integration defects: Python's lazy callback-first
+collections require explicit strict materialization, and WASM branch conditions
+need balanced, quote-aware raw accessor lowering. The source and producer
+contracts cover those cases without changing the target data-first library
+contract. Explicit boundary boxing also prevents an outcome's ordinary `kind`
+field from being mistaken for a runtime tag. Final adapter probes reject
+foreign tag-shaped objects, getters, symbolic fields and malformed storage.
+They do not establish a sandbox for arbitrary native proxies.
+
+Real browser scenarios verify two-field repair, current revision identity,
+exact downloaded bytes and report preservation on encoder/download-initiation
+failure. Local capacity probes identify Python/Node/Chromium versions and source
+digests; counters and different memory measures are explicit. Browser peak
+memory and representative supported-capacity validation remain unavailable.
+
+### Workflow Friction And Durable Improvement
+
+The first committed library checkpoint passed a small set of prepared examples
+while leaving the public source path disconnected. Running independent edge,
+graph, adapter and producer tests before broader checks made its remaining gaps
+concrete. The new report sample is the single runnable source owner, reused by
+contracts, CLI, regressions and actual browser scenarios. Existing runtime
+checks and the design-pass registry now include those durable surfaces; no
+parallel specification or new agent process was needed.
+
+### Next Pass
+
+Follow the roadmap's target scalar, nominal construction/derived decoder,
+Result/match and checked callback gates. Prepare the closed source-derived
+`maximum_batch_size`/subtotal evidence comparison with two passive consumers;
+checking must not run bodies, imports, defaults or annotations. Keep unknown
+facts unknown and source/contract/verification identities separate.
+The compatibility sample still edits JSON inside source; separate input/options
+revision/persistence/navigation controls, checked local module reuse, user
+trials and exact release validation remain open. The packet stays `designing`.
