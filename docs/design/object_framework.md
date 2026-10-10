@@ -316,8 +316,16 @@ Both renderers return the fixture's complete text and `paragraph_count = 3`.
 The last command selects only the `title` intermediate and returns
 `"Research plan"`. `--output` is repeatable on compile/run; omitted outputs use
 the graph's selection. Selecting the description for execution is refused.
-The existing independent consumer still admits only the original lab profile
-at this checkpoint; a separate admission is required for documentary evidence.
+The [independent consumer](../../tools/object_replay.py) separately pins this
+document vocabulary and validates its nominal ports and nested values. It
+reconstructs version-2 paths, predicates and verdicts without producer or engine
+imports. Its admission remains bounded to two reviewed vocabularies; editing a
+codec or definition creates a new unadmitted context.
+
+```bash
+python3 -m tools.object_interface --vocabulary config/document_interface.json requirements docs/research/object_framework/document.json docs/research/object_framework/document_requirements.json --bindings docs/research/object_framework/document_bindings.json > /tmp/nomi-document-conditions.json
+python3 -m tools.object_replay config/document_interface.json docs/research/object_framework/document.json /tmp/nomi-document-conditions.json --requirements docs/research/object_framework/document_requirements.json --bindings docs/research/object_framework/document_bindings.json
+```
 
 ## Limits And Next Discriminators
 
@@ -330,11 +338,11 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Richer domain refinement protocol | Positive Int and nonempty Text now exercise literal/input evidence, binding gates and independent replay. Add domain-owned parameter, schema or documentary refinements with independent consumers; assertions cannot become proof. |
-| More useful object composition | A small reusable parameterized workflow and a document specification; domain contracts survive inspection, serialization and rebinding. |
+| Richer domain refinement protocol | Nested documentary paths now exercise static/input evidence, binding gates and independent replay. Cross-object relations, quantification and domain proofs require separate rules; assertions cannot become proof. |
+| More useful object composition | A document specification survives inspection, serialization and rebinding. Next compare reusable parameterized multi-output workflows with inline composition, preserving identities and required conditions. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
-| Wider independent consumers | The pinned lab vocabulary now has independent replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
-| Additional realization profiles | A second materially different implementation with explicit conversion/capacity refusal and independent value/error fixtures. |
+| Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
+| Additional realization profiles | Two local documentary algorithms have independent expected-value fixtures. A foreign or remote adapter still needs explicit conversion/capacity, cancellation and failure evidence. |
 | User-facing integration | Ordinary Nomi library calls plus a clear inspector; source/type/diagnostic/runtime contracts before source admission. |
 
 Keep this framework removable until these comparisons earn generalization.

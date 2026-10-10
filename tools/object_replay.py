@@ -13,6 +13,7 @@ import re
 import sys
 
 VOCABULARY = "261a416c00ab73b7849ce085ed9c4436b9fe941fcc4414dd384216d6552d782a"
+DOCUMENT_VOCABULARY = "e928fb99763004ed80bbf6f194d922abf96a908ead0ce0ceb5ce78890829d3c8"
 LIMIT = 1_000_000
 IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z_0-9.-]{0,127}\Z")
 
@@ -31,6 +32,71 @@ RULES = {
     "text.concat": ("Text", "apply", ("left", "right")),
     "document.describe": ("Document", "description", ("body", "title")),
 }
+DOCUMENT_RULES = {
+    **RULES,
+    "document.spec.input": ("DocumentSpec", "input", ()),
+    "document.spec.literal": ("DocumentSpec", "literal", ()),
+    "document.spec.alias": ("DocumentSpec", "alias", ("target",)),
+    "document.spec.describe": ("Document", "description", ("spec",)),
+    "document.render_text": ("RenderedText", "apply", ("spec",)),
+    "document.title": ("Text", "apply", ("spec",)),
+    "document.paragraph_count": ("ExactInt", "apply", ("spec",)),
+    "rendered.as_text": ("Text", "apply", ("value",)),
+}
+
+
+def _rules_for(vocabulary):
+    fingerprint = _digest(vocabulary)
+    if fingerprint == VOCABULARY:
+        return RULES
+    if fingerprint == DOCUMENT_VOCABULARY:
+        return DOCUMENT_RULES
+    raise ReplayError("independent consumer does not admit this vocabulary")
+
+
+def _value_ok(value, codec):
+    # Only codecs in independently pinned artifacts can reach this function.
+    if codec is None:
+        return False
+    kind = codec["kind"]
+    if kind in ("text", "int"):
+        return type(value) is (str if kind == "text" else int)
+    if kind == "record":
+        return (
+            type(value) is dict
+            and set(value) == set(codec["fields"])
+            and all(
+                _value_ok(value[field], shape)
+                for field, shape in codec["fields"].items()
+            )
+        )
+    if kind == "array":
+        return type(value) is list and all(
+            _value_ok(item, codec["items"]) for item in value
+        )
+    return False
+
+
+def _path_codec(codec, path):
+    if type(path) is not list or len(path) > 64:
+        raise ReplayError("invalid structural path")
+    for segment in path:
+        if codec is None:
+            raise ReplayError("path has no declared codec")
+        if type(segment) is str:
+            _identity(segment)
+            if codec["kind"] != "record" or segment not in codec.get("fields", {}):
+                raise ReplayError("unknown structural field")
+            codec = codec["fields"][segment]
+        elif type(segment) is int and 0 <= segment <= LIMIT:
+            if codec["kind"] != "array" or "items" not in codec:
+                raise ReplayError("path does not select a declared array item")
+            codec = codec["items"]
+        else:
+            raise ReplayError("invalid structural path segment")
+    if codec is None:
+        raise ReplayError("path has no declared codec")
+    return codec
 
 
 class ReplayError(ValueError):
@@ -92,13 +158,12 @@ def _unique_names(values):
 def _reconstruct(vocabulary, graph):
     for artifact in (vocabulary, graph):
         _artifact(artifact)
-    if _digest(vocabulary) != VOCABULARY:
-        raise ReplayError("independent consumer does not admit this vocabulary")
+    rules = _rules_for(vocabulary)
     _keys(graph, ("version", "vocabulary", "objects", "outputs"))
     if (
         type(graph["version"]) is not int
         or graph["version"] != 1
-        or graph["vocabulary"] != VOCABULARY
+        or graph["vocabulary"] != _digest(vocabulary)
     ):
         raise ReplayError("unsupported object graph context")
     if type(graph["objects"]) is not list or not 1 <= len(graph["objects"]) <= 512:
@@ -109,17 +174,16 @@ def _reconstruct(vocabulary, graph):
         identity, op = _identity(raw["id"]), raw["op"]
         if identity in objects:
             raise ReplayError("duplicate object identity")
-        if type(op) is not str or op not in RULES:
+        if type(op) is not str or op not in rules:
             raise ReplayError("unknown operation")
-        family, role, port_names = RULES[op]
+        family, role, port_names = rules[op]
         _keys(raw["ports"], port_names)
         for ref in raw["ports"].values():
             _identity(ref)
         attributes = raw["attributes"]
         if role == "literal":
             _keys(attributes, ("value",))
-            expected = int if family == "ExactInt" else str
-            if type(attributes["value"]) is not expected:
+            if not _value_ok(attributes["value"], vocabulary["types"][family]["value"]):
                 raise ReplayError("literal value disagrees with nominal family")
         elif role == "description":
             _keys(attributes, ("purpose",))
@@ -132,12 +196,26 @@ def _reconstruct(vocabulary, graph):
     if set(graph["outputs"]) - objects.keys():
         raise ReplayError("unknown output")
     for raw in objects.values():
-        family, _, _ = RULES[raw["op"]]
+        family, _, _ = rules[raw["op"]]
         for ref in raw["ports"].values():
             if ref not in objects:
                 raise ReplayError("unknown dependency")
-            required = "Text" if family == "Document" else family
-            if RULES[objects[ref]["op"]][0] != required:
+            required = (
+                "DocumentSpec"
+                if raw["op"]
+                in (
+                    "document.spec.describe",
+                    "document.render_text",
+                    "document.title",
+                    "document.paragraph_count",
+                )
+                else "RenderedText"
+                if raw["op"] == "rendered.as_text"
+                else "Text"
+                if family == "Document"
+                else family
+            )
+            if rules[objects[ref]["op"]][0] != required:
                 raise ReplayError("incompatible nominal port families")
     # Preserve source order within topological layers so published term IDs
     # can also be checked; structural interning is the equality oracle.
@@ -171,7 +249,7 @@ def _reconstruct(vocabulary, graph):
     for identity in order:
         raw = objects[identity]
         op = raw["op"]
-        family, role, _ = RULES[op]
+        family, role, _ = rules[op]
         ports = tuple(
             (port, (normal[ref],)) for port, ref in sorted(raw["ports"].items())
         )
@@ -244,7 +322,7 @@ def replay(vocabulary, graph, receipt):
     expected = {
         "version": 1,
         "context": context,
-        "vocabulary": VOCABULARY,
+        "vocabulary": _digest(vocabulary),
         "left": left,
         "right": right,
         "status": "equivalent",
@@ -258,7 +336,7 @@ def replay(vocabulary, graph, receipt):
     return {
         "status": "verified",
         "context": context,
-        "vocabulary": VOCABULARY,
+        "vocabulary": _digest(vocabulary),
         "independent_checker": True,
         "scope": "pinned object lab vocabulary; no engine conformance claim",
     }
@@ -266,18 +344,20 @@ def replay(vocabulary, graph, receipt):
 
 def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None):
     objects, normal, terms = _reconstruct(vocabulary, graph)
+    rules = _rules_for(vocabulary)
     _artifact(requirements)
     _artifact(receipt)
     _keys(requirements, ("version", "graph", "owner", "revision", "requirements"))
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
     if (
         type(requirements["version"]) is not int
-        or requirements["version"] != 1
+        or requirements["version"] not in (1, 2)
         or requirements["graph"] != graph_context
     ):
         raise ReplayError("unsupported or stale requirement context")
     _identity(requirements["owner"])
     _identity(requirements["revision"])
+    version = requirements["version"]
     obligations = requirements["requirements"]
     if type(obligations) is not list or not 1 <= len(obligations) <= 512:
         raise ReplayError("requirement count budget exceeded")
@@ -288,37 +368,72 @@ def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None)
     for identity, value in supplied.items():
         if identity not in objects:
             raise ReplayError("unknown input binding")
-        family, role, _ = RULES[objects[identity]["op"]]
-        if role != "input" or type(value) is not (int if family == "ExactInt" else str):
+        family, role, _ = rules[objects[identity]["op"]]
+        if role != "input" or not _value_ok(
+            value, vocabulary["types"][family]["value"]
+        ):
             raise ReplayError("incompatible abstract input binding")
     seen, results = set(), []
     for obligation in obligations:
-        _keys(obligation, ("id", "rule", "subject"))
+        _keys(
+            obligation,
+            ("id", "rule", "subject")
+            if version == 1
+            else ("id", "rule", "subject", "path"),
+        )
         identity = _identity(obligation["id"])
         if identity in seen:
             raise ReplayError("duplicate requirement identity")
         seen.add(identity)
         rule = obligation["rule"]
-        if type(rule) is not str or rule not in (
-            "exact.positive-v1",
-            "text.nonempty-v1",
-        ):
+        admitted = ("exact.positive-v1", "text.nonempty-v1")
+        if version == 2:
+            admitted += ("array.nonempty-v1",)
+        if type(rule) is not str or rule not in admitted:
             raise ReplayError("independent consumer does not admit this predicate")
         subject = obligation["subject"]
         if type(subject) is not str or subject not in objects:
             raise ReplayError("unknown requirement subject")
-        family = "ExactInt" if rule == "exact.positive-v1" else "Text"
-        if RULES[objects[subject]["op"]][0] != family:
-            raise ReplayError("incompatible predicate subject family")
+        family = rules[objects[subject]["op"]][0]
+        path = [] if version == 1 else obligation["path"]
+        codec = vocabulary["types"][family]["value"]
+        if version == 1:
+            required = "ExactInt" if rule == "exact.positive-v1" else "Text"
+            if family != required:
+                raise ReplayError("incompatible predicate subject family")
+        else:
+            selected = _path_codec(codec, path)
+            required_kind = {
+                "exact.positive-v1": "int",
+                "text.nonempty-v1": "text",
+                "array.nonempty-v1": "array",
+            }[rule]
+            if selected["kind"] != required_kind:
+                raise ReplayError("incompatible predicate path kind")
         term = terms[normal[subject]]
-        _, role, _ = RULES[term[0]]
+        _, role, _ = rules[term[0]]
         known, value, basis = False, None, "unresolved expression"
         if role == "literal":
             known, value, basis = True, json.loads(term[4])["value"], "declared literal"
         elif role == "input" and term[2] in supplied:
             known, value, basis = True, supplied[term[2]], "explicit input snapshot"
-        passed = (
-            (value > 0 if family == "ExactInt" else len(value) > 0) if known else False
+        exists = known
+        if known:
+            for segment in path:
+                if (
+                    type(segment) is str and type(value) is dict and segment in value
+                ) or (
+                    type(segment) is int
+                    and type(value) is list
+                    and segment < len(value)
+                ):
+                    value = value[segment]
+                else:
+                    exists = False
+                    basis += "; missing path"
+                    break
+        passed = exists and (
+            value > 0 if rule == "exact.positive-v1" else len(value) > 0
         )
         results.append(
             {
@@ -333,6 +448,8 @@ def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None)
                 "basis": basis,
             }
         )
+        if version == 2:
+            results[-1]["path"] = path
     statuses = {result["status"] for result in results}
     verdict = (
         "refuted"
@@ -342,17 +459,24 @@ def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None)
         else "satisfied"
     )
     context = _digest(
-        {"requirements": requirements, "checker": "literal-input-predicates-v1"}
+        {
+            "requirements": requirements,
+            "checker": "literal-input-predicates-v1"
+            if version == 1
+            else "structural-path-predicates-v2",
+        }
     )
     expected = {
-        "version": 1,
+        "version": version,
         "context": context,
         "graph": graph_context,
         "status": verdict,
         "evidence_phase": "static" if bindings is None else "binding",
         "binding_digest": None if bindings is None else _digest(bindings),
         "requirements": results,
-        "scope": "closed representation predicates, not scientific assumptions or a general solver",
+        "scope": "closed representation predicates, not scientific assumptions or a general solver"
+        if version == 1
+        else "closed structural path predicates, not scientific assumptions or a general solver",
     }
     if _encode(receipt) != _encode(expected):
         raise ReplayError(

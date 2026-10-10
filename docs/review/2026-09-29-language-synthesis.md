@@ -1105,3 +1105,35 @@ Independently admit the document vocabulary and version-2 path evidence before
 claiming replay for this richer domain. Then distill the documented language
 into a dependency hierarchy, naming reductions, operational laws and unclosed
 gates instead of treating the framework's six roles as language primitives.
+
+## Independent Documentary Admission — 2026-10-10
+
+### Evidence That Changed The Design
+
+The independent consumer now separately pins the documentary vocabulary and
+owns its nominal port and nested-value checks. Version-2 evidence reconstructs
+declared paths, missing indexed values and closed predicates, retaining each
+original verdict. This proves the bounded protocol can carry a richer domain
+without assuming a renderer or reusing producer inference.
+
+### Workflow Friction
+
+The first consumer inferred every port family from its result family, which
+fails for document projections and explicit rendered-text conversion. Reviewed
+per-operation port requirements now preserve those distinct domain meanings.
+Editing a supplied vocabulary still cannot install new trusted rules.
+
+### Durable Improvement
+
+Nineteen new cases cover all three verdicts, forged scope/phase/path evidence,
+changed codecs, invalid unselected nodes, deep binding rejection, nominal
+aliases and pending computed subjects. A fresh isolated process rejects every
+producer import while replaying a documentary receipt. All 69 selected replay
+cases and Ruff passed; original consumer receipts remain unchanged.
+
+### Next Pass
+
+Use this evidence to separate reusable framework mechanisms from semantic
+language primitives. Build the requested composition hierarchy with owners,
+operational laws and explicit residual gaps; do not infer a universal IR or
+source-language acceptance from successful library experiments.
