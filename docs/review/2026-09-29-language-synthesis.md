@@ -1040,3 +1040,35 @@ admitting another generic predicate. Preserve specialized domain contracts and
 their independent consumers when adapting statistical computation. The current
 generic foundation is runnable and remains a removable library/artifact
 experiment rather than a source-language semantic commitment.
+
+## Composable Structural Object Contracts — 2026-10-10
+
+### Evidence That Changed The Design
+
+A shallow record codec could accept a document-shaped dictionary while missing
+every section/paragraph contract. Closed record fields and array item codecs
+now compose within the generic envelope without a data or rendering engine.
+Binding, literal and output boundaries accumulate independent original paths
+instead of stopping at the first nested mismatch. Missing/null/empty and
+nominal family distinctions remain separate.
+
+### Workflow Friction
+
+The CLI discarded structural details when presenting a contract exception.
+It now returns stable path/code/expected errors and completeness. Bare record
+and array codecs keep their existing meanings, avoiding a silent change to
+statistical description metadata or the independently pinned v1 vocabulary.
+
+### Durable Improvement
+
+Twelve new cases cover nested composition, exact failure paths, no defaults,
+detached error reports, invalid/cyclic schemas, 128-error capacity, shallow
+compatibility and codec/nominal round trips. The structural codec owner and
+registered checks make its limited promises explicit; no predicate or host
+callback is run during shape validation.
+
+### Next Pass
+
+Add obligations on declared nested parts, then use a document specification
+with an explicit render request to challenge nominal boundaries and independent
+consumer admission. Keep schemas separate from meaningful domain constraints.

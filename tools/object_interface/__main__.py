@@ -6,6 +6,7 @@ import sys
 
 from . import ContractError, Graph, Requirements, Vocabulary, load_document
 from .backend import BackendFailure, Cancelled
+from .documents import ValueContractError
 from .examples import lab_vocabulary, python_backend
 
 
@@ -73,6 +74,21 @@ def main(argv=None):
                 result = {"values": realization.values, "receipt": realization.receipt}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1 if result.get("status") in ("unknown", "pending", "refuted") else 0
+    except ValueContractError as exc:
+        report = exc.report
+        print(
+            json.dumps(
+                {
+                    "status": "refused",
+                    "kind": "value-contract",
+                    "message": str(exc),
+                    "errors": report["errors"],
+                    "complete": report["complete"],
+                }
+            ),
+            file=sys.stderr,
+        )
+        return 2
     except (ContractError, BackendFailure, Cancelled, OSError) as exc:
         print(json.dumps({"status": "refused", "message": str(exc)}), file=sys.stderr)
         return 2

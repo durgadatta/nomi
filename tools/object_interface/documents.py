@@ -127,13 +127,29 @@ SCHEMA_KINDS = {
 }
 
 
-def schema(contract):
+def schema(contract, depth=0):
+    if depth > MAX_DEPTH:
+        raise ContractError("value schema exceeds nesting budget")
     if type(contract) is not dict or type(contract.get("kind")) is not str:
         raise ContractError("invalid value schema")
     kind = contract["kind"]
-    keys(contract, ("kind", "values") if kind == "enum" else ("kind",), "value schema")
     if kind not in SCHEMA_KINDS:
         raise ContractError("unknown value schema kind")
+    required = ("kind", "values") if kind == "enum" else ("kind",)
+    if kind == "record" and "fields" in contract:
+        required = ("kind", "fields")
+    elif kind == "array" and "items" in contract:
+        required = ("kind", "items")
+    keys(contract, required, "value schema")
+    if kind == "record" and "fields" in contract:
+        fields = contract["fields"]
+        if type(fields) is not dict or len(fields) > 128:
+            raise ContractError("record schema requires at most 128 named fields")
+        for field, child in fields.items():
+            name(field, "record field")
+            schema(child, depth + 1)
+    elif kind == "array" and "items" in contract:
+        schema(contract["items"], depth + 1)
     if kind == "enum" and (
         type(contract["values"]) is not list
         or not contract["values"]
@@ -143,7 +159,7 @@ def schema(contract):
         raise ContractError("invalid enum values")
 
 
-def value_check(value, contract, where):
+def _matches(value, contract):
     kind = contract["kind"]
     valid = {
         "text": lambda: type(value) is str,
@@ -159,8 +175,70 @@ def value_check(value, contract, where):
         "json": lambda: True,
         "null": lambda: value is None,
     }
-    if not valid[kind]():
-        raise ContractError(f"{where}: expected {kind}")
+    return valid[kind]()
+
+
+class ValueContractError(ContractError):
+    """Accumulated structural failures, with paths and no rejected value echo."""
+
+    def __init__(self, where, report):
+        self._report = encode(report)
+        first = report["errors"][0]
+        super().__init__(
+            f"{where} at {first['path']}: expected {first['expected']} ({len(report['errors'])} error(s), complete={report['complete']})"
+        )
+
+    @property
+    def report(self):
+        return json.loads(self._report)
+
+
+def value_report(value, contract):
+    """Check a closed record/array composition, accumulating up to 128 errors.
+
+    Bare record/array schemas retain their original shallow meanings. No
+    conversion, defaults, optional fields, normalization or predicate execution.
+    """
+    snapshot(value)
+    schema(contract)
+    errors, complete = [], True
+
+    def error(path, code, expected):
+        nonlocal complete
+        if len(errors) < 128:
+            errors.append({"path": list(path), "code": code, "expected": expected})
+        else:
+            complete = False
+
+    def visit(current, declaration, path):
+        if not _matches(current, declaration):
+            error(path, "wrong-value-kind", declaration["kind"])
+            return
+        if declaration["kind"] == "record" and "fields" in declaration:
+            fields = declaration["fields"]
+            for field, child in sorted(fields.items()):
+                if field not in current:
+                    error((*path, field), "missing-field", child["kind"])
+                else:
+                    visit(current[field], child, (*path, field))
+            for field in sorted(current.keys() - fields.keys()):
+                error((*path, field), "unexpected-field", "absent field")
+        elif declaration["kind"] == "array" and "items" in declaration:
+            for index, item in enumerate(current):
+                visit(item, declaration["items"], (*path, index))
+
+    visit(value, contract, ())
+    return {
+        "status": "valid" if not errors else "invalid",
+        "complete": complete,
+        "errors": errors,
+    }
+
+
+def value_check(value, contract, where):
+    report = value_report(value, contract)
+    if report["status"] != "valid":
+        raise ValueContractError(where, report)
 
 
 def _pairs(pairs):

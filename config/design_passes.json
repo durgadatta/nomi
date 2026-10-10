@@ -156,7 +156,9 @@
         "ruff check prototype/tests/unit/tools/test_object_requirements.py",
         "python3 -m tools.object_interface run docs/research/object_framework/composition.json docs/research/object_framework/bindings.json --backend python-exact-text --requirements docs/research/object_framework/requirements.json",
         "pytest -n 0 prototype/tests/unit/tools/test_object_requirement_replay.py",
-        "ruff check prototype/tests/unit/tools/test_object_requirement_replay.py"
+        "ruff check prototype/tests/unit/tools/test_object_requirement_replay.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_object_structural_codecs.py",
+        "ruff check prototype/tests/unit/tools/test_object_structural_codecs.py"
       ],
       "next_actions": [
         "Establish the generic engine-free object framework before extending data/statistics. Typed references, passive descriptions, closed composition, explicit pure realization, independent pinned-lab composition/predicate replay, numeric/text obligation states and binding gates, and a 35-family statistical descriptor adapter now run. Next preserve richer domain contracts with separately admitted consumer rules, then adapt statistical computation without weakening observation domains, missingness, exact theory or independent v1 replay. Units, paired moments and physical data engines remain later domain gates.",

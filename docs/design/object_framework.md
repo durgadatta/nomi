@@ -152,11 +152,33 @@ It does not automatically trust every definition supplied by a new domain.
 The statistical exact-law consumer remains separate for its own v1 theory;
 neither consumer certifies an engine's implementations.
 
-The envelope supports nominal families with shallow codecs and parameter shapes.
+The envelope supports nominal families with composable structural codecs and parameter shapes.
 It does not implement general parameterized types, predicate solving or Nomi's
 full type system. Domain-specific structure stays in domain-owned contracts.
 A model parameter record passing an inert shape check is still not a validated
 model.
+
+### Structural Contracts Without A Domain Engine
+
+A codec can compose a closed record from named field codecs and an array from
+an item codec. These are inert declarations checked before a binding or literal
+is accepted. For example, a document specification can declare a Text title and
+an array of sections, each with a Text heading and an array of Text paragraphs.
+Every nested part can be checked before selecting a renderer.
+
+`{"kind": "record", "fields": {...}}` requires exactly the declared fields;
+all are required. `{"kind": "array", "items": {...}}` checks every item in
+order. Bare record/array codecs retain their original shallow meanings. There
+are no hidden defaults, coercions, optional fields or inferred schemas. Missing,
+null and an empty container remain distinct. Schema fields use the lab's bounded
+identifiers, with at most 128 fields per record.
+
+Validation accumulates up to 128 independent errors with field/index paths,
+stable codes and expected kinds; it does not echo rejected values. Record fields
+are visited in sorted name order, with extra fields afterward, and arrays in
+input order. A report marks `complete: false` when more errors exist. The Python
+`ValueContractError.report` and CLI expose detached error records. Structural
+validity does not establish an object's scientific or documentary suitability.
 
 ## Add A Domain Without Adding An Engine
 
