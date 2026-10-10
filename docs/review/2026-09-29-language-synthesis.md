@@ -627,12 +627,16 @@ parallel specification or new agent process was needed.
 ### Next Pass
 
 The October 10 user direction now selects the
-[user-facing documentation pass](../orientation/project_roadmap.md#user-facing-documentation-pass):
-explain what works today and how it will grow before resuming engineering.
+[user-facing readiness pass](../orientation/project_roadmap.md#user-facing-readiness-audit):
+start with documentation, then audit browser, CLI, editor/notebook, and
+distribution. The integrated guide and actual host/artifact probes now expose
+an older published playground and specific onboarding, presentation, engine,
+and packaging gaps. Record them before the
+[next fixing pass](../orientation/project_roadmap.md#next-fixing-pass-order).
 The bounded report completion closes this compatibility continuation; it does
 not close the target-language packet.
 
-When implementation resumes, follow the roadmap's target scalar, nominal
+For target-language implementation, follow the roadmap's target scalar, nominal
 construction/derived decoder, Result/match and checked callback gates. Prepare the closed source-derived
 `maximum_batch_size`/subtotal evidence comparison with two passive consumers;
 checking must not run bodies, imports, defaults or annotations. Keep unknown

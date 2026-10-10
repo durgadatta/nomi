@@ -9,6 +9,12 @@
 
 ## Reading Order
 
+If you want to learn the runnable prototype, start with the
+[user guide](../guide/README.md). For a plain-language explanation of the ideas
+below and what is implemented, read
+[Current Support And Growth](../guide/status.md). This reference owns the target
+language; its examples are not all runnable yet.
+
 1. [Target Design](README.md) - product promise, principles, and language
    shape.
 2. [Syntax](syntax.md) - the canonical source forms and notation budget.

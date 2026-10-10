@@ -9,16 +9,30 @@ Today you can try calculations, functions, collections, and a local JSON report
 in the browser or from the command line. The broader language is still being
 designed and built. Syntax and behavior may change as the project develops.
 
-**[Try Nomi in your browser](https://durgadatta.github.io/nomi/web/)** ·
-**[Getting started](docs/guide/getting_started.md)** ·
+**[Run the current playground](#try-a-calculation)** ·
+**[Learn Nomi](docs/guide/README.md)** ·
 **[Documentation](docs/README.md)**
+
+The [online preview](https://durgadatta.github.io/nomi/web/) is an older
+deployment: the October 10 check found nine samples and no calculation/report
+samples. Use the checkout locally for the current walkthroughs. Deployment
+parity is tracked in the [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit).
 
 ## Quick Start
 
 ### Try a calculation
 
-Open the [playground](https://durgadatta.github.io/nomi/web/), choose
-`calculate.nomi`, and run it. This program calculates an invoice in integer cents:
+First [download or clone the repository](docs/guide/getting_started.md#choose-where-to-run).
+From its root directory, start the current browser playground using the
+committed parser assets:
+
+```bash
+python3 scripts/launch_web.py --no-wasm
+```
+
+Open the URL printed by the launcher, choose `calculate.nomi`, and run it.
+The editor still needs network access for CDN assets. This program calculates
+an invoice in integer cents:
 
 ```nomi
 func subtotal(price, quantity):
@@ -36,7 +50,9 @@ Try `"three"` to see an error, then repair it by restoring a number.
 
 ### Run it locally
 
-From a checkout of this repository, use Python 3.12 or newer:
+Download or clone [the repository](https://github.com/durgadatta/nomi), open a
+terminal in its `nomi` directory, and use Python 3.12 or newer. The commands
+below use a macOS/Linux shell:
 
 ```bash
 python3 -m venv .venv
@@ -51,8 +67,9 @@ You can also run directly from the checkout without installing the package:
 python3 scripts/cli.py samples/calculate.nomi --output program
 ```
 
-Continue with [Getting Started](docs/guide/getting_started.md) to validate JSON,
-repair invalid input, inspect results, and try the experimental source checker.
+Continue with [Getting Started](docs/guide/getting_started.md) to validate JSON
+and repair input, then [Language Basics](docs/guide/language_basics.md) to learn
+values, functions, choices, loops, and collections.
 
 ## What You Can Use Today
 
@@ -68,8 +85,8 @@ starting point for the syntax supported by each execution path.
 | Work in notebooks or an editor | [Jupyter](tools/jupyter/README.md), [VS Code](docs/orientation/vscode_extension.md) | Local notebook kernel and an extension with highlighting and run commands. |
 
 The browser and Python execution paths cover different subsets and have
-different numeric limits. The [getting-started guide](docs/guide/getting_started.md#current-limits)
-explains the limits relevant to these examples.
+different numeric limits. [Current Support And Growth](docs/guide/status.md)
+explains supported examples, prototype/target differences, and distribution status.
 
 ## How Nomi Will Grow
 
@@ -85,6 +102,9 @@ grows, while keeping ordinary code readable.
 | Build larger applications and domain tools | Add services, structured concurrent work, packages, and libraries for data and other domains. | Later delivery work; supporting research and target designs exist. |
 
 These stages describe direction and dependencies, with no release dates promised.
+The [user guide to these guarantees](docs/guide/status.md#the-guarantees-being-built)
+explains types, data boundaries, expected failures, effects, and capabilities in
+plain language.
 The [target design](docs/design/README.md) explains the intended language;
 the [delivery roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies)
 tracks the steps toward it. Code in design documents may use features that do
@@ -94,7 +114,9 @@ not run yet. Runnable examples live in [samples](samples/).
 
 | If you want to… | Read… |
 | --- | --- |
-| Learn by running and changing examples | [Getting Started](docs/guide/getting_started.md) |
+| Learn by running and changing examples | [User Guide](docs/guide/README.md), [Getting Started](docs/guide/getting_started.md), [Language Basics](docs/guide/language_basics.md) |
+| Find a complete example for a task | [Example Catalog](docs/guide/examples.md) |
+| Save files, use tools, or diagnose a problem | [Tools And Troubleshooting](docs/guide/tools.md) |
 | Find guides, design references, or research | [Documentation](docs/README.md) |
 | Understand the intended language | [Target Design](docs/design/README.md) |
 | See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [Changelog](CHANGELOG.md) |
@@ -103,19 +125,20 @@ not run yet. Runnable examples live in [samples](samples/).
 
 ## Web Playground
 
-The [online playground](https://durgadatta.github.io/nomi/web/) lets you edit and
-run examples, inspect output and diagnostics, and download source. Notebook
+The current local playground lets you edit and run examples, inspect output
+and diagnostics, and download source. Notebook
 examples use `# %%` cell markers: `Shift+Enter` runs the current cell and
 `Run All` starts again from the top.
 
 To run the playground locally from the repository root:
 
 ```bash
-python3 scripts/launch_web.py
+python3 scripts/launch_web.py --no-wasm
 ```
 
-Local setup, Rust/WASM build requirements, and browser checks are described in
-[Developing Nomi](docs/orientation/development.md#web-playground).
+Use [Tools And Troubleshooting](docs/guide/tools.md#browser-playground) for
+files, cells, results, and running locally with committed parser assets. Build
+requirements and browser checks are in [Developing Nomi](docs/orientation/development.md#web-playground).
 
 Nomi is an early experimental preview. There is no source compatibility promise
 yet, and the prototype does not implement the complete target language.

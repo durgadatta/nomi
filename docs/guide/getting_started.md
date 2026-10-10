@@ -2,7 +2,7 @@
 
 > Status: user guide for runnable prototype examples.
 
-[Documentation](../README.md) / Getting started
+[User guide](README.md) / Getting started
 
 Start by running a calculation, then change it and repair an error. Next,
 try a report that validates JSON before producing a result. These examples
@@ -11,16 +11,41 @@ in the [target design](../design/README.md).
 
 ## Choose Where To Run
 
+You need a checkout for the current browser and sample commands. Download a ZIP
+from [the repository's Code menu](https://github.com/durgadatta/nomi) and extract
+it, or clone it with Git:
+
+```bash
+git clone https://github.com/durgadatta/nomi.git
+cd nomi
+```
+
+The repository root contains `pyproject.toml`, `samples/`, and `scripts/`.
+Run the commands below there. The setup examples use a macOS/Linux shell;
+operating-system support has not yet been declared as a distribution matrix.
+
 ### In your browser
 
-Open the [playground](https://durgadatta.github.io/nomi/web/) and choose
-`calculate.nomi` from the sample list. Run it and inspect Output. The default
+For the current examples, run the playground from a checkout of this repository:
+
+```bash
+python3 scripts/launch_web.py --no-wasm
+```
+
+Open the printed URL and choose `calculate.nomi` from the sample list. Run it
+and inspect Output. The default
 browser route also offers Bindings, Diagnostics, and Pipeline views for inspecting
 values, problems, and execution details.
 
 For notebook examples, `Shift+Enter` runs the current cell; `Run All` resets
 the session and runs cells from the top. The optional legacy Pyodide route has
 different inspection support, including no Bindings download control.
+
+The [online preview](https://durgadatta.github.io/nomi/web/) is an older deployed
+version. The October 10 audit found neither the calculation nor report sample
+there. These instructions refer to the current local checkout; deployment parity
+remains a [readiness issue](../orientation/project_roadmap.md#user-facing-readiness-audit).
+CDN editor/runtime assets still need network access even when serving locally.
 
 ### On your computer
 
@@ -43,6 +68,11 @@ python3 scripts/cli.py samples/calculate.nomi --output program
 `--output program` shows the program's output. Without it, the CLI uses its
 legacy debug display. `--output json` provides a machine-readable result with
 diagnostics and inspected binding strings separate from program stdout.
+
+The current guides describe this source installation path rather than
+installation of a public registry release. An installed wheel does not include
+the checkout's sample directory; keep the checkout or save an example as your
+own `.nomi` file.
 
 ## Calculate And Change A Value
 
@@ -67,8 +97,8 @@ The output is `3850`: three items at 1,200 cents plus 250 cents delivery.
 Change `quantity = 3` to `quantity = 4`, save if using a local file, and run
 again. The output becomes `5050`.
 
-Now change the quantity to `"three"`. The multiplication cannot use this text
-as the quantity, so execution reports an operand error. Restore a number and
+Now change the quantity to `"three"`. The invoice cannot finish with that text
+quantity, so execution reports an operand error. Restore a number and
 rerun. This example demonstrates runtime feedback; it does not depend on adding
 type annotations first.
 
@@ -104,6 +134,10 @@ $.customers[0].name
 $.customers[0].age
 ```
 
+The sample prints this validation outcome in Output, including its `path_text`
+fields. It is an expected input rejection, so the program itself completes
+normally; a successful CLI process exit does not mean the data was valid.
+
 Restore a nonblank name and a nonnegative age, then rerun. All customers are
 validated before filtering, so invalid data cannot disappear merely because
 that customer would be excluded from the report.
@@ -122,6 +156,14 @@ Input and options are currently edited inside source. General user-defined typed
 decoders, separate input controls, and checked module reuse are still future work;
 see the [report delivery gates](../orientation/project_roadmap.md#report-and-target-delivery-gates).
 
+The failure record also tells you whether its field-error list is complete.
+It retains at most 64 field errors; an observed additional error marks the list
+incomplete. Capacity or work-budget refusal can stop validation and return a
+different failure record. These refusals do not produce a successful report.
+For larger inputs, inspect the outcome rather than assuming the visible errors
+are the only problems. Exact provisional limits and measurements are in the
+[report completion receipt](../orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10).
+
 ## Check A Program Without Running It
 
 The experimental source checker can inspect a small calculation independently
@@ -137,6 +179,10 @@ The first command runs the program and prints `3850`. The second checks its
 scalar types. The third requests purity and reports that `print` uses
 `ConsoleWrite`: output touches the outside world. Remove the output statement
 in a copy of the file to try checking a pure calculation.
+
+A type-only check can still list the console effect while ending with
+`known-types: satisfied`. The selected requirements decide what blocks that
+check; seeing an effect does not by itself mean the type requirement failed.
 
 Use `--check` without `--require` to preview facts and unresolved obligations.
 You can repeat `--require` to combine restrictions; it requires `--check`.
@@ -168,6 +214,10 @@ particular:
 
 ## Continue Exploring
 
+Continue with [Language Basics](language_basics.md) for names, functions,
+choices, loops, maps, and collection operations, then use the
+[Example Catalog](examples.md) to choose a complete program.
+
 Try [the data pipeline](../../samples/data_pipeline.nomi) for ordered `fold`
 and seeded `scan`, or [the text notebook](../../samples/text_pipeline.nomi.nb)
 for delimited-text exploration. These are prototype library examples; the text
@@ -179,3 +229,7 @@ For the language's direction, start with the
 [growth path](../../README.md#how-nomi-will-grow) and then the
 [target design](../design/README.md). The [documentation index](../README.md)
 routes to the full design, research, and implementation references.
+
+For help with files, notebook state, tool setup, or an error, use
+[Tools And Troubleshooting](tools.md). [Current Support And Growth](status.md)
+explains the guarantees being built and which syntax differs from the target.

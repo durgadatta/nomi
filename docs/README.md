@@ -2,9 +2,8 @@
 
 > Status: canonical documentation entry point.
 >
-> Nomi keeps one target-language authority, one consolidated research set, and
-> a separate implementation orientation. Current prototypes are evidence and
-> migration vehicles; they do not define the future language.
+> Start with the user guide for runnable examples. Design describes the intended
+> language; research records evidence; development pages explain the implementation.
 
 ## Start Here
 
@@ -12,8 +11,9 @@ Choose a reading path based on what you want to do:
 
 | Your goal | Start with | Then explore |
 | --- | --- | --- |
-| Try Nomi for the first time | [Quick Start](../README.md#quick-start) | [Getting Started](guide/getting_started.md): calculations, input repair, report export, and source checking. |
-| Understand what will be added | [Growth path](../README.md#how-nomi-will-grow) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
+| Try Nomi for the first time | [User Guide](guide/README.md) | [Getting Started](guide/getting_started.md), then [Language Basics](guide/language_basics.md). |
+| Find a task or solve a problem | [Example Catalog](guide/examples.md) | [Tools And Troubleshooting](guide/tools.md). |
+| Understand what will be added | [Current Support And Growth](guide/status.md) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
 | Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
 | Investigate a language decision | [Design references](#design-and-research-references) | [Research](research/README.md) and [open questions](research/open_questions.md). |
 
@@ -21,6 +21,20 @@ The getting-started guide describes runnable prototype examples. Design
 documents describe the intended language, including features that do not run
 yet. Research explains evidence and alternatives. You can learn the examples
 without reading the research corpus first.
+
+## User Guide
+
+Follow the [learning path](guide/README.md#learn-in-order), or jump to a topic:
+
+- [Getting Started](guide/getting_started.md): run, change, repair, and export.
+- [Language Basics](guide/language_basics.md): ordinary source explained through complete programs.
+- [Example Catalog](guide/examples.md): recommended tasks and older experimental samples.
+- [Using Nomi's Tools](guide/tools.md): browser, CLI, notebooks, editor, and troubleshooting.
+- [Current Support And Growth](guide/status.md): capability boundaries and future guarantees.
+
+The remaining sections are reference routes for design, research, and
+development. The [complete inventory](#complete-markdown-inventory) is available
+when you need to find a particular document.
 
 ## Design And Research References
 
@@ -177,9 +191,17 @@ For a registered cross-cutting feature, use the complete
 
 This list is intentionally complete and is checked by tests.
 
+<details>
+<summary>Browse every document by category</summary>
+
 ### User Guides
 
+- [User Guide](guide/README.md)
 - [Getting Started](guide/getting_started.md)
+- [Language Basics](guide/language_basics.md)
+- [Example Catalog](guide/examples.md)
+- [Using Nomi's Tools](guide/tools.md)
+- [Current Support And Growth](guide/status.md)
 
 ### Design
 
@@ -352,3 +374,5 @@ This list is intentionally complete and is checked by tests.
 - [Function Contract Checkpoint 2026-09-30](review/2026-09-30-function-contracts.md)
 - [Implementation Boundary Review 2026-09-30](review/2026-09-30-implementation-boundaries.md)
 - [Deferred Test Review 2026-09-30](review/2026-09-30-test-issues.md)
+
+</details>

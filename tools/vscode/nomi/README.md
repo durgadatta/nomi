@@ -2,6 +2,11 @@
 
 Early VS Code support for the Nomi language.
 
+New to Nomi? Start with the [user guide](../../../docs/guide/README.md) and
+open `samples/calculate.nomi` for the first task. The extension also highlights
+older experimental syntax; the [example catalog](../../../docs/guide/examples.md)
+explains which samples to learn from and which explore historical forms.
+
 ## Features
 
 - Registers `.nomi` files as the Nomi language.

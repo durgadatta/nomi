@@ -470,6 +470,36 @@ Compare passive traces, contrastive dependency slices and separately authorized
 hypothetical repair. Showing one failed condition does not prove that changing
 it will enable the expected action; incomplete evidence must remain visible.
 
+## User-Facing Readiness Pressure
+
+The October 10 [user-facing audit](../orientation/project_roadmap.md#user-facing-readiness-audit)
+adds concrete usage pressures beneath existing questions 4/7/15/17, not new
+accepted syntax or a separate research program:
+
+- **Task-oriented discovery:** compare a flat syntax/sample browser with a
+  task/status/prerequisite catalog derived from current capability metadata.
+  Can a newcomer select runnable source without mistaking an older experiment
+  or target program for a supported feature? Use Calculate/Repair/Export tasks,
+  source identity and an actual host; navigation self-review is not a human study.
+- **Expected failure presentation:** the report returns failure as ordinary
+  data while the process completes normally. Compare explicit task adapters
+  with passive outcome views across browser/CLI; do not infer failure from any
+  arbitrary map field or erase the distinction between Err and abnormal failure.
+- **Engine-independent library understanding:** a whitespace conversion works
+  on hosted Python and WASM/JS but `.strip()` is absent from Python Core. Compare
+  a declared standard operation family with host-method adaptation, including
+  unsupported preflight and source-linked errors. This extends the existing D3
+  text/library boundary; engine capability is not a new source meaning.
+- **Progressive disclosure:** compare beginner task explanations plus linked
+  evidence with exposing parser/backend details before first use. Keep unknown
+  support and provisional guarantees visible; a simpler screen must not imply
+  a stronger conformance claim. Existing HX8 protocols own any human evaluation.
+
+These are prepared follow-ups grounded in local usage checks. No new study,
+language form, public generic contract, or distribution guarantee is selected.
+First try ordinary metadata, libraries, task adapters, and read-only views.
+Only a remaining concrete language deficiency can justify further syntax research.
+
 ## Research Stop Rule
 
 The [September synthesis](../design/synthesis.md) orders these gates against

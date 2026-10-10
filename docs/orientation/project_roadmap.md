@@ -35,8 +35,8 @@ The [product synthesis and handoff](../../FRONTIER_PLAN.md) records the complete
 planning and bounded report implementation sequence. Its latest completion
 receipt is recorded at `2338bdd`; older incomplete slices and failure counts
 must be read against the [current checkpoint](frontier_checkpoint_2026-10-08.md).
-The [user-facing documentation pass](#user-facing-documentation-pass) now owns
-the immediate direction. M0-M5 remain delivery milestones; earlier P/F labels
+The [user-facing readiness audit](#user-facing-readiness-audit), beginning with
+documentation, now owns the immediate direction. M0-M5 remain delivery milestones; earlier P/F labels
 are historical planning organization. Remaining engineering gates preserve
 the broader ambition without automatically selecting the next task.
 
@@ -103,10 +103,104 @@ type check succeeds; the purity request refuses console output as expected.
 Browser instructions retain the existing completion receipt's scope; no new
 browser run, install, deployment or human study is claimed for these prose edits.
 
-Next increment: add a basic language walkthrough for values, functions, choices
-and collections using verified prototype examples, then link it after Getting
-Started. Explain target-only differences separately and keep the reference
-inventory behind the reader-oriented entry path.
+The continuation now expands this into the integrated user-facing audit below:
+language basics, example selection, tool workflows, support/growth explanations,
+and distribution evidence. Implementation findings belong to the next fixing
+pass rather than piecemeal repairs during the audit.
+
+## User-Facing Readiness Audit
+
+The October 10 continuation covers the whole user experience, in order:
+introduction/docs, browser, CLI, editor/notebook, then installation/distribution.
+The user requested findings and new research/use pressures to be recorded first,
+with implementation repairs in the next pass. This audit specializes existing
+A01/A02/A19-A24/A28-A31 work; it does not replace the M0-M5 delivery queue or
+accept new target semantics.
+
+### Documentation And Learning Closure
+
+The [user-guide index](../guide/README.md) now links a complete beginner path:
+Getting Started, Language Basics, Example Catalog, Tools/Troubleshooting, and
+Current Support/Growth. Root and docs READMEs lead into that hierarchy. The
+catalog accounts for all 13 current samples and distinguishes focused tasks
+from older experimental tours. The support page translates types, constraints,
+data boundaries, expected failure, effects, capabilities, and progressive
+checking without treating target designs as implemented features.
+
+### Findings For The Next Fixing Pass
+
+Priority here is user impact within the existing owners. “Observed” names local
+evidence; “not verified” is a validation gap, not an invented defect.
+
+| Finding | Evidence or boundary | Next repair / owner / completion evidence |
+| --- | --- | --- |
+| Published playground is materially behind current user instructions. | Actual Chromium check of `https://durgadatta.github.io/nomi/web/` fails against current result controls. The inspected live page has nine samples, old demo source/UI, and no calculation/report workflows; browser logs show no page errors. | A21/A28, first release blocker: prepare an exact static artifact with identity and rollback, validate its paths and current tasks, then deploy only under the owner's publication authorization. Re-run the public URL gate; local green checks are insufficient. Docs now route current walkthroughs to the local checkout. |
+| Entry points select different historical demos rather than the documented first task. | Browser defaults to `terse` in `web/app.js`; no-argument CLI runs `scripts/demo.nomi`; VS Code and Jupyter open older tours. | A01/A21-A23/A31: select a coherent first calculation/repair route and preserve advanced samples as explicitly experimental. Test first-run/default behavior on each actual host. |
+| The sample browser does not express the learning hierarchy or link the new guide. | Default-browser desktop/mobile captures show an alphabetic sample list; source uses a flat manifest. | A02/A21/A31: declarative sample metadata for task, status, prerequisites, supported path, and guide link. Derive UI grouping without inventing a second feature authority; prove fresh/returning navigation and narrow-screen access. |
+| Older tour labels imply language guidance while teaching rejected notation. | `demo`, `constraint`, `block`, `others`, and large corpus samples contain historical forms; the catalog explains them. | A02/A03/A21/A31: label them in the actual UI/editor/notebook, migrate or retire each only against its supported regression/profile contract. No silent change to target decisions. |
+| Report data/options are edited inside source and useful outcomes are buried in generic bindings. | Actual report repair passes; inspected screenshot shows source-owned JSON and nested `result`/`wire` records. | A19/A21 and cognitive packet: separate revisioned input/options, present report counts/errors as passive views, keep source/input/run identity and current-result download. Observe invalidation/repair/encoding/save failures. |
+| Report validation failure is ordinary outcome data, not a runtime diagnostic or nonzero CLI exit. | `samples/report.nomi` prints the failed structural result; the guide's invalid-input run exits successfully while naming both fields. | A19/A21/A28: define a report-task adapter that exposes expected failure clearly without changing Result/data semantics or treating every `ok` field as a runtime tag. Compare CLI/browser presentation and machine records. |
+| Legacy debug output and historical no-argument behavior obscure the beginner CLI path. | CLI defaults to `--output debug`; explicit `--output program` is required in new guides. | A20/A28/A31: decide the user default and compatibility disposition; verify help, success, expected failure, stderr/stdout separation, and automation exit codes. |
+| Portable Python Core lacks a text operation used by a beginner program. | `int(" 3 ".strip())` succeeds in hosted Nomi/reduced and WASM/JS but Python Core reports `StrValue has no field 'strip'`. | A02/A08/A19; D3 text/library owner: establish the supported method contract or honest preflight refusal. Add independent text-method vectors across declared engines; do not change the target merely to match this backend. |
+| The wheel's user-facing content differs from checkout instructions. | `pyproject.toml` includes runtime assets and two script samples, but not root `samples/`, `web/`, or guide files. Existing wheel tests verify selected installed paths. | A24/A28: decide which examples/docs/launcher tools ship; make installed help/docs resolve outside checkout and package only declared surfaces. Verify from a fresh dependency environment with no source-tree fallback. |
+| Package metadata lacks public project/docs URLs and license/support decisions remain open. | Root license is absent; `pyproject.toml` has pre-alpha/version/Python minimum but no project URL or license fields. | A28: owner chooses license and release/support scope; then add metadata and rendered package documentation with working absolute links. Check exact wheel identity and release rollback. Do not infer license from a dependency or plugin. |
+| Developer console entry points depend on checkout-only configuration. | `nomi-rag`/`nomi-rag-mcp` ship, but default RAG configuration resolves to root `config/rag_sources.json`, which is not wheel package data. | A28/A32: classify shipped developer tools explicitly, accept a configured location or package defaults, and return actionable setup errors outside checkout. Verify entry points in an isolated install; do not implicitly index an installation tree. |
+| Desktop VS Code execution cannot be verified on this host. | Wrapper status reports Node/npm/dependencies and a local VSIX, but `code: not found`. | A23/A28: obtain an actual supported desktop host/CLI and verify clean install, saved/selection runs, workspace trust, cancellation, and virtual-environment discovery. Unit checks alone do not close this. |
+| Kernel execution passes, but clean notebook installation and broad host support are unverified here. | Actual existing local Nomi kernel returns `7` and `30`; no clean kernelspec install or Docker run performed in this audit. | A22/A29: clean environment install, state/error/interrupt/reset tests, notebook launch and Docker lifecycle on declared hosts. Keep generated credential and locality rules intact. |
+| Network/offline, accessibility, and release claims need wider evidence. | Local Chromium default/legacy and desktop/mobile scenarios pass; CDN dependencies remain. Public parity fails as above. No assistive-device/human study or deployment action was performed. | A21/A24/A28/A31: declare network requirements and supported host matrix, test exact hosted artifact/rollback, then keyboard/screen-reader comprehension and first-task trials. No offline or population-level usability claim from local smoke checks. |
+| Tutorial snippets currently need a manual execution audit. | Eight code/output pairs were extracted for cross-path comparison; no tracked tutorial checker exists. | A24/A31: add a bounded docs-example verification surface that reads authoritative snippets, labels expected failures/profiles, and catches drift without duplicated source fixtures. |
+| User problem intake is browser-specific. | The only current issue form is `.github/ISSUE_TEMPLATE/playground.yml`. | A28/A31: task/profile/version-aware intake for CLI, installation, notebook, editor, and docs, using the same minimal reproduction guidance. |
+
+### Executed Audit Evidence
+
+| Surface | Actual result and limit |
+| --- | --- |
+| CLI, source-check and wheel boundary selection | 16 tests passed; selected wheel contents and execution outside checkout, help, structured output and check separation. The wheel is extracted against this host's dependencies; this is not a pristine dependency installation. |
+| Additional extracted-wheel probe | A local `nomi-0.1.0-py3-none-any.whl` is rebuilt with the current README. Isolated import confirms browser UI/guides/default RAG config absent and default RAG loading raises `FileNotFoundError`. Temporary build removed; this is an artifact-content probe, not dependency isolation or a release artifact. |
+| Actual local Chromium playground | `check_web_browser.py --legacy-pyodide` passed default sample/report repair/JSON download, notebook, diagnostics, cancellation, draft recovery, desktop/mobile and legacy quick-tour/call/report scenarios. Inspected report and 320px captures. Other browser engines were not checked. |
+| Actual published Chromium playground | `check_web_browser.py --url https://durgadatta.github.io/nomi/web/ --artifacts reports/web-browser-published` fails at the current Output-view assertion. Screenshot/accessibility snapshot show the older nine-sample UI/source, with no uncaught page errors. No deployment action taken. |
+| Tutorial programs | All eight exact-output examples pass on hosted Nomi/reduced and WASM/JS; seven also pass Python Core. **31 successful comparisons** and one reproduced `.strip()` refusal. No whole-language parity claim. |
+| Web/runtime gate | Fresh 129-file/13-sample manifest and eight WASM outputs; **1,400 passed, one skipped**. The initial stale local retrieval warning is addressed by rebuilding the ignored index after the documentation edits. Manifest regeneration during launcher checks is byte-identical; final `make_web.py --check` passes. |
+| Existing Jupyter kernel | Actual `check_nomi_kernel` passed, printing `7` and `30`. Existing installation only. |
+| VS Code wrapper status | Node 25.9.0/npm 11.12.1 and local extension artifacts available; desktop CLI unavailable. No actual extension-host receipt from this audit. |
+| Collection/text examples | CLI outputs match the catalog: total 1260/history `[0, 900, 1260]`; text counts `[3, 5, 2]`/total 10/history `[0, 3, 8, 10]`. |
+| Documented local launcher | `launch_web.py --no-wasm --no-browser` serves HTTP 200 for the current workbench and its 13-sample manifest. The independent HTTP probe required the local sandbox's network permission; the server was stopped cleanly afterward. No launcher change or deployment action. |
+| Documentation verification | Full tools selection: **457 passed**, including documentation lifecycle and packet checks; final focused 127-check selection passes. **1,908** local links/anchors across **161** Markdown files resolve, including all docs, root README/Changelog and tool entry READMEs. Code fences and inline source notation are excluded from link interpretation. |
+
+Broader historical receipts remain evidence at their recorded revision. Current
+package/build/browser passes do not close target scalars, general inference,
+checked modules, licensing, distribution support, hosted deployment, or human
+comprehension. Fix the identified entry/example/presentation/package gaps next
+through these owners, then repeat the user journeys before selecting more
+features. New PL/use questions are routed to
+[the existing open-question owner](../research/open_questions.md#user-facing-readiness-pressure).
+
+### Next Fixing Pass Order
+
+1. Make the first task coherent across entry points and label experimental
+   examples from declarative sample metadata. Connect actual UI help to the
+   user-guide hierarchy; retain the older source/profile fixtures until their
+   migration disposition is explicit.
+2. Improve report input, result, and expected-failure presentation using shared
+   revisioned records. Keep CLI machine output, ordinary Result/data meaning,
+   download freshness, and failure preservation independently testable.
+3. Close the demonstrated text-method capability gap or reject it before
+   effects on the unsupported engine; add focused independent reproductions
+   before changing parser/interpreter/library code.
+4. Define the package's shipped user/developer surfaces. Fix installed examples,
+   documentation links, optional-tool configuration, metadata, and clean-environment
+   checks for that declared scope. Keep license/support decisions explicit.
+5. Prepare and verify a versioned static artifact with a rollback path, resolve
+   publication requirements, then replace the old public deployment and repeat
+   the actual public-URL task gate. Until that happens, the local-checkout route
+   remains the current walkthrough path.
+6. Broaden desktop/editor/notebook, operating-system, offline, accessibility,
+   and beginner-task evidence against the chosen distribution profile. Do not
+   delay clear supported-path fixes while waiting for general language inference.
+
+This order is the audit's repair handoff within the existing delivery plan.
+It does not close the target-language or M4 distribution gates, and it does not
+turn the observed differences into new language syntax.
 
 ## October 8 Notes And Frontier Preparation
 

@@ -100,6 +100,14 @@ No new experiment was executed, participant recruited, target rule accepted,
 ABI guaranteed or runtime behavior changed. Existing local probe captures and
 prepared study inventories retain their earlier scope.
 
+## For Readers Learning Nomi
+
+Research is supporting evidence, not a prerequisite for trying the language.
+Start with the [user guide](../guide/README.md) for runnable programs and
+[Current Support And Growth](../guide/status.md) for the distinction between
+implemented behavior, target contracts, and open experiments. Use the indexes
+here when a specific design question or domain interests you.
+
 ## Corpus Covered
 
 The consolidated corpus compared:

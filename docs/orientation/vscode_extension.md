@@ -4,7 +4,13 @@
 >
 > Role: setup, capability map, and roadmap for `tools/vscode/nomi`.
 
-Nomi has an early VS Code extension under:
+Nomi has an early VS Code extension.
+
+For user setup and everyday run commands, start with
+[Using Nomi's Tools](../guide/tools.md#vs-code). This page owns the detailed
+extension configuration and developer workflow.
+
+Its source lives under:
 
 ```text
 tools/vscode/nomi

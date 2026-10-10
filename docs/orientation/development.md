@@ -8,6 +8,10 @@ Use this page to work on the checkout, run the playground locally, set up editor
 and notebook tools, and verify changes. To learn by running examples, start with
 [Getting Started](../guide/getting_started.md).
 
+For ordinary tool use and recovery, read
+[Tools And Troubleshooting](../guide/tools.md). This page contains the build,
+verification, and contribution details behind those instructions.
+
 Run the commands below from the repository root. Use Python 3.12 or newer;
 CI runs the full suite on Python 3.14 and checks installed-package behavior on
 Python 3.12. These are prototype tools; supported syntax differs by execution path.
@@ -37,11 +41,16 @@ orchestration, packaging and engine boundaries.
 
 ## Web Playground
 
-The live playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
+The checkout's default playground uses Monaco, a Rust/WASM parser, and a JavaScript Core
 runtime. Its sample list is generated from runnable files under `samples/`.
 The optional Pyodide path loads required Python modules and explicitly registered
 runtime data from the same manifest. Add `--legacy-pyodide` to the browser gate
 to check that slower network-bootstrap path too.
+
+The published preview is currently older than this checkout; the October 10
+[readiness audit](project_roadmap.md#user-facing-readiness-audit) records the
+failed current-workbench comparison. Test a declared local or published URL
+explicitly rather than assuming a local pass establishes deployment parity.
 
 The JS prototype rejects integers outside +/-9007199254740991 rather than
 rounding them; Python supports wider integers. Target scalar semantics and
@@ -210,3 +219,27 @@ regeneration.
 
 See [Artifacts And Usage](artifacts_and_usage.md) for the
 current pipeline and [AGENTS.md](../../AGENTS.md) for engineering guidance.
+
+## Work On A Change
+
+Start with a concrete user task or a small failing program. Read the relevant
+guide, then its target/design owner and current implementation owner. The
+[roadmap](project_roadmap.md#user-facing-readiness-audit) records user-facing
+findings awaiting repair; historical audit tables are not all current defects.
+
+For a documentation change, verify links, support labels, and every runnable
+example you claim. For a runtime or tool change, reproduce the failure first,
+repair its smallest owner, and check the affected CLI/browser/notebook/editor
+path as well as the neighboring tests. Preserve a usable playground during
+migration. Existing test assertions and snapshots need their repository-defined
+review/authorization; see [AGENTS.md](../../AGENTS.md) and the relevant local skill.
+
+Keep target-only programs outside `samples/`. A runnable sample change affects
+regressions and the generated browser manifest; follow
+[Artifacts And Usage](artifacts_and_usage.md) for its verification boundaries.
+Do not commit caches, browser captures, local VSIX files, or generated reports.
+
+In a review description, state the user-visible before/after behavior, the
+changed contract, actual validation, and remaining limits. Package builds and
+local browser checks are evidence for the checkout; release/deployment requires
+the separate [distribution gates](project_roadmap.md#user-facing-readiness-audit).

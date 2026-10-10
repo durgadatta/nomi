@@ -6,6 +6,15 @@ This checkout remains pre-alpha. Runnable prototype behavior is separate from
 the target language; no stable syntax, type/effect checker or production
 data/ML engine is promised.
 
+- Added a hierarchical user guide for first use, language basics, complete
+  examples, tool workflows, troubleshooting, current support, and gradual growth.
+- Audited current local browser, CLI, package, notebook, and editor boundaries;
+  routed current walkthroughs to the checkout after detecting an older published
+  playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)
+  records implementation/distribution findings for the next fixing pass.
+- Completed the bounded JSON report's validation, two-field repair, encoding,
+  and current-result browser download, as recorded in the
+  [report receipt](docs/orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10).
 - Added data-first ordered `fold` and seed-including `scan` library experiments
   across Nomi/reduced and Python/JavaScript Core runtimes, with explicit empty,
   failure, order and mutable-history contracts.
@@ -41,8 +50,8 @@ data/ML engine is promised.
   and synchronous LIFO unwind; reduced scopes now always enter and use guarded
   cleanup. Python suppression remains separate from target resource semantics.
 - Kept re-yielding child frames ahead of waiting ancestors and propagated state
-  through expression statements and while bodies; general expression and
-  suspended-error continuations remain open.
+  through expression statements and while bodies; subsequent continuation
+  repairs are recorded in the [current checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md).
 - Displayed single-expression native session values exactly once and retained
   historical binding-name maps without deep-copying mutable values or handles.
 - Preserved notebook source framing; added local UTF-8 open/download, source-linked

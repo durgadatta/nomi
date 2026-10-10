@@ -4,6 +4,11 @@ This folder contains a local Jupyter kernel for running Nomi syntax in notebooks
 The kernel reuses the existing Nomi parser and interpreter, so notebook cells
 execute through the same prototype semantics as the CLI.
 
+For the first learning route, use the [user guide](../../docs/guide/README.md)
+and [Language Basics](../../docs/guide/language_basics.md). The installed syntax
+tour covers older experimental forms as well; it is not the complete target
+language or a promise that every form will remain.
+
 Execution/session creation, `%ast`, completeness checks, and binding lookup
 use the public runtime facade. The kernel does not choose a parser directly.
 Silent execution still updates notebook state but suppresses streams, command
