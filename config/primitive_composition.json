@@ -1115,6 +1115,25 @@
         "docs/design/targets/research/domain_layers.nomi",
         "docs/design/targets/research/overall.nomi"
       ]
+    },
+    {
+      "id": "graph-workflow",
+      "label": "Reusable multi-output graph workflows",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "binding",
+        "obligations"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Reference parameters substitute explicitly; namespaced intermediates and carried conditions retain graph-qualified identity.",
+      "gate": "Expanded graphs replay independently; template substitution itself and authoring/repair benefits need independent evidence.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi",
+        "docs/design/targets/research/generic_operations.nomi"
+      ]
     }
   ]
 }

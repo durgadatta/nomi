@@ -332,6 +332,78 @@ python3 -m tools.object_interface --vocabulary config/document_interface.json re
 python3 -m tools.object_replay config/document_interface.json docs/research/object_framework/document.json /tmp/nomi-document-conditions.json --requirements docs/research/object_framework/document_requirements.json --bindings docs/research/object_framework/document_bindings.json
 ```
 
+## Reuse A Workflow With Several Outputs
+
+The [workflow protocol](../../tools/object_interface/workflows.py) composes a
+checked graph template through explicit reference arguments. A template declares
+every abstract input exactly once, exposes its selected outputs under public
+port names, and optionally carries a checked requirement artifact. It contains
+no engine, callback or supplied input values. This is library/artifact reuse,
+not Nomi function/module admission or a new executable instruction.
+
+The [example template](../research/object_framework/workflow.json) exposes a
+square and greeting while retaining a passive document intermediate:
+
+```python
+from tools.object_interface import Graph, Workflow, load_document
+from tools.object_interface.examples import lab_vocabulary, python_backend
+
+vocabulary = lab_vocabulary()
+base = Graph.from_document(
+    load_document("docs/research/object_framework/composition.json"), vocabulary,
+)
+base = base.compose("other_quantity", "exact.input", {})
+base = base.compose("other_name", "text.input", {})
+workflow = Workflow.from_document(
+    load_document("docs/research/object_framework/workflow.json"), vocabulary,
+)
+first = workflow.compose(base, "first", {
+    "quantity": base.ref("quantity"), "name": base.ref("name"),
+})
+second = workflow.compose(first, "second", {
+    "quantity": first.graph.ref("other_quantity"),
+    "name": first.graph.ref("other_name"),
+})
+outputs = [
+    second.graph.ref("first.squared"), second.graph.ref("first.published"),
+    second.outputs["square"], second.outputs["greeting"],
+]
+compiled = second.compile(python_backend(vocabulary), outputs)
+result = compiled.bind({
+    "quantity": 3, "name": "Ada", "other_quantity": 4, "other_name": "Bo",
+}).execute()
+assert result.get(second.outputs["square"]) == 16
+assert result.get(second.outputs["greeting"]) == "Hello, Bo"
+```
+
+The first instance also returns 9 and `"Hello, Ada"`. Composition substitutes
+only typed reference ports, including ordered repeated ports; strings inside
+literal attributes remain literal strings. Local intermediates and conditions
+receive namespace-qualified IDs. No name collision, wrong nominal argument,
+stale/foreign reference or aggregate-budget overflow mutates the original graph.
+Explicitly passing the same input reference to two instances shares that input;
+equal input types or names do not cause implicit sharing. Descriptions retain
+distinct source identities even when their pure dependencies are shared.
+
+Passing the previous **instance** carries its conditions forward to the new
+graph context, merging them with the new namespaced conditions. Source owner,
+revision and requirement context remain in component inspection; the combined
+artifact has the explicit `nomi.workflow-composition` owner. Existing receipts
+are not reused under a changed context. `instance.compile(backend)` attaches
+all carried conditions before binding and refuses a selection that omits a
+required subject. Computed arguments do not become static evidence merely
+because they are passed through a template.
+
+`instance.document` exports the expanded graph, requirements and passive
+inspection. Restore the first two through `Graph.from_document` and
+`Requirements.from_document`. Independent consumers already replay those
+expanded graphs and predicate receipts; they do not yet independently verify
+the template substitution algorithm or trust inspection provenance as proof.
+Extracting `instance.graph` explicitly exposes the raw graph interface, which
+does not carry separate requirements; use the instance when preserving the
+workflow's required contract. No automatic backend selection or required-policy
+enforcement outside this convenience API is implied.
+
 ## Limits And Next Discriminators
 
 The lab permits 512 named objects, 512 expanded terms, graph/definition depth 64,
@@ -344,7 +416,7 @@ No remote execution, resource scope or general scheduling is implemented.
 | Next increment | Required evidence |
 | --- | --- |
 | Richer domain refinement protocol | Nested documentary paths now exercise static/input evidence, binding gates and independent replay. Cross-object relations, quantification and domain proofs require separate rules; assertions cannot become proof. |
-| More useful object composition | A document specification survives inspection, serialization and rebinding. Next compare reusable parameterized multi-output workflows with inline composition, preserving identities and required conditions. |
+| More useful object composition | Parameterized multi-output workflows now preserve reference arguments, namespaced intermediates and carried conditions. Compare their authoring/repair costs with inline composition; independently check template substitution itself before claiming that proof. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
 | Additional realization profiles | Two local documentary algorithms have independent expected-value fixtures. A foreign or remote adapter still needs explicit conversion/capacity, cancellation and failure evidence. |

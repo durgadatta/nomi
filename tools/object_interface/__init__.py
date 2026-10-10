@@ -3,6 +3,7 @@
 from .documents import ContractError, load_document
 from .model import Graph, Reference, Vocabulary
 from .contracts import Requirements
+from .workflows import Workflow, WorkflowInstance
 
 __all__ = [
     "ContractError",
@@ -10,5 +11,7 @@ __all__ = [
     "Reference",
     "Requirements",
     "Vocabulary",
+    "Workflow",
+    "WorkflowInstance",
     "load_document",
 ]

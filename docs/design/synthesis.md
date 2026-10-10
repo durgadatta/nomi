@@ -492,7 +492,7 @@ they are evidence dimensions, not a seventh universal runtime object.
 The [primitive composition hierarchy](primitive_composition.md) distills these
 families into checked local construction, ordinary control/conveniences,
 reusable boundaries/carriers, domain models and creation/sharing/operation.
-Its catalog covers 56 compositions with their dependencies, canonical owners,
+Its catalog covers 57 compositions with their dependencies, canonical owners,
 retained laws and unclosed gates; all 25 active category and research target
 programs have a declared navigation route. This is a designing dependency map,
 not a proof of a minimal Core or implementation completeness.

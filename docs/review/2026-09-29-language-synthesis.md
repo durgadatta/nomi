@@ -1174,3 +1174,40 @@ workflow, instantiated twice with explicit reference arguments. Preserve
 nominal families, source identities, conditions and independent replay while
 avoiding a new execution primitive or implicit sharing. Source-derived report
 contracts and later operational/domain gates retain their existing owners.
+
+## Reusable Engine-Free Graph Workflows — 2026-10-10
+
+### Evidence That Changed The Design
+
+The primitive hierarchy exposed reuse as reference substitution, retained
+identity and contract composition rather than another executor primitive.
+A multi-output workflow now declares its complete abstract interface and
+expands into an existing checked graph. Namespaced intermediate objects remain
+referable. Explicitly repeated reference arguments share inputs; separate input
+identities do not become equal through type or name similarity.
+
+### Workflow Friction
+
+Reusing the graph alone would discard separately carried conditions. Composing
+the previous instance now transfers its conditions into the appended graph's
+context and adds the new namespaced conditions. Component inspection retains
+the original requirement owner/revision/context; the combined artifact has an
+explicit composition owner. Compilation through the instance attaches all
+conditions and refuses a selection that drops a required subject.
+
+### Durable Improvement
+
+Twenty-six new cases cover two instances, explicit sharing, foreign revisions,
+wrong nominal arguments, collisions, conditions from both instances, deep
+documentary paths, independent expanded-graph replay, literal refutation,
+pending computed arguments, ordered repeated ports, parameter-free templates
+and aggregate graph limits. All three documented Python examples execute.
+The catalog now includes a dedicated graph-workflow composition; durable
+workflow/persistence semantics remain a separate open domain.
+
+### Next Pass
+
+Independently replay template substitution and carried-condition composition
+itself, rather than using expanded-graph validation to claim that proof. Then
+compare authoring and repair against inline graphs, and select one cross-object
+relation with an owned rule before broader quantified domain validation.

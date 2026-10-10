@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "id": "nomi.square-and-greet",
+  "revision": "v1",
+  "graph": {
+    "version": 1,
+    "vocabulary": "261a416c00ab73b7849ce085ed9c4436b9fe941fcc4414dd384216d6552d782a",
+    "objects": [
+      {
+        "id": "quantity",
+        "op": "exact.input",
+        "ports": {},
+        "attributes": {}
+      },
+      {
+        "id": "squared",
+        "op": "exact.square",
+        "ports": {
+          "value": "quantity"
+        },
+        "attributes": {}
+      },
+      {
+        "id": "expanded_square",
+        "op": "exact.multiply",
+        "ports": {
+          "left": "quantity",
+          "right": "quantity"
+        },
+        "attributes": {}
+      },
+      {
+        "id": "doubled",
+        "op": "exact.double",
+        "ports": {
+          "value": "squared"
+        },
+        "attributes": {}
+      },
+      {
+        "id": "prefix",
+        "op": "text.literal",
+        "ports": {},
+        "attributes": {
+          "value": "Hello, "
+        }
+      },
+      {
+        "id": "name",
+        "op": "text.input",
+        "ports": {},
+        "attributes": {}
+      },
+      {
+        "id": "greeting",
+        "op": "text.concat",
+        "ports": {
+          "left": "prefix",
+          "right": "name"
+        },
+        "attributes": {}
+      },
+      {
+        "id": "published",
+        "op": "text.alias",
+        "ports": {
+          "target": "greeting"
+        },
+        "attributes": {}
+      },
+      {
+        "id": "document",
+        "op": "document.describe",
+        "ports": {
+          "title": "published",
+          "body": "greeting"
+        },
+        "attributes": {
+          "purpose": "An inspectable description; not a rendered or saved document."
+        }
+      }
+    ],
+    "outputs": [
+      "squared",
+      "published"
+    ]
+  },
+  "inputs": {
+    "quantity": "quantity",
+    "name": "name"
+  },
+  "outputs": {
+    "square": "squared",
+    "greeting": "published"
+  },
+  "requirements": {
+    "version": 1,
+    "graph": "6d34235d0194832742a67fd276c21864e4bcb95660fe2bc913098c53f2cd2588",
+    "owner": "example.input-contracts",
+    "revision": "v1",
+    "requirements": [
+      {
+        "id": "positive_quantity",
+        "rule": "exact.positive-v1",
+        "subject": "quantity"
+      },
+      {
+        "id": "name_has_content",
+        "rule": "text.nonempty-v1",
+        "subject": "name"
+      }
+    ]
+  }
+}

@@ -241,7 +241,7 @@ a source change cannot undo a sent message or physical action. These are
 ## Composition Catalog And Coverage
 
 The [declarative catalog](../../config/primitive_composition.json) contains six
-families and 56 compositions. Each row gives dependencies, placement, status,
+families and 57 compositions. Each row gives dependencies, placement, status,
 a semantic law and a gate. All 25 current category/overall/research target
 programs have at least one declared mapping. That is **navigation coverage**,
 not exhaustive identification of constructs in their source and not semantic
@@ -323,6 +323,7 @@ The catalog is a design projection; canonical owners decide actual semantics.
 | Document specifications and rendering / `document` | `engine-objects`, `obligations`, `realization`, `encode` | library / experiment | [Owner](../design/object_framework.md). Meaning and publication conditions are separate from renderer choice and Text conversion. **Gate:** Two local profiles do not establish remote rendering, review or file publication. |
 | Training, prediction and evaluation / `learned-model` | `engine-objects`, `table-plan`, `numeric-profile`, `contracts` | library / open | [Owner](../design/synthesis.md). Train-only learned state and evaluation split identities remain separate from predictions. **Gate:** Adaptive evaluation, uncertainty and deletion/unlearning are unresolved domain contracts. |
 | Delivery, outbox and reconciliation / `messaging` | `transaction`, `retry`, `encode`, `decode`, `task-group` | library / open | [Owner](../design/synthesis.md). Delivery identity, processing ownership, settlement and uncertain external outcomes remain distinct. **Gate:** Broker profiles and crash/recovery traces are required; retries do not ensure exactly-once effects. |
+| Reusable multi-output graph workflows / `graph-workflow` | `engine-objects`, `binding`, `obligations` | library / experiment | [Owner](../design/object_framework.md). Reference parameters substitute explicitly; namespaced intermediates and carried conditions retain graph-qualified identity. **Gate:** Expanded graphs replay independently; template substitution itself and authoring/repair benefits need independent evidence. |
 | Examples, checks and test harnesses / `examples` | `callable`, `choice`, `inspection`, `capabilities` | tool / target | [Owner](../design/industrial.md). Independent expectations, compared values and replaced host capabilities retain context. **Gate:** Passing examples do not prove all-input equivalence or backend conformance. |
 | Declared expansion and independent replay / `definition-proof` | `engine-objects`, `contracts`, `inspection` | tool / experiment | [Owner](../design/object_framework.md). Replay uses context-bound rules and preserves source identity; unsupported equality is unknown. **Gate:** Formal domain equality needs an admitted theory, side conditions and independent consumers. |
 | Durable workflows and orchestration / `workflow` | `engine-objects`, `messaging`, `modules` | library / open | [Owner](../design/synthesis.md). Dependency, attempt, partition and idempotency identities survive recovery and handoff. **Gate:** Persistence, compensation, grant freshness and unknown outcomes need real adapters. |
@@ -365,7 +366,7 @@ a dependency path through their work, not a second release schedule.
 | --- | --- | --- |
 | Establish the first report's typed local spine | Value/Bind/Apply/Choose; owned-data, callable, Option/Result and codecs | Source-derived declarations, ordered calls/defaults, complete local interfaces and independent invalid-input paths; honest unsupported cases. |
 | Preserve source identity through convenience reductions | Pipeline, interpolation, propagation and pattern attempts | Typed long form plus expected call/control traces, source-linked failures and unchanged lexical targets. |
-| Reuse engine-free workflows | Engine-objects, obligations, definition-proof and realization | A parameterized multi-output workflow instantiated twice without input aliasing; required conditions survive serialization and independent replay. |
+| Verify reusable graph expansion | Engine-objects, graph-workflow, obligations and definition-proof | Two instances and their carried conditions now serialize/replay as expanded graphs. Independently check template substitution itself, then compare reuse and repair against inline authoring. |
 | Bridge one statistical computation | Numeric-profile, statistics and realization | Preserve domain/mask/exact theory, conditional or unknown proof status and independent v1 replay; refuse incompatible engines. |
 | Admit operational scopes under their owners | Perform/Scope; capability, resource and task contracts | Non-escape checks and deterministic acquire/body/release/cancel/join traces with all causes and bounded work. |
 | Test a contrasting whole activity | Projection, temporal-model and semantic-command | Equal semantic tasks across representations; stale edit refusal and measured prediction/repair/handoff outcomes. |
