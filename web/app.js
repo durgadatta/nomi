@@ -8,7 +8,7 @@ let _runFn = null;
 let _resetFn = null;
 let _ready = false;
 let _startupFailed = false;
-let _currentSample = "terse";
+let _currentSample = "calculate";
 let _cellEditors = [];
 let _cellResults = [];
 let _executionCounter = 0;
@@ -25,7 +25,7 @@ let _cellPrefixes = [];
 let _storageFailed = false;
 let _bootStart = performance.now();
 let _toastTimer = null;
-let _workbenchState = { active: "terse", drafts: {}, sidebarWidth: 272, resultPane: 43 };
+let _workbenchState = { active: "calculate", drafts: {}, sidebarWidth: 272, resultPane: 43 };
 let _evalBackend = new URLSearchParams(location.search).get("backend") || "wasm-js";
 
 const WORKBENCH_STORAGE_KEY = "nomi.playground.workbench.v2";
@@ -383,7 +383,8 @@ async function init() {
   setControlsDisabled(false);
 
   if (matchMedia("(max-width: 980px)").matches) toggleSidebar(false);
-  const initialSample = Object.prototype.hasOwnProperty.call(DEMOS, _workbenchState.active) ? _workbenchState.active : "terse";
+  const initialSample = Object.prototype.hasOwnProperty.call(DEMOS, _workbenchState.active)
+    ? _workbenchState.active : Object.prototype.hasOwnProperty.call(DEMOS, "calculate") ? "calculate" : "terse";
   requestAnimationFrame(() => requestAnimationFrame(() => loadFile(initialSample)));
   console.log("[web] Ready");
 }

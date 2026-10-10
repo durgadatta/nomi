@@ -1,16 +1,41 @@
 // Samples are loaded from the generated manifest; source has one owner.
 const DEMOS = Object.create(null);
 
-const SAMPLE_DESCRIPTIONS = {
-  "samples/calculate.nomi": "Calculate an invoice. Change quantity, inspect a mistake, and repair it.",
-  "samples/report.nomi": "Validate a local JSON batch. Repair both fields, inspect the report, and download JSON from Bindings.",
-  "samples/demo.nomi": "Guided tour from samples/demo.nomi.",
-  "samples/demo_terse.nomi": "Browser-safe quick tour: functions, flow, records, match, and output.",
-  "samples/collections.nomi": "Collection examples from samples/collections.nomi.",
-  "samples/notebook_intro.nomi.nb": "Notebook cells example.",
-  "samples/data_pipeline.nomi": "Paid orders, integer cents, ordered fold and seeded scan.",
-  "samples/text_pipeline.nomi.nb": "Normalize delimited text, convert fields, accumulate counts."
+// Learning metadata only: the manifest and sample files still own source.
+const SAMPLE_CATALOG = {
+  "samples/calculate.nomi": { group: "Start here", rank: 0, status: "Prototype", description: "Calculate an invoice. Change quantity, inspect a mistake, and repair it." },
+  "samples/report.nomi": { group: "Start here", rank: 1, status: "Prototype", description: "Validate JSON, repair two fields, and download a report from Bindings." },
+  "samples/data_pipeline.nomi": { group: "Data and text", rank: 0, status: "Prototype", description: "Select paid orders and accumulate a total and history in integer cents." },
+  "samples/text_pipeline.nomi.nb": { group: "Data and text", rank: 1, status: "Prototype", description: "Normalize simple delimited text, convert fields, and run cells in order." },
+  "samples/demo_terse.nomi": { group: "Experiments", rank: 0, status: "Experiment", description: "Ticket triage with prototype match and range notation." },
+  "samples/notebook_intro.nomi.nb": { group: "Experiments", rank: 1, status: "Experiment", description: "Notebook state and an older constraint spelling." },
+  "samples/demo.nomi": { group: "Experiments", status: "Experiment", description: "Historical syntax tour; several forms are rejected by the target." },
+  "samples/demo_verbose.nomi": { group: "Experiments", status: "Experiment", description: "Compare explicit and experimental prototype forms." },
+  "samples/collections.nomi": { group: "Experiments", status: "Experiment", description: "Prototype collection helpers and shorthand." },
+  "samples/constraint.nomi": { group: "Experiments", status: "Experiment", description: "Older constraint, data, and pattern experiments." },
+  "samples/block.nomi": { group: "Experiments", status: "Experiment", description: "Caller blocks and yield; not the target resource/task model." },
+  "samples/others.nomi": { group: "Experiments", status: "Experiment", description: "Historical shortcuts, cleanup, and composition experiments." },
+  "samples/comprehensive.nomi": { group: "Experiments", status: "Experiment", description: "Large prototype compatibility corpus; start with a focused task." },
 };
+
+function sampleInfo(path) {
+  return Object.prototype.hasOwnProperty.call(SAMPLE_CATALOG, path)
+    ? SAMPLE_CATALOG[path]
+    : { group: "Experiments", status: "Experiment", description: `Prototype sample from ${path}.` };
+}
+
+function sampleGroups(entries) {
+  const groups = [["Local", entries.filter(([, demo]) => demo.local)]];
+  for (const label of ["Start here", "Data and text", "Experiments"]) {
+    const members = entries.filter(([, demo]) => !demo.local && sampleInfo(demo.source).group === label);
+    members.sort(([a, left], [b, right]) => {
+      const rank = (sampleInfo(left.source).rank ?? 100) - (sampleInfo(right.source).rank ?? 100);
+      return rank || (left.title || a).localeCompare(right.title || b);
+    });
+    groups.push([label, members]);
+  }
+  return groups.filter(([, members]) => members.length);
+}
 
 let _draftSaveTimer = null;
 const SAMPLE_LOAD_TIMEOUT_MS = 30000;
@@ -65,7 +90,7 @@ async function loadSampleSources() {
       if (!r.ok) throw new Error(`Sample ${path} returned HTTP ${r.status}`);
       const code = await r.text();
       const existing = DEMOS[key] || {};
-      DEMOS[key] = { ...existing, title: path.split("/").pop(), desc: SAMPLE_DESCRIPTIONS[path] || `Sample from ${path}.`, source: path, code };
+      DEMOS[key] = { ...existing, title: path.split("/").pop(), desc: sampleInfo(path).description, source: path, code };
     }
   } catch (e) {
     const error = controller.signal.aborted
@@ -108,10 +133,7 @@ function buildFileList() {
   list.innerHTML = "";
   const entries = Object.entries(DEMOS);
   byId("sample-count").textContent = `${entries.length} files`;
-  const groups = [
-    ["Local", entries.filter(([, demo]) => demo.local)],
-    ["Examples", entries.filter(([, demo]) => !demo.local)],
-  ];
+  const groups = sampleGroups(entries);
 
   for (const [label, groupEntries] of groups) {
     if (!groupEntries.length) continue;
@@ -122,15 +144,17 @@ function buildFileList() {
     list.appendChild(heading);
 
     for (const [name, demo] of groupEntries) {
-    const el = document.createElement("button");
-    el.type = "button";
-    el.className = "sample";
-    el.dataset.sample = name;
-    el.dataset.search = `${demo.title} ${demo.desc}`.toLowerCase();
-    el.onclick = () => loadFile(name);
-    el.classList.toggle("has-draft", hasDocumentDraft(name));
-    el.innerHTML = `<span class="sample-icon"><i data-lucide="${demo.local ? "file-pen-line" : "file-code-2"}"></i></span><span class="sample-name">${esc(demo.title)}</span><span class="sample-meta">${lineCount(documentCode(name))} lines</span><span class="sample-desc">${esc(demo.desc)}</span>`;
-    list.appendChild(el);
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "sample";
+      el.dataset.sample = name;
+      const status = demo.local ? "Local draft" : sampleInfo(demo.source).status;
+      el.dataset.search = `${demo.title} ${demo.desc} ${label} ${status}`.toLowerCase();
+      el.onclick = () => loadFile(name);
+      el.classList.toggle("has-draft", hasDocumentDraft(name));
+      el.title = `${status}: ${demo.desc}`;
+      el.innerHTML = `<span class="sample-icon"><i data-lucide="${demo.local ? "file-pen-line" : "file-code-2"}"></i></span><span class="sample-name">${esc(demo.title)}</span><span class="sample-meta">${lineCount(documentCode(name))} lines</span><span class="sample-desc">${esc(status)} · ${esc(demo.desc)}</span>`;
+      list.appendChild(el);
     }
   }
 

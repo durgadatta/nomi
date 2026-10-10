@@ -57,6 +57,7 @@ button {
 }
 
 button:focus-visible,
+a:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--teal);
   outline-offset: 2px;
@@ -324,7 +325,7 @@ body:not(.is-running) .cancel-button {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   overflow: hidden;
   background: var(--chrome);
   border-right: 1px solid var(--line);
@@ -1385,4 +1386,11 @@ body.sidebar-hidden .resize-handle {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+.guide-link {
+  margin: 0 16px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

@@ -49,7 +49,7 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - run: python3 -m pip install -e '.[dev]'
-      - run: python3 -m pytest -q -n 0 prototype/tests/e2e/test_distribution_boundary.py prototype/tests/e2e/test_cli.py
+      - run: python3 -m pytest -q -n 0 prototype/tests/e2e/test_distribution_boundary.py prototype/tests/e2e/test_distribution_discovery.py prototype/tests/e2e/test_cli.py
 
   smoke:
     name: Fast smoke

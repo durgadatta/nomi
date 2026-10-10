@@ -50,7 +50,7 @@ an older form, and use the playground's diagnostics for unsupported operations.
 | Sample | What it explores | Reading caution |
 | --- | --- | --- |
 | [demo.nomi](../../samples/demo.nomi) | Broad tour of implemented prototype syntax. | Includes equation functions, piecewise forms, and other syntax rejected by the target. |
-| [demo_terse.nomi](../../samples/demo_terse.nomi) | Compact ticket-triage program. | Concise experimental notation; currently selected by the playground at startup. |
+| [demo_terse.nomi](../../samples/demo_terse.nomi) | Compact ticket-triage program. | Concise experimental notation; listed under Experiments in the playground. |
 | [demo_verbose.nomi](../../samples/demo_verbose.nomi) | More explicit presentation of a prototype program. | Still a prototype fixture, not a target migration guide. |
 | [collections.nomi](../../samples/collections.nomi) | Collection helpers and shorthand. | Some shorthands and callback conventions differ from the target. |
 | [constraint.nomi](../../samples/constraint.nomi) | Constraints, data, and patterns. | Old constraint tuples and pattern shortcuts are not the target `where`/`match` contract. |

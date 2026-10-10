@@ -19,9 +19,12 @@ From the repository root:
 python3 scripts/launch_web.py --no-wasm
 ```
 
-Open the printed URL and choose `calculate.nomi` from the sample list.
-Startup currently
-selects the older compact triage demo; you can switch samples without running it.
+Open the printed URL. On a first visit, `calculate.nomi` is selected. Returning
+visits restore your selected file and local drafts. **Start here** contains the
+calculation and report tasks; **Data and text** contains the two collection
+notebooks. **Experiments** labels older prototype tours. Search matches file
+names, descriptions, groups, and status. The sidebar's **User guide** link opens
+the guide in the repository; a local checkout may be ahead of that published copy.
 
 ### Edit and run
 
@@ -189,6 +192,12 @@ and the relevant version/error text. For browser behavior, mention whether it
 occurs in a scratch document or a sample and whether Run All reproduces it.
 Remove credentials and private input before sharing a reproduction.
 
-Use the repository's [issue templates](../../.github/ISSUE_TEMPLATE/) where they
-fit the problem. Support and release expectations remain described in
+`nomi --version` reports the installed package version and preview status.
+For a checkout, also include `git rev-parse --short HEAD`: local changes can
+differ even when the package version is the same. `nomi --help` links this guide
+and shows the command for the first calculation task.
+
+Use [Playground problem](../../.github/ISSUE_TEMPLATE/playground.yml) for browser
+issues, or [CLI, tools, installation, or documentation problem](../../.github/ISSUE_TEMPLATE/problem.yml)
+for the other surfaces above. Support and release expectations remain described in
 [Current Support And Growth](status.md#distribution-status).

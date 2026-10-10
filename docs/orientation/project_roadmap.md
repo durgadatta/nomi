@@ -202,6 +202,44 @@ This order is the audit's repair handoff within the existing delivery plan.
 It does not close the target-language or M4 distribution gates, and it does not
 turn the observed differences into new language syntax.
 
+### First Fixing Pass Receipt — October 10
+
+The continuation now closes the browser portion of entry/example discovery:
+fresh visits select `calculate.nomi`, returning selections and drafts retain
+their existing ownership, and declarative presentation metadata groups all 13
+samples into Start here, Data and text, and Experiments. Unknown future samples
+default to Experiment. Source remains owned by the manifest and sample files;
+this catalog does not authorize syntax or duplicate source. The sidebar links
+the user-guide hierarchy and provides keyboard focus feedback.
+
+The exact-output guide checker reads all eight complete programs from Language
+Basics and passes **24/24 comparisons** on hosted Nomi, reduced, and actual
+WASM parsing/JS lowering/runtime in Node. It rejects empty/unpaired lessons and
+is part of the existing web/runtime gate. This closes the manual-only beginner
+snippet check, with optional Python Core still outside its declared scope.
+
+Package metadata now links repository, guide, and issue tracker. `nomi --version`
+reports installed package identity/preview status; help routes first calculations
+and user guidance. A second issue form covers CLI, installation, notebooks,
+editor, and docs. Two extracted-wheel discovery checks pass outside the source
+tree, alongside the existing CLI/distribution selection. No license was chosen,
+and installed sample/docs/config scope still needs its declared distribution
+decision. Legacy CLI defaults and editor/notebook entry examples remain open.
+
+Evidence: **49** focused learning-path/startup/document checks; **18** tutorial
+checks; **475** full tool checks; **1,405 passed, one skipped** in the existing
+web/runtime gate, plus the 24 guide comparisons. Actual Chromium default and
+legacy checks pass fresh selection, real search input, returning notebook
+selection, guide discovery, existing repair/download/cancellation/drafts and
+desktop/mobile journeys. The final desktop learning-path capture was inspected.
+The manifest and eight WASM outputs remain fresh and unchanged: no runtime
+module or sample source was added by this UI pass.
+
+Public deployment, clean dependency installation, broader desktop hosts and
+human/accessibility evidence remain separate gates. The live-preview mismatch
+is not closed by these local receipts. Continue with the remaining ordered
+repairs above rather than treating this checkpoint as release readiness.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

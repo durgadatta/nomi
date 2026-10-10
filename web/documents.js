@@ -27,7 +27,7 @@ function normalizeWorkbenchState(stored) {
   const entries = (value) => value && typeof value === "object" && !Array.isArray(value) ? Object.entries(value) : [];
   const bounded = (value, fallback, min, max) => typeof value === "number" && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
   return {
-    active: typeof record.active === "string" ? record.active : "terse",
+    active: typeof record.active === "string" ? record.active : "calculate",
     drafts: Object.fromEntries(entries(record.drafts).filter(([key, value]) => /^[a-z0-9-]+$/.test(key) && typeof value === "string")),
     scratchDocs: Object.fromEntries(entries(record.scratchDocs).filter(([key, item]) => /^scratch-\d+$/.test(key) && item && typeof item.title === "string")),
     sidebarWidth: bounded(record.sidebarWidth, 272, 210, 420),

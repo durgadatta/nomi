@@ -52,6 +52,7 @@ def check_browser(
     url: str, artifacts: Path, headed: bool, legacy_pyodide: bool = False
 ) -> None:
     from scripts.check_calculation_scenarios import check_calculation_scenarios
+    from scripts.check_learning_path_scenarios import check_learning_path_scenarios
     from scripts.check_report_scenarios import check_report_scenarios
     from scripts.check_legacy_call_scenarios import check_legacy_call_scenarios
     from scripts.check_editor_lifecycle_scenarios import check_editor_lifecycle_scenarios
@@ -111,6 +112,7 @@ def check_browser(
             expect(page.locator("#loading")).to_be_hidden(timeout=60_000)
             expect(page.locator("#status")).to_have_text("ready")
             expect(page.locator(".monaco-editor")).to_be_visible()
+            check_learning_path_scenarios(page, expect, artifacts)
             page.locator('[data-sample="terse"]').click()
             expect(page.locator("#current-file")).to_have_text("demo_terse.nomi")
             page.wait_for_function(

@@ -1,0 +1,66 @@
+name: CLI, tools, installation, or documentation problem
+description: Report a broken or confusing task outside the browser playground.
+title: "[user-facing] "
+labels:
+  - user-facing
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Nomi is an experimental preview. Describe the task you were trying to complete.
+        Use the Playground problem form for browser-specific issues. Remove credentials
+        and private data from source, logs, and screenshots before sharing them.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did the problem occur?
+      options:
+        - CLI execution
+        - Installation or package
+        - Jupyter notebook
+        - VS Code extension
+        - Documentation or example
+        - Another tool
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you trying to do?
+      description: Include the guide page or command you followed, if applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Version and environment
+      description: Include your checkout commit or package version, OS, Python version, and relevant editor/kernel version. Mention checkout vs installed package and any selected parser/backend.
+      placeholder: "Checkout commit: …; Python: …; OS: …; command: …"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Smallest reproduction
+      description: Paste the source and exact command or steps. For notebooks, mention which cells ran and whether restarting reproduces it.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include output, diagnostics, exit status, or the confusing wording.
+    validations:
+      required: true
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Other execution path, if checked
+      description: If the same source works in another runtime or tool, name it and include the result. No comparison is required to report a problem.

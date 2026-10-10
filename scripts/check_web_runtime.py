@@ -33,6 +33,10 @@ def main() -> int:
 
     steps: list[tuple[str, list[str]]] = [
         (
+            "user-guide executable examples",
+            [python, str(ROOT / "scripts" / "check_guide_examples.py")],
+        ),
+        (
             "web manifest freshness",
             [python, str(ROOT / "scripts" / "make_web.py"), "--check"],
         ),
@@ -77,6 +81,7 @@ def main() -> int:
                 "prototype/tests/contracts/test_editor_startup_boundary.py",
                 "prototype/tests/contracts/test_editor_lifecycle_boundary.py",
                 "prototype/tests/contracts/test_sample_startup_boundary.py",
+                "prototype/tests/contracts/test_playground_learning_path.py",
                 "prototype/tests/unit/runtime/test_function_completion_defaults.py",
                 "prototype/tests/unit/runtime/test_defer_reentrancy_boundaries.py",
                 "prototype/tests/unit/interpreter/python/test_lambda_default_scope.py",

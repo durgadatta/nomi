@@ -81,6 +81,7 @@ python3 scripts/launch_web.py --port 8090
 python3 scripts/make_web.py --check
 scripts/build_wasm.sh --check
 python3 scripts/check_web_runtime.py
+python3 scripts/check_guide_examples.py
 ```
 
 The launcher opens the browser only after its HTTP server accepts connections
@@ -99,7 +100,8 @@ python3 scripts/check_web_browser.py
 python3 scripts/check_web_browser.py --legacy-pyodide
 ```
 
-The check starts and stops its own local server and exercises the quick tour,
+The check starts and stops its own local server and exercises fresh/returning
+example navigation, guide discovery, the quick tour,
 data/text examples, notebook export, source-linked diagnostics and repair,
 worker cancellation, delayed replies, local draft recovery, keyboard controls
 and desktop/mobile layouts.
@@ -108,6 +110,13 @@ Screenshots, a Playwright trace, and browser logs go to ignored
 `reports/web-browser/`. Add `--headed` to watch it run, or
 `--url https://durgadatta.github.io/nomi/web/` to check the published site.
 Browser installation and CDN loading require network access.
+
+`check_guide_examples.py` reads the complete programs and exact output directly
+from [Language Basics](../guide/language_basics.md). It checks hosted Nomi,
+reduced, and the browser's WASM/JS pipeline in Node without duplicated source
+fixtures. Use `--route nomi` for a Python-only check. The full default check
+requires Node and the committed WASM assets; it does not cover optional Python
+Core or claim whole-language parity. It is included in the web/runtime gate.
 
 The workbench opens local UTF-8 source without running it and downloads current
 source, preserving notebook titles and framing. Edited results are visibly

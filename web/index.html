@@ -8,7 +8,7 @@
 <link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <div class="app" id="app-shell">
@@ -45,7 +45,7 @@
 
     <div class="document-title" title="Current document">
       <i data-lucide="file-code-2" aria-hidden="true"></i>
-      <strong id="current-file">demo_terse.nomi</strong>
+      <strong id="current-file">Loading source…</strong>
       <span class="document-state" id="document-state">Sample</span>
     </div>
 
@@ -84,6 +84,8 @@
           <span>New scratch</span>
         </button>
       </div>
+      <a class="guide-link" href="https://github.com/durgadatta/nomi/blob/main/docs/guide/README.md"
+         target="_blank" rel="noopener noreferrer">User guide <span aria-hidden="true">↗</span></a>
       <nav class="sample-list" id="file-list" aria-label="Nomi samples"></nav>
     </aside>
     <button type="button" class="sidebar-scrim" id="sidebar-scrim" onclick="toggleSidebar(false)"
@@ -145,9 +147,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
-<script src="documents.js?v=5"></script>
-<script src="app.js?v=7"></script>
-<script src="demos.js?v=6"></script>
+<script src="documents.js?v=6"></script>
+<script src="app.js?v=8"></script>
+<script src="demos.js?v=7"></script>
 <script src="cells.js?v=6"></script>
 <script src="runtime.js?v=7"></script>
 <script src="editor.js?v=6"></script>

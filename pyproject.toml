@@ -16,6 +16,11 @@ dependencies = [
     "lark",
 ]
 
+[project.urls]
+Repository = "https://github.com/durgadatta/nomi"
+Documentation = "https://github.com/durgadatta/nomi/blob/main/docs/guide/README.md"
+Issues = "https://github.com/durgadatta/nomi/issues"
+
 [project.optional-dependencies]
 web-test = [
     "playwright>=1.51,<2",

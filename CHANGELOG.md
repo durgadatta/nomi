@@ -8,6 +8,12 @@ data/ML engine is promised.
 
 - Added a hierarchical user guide for first use, language basics, complete
   examples, tool workflows, troubleshooting, current support, and gradual growth.
+- Made the local playground start with the calculation task on a first visit,
+  preserve returning selections, group examples by learning path, label older
+  experiments, and link the user guide from the sidebar.
+- Added repeatable exact-output checks for the introductory guide on hosted
+  Nomi/reduced and WASM/JS, package project/guide/issue links, CLI version/help
+  discovery, and an issue form for installation, CLI, editor, notebook, and docs.
 - Audited current local browser, CLI, package, notebook, and editor boundaries;
   routed current walkthroughs to the checkout after detecting an older published
   playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)

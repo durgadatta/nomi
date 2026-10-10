@@ -4,6 +4,7 @@ Nomi CLI - Run Nomi or Python files
 """
 
 import argparse
+from importlib.metadata import PackageNotFoundError, version
 import json
 import sys
 from pathlib import Path
@@ -15,7 +16,20 @@ if __package__ in {None, ""}:
 def parse_args(argv):
     parser = argparse.ArgumentParser(
         prog="nomi",
-        description="Run Nomi or Python files",
+        description="Run Nomi or Python files (experimental preview)",
+        epilog=(
+            "For a first calculation in a checkout: "
+            "nomi samples/calculate.nomi --output program. "
+            "User guide: https://github.com/durgadatta/nomi/blob/main/docs/guide/README.md"
+        ),
+    )
+    try:
+        package_version = version("nomi")
+    except PackageNotFoundError:
+        package_version = "uninstalled checkout"
+    parser.add_argument(
+        "--version", action="version", version=f"nomi {package_version} (experimental preview)",
+        help="Show installed package version; use the Git commit to identify checkout changes",
     )
     parser.add_argument(
         "--output",
