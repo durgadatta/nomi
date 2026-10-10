@@ -36,11 +36,13 @@ planning and bounded report implementation sequence. Its latest completion
 receipt is recorded at `2338bdd`; older incomplete slices and failure counts
 must be read against the [current checkpoint](frontier_checkpoint_2026-10-08.md).
 The [user-facing readiness audit](#user-facing-readiness-audit), beginning with
-documentation, now owns the immediate direction. M0-M5 remain delivery milestones; earlier P/F labels
+documentation, records the bounded readiness work. The later
+[whole-system direction](#whole-system-direction--october-10) guides the broader
+discovery and target. M0-M5 remain delivery milestones; earlier P/F labels
 are historical planning organization. Remaining engineering gates preserve
 the broader ambition without automatically selecting the next task.
 
-The latest October 9 direction starts from the end product. The first release
+The October 9 delivery direction starts from the end product. The first release
 selects calculation, local JSON report/repair and local function reuse. The
 [canonical product contract](../design/synthesis.md#first-product-contract)
 defines its coherent core and release exclusions. Close each journey's blocking
@@ -55,12 +57,82 @@ ecosystem and freedom-to-strictness direction. Its old suggested requests no
 longer select the active pass. Existing owners and delivery gates remain the
 starting point when implementation resumes.
 
+## Whole-System Direction — October 10
+
+The user's later direction places the [computational-medium vision](../design/vision.md)
+above this delivery organization. The goal includes how people discover models,
+create and understand computations, move between representations, collaborate,
+delegate and retain control over real actions. The current source language,
+research taxonomy, release profile and M0-M5/D0-D7 organization are revisable
+means toward that goal. They are not limits on exploration or reasons to reject
+an idea before understanding its pressure.
+
+The current standing is a research-rich laboratory with runnable compatibility
+journeys and substantial target contracts. Portable target execution, integrated
+evidence/explanation, competing authoring models, human benefit, checked growth
+and broader operational behavior have major gaps. The
+[vision assessment](../design/vision.md#where-nomi-stands-2026-10-10) records their
+different evidence levels without a completion percentage. The earlier readiness
+receipts remain evidence for their named tasks, not proof of this broader system.
+
+### Connected Discovery And Delivery
+
+Delivery continues to turn calculation/report/reuse into an actual target slice.
+Discovery proceeds alongside it and can change its assumptions. Prepare both an
+understanding/revision comparison for the growing model and a contrasting creative,
+collaborative or temporal activity. An unfamiliar activity need not wait for all
+report contracts or fit an existing work ID before investigation begins.
+
+For the growing model, compare text, structured and mixed representations under
+equal task facts: create it, predict dependencies and effects, repair invalid
+input, revise a rule, extract reusable logic and hand the change to another
+person. Current HX8 offers useful stimuli but is not the whole research method.
+Separate self-review, supplied-fact exercises, finite probes, actual producer
+behavior and observations of people. No participant results are available yet.
+
+For a contrasting activity, investigate an explained scientific report or a live
+creative timeline from the [vision pressure programs](../design/vision.md#pressure-programs-that-can-change-the-direction).
+First determine the relevant concepts and actual working process. Compare the
+ordinary source model with a domain representation; investigate what each makes
+visible and what it forces a person to reconstruct. Record discovery even if it
+reveals that the current questions or architecture need replacement.
+
+Promote concrete findings into the appropriate target/research owners and revise
+this schedule when their dependencies change. Retain independent semantic vectors
+and actual host evidence for implementation claims. Do not turn the expanded
+vision into a requirement that every domain mechanism ship before a useful release.
+
+### Direction Revision Receipt
+
+This pass adds the guiding vision and current gap assessment, broadens the design
+agenda and research method, and connects them to root/user-facing documentation.
+It explicitly permits broader discovery and early competing representations.
+Selected primary construction/learning and multimodal-edit evidence informs the
+questions; no runtime, grammar, source compatibility, public API or packet status
+changed. Documentation checks establish consistency, not target execution or
+human benefit. The detailed bridge retrospective lives with the
+[cognitive packet](../review/2026-09-30-cognitive-interfaces.md#whole-system-vision-continuation-2026-10-10).
+The [creative timing challenger](../research/interfaces/music_timing.md#creative-authoring-challenger--october-10)
+now supplies fixed literal expectations and prepared activity comparisons. It is
+not an executed clock, score editor, accessibility trial or participant result.
+
+Verification: 136 documentation/packet/interaction/domain/target-coherence checks
+pass; all five design packets remain coherent. Local file navigation and whitespace
+checks pass. These checks validate maintained documents and fixtures, not the new
+human, architectural or temporal hypotheses. Existing runtime receipts retain
+their earlier scope; runtime code and generated browser assets are unchanged.
+
 ## User-Facing Documentation Pass
 
-The October 10 user direction closes the current research/implementation
-continuation with minor cleanup, then starts a separate pass from the reader's
-side. The research corpus is available as supporting evidence; expanding it is
-not the next deliverable. Open design packets retain their current statuses.
+The later [whole-system direction](#whole-system-direction--october-10) broadens
+the guiding ambition. This reader-first pass remains useful delivery work; its
+order does not constrain research discovery or fix the final interaction model.
+
+The initial October 10 direction selected minor cleanup followed by a separate
+pass from the reader's side. The research corpus supported that pass. The later
+whole-system direction now permits broader discovery alongside delivery; the
+historical reader-first order below does not supersede it. Open design packets
+retain their current statuses.
 
 Start with `README.md`, `docs/README.md` and the runnable calculation/report
 examples. Build a clear reading path around these questions:

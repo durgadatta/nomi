@@ -502,6 +502,13 @@ Only a remaining concrete language deficiency can justify further syntax researc
 
 ## Research Stop Rule
 
+The [broader vision](../design/vision.md) permits discovery beyond this inventory:
+observational work, historical synthesis and speculative interaction prototypes
+can expose questions that current targets do not ask. A research lead need not
+already have two fully formed answers. Preserve it as a lead, develop its pressure
+and alternatives, and revise the map when necessary. The criteria below govern
+promotion into a focused language-design fork, not whether discovery may begin.
+
 The [September synthesis](../design/synthesis.md) orders these gates against
 [the overall program](../design/targets/overall.nomi). Task-group policy is a
 specific additional fork exposed there: cancel siblings versus collect all on
@@ -511,10 +518,10 @@ cause ordering, parent cancellation, and no children after lexical exit. See
 [concurrency](features/concurrency.md). This does not reopen cold tasks or
 structured lifetime; it closes their currently underspecified library policy.
 
-Do not add another open question merely because a language has an interesting
-feature. Add one only when:
+Do not promote a borrowed feature directly into a language obligation. A mature
+focused fork should establish:
 
-1. a target program exposes a concrete deficiency;
-2. two credible Nomi-compatible answers remain;
-3. the choice would alter source, semantics, or an industrial contract;
+1. a concrete activity or target program exposes a deficiency or opportunity;
+2. two credible answers remain, with conflicts against current choices named;
+3. the choice affects language, representations, tooling or an industrial contract;
 4. a bounded experiment can distinguish them.

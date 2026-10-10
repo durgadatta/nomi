@@ -15,6 +15,9 @@ below and what is implemented, read
 [Current Support And Growth](../guide/status.md). This reference owns the target
 language; its examples are not all runnable yet.
 
+For the broader purpose, competing directions and current gap, read the
+[Computational Medium Vision](vision.md).
+
 1. [Target Design](README.md) - product promise, principles, and language
    shape.
 2. [Syntax](syntax.md) - the canonical source forms and notation budget.
@@ -57,6 +60,12 @@ in the [2026-07-16 review](../review/2026-07-16.md). Registered focused passes
 follow the [design-pass workflow](../orientation/design_pass_workflow.md).
 
 ## Product Promise
+
+The broader goal is a [computational medium](vision.md): help people express,
+explore, understand, revise and share ideas, then execute them with appropriate
+assurance and control. The language, interaction environment and surrounding
+practices must be designed together. Research can challenge the current shape;
+the prototype and release milestones do not set the limits of that ambition.
 
 Nomi is a general-purpose language for people who want Python's immediacy and
 readability without making dynamic accidents, invisible boundaries, or weak
@@ -123,7 +132,10 @@ Users should be able to organize the language around eight recurring acts:
 | Understand | diagnostics, examples, traces | Why did this happen, and how can it change? |
 
 These are teaching anchors, not a claim that the runtime needs exactly eight
-node kinds. Compiler IR may be smaller or larger.
+node kinds or that all human activity fits eight acts. Compiler IR may be smaller
+or larger. Discovery, creation, negotiation, delegation and collaboration also
+shape the [whole-system vision](vision.md#broaden-the-unit-of-design); the
+language acts are one orientation within it.
 
 ## Language Shape
 

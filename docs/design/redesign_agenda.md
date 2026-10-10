@@ -17,6 +17,33 @@ The [Project Enhancement Roadmap](../orientation/project_roadmap.md) schedules
 language closure alongside runtime, product, verification and maintenance work.
 This agenda continues to own D0-D7 and the semantic questions below.
 
+## Vision Sets The Agenda
+
+The [computational-medium vision](vision.md) guides the language and environment
+together. D0-D7, the current research taxonomy and the first-product milestones
+are working organization. They must change when broader evidence exposes a
+missing concept or a better route. They do not restrict exploration to ideas
+that fit the current code, report workflow or small-core preference.
+
+Run discovery alongside delivery. Observe how people create, explain, negotiate,
+delegate and maintain computational work; investigate unfamiliar activities and
+competing representations before all compiler contracts close. A useful research
+lead may begin with a question rather than an already failing target program.
+Record the lead's limits, then develop concrete comparisons before promoting it.
+Admission of executable meaning remains a separate obligation.
+
+The following questions extend the existing dimensions rather than assume
+their present decomposition is complete:
+
+| Broader question | Consequence to investigate | Current routes, subject to revision |
+| --- | --- | --- |
+| How does a person discover the model before they know its vocabulary? | Examples, demonstrations, domain objects and alternative starting representations; cost of premature abstraction | Human intent, partial programs, interaction; cognitive research |
+| What is being claimed about the world, and what evidence supports it? | Navigable assumptions, measurements, derived facts and uncertainty; correctness within a model versus fitness of the model | Proof/evidence, numbers, data identity; domain composition |
+| Which computational model exposes this activity's useful structure? | Functional, relational, constraint, temporal and stochastic candidates; domain laws and composition costs | Meaning, logic/search, time, scoped tools |
+| How does understanding survive handoff and changed requirements? | Decision context, competing goals, semantic conflicts and explicit responsibility | Change/history, governance, AI collaboration; team cognition |
+| How can a learner invent something beyond the supplied examples? | Diverse outcomes, concrete-to-abstract transitions, discoverable concepts and independently created work | Human intent, accessibility, interaction; construction and learning |
+| Which assumptions about source, core and tools should be replaced? | Text/structured/mixed authoring, library/scoped/core placement and architecture comparisons | D4-D6; no candidate protected by implementation investment |
+
 ## Design Before Implementation
 
 Do not equate a large bibliography with a settled design. "Reasonably designed"
@@ -165,7 +192,14 @@ entire language. Preserve artifacts that let a different parser/runtime replace
 the experiment. Removal criteria and cost of changing the choice are part of
 the design review, not cleanup work left for later.
 
-## Research Stop Rule
+## Research And Promotion
+
+Exploratory breadth can originate in real activity, a primary research mechanism,
+an unfamiliar discipline or a speculative comparison. The current table is not
+an admission filter for those investigations. Distinguish a discovered question,
+a proposed mechanism, a discriminating experiment and an accepted contract.
+When an investigation only repeats known examples, summarize its consequence
+and move on; when it reveals a missing dimension, revise the agenda itself.
 
 ### Qualified Guarantees
 
@@ -186,10 +220,12 @@ Tool output must say what a guarantee covers. These labels are not synonyms:
 Use this vocabulary in diagnostics and future playground views. No compiler
 or UI produces all these guarantee records yet.
 
-Continue breadth only when it exposes a missing concept or credible competing
-representation. Close a thread when an experiment distinguishes its candidates,
+Use breadth to discover missing concepts and credible competing representations.
+Close a focused thread when an experiment distinguishes its candidates,
 promote the result into its owner, and retain the thread as cited rationale.
 Do not describe this agenda as a complete next-generation language. The next
-exact semantic step is D1: type map/fold, decoder derivation, and resource
-callbacks together; otherwise every richer interface would rest on an unresolved
-function contract.
+target delivery work includes D1: type map/fold, decoder derivation and resource
+callbacks coherently. Broader representation, learning and domain investigations
+can proceed with explicitly supplied facts while that work advances. Their
+results can change these contracts and the schedule. Actual product claims need
+actual semantic and host evidence; a supplied-fact comparison has a different scope.

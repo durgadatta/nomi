@@ -14,6 +14,7 @@ Choose a reading path based on what you want to do:
 | Try Nomi for the first time | [User Guide](guide/README.md) | [Getting Started](guide/getting_started.md), then [Language Basics](guide/language_basics.md). |
 | Find a task or solve a problem | [Example Catalog](guide/examples.md) | [Tools And Troubleshooting](guide/tools.md). |
 | Understand what will be added | [Current Support And Growth](guide/status.md) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
+| Explore the broader ambition | [Computational Medium Vision](design/vision.md) | [Cognitive Foundations](research/cognition.md) and [Design-First Agenda](design/redesign_agenda.md). |
 | Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
 | Investigate a language decision | [Design references](#design-and-research-references) | [Research](research/README.md) and [open questions](research/open_questions.md). |
 
@@ -41,6 +42,8 @@ when you need to find a particular document.
 For language design, read:
 
 1. [Target Design](design/README.md)
+   and [Computational Medium Vision](design/vision.md): intended language and
+   broader purpose, with current gaps and open directions.
 2. [Syntax](design/syntax.md)
 3. [Semantics](design/semantics.md)
 4. [Pattern Matching](design/pattern_matching.md)
@@ -131,7 +134,12 @@ For a registered cross-cutting feature, use the complete
 [Design Pass Workflow](orientation/design_pass_workflow.md) and update
 `config/design_passes.json`.
 
-1. Start with a failing or awkward program, not a borrowed feature.
+Discovery can begin with observed activity, an unfamiliar discipline or a
+speculative model under the [guiding vision](design/vision.md). The steps below
+govern turning a candidate into a language change; existing packets and milestone
+names can evolve rather than confine that discovery.
+
+1. Ground the proposed change in a concrete activity or program and its pressure.
 2. Check [Open Questions](research/open_questions.md) and existing research
    convergence before doing new broad research.
 3. Compare at least two Nomi surfaces and the explicit long form.
@@ -206,6 +214,7 @@ This list is intentionally complete and is checked by tests.
 ### Design
 
 - [Target Design](design/README.md)
+- [Computational Medium Vision](design/vision.md)
 - [Syntax](design/syntax.md)
 - [Semantics](design/semantics.md)
 - [Pattern Matching](design/pattern_matching.md)

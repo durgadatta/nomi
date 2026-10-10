@@ -17,6 +17,26 @@ design probes, not additional systems benchmarked here.
 
 ## Nomi Normal Form And Placement
 
+### A Shared Edit Interface Is A Candidate
+
+Ziegler, Cao, Lubin and Chasins's August 2026 primary preprint connects direct
+manipulation and natural-language editing through structured edits in a cartokit
+variant. In its 18-participant within-subjects study, participants used natural
+language for 6.14% of edits when both modalities were available. This is evidence
+from a particular system and task setting; it does not settle Nomi's primary
+representation or a general preference across users and domains.
+[Primary preprint](https://arxiv.org/abs/2608.26359v1).
+
+**Nomi inference:** compare modalities that produce explicit domain changes,
+including a proposal that needs clarification. Measure what a person understood
+and corrected, alongside which modality they chose. Reuse HX3/HX8 with equal
+facts and failure tasks; compare domain-specific edit families with a shared
+command envelope. A common edit representation may improve inspectability while
+also limiting expressive freedom. No edit API or natural-language evaluator is
+accepted by this evidence.
+
+### Proposed Invoice Command
+
 Dragging an invoice quantity control should propose the same decoded command
 as entering a value in text. A candidate change includes the domain target,
 base revision, requested value, validation, and a source/value preview. Commit

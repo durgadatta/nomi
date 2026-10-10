@@ -11,7 +11,9 @@
 This chapter extends [the DSL atlas](dsls/domain_atlas.md),
 [notation](notation_atlas.md) and [cognitive foundations](cognition.md).
 The canonical [language synthesis](../design/synthesis.md#domain-layer-proposal)
-owns the current proposal; D1-D7 remain the admission order.
+owns the current proposal; D1-D7 route current admission work. The
+[broader vision](../design/vision.md) can challenge the model and these routes;
+discovery is not limited to the present domain taxonomy.
 
 ## Ambition With A Compositional Boundary
 
@@ -69,7 +71,11 @@ hashing, serialization, filtering, differentiation or the same executor.
 
 ## One Source Language, Multiple Domain Models
 
-The existing four [surface layers](../design/README.md#surface-layers) are enough:
+The existing four [surface layers](../design/README.md#surface-layers) are a
+working placement hypothesis, not proof they cover every useful computational
+model. Compare their expression, learning and composition costs; revise the
+placement if an ordinary library or scoped form repeatedly hides essential laws.
+The current candidate division is:
 
 | Nomi layer | Role in domain growth | Examples / admission pressure |
 | --- | --- | --- |

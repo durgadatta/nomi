@@ -11,6 +11,9 @@ Evidence starts at [cognitive foundations](../research/cognition.md) and the
 the [language synthesis](synthesis.md); it does not replace [syntax](syntax.md),
 [semantics](semantics.md), or [industrial contracts](industrial.md). The
 [redesign agenda](redesign_agenda.md) owns broader unresolved design work.
+The [computational-medium vision](vision.md) supplies the guiding purpose. Its
+broader discovery loop can challenge these candidates, the current primary
+representation and the assumption that every useful interaction fits this model.
 
 Further evidence: [data/workflow layers](../research/data_workflows/README.md)
 and [cross-disciplinary notation](../research/notation_atlas.md) test whether
@@ -63,6 +66,8 @@ Two credible directions remain:
 is a reversible experiment, not proof the second direction is inferior. If
 source synchronization repeatedly defeats useful domain edits, run a fenced
 structured-document experiment instead of forcing every interaction into text.
+This is a current implementation baseline, not an exploration prerequisite:
+structured or mixed authoring can be compared before a text implementation fails.
 
 Text-primary means exact authored source plus explicit interpretation stages,
 not bare strings at every boundary. Bytes decoding, Unicode coordinates,

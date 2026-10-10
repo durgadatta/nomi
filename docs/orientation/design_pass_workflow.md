@@ -25,6 +25,11 @@ does not decide semantics. Target authority remains under `docs/design/`.
 
 ## Packet Contract
 
+The [guiding vision](../design/vision.md) permits discovery before a question fits
+a registered packet. Observation, historical synthesis and speculative models
+can revise the taxonomy and target. Use a packet when a bounded question needs
+this durable contract; registration is not a prerequisite for exploration.
+
 Every registered pass owns exactly these artifacts:
 
 | Artifact | Location | Responsibility |
@@ -61,8 +66,9 @@ spelling. Update `last_reviewed`, checks, and next actions whenever status moves
 
 1. **Discover.** Check the registry before creating notes. Resume an existing
    packet when its keywords and user pressure match.
-2. **Research.** Start from a real program and use official specifications,
-   primary papers, and current Nomi evidence. Record forks, not language tours.
+2. **Research.** Ground the focused question in a real activity or program. Use
+   official specifications, primary papers and current Nomi evidence. Record
+   forks, not language tours.
 3. **Decide.** Update canonical target docs and the decision ledger. State what
    is rejected as carefully as what is accepted.
 4. **Pressure-test.** Put the choice in a focused target file and the broad

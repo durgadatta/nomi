@@ -4,14 +4,15 @@
 >
 > This ledger records the current language-design choices after the 2026-07-16
 > reset. `Accepted` means part of the target, not necessarily implemented.
-> Reconsideration requires new user evidence or a failed whole-program test.
+> Reconsideration names the changed user direction, evidence or whole-activity
+> pressure and its consequences for existing contracts.
 
 ## Decision Standard
 
 A proposal is judged in this order:
 
-1. Which real program is hard to read or write without it?
-2. What semantic fact should its syntax make visible?
+1. Which real activity or program is hard to express, understand or change without it?
+2. What meaning should its representation or interaction make visible?
 3. Can an existing form express it without serious cognitive or diagnostic
    cost?
 4. Does it compose with types, patterns, failure, effects, async, tooling, and
@@ -20,6 +21,21 @@ A proposal is judged in this order:
 
 Implementation effort and existing tests are not reasons to preserve a design.
 They matter only after a target choice survives this review.
+
+## Guiding Vision Direction — October 10
+
+The user's direction establishes the [computational-medium vision](vision.md):
+design language and environment around how people create, understand, revise,
+share and authorize computational work. The prototype, current evidence map and
+release milestones are revisable means toward it. Discovery may start beyond
+the existing target programs and registered questions.
+
+This accepts a guiding purpose and separates discovery from feature admission.
+Text/structured/mixed authoring, partial execution, evidence-connected artifacts,
+domain models and delegation remain competing hypotheses. No new syntax, API,
+type rule or universal intermediate representation is accepted here. Existing
+semantic decisions retain their status until a named revision supplies its own
+coherent contract and consequences.
 
 ## Accepted Foundations
 
@@ -339,6 +355,9 @@ command identity, typed changes, explicit epochs, and evidence-aware explanation
 are **proposals, not accepted contracts**. Structured-document primary remains
 a competing candidate. The [design-first agenda](redesign_agenda.md) names
 broader gaps; it does not accept new keywords, inference rules, or APIs.
+The text-first recommendation is a reversible delivery baseline. It does not
+require broader structured/mixed authoring research to wait for that baseline
+to fail; the guiding vision can challenge either candidate.
 
 The [interaction edge/composition extension](../research/interfaces/composition_cases.md)
 adds counterexamples and HX1-HX8 comparisons. Model incarnation, proposal

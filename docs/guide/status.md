@@ -158,6 +158,12 @@ block or a browser Stop button. The detailed target remains in
 
 ## Delivery Direction
 
+The [broader vision](../design/vision.md) includes how people explore ideas,
+understand results, move between code and other representations, collaborate
+and control automation. These questions can change the design. The initial
+delivery route below is a way to learn from a usable slice; it is not the
+boundary of Nomi's ambition or a claim that those wider experiences work today.
+
 The first useful language centers on small scripts and trustworthy local reports.
 The delivery order closes each journey's required contracts before promoting it:
 

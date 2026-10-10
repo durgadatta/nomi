@@ -5,7 +5,8 @@
 Read this before the [interface threads](interfaces/README.md), then the
 [interaction proposal](../design/interaction_model.md) and
 [redesign agenda](../design/redesign_agenda.md). Sources were consulted on
-2026-09-29/30 and extended with selected primary readings on 2026-10-02.
+2026-09-29/30 and extended with selected primary readings on 2026-10-02 and
+2026-10-10.
 Historical interpretation, Nomi inference, and untested claims
 are distinguished below. This is not a claim to exhaust either philosophy or HCI.
 
@@ -173,6 +174,45 @@ timestamps.
 editing needs room for incomplete ideas; task explanations need causal links,
 not an apparently authoritative total order. These references motivate questions,
 not one combined theory that proves Nomi's proposed design.
+
+## Creation And Understanding
+
+The [guiding vision](../design/vision.md) brings these foundations into the
+whole-system design. The added construction and understanding evidence below
+also challenges an implementation-only notion of progress.
+
+### Resnick And Silverman: Creation Has Many Starting Points
+
+Their 2005 paper reflects on construction kits that support designing meaningful
+artifacts. It distinguishes ease of starting from diversity of possible projects
+and describes different paths through making. Its examples and principles arise
+from work with children; they do not establish which Nomi representation works
+for professional teams.
+[Primary paper](https://dam-prod.media.mit.edu/x/files/papers/IDC-2005.pdf).
+
+**Nomi inference:** supplied examples should be starting material for independent
+creation. Compare whether people can change the model, make an artifact of their
+own and recognize a reusable idea. An invoice-only progression cannot test the
+range of creative activity. A contrasting animation, music or simulation task
+can expose missing temporal, representational or learning concepts. Keep the
+scope and comparison explicit; diversity of artifacts alone does not establish
+correctness or sustained learning.
+
+### Victor: Explain The Computation In Its Working Context
+
+Victor's 2012 design essay proposes environments that expose vocabulary, flow
+and state and let learners develop programs through feedback and abstraction.
+Its illustrated designs supply mechanisms and critique, not a controlled study
+that demonstrates a universally superior programming system.
+[Author's essay](https://worrydream.com/LearnableProgramming/).
+
+**Nomi inference:** a final value beside source may leave a person reconstructing
+the relevant computation. Compare explanations connected to actual inputs,
+dependencies and meaningful time intervals. Use an initially correct program,
+a wrong expectation, an incomplete model and a changed requirement. Measure
+prediction and repair separately from visual appeal. Recorded execution can
+support inspection; scrubbing a trace must not replay effects. The computational
+model may itself need revision if an interface merely exposes its confusion.
 
 ## Further Philosophical Lenses
 

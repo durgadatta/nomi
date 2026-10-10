@@ -549,3 +549,67 @@ can precede source typing if labeled, while production promotion needs actual
 contracts. Continue text-primary read-only as the reversible baseline and retain
 the structured challenger. No study, accessibility verification, independent
 review or measured representation winner was produced by this planning pass.
+
+## Whole-System Vision Continuation, 2026-10-10
+
+### Evidence That Changed The Design
+
+The user explicitly broadened the design object beyond the current implementation,
+research map and release milestones. The
+[guiding vision](../design/vision.md) now owns that purpose: a computational medium
+for creating, understanding, revising, sharing and authorizing work. Existing
+language/interaction contracts are candidates to assess against it, not a fence
+around discovery.
+
+Selected primary construction-kit evidence motivates diversity of starting points
+and independently created artifacts; an author's learnable-programming essay
+motivates vocabulary, dependency and time explanations. These are bounded leads,
+not general user-effectiveness results. The August 2026 cartokit edit-interface
+preprint provides a particular multimodal mechanism and an 18-person study.
+Its population/task results do not decide Nomi's representation. Detailed scope
+and Nomi hypotheses remain in [cognition](../research/cognition.md#creation-and-understanding)
+and [direct manipulation](../research/interfaces/direct_manipulation.md#a-shared-edit-interface-is-a-candidate).
+
+### Workflow Friction
+
+Treating the current packets and compiler dependencies as exploration admission
+rules can prematurely exclude a better model. Treating every broader idea as an
+immediate language feature can also prevent coherent synthesis. The previous
+“failed target plus two candidates” rule did not distinguish discovering a
+question from promoting a mature language fork.
+
+### Durable Improvement
+
+The vision now separates whole-system outcomes, open architectural directions,
+pressure activities and current evidence. The design agenda and research method
+permit observational, historical and speculative discovery before a precise
+discriminator exists. Text-first, library-first and the existing taxonomy remain
+revisable. The root README and user guide connect the first useful release to
+this wider purpose without advertising future interaction as implemented.
+
+The roadmap retains its delivery receipts and adds a connected discovery loop.
+The [creative timing challenger](../research/interfaces/music_timing.md#creative-authoring-challenger--october-10)
+supplies beat/time expectations and creation, ambiguity, unfinished work, stale
+editing, handoff and playback distinctions. It also makes the existing four-layer
+domain placement explicitly a revisable hypothesis. These are prepared questions
+and arithmetic expectations, not a score runtime or new probe capture.
+No new global experiment IDs, duplicate feature registry, target syntax, runtime
+behavior, study participant or prepared-probe result was introduced. All five
+packets retain their previous status.
+
+### Next Pass
+
+Investigate creation, prediction, repair, rule change, extraction and handoff for
+one growing model alongside source-contract implementation. Prepare a contrasting
+creative or scientific activity that can challenge the model and representations.
+Use existing HX8 facts where useful and extend the questions when those facts are
+insufficient. Compare semantic outcomes and human activity separately, with
+supplied versus actual facts identified. Revise the target and schedule when
+evidence warrants it; a release milestone cannot settle the broader vision.
+
+### Verification
+
+136 documentation/packet/interaction/domain/target-coherence checks pass; all
+five design packets remain coherent. Local file-link and whitespace checks pass.
+The roadmap records the same scope. These checks cannot validate the new
+hypotheses, establish target conformance or substitute for observations of people.

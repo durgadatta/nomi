@@ -10,6 +10,11 @@
 
 ## Reading Order
 
+The [guiding vision](../design/vision.md) defines the broader human-computer
+ambition. This corpus is a selected evidence map, not a boundary around valid
+research. New observations, disciplines and competing models can change its
+taxonomy and the target. Discovery and feature admission have different gates.
+
 1. [Language Families](families.md) - what major traditions contribute and
    what Nomi should not inherit.
 2. [Design Convergences](convergences.md) - findings that recur across
@@ -137,9 +142,11 @@ The interface expansion adds questions about representation, change, evidence,
 and time. Its edge extension includes accessibility/attention, multilingual and
 multimodal input, tangible/spatial models, physical supervision, privacy/evidence,
 and learning/repair, with unresearched domains explicitly named. It does not turn
-every interface into a new syntax proposal. Further
-research should begin with a failed target program or unresolved experiment,
-using the [design-first agenda](../design/redesign_agenda.md) for coverage gaps.
+every interface into a new syntax proposal. Further research may begin with an
+observed activity, an unexplained difficulty, a primary mechanism or a speculative
+alternative, as well as a failed target program. Use the
+[design-first agenda](../design/redesign_agenda.md) for known questions; extend
+it when the discovery exposes a gap in the map itself.
 
 ## Method
 
@@ -163,8 +170,10 @@ Each finding is classified as one of:
 - **anti-pattern** - a repeated failure mode with little compensating value;
 - **Nomi hypothesis** - a choice that still needs direct evidence.
 
-Research is strongest when it narrows the language. A list of attractive
-features is not synthesis.
+Research is strongest when it explains which mechanism helps which activity,
+what it costs and which alternatives remain. It may broaden the design object,
+replace a model or simplify the language. A list of attractive features is not
+synthesis.
 
 Registered focused passes may add one topic document when a cross-cutting
 contract needs more evidence than the consolidated files can hold cleanly.
@@ -195,4 +204,6 @@ language-design traditions.
 The old source URLs and longer bibliographies remain available in repository
 history. The September review adds freshly checked primary references under
 the requested language/feature indexes; it does not restore old competing
-atlases or syntheses. Extend these pages only for a concrete target deficiency.
+atlases or syntheses. Extend these pages with the question, evidence boundary and
+design consequence of a useful discovery. An implementation or syntax proposal
+must additionally develop concrete programs, contracts and discriminators.

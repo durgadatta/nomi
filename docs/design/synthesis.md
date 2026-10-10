@@ -8,6 +8,10 @@ Packet: `docs/research/features/README.md`,
 
 ## Read The Language
 
+For the broader design purpose, start with the [computational-medium vision](vision.md).
+It can challenge this synthesis's models, representations and priorities.
+The selected product below is a delivery experiment, not a research boundary.
+
 Start with the [first-product contract](#first-product-contract) and
 [local report program](targets/overall.nomi), then consult the relevant
 [category fixture](targets/README.md). The
@@ -542,8 +546,9 @@ but do not settle its open contracts:
 | Portable values and boundaries | JavaScript exact-integer range rejection; shallow tagged slices; special text keys preserved without inherited host fields | Exact first-product Int is accepted; tagged transport, measured capacity, Text/Bytes validity, equality/hash/map identity, scalar codecs and cross-host conformance remain unfinished |
 | Eager failure and callable boundaries | Portable errors stop later eager work; partial Core call shapes reject unsupported names/parameter kinds before effects | Versioned named/default/callback binding, typed expected outcomes and composed abnormal completion |
 
-The next language step is the bounded first-product closure above. Use runnable
-collection traces as behavioral evidence, not as proof of typed callbacks.
+The next target delivery step is the bounded first-product closure above. Broader
+discovery proceeds alongside it under the vision and can revise that direction.
+Use runnable collection traces as behavioral evidence, not as proof of typed callbacks.
 Co-design general callbacks and resources when the later resource workflow is
 selected; do not make their full D1/D2 resolution a prerequisite for this report.
 

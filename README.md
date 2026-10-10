@@ -90,6 +90,12 @@ explains supported examples, prototype/target differences, and distribution stat
 
 ## How Nomi Will Grow
 
+The broader ambition is to help people express, explore, understand and share
+computational ideas. Code, tables, diagrams, examples and dialogue may offer
+different ways into the same work. Nomi researches these possibilities alongside
+language semantics; the [guiding vision](docs/design/vision.md) explains the
+questions and current gaps. These are directions under investigation.
+
 The first useful language is focused on **small scripts and trustworthy local
 data reports**. The goal is to let you add stronger guarantees as a program
 grows, while keeping ordinary code readable.
@@ -101,7 +107,8 @@ grows, while keeping ordinary code readable.
 | Grow a script into a reusable local library | Check inputs, outputs, expected failures, and operations that touch the outside world. | Limited source checking exists; checked local module reuse is still planned. |
 | Build larger applications and domain tools | Add services, structured concurrent work, packages, and libraries for data and other domains. | Later delivery work; supporting research and target designs exist. |
 
-These stages describe direction and dependencies, with no release dates promised.
+These stages describe a delivery route, with no release dates promised. They
+do not limit the broader design or determine which interaction model will win.
 The [user guide to these guarantees](docs/guide/status.md#the-guarantees-being-built)
 explains types, data boundaries, expected failures, effects, and capabilities in
 plain language.

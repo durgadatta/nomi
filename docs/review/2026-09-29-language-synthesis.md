@@ -644,3 +644,27 @@ facts unknown and source/contract/verification identities separate.
 The compatibility sample still edits JSON inside source; separate input/options
 revision/persistence/navigation controls, checked local module reuse, user
 trials and exact release validation remain open. The packet stays `designing`.
+
+## Broader Vision Revision, 2026-10-10
+
+**Evidence That Changed The Design:** the user's broader direction establishes
+the [computational-medium vision](../design/vision.md) as the guiding purpose.
+The first-product profile is an experiment toward it, not a boundary on research.
+Creation, explanation, evolving models, multiple representations, collaboration
+and delegation can challenge current source/core/library assumptions.
+
+**Workflow Friction:** interpreting a closed implementation dependency as a ban
+on earlier discovery would make the current prototype determine the target.
+Conversely, broader ambition alone supplies no scalar, callback or module proof.
+
+**Durable Improvement:** the existing agenda, research method and roadmap now
+distinguish discovery from semantic promotion and delivery. The vision records
+current gaps and contrasting pressure activities without creating another
+implementation queue. Existing report laws, literal fixtures and packet statuses
+are unchanged; no target-only source was moved into runnable samples.
+
+**Next Pass:** advance actual target meaning and checked reuse while investigating
+the growing model's creation/revision/handoff and a contrasting creative or
+scientific activity. Allow the evidence to revise the model and schedule. Use
+the cognitive packet's [direction retrospective](2026-09-30-cognitive-interfaces.md#whole-system-vision-continuation-2026-10-10)
+for discovery scope and the roadmap's existing target gates for implemented claims.
