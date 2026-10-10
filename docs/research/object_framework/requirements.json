@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "graph": "22984d66866560e65fee6f7e94e5838a9331d41b7076205c1dccb41c4825fec9",
+  "owner": "example.input-contracts",
+  "revision": "v1",
+  "requirements": [
+    {
+      "id": "positive_quantity",
+      "rule": "exact.positive-v1",
+      "subject": "quantity"
+    },
+    {
+      "id": "name_has_content",
+      "rule": "text.nonempty-v1",
+      "subject": "name"
+    }
+  ]
+}

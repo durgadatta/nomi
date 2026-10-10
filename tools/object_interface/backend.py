@@ -126,12 +126,50 @@ class Backend(Frozen):
         result._outputs = selected_ids
         result._terms = tuple(sorted(reachable))
         result._inputs = tuple(input_ids)
+        result._requirements = None
         result._sealed = True
         return result
 
 
 class Compiled(Frozen):
-    __slots__ = ("_graph", "_backend", "_outputs", "_terms", "_inputs")
+    __slots__ = ("_graph", "_backend", "_outputs", "_terms", "_inputs", "_requirements")
+
+    def require(self, requirements):
+        from .contracts import Requirements
+
+        if (
+            type(requirements) is not Requirements
+            or requirements._graph is not self._graph
+        ):
+            raise ContractError("requirements need this exact graph revision")
+        if self._requirements is not None:
+            raise ContractError(
+                "combine requirements explicitly before attaching a new set"
+            )
+        manifest = self._graph.vocabulary.document
+        for obligation in requirements._obligations:
+            index = self._graph._normal[obligation.subject]
+            if index not in self._terms:
+                raise ContractError(
+                    "requirement subject is outside selected realization"
+                )
+            term = self._graph._terms[index]
+            if manifest["operations"][term[0]]["role"] not in ("input", "literal"):
+                raise ContractError(
+                    "computed preconditions need a richer validator; they cannot be enforced before execution"
+                )
+        if requirements.check()["status"] == "refuted":
+            raise ContractError("required literal condition is refuted")
+        result = Compiled()
+        result._graph, result._backend = self._graph, self._backend
+        result._outputs, result._terms, result._inputs = (
+            self._outputs,
+            self._terms,
+            self._inputs,
+        )
+        result._requirements = requirements
+        result._sealed = True
+        return result
 
     def origins(self, term):
         """Find source objects for a physical term introduced by a definition."""
@@ -182,6 +220,9 @@ class Compiled(Frozen):
             },
             "execution": "not performed",
             "effects": [],
+            "requirements": None
+            if self._requirements is None
+            else self._requirements.check(),
         }
 
     def bind(self, values):
@@ -197,6 +238,17 @@ class Compiled(Frozen):
                 manifest["types"][family]["value"],
                 f"binding.{identity}",
             )
+        if self._requirements is not None:
+            evidence = self._requirements.check(values)
+            failed = [
+                item["id"]
+                for item in evidence["requirements"]
+                if item["status"] != "satisfied"
+            ]
+            if failed:
+                raise ContractError(
+                    f"required input conditions {failed} are not satisfied; backend was not invoked"
+                )
         result = Bound()
         result._compiled, result._bindings = self, encoded
         result._sealed = True
@@ -258,6 +310,9 @@ class Bound(Frozen):
                 "result_digest": digest(materialized),
                 "authority": "trusted explicit backend implementation",
                 "domain_validity": "not established",
+                "requirement_evidence": None
+                if compiled._requirements is None
+                else compiled._requirements.check(bindings),
             }
         )
         result = Realization()

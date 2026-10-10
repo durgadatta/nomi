@@ -2,7 +2,7 @@
 
 > Status: designing framework, 2026-10-10. A bounded Python research implementation
 > runs typed composition, inspection, closed definitions, independent lab replay
-> and explicit realization.
+> and explicit realization with required input conditions.
 > This does not admit Nomi syntax, a public package, or a universal domain IR.
 
 An object should express **what something means and how it relates to other
@@ -160,6 +160,63 @@ model.
 
 ## Add A Domain Without Adding An Engine
 
+### Explicit Obligations Before Realization
+
+The [obligation protocol](../../tools/object_interface/contracts.py) adds a
+separate engine-free artifact: named conditions referring to objects in one
+graph context, with an owner, revision and rule. The initial lab admits only
+two representation predicates: a strictly positive ExactInt and a nonempty
+Text. These are witnesses for the protocol, not a general constraint language.
+Nonempty Text includes whitespace; no trim or normalization is implied.
+
+Each condition is `satisfied`, `refuted` or `pending`. Literals and aliases of
+literals can supply static evidence without inputs. An unknown input remains
+pending until an explicit typed snapshot is supplied. Computed expressions
+remain pending even with inputs: this checker never calls an evaluator to
+guess their result. Claims about populations, models, effects or scientific
+truth cannot be represented as supplied satisfied statuses.
+
+The [example conditions](../research/object_framework/requirements.json)
+require a positive quantity and a name with content:
+
+```bash
+python3 -m tools.object_interface requirements docs/research/object_framework/composition.json docs/research/object_framework/requirements.json
+python3 -m tools.object_interface requirements docs/research/object_framework/composition.json docs/research/object_framework/requirements.json --bindings docs/research/object_framework/bindings.json
+python3 -m tools.object_interface run docs/research/object_framework/composition.json docs/research/object_framework/bindings.json --backend python-exact-text --requirements docs/research/object_framework/requirements.json
+```
+
+The first returns `pending` with exit code 1. The second checks the supplied
+snapshot without invoking any backend and returns `satisfied`. The third
+explicitly attaches those conditions as required preconditions. A zero or
+negative quantity, or an empty name, refuses binding **before backend callbacks
+run**. Compile-time attachment also refuses a refuted literal, an unrelated
+subject outside the selected realization, or a computed precondition this
+protocol cannot enforce. Conditions are required only when explicitly attached.
+
+The Python path is:
+
+```python
+from tools.object_interface import Requirements
+
+conditions = Requirements.from_document(
+    load_document("docs/research/object_framework/requirements.json"), objects,
+)
+print(conditions.check())  # Pending; no assumptions become facts.
+compiled = python_backend(objects.vocabulary).compile(objects).require(conditions)
+result = compiled.bind({"quantity": 3, "name": "Ada"}).execute()
+assert result.receipt["requirement_evidence"]["status"] == "satisfied"
+```
+
+The realization receipt retains the static checkpoint under `requirements`
+and binding evidence under `requirement_evidence`, with distinct phase labels.
+An evidence replay reports its actual verdict; verifying a pending receipt does
+not make its conditions satisfied. This is same-checker replay. Independent
+generic comparison currently covers the pinned vocabulary's definitions, not
+these obligation predicates. Richer domain validators and their independent
+consumers remain separate admission work.
+
+### Domain Integration Order
+
 1. Define nominal families and inert constructors in a versioned vocabulary.
    Preserve domain-specific contracts, including unresolved obligations.
 2. Give each constructor typed ports and bounded attribute shapes. Use the
@@ -194,7 +251,7 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Domain refinement protocol | One arithmetic and one non-numeric contract, including pending and rejected obligations; checkers cannot turn supplied assertions into proof. |
+| Richer domain refinement protocol | Positive Int and nonempty Text now exercise literal/input evidence and binding gates. Add domain-owned parameter, schema or documentary refinements with independent consumers; assertions cannot become proof. |
 | More useful object composition | A small reusable parameterized workflow and a document specification; domain contracts survive inspection, serialization and rebinding. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | The pinned lab vocabulary now has independent replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |

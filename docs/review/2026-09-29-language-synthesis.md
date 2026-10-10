@@ -958,3 +958,46 @@ non-numeric witness. Then adapt statistical computation contracts while
 preserving existing independent mean-law replay. Broader vocabulary admission,
 general parameterized types, effectful realization and user-facing Nomi package
 integration remain open; no data engine is needed to investigate the next step.
+
+## Engine-Free Obligation Protocol — 2026-10-10
+
+### Evidence That Changed The Design
+
+Nominal composition alone cannot say whether an input satisfies a domain
+precondition. The new `Requirements` artifact gives named obligations their
+own owner/revision, graph context and satisfied/refuted/pending evidence.
+Positive ExactInt and nonempty Text supply numeric and non-numeric witnesses.
+Only literals, literal aliases and explicitly supplied input snapshots can
+discharge these two predicates. Computed expressions remain pending rather
+than invoking an engine during checking.
+
+### Workflow Friction
+
+Treating a supplied status as proof would weaken the boundary; accepting a
+pending computed precondition before execution would claim an unenforced
+contract. Both are refused. Conditions attach explicitly to a compiled
+realization, and invalid input stops binding before backend callbacks run.
+An unrelated or stale obligation cannot be attached to another graph/result.
+
+### Durable Improvement
+
+The framework now preserves static and binding evidence separately in a
+realization receipt. Diagnostics name failed condition IDs. A pending receipt
+can be replayed as pending; replay never changes its verdict to satisfied.
+The CLI supports passive obligation checks and explicit required execution.
+Nineteen new cases exercise both domains, literal/alias evidence, pending
+computed subjects, callback-free refusal, scope, tampering, type boundaries
+and the CLI. These are closed representation predicates, not scientific
+assumptions, a general solver or accepted Nomi constraint syntax.
+Combined framework, existing statistical and packet/documentation validation
+passed 312 cases. Ruff, all five packet checks and 2163 local file links across
+167 documents passed. The guarded CLI example returns the same exact/text
+values with separate static and binding evidence; no data engine was added.
+
+### Next Pass
+
+Preserve richer domain payloads through the common envelope and admit separate
+refinement consumers. A statistical computation adapter should reuse graph
+identity/inspection while retaining domain masks, schemas, numeric theory and
+the existing independent v1 proof boundary. A documentary witness should test
+requirements beyond text length before the shared protocol is generalized.

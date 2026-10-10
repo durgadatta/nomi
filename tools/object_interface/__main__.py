@@ -4,7 +4,7 @@ import argparse
 import json
 import sys
 
-from . import ContractError, Graph, Vocabulary, load_document
+from . import ContractError, Graph, Requirements, Vocabulary, load_document
 from .backend import BackendFailure, Cancelled
 from .examples import lab_vocabulary, python_backend
 
@@ -15,7 +15,7 @@ def main(argv=None):
         "--vocabulary", help="explicit vocabulary artifact; default: tracked lab"
     )
     commands = parser.add_subparsers(dest="command", required=True)
-    for command in ("check", "inspect", "compare", "compile", "run"):
+    for command in ("check", "inspect", "compare", "compile", "run", "requirements"):
         child = commands.add_parser(command)
         child.add_argument("graph")
         if command == "inspect":
@@ -27,8 +27,16 @@ def main(argv=None):
             child.add_argument(
                 "--backend", required=True, choices=("python-exact-text",)
             )
+            child.add_argument(
+                "--requirements", help="explicit required input/literal conditions"
+            )
         if command == "run":
             child.add_argument("bindings")
+        if command == "requirements":
+            child.add_argument("requirements")
+            child.add_argument(
+                "--bindings", help="explicit input snapshot; no backend execution"
+            )
     args = parser.parse_args(argv)
     try:
         vocabulary = (
@@ -43,17 +51,28 @@ def main(argv=None):
             result = graph.inspect(args.object)
         elif args.command == "compare":
             result = graph.compare(args.left, args.right)
+        elif args.command == "requirements":
+            requirements = Requirements.from_document(
+                load_document(args.requirements), graph
+            )
+            result = requirements.check(
+                None if args.bindings is None else load_document(args.bindings)
+            )
         else:
             # This explicitly selected example adapter accepts only its pinned vocabulary.
             backend = python_backend(lab_vocabulary())
             compiled = backend.compile(graph)
+            if args.requirements:
+                compiled = compiled.require(
+                    Requirements.from_document(load_document(args.requirements), graph)
+                )
             if args.command == "compile":
                 result = compiled.inspect()
             else:
                 realization = compiled.bind(load_document(args.bindings)).execute()
                 result = {"values": realization.values, "receipt": realization.receipt}
         print(json.dumps(result, indent=2, sort_keys=True))
-        return 1 if result.get("status") == "unknown" else 0
+        return 1 if result.get("status") in ("unknown", "pending", "refuted") else 0
     except (ContractError, BackendFailure, Cancelled, OSError) as exc:
         print(json.dumps({"status": "refused", "message": str(exc)}), file=sys.stderr)
         return 2
