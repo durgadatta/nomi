@@ -98,6 +98,7 @@ class Vocabulary(Frozen):
     @classmethod
     def from_document(cls, document):
         encoded = snapshot(document)
+        document = json.loads(encoded)
         keys(
             document, ("version", "id", "revision", "types", "operations"), "vocabulary"
         )
@@ -247,6 +248,7 @@ class Graph(Frozen):
         if type(vocabulary) is not Vocabulary:
             raise ContractError("expected checked vocabulary")
         encoded = snapshot(document)
+        document = json.loads(encoded)
         keys(document, ("version", "vocabulary", "objects", "outputs"), "graph")
         if type(document["version"]) is not int or document["version"] != 1:
             raise ContractError("unsupported graph envelope")

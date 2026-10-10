@@ -916,3 +916,45 @@ consumer before broadening the envelope. Then adapt a statistical computation
 fragment while preserving grain, missingness, exact theory and independent
 v1 replay. General algebra, effectful realization, parameterized type checking,
 scientific validity and Nomi source admission remain distinct gates.
+
+## Independent Object Replay Continuation — 2026-10-10
+
+### Evidence That Changed The Design
+
+`Graph.verify` is a useful self-check, but it imports the same rules as the
+producer. `tools/object_replay.py` now independently reconstructs the pinned
+lab vocabulary's nominal types, aliases, square/double definitions, structural
+terms and full graph context. It imports only the standard library and succeeds
+when planner construction/comparison are replaced with failing functions.
+Changed definitions require new independent admission rather than being trusted
+as supplied claims. This is a separate consumer, not formal verification.
+
+### Workflow Friction
+
+The domain-neutral framework needs separate admission scopes just as the
+statistical checker does. Replaying an arbitrary vocabulary would otherwise
+let unreviewed metadata choose the consumer's trusted theory. The new consumer
+pins one complete vocabulary and refuses unsupported revisions. It validates
+disconnected nodes too, so an unrelated malformed description cannot ride
+along with an apparently valid comparison.
+
+### Durable Improvement
+
+Twenty-six new replay cases exercise independent imports, planner-free replay,
+identity/alias/definition evidence, forged receipts, altered source/type/port
+records, changed vocabulary and the CLI JSON boundary. The framework owner
+and packet checks now include the independent consumer and export/replay route.
+Backend correctness remains separate from composition equivalence.
+Five additional edge cases cover unnamed lowered-operation origins,
+mid-operation cancellation, backend mapping isolation, undeclared algebra and
+expanded-term capacity. Construction and binding now validate their detached
+snapshots. Combined framework/statistical/packet validation passed 293 cases;
+Ruff, the five packet checks and 2161 local links passed.
+
+### Next Pass
+
+Establish a domain refinement/obligation protocol with one numeric and one
+non-numeric witness. Then adapt statistical computation contracts while
+preserving existing independent mean-law replay. Broader vocabulary admission,
+general parameterized types, effectful realization and user-facing Nomi package
+integration remain open; no data engine is needed to investigate the next step.

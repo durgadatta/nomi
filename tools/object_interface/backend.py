@@ -133,6 +133,40 @@ class Backend(Frozen):
 class Compiled(Frozen):
     __slots__ = ("_graph", "_backend", "_outputs", "_terms", "_inputs")
 
+    def origins(self, term):
+        """Find source objects for a physical term introduced by a definition."""
+        if type(term) is not int or term not in self._terms:
+            raise ContractError("unknown compiled physical term")
+        direct = tuple(
+            identity
+            for identity in self._graph._order
+            if self._graph._normal[identity] == term
+        )
+        if direct:
+            return direct
+
+        def depends(root):
+            visited, stack = set(), [root]
+            while stack:
+                current = stack.pop()
+                if current == term:
+                    return True
+                if current not in visited:
+                    visited.add(current)
+                    stack.extend(
+                        ref
+                        for _, refs in self._graph._terms[current][3]
+                        for ref in refs
+                    )
+            return False
+
+        return tuple(
+            identity
+            for identity in self._graph._order
+            if self._graph._normal[identity] in self._terms
+            and depends(self._graph._normal[identity])
+        )
+
     def inspect(self):
         return {
             "status": "capability-checked",
@@ -152,6 +186,7 @@ class Compiled(Frozen):
 
     def bind(self, values):
         encoded = snapshot(values)
+        values = json.loads(encoded)
         if type(values) is not dict or set(values) != set(self._inputs):
             raise ContractError(f"binding requires exactly {list(self._inputs)}")
         manifest = self._graph.vocabulary.document
@@ -202,11 +237,7 @@ class Bound(Frozen):
                 except Cancelled:
                     raise
                 except Exception as exc:
-                    origins = tuple(
-                        identity
-                        for identity in graph._order
-                        if graph._normal[identity] == index
-                    )
+                    origins = compiled.origins(index)
                     raise BackendFailure(origins, op) from exc
             token.check()
             values[index] = snapshot(value)

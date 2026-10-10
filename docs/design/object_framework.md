@@ -1,7 +1,8 @@
 # Engine-Free Objects
 
 > Status: designing framework, 2026-10-10. A bounded Python research implementation
-> runs typed composition, inspection, closed definitions and explicit realization.
+> runs typed composition, inspection, closed definitions, independent lab replay
+> and explicit realization.
 > This does not admit Nomi syntax, a public package, or a universal domain IR.
 
 An object should express **what something means and how it relates to other
@@ -136,8 +137,20 @@ inside an object or change that object's identity.
 Editing a definition changes its fingerprint and invalidates old graph and
 backend claims. `verify` reconstructs the comparison and rejects a changed
 receipt/context; it uses the same checker and is explicitly **not independent
-verification**. The existing statistical exact-law consumer remains a separate
-independent checker for its own v1 theory.
+verification**. A separate [lab consumer](../../tools/object_replay.py) now
+rechecks the whole source graph, nominal types and closed definitions with only
+the standard library, without importing the planner or backend:
+
+```bash
+python3 -m tools.object_interface compare docs/research/object_framework/composition.json squared expanded_square > /tmp/nomi-object-comparison.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/composition.json /tmp/nomi-object-comparison.json
+```
+
+The consumer independently admits the pinned arithmetic/text/document vocabulary.
+It refuses changed vocabularies, altered sources and forged term/context records.
+It does not automatically trust every definition supplied by a new domain.
+The statistical exact-law consumer remains separate for its own v1 theory;
+neither consumer certifies an engine's implementations.
 
 The envelope supports nominal families with shallow codecs and parameter shapes.
 It does not implement general parameterized types, predicate solving or Nomi's
@@ -184,7 +197,7 @@ No remote execution, resource scope or general scheduling is implemented.
 | Domain refinement protocol | One arithmetic and one non-numeric contract, including pending and rejected obligations; checkers cannot turn supplied assertions into proof. |
 | More useful object composition | A small reusable parameterized workflow and a document specification; domain contracts survive inspection, serialization and rebinding. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
-| Independent generic consumer | Reconstruct closed definitions, typing and context without importing this planner; reject altered definitions and forged claims. |
+| Wider independent consumers | The pinned lab vocabulary now has independent replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
 | Additional realization profiles | A second materially different implementation with explicit conversion/capacity refusal and independent value/error fixtures. |
 | User-facing integration | Ordinary Nomi library calls plus a clear inspector; source/type/diagnostic/runtime contracts before source admission. |
 
