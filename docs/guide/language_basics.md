@@ -209,6 +209,11 @@ This is an exploratory conversion, not a decoder that collects every input
 error. For that workflow, continue with the
 [JSON report](getting_started.md#validate-a-json-report).
 
+The current prototype also accepts `text.strip("xy")`: it removes any of those
+characters from either end. With no argument (or `None`), it removes whitespace.
+Read [text compatibility limits](status.md#text-compatibility) when working with
+Unicode text or moving code between engines.
+
 ## If You Know Python
 
 Many expressions and indented control-flow forms feel familiar. Nomi uses

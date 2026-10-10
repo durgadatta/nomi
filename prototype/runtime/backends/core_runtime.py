@@ -27,6 +27,7 @@ from prototype.runtime.backends.values import (
     NIL,
     NativeValue,
     SequenceValue,
+    StrValue,
     Value,
     box_value,
     is_truthy,
@@ -468,6 +469,9 @@ class CoreRuntimeEvaluator:
         obj = self.eval(node.object_)
         if isinstance(obj, (ControlFlow, ErrorValue)):
             return obj
+        if isinstance(obj, StrValue) and node.field == "strip":
+            # Fenced prototype library compatibility, not the target Text API.
+            return NativeValue(name="str.strip", callable=obj.value.strip)
         if isinstance(obj, MappingValue) and node.field == "get":
             return NativeValue(
                 name="mapping.get",

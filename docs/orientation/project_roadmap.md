@@ -262,6 +262,44 @@ example in [RAG MCP Context](rag_mcp.md#configuration), replacing a traceback
 with an inspectable user boundary. Package example/docs inclusion, license,
 clean installation, broad desktop hosts, and public deployment remain open.
 
+### Text Compatibility Follow-Up
+
+The trim-method vectors reproduce the missing Python Core method, JavaScript
+discarding supplied character arguments, and host whitespace differences. This
+is A02/A08/A19's prototype library boundary, not a new target Unicode trimming
+rule. Testing raw text also reproduces a separate Rust payload defect: literal
+U+000B/U+001C enter parser JSON unescaped, so JSON decoding fails before eval.
+Python-style `\x`/`\u` escape spellings also differ on the WASM path; preserve
+that as a separate source-literal follow-up rather than silently claiming full
+Python string compatibility. Repair trim/payload transport independently, retain
+the target's explicit library gate, and validate each through exact value/output
+vectors and generated parser freshness.
+
+The repair now passes **210 trim compatibility checks** across hosted Nomi,
+reduced, Python Core, JS Core, and WASM/JS. Vectors cover every whitespace
+character in the hosted prototype set, preserved BOM/internal text, empty and
+custom sets (including supplementary characters), `None`, and argument failures.
+Python Core exposes only the explicitly named strip member through existing
+GetField/NativeValue operations; JavaScript uses an explicit compatibility set
+instead of its host's different `trim` rule. This stays a fenced library adapter
+until the target text-library contract replaces it; it adds no new Core node or
+general host reflection.
+
+Three new Rust payload tests cover all C0 controls, parsed source/value fields,
+and unchanged ordinary Unicode. Two failed before the serializer repair; all
+**six crate checks** now pass. The Rust frontend/parity/acceptance selection
+passes **189 checks**. Rebuilt committed browser/worker WASM binaries and build
+metadata reflect the serializer source change; `build_wasm.sh --check` verifies
+all eight outputs. The manifest remains unchanged and `make_web.py --check`
+passes (129 runtime files, 13 samples).
+
+The default web/runtime gate now passes **1,615 tests, one skipped**, plus
+24/24 guide comparisons; the optional Python Core guide route adds **8/8**.
+Actual default and legacy Chromium journeys pass against the rebuilt parser.
+This closes the observed beginner strip refusal and payload transport failure;
+source-literal escape parity, target Unicode trimming, and general text-method
+capability registration remain follow-ups rather than implied completion.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

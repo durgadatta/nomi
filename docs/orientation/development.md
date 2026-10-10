@@ -115,8 +115,10 @@ Browser installation and CDN loading require network access.
 from [Language Basics](../guide/language_basics.md). It checks hosted Nomi,
 reduced, and the browser's WASM/JS pipeline in Node without duplicated source
 fixtures. Use `--route nomi` for a Python-only check. The full default check
-requires Node and the committed WASM assets; it does not cover optional Python
-Core or claim whole-language parity. It is included in the web/runtime gate.
+requires Node and the committed WASM assets. Use `--route core-runtime` to check
+the optional Python Core backend, now including the beginner text-trimming
+operation. Neither selection claims whole-language parity. The default guide
+check is included in the web/runtime gate.
 
 The workbench opens local UTF-8 source without running it and downloads current
 source, preserving notebook titles and framing. Edited results are visibly

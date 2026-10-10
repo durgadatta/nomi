@@ -69,7 +69,8 @@ def run_example(example: Example, route: str) -> str:
         return json.loads(result.stdout)
     from prototype.runtime import execute
 
-    result = execute(source=example.source, mode=route, raise_on_error=False)
+    options = {"mode": route} if route in {"nomi", "reduced"} else {"eval_backend": route}
+    result = execute(source=example.source, raise_on_error=False, **options)
     if not result.ok:
         raise RuntimeError("; ".join(item.message for item in result.diagnostics))
     if result.stderr:
@@ -80,7 +81,7 @@ def run_example(example: Example, route: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--route", action="append", choices=("nomi", "reduced", "wasm-js"),
+        "--route", action="append", choices=("nomi", "reduced", "wasm-js", "core-runtime"),
         help="Execution route; repeatable. Default: all three documented routes.",
     )
     args = parser.parse_args()

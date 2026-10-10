@@ -25,6 +25,7 @@ pub(crate) fn json_string(value: &str) -> String {
             '\n' => escaped.push_str("\\n"),
             '\r' => escaped.push_str("\\r"),
             '\t' => escaped.push_str("\\t"),
+            other if other <= '\u{1f}' => escaped.push_str(&format!("\\u{:04x}", other as u32)),
             other => escaped.push(other),
         }
     }

@@ -5,7 +5,7 @@ import pytest
 from scripts.check_guide_examples import read_examples, run_example
 
 
-@pytest.mark.parametrize("route", ["nomi", "reduced"])
+@pytest.mark.parametrize("route", ["nomi", "reduced", "core-runtime"])
 @pytest.mark.parametrize("example", read_examples(), ids=lambda item: item.title)
 def test_beginner_program_matches_its_published_output(example, route):
     assert run_example(example, route) == example.stdout

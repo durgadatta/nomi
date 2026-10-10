@@ -18,6 +18,27 @@ function native(name, call, expectsValues = false) {
   return { kind: "native", name, call, expectsValues };
 }
 
+// Prototype strip compatibility; target Unicode trimming remains a library gate.
+const PROTOTYPE_STRIP_WHITESPACE = new Set(Array.from(
+  "\t\n\v\f\r \u001c\u001d\u001e\u001f\u0085\u00a0\u1680" +
+  "\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a" +
+  "\u2028\u2029\u202f\u205f\u3000"
+));
+
+function stripPrototypeText(text, args) {
+  if (args.length > 1) throw new TypeError("str.strip expects zero or one argument");
+  let characters = PROTOTYPE_STRIP_WHITESPACE;
+  if (args.length && args[0].kind !== "nil") {
+    if (args[0].kind !== "str") throw new TypeError("str.strip characters must be text or None");
+    characters = new Set(Array.from(args[0].value));
+  }
+  const points = Array.from(text);
+  let start = 0, end = points.length;
+  while (start < end && characters.has(points[start])) start++;
+  while (end > start && characters.has(points[end - 1])) end--;
+  return points.slice(start, end).join("");
+}
+
 function valueError(message) {
   const error = new Error(message);
   error.name = "ValueError";
@@ -817,7 +838,7 @@ class CoreRuntime {
     if (objectValue.kind === "str") {
       const strVal = objectValue.value;
       switch (node.field) {
-        case "strip": return native("str.strip", () => strVal.trim(), true);
+        case "strip": return native("str.strip", (...args) => stripPrototypeText(strVal, args), true);
         case "title": {
           const titled = strVal.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
           return native("str.title", () => titled, true);

@@ -78,6 +78,22 @@ See [Syntax](../design/syntax.md), [Semantics](../design/semantics.md), and
 [example catalog](examples.md#older-experimental-samples) to recognize the
 experimental forms you may encounter.
 
+### Text compatibility
+
+Prototype `strip()` uses a Python-compatible whitespace set across hosted,
+Python Core, and browser engines. It includes whitespace beyond ASCII and
+preserves a byte-order-mark character. An optional text argument supplies a
+set of characters to remove at the two ends; `None` selects whitespace.
+Wrong argument types or extra arguments fail. This is a bounded prototype
+library contract; target Unicode trimming remains a separate library decision.
+
+Use literal Unicode text in browser examples. Python-style `\x`/`\u` source
+escape spellings still differ in the WASM parser and may lose their backslash;
+they are not a supported cross-engine spelling. Parser JSON now escapes literal
+control characters correctly, but that transport repair does not fix source
+escape decoding. The [readiness follow-up](../orientation/project_roadmap.md#text-compatibility-follow-up)
+tracks this remaining gap.
+
 ## The Guarantees Being Built
 
 These concepts describe the intended growth path. They do not claim that the

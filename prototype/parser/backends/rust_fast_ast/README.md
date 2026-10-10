@@ -316,6 +316,12 @@ them fresh as work lands.
 
 ### Correctness and Parity
 
+- JSON emission now escapes every C0 control character in source/value fields;
+  dedicated payload vectors cover the full U+0000–U+001F range. The October 10
+  text-method probe exposed literal U+000B/U+001C transport failures. Keep
+  Python-style `\x`/`\u` source escape decoding as a separate parity follow-up;
+  correcting JSON serialization does not claim those spellings are equivalent.
+
 - Replace remaining `Raw` payloads feature by feature with structured nodes.
   The Python adapter currently lowers the shared parity matrix, including
   inline `match`, `where`, ranges, pipeline, nullish/safe navigation, operator

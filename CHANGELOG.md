@@ -17,6 +17,11 @@ data/ML engine is promised.
 - Made installed RAG developer tools explain their explicit configuration
   requirement, reject malformed setup before indexing, and keep startup errors
   on stderr without traceback or MCP stdout pollution.
+- Repaired prototype `strip` on Python Core and JavaScript: character sets,
+  Unicode whitespace compatibility, and argument failures now agree with the
+  hosted path. Escaped all C0 controls in Rust parser JSON and rebuilt WASM
+  artifacts after text vectors exposed invalid transport. Target Unicode
+  trimming and Python-style source escape parity remain separate work.
 - Audited current local browser, CLI, package, notebook, and editor boundaries;
   routed current walkthroughs to the checkout after detecting an older published
   playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)

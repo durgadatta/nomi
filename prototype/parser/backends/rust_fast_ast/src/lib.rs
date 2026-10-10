@@ -4,6 +4,8 @@ pub(crate) mod lexer;
 pub(crate) mod parser;
 mod pattern;
 mod payload;
+#[cfg(test)]
+mod payload_control_tests;
 pub(crate) mod token;
 
 use wasm_bindgen::prelude::*;
