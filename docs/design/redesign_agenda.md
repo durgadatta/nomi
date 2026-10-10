@@ -154,6 +154,15 @@ to keep interpretation, semantic conformance and actual host observations separa
 
 ## Ordered Design Closure
 
+The [candidate primitive synthesis](synthesis.md#candidate-primitive-synthesis-and-integration-path)
+now maps Value, Bind, Apply, Choose, Perform, and Scope to richer features,
+interaction tradeoffs, concrete gap receipts, and one integration path through
+these existing gates. These are proposed semantic families, not accepted opcodes.
+The next selected research pressure is a lazy statistical/data interface whose
+structure and supported laws can be checked without providing data. Keep domain
+theory and execution adapters separate; input-free checking cannot establish
+unobserved empirical facts.
+
 The October 9 [first-product contract](synthesis.md#first-product-contract)
 selects calculation, local JSON report/repair and local reuse. Apply these gates
 to the guarantees that profile promises. D1 needs closed calls and the selected

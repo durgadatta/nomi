@@ -681,3 +681,33 @@ Choose matched rules before constructing source, structured and mixed authoring
 comparisons; keep creation, prediction, repair and handoff outcomes separate from
 semantic checking. Delivery continues through the roadmap's selected target
 contracts. Actual target integration, hosts and human observations remain open.
+
+## Primitive And Data-Interface Direction, 2026-10-10
+
+### Evidence That Changed The Design
+
+The user now selects data-platform abstraction after coherent primitive
+synthesis. Named lazy intermediates and passive structure/law inspection provide
+a concrete new pressure for the interaction model. The language synthesis owns
+the six-family candidate model and gap path; the data semantic owner will retain
+grain, missingness, numerical theory and statistical assumptions.
+
+### Workflow Friction
+
+Shared graph display or command vocabulary cannot make all intermediate objects
+semantically interchangeable. A proof view can also mislead if conditional laws
+are shown as empirically verified facts or inspection silently reads input data.
+
+### Durable Improvement
+
+The interaction proposal routes to the existing primitive synthesis instead of
+creating another architecture or scheduling queue. No new interaction syntax,
+view framework or source synchronization mechanism was accepted.
+
+### Next Pass
+
+Use the selected data-interface study for named intermediate inspection and
+contract explanations. Compare passive plan/schema/proof views with explicit
+execution and preserve unresolved conditions. Language-coherence owns the
+interface/law model; this packet retains representation and human-activity
+questions, including its prepared timing alternatives.

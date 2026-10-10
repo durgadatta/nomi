@@ -741,3 +741,40 @@ question and packet ownership. Promote only the settled contract through design,
 ledger, whole-program target, and a reversible implementation bridge. The packet
 remains `designing`; broader target implementation and distribution work retain
 their existing readiness gates.
+
+## Primitive Composition And Gap Path, 2026-10-10
+
+### Evidence That Changed The Design
+
+The user requests broader coverage and a concrete coherent integration path,
+then a data-platform focus. The synthesis now compares six semantic families:
+Value, Bind, Apply, Choose, Perform, and Scope. Its feature composition map retains
+checks for lifetimes, control completion, scheduling, authority, and numeric theory.
+The maintainer guide adds eighteen corner cases and fresh primary leads for
+variance, erased trait interfaces, equality/hash coherence, and cooperative
+cancellation. These are proposed cases and a designing model, not accepted IR.
+
+### Workflow Friction
+
+A tiny encoding can hide required laws, and a broad feature taxonomy can avoid
+answering which contract to close next. Calling everything a function would not
+establish resource release, lawful fusion, or observational equivalence. A source
+schema can support a statistical plan without providing actual observations;
+that does not establish the observations' validity or every numeric identity.
+
+### Durable Improvement
+
+The canonical synthesis now owns the primitive model, feature reductions, gap
+receipts and ordered path through D0-D7. The guide owns prepared counterexamples;
+the agenda and interaction proposal route to the same path. Existing packet
+owners and release scheduling remain intact. Repository coherence validation
+covers the changed documents; no source grammar or runtime behavior was changed.
+
+### Next Pass
+
+Focus on the user's statistical/data-platform interface: typed lazy plans,
+referable intermediates, schema-only checking, explicit statistical-object
+families, and exact mean decomposition with stated missingness, empty-input,
+weight and representation laws. Start with a removable interface/checking model,
+then compare pinned engine adapters. Preserve conditional/unknown proof results,
+and do not introduce a dataframe engine or claim universal statistical proofs.

@@ -167,6 +167,13 @@ remain tool-owned without becoming a runtime function type.
 
 ## Shared Normal Form
 
+The [primitive synthesis](synthesis.md#candidate-primitive-synthesis-and-integration-path)
+maps commands/views to explicit candidate values, validation, and owner-controlled
+publication. Its next data-platform case requires stable references to lazy
+intermediates and passive inspection of contracts/proof obligations. A shared
+interface does not erase table grain, missingness, numeric or statistical laws;
+each domain retains its semantic owner. No new interaction API is accepted here.
+
 [The invoice target](interaction_model_target.nomi) uses ordinary functions,
 nominal data, explicit Result, and proposed collection/decoder APIs. Its three
 pressures are a beginner calculation, a production immutable change, and a

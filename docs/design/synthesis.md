@@ -451,6 +451,97 @@ keywords, extractors, implicit conversions, generic declaration syntax, macro
 quotation, or a second query language. A beautiful short example is not enough
 to admit any of them.
 
+## Candidate Primitive Synthesis And Integration Path
+
+> Designing hypothesis, 2026-10-10. These six semantic families organize a
+> comparison; they are not accepted opcodes, syntax, or a universal domain IR.
+
+The research can converge on a small common substrate while keeping domain laws
+explicit. Compare this model against both a smaller lambda/variant kernel and
+richer domain-specific primitives. A smaller encoding wins only when its behavior,
+checking, debugging, and user activity remain understandable. The eight teaching
+acts remain useful; the families below concern semantic obligations instead.
+
+| Family | Minimal responsibility | Law that cannot disappear in an encoding |
+| --- | --- | --- |
+| Value | Construct/project atoms, products, variants, and explicit opaque handles | Runtime type/nominal identity and invariant-preserving owned construction; received structure is separate |
+| Bind | Associate resolved identities with values or explicit cells; capture lexical relationships | Value/cell capture, fresh allocation, shadowing and package declaration identity survive rewriting |
+| Apply | Invoke a callable with a declared shape and completion contract | Eager once-only ordered inputs/defaults, exact return target, effects/captures and expected failure |
+| Choose | Select a branch by Bool or inert structural elimination | Only selected work runs; tentative pattern bindings commit atomically; guards do not become arbitrary extractors |
+| Perform | Request a named local-state, host, or scheduler operation through its owner | Validation before state publication; world authority, representation and suspension are explicit and distinct |
+| Scope | Bound the lifetime of resources, work, and control completion | Enter/body/release phases, all causes, child joins and escape rules remain observable |
+
+Perform does not introduce a new global effect taxonomy: local cell mutation and
+world access retain their existing distinct contracts. Scope is a family of
+specified policies, not a universal user-defined block handler. A resource scope,
+function return boundary, and task group cannot share an unspecified completion
+rule. Observed traces, revisions, types, and contracts accompany these operations;
+they are evidence dimensions, not a seventh universal runtime object.
+
+### Compose Richer Features
+
+The formulas below are semantic metalanguage, not Nomi source or proof that the
+present runtimes implement the reduction. Each names a remaining obligation.
+
+| Feature | Composition | Remaining obligation |
+| --- | --- | --- |
+| Option / Result | Value variants + Choose + Apply | Absence, expected failure, panic and cancellation stay separate |
+| `?` / `??` / `?.` | Choose the relevant variant + return/apply the selected continuation | Preserve short circuit and nearest-function propagation; no hidden error conversion |
+| Constraints and decoders | Apply checks to tentative typed fields + Value construction + owner-controlled publication | Accumulate independent external errors; internal invariant violations retain their own channel |
+| Immutable update / `set` | Bind an immutable replacement or Perform a validated cell update | Atomicity is scoped to the actual owner; no implied distributed transaction |
+| Methods and protocols | Value of supplied operations + Bind identity + Apply | Selection, coherence, variance, effects and capture facts must be checked |
+| List map / filter / fold | Apply + Choose + explicit ordered traversal/state | Strict versus demand-bearing carriers; Result elements do not auto-propagate |
+| Retry | Apply a fresh attempt under an explicit policy + Choose completion | Partial effects, idempotency and cancellation; replay is not rollback |
+| Resources | Perform acquire + Scope body/release + Choose typed completion | Non-escape through successes, errors, closures, tasks and diagnostics |
+| Async / streams | Value description + Perform start/poll/suspend + Scope ownership | Backpressure, single/repeated consumption, child failure and release policy |
+| Tables / statistical plans | Value of typed domain nodes + Apply checked composition + explicit execution operations | Grain, null, shape, ordering, numeric theory and adapter conformance |
+| Symbolic rewriting / derivation | Value expression/schema + Apply a declared transformation + Bind preserved identities | Theory, stage, hygiene, source provenance, budget and unknown proof status |
+| Semantic commands / views | Value candidate/projection + Apply validation + Perform owner commit | Revision freshness, review scope, authority, unsupported content and domain-specific inverse laws |
+| Modules / checked reuse | Bind declaration identity + Value complete interface + Apply imported callable | Separate checking, verification dependencies and compatibility evidence |
+
+Iteration/suspension and runtime memory machinery still need operational rules.
+Encoding them as recursive functions or library protocols does not establish
+bounded stack space, progress, scheduling fairness, or cleanup. Numeric operations
+and native handles also retain profile-specific primitive implementations. The
+model reduces repeated semantic concepts; it does not claim every mechanism is
+free or that every domain has the same algebra.
+
+### Gap Analysis With Concrete Closure Receipts
+
+| Gap now | Required receipt | Dependency and tradeoff |
+| --- | --- | --- |
+| No complete common callable evidence for the broad target | Closed positive/negative call contracts, then general capture/effect/region fixtures | Start monomorphic; general inference increases reuse and checker complexity |
+| Nominal/structural boundary not fully source-derived | Typed construction/decoder derivation and independent malformed-input paths | More adapters buy invariants; copying versus foreign sharing stays explicit |
+| Operation selection and variance remain open | Two intentional behaviors, colliding packages, mutable-container substitution, erased-callable limits | Explicit operation values cost plumbing; ambient resolution costs local reasoning |
+| Resource/task guarantees rely on supplied facts/models | Escape rejection plus deterministic enter/body/release/cancel traces and owned children | GC simplicity does not establish external validity; stronger restrictions reduce escapes |
+| Domain optimization laws are not mechanically checked | Typed inert plan, declared theory, side conditions and independently checked rewrite steps | Restrict the first theory; broader rewrite power raises proof and diagnostic cost |
+| Interactive evidence can outlive its basis | Revision/dependency-bound inspection and owner-enforced stale publication refusal | Frozen runs retain predictability; live adoption costs reproducibility and memory |
+| Statistical abstractions lack a common checked interface | Input-free schema/plan checking, named intermediates, exact mean decomposition, explicit unresolved assumptions | Abstract ports enable replaceable engines; schema checks cannot certify actual data or inference validity |
+
+### One Ordered Path
+
+Use the existing D0-D7 owners; these increments are a dependency path through them,
+not another release schedule. Discovery can continue while an implementation
+increment is open. Close only the promises of the selected slice.
+
+| Step | Work and accountable owner | Exit evidence | If it fails |
+| --- | --- | --- | --- |
+| 1 | Derive the existing report through Value/Bind/Apply/Choose; language-coherence with function contracts | Every call, type, default, failure and callback has a named contract; unresolved facts remain visible | Narrow the checked subset or improve the contract; never insert Any |
+| 2 | Extract a replaceable typed-plan interface for the selected data/statistical workflow; data owner under language-coherence | Declared input ports suffice for structural checking; every intermediate can be referenced; no scan/UDF/collect during checking | Separate data-dependent schema discovery or opaque callbacks into explicit unsupported/runtime obligations |
+| 3 | Establish one bounded equational theory, beginning with exact mean and defined empty/missing policy | Proof records name rewrite definitions, source/grain/mask/profile, and every required assumption | Return conditional/unknown; preserve original plan and prohibit an unjustified optimization |
+| 4 | Compare adapters behind that interface, starting with one pinned execution profile | Engines either preserve the interface's values/absence/errors/order or refuse; logical plan identity stays independent | Name a backend-specific profile or conversion cost; do not change interface laws silently |
+| 5 | Add one scoped execution case only when needed; resource/function owners | Complete cause/escape/cancellation traces and owned work; inspection remains passive | Retain explicit synchronous execution; keep the richer lifetime candidate open |
+| 6 | Reuse and inspect the same checked workflow from two consumers; cognitive packet owns representation comparison | Independent consumer checking, revision invalidation, named intermediates and repair/handoff observations | Improve interfaces/diagnostics before adding another syntax |
+| 7 | Admit a proven useful convenience or generalization | Long form, formatter, lowering, diagnostics, independent conformance and removal criteria agree | Keep the ordinary composition; a failed shorthand does not reject the domain need |
+
+The immediate next action is step 2's inert statistical/data interface and step
+3's bounded mean law, following the user's requested data-platform direction.
+This is an isolated design experiment; it does not declare the broad target
+implemented or make all prior language topics prerequisites for investigating it.
+The [maintainer guide](../research/synthesis_guide.md) owns the research worksheet
+and interaction counterexamples. The [agenda](redesign_agenda.md) keeps D0-D7;
+the [roadmap](../orientation/project_roadmap.md) still owns distribution scheduling.
+
 ## Where The Previous Program Broke Down
 
 The [legacy target](target.nomi) exposed useful ambitions but hid interactions:

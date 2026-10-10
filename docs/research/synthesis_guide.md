@@ -293,6 +293,73 @@ or clever notation can improve one dimension while making the activity harder.
 Use the existing [cognitive](cognition.md) and [interaction](interfaces/composition_cases.md)
 protocols where that is the actual unresolved question.
 
+## Composition Corner Cases And Research Quality
+
+The [candidate six-family synthesis](../design/synthesis.md#candidate-primitive-synthesis-and-integration-path)
+provides one integration path. Value, Bind, Apply, Choose, Perform, and Scope are
+semantic families, not accepted opcodes or a universal domain model. Most
+conveniences combine them; lifetime, scheduling, type soundness, numerical laws,
+and domain-specific meaning remain obligations. The canonical proposal owns the
+composition map, gap receipts, and ordered steps.
+
+The following cases sharpen coverage beyond isolated feature reviews. Existing
+owners retain the detailed experiments; these expectations are prepared, not
+executed language comparisons.
+
+| Corner case | Required distinction or negative oracle | Owner |
+| --- | --- | --- |
+| `map` callback returns Err on the second of three inputs | Ordinary map retains three Result elements; fail-fast traversal is a separate contract | Functions, questions 3/6/7 |
+| Option of Result versus Result of Option | Missing record, failed lookup and missing payload remain separately matchable | Failure, question 6 |
+| Empty input with an effectful callback | Zero runtime calls do not establish static purity | Functions/effects, questions 2/4 |
+| Read-only covariant view retains a mutable producer alias | Type-safe reading is not immutability, freshness or permission to write | Types/data, question 2 |
+| Protocol includes generic methods or a Self-dependent result | Erased runtime dispatch needs its own supported signature; ordinary conformance does not establish it | Functions, questions 3/10 |
+| A key changes equality/hash behavior after insertion | Equality/hash coherence and lifetime stability are separate from interface shape | Generic operations, question 3 |
+| Floating NaN or approximate equality used in a set/merge | Domain equality, tolerance and hash policy cannot be interchanged | Numerics, question 9 |
+| Default callback allocates a shared cell | Adapter/inlining cannot silently change allocation frequency or capture identity | Binding/functions, questions 1/2 |
+| Resource is retained by an error cause or diagnostic closure | Whole-completion non-escape includes failure/inspection carriers | Resources, question 5 |
+| Child catches cancellation and keeps running | Stop request is not observed quiescence; scope must join or report its limit | Concurrency, questions 5/7 |
+| Retry follows a lost response after remote publication | Unknown outcome differs from failure; another call may duplicate an effect | Messaging, questions 6/15 |
+| Rewrite crosses a failing/effectful callback | Same successful values are insufficient when counts, order or partial effects change | Numerics/metaprogramming, questions 9/12 |
+| Source snapshot is unchanged but numeric theory or schema changes | Cached proof/result depends on its theory/profile, not only text | Modules/tooling, questions 13/14 |
+| Generated field/default depends on runtime context | Declared derivation cannot manufacture an earlier-stage value or authority | Metaprogramming, question 12 |
+| An editor renames a display label but binding identity is unchanged | A source edit, domain change and projection edit have different owners | Interaction, question 17 |
+| Statistical mean uses count of all rows while sum skips null | The two reductions observe different domains; no unconditional identity | Data/statistics, questions 8/9 |
+| Filter leaves an empty group despite nonempty source | Source cardinality does not prove valid denominator for a group | Data/statistics, questions 8/9 |
+| Quantile/variance/weighted mean uses implicit policy | Definition, interpolation, ddof, weights and missingness are explicit parameters | Data/statistics, question 9 |
+
+### New Primary Mechanisms To Challenge The Model
+
+Kotlin's variance/projection documentation distinguishes safe producer/consumer
+substitution from immutability. Rust's dyn-compatibility requirements show that
+not every trait interface supports an erased runtime object. Python's data model
+requires equal hashable objects to share a hash and explains why changing a key's
+hash breaks hashed-container placement. Asyncio documents cooperative cancellation
+and the risk of swallowing it inside structured work.
+[Primary references: Kotlin generics](https://kotlinlang.org/docs/generics.html),
+[Rust traits](https://doc.rust-lang.org/reference/items/traits.html),
+[Python data model](https://docs.python.org/3/reference/datamodel.html),
+[asyncio tasks](https://docs.python.org/3/library/asyncio-task.html).
+
+These living references were consulted on 2026-10-10; the unversioned Python
+pages then served 3.15 documentation. They are selected mechanisms, not tested
+cross-version guarantees. The Nomi consequences in the case table are proposed
+oracles. Keep type safety, representation erasure, lawfulness, lifecycle progress,
+and empirical validity separate when integrating them.
+
+### Quality Gate For Every New Finding
+
+Record a positive case and a false-success case that the proposed abstraction
+might mistakenly accept. Name its inputs, assumptions, expected observation,
+and semantic owner. Check whether a type, static fact, law, runtime guard, or
+actual observation establishes the required claim. Preserve unknown/conditional
+results when that evidence is unavailable. Compare repair and explanation costs
+alongside implementation cost; a small encoding with opaque errors can lose to
+a richer domain interface.
+
+Continue through the ordered path in the synthesis, using one data workflow as
+the next composition pressure. Existing packets keep their status and source
+semantics until evidence justifies explicit promotion.
+
 ## Integrate A Settled Result
 
 Research placement begins with an ordinary library or protocol where practical;
