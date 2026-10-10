@@ -113,7 +113,23 @@
       "fragment_support": [
         "node identity",
         "declared schema"
-      ]
+      ],
+      "ports": {
+        "schema": {
+          "families": [
+            "schema"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "binding_identity": {
+          "kind": "text"
+        },
+        "snapshot_requirement": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "schema",
@@ -128,7 +144,22 @@
         "field names",
         "dtype",
         "nullable"
-      ]
+      ],
+      "ports": {},
+      "parameters": {
+        "ordered_fields": {
+          "kind": "array"
+        },
+        "types": {
+          "kind": "text"
+        },
+        "nullability": {
+          "kind": "bool"
+        },
+        "schema_revision": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "relation",
@@ -142,7 +173,29 @@
       "fragment_support": [
         "schema",
         "unordered bag domain"
-      ]
+      ],
+      "ports": {
+        "schema": {
+          "families": [
+            "schema"
+          ],
+          "multiplicity": "one"
+        },
+        "observation_domain": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "multiplicity": {
+          "kind": "text"
+        },
+        "ordering": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "column",
@@ -158,7 +211,26 @@
         "nullability",
         "observation domain",
         "fixed dimensionless unit"
-      ]
+      ],
+      "ports": {
+        "observation_domain": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "dtype": {
+          "kind": "text"
+        },
+        "nullability": {
+          "kind": "bool"
+        },
+        "unit": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "scalar_expression",
@@ -172,7 +244,19 @@
         "dtype",
         "nullability",
         "numeric profile"
-      ]
+      ],
+      "ports": {},
+      "parameters": {
+        "dtype": {
+          "kind": "text"
+        },
+        "nullability": {
+          "kind": "bool"
+        },
+        "numeric_profile": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "selection",
@@ -185,7 +269,26 @@
       "fragment_support": [
         "non-null Bool predicate",
         "same input domain"
-      ]
+      ],
+      "ports": {
+        "predicate": {
+          "families": [
+            "column"
+          ],
+          "multiplicity": "one"
+        },
+        "observation_domain": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "missing_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "partition",
@@ -195,7 +298,29 @@
         "keys",
         "null_key_policy",
         "empty_group_policy"
-      ]
+      ],
+      "ports": {
+        "relation": {
+          "families": [
+            "relation"
+          ],
+          "multiplicity": "one"
+        },
+        "keys": {
+          "families": [
+            "column"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "null_key_policy": {
+          "kind": "text"
+        },
+        "empty_group_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "window",
@@ -205,7 +330,29 @@
         "order",
         "frame",
         "tie_policy"
-      ]
+      ],
+      "ports": {
+        "partition": {
+          "families": [
+            "partition"
+          ],
+          "multiplicity": "one"
+        },
+        "order": {
+          "families": [
+            "column"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "frame": {
+          "kind": "text"
+        },
+        "tie_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "aggregate_state",
@@ -217,7 +364,41 @@
         "merge",
         "finalize",
         "numeric_profile"
-      ]
+      ],
+      "ports": {
+        "state_schema": {
+          "families": [
+            "schema"
+          ],
+          "multiplicity": "one"
+        },
+        "update": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "merge": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "finalize": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "identity": {
+          "kind": "text"
+        },
+        "numeric_profile": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "weight",
@@ -228,7 +409,29 @@
         "support",
         "missing_policy",
         "normalization"
-      ]
+      ],
+      "ports": {
+        "domain": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "weight_kind": {
+          "kind": "text"
+        },
+        "support": {
+          "kind": "text"
+        },
+        "missing_policy": {
+          "kind": "text"
+        },
+        "normalization": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "estimand",
@@ -238,7 +441,32 @@
         "target_functional",
         "unit",
         "identification_assumptions"
-      ]
+      ],
+      "ports": {
+        "population": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        },
+        "target_functional": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "identification_assumptions": {
+          "families": [
+            "assumption"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "unit": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "estimator",
@@ -248,7 +476,32 @@
         "sample_design",
         "algorithm",
         "finite_sample_policy"
-      ]
+      ],
+      "ports": {
+        "estimand": {
+          "families": [
+            "estimand"
+          ],
+          "multiplicity": "one"
+        },
+        "sample_design": {
+          "families": [
+            "sample_design"
+          ],
+          "multiplicity": "one"
+        },
+        "algorithm": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "finite_sample_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "distribution",
@@ -260,7 +513,32 @@
         "density_or_mass",
         "cdf",
         "sampling_contract"
-      ]
+      ],
+      "ports": {
+        "parameters": {
+          "families": [
+            "parameter"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "support": {
+          "kind": "text"
+        },
+        "measure": {
+          "kind": "text"
+        },
+        "density_or_mass": {
+          "kind": "text"
+        },
+        "cdf": {
+          "kind": "text"
+        },
+        "sampling_contract": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "random_variable",
@@ -270,7 +548,26 @@
         "joint_origin",
         "dependence",
         "randomness_owner"
-      ]
+      ],
+      "ports": {
+        "distribution": {
+          "families": [
+            "distribution"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "joint_origin": {
+          "kind": "text"
+        },
+        "dependence": {
+          "kind": "record"
+        },
+        "randomness_owner": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "parameter",
@@ -280,7 +577,22 @@
         "constraint",
         "unit",
         "role"
-      ]
+      ],
+      "ports": {},
+      "parameters": {
+        "space": {
+          "kind": "text"
+        },
+        "constraint": {
+          "kind": "text"
+        },
+        "unit": {
+          "kind": "text"
+        },
+        "role": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "model_specification",
@@ -291,7 +603,38 @@
         "likelihood",
         "link",
         "assumptions"
-      ]
+      ],
+      "ports": {
+        "variables": {
+          "families": [
+            "column"
+          ],
+          "multiplicity": "many"
+        },
+        "formula_ast": {
+          "families": [
+            "formula"
+          ],
+          "multiplicity": "one"
+        },
+        "likelihood": {
+          "families": [
+            "distribution"
+          ],
+          "multiplicity": "one"
+        },
+        "assumptions": {
+          "families": [
+            "assumption"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "link": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "fitted_artifact",
@@ -302,7 +645,32 @@
         "learned_state",
         "algorithm_revision",
         "diagnostics"
-      ]
+      ],
+      "ports": {
+        "model": {
+          "families": [
+            "model_specification"
+          ],
+          "multiplicity": "one"
+        },
+        "diagnostics": {
+          "families": [
+            "diagnostic"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "training_snapshot": {
+          "kind": "text"
+        },
+        "learned_state": {
+          "kind": "record"
+        },
+        "algorithm_revision": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "prediction",
@@ -312,7 +680,29 @@
         "input_schema",
         "prediction_kind",
         "new_level_policy"
-      ]
+      ],
+      "ports": {
+        "fitted_artifact": {
+          "families": [
+            "fitted_artifact"
+          ],
+          "multiplicity": "one"
+        },
+        "input_schema": {
+          "families": [
+            "schema"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "prediction_kind": {
+          "kind": "text"
+        },
+        "new_level_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "resampling_plan",
@@ -323,7 +713,29 @@
         "strata_or_clusters",
         "seed_stream",
         "replicates"
-      ]
+      ],
+      "ports": {
+        "domain": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "sampling_unit": {
+          "kind": "text"
+        },
+        "strata_or_clusters": {
+          "kind": "record"
+        },
+        "seed_stream": {
+          "kind": "text"
+        },
+        "replicates": {
+          "kind": "positive_int"
+        }
+      }
     },
     {
       "id": "hypothesis_test",
@@ -334,7 +746,32 @@
         "statistic",
         "reference_law",
         "selection_history"
-      ]
+      ],
+      "ports": {
+        "statistic": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "reference_law": {
+          "families": [
+            "distribution"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "null": {
+          "kind": "record"
+        },
+        "alternative": {
+          "kind": "record"
+        },
+        "selection_history": {
+          "kind": "text_list"
+        }
+      }
     },
     {
       "id": "uncertainty",
@@ -345,7 +782,32 @@
         "joint_origin",
         "assumptions",
         "interval_or_region"
-      ]
+      ],
+      "ports": {
+        "method": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "assumptions": {
+          "families": [
+            "assumption"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "coverage_or_credibility": {
+          "kind": "record"
+        },
+        "joint_origin": {
+          "kind": "text"
+        },
+        "interval_or_region": {
+          "kind": "record"
+        }
+      }
     },
     {
       "id": "score",
@@ -356,7 +818,35 @@
         "loss",
         "aggregation",
         "evaluation_snapshot"
-      ]
+      ],
+      "ports": {
+        "target": {
+          "families": [
+            "estimand"
+          ],
+          "multiplicity": "one"
+        },
+        "loss": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "aggregation": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "prediction_kind": {
+          "kind": "text"
+        },
+        "evaluation_snapshot": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "visualization",
@@ -367,7 +857,38 @@
         "scales",
         "aggregation",
         "interaction_policy"
-      ]
+      ],
+      "ports": {
+        "source_nodes": {
+          "families": [
+            "relation",
+            "column",
+            "scalar_expression",
+            "prediction",
+            "uncertainty",
+            "score",
+            "test_result"
+          ],
+          "multiplicity": "many"
+        },
+        "aggregation": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "encodings": {
+          "kind": "record"
+        },
+        "scales": {
+          "kind": "record"
+        },
+        "interaction_policy": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "proof_artifact",
@@ -383,7 +904,22 @@
         "context fingerprint",
         "named references",
         "closed derivation receipt"
-      ]
+      ],
+      "ports": {},
+      "parameters": {
+        "theory_revision": {
+          "kind": "text"
+        },
+        "context": {
+          "kind": "text"
+        },
+        "node_references": {
+          "kind": "text_list"
+        },
+        "derivation": {
+          "kind": "text"
+        }
+      }
     },
     {
       "id": "execution_receipt",
@@ -394,8 +930,412 @@
         "engine_version",
         "capability_receipt",
         "actual_numeric_profile"
-      ]
+      ],
+      "ports": {},
+      "parameters": {
+        "plan_revision": {
+          "kind": "text"
+        },
+        "bindings": {
+          "kind": "record"
+        },
+        "engine_version": {
+          "kind": "text"
+        },
+        "capability_receipt": {
+          "kind": "record"
+        },
+        "actual_numeric_profile": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "observation_domain",
+      "status": "catalog-only",
+      "contract_fields": [
+        "source",
+        "grain",
+        "multiplicity",
+        "ordering"
+      ],
+      "ports": {
+        "source": {
+          "families": [
+            "input_port"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "grain": {
+          "kind": "text"
+        },
+        "multiplicity": {
+          "kind": "text"
+        },
+        "ordering": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "algorithm_plan",
+      "status": "catalog-only",
+      "contract_fields": [
+        "inputs",
+        "operation",
+        "algorithm_revision",
+        "policies"
+      ],
+      "ports": {
+        "inputs": {
+          "families": [
+            "input_port",
+            "schema",
+            "relation",
+            "column",
+            "scalar_expression",
+            "selection",
+            "partition",
+            "window",
+            "aggregate_state",
+            "weight",
+            "estimand",
+            "estimator",
+            "distribution",
+            "random_variable",
+            "parameter",
+            "model_specification",
+            "fitted_artifact",
+            "prediction",
+            "resampling_plan",
+            "hypothesis_test",
+            "uncertainty",
+            "score",
+            "visualization",
+            "proof_artifact",
+            "execution_receipt",
+            "observation_domain",
+            "algorithm_plan",
+            "fit_plan",
+            "test_result",
+            "formula",
+            "coordinate_system",
+            "tensor",
+            "sample_design",
+            "assumption",
+            "diagnostic"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "operation": {
+          "kind": "text"
+        },
+        "algorithm_revision": {
+          "kind": "text"
+        },
+        "policies": {
+          "kind": "record"
+        }
+      }
+    },
+    {
+      "id": "fit_plan",
+      "status": "catalog-only",
+      "contract_fields": [
+        "model",
+        "input",
+        "transform",
+        "state_schema",
+        "randomness_owner"
+      ],
+      "ports": {
+        "model": {
+          "families": [
+            "model_specification"
+          ],
+          "multiplicity": "one"
+        },
+        "input": {
+          "families": [
+            "input_port"
+          ],
+          "multiplicity": "one"
+        },
+        "transform": {
+          "families": [
+            "algorithm_plan"
+          ],
+          "multiplicity": "one"
+        },
+        "state_schema": {
+          "families": [
+            "schema"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "randomness_owner": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "test_result",
+      "status": "catalog-only",
+      "contract_fields": [
+        "test_specification",
+        "statistic",
+        "execution",
+        "conclusion",
+        "diagnostics"
+      ],
+      "ports": {
+        "test_specification": {
+          "families": [
+            "hypothesis_test"
+          ],
+          "multiplicity": "one"
+        },
+        "statistic": {
+          "families": [
+            "scalar_expression"
+          ],
+          "multiplicity": "one"
+        },
+        "execution": {
+          "families": [
+            "execution_receipt"
+          ],
+          "multiplicity": "one"
+        },
+        "diagnostics": {
+          "families": [
+            "diagnostic"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "conclusion": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "formula",
+      "status": "catalog-only",
+      "contract_fields": [
+        "variables",
+        "terms",
+        "bindings",
+        "scope_policy"
+      ],
+      "ports": {
+        "variables": {
+          "families": [
+            "column"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "terms": {
+          "kind": "record"
+        },
+        "bindings": {
+          "kind": "record"
+        },
+        "scope_policy": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "coordinate_system",
+      "status": "catalog-only",
+      "contract_fields": [
+        "axes",
+        "labels",
+        "units",
+        "alignment_policy"
+      ],
+      "ports": {},
+      "parameters": {
+        "axes": {
+          "kind": "record"
+        },
+        "labels": {
+          "kind": "record"
+        },
+        "units": {
+          "kind": "record"
+        },
+        "alignment_policy": {
+          "kind": "text"
+        }
+      }
+    },
+    {
+      "id": "tensor",
+      "status": "catalog-only",
+      "contract_fields": [
+        "coordinates",
+        "dtype",
+        "nullability",
+        "layout_contract"
+      ],
+      "ports": {
+        "coordinates": {
+          "families": [
+            "coordinate_system"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "dtype": {
+          "kind": "text"
+        },
+        "nullability": {
+          "kind": "bool"
+        },
+        "layout_contract": {
+          "kind": "record"
+        }
+      }
+    },
+    {
+      "id": "sample_design",
+      "status": "catalog-only",
+      "contract_fields": [
+        "population",
+        "sampling_unit",
+        "selection_policy",
+        "dependence",
+        "weights"
+      ],
+      "ports": {
+        "population": {
+          "families": [
+            "observation_domain"
+          ],
+          "multiplicity": "one"
+        },
+        "weights": {
+          "families": [
+            "weight"
+          ],
+          "multiplicity": "many"
+        }
+      },
+      "parameters": {
+        "sampling_unit": {
+          "kind": "text"
+        },
+        "selection_policy": {
+          "kind": "text"
+        },
+        "dependence": {
+          "kind": "record"
+        }
+      }
+    },
+    {
+      "id": "assumption",
+      "status": "catalog-only",
+      "contract_fields": [
+        "statement",
+        "evidence_status",
+        "evidence_references"
+      ],
+      "ports": {},
+      "parameters": {
+        "statement": {
+          "kind": "text"
+        },
+        "evidence_status": {
+          "kind": "enum",
+          "values": [
+            "unresolved",
+            "assumed",
+            "supported-by-reference"
+          ]
+        },
+        "evidence_references": {
+          "kind": "text_list"
+        }
+      }
+    },
+    {
+      "id": "diagnostic",
+      "status": "catalog-only",
+      "contract_fields": [
+        "subject",
+        "criterion",
+        "severity",
+        "interpretation"
+      ],
+      "ports": {
+        "subject": {
+          "families": [
+            "input_port",
+            "schema",
+            "relation",
+            "column",
+            "scalar_expression",
+            "selection",
+            "partition",
+            "window",
+            "aggregate_state",
+            "weight",
+            "estimand",
+            "estimator",
+            "distribution",
+            "random_variable",
+            "parameter",
+            "model_specification",
+            "fitted_artifact",
+            "prediction",
+            "resampling_plan",
+            "hypothesis_test",
+            "uncertainty",
+            "score",
+            "visualization",
+            "proof_artifact",
+            "execution_receipt",
+            "observation_domain",
+            "algorithm_plan",
+            "fit_plan",
+            "test_result",
+            "formula",
+            "coordinate_system",
+            "tensor",
+            "sample_design",
+            "assumption",
+            "diagnostic"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "parameters": {
+        "criterion": {
+          "kind": "text"
+        },
+        "severity": {
+          "kind": "text"
+        },
+        "interpretation": {
+          "kind": "text"
+        }
+      }
     }
   ],
-  "family_contract_note": "contract_fields describe the proposed full interface; fragment_support lists the current bounded implementation. Catalog-only families are not executable checker operations."
+  "family_contract_note": "contract_fields describe the proposed full interface; fragment_support lists the current bounded implementation. Catalog-only families are not executable checker operations.",
+  "object_envelope_version": 1,
+  "object_envelope_note": "Ports are typed descriptor references. Parameters are inert declarations; structural validation does not establish domain laws, realized data, learned state or scientific assumptions."
 }

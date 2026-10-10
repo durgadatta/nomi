@@ -18,6 +18,7 @@ comparison, scientific pressures and counterexamples.
 | [Polars lazy API](https://docs.pola.rs/user-guide/concepts/lazy-api/) | A plan can be constructed lazily, inspected with `explain`, and built from a declared schema | Passive checking must remain separate from source discovery and collection |
 | [Polars schema resolution](https://docs.pola.rs/api/python/stable/reference/lazyframe/api/polars.LazyFrame.collect_schema.html) | `collect_schema` resolves a lazy plan's schema; documentation warns it can read storage metadata or contact a network | Laziness alone is insufficient for input-free checking; unknown schemas remain unknown unless an explicitly authorized resolver runs |
 | [pandas Series mean](https://pandas.pydata.org/docs/reference/api/pandas.Series.mean.html) | The mean has explicit axis, missing-value and numeric-column options | Make the selected observation domain, missing policy and scalar versus column shape part of the object contract |
+| [pandas label alignment](https://pandas.pydata.org/docs/user_guide/dsintro.html#vectorized-operations-and-label-alignment-with-series) | Series arithmetic aligns labels; unaligned indexes contribute to an outer index and missing results | Treat labeled alignment as an explicit semantic operation, preserving its useful behavior rather than treating equal lengths as paired domains |
 | [R mean](https://stat.ethz.ch/R-manual/R-devel/library/base/html/mean.html) | A generic mean admits methods, trimming and a missing-value policy | A method name is not one universally portable algebraic law; operator identity includes definition and policy |
 | [R weighted mean](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/weighted.mean.html) | Missing weights, zero weights and normalization have distinct documented behavior | Weight support and pair masks need contracts; substituting arbitrary `sum(w*x)/sum(w)` is unsafe without them |
 | [dplyr summaries](https://dplyr.tidyverse.org/reference/summarise.html) | Summary output grain and grouping retention are explicit concerns; reuse/overwrite of summary variables differs by backend | Name every intermediate with immutable identity and resolve grain before physical lowering |
@@ -35,6 +36,13 @@ abstraction. It combines those precedents with a stricter no-input checking
 boundary, named statistical intent, and small, auditable semantic theories.
 
 ## Three Kinds Of Abstraction Must Stay Distinct
+
+The second local pass provides a separate standard-library-only exact proof
+consumer and a catalog-driven descriptor graph. All 35 families have checked
+reference/parameter shapes. A model-description fixture has no observations,
+no fitted state and unresolved scientific assumptions. Shape validation does
+not resolve specialized scientific semantics; distribution sampling, fitting,
+matrix algorithms and backend execution remain unimplemented.
 
 **Computational descriptions** specify schema, expressions, relational context,
 algorithms and dependency graphs. They can often be checked without data.
@@ -56,6 +64,67 @@ The complete family vocabulary is in the
 [catalog](../../../config/data_interface.json); the design groups it by layer.
 Expansion should occur through typed specialized objects, not a claim that one
 generic `StatisticalObject` makes every operation meaningful on every instance.
+
+### Deeper R And Expression-Context Discriminators
+
+R's distribution interface separates density, CDF, quantile and random
+generation (`d`, `p`, `q`, `r` families), including tail/log options. Its Normal
+methods also document recycling and a zero-scale point-mass limit. The proposal
+should retain distinct operations and make broadcasting/support policies explicit;
+a generic `Distribution` name cannot erase those choices.
+[R Normal distribution](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Normal.html)
+
+R formulas distinguish model-term operators from ordinary arithmetic and carry
+an environment used for variables absent from supplied data. Nomi's descriptor
+fixture instead lists formula-variable references explicitly. Its terms/bindings
+are still inert records, not a completed formula parser or model-matrix generator.
+Future formula checking must distinguish term crossing from multiplication,
+intercept removal from subtraction, and declared variables from ambient captures.
+[R model formulae](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html)
+
+R documents that pairwise-complete covariance/correlation can produce matrices
+that are not positive semidefinite. A symmetric matrix of individually valid
+pairwise statistics therefore cannot automatically acquire a covariance-matrix
+contract suitable for every downstream algorithm. The interface needs both
+per-entry observation domains and matrix-level obligations.
+[R covariance and correlation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.html)
+
+Polars expressions acquire meaning through contexts such as selection,
+column addition, filtering and group aggregation. The proposed interface should
+keep scalar, column, group and window shapes visible before adapter lowering.
+Expression reuse must not silently change grain or broadcast semantics merely
+because an operation is placed inside a different context.
+[Polars expressions and contexts](https://docs.pola.rs/user-guide/concepts/expressions-and-contexts/)
+
+In Polars `select`, scalars broadcast to the length of the other selected
+series. The interface should expose broadcasting as a grain change with a
+named source and target domain. A scalar mean and a repeated column of that
+mean are different shapes even when a backend makes the convenience implicit.
+[Polars expressions and contexts](https://docs.pola.rs/user-guide/concepts/expressions-and-contexts/)
+
+### Captured Finite Domain Countermodels
+
+The [local countermodel tests](../../../prototype/tests/unit/tools/test_statistical_countermodels.py)
+execute four original mechanisms with exact arithmetic and ordinary host
+containers. They do not execute or benchmark pandas, Polars or R:
+
+- Pairwise observations `(-1,-1,null)`, `(1,1,null)`,
+  `(-1,null,-1)`, `(1,null,1)`, `(null,-1,1)`, `(null,1,-1)` produce pairwise
+  correlation matrix `[[1,1,1],[1,1,-1],[1,-1,1]]`. Along `(-1,1,1)` its quadratic
+  form is -3, violating the positive-semidefinite requirement for a single
+  genuine correlation matrix. Each local pair alone is perfectly correlated.
+- Values/weights `(10,1)`, `(null,3)` yield a paired-valid weighted mean of 10;
+  counting the invalid pair's weight in the denominator gives 2.5. Allowing
+  weights `(-1,2)` on values `(0,10)` produces 20, outside the observed range.
+- Labeled values `A:1,B:10` and `B:100,C:1000` have positional sums 101 and
+  1010; outer label alignment gives `A:Missing,B:110,C:Missing`.
+- Two measurements of one key joined to two annotations create four rows and
+  double a subsequent measurement sum from 3 to 6. A valid join schema alone
+  does not establish the intended cardinality or accounting meaning.
+
+These captures strengthen the next specialized validators and paired-moment
+contract. No corresponding weighted, matrix, alignment or join operator is
+implemented by the statistical plan checker.
 
 ## Composition Obligations For Statistical Families
 
@@ -148,5 +217,5 @@ evaluator is admitted. JSON is just the current engine-free laboratory boundary.
 Continue only through the ordered closures in the
 [design proposal](../../design/statistical_data.md#current-gaps-and-selected-data-only-path).
 The next experiment remains data-specific: expose independently replayable
-expression artifacts and extend exact paired moments with units, before a
+expression artifacts further and extend exact paired moments with units, before a
 physical adapter or broad source syntax.

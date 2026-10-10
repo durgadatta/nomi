@@ -17,6 +17,8 @@ CATALOG_PATH = Path(__file__).resolve().parents[2] / "config/data_interface.json
 MAX_BYTES = 1_000_000
 MAX_NODES = 512
 MAX_DEPTH = 64
+# Semantic edits require a new theory revision and review of both consumers.
+THEORY_FINGERPRINT = "af1eb30bd0a236a5dcb6f8f454756e4559b64be3a22effbe089dfda8baaf443c"
 DTYPES = {"ExactInt", "ExactRational", "Float64", "Bool", "Text"}
 NUMERIC = {"ExactInt", "ExactRational", "Float64"}
 EXACT = {"ExactInt", "ExactRational"}
@@ -138,8 +140,11 @@ RULES = {
 
 def catalog():
     result = load_document(CATALOG_PATH)
-    if result.get("version") != 1:
+    if type(result.get("version")) is not int or result["version"] != 1:
         raise PlanError("unsupported catalog version")
+    theory = {key: result.get(key) for key in ("profiles", "laws", "operations")}
+    if _digest(theory) != THEORY_FINGERPRINT:
+        raise PlanError("catalog semantics changed without a supported theory revision")
     operations = result.get("operations", {})
     if set(operations) != set(RULES):
         raise PlanError("catalog/checker operation disagreement")
@@ -296,7 +301,7 @@ class Plan:
 
     def inspect(self, name):
         if type(name) is not str or name not in self._nodes:
-            raise PlanError(f"unknown node: {name}")
+            raise PlanError("unknown node reference")
         node = self._nodes[name]
         return {
             "id": name,

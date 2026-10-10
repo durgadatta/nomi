@@ -1,7 +1,8 @@
 # Statistical Data Interface
 
 > Status: designing proposal, 2026-10-10. A bounded engine-free research model
-> implements schema checking and two closed laws. This is not an accepted Nomi
+> implements schema checking, descriptor ports, two closed laws and independent
+> exact-proof replay. This is not an accepted Nomi
 > package, language syntax, dataframe executor, or general theorem prover.
 
 The interface should let someone describe a complete analysis before supplying
@@ -19,6 +20,9 @@ explains what Polars, pandas, R, dplyr, Ibis and Substrait contribute. The
 
 ## Try The Interface Without Data
 
+This experiment requires a source checkout and its tracked catalog. It is not
+an installed end-user dataframe package.
+
 From the repository root, with Python only:
 
 ```bash
@@ -26,6 +30,8 @@ python3 -m tools.statistical_interface check docs/research/data_workflows/statis
 python3 -m tools.statistical_interface inspect docs/research/data_workflows/statistical_plan.json difference
 python3 -m tools.statistical_interface prove docs/research/data_workflows/statistical_plan.json average decomposed
 python3 -m tools.statistical_interface catalog
+python3 -m tools.statistical_interface objects docs/research/data_workflows/statistical_objects.json
+python3 -m tools.statistical_interface objects docs/research/data_workflows/statistical_objects.json normal_likelihood
 ```
 
 The [example](../research/data_workflows/statistical_plan.json) declares three
@@ -59,7 +65,8 @@ are detached snapshots. Build a new plan for each revision.
 
 The current model implements the first question, a small fragment of the
 second, and bounded definitional checking for the third. It deliberately has
-no execution path. Full unit checking, relational cardinality reasoning,
+no execution path. Descriptor checking establishes reference families and inert
+parameter shapes, not full scientific or expression typing. Full unit checking, relational cardinality reasoning,
 inference, fitted models and execution receipts are still proposed.
 
 ## Object Identity And Passive Inspection
@@ -91,7 +98,7 @@ plot specification cannot fetch its data or execute a formatter.
 
 ## The Statistical Object Families
 
-The [declarative catalog](../../config/data_interface.json) records 25 extensible
+The [declarative catalog](../../config/data_interface.json) records 35 extensible
 families and their proposed contract fields. This is an organizing vocabulary,
 not an assertion that all statistical practice is exhaustively enumerated or
 implemented. A family can have many specialized objects and revisioned methods.
@@ -107,6 +114,7 @@ implemented. A family can have many specialized objects and revisioned methods.
 | Inference | Resampling plan, hypothesis test, uncertainty | Sampling unit, reference law, selection history, coverage/credibility and joint origin |
 | Evaluation and presentation | Score, visualization | Loss and evaluation population versus rendering and interaction |
 | Evidence | Proof artifact, execution receipt | Derivation about descriptions versus observations about a run |
+| Supporting descriptions | Observation domain, algorithm plan, fit plan, test result, formula, coordinate system, tensor, sample design, assumption, diagnostic | Name assumptions, axes, algorithms and planned versus realized phases explicitly |
 
 A `ModelSpec` can depend on distributions and formulas without a dataset. A
 `FitPlan` can depend on a model and an input port without being a fitted
@@ -117,9 +125,88 @@ interchangeable. These names illustrate objects, not accepted Nomi classes.
 
 The catalog marks the current graph families `fragment` and the remaining
 families `catalog-only`. Its fields describe the intended full contracts;
-`fragment_support` names what is actually checked. A catalog-only distribution
-is not silently accepted by the checker. New methods must declare ports,
+`fragment_support` names what is actually checked in a computation plan. A
+catalog-only distribution cannot become an executable dataframe operator.
+The separate descriptor interface can name its proposed contract. New methods must declare ports,
 type rules, policy parameters, laws, counterexamples and adapter obligations.
+
+### A Shared Descriptor Envelope
+
+`ObjectGraph.from_document(document)` constructs an immutable description graph:
+
+```json
+{
+  "id": "normal_likelihood",
+  "family": "distribution",
+  "ports": {"parameters": ["mu", "sigma"]},
+  "parameters": {
+    "support": "real line",
+    "measure": "Lebesgue",
+    "density_or_mass": "normal-density-v1",
+    "cdf": "normal-cdf-v1",
+    "sampling_contract": "requires an explicit random stream"
+  }
+}
+```
+
+Ports reference other named descriptions with catalog-declared families and
+one/many multiplicity. Parameters contain inert declarations with a small set
+of shape kinds: text, Boolean, positive integer, record, array, text list or
+closed enum. Every declared slot must be present; undeclared slots are refused.
+The catalog drives these shapes. Formula terms are records, never strings
+passed to `eval`; a record's internal AST semantics are not yet checked.
+The current artifact encoding accepts integers and symbolic/exact records,
+not floating numeric literals. A probability or tolerance can be declared as an
+exact rational record; its specialized range or error contract remains unproved.
+
+The [model example](../research/data_workflows/statistical_objects.json) names
+a source/schema/domain/column, location and scale parameters, Normal likelihood,
+formula, model specification, transform description and fit plan. Its positivity
+and population-model assumptions remain `unresolved`. `description-checked`
+means family references and parameter shapes compose. It does **not** establish
+positivity, normalization, parameter roles, units, formula binding correctness,
+input grain compatibility, or a real learned artifact. A fitted-artifact or
+execution-receipt descriptor is a contract for future evidence, not fabricated
+evidence. The executable plan checker and independent proof consumer remain
+separate from this open scientific vocabulary.
+
+All descriptions are named, bounded, acyclic and inspectable. Inspection carries
+a document/catalog context fingerprint, so the same graph-local ID in another
+revision is a different externally referable description. The shape checker
+does not perform method dispatch, resolve opaque algorithm names, validate
+external evidence references, or supply missing scientific policy defaults.
+Cycles and feedback need another explicitly admitted model. All 35 families
+have a construction/inspection shape; specialized semantic validators and
+operations require further research, counterexamples and conformance tests.
+
+### Add A Statistical Abstraction Through One Route
+
+1. Write a complete analysis that needs it, including unresolved assumptions
+   and an adversarial case. First try specialization of an existing family;
+   create a new family only when its identity or contract is different.
+2. Declare its reference ports, multiplicities and inert parameter shapes in
+   the catalog. The descriptor checker then checks those boundaries without
+   installing an engine or adding source syntax.
+3. Name the specialized semantic validator: units, support, grain, parameter
+   constraints, dependence, missingness and numerical policy. Keep asserted,
+   unresolved, externally supported and mechanically derived facts distinct.
+   A parameter's text field or an opaque algorithm name supplies none of those
+   proofs on its own.
+4. Add a law only with a revisioned theory, precise side conditions and a
+   counterexample outside its scope. Change the semantic catalog revision and
+   both closed consumers when extending the executable fragment. Family-shape
+   extension alone does not extend the proof theory.
+5. Check a named before-data example and its invalid compositions. Require
+   independent receipt replay for a new algebraic claim. Keep real input
+   validation, algorithm execution and backend numeric conformance in separate
+   tests rather than treating schema-only success as their evidence.
+6. Compare one pinned adapter only when the meaning is settled. Retain the
+   original object references in its physical-plan explanation; require explicit
+   conversion/refusal and execution receipts. Admit ordinary Nomi package calls
+   and inspection surfaces before considering any new notation.
+
+This is the data-specific application of the maintainer guide's integration
+loop, not a separate language or a universal statistical evaluator.
 
 ## A Small Set Of Domain Primitives
 
@@ -211,9 +298,28 @@ references, applied rules and normalized term fingerprints. `verify` recomputes
 the derivation and requires an exact receipt match. Schema, profile or catalog
 changes invalidate a receipt. The closed checker and its rule definitions are
 the trusted base; replay by the same checker is not independent formal
-verification. SHA-256 fingerprints assume collision resistance. A future proof
-format should expose an independently replayable normalized DAG and separate
-semantic identity from incidental manifest order and output selection.
+verification. The separate [exact consumer](../../tools/statistical_replay.py)
+imports only the standard library. It reconstructs the full typed graph using
+structurally interned terms, checks the claimed rules and original references,
+and independently verifies the receipt context. It does not trust matching
+fingerprints as the equality oracle. Both consumers pin the semantic catalog
+fingerprint; editing a numeric definition without a supported theory revision
+is refused.
+
+To exchange and replay a receipt:
+
+```bash
+python3 -m tools.statistical_interface prove docs/research/data_workflows/statistical_plan.json average decomposed > /tmp/nomi-mean-proof.json
+python3 -m tools.statistical_replay docs/research/data_workflows/statistical_plan.json /tmp/nomi-mean-proof.json
+```
+
+This is an independently implemented bounded checker, not a machine-checked
+formal proof assistant. It supports the exact fragment only; a Float64
+computation anywhere in the supplied graph can make this consumer refuse even
+when the planner proves an unrelated alias. SHA-256 fingerprints still assume
+collision resistance for context/receipt association. A future wire format
+should expose the normalized DAG and separate semantic identity from incidental
+manifest order and output selection.
 
 ## Interface Versus Implementation
 
@@ -246,7 +352,7 @@ the interface requested.
 | Order | Concrete next closure | Acceptance evidence |
 | --- | --- | --- |
 | 1 — implemented fragment | Named schema-only graph, inert inspection and bounded mean identity | Focused tests, invalid/cyclic/foreign-object refusal, unknown count/Float64 laws, revision/tamper refusal |
-| 2 — next | Independently replayable expression/theory artifacts; exact variance/covariance and explicit units | External replay of the derivation; paired-mask, ddof, zero-count and dimensional counterexamples; no backend required |
+| 2 — partial, next closure | Independent exact receipt replay and descriptor ports now run; next add specialized semantic validators, exact variance/covariance and explicit units | Independent replay of source graph/catalog/receipt; paired-mask, ddof, zero-count and dimensional counterexamples; no backend required |
 | 3 | Group, window, alignment and join contracts | Duplicate keys, nullable keys, absent versus empty groups, tie policies and cardinality changes; no implicit index alignment |
 | 4 | Distribution/estimand/estimator and model-description interfaces | Support and normalization obligations, joint dependence, sample-design/weight distinctions, named pre-fit intermediates |
 | 5 | One pinned adapter for a deliberately small accepted fragment | Bind-time validation, conversion refusal, independent arithmetic oracles, operation support matrix, output provenance and cancellation receipts |
@@ -265,5 +371,5 @@ question 9 and [ML1-ML6](../research/data_workflows/ai_ml.md) retain their owner
 This path supplies concrete interface evidence to them. Complete Nomi generic
 and effect checking is needed for eventual package admission, but not for
 continuing this isolated experiment. Removal criteria: replace this model when
-a checked domain library and independent proof consumer cover its fragment;
+a checked Nomi domain library and independent proof consumer cover its fragment;
 keep its counterexamples and provenance obligations as conformance evidence.

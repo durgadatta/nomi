@@ -130,6 +130,7 @@ not run yet. Runnable examples live in [samples](samples/).
 | Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
 | Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |
 | Research and integrate language mechanisms | [Maintainer synthesis guide](docs/research/synthesis_guide.md) |
+| Explore the data/statistics interface experiment | [Statistical Data Interface](docs/design/statistical_data.md): named plans, input-free checks and statistical object descriptions. |
 
 ## Web Playground
 

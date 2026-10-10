@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "schema",
+      "family": "schema",
+      "ports": {},
+      "parameters": {
+        "ordered_fields": [
+          {
+            "name": "reading",
+            "dtype": "ExactRational",
+            "nullable": true
+          }
+        ],
+        "types": "declared per field",
+        "nullability": true,
+        "schema_revision": "example-v1"
+      }
+    },
+    {
+      "id": "observations",
+      "family": "input_port",
+      "ports": {
+        "schema": "schema"
+      },
+      "parameters": {
+        "binding_identity": "abstract-observations",
+        "snapshot_requirement": "validated snapshot required at execution"
+      }
+    },
+    {
+      "id": "domain",
+      "family": "observation_domain",
+      "ports": {
+        "source": "observations"
+      },
+      "parameters": {
+        "grain": "one observation",
+        "multiplicity": "bag",
+        "ordering": "unspecified"
+      }
+    },
+    {
+      "id": "reading",
+      "family": "column",
+      "ports": {
+        "observation_domain": "domain"
+      },
+      "parameters": {
+        "dtype": "ExactRational",
+        "unit": "1",
+        "nullability": true
+      }
+    },
+    {
+      "id": "mu",
+      "family": "parameter",
+      "ports": {},
+      "parameters": {
+        "space": "Real",
+        "constraint": "unresolved value",
+        "unit": "1",
+        "role": "location"
+      }
+    },
+    {
+      "id": "sigma",
+      "family": "parameter",
+      "ports": {},
+      "parameters": {
+        "space": "Real",
+        "constraint": "positive, not established by this description",
+        "unit": "1",
+        "role": "scale"
+      }
+    },
+    {
+      "id": "positive_scale",
+      "family": "assumption",
+      "ports": {},
+      "parameters": {
+        "statement": "sigma > 0",
+        "evidence_status": "unresolved",
+        "evidence_references": []
+      }
+    },
+    {
+      "id": "normal_population",
+      "family": "assumption",
+      "ports": {},
+      "parameters": {
+        "statement": "The selected scientific model adequately represents the intended population.",
+        "evidence_status": "unresolved",
+        "evidence_references": []
+      }
+    },
+    {
+      "id": "normal_likelihood",
+      "family": "distribution",
+      "ports": {
+        "parameters": [
+          "mu",
+          "sigma"
+        ]
+      },
+      "parameters": {
+        "support": "real line",
+        "measure": "Lebesgue",
+        "density_or_mass": "normal-density-v1",
+        "cdf": "normal-cdf-v1",
+        "sampling_contract": "requires an explicit random stream; no stream is bound"
+      }
+    },
+    {
+      "id": "response_formula",
+      "family": "formula",
+      "ports": {
+        "variables": [
+          "reading"
+        ]
+      },
+      "parameters": {
+        "terms": {
+          "response": "reading",
+          "predictor": [
+            {
+              "kind": "intercept"
+            }
+          ]
+        },
+        "bindings": {
+          "reading": "reading"
+        },
+        "scope_policy": "explicit variable ports; no captured environment"
+      }
+    },
+    {
+      "id": "normal_model",
+      "family": "model_specification",
+      "ports": {
+        "variables": [
+          "reading"
+        ],
+        "formula_ast": "response_formula",
+        "likelihood": "normal_likelihood",
+        "assumptions": [
+          "positive_scale",
+          "normal_population"
+        ]
+      },
+      "parameters": {
+        "link": "identity"
+      }
+    },
+    {
+      "id": "transform",
+      "family": "algorithm_plan",
+      "ports": {
+        "inputs": [
+          "reading"
+        ]
+      },
+      "parameters": {
+        "operation": "declared identity transformation",
+        "algorithm_revision": "example-v1",
+        "policies": {
+          "missing": "must be resolved before fitting"
+        }
+      }
+    },
+    {
+      "id": "state_schema",
+      "family": "schema",
+      "ports": {},
+      "parameters": {
+        "ordered_fields": [
+          {
+            "name": "mu",
+            "dtype": "Float64",
+            "nullable": false
+          },
+          {
+            "name": "sigma",
+            "dtype": "Float64",
+            "nullable": false
+          }
+        ],
+        "types": "declared Float64 fitted state",
+        "nullability": false,
+        "schema_revision": "fitted-state-example-v1"
+      }
+    },
+    {
+      "id": "planned_fit",
+      "family": "fit_plan",
+      "ports": {
+        "model": "normal_model",
+        "input": "observations",
+        "transform": "transform",
+        "state_schema": "state_schema"
+      },
+      "parameters": {
+        "randomness_owner": "no random capability bound"
+      }
+    }
+  ],
+  "outputs": [
+    "planned_fit",
+    "normal_likelihood",
+    "positive_scale",
+    "normal_population"
+  ]
+}

@@ -5,6 +5,7 @@ import json
 import sys
 
 from .model import Plan, PlanError, catalog, load_document
+from .objects import ObjectGraph
 
 
 def main(argv=None):
@@ -13,6 +14,11 @@ def main(argv=None):
     commands.add_parser(
         "catalog", help="show implemented ports and catalog-only families"
     )
+    objects = commands.add_parser(
+        "objects", help="check typed statistical description ports; no scientific proof"
+    )
+    objects.add_argument("document")
+    objects.add_argument("node", nargs="?", help="inspect one named description")
     for command in ("check", "inspect", "prove"):
         sub = commands.add_parser(command)
         sub.add_argument("plan", help="schema-only JSON plan; no dataset bindings")
@@ -25,6 +31,9 @@ def main(argv=None):
     try:
         if args.command == "catalog":
             result = catalog()
+        elif args.command == "objects":
+            graph = ObjectGraph.from_document(load_document(args.document))
+            result = graph.inspect(args.node) if args.node else graph.check()
         else:
             plan = Plan.from_document(load_document(args.plan))
             if args.command == "check":

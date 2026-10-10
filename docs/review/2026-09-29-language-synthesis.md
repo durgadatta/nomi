@@ -819,3 +819,49 @@ extend the exact paired-moment theory with units and denominator policies. The
 broader catalog contracts still need typed specialized ports and scientific
 obligations before their operators can be admitted. Backend execution and Nomi
 source/package admission remain separate. The packet stays `designing`.
+
+## Independent Replay And Statistical Descriptors, 2026-10-10
+
+### Evidence That Changed The Design
+
+A second consumer now reconstructs the exact graph and verifies the mean-law
+receipt without importing the planner or its type inference. Its equality test
+uses structurally interned terms, not matching supplied hashes. Both consumers
+refuse numeric-definition changes without a supported theory revision. The
+descriptor catalog now has 35 families, typed reference ports and inert
+parameter shapes. A named Normal model/fit description remains unbound with
+unresolved scale and population assumptions.
+
+### Workflow Friction
+
+Descriptor shape, expression typing and scientific validity need different
+success statuses. Captured finite countermodels show invalid matrix-wide
+correlation despite valid local pairs, wrong weighted domains, positional versus
+labeled alignment and join-induced double counting. The descriptor context
+addition briefly reused a loop variable for catalog metadata; focused checks
+caught and corrected that implementation error before checkpointing. The current
+wire receipt still conservatively invalidates on manifest-order/catalog changes;
+semantic revision identity needs a later narrower dependency contract.
+
+### Durable Improvement
+
+The canonical statistical proposal owns one extension route through catalog
+ports, specialized validators, closed laws, independent evidence and adapter
+admission. The research dossier adds deeper primary R formula/distribution/
+matrix and pandas/Polars context evidence. User-facing navigation routes to the
+research tool with an explicit source-checkout boundary. All 35 families can
+name and inspect descriptions; catalog-only objects still cannot execute.
+Combined focused validation passed 210 tests, including 73 new data-interface,
+replay, descriptor and finite-countermodel cases. Ruff, five packet checks and
+2142 local links across 166 documents passed. No language grammar, interpreter,
+browser runtime or real statistical execution engine was changed.
+
+### Next Pass
+
+Keep the next work solely within the data path: specialized semantic validators,
+units, paired-valid exact moments and denominator policies. Then close group/
+window/alignment/cardinality contracts and richer model/inference obligations
+before selecting one pinned backend. Independent exact replay is delivered;
+formal verification, arbitrary laws, floating guarantees, fitting and scientific
+assumption validation remain open. The current descriptor and proof artifacts
+are removable research surfaces, not accepted Nomi public package contracts.

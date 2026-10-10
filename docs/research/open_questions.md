@@ -223,8 +223,9 @@ are unperformed and do not replace the existing owner-enforced publication law.
 The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
 now exercises a declared exact-rational theory without observations. Float64
 mean expansion, paired moments, units, weights and scientific assumptions
-remain distinct obligations. The next selected step is independent proof
-replay and exact variance/covariance with units, not a universal numeric engine.
+remain distinct obligations. Independent exact proof replay now runs; the next
+selected closure is specialized object semantics and exact variance/covariance
+with units, not a universal numeric engine.
 
 **October 9 bounded closure:** default mathematical Int, distinct Bool and the
 initial scalar operations are accepted in
