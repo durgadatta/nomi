@@ -49,6 +49,34 @@ The default index is generated at:
 
 `.nomi/` is ignored by git because the index is derived from local files.
 
+The default configuration belongs to the source checkout; it is not bundled
+with the wheel. For an installed developer tool, supply an absolute config path:
+
+```bash
+nomi-rag --config /absolute/path/to/rag_sources.json build
+nomi-rag --config /absolute/path/to/rag_sources.json search "binding constraints"
+nomi-rag-mcp --config /absolute/path/to/rag_sources.json
+```
+
+For an explicitly supplied config, relative source and index paths resolve
+against its directory. This keeps the index with your configured material,
+rather than indexing the Python installation. A minimal configuration is:
+
+```json
+{
+  "index_path": ".nomi/rag_index.json",
+  "sources": [
+    {"name": "notes", "path": "notes", "include": ["**/*.md"]}
+  ]
+}
+```
+
+Create a `notes` directory beside that config and add your Markdown files.
+Configure only material you intend to expose through retrieval. Missing or
+malformed configuration exits with status 2 and a recovery message on stderr;
+MCP startup keeps stdout reserved for protocol JSON. Source include/exclude and
+resource boundaries remain described below.
+
 The placeholder books source points at:
 
 ```bash

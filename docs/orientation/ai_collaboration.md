@@ -7,6 +7,11 @@ authority, oracle, or replacement for design judgment. It is treated as a
 high-throughput collaborator for exploration, critique, synthesis, refactoring,
 test generation, and documentation pressure.
 
+For installed RAG/MCP developer tools, use an explicit owned configuration as
+described in [RAG setup](rag_mcp.md#configuration). Checkout defaults are not
+wheel assets; startup errors explain that boundary without writing messages
+to MCP stdout. This configuration requirement does not change document authority.
+
 The durable source of evidence remains the repository: code, tests, design
 notes, and executable examples. But because Nomi is exploratory, the repository
 is not a frozen product contract. Current artifacts may lag the intended

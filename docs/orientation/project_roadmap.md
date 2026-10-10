@@ -240,6 +240,28 @@ human/accessibility evidence remain separate gates. The live-preview mismatch
 is not closed by these local receipts. Continue with the remaining ordered
 repairs above rather than treating this checkpoint as release readiness.
 
+### Installed RAG Setup Repair — October 10
+
+The developer-tool setup portion of A28/A32 now has an explicit boundary:
+checkout configuration is not wheel data; installed `nomi-rag` and
+`nomi-rag-mcp` require `--config /absolute/path/to/rag_sources.json`.
+Missing/invalid configuration produces status 2 and a concise stderr recovery
+message, preserving stdout for program/protocol output. Structural config
+checks run before indexing; configured sources and resource restrictions keep
+their existing ownership. No installation tree is implicitly indexed.
+
+Eight startup reproductions failed before the repair and pass afterward; the
+combined RAG setup/retrieval/resource/stdio selection passes **30 checks**.
+Three extracted-wheel checks pass outside the checkout: missing defaults refuse
+with recovery guidance, explicit relative sources/index paths remain owned by
+the config directory, and build/search/MCP initialization succeed. These use
+the current host's dependencies and are not a pristine install receipt.
+
+The durable improvement is actionable configuration refusal plus a small setup
+example in [RAG MCP Context](rag_mcp.md#configuration), replacing a traceback
+with an inspectable user boundary. Package example/docs inclusion, license,
+clean installation, broad desktop hosts, and public deployment remain open.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

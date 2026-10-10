@@ -22,6 +22,13 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    try:
+        run_command(args)
+    except (OSError, ValueError) as error:
+        parser.exit(2, f"nomi-rag: {error}\n")
+
+
+def run_command(args: argparse.Namespace) -> None:
     if args.command == "build":
         config = load_config(args.config)
         index = build_and_save(args.config)

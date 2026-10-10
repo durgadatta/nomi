@@ -14,6 +14,9 @@ data/ML engine is promised.
 - Added repeatable exact-output checks for the introductory guide on hosted
   Nomi/reduced and WASM/JS, package project/guide/issue links, CLI version/help
   discovery, and an issue form for installation, CLI, editor, notebook, and docs.
+- Made installed RAG developer tools explain their explicit configuration
+  requirement, reject malformed setup before indexing, and keep startup errors
+  on stderr without traceback or MCP stdout pollution.
 - Audited current local browser, CLI, package, notebook, and editor boundaries;
   routed current walkthroughs to the checkout after detecting an older published
   playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)

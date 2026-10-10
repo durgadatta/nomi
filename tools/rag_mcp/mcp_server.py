@@ -371,7 +371,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the Nomi RAG MCP stdio server.")
     parser.add_argument("--config", default=None, help="Path to rag_sources.json.")
     args = parser.parse_args()
-    NomiRagMcpServer(args.config).serve()
+    try:
+        server = NomiRagMcpServer(args.config)
+    except (OSError, ValueError) as error:
+        parser.exit(2, f"nomi-rag-mcp: {error}\n")
+    server.serve()
 
 
 if __name__ == "__main__":

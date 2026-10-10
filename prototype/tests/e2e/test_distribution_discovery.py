@@ -4,7 +4,9 @@ from email import message_from_string
 import subprocess
 import sys
 
-from prototype.tests.e2e.test_distribution_boundary import distribution  # noqa: F401
+from prototype.tests.e2e import test_distribution_boundary as wheel_helpers
+
+distribution = wheel_helpers.distribution
 
 
 def test_wheel_metadata_links_to_user_guidance_and_problem_intake(distribution):
