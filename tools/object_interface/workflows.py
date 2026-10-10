@@ -256,7 +256,7 @@ class WorkflowInstance(Frozen):
             else self._requirements.check(),
         }
 
-    def compile(self, backend, outputs=None):
+    def compile(self, backend, outputs=None, *, include_condition_inputs=False):
         """Explicitly select an adapter and retain all carried required conditions."""
         from .backend import Backend
 
@@ -264,11 +264,19 @@ class WorkflowInstance(Frozen):
             raise ContractError(
                 "workflow realization needs an explicitly selected backend"
             )
+        if type(include_condition_inputs) is not bool:
+            raise ContractError("condition-input inclusion must be an explicit boolean")
+        if include_condition_inputs and self._requirements is None:
+            raise ContractError(
+                "condition-input inclusion requires carried requirements"
+            )
         compiled = backend.compile(self._graph, outputs)
         return (
             compiled
             if self._requirements is None
-            else compiled.require(self._requirements)
+            else compiled.require(
+                self._requirements, include_condition_inputs=include_condition_inputs
+            )
         )
 
     @property

@@ -127,16 +127,28 @@ class Backend(Frozen):
         result._terms = tuple(sorted(reachable))
         result._inputs = tuple(input_ids)
         result._requirements = None
+        result._condition_inputs, result._condition_subjects = (), ()
         result._sealed = True
         return result
 
 
 class Compiled(Frozen):
-    __slots__ = ("_graph", "_backend", "_outputs", "_terms", "_inputs", "_requirements")
+    __slots__ = (
+        "_graph",
+        "_backend",
+        "_outputs",
+        "_terms",
+        "_inputs",
+        "_requirements",
+        "_condition_inputs",
+        "_condition_subjects",
+    )
 
-    def require(self, requirements):
+    def require(self, requirements, *, include_condition_inputs=False):
         from .contracts import Requirements
 
+        if type(include_condition_inputs) is not bool:
+            raise ContractError("condition-input inclusion must be an explicit boolean")
         if (
             type(requirements) is not Requirements
             or requirements._graph is not self._graph
@@ -147,27 +159,46 @@ class Compiled(Frozen):
                 "combine requirements explicitly before attaching a new set"
             )
         manifest = self._graph.vocabulary.document
+        condition_inputs, condition_subjects = set(), set()
         for obligation in requirements._obligations:
             for operand in obligation.operands:
                 index = self._graph._normal[operand.subject]
-                if index not in self._terms:
+                outside = index not in self._terms
+                if outside and not include_condition_inputs:
                     raise ContractError(
                         "requirement subject is outside selected realization"
                     )
                 term = self._graph._terms[index]
-                if manifest["operations"][term[0]]["role"] not in ("input", "literal"):
+                contract = manifest["operations"][term[0]]
+                if contract["role"] not in ("input", "literal"):
                     raise ContractError(
                         "computed preconditions need a richer validator; they cannot be enforced before execution"
                     )
+                if contract["effects"]:
+                    raise ContractError(
+                        "effectful condition inputs are outside this pure backend protocol"
+                    )
+                if outside:
+                    condition_subjects.add(operand.subject)
+                    if contract["role"] == "input":
+                        condition_inputs.add(term[2])
         if requirements.check()["status"] == "refuted":
             raise ContractError("required literal condition is refuted")
         result = Compiled()
         result._graph, result._backend = self._graph, self._backend
-        result._outputs, result._terms, result._inputs = (
+        result._outputs, result._terms = (
             self._outputs,
             self._terms,
-            self._inputs,
         )
+        result._condition_inputs = tuple(
+            identity for identity in self._graph._order if identity in condition_inputs
+        )
+        result._condition_subjects = tuple(
+            identity
+            for identity in self._graph._order
+            if identity in condition_subjects
+        )
+        result._inputs = self._inputs + result._condition_inputs
         result._requirements = requirements
         result._sealed = True
         return result
@@ -207,7 +238,7 @@ class Compiled(Frozen):
         )
 
     def inspect(self):
-        return {
+        result = {
             "status": "capability-checked",
             "context": self._graph.context,
             "vocabulary": self._graph.vocabulary.fingerprint,
@@ -225,6 +256,15 @@ class Compiled(Frozen):
             if self._requirements is None
             else self._requirements.check(),
         }
+        if self._condition_subjects:
+            result["condition_subjects"] = list(self._condition_subjects)
+            result["condition_inputs"] = list(self._condition_inputs)
+            result["computation_inputs"] = [
+                identity
+                for identity in self._inputs
+                if identity not in self._condition_inputs
+            ]
+        return result
 
     def bind(self, values):
         encoded = snapshot(values)

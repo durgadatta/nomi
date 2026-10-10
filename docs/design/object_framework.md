@@ -311,9 +311,8 @@ bindings leaves it pending. Reversing the supplied bounds refutes it, and an
 attached required condition stops execution before any backend callback. Every
 operand must belong to the selected realization and normalize to an input or
 literal; computed operands remain pending and cannot be attached as preconditions.
-A condition-only input currently needs explicit output selection to belong to
-the realization; separating contract dependencies from value dependencies is a
-next experiment, not an implicit enlargement of execution.
+Inputs needed only by conditions can be included separately through the
+explicit mechanism below.
 
 Workflow substitution rewires **all** operands. A composition containing v3
 conditions promotes older unary conditions to single-operand records in v3;
@@ -325,6 +324,38 @@ Keep three questions separate: vocabulary definitions can establish symbolic
 composition equality without inputs; requirement artifacts can validate
 explicit snapshots; backend executions produce values. Relations do not
 generalize the first into a solver or the third into a proof of a domain law.
+
+### Bind Inputs Used Only By A Condition
+
+A requested title can constrain publication without becoming part of its
+rendered content or returned values. The [publication example](../research/object_framework/publication.json)
+has a `draft` computation input and a `requested` condition-only input. Their
+[condition](../research/object_framework/publication_requirements.json) relates
+the draft's title to that request.
+
+```bash
+python3 -m tools.object_interface --vocabulary config/document_interface.json compile docs/research/object_framework/publication.json --backend document-blocks --requirements docs/research/object_framework/publication_requirements.json --include-condition-inputs
+python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/publication.json docs/research/object_framework/publication_bindings.json --backend document-blocks --requirements docs/research/object_framework/publication_requirements.json --include-condition-inputs
+```
+
+Python callers use `compiled.require(conditions, include_condition_inputs=True)`
+or `instance.compile(backend, include_condition_inputs=True)`. This option extends
+the exact binding interface with the underlying slots of condition-only inputs;
+aliases and repeated operands bind one slot. Condition-only literals need no
+binding. Inspection and realization receipts distinguish `computation_inputs`,
+`condition_inputs` and the out-of-computation `condition_subjects`. Output
+selection, executable terms and their logical-to-physical mapping stay the same.
+Condition values do not enter backend arguments unless they also belong to the
+selected computation. All bindings contribute to the binding digest and typed
+requirement evidence.
+
+The default remains the closed selected realization, which refuses omitted
+subjects. Inclusion must be an explicit boolean and requires a contract. It
+never admits computed or effectful conditions, adds callbacks, chooses an
+engine, or drops an unsatisfied condition. Each added slot needs an exact typed
+snapshot before any callback can run. This is a laboratory binding interface,
+not ambient authority or a guarantee that arbitrary callers cannot bypass a
+separately owned policy.
 
 ### Domain Integration Order
 
@@ -507,7 +538,7 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Richer domain refinement protocol | Nested paths and v3 cross-object integer/text relations have static/input evidence, binding gates and independent replay. Quantification, contract-only input dependencies and domain proofs need separate laws; assertions cannot become proof. |
+| Richer domain refinement protocol | Nested paths, v3 cross-object relations and explicit condition-only binding inputs now run. Quantification and domain proofs need separate laws; assertions cannot become proof. |
 | More useful object composition | Parameterized multi-output workflows preserve reference arguments, namespaced intermediates and carried conditions, with independent pinned substitution replay. Compare authoring/repair costs with inline composition before generalizing the interface. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |

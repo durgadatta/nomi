@@ -760,7 +760,7 @@
       ],
       "owner": "docs/design/object_framework.md",
       "law": "Literal and explicit input evidence discharge closed unary and cross-object representation rules; every computed operand stays pending.",
-      "gate": "Quantification, contract-only input dependencies and scientific assumptions require separately owned laws.",
+      "gate": "Quantification and scientific assumptions require separately owned laws; condition-only inputs require explicit inclusion.",
       "placement": "library",
       "status": "experiment",
       "fixtures": [

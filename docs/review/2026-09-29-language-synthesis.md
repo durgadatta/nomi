@@ -1293,3 +1293,35 @@ Compare an explicit extension for contract-only inputs with keeping the
 selected realization closed. Then express bounded universal structural
 requirements with explicit empty-container and missing-path laws; do not
 introduce implicit evaluation, Cartesian products or scientific assertions.
+
+## Explicit Condition-Only Inputs — 2026-10-10
+
+### Evidence That Changed The Design
+
+A publication condition can depend on a requested title without rendering or
+returning the request. Contract dependencies and value dependencies therefore
+need distinct inspection. An explicit inclusion option extends binding with
+condition-only slots while preserving selected outputs and executable terms.
+This is a separate laboratory policy choice, not an inferred output or engine.
+
+### Workflow Friction
+
+Aliases must resolve to one underlying input; repeated conditions must not
+require duplicate bindings. Condition-only literals require no binding and
+computed conditions must never gain hidden execution. The default selected
+realization keeps its existing refusals. Workflows pass the explicit inclusion
+choice through while retaining all carried conditions.
+
+### Durable Improvement
+
+New tests establish unchanged computation mappings, exact slot typing, no
+callbacks on mismatched requests, detached receipts, independent requirement
+replay, alias deduplication, workflow selection and CLI refusal of an unscoped
+inclusion flag. A tracked publication example returns its original rendered
+text and paragraph count while separately binding its requested title.
+
+### Next Pass
+
+Compose bounded universal requirements over declared collection items. Specify
+empty-container truth, missing indexed paths, full schema validation even when
+empty, evidence limits and workflow promotion before implementing the traversal.

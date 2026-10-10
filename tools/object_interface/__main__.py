@@ -39,6 +39,11 @@ def main(argv=None):
             child.add_argument(
                 "--requirements", help="explicit required input/literal conditions"
             )
+            child.add_argument(
+                "--include-condition-inputs",
+                action="store_true",
+                help="explicitly bind condition-only inputs without adding computation or outputs",
+            )
         if command == "run":
             child.add_argument("bindings")
         if command == "requirements":
@@ -68,6 +73,10 @@ def main(argv=None):
                 None if args.bindings is None else load_document(args.bindings)
             )
         else:
+            if args.include_condition_inputs and not args.requirements:
+                raise ContractError(
+                    "condition-input inclusion requires an explicit requirement artifact"
+                )
             # This explicitly selected example adapter accepts only its pinned vocabulary.
             backend = (
                 python_backend(lab_vocabulary())
@@ -82,7 +91,8 @@ def main(argv=None):
             )
             if args.requirements:
                 compiled = compiled.require(
-                    Requirements.from_document(load_document(args.requirements), graph)
+                    Requirements.from_document(load_document(args.requirements), graph),
+                    include_condition_inputs=args.include_condition_inputs,
                 )
             if args.command == "compile":
                 result = compiled.inspect()
