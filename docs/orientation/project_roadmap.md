@@ -334,6 +334,30 @@ still selects its existing syntax-tour profile, and the CLI retains its legacy
 no-argument/debug defaults. Those entry/distribution decisions remain open
 rather than being silently changed along with the learning notebooks.
 
+### Notebook Diagnostic Repair — October 10
+
+The kernel now consumes the public runtime's failed `ExecutionResult` and
+publishes one visible error with the same diagnostic records in its shell reply.
+Parse positions/excerpts remain available; `%run` diagnostics include the file
+path. Python implementation frames are omitted. Silent failures return an error
+reply without publishing; command/setup errors keep a concise exception message.
+The adapter does not invent runtime locations, reset state, or roll back earlier
+assignments. The public runtime's original exception path remains available for
+implementation debugging. This closes the previous notebook-presentation gap
+at the messaging boundary, not a full debugger or human UI usability study.
+
+Seven new diagnostic contracts failed before the repair and pass afterward.
+The notebook/kernel selection passes **19 checks**. The broader contract/tool
+and notebook selection passes **1,051 checks**, including the existing launcher
+contract updated for the intentionally changed calculation default. A real
+installed kernel independently verifies matching IOPub/shell errors, preserved
+prior output, parse coordinates, and successful state recovery after both
+runtime and parse failures. The diagnostic probe's Python 3.14 Jupyter client
+emits a third-party deallocator warning at process exit; the kernel was shut
+down. A fresh real-kernel calculation still prints **3850**, then **5050**.
+No notebook files were saved or global kernelspecs modified. Clean installation,
+interrupt behavior, Docker and actual desktop UI evidence remain open.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

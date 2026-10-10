@@ -26,6 +26,9 @@ data/ML engine is promised.
   calculation task. Added a clean calculation notebook, labeled older notebook
   tours as experiments, and added actual-kernel notebook checking without
   saving execution outputs into the lesson.
+- Made notebook failures publish runtime diagnostics, preserve parse positions
+  and earlier output, and omit internal Python traceback frames. Failed cells
+  keep existing notebook state; silent failures return only the error reply.
 - Audited current local browser, CLI, package, notebook, and editor boundaries;
   routed current walkthroughs to the checkout after detecting an older published
   playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)

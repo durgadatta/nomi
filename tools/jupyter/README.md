@@ -16,6 +16,18 @@ output, and displayed results, following the
 [Jupyter messaging contract](https://jupyter-client.readthedocs.io/en/latest/messaging.html#execute).
 Normal visible output and cross-cell bindings are unchanged.
 
+Failed cells publish an error to the notebook and return the same diagnostic
+in the execution reply. Parse errors keep known source positions and excerpts;
+runtime messages retain their diagnostic code without Python implementation
+frames. `nomi_diagnostics` carries the public runtime's structured records for
+tool consumers. Silent failures return an error reply without publishing.
+Kernel-command failures still use a concise exception message. This is a
+prototype adapter, not a full source-level stack trace or target debugger.
+
+Printed output and assignments completed before a failure remain. Repair and
+rerun the cell, or use `%reset` and Run All to rebuild state. For implementation
+debugging, the public runtime API still supports raising the original exception.
+
 ## Setup
 
 From the repository root:

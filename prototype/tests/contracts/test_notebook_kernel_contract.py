@@ -112,7 +112,7 @@ def test_one_command_launcher_runs_setup_check_and_notebook(monkeypatch):
     assert calls[1][0] == [sys.executable, "-m", "tools.jupyter.check_nomi_kernel"]
     assert calls[2][0][:3] == [sys.executable, "-m", "notebook"]
     assert calls[2][0][3] == f"--ServerApp.root_dir={ROOT}"
-    assert calls[2][0][4] == "--ServerApp.default_url=/lab/tree/notebooks/nomi_syntax_tour.ipynb"
+    assert calls[2][0][4] == "--ServerApp.default_url=/lab/tree/notebooks/nomi_calculation.ipynb"
     assert calls[2][0][5] == "--LabServerApp.notebook_starts_kernel=True"
     assert calls[2][0][6] == "--no-browser"
 

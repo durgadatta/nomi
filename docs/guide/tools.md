@@ -135,6 +135,11 @@ and opens the first calculation notebook. Choose the **Nomi** kernel if necessar
 persist across cells, so execution order matters. `%who` lists names, `%reset`
 clears state, `%run` runs a file, and `%ast` inspects the prototype's lowered AST.
 
+A failed cell shows an error message; parse errors also identify the source
+line and column. Output printed before the failure stays visible. A failure
+does not reset the notebook or undo assignments that already ran: repair the
+cell and rerun it, or use `%reset` and Run All for a fresh start.
+
 The calculation reuses the same first program as the browser and guide, then
 shows a change in a second cell. Save a copy for your own work. The separate
 experimental syntax tour includes historical forms. Use the

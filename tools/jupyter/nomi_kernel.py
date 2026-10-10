@@ -12,7 +12,6 @@ import io
 import os
 import shlex
 import sys
-import traceback
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from typing import Any
@@ -29,7 +28,7 @@ def _ensure_project_root_on_path() -> None:
 
 _ensure_project_root_on_path()
 
-from prototype.runtime import create_session, inspect as inspect_runtime
+from prototype.runtime import Diagnostic, ExecutionResult, create_session, inspect as inspect_runtime  # noqa: E402
 
 
 class KernelStream(io.TextIOBase):
@@ -92,9 +91,11 @@ class NomiKernel(Kernel):
 
         try:
             result = self._execute_with_output(code, silent=silent)
+            if isinstance(result, ExecutionResult) and result.exception is not None:
+                return self._error(result.exception, diagnostics=result.diagnostics, silent=silent)
             return self._ok(user_expressions, result)
         except Exception as error:
-            return self._error(error)
+            return self._error(error, silent=silent)
 
     def do_complete(self, code: str, cursor_pos: int) -> dict:
         prefix = self._completion_prefix(code[:cursor_pos])
@@ -170,7 +171,7 @@ class NomiKernel(Kernel):
                 raise ValueError("Usage: %run path/to/file.nomi")
             file_path = self._resolve_path(parts[1])
             source = file_path.read_text(encoding="utf-8")
-            return self._execute_nomi(source, silent=silent)
+            return self._execute_nomi(source, silent=silent, filename=file_path)
 
         if name == "%ast":
             source = rest if rest.strip() else command[len(first_line):].strip()
@@ -182,13 +183,15 @@ class NomiKernel(Kernel):
 
         raise ValueError(f"Unknown Nomi kernel command: {name}. Try %help.")
 
-    def _execute_nomi(self, code: str, *, silent: bool) -> Any:
-        # TODO(NOMI-ARCH-024): Consume the same structured diagnostics/events
-        # result contract as the web bridge once ExecutionResult grows it.
+    def _execute_nomi(self, code: str, *, silent: bool, filename: Path | None = None) -> Any:
         result = self.runtime_session.run(
             source=self._normalize_source(code),
+            filename=filename,
             display_last_expr=not silent,
+            raise_on_error=False,
         )
+        if result.exception is not None:
+            return result
         if result.has_value and result.value is not None:
             self._send_execute_result(result.value)
         return result.value if result.has_value else None
@@ -244,13 +247,34 @@ class NomiKernel(Kernel):
             "user_expressions": user_expressions or {},
         }
 
-    def _error(self, error: Exception) -> dict:
-        lines = traceback.format_exception(type(error), error, error.__traceback__)
-        return {
-            "status": "error",
+    def _error(
+        self, error: Exception, *, diagnostics: tuple[Diagnostic, ...] = (), silent: bool = False,
+    ) -> dict:
+        lines = []
+        for diagnostic in diagnostics:
+            span = diagnostic.span
+            if isinstance(span, dict) and span.get("line"):
+                location = f"line {span['line']}, column {span.get('column', 1)}"
+                if span.get("filename"):
+                    location = f"{span['filename']}: {location}"
+                lines.append(location)
+            if diagnostic.source_excerpt is not None:
+                lines.append(diagnostic.source_excerpt)
+            lines.append(f"{diagnostic.code or diagnostic.phase or 'error'}: {diagnostic.message}")
+        if not lines:
+            lines.append(f"{type(error).__name__}: {error}")
+        content = {
             "ename": type(error).__name__,
             "evalue": str(error),
-            "traceback": [line.rstrip("\n") for line in lines],
+            "traceback": lines,
+            "nomi_diagnostics": [diagnostic.to_record() for diagnostic in diagnostics],
+        }
+        if not silent:
+            self.send_response(self.iopub_socket, "error", content)
+        return {
+            "status": "error",
+            "execution_count": self.execution_count,
+            **content,
         }
 
     def _help_text(self) -> str:
