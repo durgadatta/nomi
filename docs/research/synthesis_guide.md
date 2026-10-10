@@ -21,6 +21,10 @@ The current selected continuation establishes a generic
 [engine-free object framework](../design/object_framework.md) first: referable
 objects, typed composition, passive inspection, closed definitions and explicit
 realization. Arithmetic, text and document descriptions test the shared boundary.
+The [primitive composition hierarchy](../design/primitive_composition.md) now
+provides a second design route: trace a construct to its reusable ingredients,
+retain its operational/domain laws, then compare long forms. Its catalog maps
+the current target suite without claiming a minimal Core or semantic proof.
 The [Statistical Data Interface](../design/statistical_data.md) and its
 [primary-system comparison](data_workflows/statistical_objects.md) provide one
 domain adapter. Their missingness, observation domains, numeric theories and
@@ -35,6 +39,7 @@ meaning from implementation; deferred execution is one consequence.
 | Resume an unresolved choice | [Open questions](open_questions.md), [registered passes](../orientation/design_pass_workflow.md) | One bounded discriminator under the existing owner |
 | Test composition beyond ordinary source | [Interfaces](interfaces/README.md), [domain composition](domain_composition.md), [DSL models](dsls/orthogonal_models.md) | A whole activity, preserving domain-specific meaning |
 | Define objects independently of an implementation | [Engine-Free Objects](../design/object_framework.md) | Nominal families, typed ports, passive descriptions, domain obligations and explicit adapter capabilities |
+| Reduce a feature to reusable responsibilities | [Primitive compositions](../design/primitive_composition.md) | A typed long form, preserved laws, residual mechanisms and independent counterexamples |
 | Move a settled result into the language | [Admission workflow](#integrate-a-settled-result) | Canonical laws, independent fixtures, and a reversible bridge |
 
 For this pass, start with the eight expanded reviews below. Follow the linked

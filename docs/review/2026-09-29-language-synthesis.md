@@ -1137,3 +1137,40 @@ Use this evidence to separate reusable framework mechanisms from semantic
 language primitives. Build the requested composition hierarchy with owners,
 operational laws and explicit residual gaps; do not infer a universal IR or
 source-language acceptance from successful library experiments.
+
+## Primitive Composition Hierarchy — 2026-10-10
+
+### Evidence That Changed The Design
+
+The user asked to approach the coherent language from its primitives upward.
+The canonical hierarchy now connects six candidate semantic families to 56
+compositions spanning source constructs, operational boundaries, domains and
+interaction tools. Every composition retains a law and an unclosed gate.
+Worked reductions expose evaluation order, lexical return targets, accumulated
+errors, completion policy, domain-qualified equality and owner-checked edits.
+
+### Workflow Friction
+
+A compact formula could hide exactly the facts it was meant to explain.
+The hierarchy separates semantic families from machine opcodes, contracts from
+runtime branching, navigation from proof, and domain laws from representation.
+The catalog includes validation/tooling ingredients; its closure cannot be used
+to infer the effect set of the subject program.
+
+### Durable Improvement
+
+A declarative catalog and passive inspector expose dependencies by DAG depth.
+Validation rejects cycles, unknown dependencies, missing/escaped owners,
+unmapped target files, candidate-root acceptance claims and stale documentation.
+All 25 current target-suite programs have declared routes; that does not prove
+construct or semantic completeness. Nineteen validator cases and 127 existing
+documentation/packet/target cases passed, alongside Ruff, five packets and
+2250 local links across 168 documents. Entry points now route to one hierarchy.
+
+### Next Pass
+
+Use the hierarchy to implement a parameterized multi-output engine-free
+workflow, instantiated twice with explicit reference arguments. Preserve
+nominal families, source identities, conditions and independent replay while
+avoiding a new execution primitive or implicit sharing. Source-derived report
+contracts and later operational/domain gates retain their existing owners.

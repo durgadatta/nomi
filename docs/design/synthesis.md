@@ -489,31 +489,22 @@ they are evidence dimensions, not a seventh universal runtime object.
 
 ### Compose Richer Features
 
-The formulas below are semantic metalanguage, not Nomi source or proof that the
-present runtimes implement the reduction. Each names a remaining obligation.
+The [primitive composition hierarchy](primitive_composition.md) distills these
+families into checked local construction, ordinary control/conveniences,
+reusable boundaries/carriers, domain models and creation/sharing/operation.
+Its catalog covers 56 compositions with their dependencies, canonical owners,
+retained laws and unclosed gates; all 25 active category and research target
+programs have a declared navigation route. This is a designing dependency map,
+not a proof of a minimal Core or implementation completeness.
 
-| Feature | Composition | Remaining obligation |
-| --- | --- | --- |
-| Option / Result | Value variants + Choose + Apply | Absence, expected failure, panic and cancellation stay separate |
-| `?` / `??` / `?.` | Choose the relevant variant + return/apply the selected continuation | Preserve short circuit and nearest-function propagation; no hidden error conversion |
-| Constraints and decoders | Apply checks to tentative typed fields + Value construction + owner-controlled publication | Accumulate independent external errors; internal invariant violations retain their own channel |
-| Immutable update / `set` | Bind an immutable replacement or Perform a validated cell update | Atomicity is scoped to the actual owner; no implied distributed transaction |
-| Methods and protocols | Value of supplied operations + Bind identity + Apply | Selection, coherence, variance, effects and capture facts must be checked |
-| List map / filter / fold | Apply + Choose + explicit ordered traversal/state | Strict versus demand-bearing carriers; Result elements do not auto-propagate |
-| Retry | Apply a fresh attempt under an explicit policy + Choose completion | Partial effects, idempotency and cancellation; replay is not rollback |
-| Resources | Perform acquire + Scope body/release + Choose typed completion | Non-escape through successes, errors, closures, tasks and diagnostics |
-| Async / streams | Value description + Perform start/poll/suspend + Scope ownership | Backpressure, single/repeated consumption, child failure and release policy |
-| Tables / statistical plans | Value of typed domain nodes + Apply checked composition + explicit execution operations | Grain, null, shape, ordering, numeric theory and adapter conformance |
-| Symbolic rewriting / derivation | Value expression/schema + Apply a declared transformation + Bind preserved identities | Theory, stage, hygiene, source provenance, budget and unknown proof status |
-| Semantic commands / views | Value candidate/projection + Apply validation + Perform owner commit | Revision freshness, review scope, authority, unsupported content and domain-specific inverse laws |
-| Modules / checked reuse | Bind declaration identity + Value complete interface + Apply imported callable | Separate checking, verification dependencies and compatibility evidence |
-
-Iteration/suspension and runtime memory machinery still need operational rules.
-Encoding them as recursive functions or library protocols does not establish
-bounded stack space, progress, scheduling fairness, or cleanup. Numeric operations
-and native handles also retain profile-specific primitive implementations. The
-model reduces repeated semantic concepts; it does not claim every mechanism is
-free or that every domain has the same algebra.
+Worked reductions cover pipelines, typed propagation, accumulated decoding,
+resource completion, engine-free documents, qualified statistical equality and
+owner-checked view edits. They expose where ordinary composition suffices and
+where an extra operational/domain law remains. Recursion does not establish
+bounded stack or fairness; callbacks do not establish cleanup; representation
+equality does not establish nominal identity, authority or scientific meaning.
+Numeric operations and native handles retain profile-specific implementations.
+The model reduces repeated concepts without claiming every domain has one algebra.
 
 ### Gap Analysis With Concrete Closure Receipts
 

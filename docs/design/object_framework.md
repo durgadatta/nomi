@@ -27,6 +27,11 @@ The [statistical interface](statistical_data.md) is a domain on top of this
 direction. Its observation domains, masks and scientific laws retain their own
 authority.
 
+The [composition hierarchy](primitive_composition.md) connects this experiment
+to the broader language. Its input/literal/alias/apply/derived/description roles
+classify inert objects; they are not the six semantic families used to compare
+language execution, authority and scope.
+
 ## Try A Composition Before Supplying Inputs
 
 From a source checkout, with Python only:

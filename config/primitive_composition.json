@@ -1,0 +1,1120 @@
+{
+  "version": 1,
+  "status": "designing",
+  "nodes": [
+    {
+      "id": "value",
+      "label": "Value",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "Atoms, products, closed variants and explicit opaque handles retain representation and nominal identity.",
+      "gate": "Representation and primitive numeric/host profiles remain independently specified.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "bind",
+      "label": "Bind",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "Names resolve lexically to declaration identities; capture and fresh cells retain their meaning.",
+      "gate": "Shadowing, package identity and mutable capture evidence must survive lowering.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "apply",
+      "label": "Apply",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "Ordered arguments are evaluated once and invoked under an explicit callable contract.",
+      "gate": "General call shapes, defaults, capture and effect evidence are not inferred from a lambda encoding.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "choose",
+      "label": "Choose",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "Only selected work executes; structural tests are inert and captures commit atomically.",
+      "gate": "Coverage and pure-guard checking must be demonstrated.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "perform",
+      "label": "Perform",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "An owner handles an explicit state, host or scheduler request with declared authority.",
+      "gate": "Local mutation, world authority and suspension require different operational profiles.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "scope",
+      "label": "Scope",
+      "kind": "family",
+      "depends": [],
+      "owner": "docs/design/synthesis.md",
+      "law": "A specified boundary owns completion, cleanup and child lifetime.",
+      "gate": "Function, loop, resource and task policies cannot share an unspecified handler law.",
+      "placement": "semantic-family",
+      "status": "hypothesis",
+      "fixtures": []
+    },
+    {
+      "id": "literal",
+      "label": "Scalars, products and variants",
+      "kind": "composition",
+      "depends": [
+        "value"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Value constructors retain exact representations; Bool and Int are distinct.",
+      "gate": "Portable wire, capacity and non-first-product scalar laws remain incomplete.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/numerics.nomi"
+      ]
+    },
+    {
+      "id": "binding",
+      "label": "Bindings, imports and irrefutable destructuring",
+      "kind": "composition",
+      "depends": [
+        "value",
+        "bind"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Evaluate once, tentatively bind, check and commit all names or none.",
+      "gate": "Resolved identities and source-derived type/constraint evidence need target conformance.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/binding.nomi"
+      ]
+    },
+    {
+      "id": "completion",
+      "label": "Return, loop transfer, panic and cancellation",
+      "kind": "composition",
+      "depends": [
+        "value",
+        "choose",
+        "scope"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Normal value, function return, loop transfer, panic and cancellation retain distinct targets and causes.",
+      "gate": "General multi-cause envelopes and cancellation during release remain open.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/failure.nomi"
+      ]
+    },
+    {
+      "id": "contracts",
+      "label": "Types, constraints and evidence",
+      "kind": "composition",
+      "depends": [
+        "value",
+        "apply",
+        "choose"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "A declared promise is checked; satisfied, refuted and unknown evidence remain distinct.",
+      "gate": "Full inference and proof rules are not established by a codec or supplied annotation.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/data.nomi"
+      ]
+    },
+    {
+      "id": "callable",
+      "label": "Closures and ordinary functions",
+      "kind": "composition",
+      "depends": [
+        "value",
+        "bind",
+        "apply",
+        "scope",
+        "completion",
+        "contracts"
+      ],
+      "owner": "docs/design/function_contracts.md",
+      "law": "Immutable captures have value semantics; mutable captures retain shared cell identity.",
+      "gate": "General generic, capture, region and callback-effect contracts remain designing.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/functions.nomi"
+      ]
+    },
+    {
+      "id": "owned-data",
+      "label": "Nominal products and closed alternatives",
+      "kind": "composition",
+      "depends": [
+        "literal",
+        "binding",
+        "contracts"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Construction checks all fields and declaration invariants before publishing one owned value.",
+      "gate": "Source-derived constructors and codecs need independent target agreement.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/data.nomi"
+      ]
+    },
+    {
+      "id": "choice",
+      "label": "Bool choice and short circuit",
+      "kind": "composition",
+      "depends": [
+        "literal",
+        "choose",
+        "binding"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Conditions require Bool; unselected expressions are never evaluated.",
+      "gate": "Typed source lowering and exact event traces must agree.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/patterns.nomi"
+      ]
+    },
+    {
+      "id": "patterns",
+      "label": "Exhaustive structural matching",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "choice",
+        "contracts"
+      ],
+      "owner": "docs/design/pattern_matching.md",
+      "law": "Shape failure and guard rejection discard tentative captures; every match is exhaustive.",
+      "gate": "Coverage, guard purity and formatter/diagnostic conformance remain required.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/patterns.nomi"
+      ]
+    },
+    {
+      "id": "mutation",
+      "label": "Visible local state update",
+      "kind": "composition",
+      "depends": [
+        "binding",
+        "contracts",
+        "perform"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Validate the replacement before owner-controlled atomic cell publication.",
+      "gate": "Captured-cell and invalid-update traces must agree across backends.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/binding.nomi"
+      ]
+    },
+    {
+      "id": "iteration",
+      "label": "For/while and loop boundaries",
+      "kind": "composition",
+      "depends": [
+        "choice",
+        "callable",
+        "completion",
+        "scope"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Iteration order and nearest lexical break/continue targets remain observable.",
+      "gate": "Recursion alone does not prove bounded stack, progress or iterator cleanup.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/collections.nomi"
+      ]
+    },
+    {
+      "id": "option-result",
+      "label": "Option and Result",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "patterns"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Absence and expected rejection are ordinary distinct closed carriers.",
+      "gate": "Target nominal carriers cannot be inferred from host None or exceptions.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/failure.nomi"
+      ]
+    },
+    {
+      "id": "propagation",
+      "label": "Postfix propagation",
+      "kind": "composition",
+      "depends": [
+        "option-result",
+        "completion",
+        "callable"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Inspect once; success extracts, rejection returns to the nearest compatible function.",
+      "gate": "Error mapping is explicit; pending cleanup still precedes observation.",
+      "placement": "convenience",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/failure.nomi"
+      ]
+    },
+    {
+      "id": "optional",
+      "label": "Safe navigation and fallback",
+      "kind": "composition",
+      "depends": [
+        "option-result",
+        "choice",
+        "callable"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Evaluate receiver once and evaluate only the selected fallback/property.",
+      "gate": "Nested Option shape and effectful receiver traces require conformance.",
+      "placement": "convenience",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/failure.nomi"
+      ]
+    },
+    {
+      "id": "pipeline",
+      "label": "First-argument pipeline insertion",
+      "kind": "composition",
+      "depends": [
+        "binding",
+        "apply",
+        "callable"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Insert one evaluated value at the first argument position; preserve call order.",
+      "gate": "Do not infer laziness, concurrency, currying or propagation.",
+      "placement": "convenience",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/collections.nomi"
+      ]
+    },
+    {
+      "id": "interpolation",
+      "label": "Text interpolation and display",
+      "kind": "composition",
+      "depends": [
+        "literal",
+        "binding",
+        "apply"
+      ],
+      "owner": "docs/design/syntax.md",
+      "law": "Evaluate embedded expressions once in order; display is a distinct protocol from encoding.",
+      "gate": "General display/protocol and secret-redaction contracts remain open.",
+      "placement": "convenience",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/tooling.nomi",
+        "docs/design/targets/research/text_boundaries.nomi"
+      ]
+    },
+    {
+      "id": "defaults",
+      "label": "Parameter and field defaults",
+      "kind": "composition",
+      "depends": [
+        "binding",
+        "callable",
+        "contracts"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Evaluate each omitted default at the specified call/construction phase and retain provenance.",
+      "gate": "A supplied value and an equal default value need distinct provenance.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/functions.nomi",
+        "docs/design/targets/data.nomi"
+      ]
+    },
+    {
+      "id": "decode",
+      "label": "Strict accumulated decoding",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "contracts",
+        "option-result",
+        "iteration"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Validate received structure before owned construction; preserve independent original error paths.",
+      "gate": "Custom field rules, budgets and non-projectable predicates need source-derived evidence.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/boundaries.nomi"
+      ]
+    },
+    {
+      "id": "encode",
+      "label": "Explicit encoding and schema projection",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "contracts",
+        "option-result",
+        "iteration"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Encoding follows owned declarations; schema export reports omitted or approximate constraints.",
+      "gate": "Human display and private engine transport cannot define the external format.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/boundaries.nomi",
+        "docs/design/targets/research/text_boundaries.nomi"
+      ]
+    },
+    {
+      "id": "assurance",
+      "label": "Progressive checking policies",
+      "kind": "composition",
+      "depends": [
+        "contracts",
+        "binding",
+        "callable"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "A policy selects required evidence without changing successful meaning or granting authority.",
+      "gate": "General public inference and dependency invalidation remain incomplete.",
+      "placement": "tool",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/functions.nomi",
+        "docs/design/targets/overall.nomi"
+      ]
+    },
+    {
+      "id": "generics",
+      "label": "Explicit generic interface quantification",
+      "kind": "composition",
+      "depends": [
+        "contracts",
+        "callable",
+        "owned-data"
+      ],
+      "owner": "docs/design/function_contracts.md",
+      "law": "A generic contract names quantification, variance, constraints, captures and effects.",
+      "gate": "One concrete call does not establish generality; source syntax and solver remain open.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": []
+    },
+    {
+      "id": "protocols",
+      "label": "Protocols, methods and dispatch",
+      "kind": "composition",
+      "depends": [
+        "generics",
+        "binding",
+        "apply"
+      ],
+      "owner": "docs/design/function_contracts.md",
+      "law": "Operation selection is explicit/coherent within its declared package and import context.",
+      "gate": "Collision, variance, specialization and extension visibility need a bounded comparison.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": []
+    },
+    {
+      "id": "numeric-profile",
+      "label": "Numbers, units and tensor shapes",
+      "kind": "composition",
+      "depends": [
+        "literal",
+        "contracts",
+        "protocols"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Numeric domain profiles own exactness, rounding, dimensions, axes and failures.",
+      "gate": "No host numeric default or shared method name establishes common laws.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/numerics.nomi",
+        "docs/design/targets/research/notation.nomi"
+      ]
+    },
+    {
+      "id": "strict-collections",
+      "label": "Strict collection verbs",
+      "kind": "composition",
+      "depends": [
+        "callable",
+        "choice",
+        "iteration"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Callbacks run in declared order and multiplicity; Result elements do not auto-propagate.",
+      "gate": "General pure/effect-polymorphic, retaining and failure callback contracts remain open.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/collections.nomi",
+        "docs/design/targets/research/data_collections.nomi",
+        "docs/design/targets/research/generic_operations.nomi"
+      ]
+    },
+    {
+      "id": "capabilities",
+      "label": "Effect contracts and runtime grants",
+      "kind": "composition",
+      "depends": [
+        "contracts",
+        "owned-data",
+        "perform"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Static effect evidence and unforgeable current runtime authority are separate facts.",
+      "gate": "Grant delegation/revocation and host substitution require executable contracts.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/effects.nomi"
+      ]
+    },
+    {
+      "id": "resource-scope",
+      "label": "Exactly-once resource scopes and defer",
+      "kind": "composition",
+      "depends": [
+        "capabilities",
+        "completion",
+        "scope",
+        "callable"
+      ],
+      "owner": "docs/design/resource_lifetime.md",
+      "law": "Acquire/body/release phases retain every completion cause; defer cleanup is lexical LIFO.",
+      "gate": "General release-error carrier, non-escape and asynchronous release remain designing.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/resources.nomi"
+      ]
+    },
+    {
+      "id": "cold-task",
+      "label": "Cold async descriptions and explicit await",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "callable",
+        "capabilities",
+        "completion",
+        "scope"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Constructing a cold task does not start it; await names suspension and outcome ownership.",
+      "gate": "Scheduler transitions, cancellation and latent effects require conformance.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/concurrency.nomi"
+      ]
+    },
+    {
+      "id": "task-group",
+      "label": "Owned concurrent children",
+      "kind": "composition",
+      "depends": [
+        "cold-task",
+        "resource-scope"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Children cannot silently escape their group; completion waits for owned cleanup and children.",
+      "gate": "Failure envelope, observation order, running and queue bounds remain open.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/concurrency.nomi"
+      ]
+    },
+    {
+      "id": "stream",
+      "label": "Streams and generators",
+      "kind": "composition",
+      "depends": [
+        "cold-task",
+        "iteration",
+        "resource-scope"
+      ],
+      "owner": "docs/design/semantics.md",
+      "law": "Demand, consumption multiplicity, backpressure and release are explicit carrier laws.",
+      "gate": "No generator source spelling or universal map schedule is admitted.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": []
+    },
+    {
+      "id": "retry",
+      "label": "Retry and backoff",
+      "kind": "composition",
+      "depends": [
+        "callable",
+        "choice",
+        "completion",
+        "capabilities"
+      ],
+      "owner": "docs/design/decisions.md",
+      "law": "Invoke a fresh explicit attempt under policy; previous external effects are not undone.",
+      "gate": "Idempotency, uncertainty and cancellation belong to the operation and host.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/research/workflow.nomi"
+      ]
+    },
+    {
+      "id": "synchronization",
+      "label": "Channels, locks, atomics and actors",
+      "kind": "composition",
+      "depends": [
+        "capabilities",
+        "task-group",
+        "completion"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Publication visibility and ownership follow the selected synchronization protocol.",
+      "gate": "A task group or mutable cell does not imply a memory model or delivery guarantee.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": []
+    },
+    {
+      "id": "modules",
+      "label": "Closed checked module interfaces",
+      "kind": "composition",
+      "depends": [
+        "binding",
+        "callable",
+        "contracts",
+        "assurance"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Public identity, types, effects and dependencies are available without executing private code.",
+      "gate": "Source-derived closed reuse and unknown-dependency refusal still need completion.",
+      "placement": "core",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/modules.nomi"
+      ]
+    },
+    {
+      "id": "packages",
+      "label": "Content-addressed packages and builds",
+      "kind": "composition",
+      "depends": [
+        "modules",
+        "capabilities",
+        "encode"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Source, lockfile, toolchain, target and declared inputs determine a sandboxed build.",
+      "gate": "Resolver, trust, edition migration and deployment receipts remain incomplete.",
+      "placement": "tool",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/modules.nomi"
+      ]
+    },
+    {
+      "id": "foreign",
+      "label": "FFI and explicit host adapters",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "capabilities",
+        "completion",
+        "resource-scope",
+        "encode",
+        "decode"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "ABI, copying/borrowing, affinity, blocking and host failures are declared at the boundary.",
+      "gate": "A host value is not nominal proof; portable ABI and ownership fixtures remain open.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/research/text_boundaries.nomi"
+      ]
+    },
+    {
+      "id": "secrets",
+      "label": "Secrets and redacted observation",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "capabilities",
+        "contracts"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Secret projection is redacted by default; reveal requires explicit audited authority.",
+      "gate": "Redaction across display, paths, logs and crash records requires conformance.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/effects.nomi"
+      ]
+    },
+    {
+      "id": "inspection",
+      "label": "Diagnostics, traces and explanation",
+      "kind": "composition",
+      "depends": [
+        "contracts",
+        "binding",
+        "encode"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "A claim names its source, dependencies, phase, coverage and unresolved facts.",
+      "gate": "A friendly view must not upgrade evidence or expose secret payloads.",
+      "placement": "tool",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/tooling.nomi"
+      ]
+    },
+    {
+      "id": "examples",
+      "label": "Examples, checks and test harnesses",
+      "kind": "composition",
+      "depends": [
+        "callable",
+        "choice",
+        "inspection",
+        "capabilities"
+      ],
+      "owner": "docs/design/industrial.md",
+      "law": "Independent expectations, compared values and replaced host capabilities retain context.",
+      "gate": "Passing examples do not prove all-input equivalence or backend conformance.",
+      "placement": "tool",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/tooling.nomi"
+      ]
+    },
+    {
+      "id": "engine-objects",
+      "label": "Engine-free references and descriptions",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "binding",
+        "contracts"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Typed references, inert operation descriptions and closed definitions exist without an executor.",
+      "gate": "The lab envelope has no control-flow, effectful execution or universal domain algebra.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi"
+      ]
+    },
+    {
+      "id": "obligations",
+      "label": "Engine-free refinement obligations",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "contracts",
+        "option-result"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Literal and explicit input evidence can discharge closed rules; computed subjects stay pending.",
+      "gate": "Cross-object relations, quantification and scientific assumptions require separately owned rules.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi"
+      ]
+    },
+    {
+      "id": "realization",
+      "label": "Explicit compilation, binding and realization",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "callable",
+        "contracts",
+        "completion"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Choose a pinned implementation, check capability/preconditions, then execute detached bound values.",
+      "gate": "Trusted callbacks and cooperative cancellation are bounded lab evidence, not formal conformance.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi"
+      ]
+    },
+    {
+      "id": "definition-proof",
+      "label": "Declared expansion and independent replay",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "contracts",
+        "inspection"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Replay uses context-bound rules and preserves source identity; unsupported equality is unknown.",
+      "gate": "Formal domain equality needs an admitted theory, side conditions and independent consumers.",
+      "placement": "tool",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/generic_operations.nomi"
+      ]
+    },
+    {
+      "id": "document",
+      "label": "Document specifications and rendering",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "obligations",
+        "realization",
+        "encode"
+      ],
+      "owner": "docs/design/object_framework.md",
+      "law": "Meaning and publication conditions are separate from renderer choice and Text conversion.",
+      "gate": "Two local profiles do not establish remote rendering, review or file publication.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi"
+      ]
+    },
+    {
+      "id": "table-plan",
+      "label": "Schema-bound relational plans",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "contracts",
+        "protocols"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Schema, grain, nullability, order and cardinality belong to the table carrier.",
+      "gate": "Strict callbacks cannot be retagged as row expressions; adapters need pinned table laws.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/table_plan.nomi"
+      ]
+    },
+    {
+      "id": "statistics",
+      "label": "Statistical summaries and exact laws",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "numeric-profile",
+        "definition-proof",
+        "obligations"
+      ],
+      "owner": "docs/design/statistical_data.md",
+      "law": "Observation domains, shared masks and numeric theory qualify sum/count/division identities.",
+      "gate": "Empty samples, missingness, units and physical engines need independent domain evidence.",
+      "placement": "library",
+      "status": "experiment",
+      "fixtures": [
+        "docs/design/targets/research/scientific_model.nomi"
+      ]
+    },
+    {
+      "id": "learned-model",
+      "label": "Training, prediction and evaluation",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "table-plan",
+        "numeric-profile",
+        "contracts"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Train-only learned state and evaluation split identities remain separate from predictions.",
+      "gate": "Adaptive evaluation, uncertainty and deletion/unlearning are unresolved domain contracts.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/scientific_model.nomi"
+      ]
+    },
+    {
+      "id": "temporal-model",
+      "label": "Reactive, incremental and temporal models",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "contracts",
+        "capabilities",
+        "scope"
+      ],
+      "owner": "docs/design/vision.md",
+      "law": "Every change has a model/revision/time basis and an explicit invalidation/publication policy.",
+      "gate": "Caching, snapshots, live adoption and physical time are distinct choices.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi",
+        "docs/design/targets/research/generic_operations.nomi"
+      ]
+    },
+    {
+      "id": "staging",
+      "label": "Symbolic quotation, rewriting and staging",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "definition-proof",
+        "modules"
+      ],
+      "owner": "docs/design/decisions.md",
+      "law": "A quoted model retains stage, hygiene, effects, provenance and bounded transformations.",
+      "gate": "No global macros or ambient compile-time execution is admitted.",
+      "placement": "scoped-candidate",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/notation.nomi"
+      ]
+    },
+    {
+      "id": "domain-notation",
+      "label": "Scoped query, tensor, grammar and template notation",
+      "kind": "composition",
+      "depends": [
+        "staging",
+        "table-plan",
+        "numeric-profile",
+        "document"
+      ],
+      "owner": "docs/design/decisions.md",
+      "law": "An explicitly entered scope has declared input/output meaning and inspectable expansion.",
+      "gate": "Every notation needs its own parser, diagnostics, laws and whole-activity evidence.",
+      "placement": "scoped-candidate",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/notation.nomi",
+        "docs/design/targets/research/text_boundaries.nomi"
+      ]
+    },
+    {
+      "id": "transaction",
+      "label": "Local transactions and owner commit",
+      "kind": "composition",
+      "depends": [
+        "mutation",
+        "capabilities",
+        "completion",
+        "contracts"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "The actual owner defines atomicity, isolation, revision validation and visible publication.",
+      "gate": "Pure candidate validation is not serializable publication or a distributed transaction.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/messaging.nomi"
+      ]
+    },
+    {
+      "id": "messaging",
+      "label": "Delivery, outbox and reconciliation",
+      "kind": "composition",
+      "depends": [
+        "transaction",
+        "retry",
+        "encode",
+        "decode",
+        "task-group"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Delivery identity, processing ownership, settlement and uncertain external outcomes remain distinct.",
+      "gate": "Broker profiles and crash/recovery traces are required; retries do not ensure exactly-once effects.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/messaging.nomi",
+        "docs/design/targets/research/workflow.nomi"
+      ]
+    },
+    {
+      "id": "workflow",
+      "label": "Durable workflows and orchestration",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "messaging",
+        "modules"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Dependency, attempt, partition and idempotency identities survive recovery and handoff.",
+      "gate": "Persistence, compensation, grant freshness and unknown outcomes need real adapters.",
+      "placement": "library",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/workflow.nomi",
+        "docs/design/targets/research/overall.nomi"
+      ]
+    },
+    {
+      "id": "semantic-command",
+      "label": "Reviewed semantic edits and commands",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "contracts",
+        "transaction",
+        "inspection"
+      ],
+      "owner": "docs/design/interaction_model.md",
+      "law": "A proposal names its intent, target revision and review scope; commit checks current authority.",
+      "gate": "No UI token or validated candidate can stand in for owner-enforced commit.",
+      "placement": "tool",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/natural_language.nomi"
+      ]
+    },
+    {
+      "id": "projection",
+      "label": "Views, visualizations and inverse edits",
+      "kind": "composition",
+      "depends": [
+        "engine-objects",
+        "inspection",
+        "semantic-command"
+      ],
+      "owner": "docs/design/interaction_model.md",
+      "law": "A projection states its model basis, losses and editable inverse obligations.",
+      "gate": "Human comprehension, accessibility and inverse-law comparisons remain unvalidated.",
+      "placement": "tool",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/natural_language.nomi",
+        "docs/design/targets/research/domain_layers.nomi"
+      ]
+    },
+    {
+      "id": "partial-work",
+      "label": "Drafts, holes and last-good states",
+      "kind": "composition",
+      "depends": [
+        "owned-data",
+        "contracts",
+        "temporal-model",
+        "projection"
+      ],
+      "owner": "docs/design/vision.md",
+      "law": "An incomplete draft and recovery guess retain their status rather than manufacturing a valid program.",
+      "gate": "Supported-hole semantics and safe partial execution need a distinct admission.",
+      "placement": "tool",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/natural_language.nomi"
+      ]
+    },
+    {
+      "id": "delegation",
+      "label": "Natural-language and automated proposals",
+      "kind": "composition",
+      "depends": [
+        "semantic-command",
+        "partial-work",
+        "capabilities"
+      ],
+      "owner": "docs/design/vision.md",
+      "law": "Inference, checked meaning, reviewed intent, authority and external observation are separate evidence.",
+      "gate": "Actual role validation, calibrated reliance and interrupted recovery need human and host evidence.",
+      "placement": "tool",
+      "status": "open",
+      "fixtures": [
+        "docs/design/targets/research/natural_language.nomi"
+      ]
+    },
+    {
+      "id": "first-report",
+      "label": "The first coherent report activity",
+      "kind": "composition",
+      "depends": [
+        "decode",
+        "encode",
+        "strict-collections",
+        "propagation",
+        "defaults",
+        "modules",
+        "examples"
+      ],
+      "owner": "docs/design/synthesis.md",
+      "law": "Decode every row before eligibility filtering; preserve order/duplicates and explicit error mapping.",
+      "gate": "Current compatibility delivery is not target data/call/Result/reuse conformance.",
+      "placement": "library",
+      "status": "target",
+      "fixtures": [
+        "docs/design/targets/overall.nomi"
+      ]
+    },
+    {
+      "id": "whole-medium",
+      "label": "Cross-domain creative and shared activity",
+      "kind": "composition",
+      "depends": [
+        "document",
+        "statistics",
+        "learned-model",
+        "workflow",
+        "projection",
+        "delegation",
+        "temporal-model"
+      ],
+      "owner": "docs/design/vision.md",
+      "law": "Meaning, representations, evidence, authority and revision remain recoverable across one activity.",
+      "gate": "A dependency map is not a demonstrated coherent computational medium.",
+      "placement": "tool",
+      "status": "hypothesis",
+      "fixtures": [
+        "docs/design/targets/research/domain_layers.nomi",
+        "docs/design/targets/research/overall.nomi"
+      ]
+    }
+  ]
+}

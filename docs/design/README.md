@@ -226,6 +226,11 @@ requirement that discovery start outside the core or prove a library failed
 before comparing alternatives. The [vision](vision.md) can challenge the layer
 organization itself; accepted source meaning changes through explicit decisions.
 
+The [primitive composition hierarchy](primitive_composition.md) offers a
+complementary view: six candidate semantic families, reusable combinations and
+the laws that must survive reduction. It maps language, domain and interaction
+constructs without choosing a new Core or accepting open mechanisms.
+
 ## Syntax Contract
 
 Every accepted source form must satisfy all of these:

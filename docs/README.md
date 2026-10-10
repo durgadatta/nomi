@@ -18,6 +18,7 @@ Choose a reading path based on what you want to do:
 | Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
 | Research or integrate a language mechanism | [Maintainer Synthesis Guide](research/synthesis_guide.md) | [Language reviews](research/languages/README.md), [feature comparisons](research/features/README.md), and [open questions](research/open_questions.md). |
 | Describe and compose objects before choosing an engine | [Engine-Free Objects](design/object_framework.md) | Typed descriptions, closed composition and explicit realization; a source-checkout research tool. |
+| Design by composing a few primitives | [Primitives And Their Compositions](design/primitive_composition.md) | Hierarchy, worked reductions, construct catalog and explicit unclosed laws. |
 | Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
 
 The getting-started guide describes runnable prototype examples. Design
@@ -232,6 +233,7 @@ This list is intentionally complete and is checked by tests.
 - [Industrial Model](design/industrial.md)
 - [Decision Ledger](design/decisions.md)
 - [Language Synthesis](design/synthesis.md)
+- [Primitives And Their Compositions](design/primitive_composition.md)
 - [Target Suite](design/targets/README.md)
 - [Resource Completion Proposal](design/resource_lifetime.md)
 - [Interaction Proposal](design/interaction_model.md)
