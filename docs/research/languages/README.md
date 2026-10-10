@@ -15,6 +15,8 @@ The October 10 pass deepens [Wolfram](wolfram.md), [Haskell](haskell.md),
 [maintainer synthesis guide](../synthesis_guide.md) to compare their mechanisms
 in one language. Other reviews retain their earlier bounded scope. The new
 prepared cases have not been executed in the foreign languages or Nomi.
+The [OCaml](ocaml.md) review also adds a bounded handler/continuation lead;
+its earlier type/module comparison is otherwise retained.
 
 Primary documentation was consulted for the cited mechanisms on 2026-09-29.
 Version scope matters: Haskell means the 2010 report, C means the C11 committee

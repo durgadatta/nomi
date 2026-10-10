@@ -121,6 +121,13 @@ evidence that two nominal declarations share constraints or conformance.
 embedded host. Avoid path/URL-level types in function signatures unless the
 complexity pays for itself.
 
+**Control-effect pressure:** the
+[handler continuation](features/effects.md#control-effects-and-continuation-ownership)
+compares direct calls, explicit suspended state, and one-shot handlers under
+questions 4/5/7. A control operation and a world-access declaration are distinct;
+resumption multiplicity does not establish eventual cleanup. Use the prepared
+resume/abandon/cancel schedule before selecting any mechanism.
+
 ## 5. Resource Scope And Async Cleanup
 
 **Question:** Can exactly-once `with`, `async with`, and `defer` cover resource
@@ -218,8 +225,8 @@ capacity remain open. General
 numeric conversion and Unicode trimming remain open, as do Float,
 Decimal, units, arrays and the richer numeric operations below.
 
-**Question:** What are the default integer, decimal, float, overflow, unit,
-shape, and broadcasting rules?
+**Question:** Which Decimal/Float, explicit narrowing/overflow, unit, shape,
+and broadcasting rules compose with accepted exact Int meaning and capacity?
 
 **Current hypothesis:** ordinary numeric protocols with explicit array/shape
 types; checked or well-specified overflow; units and rank library-first; dense

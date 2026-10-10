@@ -28,3 +28,22 @@ Model a ticket workflow, add a new state, and measure exactly which matches and
 public interfaces must change. Compare reusable higher-order functions with
 explicit lambdas. See [types/data](../features/types_data.md),
 [functions](../features/functions.md), and [data](../../design/targets/data.nomi).
+
+## Effect-Handler Lead, 2026-10-10
+
+The OCaml 5.3 manual describes handlers and captured one-shot continuations.
+Repeated resumption is checked dynamically; eventual resumption/discontinuation
+is a programmer responsibility, so suspended computation can retain resources.
+[Primary reference: effect handlers](https://ocaml.org/manual/5.3/effects.html).
+
+This deepens the effect/control boundary without changing the earlier bounded
+type/module comparison. For Nomi, compare direct callbacks, explicit suspended
+state, and a one-shot handler challenger. Hold a scoped reader during suspension,
+then resume once, resume twice, abandon, and cancel with a release error. Require
+an owner and complete cause/cleanup observations. The continuation mechanism
+does not itself supply a world grant or the accepted exactly-once scope law.
+
+The [effect owner](../features/effects.md#control-effects-and-continuation-ownership)
+contains the unperformed comparison; the
+[maintainer guide](../synthesis_guide.md) connects it to questions 4/5/7. No OCaml
+execution, Nomi continuation implementation, or scheduler study ran in this pass.

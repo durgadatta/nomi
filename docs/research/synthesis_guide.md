@@ -99,6 +99,24 @@ model can also remain outside the ordinary evaluator: symbolic expressions,
 query plans, differentiable descriptions, and documents need not share a
 universal executable IR.
 
+### Combinations To Investigate
+
+The named languages need not contribute indivisible packages. Compare coherent
+combinations whose boundaries remain explicit:
+
+| Combination hypothesis | What it preserves | What still needs evidence |
+| --- | --- | --- |
+| Eager ordinary functions plus explicit demand-bearing carriers | Local call timing with deferred streams/plans | Failure, repeat-consumption, retention and capability lifetime |
+| Nominal owned data plus structural foreign values | Internal concepts and ecosystem reach | Decoding, alias isolation, versioned adapters and representation cost |
+| Ordinary functions plus supplied operation values | Alternate behavior without hidden source-level dispatch | Generic contracts, capture facts, ergonomics and coherent defaults |
+| GC ordinary values plus scoped native/resource handles | Simple common values with deliberate external validity | Escape checking, suspension, foreign callbacks and release outcomes |
+| Exact scalar meaning plus explicit representations/specialization | Portable meaning with optional optimized execution | Capacity, compilation, conversion and accepted transformation laws |
+| Explicit expression/plan data plus inspectable staged tools | Symbolic/domain abstraction without ambient second evaluation | Binding, theory, stage inputs, source provenance and build authority |
+
+These are research hypotheses shaped by the current target, not a selected final
+language architecture. A credible broader challenger may revise them. Evaluate
+the combination in one activity and explain the smallest extra law it introduces.
+
 ## Research One Mechanism Through A Repeatable Loop
 
 1. **Start with an activity.** Describe what a person is creating, understanding,
@@ -135,10 +153,17 @@ universal executable IR.
 Place this in the existing feature owner or matching packet while the question
 is active. It is a compact review aid, not a new registry or mandatory document.
 
+Evidence labels describe independent surfaces rather than a single confidence
+score. A foreign compiler accepting one example does not establish a language
+law across versions; a local model does not establish a Nomi checker; a reader
+study does not prove semantic soundness. Record the assumptions and scope of any
+formal argument separately, including whether it covers partiality, effects,
+aliases, and foreign code.
+
 ```text
 Activity and deficiency:
 Primary mechanism, source, version/date:
-Evidence level: documented / modeled / foreign-executed / Nomi-tested / human-observed
+Evidence surfaces and limits: documentation / model / foreign run / Nomi checks / formal argument / human observation
 Current Nomi law and any explicit conflict:
 Explicit long form; proposed convenience if needed:
 Candidates and semantic owner/placement:
@@ -196,6 +221,43 @@ and [growth journeys](../design/synthesis.md#growth-journeys-and-boundary-eviden
 provide baseline pressures. This prepared program is not a benchmark or evidence
 of usability; its inputs and traces must be materialized before execution.
 
+### Two Small Pilots With Literal Expectations
+
+These pilots make the first comparison executable without building the entire
+scientific report. They are paper oracles prepared here, not executed results.
+Put any later model/probe beside its existing feature owner and preserve the
+literal records independently of the implementation.
+
+**Evaluation pilot:** input `[1, 2, 3]`; operation A records `A(x)` and produces
+`x + 10`; operation B records `B(y)`, fails with a named error at `y = 12`, and
+otherwise produces `2*y`. Events are append-only observations, so the callbacks
+are deliberately effectful. The candidate contracts, not foreign language
+defaults, define the following traversals:
+
+| Declared candidate | Literal expected events | Outcome |
+| --- | --- | --- |
+| Materialize all A results, then traverse B left to right | `A(1), A(2), A(3), B(11), B(12)` | Named error; no completed result list |
+| Traverse each item through A then B, stopping on first failure | `A(1), B(11), A(2), B(12)` | Same named error; different effect trace |
+| Demand one item from an explicit fresh stream | `A(1), B(11)` | One consumed value `22`; remaining producer has a declared owner |
+
+The first two agree on the error but are observably different. Fusion cannot be
+called semantics-preserving for this contract solely because successful pure
+numbers agree. Compare a separate pure/total callback version and preserve its
+values before studying optimization cost. Reconsuming the stream additionally
+requires a restart/replay/single-use rule; do not infer it from the verb `map`.
+Owner: [collections](features/collections.md) and [numeric laws](features/numerics.md).
+
+**Behavior-selection pilot:** two validated identifiers have displayed names
+`item2` and `item10`, with integer suffixes 2 and 10. Lexical ordering produces
+`[item10, item2]`; suffix ordering produces `[item2, item10]`. Both are intentional.
+Explicit operation values must make both selections possible and visible. A
+globally coherent single default must explain the alternate path and its cost;
+scoped/contextual selection must explain ambiguity and origin. Add an unrelated
+adapter import and require the deliberately selected behavior to stay stable.
+Independently overlapping two-argument methods need their separate ambiguity
+case; neither order here resolves that conflict. Owner:
+[dispatch comparison](features/functions.md#dispatch-coherence-and-operation-values).
+
 ## Depth Gaps Worth Researching Next
 
 The corpus already covers many of these domains. The gap is often an interaction,
@@ -206,7 +268,7 @@ second backlog.
 | Underexplored depth | Small next comparison | Owner |
 | --- | --- | --- |
 | Higher-kinded operations and law evidence | Explicit dictionary for traversal/merge versus a constructor-polymorphic interface; test identity, composition, partiality, and effect order | Questions 2/3; [generic operations](generic_operations.md), [Haskell](languages/haskell.md) |
-| Control effects and continuation ownership | Direct callback/Result versus one-shot handled suspension; abandon or resume twice while holding a resource | Questions 4/5/7; [effects](features/effects.md), [resources](features/resources.md) |
+| Control effects and continuation ownership | Direct callback/Result versus one-shot handled suspension; abandon or resume twice while holding a resource | Questions 4/5/7; [effects](features/effects.md#control-effects-and-continuation-ownership), [resources](features/resources.md) |
 | Totality and stronger contracts | Ordinary constrained function versus a proof/termination-backed library contract; preserve a usable partial computation path | Questions 1/2/9/12; [constraints](features/decoding.md), [symbolic/proof models](dsls/orthogonal_models.md) |
 | Gradual assurance at a foreign mutable boundary | Checked adapter versus explicit dynamic handle; mutate through a second alias after validation | Questions 2/11/15; [TypeScript](languages/typescript.md), [decoding](features/decoding.md) |
 | Borrowing without universal ownership syntax | Immutable copied value versus region-scoped buffer versus borrowed profile; resize, suspend, and transfer views | Question 5; [resource comparison](resource_lifetime.md), [Rust](languages/rust.md), [Mojo](languages/mojo.md) |

@@ -47,6 +47,19 @@ vocabulary as the price of ordinary function use.
 
 ## Effects Are Values, But Values Are Not Total Proofs
 
+The 2010 library specifies mapping and sequential composition through Functor
+and Monad, with identity/composition and sequencing laws. These abstractions
+describe reusable operation shapes across carriers. The report's `return` method
+injects a value into a carrier; it is unrelated to Nomi's function-exit keyword.
+[Control.Monad](https://www.haskell.org/onlinereport/haskell2010/haskellch13.html).
+
+**Nomi hypothesis:** compare carrier-specific `map`/fallible composition with a
+shared operation dictionary. A single name must not imply that List, Option,
+Result, Stream, and a cold task have identical execution meaning. State how each
+carrier handles missing input, first failure, accumulation, repeated consumption,
+and cancellation. Lawful abstraction can reduce duplication; its learning and
+inference cost needs the same whole-program evidence as any new syntax.
+
 The report models I/O actions through `IO`; constructing/composing an action and
 performing it are distinct. Sequencing provides an account of effect order.
 [Basic I/O](https://www.haskell.org/onlinereport/haskell2010/haskellch7.html).

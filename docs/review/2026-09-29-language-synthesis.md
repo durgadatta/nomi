@@ -715,6 +715,21 @@ repository coherence checks. The new foreign-language cases and user activities
 remain prepared, and no compiler comparison, benchmark, Nomi semantic checker,
 or human study was executed by this pass.
 
+The second review makes the guide's evidence surfaces explicitly independent,
+adds literal evaluation and behavior-selection pilots, deepens Wolfram's delayed
+rules/live expressions and Haskell's carrier laws, and routes OCaml's one-shot
+handler lead through the existing effect owner. The callback pilot preserves
+different complete traces even when both candidates fail with the same error.
+This strengthens the prepared oracle; it is not a newly executed experiment.
+
+Final documentation verification: 137 focused checks passed; 2,103 local file
+links across 164 documents resolved; all nine heading links in the maintainer
+guide resolved; the registered packet remained coherent; `git diff --check`
+passed. The local retrieval index was rebuilt for discovery of the new guide
+and comparisons; a search located the guide and all 18 agent-doctor checks passed
+after the rebuild. None of these
+checks establishes the proposed dispatch, type, stage, or resource semantics.
+
 #### Next Pass
 
 Review the guide's interaction matrix and select one concrete synthesis

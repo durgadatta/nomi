@@ -25,6 +25,20 @@ passing an already computed number cannot recover its expression or dependencies
 
 ## Rules, Strategy And Assumptions
 
+Delayed rules hold their right-hand side and evaluate it when the rule is used;
+conditions evaluate a test to determine whether a rule/pattern applies. Thus
+`x :> RandomReal[]` and a rule whose replacement was already computed have
+different invocation semantics. Domain matching is coupled to evaluation, not
+only to inert shape inspection.
+[Delayed rules](https://reference.wolfram.com/language/ref/RuleDelayed.html),
+[conditions](https://reference.wolfram.com/language/ref/Condition.html).
+
+For Nomi, distinguish a pattern that binds structure, a pure guard, and an
+explicit rewrite callback. If a replacement generates a fresh value or fails,
+count each invocation and identify its authority. Do not transfer Wolfram's
+pattern-driven definitions into the accepted ordinary function or match model
+without a complete alternative law.
+
 `ReplaceRepeated` repeatedly applies rules until the expression stops changing,
 with an explicit maximum-iteration option. A stopped rewrite is not a proof of
 a unique mathematical normal form.
@@ -69,6 +83,25 @@ model and its evidence, rather than a single generic numeric confidence field.
 The accepted exact Int subset does not settle Rational, Decimal or Float.
 
 ## What To Integrate And What It Costs
+
+### Live Expressions Need Execution Ownership
+
+`Dynamic` connects an expression's displayed value to updates and can connect
+interactive edits to assignment or supplied update functions. Its options include
+which symbol changes trigger refresh. This is language-level evidence for an
+expression connected to an evolving interaction, rather than a static printed
+result.
+[Dynamic](https://reference.wolfram.com/language/ref/Dynamic.html).
+
+**Nomi hypothesis:** compare explicit refresh with a declared reactive description.
+Name dependency identity, reevaluation count, failure state, and whether refreshing
+is allowed to perform effects. Editing a view, committing owned data, and
+executing a calculation are separate transitions. Test a changed assumption,
+a failing callback, and a refresh that attempts network access. This feeds the
+existing dependency/time and interaction comparisons; it does not admit ambient
+reactive bindings or a notebook execution policy.
+
+### Integration Map
 
 | Mechanism | Nomi candidate | Coherence obligation and cost |
 | --- | --- | --- |

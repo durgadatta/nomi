@@ -35,3 +35,38 @@ the pure-only/effect-polymorphic comparison; do not duplicate its type model her
 **User-facing gate:** playground capabilities and diagnostics must reflect the
 actual sandbox. A declared Network effect cannot invent browser permissions.
 [Target](../../design/targets/effects.nomi).
+
+## Control Effects And Continuation Ownership
+
+> Research continuation 2026-10-10: questions 4/5/7; a discovery comparison,
+> not a selected replacement for Nomi's direct calls or failure channels.
+
+Effect declarations about world access and mechanisms for transferring control
+are different axes. OCaml 5.3 handlers can capture and resume a continuation.
+Their one-shot discipline checks repeated resumption dynamically, but does not
+check that an abandoned continuation is eventually continued/discontinued;
+resources can remain retained by suspended computation.
+[Primary reference: effect handlers](https://ocaml.org/manual/5.3/effects.html).
+
+Compare a direct callback/Result API, an explicit state-machine or Stream value,
+and a one-shot handler challenger for an operation that requests an observation
+and continues with the answer. The handler can move scheduling behind an ordinary
+looking call; the explicit state machine exposes the suspended state. Each needs
+an account of who owns pending computation, which failure ends it, and how authority
+and resource regions travel through it. Multiple resumption is a separate,
+more demanding challenger, especially when external effects or resources cannot
+be duplicated.
+
+**Prepared resource schedule:** enter a scope, request an observation, suspend,
+then (a) resume once, (b) attempt resumption twice, (c) abandon the request, or
+(d) cancel while release fails. Specify events and causes before implementing
+any candidate. At-most-once use alone cannot establish eventual cleanup. A pure
+request declaration cannot grant the responding handler world authority.
+
+Keep direct-call expected failure as Result in the accepted target. A handler
+research model must name any proposed channel/control conflict explicitly, retain
+source-linked suspended state for inspection, and demonstrate a benefit in a
+whole program. Remove it if it only hides equivalent ordinary calls or prevents
+local reasoning about task/resource ownership. No handler, continuation runtime,
+or scheduler was implemented or executed here. The
+[maintainer guide](../synthesis_guide.md) keeps this lead with existing owners.
