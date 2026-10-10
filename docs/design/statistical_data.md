@@ -5,6 +5,13 @@
 > exact-proof replay. This is not an accepted Nomi
 > package, language syntax, dataframe executor, or general theorem prover.
 
+The [engine-free object framework](object_framework.md) is the shared foundation:
+object meaning, identity, composition and inspection precede implementation.
+Data/statistics adapts that foundation with observation domains, schemas,
+missingness, units and scientific laws. The initial implementation priority is
+the generic framework, followed by this domain. Lazy execution is one use of
+the separation, rather than its complete purpose.
+
 The interface should let someone describe a complete analysis before supplying
 observations: name its inputs, select and transform variables, specify the
 quantity being estimated, inspect every intermediate, check compatible
@@ -347,7 +354,14 @@ can increase intermediate size or numerical error on a different profile.
 An execution receipt records what the adapter actually accepted, not just what
 the interface requested.
 
-## Current Gaps And Selected Data-Only Path
+## Current Gaps And Data Adapter Path
+
+Start with the [framework's next discriminators](object_framework.md#limits-and-next-discriminators).
+Its generic arithmetic/text realization does not execute this statistical
+fragment. The [descriptor bridge](../../tools/statistical_interface/engine_free.py)
+now wraps all 35 families in the shared envelope after statistical validation;
+the v1 computation checker and independent exact replay retain their contracts.
+The order below describes domain work after the shared boundary is established.
 
 | Order | Concrete next closure | Acceptance evidence |
 | --- | --- | --- |

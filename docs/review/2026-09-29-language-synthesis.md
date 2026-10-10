@@ -865,3 +865,54 @@ before selecting one pinned backend. Independent exact replay is delivered;
 formal verification, arbitrary laws, floating guarantees, fitting and scientific
 assumption validation remain open. The current descriptor and proof artifacts
 are removable research surfaces, not accepted Nomi public package contracts.
+
+## Engine-Free Foundation Correction — 2026-10-10
+
+This continuation supersedes the preceding data-only next action. The user
+clarified that objects themselves should be independent of engines and that
+data/statistics should adapt a generic framework. Laziness alone does not
+provide description, contract, identity or realization independence.
+
+### Evidence That Changed The Design
+
+The unfinished units/moments branch would have specialized the object model
+before establishing the common boundary. Its two untracked local draft modules
+were removed; no committed statistical behavior was changed. The new
+[framework](../design/object_framework.md) and `tools/object_interface/` implement
+nominal families, typed named ports, abstract inputs, literals, aliases, pure
+closed definitions and inert descriptions. Arithmetic and text execute through
+an explicitly chosen adapter; document descriptions remain useful without a
+renderer. References identify graph revisions, and results do not mutate objects.
+
+The statistical adapter derives 35 description families and preserves all
+example IDs, ports and parameters after the existing domain validator. It
+does not pretend that generic composition checking validates scientific
+assumptions or replaces the specialized computation/proof checker.
+
+### Workflow Friction
+
+The prior navigation and registered next actions directed every continuation
+straight into statistics. They now start with the generic foundation. Testing
+also identified a domain leak: repeated references in a many port are valid
+generic composition, while the statistical descriptor validator retains its
+own stricter distinct-reference checks.
+
+### Durable Improvement
+
+The new canonical owner, top-level navigation and registry distinguish object
+description, checking, comparison, compilation, binding and execution. Structural
+term interning and memoized definitions keep diamond expansions bounded. Backend
+callbacks run only during explicit execution; data and result snapshots remain
+detached. Effectful objects retain identity and are refused by the pure executor.
+Validation passed 139 focused tests: 62 new framework/adapter cases, 73 existing
+statistical cases and four documentation lifecycle checks. Ruff and 2152 local
+file links across 167 documents passed. No parser/interpreter/browser change or
+statistical engine installation was made.
+
+### Next Pass
+
+Compare a domain refinement/obligation protocol and an independent generic
+consumer before broadening the envelope. Then adapt a statistical computation
+fragment while preserving grain, missingness, exact theory and independent
+v1 replay. General algebra, effectful realization, parameterized type checking,
+scientific validity and Nomi source admission remain distinct gates.

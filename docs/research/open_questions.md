@@ -184,13 +184,16 @@ bidirectional coroutines, and async events.
 
 ## 8. Tables And Query Plans
 
-The selected continuation is the
-[Statistical Data Interface](../design/statistical_data.md): immutable named
+The selected continuation starts with the generic
+[engine-free object framework](../design/object_framework.md), then adapts it to
+the [Statistical Data Interface](../design/statistical_data.md): immutable named
 objects, declared input schemas, domain-sensitive composition and explicit
-adapter contracts. Its engine-free model implements a bounded exact mean
-identity. See [statistical research](data_workflows/statistical_objects.md) for
-primary references and refusal cases. This does not close general relational
-typing, engine execution or the complete scientific-object interface.
+adapter contracts. The generic envelope already supports arithmetic/text
+composition and descriptions; the specialized statistical model implements a
+bounded exact mean identity. See
+[statistical research](data_workflows/statistical_objects.md) for domain evidence
+and refusal cases. Generic realization does not close relational typing,
+statistical execution or the scientific-object interface.
 
 **Question:** When do `map`/`filter`/`group_by` stop being adequate for tables?
 
@@ -223,9 +226,10 @@ are unperformed and do not replace the existing owner-enforced publication law.
 The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
 now exercises a declared exact-rational theory without observations. Float64
 mean expansion, paired moments, units, weights and scientific assumptions
-remain distinct obligations. Independent exact proof replay now runs; the next
-selected closure is specialized object semantics and exact variance/covariance
-with units, not a universal numeric engine.
+remain distinct obligations. Independent exact proof replay now runs. The
+shared engine-free framework comes first; statistical computation adaptation
+must preserve that replay contract before adding specialized semantics, exact
+variance/covariance and units. A nominal port check cannot discharge those laws.
 
 **October 9 bounded closure:** default mathematical Int, distinct Bool and the
 initial scalar operations are accepted in

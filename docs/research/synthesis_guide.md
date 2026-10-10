@@ -17,12 +17,15 @@ surfaces; their present capabilities do not bound the language we can investigat
 
 ## Find Your Question
 
-The current selected continuation focuses solely on data/statistics. Start with
-the [Statistical Data Interface](../design/statistical_data.md), then its
-[primary-system comparison](data_workflows/statistical_objects.md). The
-engine-free model checks a named lazy workflow and exact mean decomposition
-without observations. Broader statistical families are interface contracts;
-distribution/model execution and arbitrary algebraic proof remain open.
+The current selected continuation establishes a generic
+[engine-free object framework](../design/object_framework.md) first: referable
+objects, typed composition, passive inspection, closed definitions and explicit
+realization. Arithmetic, text and document descriptions test the shared boundary.
+The [Statistical Data Interface](../design/statistical_data.md) and its
+[primary-system comparison](data_workflows/statistical_objects.md) provide one
+domain adapter. Their missingness, observation domains, numeric theories and
+scientific obligations must survive integration. Engine freedom separates
+meaning from implementation; deferred execution is one consequence.
 
 | You want to… | Read next | Produce |
 | --- | --- | --- |
@@ -31,6 +34,7 @@ distribution/model execution and arbitrary algebraic proof remain open.
 | Compare one area | [Feature owners](features/README.md), [semantic matrix](language_feature_matrix.md), [syntax forms](syntax_forms.md) | Alternatives, interaction costs, and a counterexample |
 | Resume an unresolved choice | [Open questions](open_questions.md), [registered passes](../orientation/design_pass_workflow.md) | One bounded discriminator under the existing owner |
 | Test composition beyond ordinary source | [Interfaces](interfaces/README.md), [domain composition](domain_composition.md), [DSL models](dsls/orthogonal_models.md) | A whole activity, preserving domain-specific meaning |
+| Define objects independently of an implementation | [Engine-Free Objects](../design/object_framework.md) | Nominal families, typed ports, passive descriptions, domain obligations and explicit adapter capabilities |
 | Move a settled result into the language | [Admission workflow](#integrate-a-settled-result) | Canonical laws, independent fixtures, and a reversible bridge |
 
 For this pass, start with the eight expanded reviews below. Follow the linked

@@ -453,12 +453,14 @@ to admit any of them.
 
 ## Candidate Primitive Synthesis And Integration Path
 
-The selected data-only continuation now has a concrete
-[Statistical Data Interface](statistical_data.md), a
-[schema-only example](../research/data_workflows/statistical_plan.json), and an
-engine-free checker with a bounded exact mean law. Its object catalog and
-ordered data path carry this section forward; broader language topics retain
-their existing owners without expanding the current implementation scope.
+The selected continuation now starts with the domain-neutral
+[Engine-Free Objects](object_framework.md): typed references, descriptions,
+closed composition and explicit realization. It separates object meaning from
+implementation, which is broader than deferring evaluation. Arithmetic, text
+and document descriptions exercise the shared envelope. The
+[Statistical Data Interface](statistical_data.md) then adapts that foundation;
+its existing checker and independent exact mean consumer remain domain-owned.
+The shared envelope does not erase domain algebras or replace Nomi Core.
 
 > Designing hypothesis, 2026-10-10. These six semantic families organize a
 > comparison; they are not accepted opcodes, syntax, or a universal domain IR.
@@ -534,17 +536,20 @@ increment is open. Close only the promises of the selected slice.
 | Step | Work and accountable owner | Exit evidence | If it fails |
 | --- | --- | --- | --- |
 | 1 | Derive the existing report through Value/Bind/Apply/Choose; language-coherence with function contracts | Every call, type, default, failure and callback has a named contract; unresolved facts remain visible | Narrow the checked subset or improve the contract; never insert Any |
-| 2 | Extract a replaceable typed-plan interface for the selected data/statistical workflow; data owner under language-coherence | Declared input ports suffice for structural checking; every intermediate can be referenced; no scan/UDF/collect during checking | Separate data-dependent schema discovery or opaque callbacks into explicit unsupported/runtime obligations |
+| 2 | Establish engine-free object references, descriptions and composition first; language-coherence owns the shared envelope, domains own refinements | Arithmetic and non-numeric descriptions compose without bindings or engines; domain payloads survive adaptation and inspection | Keep the envelope small; unsupported domain refinements remain explicit rather than being reduced to shallow nominal checks |
 | 3 | Establish one bounded equational theory, beginning with exact mean and defined empty/missing policy | Proof records name rewrite definitions, source/grain/mask/profile, and every required assumption | Return conditional/unknown; preserve original plan and prohibit an unjustified optimization |
 | 4 | Compare adapters behind that interface, starting with one pinned execution profile | Engines either preserve the interface's values/absence/errors/order or refuse; logical plan identity stays independent | Name a backend-specific profile or conversion cost; do not change interface laws silently |
 | 5 | Add one scoped execution case only when needed; resource/function owners | Complete cause/escape/cancellation traces and owned work; inspection remains passive | Retain explicit synchronous execution; keep the richer lifetime candidate open |
 | 6 | Reuse and inspect the same checked workflow from two consumers; cognitive packet owns representation comparison | Independent consumer checking, revision invalidation, named intermediates and repair/handoff observations | Improve interfaces/diagnostics before adding another syntax |
 | 7 | Admit a proven useful convenience or generalization | Long form, formatter, lowering, diagnostics, independent conformance and removal criteria agree | Keep the ordinary composition; a failed shorthand does not reject the domain need |
 
-The immediate next action is step 2's inert statistical/data interface and step
-3's bounded mean law, following the user's requested data-platform direction.
-This is an isolated design experiment; it does not declare the broad target
-implemented or make all prior language topics prerequisites for investigating it.
+The immediate continuation is step 2's generic framework and domain-validator
+boundary. The first implementation now checks closed arithmetic/text composition
+and realizes selected objects through explicit adapters. Statistical descriptors
+reuse its envelope; statistical computation and mean-law replay retain their
+own checker until a contract-preserving adapter is demonstrated. This library
+experiment does not declare the broad target implemented or require ordinary
+eager computations to become graphs.
 The [maintainer guide](../research/synthesis_guide.md) owns the research worksheet
 and interaction counterexamples. The [agenda](redesign_agenda.md) keeps D0-D7;
 the [roadmap](../orientation/project_roadmap.md) still owns distribution scheduling.
