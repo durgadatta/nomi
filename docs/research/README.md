@@ -21,6 +21,14 @@ research loop, candidate worksheet, eight deeper language comparisons,
 composition discriminators, depth gaps, and integration handoff. It routes into
 the existing evidence owners and accepted contracts rather than adding a backlog.
 
+The selected continuation is now data/statistics:
+[Statistical Objects Before Observations](data_workflows/statistical_objects.md)
+compares primary systems, and the
+[Statistical Data Interface](../design/statistical_data.md) owns the candidate
+contracts and data-only integration path. Its bounded executable model checks
+a schema-only workflow and exact mean identity; broader statistical objects
+remain explicit proposed interfaces rather than implemented engines.
+
 1. [Language Families](families.md) - what major traditions contribute and
    what Nomi should not inherit.
 2. [Design Convergences](convergences.md) - findings that recur across

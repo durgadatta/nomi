@@ -184,6 +184,14 @@ bidirectional coroutines, and async events.
 
 ## 8. Tables And Query Plans
 
+The selected continuation is the
+[Statistical Data Interface](../design/statistical_data.md): immutable named
+objects, declared input schemas, domain-sensitive composition and explicit
+adapter contracts. Its engine-free model implements a bounded exact mean
+identity. See [statistical research](data_workflows/statistical_objects.md) for
+primary references and refusal cases. This does not close general relational
+typing, engine execution or the complete scientific-object interface.
+
 **Question:** When do `map`/`filter`/`group_by` stop being adequate for tables?
 
 **Current hypothesis:** typed table values and ordinary verbs first; explicit
@@ -211,6 +219,12 @@ per-row freshness is not cross-row invariant preservation. The designed schedule
 are unperformed and do not replace the existing owner-enforced publication law.
 
 ## 9. Numeric And Scientific Model
+
+The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
+now exercises a declared exact-rational theory without observations. Float64
+mean expansion, paired moments, units, weights and scientific assumptions
+remain distinct obligations. The next selected step is independent proof
+replay and exact variance/covariance with units, not a universal numeric engine.
 
 **October 9 bounded closure:** default mathematical Int, distinct Bool and the
 initial scalar operations are accepted in

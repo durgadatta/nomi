@@ -1,0 +1,401 @@
+{
+  "version": 1,
+  "status": "isolated research interface; no Nomi semantic admission",
+  "profiles": {
+    "exact-rational-v1": {
+      "arithmetic": "unbounded exact integer/rational",
+      "missing": "skip declared nulls in aggregates",
+      "sum_empty": "zero",
+      "mean_empty": "Missing",
+      "divide_zero": "Missing",
+      "nan": "unsupported",
+      "units": "dimensionless fragment"
+    },
+    "float64-opaque-v1": {
+      "arithmetic": "backend numeric law unspecified; no mean expansion",
+      "missing": "declared null distinct from NaN",
+      "units": "dimensionless fragment"
+    }
+  },
+  "operations": {
+    "input": {
+      "arity": 0,
+      "type_rule": "input",
+      "attributes": [
+        "schema"
+      ]
+    },
+    "column": {
+      "arity": 1,
+      "type_rule": "column",
+      "attributes": [
+        "field"
+      ]
+    },
+    "alias": {
+      "arity": 1,
+      "type_rule": "alias",
+      "attributes": []
+    },
+    "filter": {
+      "arity": 2,
+      "type_rule": "filter",
+      "attributes": []
+    },
+    "add": {
+      "arity": 2,
+      "type_rule": "numeric",
+      "attributes": []
+    },
+    "subtract": {
+      "arity": 2,
+      "type_rule": "numeric",
+      "attributes": []
+    },
+    "multiply": {
+      "arity": 2,
+      "type_rule": "numeric",
+      "attributes": []
+    },
+    "greater": {
+      "arity": 2,
+      "type_rule": "compare",
+      "attributes": []
+    },
+    "sum": {
+      "arity": 1,
+      "type_rule": "sum",
+      "attributes": []
+    },
+    "count_valid": {
+      "arity": 1,
+      "type_rule": "count_valid",
+      "attributes": []
+    },
+    "count_rows": {
+      "arity": 1,
+      "type_rule": "count_rows",
+      "attributes": []
+    },
+    "mean": {
+      "arity": 1,
+      "type_rule": "mean",
+      "attributes": []
+    },
+    "safe_divide": {
+      "arity": 2,
+      "type_rule": "safe_divide",
+      "attributes": []
+    }
+  },
+  "laws": [
+    {
+      "id": "alias-reference-v1",
+      "status": "implemented closed rule",
+      "statement": "An alias preserves the referenced object and its domain."
+    },
+    {
+      "id": "mean-valid-exact-v1",
+      "status": "implemented closed rule",
+      "profile": "exact-rational-v1",
+      "statement": "mean(x) = safe_divide(sum(x), count_valid(x)), with the same x and skip-null policy; zero denominator yields Missing."
+    }
+  ],
+  "families": [
+    {
+      "id": "input_port",
+      "status": "fragment",
+      "contract_fields": [
+        "schema",
+        "binding_identity",
+        "snapshot_requirement"
+      ],
+      "fragment_support": [
+        "node identity",
+        "declared schema"
+      ]
+    },
+    {
+      "id": "schema",
+      "status": "fragment",
+      "contract_fields": [
+        "ordered_fields",
+        "types",
+        "nullability",
+        "schema_revision"
+      ],
+      "fragment_support": [
+        "field names",
+        "dtype",
+        "nullable"
+      ]
+    },
+    {
+      "id": "relation",
+      "status": "fragment",
+      "contract_fields": [
+        "schema",
+        "observation_domain",
+        "multiplicity",
+        "ordering"
+      ],
+      "fragment_support": [
+        "schema",
+        "unordered bag domain"
+      ]
+    },
+    {
+      "id": "column",
+      "status": "fragment",
+      "contract_fields": [
+        "dtype",
+        "nullability",
+        "observation_domain",
+        "unit"
+      ],
+      "fragment_support": [
+        "dtype",
+        "nullability",
+        "observation domain",
+        "fixed dimensionless unit"
+      ]
+    },
+    {
+      "id": "scalar_expression",
+      "status": "fragment",
+      "contract_fields": [
+        "dtype",
+        "nullability",
+        "numeric_profile"
+      ],
+      "fragment_support": [
+        "dtype",
+        "nullability",
+        "numeric profile"
+      ]
+    },
+    {
+      "id": "selection",
+      "status": "fragment",
+      "contract_fields": [
+        "predicate",
+        "observation_domain",
+        "missing_policy"
+      ],
+      "fragment_support": [
+        "non-null Bool predicate",
+        "same input domain"
+      ]
+    },
+    {
+      "id": "partition",
+      "status": "catalog-only",
+      "contract_fields": [
+        "relation",
+        "keys",
+        "null_key_policy",
+        "empty_group_policy"
+      ]
+    },
+    {
+      "id": "window",
+      "status": "catalog-only",
+      "contract_fields": [
+        "partition",
+        "order",
+        "frame",
+        "tie_policy"
+      ]
+    },
+    {
+      "id": "aggregate_state",
+      "status": "catalog-only",
+      "contract_fields": [
+        "state_schema",
+        "identity",
+        "update",
+        "merge",
+        "finalize",
+        "numeric_profile"
+      ]
+    },
+    {
+      "id": "weight",
+      "status": "catalog-only",
+      "contract_fields": [
+        "domain",
+        "weight_kind",
+        "support",
+        "missing_policy",
+        "normalization"
+      ]
+    },
+    {
+      "id": "estimand",
+      "status": "catalog-only",
+      "contract_fields": [
+        "population",
+        "target_functional",
+        "unit",
+        "identification_assumptions"
+      ]
+    },
+    {
+      "id": "estimator",
+      "status": "catalog-only",
+      "contract_fields": [
+        "estimand",
+        "sample_design",
+        "algorithm",
+        "finite_sample_policy"
+      ]
+    },
+    {
+      "id": "distribution",
+      "status": "catalog-only",
+      "contract_fields": [
+        "support",
+        "parameters",
+        "measure",
+        "density_or_mass",
+        "cdf",
+        "sampling_contract"
+      ]
+    },
+    {
+      "id": "random_variable",
+      "status": "catalog-only",
+      "contract_fields": [
+        "distribution",
+        "joint_origin",
+        "dependence",
+        "randomness_owner"
+      ]
+    },
+    {
+      "id": "parameter",
+      "status": "catalog-only",
+      "contract_fields": [
+        "space",
+        "constraint",
+        "unit",
+        "role"
+      ]
+    },
+    {
+      "id": "model_specification",
+      "status": "catalog-only",
+      "contract_fields": [
+        "variables",
+        "formula_ast",
+        "likelihood",
+        "link",
+        "assumptions"
+      ]
+    },
+    {
+      "id": "fitted_artifact",
+      "status": "catalog-only",
+      "contract_fields": [
+        "model",
+        "training_snapshot",
+        "learned_state",
+        "algorithm_revision",
+        "diagnostics"
+      ]
+    },
+    {
+      "id": "prediction",
+      "status": "catalog-only",
+      "contract_fields": [
+        "fitted_artifact",
+        "input_schema",
+        "prediction_kind",
+        "new_level_policy"
+      ]
+    },
+    {
+      "id": "resampling_plan",
+      "status": "catalog-only",
+      "contract_fields": [
+        "domain",
+        "sampling_unit",
+        "strata_or_clusters",
+        "seed_stream",
+        "replicates"
+      ]
+    },
+    {
+      "id": "hypothesis_test",
+      "status": "catalog-only",
+      "contract_fields": [
+        "null",
+        "alternative",
+        "statistic",
+        "reference_law",
+        "selection_history"
+      ]
+    },
+    {
+      "id": "uncertainty",
+      "status": "catalog-only",
+      "contract_fields": [
+        "method",
+        "coverage_or_credibility",
+        "joint_origin",
+        "assumptions",
+        "interval_or_region"
+      ]
+    },
+    {
+      "id": "score",
+      "status": "catalog-only",
+      "contract_fields": [
+        "target",
+        "prediction_kind",
+        "loss",
+        "aggregation",
+        "evaluation_snapshot"
+      ]
+    },
+    {
+      "id": "visualization",
+      "status": "catalog-only",
+      "contract_fields": [
+        "source_nodes",
+        "encodings",
+        "scales",
+        "aggregation",
+        "interaction_policy"
+      ]
+    },
+    {
+      "id": "proof_artifact",
+      "status": "fragment",
+      "contract_fields": [
+        "theory_revision",
+        "context",
+        "node_references",
+        "derivation"
+      ],
+      "fragment_support": [
+        "theory revision",
+        "context fingerprint",
+        "named references",
+        "closed derivation receipt"
+      ]
+    },
+    {
+      "id": "execution_receipt",
+      "status": "catalog-only",
+      "contract_fields": [
+        "plan_revision",
+        "bindings",
+        "engine_version",
+        "capability_receipt",
+        "actual_numeric_profile"
+      ]
+    }
+  ],
+  "family_contract_note": "contract_fields describe the proposed full interface; fragment_support lists the current bounded implementation. Catalog-only families are not executable checker operations."
+}

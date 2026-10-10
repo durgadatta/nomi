@@ -453,6 +453,13 @@ to admit any of them.
 
 ## Candidate Primitive Synthesis And Integration Path
 
+The selected data-only continuation now has a concrete
+[Statistical Data Interface](statistical_data.md), a
+[schema-only example](../research/data_workflows/statistical_plan.json), and an
+engine-free checker with a bounded exact mean law. Its object catalog and
+ordered data path carry this section forward; broader language topics retain
+their existing owners without expanding the current implementation scope.
+
 > Designing hypothesis, 2026-10-10. These six semantic families organize a
 > comparison; they are not accepted opcodes, syntax, or a universal domain IR.
 

@@ -44,6 +44,9 @@ For the broader purpose, competing directions and current gap, read the
 13. [Function Contracts](function_contracts.md) and
     [Callback Target](function_contracts_target.nomi) - designing pure/effectful
     callback comparison; generic/function-type notation remains open.
+14. [Statistical Data Interface](statistical_data.md) - designing engine-free
+    object contracts, named lazy plans, schema checking and bounded exact laws;
+    no data engine or source syntax admitted.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly

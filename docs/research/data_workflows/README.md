@@ -31,6 +31,14 @@ mathematics, biology, chemistry, linguistics, music, and argumentation.
 9. [Messaging And Event-Driven Architectures](messaging_and_events.md): queues,
    pub/sub, logs, actors, outbox/inbox, projections, sagas and durable workflows;
    MSG1-MSG6, 24 adversarial cases and ten captured finite countermodels.
+10. [Statistical Objects Before Observations](statistical_objects.md): the selected
+    data-only continuation; Polars/pandas/R/Ibis/Substrait interface comparison,
+    statistical object families, corner cases and an executed schema-only model.
+
+For the current data/statistics work, start with the
+[Statistical Data Interface](../../design/statistical_data.md). Its commands
+check named plans and the exact mean decomposition without data; its catalog
+distinguishes the implemented fragment from proposed statistical families.
 
 The live experiment order belongs to the synthesis, not to a second dated
 backlog. Canonical [syntax](../../design/syntax.md),

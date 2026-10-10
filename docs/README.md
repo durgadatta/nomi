@@ -235,6 +235,7 @@ This list is intentionally complete and is checked by tests.
 - [Interaction Proposal](design/interaction_model.md)
 - [Design-First Agenda](design/redesign_agenda.md)
 - [Function Contracts](design/function_contracts.md)
+- [Statistical Data Interface](design/statistical_data.md)
 
 ### Research
 
@@ -254,6 +255,7 @@ This list is intentionally complete and is checked by tests.
 - [Syntax Forms](research/syntax_forms.md)
 - [Data And Workflow Research](research/data_workflows/README.md)
 - [Data Source Forms](research/data_workflows/source_forms.md)
+- [Statistical Objects Before Observations](research/data_workflows/statistical_objects.md)
 - [Workflow Execution Models](research/data_workflows/execution_models.md)
 - [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
 - [AI/ML Transformations, State And Evidence](research/data_workflows/ai_ml.md)

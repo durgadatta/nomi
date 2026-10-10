@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "profile": "exact-rational-v1",
+  "nodes": [
+    {
+      "id": "observations",
+      "op": "input",
+      "args": [],
+      "schema": [
+        {
+          "name": "reading",
+          "dtype": "ExactRational",
+          "nullable": true
+        },
+        {
+          "name": "baseline",
+          "dtype": "ExactRational",
+          "nullable": true
+        },
+        {
+          "name": "eligible",
+          "dtype": "Bool",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "eligibility",
+      "op": "column",
+      "args": [
+        "observations"
+      ],
+      "field": "eligible"
+    },
+    {
+      "id": "selected",
+      "op": "filter",
+      "args": [
+        "observations",
+        "eligibility"
+      ]
+    },
+    {
+      "id": "reading",
+      "op": "column",
+      "args": [
+        "selected"
+      ],
+      "field": "reading"
+    },
+    {
+      "id": "baseline",
+      "op": "column",
+      "args": [
+        "selected"
+      ],
+      "field": "baseline"
+    },
+    {
+      "id": "difference",
+      "op": "subtract",
+      "args": [
+        "reading",
+        "baseline"
+      ]
+    },
+    {
+      "id": "total",
+      "op": "sum",
+      "args": [
+        "difference"
+      ]
+    },
+    {
+      "id": "valid_count",
+      "op": "count_valid",
+      "args": [
+        "difference"
+      ]
+    },
+    {
+      "id": "row_count",
+      "op": "count_rows",
+      "args": [
+        "selected"
+      ]
+    },
+    {
+      "id": "average",
+      "op": "mean",
+      "args": [
+        "difference"
+      ]
+    },
+    {
+      "id": "decomposed",
+      "op": "safe_divide",
+      "args": [
+        "total",
+        "valid_count"
+      ]
+    },
+    {
+      "id": "wrong_denominator",
+      "op": "safe_divide",
+      "args": [
+        "total",
+        "row_count"
+      ]
+    },
+    {
+      "id": "published_average",
+      "op": "alias",
+      "args": [
+        "average"
+      ]
+    }
+  ],
+  "outputs": [
+    "average",
+    "decomposed",
+    "wrong_denominator",
+    "published_average"
+  ]
+}

@@ -778,3 +778,44 @@ families, and exact mean decomposition with stated missingness, empty-input,
 weight and representation laws. Start with a removable interface/checking model,
 then compare pinned engine adapters. Preserve conditional/unknown proof results,
 and do not introduce a dataframe engine or claim universal statistical proofs.
+
+## Statistical Interface Fragment, 2026-10-10
+
+### Evidence That Changed The Design
+
+The selected continuation now has an executable engine-free interface rather
+than only aspirational dataframe calls. Its schema-only example names a filter,
+nullable difference, sum, valid count, row count, mean, expansion and alias.
+The exact mean expansion is established by a closed definitional rule; row-count
+and Float64 variants remain unknown. Primary Polars evidence shows schema
+resolution can perform I/O; Ibis provides unbound descriptions as an existing
+precedent. R/dplyr and Substrait expose policy and state boundaries to retain.
+
+### Workflow Friction
+
+Schema-only correctness, definitional equality, physical backend conformance and
+scientific validity are different questions. A catalog cannot imply distribution
+or fitting support. A numeric countermodel initially assumed Python `sum` was
+a naive float fold; Python 3.14.0rc3's result disproved that assumption. The test
+now explicitly contrasts a left fold with `math.fsum`, without making an engine
+claim. Named references should survive fusion without forcing materialization.
+
+### Durable Improvement
+
+`statistical_data.md` owns the designing contract and data-only closure path;
+`statistical_objects.md` owns primary evidence and discriminators. The catalog
+distinguishes seven implemented fragments from eighteen catalog-only families.
+The isolated tool checks graph/schema/domain contracts, passively inspects every
+node, emits a context-qualified mean-law receipt and refuses forged or stale
+receipts. It neither binds data nor executes an adapter. Thirty-six new tests
+include 85 finite exact sequences as an independent soundness discriminator.
+Combined focused validation passed 173 tests; 2136 local links across 166
+documents and all five design packets were coherent; Ruff passed.
+
+### Next Pass
+
+Expose a normalized expression/theory artifact for independent replay, then
+extend the exact paired-moment theory with units and denominator policies. The
+broader catalog contracts still need typed specialized ports and scientific
+obligations before their operators can be admitted. Backend execution and Nomi
+source/package admission remain separate. The packet stays `designing`.

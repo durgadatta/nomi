@@ -17,6 +17,13 @@ surfaces; their present capabilities do not bound the language we can investigat
 
 ## Find Your Question
 
+The current selected continuation focuses solely on data/statistics. Start with
+the [Statistical Data Interface](../design/statistical_data.md), then its
+[primary-system comparison](data_workflows/statistical_objects.md). The
+engine-free model checks a named lazy workflow and exact mean decomposition
+without observations. Broader statistical families are interface contracts;
+distribution/model execution and arbitrary algebraic proof remain open.
+
 | You want to… | Read next | Produce |
 | --- | --- | --- |
 | Understand the present language hypothesis | [Synthesis](../design/synthesis.md), [decision ledger](../design/decisions.md), [overall program](../design/targets/overall.nomi) | A named pressure or conflict with an existing law |
