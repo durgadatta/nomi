@@ -1211,3 +1211,46 @@ Independently replay template substitution and carried-condition composition
 itself, rather than using expanded-graph validation to claim that proof. Then
 compare authoring and repair against inline graphs, and select one cross-object
 relation with an owned rule before broader quantified domain validation.
+
+## Independent Workflow Substitution — 2026-10-10
+
+### Evidence That Changed The Design
+
+An expanded graph can be valid yet contain the wrong reference substitution.
+The independent consumer now reconstructs every supplied workflow instance from
+the original base graph, explicit definitions and checked reference arguments.
+It compares the exact expanded graph, selected outputs, namespace identities,
+source condition provenance and combined conditions. This closes a different
+claim from graph typing or predicate replay; it neither infers user intent nor
+executes an implementation.
+
+### Workflow Friction
+
+Raw JSON definition files and canonicalized producer documents exposed an
+output-order disagreement that in-process round trips missed. Export ports now
+have explicit canonical name order in the consumer and documentation. Expanded
+bundles also enforce the aggregate artifact byte limit instead of relying on
+separate graph/inspection limits.
+
+### Durable Improvement
+
+Twenty-three new cases challenge lost conditions, forged satisfied/realized
+states, stale provenance, wrong but type-correct substitution, nominal argument
+errors, namespace collisions, unchecked definitions and ambiguous CLI modes.
+A fresh isolated process refuses producer imports and verifies two instances
+with pending conditions. The original scalar/documentary consumers still use
+their independently owned inference; no shared producer normalizer was added.
+Final combined validation passed 457 focused cases, including the original
+statistical contracts and all documentation/packet/target checks. Ruff, five
+design packets, the 63-node hierarchy and 2253 local links across 168 documents
+passed. All four documented Python examples and the independent workflow CLI
+replay executed. Parser, interpreter and browser semantics were not changed;
+their broader suites were not needed for these isolated artifact/tooling changes.
+
+### Next Pass
+
+Compare inline and reusable authoring/repair using the same contract and task.
+Select a bounded cross-object relation only after identifying its owner and
+independent rule; fixed paths cannot stand in for quantification. The generic
+framework is ahead of the statistical adapter, while source-language admission,
+operational scopes, physical engines and human outcomes remain open.

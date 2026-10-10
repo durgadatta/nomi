@@ -342,11 +342,10 @@ def replay(vocabulary, graph, receipt):
     }
 
 
-def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None):
+def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     objects, normal, terms = _reconstruct(vocabulary, graph)
     rules = _rules_for(vocabulary)
     _artifact(requirements)
-    _artifact(receipt)
     _keys(requirements, ("version", "graph", "owner", "revision", "requirements"))
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
     if (
@@ -478,17 +477,207 @@ def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None)
         if version == 1
         else "closed structural path predicates, not scientific assumptions or a general solver",
     }
+    return expected
+
+
+def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None):
+    _artifact(receipt)
+    expected = _requirement_receipt(vocabulary, graph, requirements, bindings)
     if _encode(receipt) != _encode(expected):
         raise ReplayError(
             "predicate evidence disagrees with independently reconstructed verdict"
         )
     return {
         "status": "verified",
-        "verdict": verdict,
-        "context": context,
-        "graph": graph_context,
+        "verdict": expected["status"],
+        "context": expected["context"],
+        "graph": expected["graph"],
         "independent_checker": True,
         "scope": "pinned lab predicates; no engine or scientific validity claim",
+    }
+
+
+def replay_workflows(vocabulary, base_graph, workflows, receipt):
+    """Independently replay explicit template expansion, with no engine/bindings."""
+    _reconstruct(vocabulary, base_graph)
+    _artifact(workflows)
+    _artifact(receipt)
+    if type(workflows) is not list or not 1 <= len(workflows) <= 512:
+        raise ReplayError("expected bounded explicit workflow definitions")
+    rules = _rules_for(vocabulary)
+    admitted = {}
+    for workflow in workflows:
+        _keys(
+            workflow,
+            ("version", "id", "revision", "graph", "inputs", "outputs", "requirements"),
+        )
+        if type(workflow["version"]) is not int or workflow["version"] != 1:
+            raise ReplayError("unsupported workflow envelope")
+        _identity(workflow["id"])
+        _identity(workflow["revision"])
+        objects, _, _ = _reconstruct(vocabulary, workflow["graph"])
+        for direction in ("inputs", "outputs"):
+            mapping = workflow[direction]
+            if type(mapping) is not dict:
+                raise ReplayError("invalid workflow interface")
+            for port, identity in mapping.items():
+                _identity(port)
+                if type(identity) is not str or identity not in objects:
+                    raise ReplayError("unknown workflow interface reference")
+        inputs = list(workflow["inputs"].values())
+        slots = {i for i, obj in objects.items() if rules[obj["op"]][1] == "input"}
+        if len(inputs) != len(set(inputs)) or set(inputs) != slots:
+            raise ReplayError("workflow inputs must expose each abstract slot once")
+        if not workflow["outputs"] or set(workflow["outputs"].values()) != set(
+            workflow["graph"]["outputs"]
+        ):
+            raise ReplayError("workflow outputs disagree with the template selection")
+        if workflow["requirements"] is not None:
+            _requirement_receipt(
+                vocabulary, workflow["graph"], workflow["requirements"]
+            )
+        context = _digest({"workflow": workflow, "envelope": "nomi.object-workflow-1"})
+        if context in admitted:
+            raise ReplayError("duplicate workflow definition")
+        admitted[context] = workflow
+    _keys(receipt, ("graph", "requirements", "inspection"))
+    view = receipt["inspection"]
+    _keys(view, ("graph", "components", "outputs", "realization", "requirements"))
+    components = view["components"]
+    if type(components) is not list or not 1 <= len(components) <= 512:
+        raise ReplayError("invalid workflow component count")
+    graph = json.loads(_encode(base_graph))
+    conditions, expected_components, namespaces = [], [], set()
+    exports = {}
+    for component in components:
+        _keys(
+            component,
+            (
+                "workflow",
+                "id",
+                "revision",
+                "namespace",
+                "inputs",
+                "outputs",
+                "requirement_source",
+            ),
+        )
+        context = component["workflow"]
+        if type(context) is not str or context not in admitted:
+            raise ReplayError("workflow definition context is not supplied")
+        workflow = admitted[context]
+        namespace = _identity(component["namespace"])
+        if namespace in namespaces:
+            raise ReplayError("duplicate workflow namespace")
+        namespaces.add(namespace)
+        arguments = component["inputs"]
+        _keys(arguments, workflow["inputs"])
+        current_objects, _, _ = _reconstruct(vocabulary, graph)
+        local_objects, _, _ = _reconstruct(vocabulary, workflow["graph"])
+        substitution = {}
+        for port, local in workflow["inputs"].items():
+            target = arguments[port]
+            if type(target) is not str or target not in current_objects:
+                raise ReplayError("unknown workflow argument in this revision")
+            if (
+                rules[current_objects[target]["op"]][0]
+                != rules[local_objects[local]["op"]][0]
+            ):
+                raise ReplayError("workflow argument nominal family mismatch")
+            substitution[local] = target
+        for local in local_objects:
+            if local not in substitution:
+                target = _identity(namespace + "." + local)
+                if target in current_objects:
+                    raise ReplayError("workflow expansion identity collision")
+                substitution[local] = target
+        for original in workflow["graph"]["objects"]:
+            if original["id"] in workflow["inputs"].values():
+                continue
+            copied = json.loads(_encode(original))
+            copied["id"] = substitution[original["id"]]
+            for port, reference in original["ports"].items():
+                copied["ports"][port] = (
+                    [substitution[r] for r in reference]
+                    if type(reference) is list
+                    else substitution[reference]
+                )
+            graph["objects"].append(copied)
+        exports = {
+            port: substitution[workflow["outputs"][port]]
+            for port in sorted(workflow["outputs"])
+        }
+        for target in exports.values():
+            if target not in graph["outputs"]:
+                graph["outputs"].append(target)
+        _reconstruct(vocabulary, graph)
+        source = workflow["requirements"]
+        source_evidence = (
+            None
+            if source is None
+            else _requirement_receipt(vocabulary, workflow["graph"], source)
+        )
+        if source is not None:
+            for requirement in source["requirements"]:
+                copied = json.loads(_encode(requirement))
+                copied["id"] = _identity(namespace + "." + requirement["id"])
+                copied["subject"] = substitution[requirement["subject"]]
+                copied["path"] = requirement.get("path", [])
+                conditions.append(copied)
+        expected_components.append(
+            {
+                "workflow": context,
+                "id": workflow["id"],
+                "revision": workflow["revision"],
+                "namespace": namespace,
+                "inputs": arguments,
+                "outputs": exports,
+                "requirement_source": None
+                if source is None
+                else {
+                    "owner": source["owner"],
+                    "revision": source["revision"],
+                    "context": source_evidence["context"],
+                },
+            }
+        )
+    graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
+    required = (
+        None
+        if not conditions
+        else {
+            "version": 2,
+            "graph": graph_context,
+            "owner": "nomi.workflow-composition",
+            "revision": "v1",
+            "requirements": conditions,
+        }
+    )
+    evidence = (
+        None if required is None else _requirement_receipt(vocabulary, graph, required)
+    )
+    expected = {
+        "graph": graph,
+        "requirements": required,
+        "inspection": {
+            "graph": graph_context,
+            "components": expected_components,
+            "outputs": exports,
+            "realization": "unbound",
+            "requirements": evidence,
+        },
+    }
+    if _encode(receipt) != _encode(expected):
+        raise ReplayError(
+            "workflow receipt disagrees with independent substitution and conditions"
+        )
+    return {
+        "status": "verified",
+        "graph": graph_context,
+        "independent_checker": True,
+        "components": len(components),
+        "verdict": None if evidence is None else evidence["status"],
+        "scope": "pinned artifact substitution and carried conditions; no engine or authoring-intent proof",
     }
 
 
@@ -526,9 +715,25 @@ def main(argv=None):
     parser.add_argument(
         "--bindings", help="explicit input evidence for requirement replay"
     )
+    parser.add_argument(
+        "--workflow",
+        action="append",
+        help="explicit workflow definition; replay an expanded instance from the base graph",
+    )
     args = parser.parse_args(argv)
     try:
-        if args.requirements:
+        if args.workflow:
+            if args.requirements or args.bindings:
+                raise ReplayError(
+                    "workflow expansion replay is separate from binding evidence"
+                )
+            result = replay_workflows(
+                load(args.vocabulary),
+                load(args.graph),
+                [load(p) for p in args.workflow],
+                load(args.receipt),
+            )
+        elif args.requirements:
             result = replay_requirements(
                 load(args.vocabulary),
                 load(args.graph),

@@ -246,10 +246,14 @@ class WorkflowInstance(Frozen):
     def document(self):
         # Reconstruct Graph and Requirements separately using their existing
         # checked loaders. Provenance is inspection data, never a supplied proof.
-        return {
-            "graph": self._graph.document,
-            "requirements": None
-            if self._requirements is None
-            else self._requirements.document,
-            "inspection": self.inspect(),
-        }
+        return json.loads(
+            snapshot(
+                {
+                    "graph": self._graph.document,
+                    "requirements": None
+                    if self._requirements is None
+                    else self._requirements.document,
+                    "inspection": self.inspect(),
+                }
+            )
+        )

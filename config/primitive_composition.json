@@ -1127,7 +1127,7 @@
       ],
       "owner": "docs/design/object_framework.md",
       "law": "Reference parameters substitute explicitly; namespaced intermediates and carried conditions retain graph-qualified identity.",
-      "gate": "Expanded graphs replay independently; template substitution itself and authoring/repair benefits need independent evidence.",
+      "gate": "Independent pinned substitution runs; broader interfaces, operational scopes and authoring/repair benefits need comparison.",
       "placement": "library",
       "status": "experiment",
       "fixtures": [

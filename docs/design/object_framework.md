@@ -388,7 +388,9 @@ distinct source identities even when their pure dependencies are shared.
 Passing the previous **instance** carries its conditions forward to the new
 graph context, merging them with the new namespaced conditions. Source owner,
 revision and requirement context remain in component inspection; the combined
-artifact has the explicit `nomi.workflow-composition` owner. Existing receipts
+artifact has the explicit `nomi.workflow-composition` owner. Export ports are
+traversed in canonical name order when adding selected graph outputs; JSON
+record insertion order is not part of the interface. Existing receipts
 are not reused under a changed context. `instance.compile(backend)` attaches
 all carried conditions before binding and refuses a selection that omits a
 required subject. Computed arguments do not become static evidence merely
@@ -397,12 +399,36 @@ because they are passed through a template.
 `instance.document` exports the expanded graph, requirements and passive
 inspection. Restore the first two through `Graph.from_document` and
 `Requirements.from_document`. Independent consumers already replay those
-expanded graphs and predicate receipts; they do not yet independently verify
-the template substitution algorithm or trust inspection provenance as proof.
+expanded graphs and predicate receipts. They also now independently reconstruct
+template substitution, nominal argument checks, output selection, namespace
+collisions and carried conditions for the two pinned vocabularies. Supplying
+the original base graph and workflow definitions is required; component
+inspection cannot install new laws or substitute for authoring-intent review.
 Extracting `instance.graph` explicitly exposes the raw graph interface, which
 does not carry separate requirements; use the instance when preserving the
 workflow's required contract. No automatic backend selection or required-policy
 enforcement outside this convenience API is implied.
+
+Export the previous example explicitly to replay its composition separately
+from binding or realization:
+
+```python
+import json
+from pathlib import Path
+
+Path("/tmp/nomi-workflow-base.json").write_text(json.dumps(base.document))
+Path("/tmp/nomi-workflow-instance.json").write_text(json.dumps(second.document))
+```
+
+```bash
+python3 -m tools.object_replay config/object_interface.json /tmp/nomi-workflow-base.json /tmp/nomi-workflow-instance.json --workflow docs/research/object_framework/workflow.json
+```
+
+The result is `verified` with a `pending` condition verdict: expansion is
+established, while input values remain absent. `--workflow` is repeatable for
+distinct explicitly supplied definitions. This mode refuses binding/evidence
+flags that belong to a different replay operation. Whole exported bundles also
+respect the 1 MB artifact limit. No renderer or arithmetic callback runs.
 
 ## Limits And Next Discriminators
 
@@ -416,7 +442,7 @@ No remote execution, resource scope or general scheduling is implemented.
 | Next increment | Required evidence |
 | --- | --- |
 | Richer domain refinement protocol | Nested documentary paths now exercise static/input evidence, binding gates and independent replay. Cross-object relations, quantification and domain proofs require separate rules; assertions cannot become proof. |
-| More useful object composition | Parameterized multi-output workflows now preserve reference arguments, namespaced intermediates and carried conditions. Compare their authoring/repair costs with inline composition; independently check template substitution itself before claiming that proof. |
+| More useful object composition | Parameterized multi-output workflows preserve reference arguments, namespaced intermediates and carried conditions, with independent pinned substitution replay. Compare authoring/repair costs with inline composition before generalizing the interface. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |
 | Additional realization profiles | Two local documentary algorithms have independent expected-value fixtures. A foreign or remote adapter still needs explicit conversion/capacity, cancellation and failure evidence. |
