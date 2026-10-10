@@ -135,7 +135,8 @@ fixture is an error, rather than an empty successful check.
   this tie rule nor rejecting zero-duration notes is a music/device standard.
 - A note change names the model incarnation, revision, coordinate basis, stable
   note identity and field. The serialized owner rejects a stale or mismatched
-  base. Invalid field values remain raw drafts beside the unchanged model.
+  base. Invalid field values remain raw drafts beside the unchanged model,
+  retaining their original incarnation, revision and coordinate basis after reset.
 - A reset supplies a distinct incarnation; this driver refuses previously used
   incarnations within the case. Supplied tokens do not establish authenticated
   identity, global fork history or an atomic concurrent publication operation.
@@ -161,6 +162,12 @@ revision inspection and the Stop contract before an interface comparison.
 
 Strict stale-base refusal is one candidate. Selective revalidation or an explicit
 coordinate conversion may be better; those alternatives are not executed here.
+The next discriminator starts with B's proposed onset at half a beat under
+120 beats/minute, then changes tempo to 60 before commit. Repreparing the beat
+intent gives a 500-millisecond onset. Preserving the original 250-millisecond
+onset requires a quarter-beat coordinate. Strict refusal publishes neither.
+These preserve different intentions; a revalidator cannot choose from pixels or
+the new tempo alone. Compare explicit intent/basis policies and their read sets.
 Last-good inspection versus typed partial programs, tie policy, schedule ownership,
 overlapping voices and acknowledged release remain open. Source, structured and
 mixed authoring views still require actual construction, matched tasks and people.

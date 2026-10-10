@@ -634,6 +634,12 @@ schedules diverge under a tempo change; an old run remains old even after all it
 events are locally delivered. Stop after note-on can leave it unmatched. Planned
 delivery, recorded delivery and acknowledged external release need different facts.
 
+The final review found the experiment table still makes structured authoring
+conditional on text failure, contradicting the surrounding proposal. It also
+found retained drafts without their original model basis. The added reset oracle
+failed before the driver retained that context; matching note IDs after reset
+do not migrate a draft's meaning.
+
 ### Workflow Friction
 
 Correcting canonical prose alone leaves conflicting operational instructions.
@@ -662,9 +668,16 @@ and false-success checks preserve the evidence boundary; the registry and resear
 routes reproduce it without replacing the old probe capture. 184 focused checks,
 23 model cases, historical capture verification, lint and packet checks pass.
 
+The final increment corrects the table and admission/workflow scope and preserves
+draft context. 266 focused tests and 24 timing cases now pass. This stabilizes the
+scoped description and finite profile, with no new target admission. The roadmap
+owns the consolidated verification and still names target, view, host and human gaps.
+
 ### Next Pass
 
-Review the refined routes once more for discovery/delivery conflicts and duplicate
-claims. Stabilize this scoped description, then compare revalidated coordinate
-edits and authoring alternatives through the existing owners. Actual target
-integration, views, hosts and observations of people remain separate gaps.
+Compare strict refusal with explicit beat-intent versus absolute-time revalidation
+using the [half-beat/tempo-change discriminator](../research/interfaces/music_timing.md#what-the-model-changes-and-leaves-open).
+Choose matched rules before constructing source, structured and mixed authoring
+comparisons; keep creation, prediction, repair and handoff outcomes separate from
+semantic checking. Delivery continues through the roadmap's selected target
+contracts. Actual target integration, hosts and human observations remain open.

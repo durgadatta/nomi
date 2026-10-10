@@ -165,7 +165,7 @@ supported samples do not change because of this capture.
 
 The [creative challenger](music_timing.md#creative-authoring-challenger--october-10)
 now has a separate, executed finite model comparison. Its
-[23 literal cases](timing_cases.json) are not additional P-series probes, a
+[24 literal cases](timing_cases.json) are not additional P-series probes, a
 replacement for the historical capture, or an HX authoring/human trial. The
 [model profile and commands](music_timing.md#bounded-model-experiment) state the
 supplied rational-time, serialized-change and delivery policies. The driver
@@ -178,7 +178,7 @@ reports current host identity and explicit execution exclusions.
 | Onset/duration changes and replay | Named, basis-matched, current-base edits change the model; replay/stale/wrong-basis/unknown-note edits do not | Serialized owner; no shared-state atomicity, selective revalidation or graph merge |
 | Unfinished, negative and zero-duration drafts; boolean tempo | Invalid input preserves the checked model and records note-field drafts | Imposed domain and pair format; not a source parser, locale codec or typed partial-program system |
 | Ambiguous request | The supplied ambiguous label leaves the model unchanged | No natural-language interpretation or human intent evidence |
-| Reset and incarnation reuse | A reused revision counter does not validate the old proposal in a different incarnation; restoring a used incarnation is refused | Case-local supplied identities, not global history/identity enforcement |
+| Reset, incarnation reuse and retained draft | A reused revision counter does not validate the old proposal; a retained draft keeps its original base; restoring a used incarnation is refused | Case-local supplied identities, not global history/identity enforcement or automatic draft migration |
 | Passive inspection and old run | Inspecting does not deliver events; a retained old run delivers its old schedule after a current-model change | Pure computation and local records; no frontend or asynchronous worker |
 | Local Stop, clock replay and equal-time order | Stop leaves an unmatched note-on; the cursor avoids redelivery; ties follow the declared rule | No release acknowledgment, scheduler timing or device standard |
 

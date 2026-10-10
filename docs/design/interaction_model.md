@@ -62,19 +62,20 @@ Two credible directions remain:
 | Text-primary source with derived views and explicit edits | Reviewable files, Git compatibility, readable fallback, one formatter | Some spatial/domain tasks remain awkward; inverse edits may be unavailable. |
 | Structured document as primary program with equally editable projections | Stable structure/identity and domain editing without reparsing text | Storage, merge, interoperability, accessibility, and exporting arbitrary source become first-order problems. |
 
-**Working recommendation:** start text-primary and read-only projections. This
-is a reversible experiment, not proof the second direction is inferior. If
-source synchronization repeatedly defeats useful domain edits, run a fenced
-structured-document experiment instead of forcing every interaction into text.
-This is a current implementation baseline, not an exploration prerequisite:
-structured or mixed authoring can be compared before a text implementation fails.
+**Working delivery recommendation:** start text-primary and read-only projections.
+Compare structured and mixed authoring directly on selected domain tasks; they
+need not wait for a text implementation to fail. Source-synchronization costs
+are one pressure to investigate, alongside creation, incomplete work and handoff.
+The recommendation is reversible and does not choose the winner of that comparison.
 
 Text-primary means exact authored source plus explicit interpretation stages,
 not bare strings at every boundary. Bytes decoding, Unicode coordinates,
 localized display, machine encoding, trusted templates, source construction and
 process invocation remain different operations. A readable fallback is required
-even when a richer projection exists; display output is never the persistence
-or execution contract by implication.
+in this text-primary candidate even when a richer projection exists. The
+structured candidate must expose saved meaning, access and supported export
+limits; it need not silently promise arbitrary text round trips. Display output
+is never the persistence or execution contract by implication.
 
 ## Small Semantic Model
 
@@ -371,14 +372,19 @@ only if this pair fails to expose a specific ownership/time distinction.
 
 ## Ordered Playground Experiments
 
+This order is the reversible delivery baseline. Matched authoring comparisons
+can run alongside it; their preparation does not require delivery steps to fail.
+Promotion into a supported playground still needs the selected source and
+execution contracts.
+
 | Order | Deliverable/owner | Acceptance evidence | Stop or removal condition |
 | --- | --- | --- | --- |
-| 1 | Language/tool design: invoice model and explicit view contract | Three programs; invalid/stale/duplicate-ID cases; law counterexamples | Inconsistent core contracts: return to typing/decode first. |
+| 1 | Language/tool design: selected invoice model and explicit view contract | Beginner/change/submission fixtures; invalid/stale/duplicate-ID cases; law counterexamples | Inconsistent core contracts: return to typing/decode before promoting execution. |
 | 2 | Tooling: read-only value/dependency projection | Existing artifact IDs; no reexecution; redaction and unsupported fallback | Needs a second evaluator: keep plain inspection. |
 | 3 | Frontend: shared Run/Stop/Inspect command adapter | Same operation from button/palette/keyboard; late-response and repeated-Stop tests | Changes current execution semantics accidentally: remove adapter. |
 | 4 | Design study: text versus grid/form/diagram | Counterbalanced tasks, error categories, novice/expert/accessibility evidence | Faster only by hiding invalidity or authority: reject. |
 | 5 | Tooling spike: one editable literal/input projection | Atomic/stale checks, undo distinction, comments/identity preservation | Arbitrary inverse guessing: remain read-only. |
-| 6 | Alternative-design spike if needed | Compare structured primary document on the same tasks and export requirements | No measurable reasoning benefit for added storage/merge cost. |
+| 6 | Structured/mixed authoring comparison alongside delivery | Compare primary representations on matched model/tasks and declared export limits | No measurable reasoning benefit for added storage/merge cost. |
 | 7 | Promotion after settled contract | CLI/browser conformance, sample regression, fresh manifest and browser smoke | Any unsupported target fixture presented as runnable. |
 
 The [HX1-HX8 detail](../research/interfaces/composition_cases.md#prioritized-discriminators)
@@ -387,7 +393,8 @@ The [real-file handoff](../research/interfaces/composition_cases.md#implementati
 maps source artifacts, worker generations, result/event records, decode paths,
 host declarations, and editor/notebook adapters. The atlas and local probes
 do not justify a new evaluator or waiting for every research family to close;
-promote one settled contract at a time under the existing D0-D7 gates.
+promote one settled executable contract at a time under the existing D0-D7 gates.
+Those gates govern the promise being promoted, rather than admitting discovery.
 
 Use the existing [playground plan](../review/2026-09-29-github-playground-agentic-plan.md).
 No UI was built and no study was run here. A trial of six to eight varied users

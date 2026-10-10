@@ -125,7 +125,7 @@ not run yet. Runnable examples live in [samples](samples/).
 | Find a complete example for a task | [Example Catalog](docs/guide/examples.md) |
 | Save files, use tools, or diagnose a problem | [Tools And Troubleshooting](docs/guide/tools.md) |
 | Find guides, design references, or research | [Documentation](docs/README.md) |
-| Understand the intended language | [Target Design](docs/design/README.md) |
+| Understand the ambition and intended language | [Computational Medium Vision](docs/design/vision.md), then [Target Design](docs/design/README.md) |
 | See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [Changelog](CHANGELOG.md) |
 | Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
 | Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |

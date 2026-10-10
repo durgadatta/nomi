@@ -205,7 +205,7 @@ express clearly.
 
 ## Surface Layers
 
-Nomi has four deliberate layers:
+The current source-language organization uses four deliberate layers:
 
 | Layer | Stability | Examples |
 | --- | --- | --- |
@@ -214,8 +214,11 @@ Nomi has four deliberate layers:
 | Libraries and protocols | Evolvable without grammar changes | collections, decoding, files, HTTP, tables, testing |
 | Scoped language tools | Explicitly entered and inspectable | symbolic expressions, query plans, staged code |
 
-A feature moves inward only after real programs show that the outer layer is
-insufficient.
+Moving a source feature inward needs evidence that the outer layer obscures or
+cannot carry the selected model. This is a semantic-admission rule, not a
+requirement that discovery start outside the core or prove a library failed
+before comparing alternatives. The [vision](vision.md) can challenge the layer
+organization itself; accepted source meaning changes through explicit decisions.
 
 ## Syntax Contract
 

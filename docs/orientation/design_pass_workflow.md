@@ -35,7 +35,7 @@ Every registered pass owns exactly these artifacts:
 | Artifact | Location | Responsibility |
 | --- | --- | --- |
 | Research | `docs/research/<topic>.md` | Primary evidence, real uses, genuine forks, and rejected mechanisms |
-| Design | `docs/design/<topic>.md` | Accepted target syntax, semantics, diagnostics, and boundaries |
+| Design | `docs/design/<topic>.md` | Target laws, proposed alternatives, diagnostics and boundaries, with acceptance status explicit |
 | Target | `docs/design/<topic>_target.nomi` | Coherent positive examples plus clearly commented rejection cases |
 | Bridge | `docs/review/<date>-<topic>.md` | Current implementation audit, ordered migration, risks, and retrospective |
 
@@ -69,8 +69,9 @@ spelling. Update `last_reviewed`, checks, and next actions whenever status moves
 2. **Research.** Ground the focused question in a real activity or program. Use
    official specifications, primary papers and current Nomi evidence. Record
    forks, not language tours.
-3. **Decide.** Update canonical target docs and the decision ledger. State what
-   is rejected as carefully as what is accepted.
+3. **Decide.** Update canonical target docs and the decision ledger. Accept,
+   reject or retain an unresolved comparison with a named next discriminator;
+   distinguish a stable description from an accepted mechanism.
 4. **Pressure-test.** Put the choice in a focused target file and the broad
    whole-language target. Include formatting and diagnostic expectations.
 5. **Bridge.** Audit every current frontend, IR, runtime, editor, test, and web

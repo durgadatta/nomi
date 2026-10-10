@@ -205,6 +205,9 @@ def run_case(models, case):
             if status == "invalid_draft":
                 drafts.append(
                     {
+                        "base_incarnation": step["base_incarnation"],
+                        "base_revision": step["base_revision"],
+                        "basis": step["basis"],
                         "note_id": step["note_id"],
                         "field": step["field"],
                         "value": step["value"],

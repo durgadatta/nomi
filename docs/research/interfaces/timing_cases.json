@@ -517,6 +517,9 @@
         ],
         "drafts": [
           {
+            "base_incarnation": "score-one",
+            "base_revision": 1,
+            "basis": "beats",
             "note_id": "B",
             "value": "1/",
             "field": "duration"
@@ -1063,6 +1066,55 @@
         ],
         "statuses": [
           "committed"
+        ]
+      }
+    },
+    {
+      "id": "draft-keeps-context-after-reset",
+      "model": "beat",
+      "steps": [
+        {
+          "op": "note_change",
+          "base_incarnation": "score-one",
+          "base_revision": 1,
+          "basis": "beats",
+          "note_id": "B",
+          "field": "duration",
+          "value": "1/"
+        },
+        {
+          "op": "reset",
+          "model": "reset"
+        }
+      ],
+      "expect": {
+        "model.incarnation": "score-two",
+        "model.revision": 1,
+        "model.notes": [
+          {
+            "id": "A",
+            "onset": "0",
+            "duration": "1/2"
+          },
+          {
+            "id": "B",
+            "onset": "1",
+            "duration": "1/2"
+          }
+        ],
+        "statuses": [
+          "invalid_draft",
+          "reset"
+        ],
+        "drafts": [
+          {
+            "base_incarnation": "score-one",
+            "base_revision": 1,
+            "basis": "beats",
+            "note_id": "B",
+            "field": "duration",
+            "value": "1/"
+          }
         ]
       }
     },

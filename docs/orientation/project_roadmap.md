@@ -168,6 +168,29 @@ the historical 23-probe capture verifies without rewriting. Formatter, lint and
 five-packet coherence checks pass. No Nomi evaluator, authoring UI, concurrent
 publisher, participant or device was exercised by the timing model.
 
+Fourth increment: the final review removes the remaining text-failure prerequisite
+from the experiment table, scopes the layer rule to semantic admission and lets
+packets retain an unresolved comparison explicitly. The root reader route now
+connects ambition to the intended language. A new reset counterexample first
+failed: draft records lost their original context. The model now retains the
+draft's incarnation, revision and coordinate basis; reset does not migrate it.
+The timing comparison now has 24 literal cases and an explicit next coordinate
+intent discriminator.
+
+This refinement stabilizes the description, routes and finite model profile.
+The same answer now holds across them: broad discovery can challenge the target;
+accepted meaning changes explicitly; supplied model results are not Nomi or human
+results; delivery promotes only the chosen supported promise. The remaining
+frontier is actual target integration, comparable authoring views, declared-host
+operation and observations of people. Their existing owners retain those gaps;
+the scoped description does not claim to settle them.
+
+Final increment verification: 266 focused tests pass, including all test files
+registered with the cognitive packet and the domain/target-coherence checks;
+24 timing cases and the original 23-probe capture verify. Target-disposition
+inspection, five-packet validation, lint and local file links pass. The sequence
+leaves the cognitive packet `designing` and promotes no target-only sample.
+
 ## User-Facing Documentation Pass
 
 The later [whole-system direction](#whole-system-direction--october-10) broadens
