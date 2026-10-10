@@ -433,6 +433,32 @@ The guide/changelog reflect refusal. Prefix semantic implementation, the wider
 literal admission contract and a target interpolation implementation remain
 separate work. Local checks do not establish public-site deployment parity.
 
+### Integrated User-Facing Pass Verification — October 10
+
+After the documentation, discovery, configured-tooling, text, notebook/editor
+starter and diagnostic repairs above, the full prototype suite passes
+**3,863 tests, 85 skipped**. These are current prototype checks, not target
+conformance or evidence that skipped capabilities are implemented. The 15
+warnings are the existing Jupyter path migration notice and intentional unknown
+escape compatibility vectors. Ten rebuilt/extracted-wheel boundary, discovery
+and explicitly configured RAG checks pass outside the checkout against this
+host's dependencies; a pristine dependency install is still unverified.
+
+Default and legacy Chromium journeys pass, including the new literal refusal
+and explicit repair. Actual existing-kernel calculation and error/recovery
+probes pass as recorded above. The final offline file-link scan passes; all five
+design packets are coherent. Manifest/WASM freshness gates pass, with the
+manifest unchanged and WASM rebuilt only for the named parser source repairs.
+Local RAG context is refreshed; generated evidence/index files remain ignored.
+
+Next user-facing work retains the audit's ordered owners: a report-task adapter
+and passive outcome view; coherent CLI/Docker first-run policy; exact hosted
+artifact/rollback and package/license/shipped-scope decisions; clean supported
+host installation and notebook/editor lifecycle evidence; source-level runtime
+locations and wider literal boundaries; and keyboard/assistive-device/human
+first-task evidence. The current preview is improved and verified locally, but
+this receipt does not claim a deployed or distribution-complete release.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

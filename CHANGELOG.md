@@ -23,7 +23,7 @@ data/ML engine is promised.
   Unicode whitespace compatibility, and argument failures now agree with the
   hosted path. Escaped all C0 controls in Rust parser JSON and rebuilt WASM
   artifacts after text vectors exposed invalid transport. Target Unicode
-  trimming and Python-style source escape parity remain separate work.
+  trimming and complete literal parity remain separate work.
 - Repaired the browser parser's bounded prototype text-escape decoder:
   common numeric/control escapes decode, raw/unknown escapes keep backslashes,
   and malformed or unsupported named escapes refuse instead of changing text.
