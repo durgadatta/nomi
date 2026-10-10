@@ -118,6 +118,7 @@
     "prototype/runtime/host_capabilities.py",
     "prototype/runtime/modes.py",
     "prototype/runtime/pipeline.py",
+    "prototype/runtime/report_boundary.py",
     "prototype/runtime/session.py",
     "prototype/syntax/__init__.py",
     "prototype/syntax/core.py",

@@ -8,6 +8,9 @@
 
 const CORE_IR_JSON_SCHEMA = "nomi.core-ir";
 const CORE_IR_JSON_VERSION = 1;
+const reportBoundary = typeof require === "function"
+  ? require("./report_boundary.js")
+  : globalThis.NomiReportBoundary;
 
 const NIL = Object.freeze({ kind: "nil" });
 
@@ -208,6 +211,7 @@ function isAbrupt(value) {
 class CoreRuntime {
   constructor(hostCalls = {}) {
     this.stdout = [];
+    this.reportBoundaryBudget = new reportBoundary.BoundaryBudget();
     this.defaultHostNames = new Set();
     this.globalFrame = new Frame();
     this.currentFrame = this.globalFrame;
@@ -222,6 +226,7 @@ class CoreRuntime {
 
   evaluate(corePayload, options = {}) {
     this.stdout = [];
+    this.reportBoundaryBudget = new reportBoundary.BoundaryBudget();
     const root = this.unwrapPayload(corePayload);
     // Reject lowering failures and unsupported literals before any effects.
     const pending = [root];
@@ -969,6 +974,8 @@ class CoreRuntime {
     return {
       abs: (value) => Math.abs(value),
       bool: native("bool", (value) => truthy(value), true),
+      decode_data: native("decode_data", (tree, schema) => reportBoundary.decodeData(unbox(tree), unbox(schema), this.reportBoundaryBudget)),
+      encode_json: native("encode_json", (value) => reportBoundary.encodeJson(unbox(value), this.reportBoundaryBudget)),
       Exception: native("Exception", (msg) => ({ kind: "error", errorKind: "Exception", message: String(msg) }), true),
       filter: native("filter", (func, sequence) => {
         const kept = [];
@@ -1016,6 +1023,7 @@ class CoreRuntime {
         this.stdout.push(`${values.map((value) => this.displayValue(value)).join(" ")}\n`);
         return null;
       }, true),
+      parse_json: native("parse_json", (text) => reportBoundary.parseJson(unbox(text), this.reportBoundaryBudget)),
       slice: native("slice", (...args) => this.sliceCollection(args), true),
       range: (...args) => {
         if (args.length < 1 || args.length > 3) throw new TypeError("range expects 1..3 arguments");
@@ -1029,6 +1037,7 @@ class CoreRuntime {
         return values;
       },
       str: native("str", (value) => this.displayValue(value), true),
+      trim_text: native("trim_text", (text) => reportBoundary.trimText(unbox(text))),
       scan: native("scan", (...args) => this.reduceCollection("scan", args), true),
       sum: native("sum", (values) => {
         let total = box(0);
@@ -1205,6 +1214,7 @@ if (typeof module !== "undefined") {
     CORE_IR_JSON_VERSION,
     CoreRuntime,
     evaluateCorePayload,
+    reportBoundary,
   };
 }
 

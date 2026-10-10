@@ -16,6 +16,7 @@ async function initWasm() {
 }
 
 async function initRuntime() {
+  importScripts("./report_boundary.js?v=1");
   importScripts("./core_runtime.js?v=4");
   importScripts("./lower_to_core_ir.js?v=4");
   await initWasm();

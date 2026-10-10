@@ -545,3 +545,35 @@ followed by real repair/export, target extraction and checked local reuse.
 Measure capacities before publishing support limits. Human and hosted release
 evidence remain separately scheduled. Further global planning is not a
 prerequisite; reopen only against the stated concrete counterexamples.
+
+### Boundary Library Checkpoint, 2026-10-09
+
+The first executable library slice now exists in
+`prototype/runtime/report_boundary.py` and
+`prototype/runtime/js/report_boundary.js`, registered as ordinary Core host
+calls and included in the browser worker's runtime load order. Both sides ran
+the standalone applicable vectors from the prepared literal fixture: 20 Python
+cases and 21 JavaScript cases, with the JS safe-integer profile applied only to
+JavaScript. This verifies that this small set of recorded examples agrees with
+the fixture; it does not establish full library conformance.
+
+The slice preserves JSON number tokens in the value tree, rejects decoded
+duplicate keys, keeps options default provenance, validates the two closed
+descriptors, emits sorted deterministic JSON, and shares an evaluator-owned
+input/work/output allowance across calls. Python retains arbitrary-precision
+integer decoding; the JavaScript descriptor refuses integers beyond its exact
+safe range. The generated web manifest now includes the added modules.
+
+The experiment remains incomplete. The fixture's `build_report` cases are not
+implemented; public Python execution and the options-first source report are
+not connected. Nested duplicate-key diagnostics currently need path fidelity,
+and the complete target accounting still needs enforcement for diagnostic
+serialization bytes, diagnostic byte fallback, all shared graph/resource
+edges, and precisely counted validation work. Cross-runtime tests cover the
+prepared standalone vectors only; add malformed supplied-tree, depth/node/work
+boundaries, 64/65-error, alias/cycle adapter, and repeated-call budget probes.
+The actual browser worker quick tour and legacy Pyodide quick tour, pipeline and
+call-boundary smoke checks pass. Measure pinned hosts against the provisional
+capacities and record any unsupported route as refused. The next step is to
+finish those boundary cases and gaps before wiring the ordinary source report
+and its explicit encode/save stages.
