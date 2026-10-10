@@ -1325,3 +1325,48 @@ text and paragraph count while separately binding its requested title.
 Compose bounded universal requirements over declared collection items. Specify
 empty-container truth, missing indexed paths, full schema validation even when
 empty, evidence limits and workflow promotion before implementing the traversal.
+
+## Bounded Universal Requirement Composition — 2026-10-10
+
+### Evidence That Changed The Design
+
+A fixed path through the first section did not establish a condition on every
+section. Version 4 composes a typed collection, an item-relative path and an
+existing unary representation predicate. The other closed condition form wraps
+v3 relations. Empty universal truth remains vacuous; existence requires its own
+condition. No new semantic family, arbitrary predicate code or engine evaluator
+is needed to inspect this composition.
+
+### Workflow Friction
+
+Every item body needs admission even before inputs or with an empty collection.
+Missing declared indices need counterexamples rather than a skipped check.
+Counters, complete failure projections and aggregate capacities need independent
+replay. Mixed workflow versions must promote old conditions without losing any
+subject, path or owner. A capacity test exposed how repeated deep failure paths
+can exceed an artifact budget even when all input artifacts fit; producer and
+consumer now bound the entire evidence receipt as well as item checks.
+
+### Durable Improvement
+
+New tests exercise empty and nonempty truth, every failure path, missing inner
+and collection indices, literal/alias evidence, generic integer/text collections,
+computed pending states, schema admission without items, truncated witnesses,
+shared traversal capacity and aggregate evidence limits. Every older condition
+version composes into v4 in both workflow orders. The separate consumer replays
+v4 evidence and workflow promotion without importing producer or backend code.
+A stronger publication contract runs with both explicit documentary profiles.
+
+Validation: 591 focused object/statistical, documentation, target and packet
+checks pass. Lint, all five packets, the 63-node composition catalog and 2258
+local documentation links also pass; no interpreter or parser behavior changed.
+
+### Next Pass
+
+Use the report and publication examples to compare repairs through named
+intermediates with editing inline constructions. Before adding correlated or
+nested quantifiers, distinguish pointwise pairing, Cartesian products and
+lexical item binding; specify domain identity and evaluation capacities. Adapt
+statistical computation only with observation domains and independent exact-law
+evidence preserved. Effects, resource scopes and ordinary Nomi source admission
+remain separate owner gates.

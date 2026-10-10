@@ -431,6 +431,140 @@ def _relation_results(vocabulary, objects, normal, terms, rules, obligations, su
     return results
 
 
+def _selected_value(value, path):
+    for segment in path:
+        if type(segment) is str and type(value) is dict and segment in value:
+            value = value[segment]
+        elif type(segment) is int and type(value) is list and segment < len(value):
+            value = value[segment]
+        else:
+            return False, None
+    return True, value
+
+
+def _universal_results(
+    vocabulary, objects, normal, terms, rules, obligations, supplied
+):
+    """v4 has two closed condition forms, never arbitrary code or truth claims."""
+    identities, results, item_checks = set(), [], 0
+    unary = {
+        "exact.positive-v1": ("int",),
+        "text.nonempty-v1": ("text",),
+        "array.nonempty-v1": ("array", "text_list"),
+    }
+    for obligation in obligations:
+        _keys(obligation, ("id", "condition"))
+        identity = _identity(obligation["id"])
+        if identity in identities:
+            raise ReplayError("duplicate requirement identity")
+        identities.add(identity)
+        condition = obligation["condition"]
+        if type(condition) is not dict:
+            raise ReplayError("invalid condition record")
+        if condition.get("kind") == "relation":
+            _keys(condition, ("kind", "rule", "operands"))
+            relation = _relation_results(
+                vocabulary,
+                objects,
+                normal,
+                terms,
+                rules,
+                [
+                    {
+                        "id": identity,
+                        "rule": condition["rule"],
+                        "operands": condition["operands"],
+                    },
+                ],
+                supplied,
+            )[0]
+            results.append(
+                {
+                    "id": identity,
+                    "status": relation["status"],
+                    "condition": {
+                        "kind": "relation",
+                        "rule": relation["rule"],
+                        "operands": relation["operands"],
+                    },
+                }
+            )
+            continue
+        _keys(condition, ("kind", "rule", "subject", "path", "item_path"))
+        if condition["kind"] != "every":
+            raise ReplayError("unknown universal condition composition")
+        rule, subject = condition["rule"], condition["subject"]
+        if type(rule) is not str or rule not in unary:
+            raise ReplayError("universal condition requires an admitted unary rule")
+        if type(subject) is not str or subject not in objects:
+            raise ReplayError("unknown universal subject")
+        path, item_path = condition["path"], condition["item_path"]
+        codec = vocabulary["types"][rules[objects[subject]["op"]][0]]["value"]
+        collection = _path_codec(codec, path)
+        if collection["kind"] == "text_list":
+            item_codec = {"kind": "text"}
+        elif collection["kind"] == "array" and "items" in collection:
+            item_codec = collection["items"]
+        else:
+            raise ReplayError("universal condition requires a typed collection")
+        if _path_codec(item_codec, item_path)["kind"] not in unary[rule]:
+            raise ReplayError("incompatible universal item kind")
+        term = terms[normal[subject]]
+        role = rules[term[0]][1]
+        known, value, basis = False, None, "unresolved expression"
+        if role == "literal":
+            known, value, basis = True, json.loads(term[4])["value"], "declared literal"
+        elif role == "input" and term[2] in supplied:
+            known, value, basis = True, supplied[term[2]], "explicit input snapshot"
+        evidence = {
+            "kind": "every",
+            "subject": subject,
+            "path": path,
+            "item_path": item_path,
+            "rule": rule,
+            "basis": basis,
+            "checked_items": 0,
+            "total_items": None,
+            "failures": [],
+            "failures_complete": True,
+        }
+        status = "pending"
+        if known:
+            exists, items = _selected_value(value, path)
+            if not exists:
+                status = "refuted"
+                evidence["basis"] += "; missing path"
+                evidence["failures"].append(
+                    {"path": path, "code": "missing-collection-path"}
+                )
+            else:
+                item_checks += len(items)
+                if item_checks > 4096:
+                    raise ReplayError("universal condition item-check budget exceeded")
+                evidence["checked_items"] = evidence["total_items"] = len(items)
+                status = "satisfied"
+                for index, item in enumerate(items):
+                    exists, value = _selected_value(item, item_path)
+                    passed = exists and (
+                        value > 0 if rule == "exact.positive-v1" else bool(len(value))
+                    )
+                    if not passed:
+                        status = "refuted"
+                        if len(evidence["failures"]) < 128:
+                            evidence["failures"].append(
+                                {
+                                    "path": path + [index] + item_path,
+                                    "code": "predicate-refuted"
+                                    if exists
+                                    else "missing-item-path",
+                                }
+                            )
+                        else:
+                            evidence["failures_complete"] = False
+        results.append({"id": identity, "status": status, "condition": evidence})
+    return results
+
+
 def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     objects, normal, terms = _reconstruct(vocabulary, graph)
     rules = _rules_for(vocabulary)
@@ -439,7 +573,7 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
     if (
         type(requirements["version"]) is not int
-        or requirements["version"] not in (1, 2, 3)
+        or requirements["version"] not in (1, 2, 3, 4)
         or requirements["graph"] != graph_context
     ):
         raise ReplayError("unsupported or stale requirement context")
@@ -464,6 +598,11 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     seen, results = set(), []
     if version == 3:
         results = _relation_results(
+            vocabulary, objects, normal, terms, rules, obligations, supplied
+        )
+        obligations = []
+    elif version == 4:
+        results = _universal_results(
             vocabulary, objects, normal, terms, rules, obligations, supplied
         )
         obligations = []
@@ -558,7 +697,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
             if version == 1
             else "structural-path-predicates-v2"
             if version == 2
-            else "structural-operand-relations-v3",
+            else "structural-operand-relations-v3"
+            if version == 3
+            else "bounded-universal-conditions-v4",
         }
     )
     expected = {
@@ -573,8 +714,11 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
         if version == 1
         else "closed structural path predicates, not scientific assumptions or a general solver"
         if version == 2
-        else "closed structural operand relations, not nominal equality, scientific assumptions or a general solver",
+        else "closed structural operand relations, not nominal equality, scientific assumptions or a general solver"
+        if version == 3
+        else "bounded structural universal conditions and relations, not scientific assumptions or a general solver",
     }
+    _artifact(expected)
     return expected
 
 
@@ -717,12 +861,18 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
             else _requirement_receipt(vocabulary, workflow["graph"], source)
         )
         if source is not None:
-            if source["version"] == 3:
-                requirement_version = 3
+            requirement_version = max(requirement_version, source["version"])
             for requirement in source["requirements"]:
                 copied = json.loads(_encode(requirement))
                 copied["id"] = _identity(namespace + "." + requirement["id"])
-                if source["version"] == 3:
+                if source["version"] == 4:
+                    body = copied["condition"]
+                    if body["kind"] == "every":
+                        body["subject"] = substitution[body["subject"]]
+                    else:
+                        for operand in body["operands"]:
+                            operand["subject"] = substitution[operand["subject"]]
+                elif source["version"] == 3:
                     for operand in copied["operands"]:
                         operand["subject"] = substitution[operand["subject"]]
                 else:
@@ -747,10 +897,10 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
             }
         )
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
-    if requirement_version == 3:
+    if requirement_version >= 3:
         promoted = []
         for condition in conditions:
-            if "operands" in condition:
+            if "operands" in condition or "condition" in condition:
                 promoted.append(condition)
             else:
                 promoted.append(
@@ -763,6 +913,23 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
                                 "path": condition["path"],
                             },
                         ],
+                    }
+                )
+        conditions = promoted
+    if requirement_version == 4:
+        promoted = []
+        for condition in conditions:
+            if "condition" in condition:
+                promoted.append(condition)
+            else:
+                promoted.append(
+                    {
+                        "id": condition["id"],
+                        "condition": {
+                            "kind": "relation",
+                            "rule": condition["rule"],
+                            "operands": condition["operands"],
+                        },
                     }
                 )
         conditions = promoted

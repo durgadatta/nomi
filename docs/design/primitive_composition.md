@@ -206,6 +206,16 @@ Checking an unknown title yields pending evidence; checking an empty supplied
 title refutes the condition. A document with empty parts can be a valid draft.
 No renderer choice, preview or satisfied shape condition publishes a file.
 
+The [publication contract](object_framework.md#compose-a-universal-condition-from-a-collection-and-a-rule)
+now composes collection traversal with a closed unary predicate, then conjoins
+it with title matching and nonempty-section conditions. A requested title can
+be bound solely for the contract, separate from computation inputs and rendered
+outputs. Universal truth over no sections is vacuous; requiring any sections is
+another condition. This does not require a seventh semantic family or a
+document-specific assertion mechanism. Correlated and nested quantification
+remain a design gap, and satisfying a representation condition is not a domain
+proof.
+
 ### Statistical Equality Needs A Theory In Addition To Composition
 
 `mean(x)` can expand to `sum(x) / count(x)` only under the
@@ -314,7 +324,7 @@ The catalog is a design projection; canonical owners decide actual semantics.
 | Numbers, units and tensor shapes / `numeric-profile` | `literal`, `contracts`, `protocols` | library / open | [Owner](../design/synthesis.md). Numeric domain profiles own exactness, rounding, dimensions, axes and failures. **Gate:** No host numeric default or shared method name establishes common laws. |
 | Owned concurrent children / `task-group` | `cold-task`, `resource-scope` | library / target | [Owner](../design/semantics.md). Children cannot silently escape their group; completion waits for owned cleanup and children. **Gate:** Failure envelope, observation order, running and queue bounds remain open. |
 | Streams and generators / `stream` | `cold-task`, `iteration`, `resource-scope` | library / open | [Owner](../design/semantics.md). Demand, consumption multiplicity, backpressure and release are explicit carrier laws. **Gate:** No generator source spelling or universal map schedule is admitted. |
-| Engine-free refinement obligations / `obligations` | `engine-objects`, `contracts`, `option-result` | library / experiment | [Owner](../design/object_framework.md). Literal and explicit input evidence discharge closed unary and cross-object representation rules; every computed operand stays pending. **Gate:** Quantification and scientific assumptions require separately owned laws; condition-only inputs require explicit inclusion. |
+| Engine-free refinement obligations / `obligations` | `engine-objects`, `contracts`, `option-result` | library / experiment | [Owner](../design/object_framework.md). Literal and explicit input evidence discharge closed relations and finite universal unary conditions; computed operands stay pending and empty universals are vacuous. **Gate:** Nested/correlated quantification and scientific assumptions require further laws; condition-only inputs require explicit inclusion. |
 | Schema-bound relational plans / `table-plan` | `engine-objects`, `contracts`, `protocols` | library / open | [Owner](../design/synthesis.md). Schema, grain, nullability, order and cardinality belong to the table carrier. **Gate:** Strict callbacks cannot be retagged as row expressions; adapters need pinned table laws. |
 | Channels, locks, atomics and actors / `synchronization` | `capabilities`, `task-group`, `completion` | library / open | [Owner](../design/industrial.md). Publication visibility and ownership follow the selected synchronization protocol. **Gate:** A task group or mutable cell does not imply a memory model or delivery guarantee. |
 | Content-addressed packages and builds / `packages` | `modules`, `capabilities`, `encode` | tool / target | [Owner](../design/industrial.md). Source, lockfile, toolchain, target and declared inputs determine a sandboxed build. **Gate:** Resolver, trust, edition migration and deployment receipts remain incomplete. |

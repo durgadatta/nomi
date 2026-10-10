@@ -357,6 +357,73 @@ snapshot before any callback can run. This is a laboratory binding interface,
 not ambient authority or a guarantee that arbitrary callers cannot bypass a
 separately owned policy.
 
+### Compose A Universal Condition From A Collection And A Rule
+
+Version 4 adds two closed condition forms: `relation` wraps the ordered operand
+protocol, and `every` applies an existing unary rule to a declared path within
+each collection item. The collection's item codec supplies the local contract;
+the checker needs no renderer, dataframe or other domain engine. For example:
+
+```json
+{
+  "id": "all_headings",
+  "condition": {
+    "kind": "every",
+    "subject": "draft",
+    "path": ["sections"],
+    "item_path": ["heading"],
+    "rule": "text.nonempty-v1"
+  }
+}
+```
+
+`path` must select an array with declared items or a text list. `item_path`
+starts at the item codec; `[]` checks the item itself. A bare shallow array does
+not supply enough evidence to admit a predicate. The full path/rule contract is
+checked before values, including when the eventual collection is empty. Only
+the three existing unary representation rules are allowed in `every`.
+
+| Situation | Evidence |
+| --- | --- |
+| Unbound or computed collection | Pending; no implicit evaluation. |
+| Known empty collection | Satisfied, with zero checked items: universal truth is vacuous. |
+| All known items pass | Satisfied, with the number of checked items. |
+| One or more items fail | Refuted, with indexed counterexample paths. |
+| Declared collection/item index missing in a known value | Refuted, with a missing-path witness. |
+| Item or artifact capacity exceeded | Refused, without issuing a verdict. |
+
+“Every section has a heading” and “there is at least one section” are separate
+conditions. Requiring paragraph arrays to be nonempty also does not establish
+that each paragraph's text has content. Fixed inner indices inspect only that
+index; this lab has one universal traversal per condition, with no nested
+quantifiers, item-to-item pairing or Cartesian products. Domain packages still
+own any stronger meaning.
+
+The [v4 publication contract](../research/object_framework/publication_requirements_v4.json)
+composes matching titles, nonempty sections, content in every heading, and a
+nonempty paragraph array in every section. It uses the same graph, bindings and
+renderer as the preceding example:
+
+```bash
+python3 -m tools.object_interface --vocabulary config/document_interface.json run docs/research/object_framework/publication.json docs/research/object_framework/publication_bindings.json --backend document-blocks --requirements docs/research/object_framework/publication_requirements_v4.json --include-condition-inputs
+python3 -m tools.object_interface --vocabulary config/document_interface.json requirements docs/research/object_framework/publication.json docs/research/object_framework/publication_requirements_v4.json --bindings docs/research/object_framework/publication_bindings.json > /tmp/nomi-publication-conditions.json
+python3 -m tools.object_replay config/document_interface.json docs/research/object_framework/publication.json /tmp/nomi-publication-conditions.json --requirements docs/research/object_framework/publication_requirements_v4.json --bindings docs/research/object_framework/publication_bindings.json
+```
+
+Evidence records the rule, source, paths, checked/total item counts and up to
+128 failure paths per universal condition, without echoing input values.
+`failures_complete = false` means further counterexamples were omitted; every
+item was still checked. The envelope permits at most 4096 item checks in total,
+counting repeated traversals separately. Entire evidence receipts retain the
+1 MB artifact limit. These are lab capacities; a resource refusal must not
+become satisfied, refuted or a claimed scientific conclusion.
+
+Workflows carrying v4 conditions promote older conditions to `relation` records
+and rewire the collection subject or every relation operand. Source ownership
+remains in component inspection. Earlier standalone envelopes and older-only
+workflow compositions retain their existing formats. The independently admitted
+consumer checks traversal, witnesses, limits, promotion and substitution.
+
 ### Domain Integration Order
 
 1. Define nominal families and inert constructors in a versioned vocabulary.
@@ -538,7 +605,7 @@ No remote execution, resource scope or general scheduling is implemented.
 
 | Next increment | Required evidence |
 | --- | --- |
-| Richer domain refinement protocol | Nested paths, v3 cross-object relations and explicit condition-only binding inputs now run. Quantification and domain proofs need separate laws; assertions cannot become proof. |
+| Richer domain refinement protocol | Nested paths, cross-object relations, condition-only bindings and bounded v4 universal rules now run with independent replay. Nested/correlated quantification and domain proofs need further laws; assertions cannot become proof. |
 | More useful object composition | Parameterized multi-output workflows preserve reference arguments, namespaced intermediates and carried conditions, with independent pinned substitution replay. Compare authoring/repair costs with inline composition before generalizing the interface. |
 | Statistical computation adapter | Preserve observation domains, missingness, exact numeric theory and independent v1 replay while reusing the envelope and references. |
 | Wider independent consumers | Arithmetic/text and documentary vocabularies now have separately pinned replay. Admit further vocabulary/refinement rules separately, with changed-definition and forged-claim refusals. |

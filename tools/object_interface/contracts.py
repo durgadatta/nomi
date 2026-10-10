@@ -42,12 +42,26 @@ CHECKERS = {
     1: "literal-input-predicates-v1",
     2: "structural-path-predicates-v2",
     3: "structural-operand-relations-v3",
+    4: "bounded-universal-conditions-v4",
 }
 SCOPES = {
     1: "closed representation predicates, not scientific assumptions or a general solver",
     2: "closed structural path predicates, not scientific assumptions or a general solver",
     3: "closed structural operand relations, not nominal equality, scientific assumptions or a general solver",
+    4: "bounded structural universal conditions and relations, not scientific assumptions or a general solver",
 }
+MAX_ITEM_CHECKS = 4096
+MAX_FAILURES = 128
+
+
+def _predicate(rule, values):
+    if rule == "exact.le-v1":
+        return values[0] <= values[1]
+    if rule == "text.equal-v1":
+        return values[0] == values[1]
+    if rule == "exact.positive-v1":
+        return values[0] > 0
+    return len(values[0]) > 0
 
 
 @dataclass(frozen=True)
@@ -61,6 +75,7 @@ class Obligation:
     id: str
     rule: str
     operands: tuple[Operand, ...]
+    item_path: tuple[str | int, ...] | None = None
 
 
 class Requirements(Frozen):
@@ -97,13 +112,68 @@ class Requirements(Frozen):
                 if version == 1
                 else ("id", "rule", "subject", "path")
                 if version == 2
-                else ("id", "rule", "operands"),
+                else ("id", "rule", "operands")
+                if version == 3
+                else ("id", "condition"),
                 "requirement",
             )
             identity = name(requirement["id"], "requirement identity")
             if identity in identities:
                 raise ContractError("duplicate requirement identity")
             identities.add(identity)
+            if version == 4:
+                condition = requirement["condition"]
+                if type(condition) is not dict:
+                    raise ContractError("expected a closed condition record")
+                if condition.get("kind") == "every":
+                    keys(
+                        condition,
+                        ("kind", "rule", "subject", "path", "item_path"),
+                        "universal condition",
+                    )
+                    rule = condition["rule"]
+                    if type(rule) is not str or rule not in PATH_RULES:
+                        raise ContractError(
+                            "universal condition requires a closed unary rule"
+                        )
+                    subject = graph.ref(condition["subject"])
+                    codec = manifest["types"][graph._objects[subject.id].type]["value"]
+                    if codec is None:
+                        raise ContractError("universal subject has no value codec")
+                    collection = schema_at(codec, condition["path"])
+                    if collection["kind"] == "text_list":
+                        item_codec = {"kind": "text"}
+                    elif collection["kind"] == "array" and "items" in collection:
+                        item_codec = collection["items"]
+                    else:
+                        raise ContractError(
+                            "universal condition requires declared collection items"
+                        )
+                    if (
+                        schema_at(item_codec, condition["item_path"])["kind"]
+                        not in PATH_RULES[rule]
+                    ):
+                        raise ContractError(
+                            "universal rule disagrees with the declared item kind"
+                        )
+                    obligations.append(
+                        Obligation(
+                            identity,
+                            rule,
+                            (Operand(subject.id, tuple(condition["path"])),),
+                            tuple(condition["item_path"]),
+                        )
+                    )
+                    continue
+                keys(condition, ("kind", "rule", "operands"), "relation condition")
+                if condition["kind"] != "relation":
+                    raise ContractError("unknown condition composition")
+                requirement = {
+                    "id": identity,
+                    "rule": condition["rule"],
+                    "operands": condition["operands"],
+                }
+                version = 3
             rule = requirement["rule"]
             if type(rule) is not str or rule not in (
                 RULES
@@ -187,29 +257,29 @@ class Requirements(Frozen):
                 raise ContractError("refinement binding has no value codec")
             value_check(value, codec, f"refinement binding.{identity}")
         results = []
+        item_checks = 0
         for obligation in self._obligations:
             evidence = [
                 self._operand_evidence(operand, supplied, manifest)
                 for operand in obligation.operands
             ]
+            if obligation.item_path is not None:
+                result, checked_items = self._every_result(
+                    obligation, evidence[0], MAX_ITEM_CHECKS - item_checks
+                )
+                item_checks += checked_items
+                results.append(result)
+                continue
             if any(item[0] == "missing" for item in evidence):
                 status = "refuted"
             elif any(item[0] == "pending" for item in evidence):
                 status = "pending"
             else:
                 values = [item[1] for item in evidence]
-                passed = (
-                    values[0] <= values[1]
-                    if obligation.rule == "exact.le-v1"
-                    else values[0] == values[1]
-                    if obligation.rule == "text.equal-v1"
-                    else values[0] > 0
-                    if obligation.rule == "exact.positive-v1"
-                    else len(values[0]) > 0
-                )
+                passed = _predicate(obligation.rule, values)
                 status = "satisfied" if passed else "refuted"
             result = {"id": obligation.id, "rule": obligation.rule, "status": status}
-            if version == 3:
+            if version >= 3:
                 result["operands"] = [
                     {
                         "subject": operand.subject,
@@ -219,6 +289,16 @@ class Requirements(Frozen):
                     }
                     for operand, item in zip(obligation.operands, evidence)
                 ]
+                if version == 4:
+                    result = {
+                        "id": obligation.id,
+                        "status": status,
+                        "condition": {
+                            "kind": "relation",
+                            "rule": obligation.rule,
+                            "operands": result["operands"],
+                        },
+                    }
             else:
                 result.update(
                     subject=obligation.operands[0].subject, basis=evidence[0][2]
@@ -234,7 +314,7 @@ class Requirements(Frozen):
             if "pending" in statuses
             else "satisfied"
         )
-        return {
+        receipt = {
             "version": version,
             "context": self._context,
             "graph": self._graph.context,
@@ -244,6 +324,57 @@ class Requirements(Frozen):
             "requirements": results,
             "scope": SCOPES[version],
         }
+        snapshot(receipt)
+        return receipt
+
+    def _every_result(self, obligation, evidence, budget):
+        operand = obligation.operands[0]
+        state, value, basis = evidence
+        condition = {
+            "kind": "every",
+            "subject": operand.subject,
+            "path": list(operand.path),
+            "item_path": list(obligation.item_path),
+            "rule": obligation.rule,
+            "basis": basis,
+            "checked_items": 0,
+            "total_items": None,
+            "failures": [],
+            "failures_complete": True,
+        }
+        status = "pending"
+        if state == "missing":
+            status = "refuted"
+            condition["failures"].append(
+                {"path": list(operand.path), "code": "missing-collection-path"}
+            )
+        elif state == "known":
+            if len(value) > budget:
+                raise ContractError("universal condition item-check budget exceeded")
+            condition["checked_items"] = condition["total_items"] = len(value)
+            status = "satisfied"
+            for index, item in enumerate(value):
+                exists, selected = value_at(item, obligation.item_path)
+                if not exists or not _predicate(obligation.rule, [selected]):
+                    status = "refuted"
+                    if len(condition["failures"]) < MAX_FAILURES:
+                        condition["failures"].append(
+                            {
+                                "path": list(operand.path)
+                                + [index]
+                                + list(obligation.item_path),
+                                "code": "predicate-refuted"
+                                if exists
+                                else "missing-item-path",
+                            }
+                        )
+                    else:
+                        condition["failures_complete"] = False
+        return {
+            "id": obligation.id,
+            "status": status,
+            "condition": condition,
+        }, condition["checked_items"]
 
     def _operand_evidence(self, operand, supplied, manifest):
         term = self._graph._terms[self._graph._normal[operand.subject]]

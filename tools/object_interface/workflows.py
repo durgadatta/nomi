@@ -146,16 +146,13 @@ class Workflow(Frozen):
             else previous.requirements.document["requirements"]
         )
         version = (
-            3
-            if previous is not None
-            and previous.requirements is not None
-            and previous.requirements.document["version"] == 3
+            max(2, previous.requirements.document["version"])
+            if previous is not None and previous.requirements is not None
             else 2
         )
         if self._requirements is not None:
             source = self._requirements.document
-            if source["version"] == 3:
-                version = 3
+            version = max(version, source["version"])
             for condition in source["requirements"]:
                 copied = {
                     **condition,
@@ -164,7 +161,17 @@ class Workflow(Frozen):
                         "instantiated requirement identity",
                     ),
                 }
-                if source["version"] == 3:
+                if source["version"] == 4:
+                    body = condition["condition"]
+                    copied["condition"] = {**body}
+                    if body["kind"] == "every":
+                        copied["condition"]["subject"] = substitutions[body["subject"]]
+                    else:
+                        copied["condition"]["operands"] = [
+                            {**operand, "subject": substitutions[operand["subject"]]}
+                            for operand in body["operands"]
+                        ]
+                elif source["version"] == 3:
                     copied["operands"] = [
                         {**operand, "subject": substitutions[operand["subject"]]}
                         for operand in condition["operands"]
@@ -175,16 +182,30 @@ class Workflow(Frozen):
                         path=condition.get("path", []),
                     )
                 conditions.append(copied)
-        if version == 3:
+        if version >= 3:
             conditions = [
                 condition
-                if "operands" in condition
+                if "operands" in condition or "condition" in condition
                 else {
                     "id": condition["id"],
                     "rule": condition["rule"],
                     "operands": [
                         {"subject": condition["subject"], "path": condition["path"]}
                     ],
+                }
+                for condition in conditions
+            ]
+        if version == 4:
+            conditions = [
+                condition
+                if "condition" in condition
+                else {
+                    "id": condition["id"],
+                    "condition": {
+                        "kind": "relation",
+                        "rule": condition["rule"],
+                        "operands": condition["operands"],
+                    },
                 }
                 for condition in conditions
             ]

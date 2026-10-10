@@ -1,0 +1,70 @@
+{
+  "version": 4,
+  "graph": "b83da5501722ac80d66ce51218b34608f1b08ea02331fa1792b229dfc958c8aa",
+  "owner": "example.publication-contract",
+  "revision": "v1",
+  "requirements": [
+    {
+      "id": "title_matches",
+      "condition": {
+        "kind": "relation",
+        "rule": "text.equal-v1",
+        "operands": [
+          {
+            "subject": "draft",
+            "path": [
+              "title"
+            ]
+          },
+          {
+            "subject": "requested",
+            "path": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "has_sections",
+      "condition": {
+        "kind": "relation",
+        "rule": "array.nonempty-v1",
+        "operands": [
+          {
+            "subject": "draft",
+            "path": [
+              "sections"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "all_headings",
+      "condition": {
+        "kind": "every",
+        "subject": "draft",
+        "path": [
+          "sections"
+        ],
+        "item_path": [
+          "heading"
+        ],
+        "rule": "text.nonempty-v1"
+      }
+    },
+    {
+      "id": "all_sections_have_paragraphs",
+      "condition": {
+        "kind": "every",
+        "subject": "draft",
+        "path": [
+          "sections"
+        ],
+        "item_path": [
+          "paragraphs"
+        ],
+        "rule": "array.nonempty-v1"
+      }
+    }
+  ]
+}
