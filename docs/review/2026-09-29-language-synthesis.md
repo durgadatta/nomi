@@ -626,8 +626,14 @@ parallel specification or new agent process was needed.
 
 ### Next Pass
 
-Follow the roadmap's target scalar, nominal construction/derived decoder,
-Result/match and checked callback gates. Prepare the closed source-derived
+The October 10 user direction now selects the
+[user-facing documentation pass](../orientation/project_roadmap.md#user-facing-documentation-pass):
+explain what works today and how it will grow before resuming engineering.
+The bounded report completion closes this compatibility continuation; it does
+not close the target-language packet.
+
+When implementation resumes, follow the roadmap's target scalar, nominal
+construction/derived decoder, Result/match and checked callback gates. Prepare the closed source-derived
 `maximum_batch_size`/subtotal evidence comparison with two passive consumers;
 checking must not run bodies, imports, defaults or annotations. Keep unknown
 facts unknown and source/contract/verification identities separate.

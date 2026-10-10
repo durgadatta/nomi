@@ -31,18 +31,14 @@ Use the latest delivery receipts before acting on historical audit findings;
 the original baseline tables retain at-the-time observations, including repaired
 issues. Future task completion still belongs in this roadmap and its linked owners.
 
-The active [product synthesis and handoff](../../FRONTIER_PLAN.md) records the
-latest direction: finish the planning through synthesis and commit completion.
-The bounded report decisions and prepared records now form an implementation
-brief. Implementation resumes in reviewable increments from its gates.
-The whole frontier remains in
-scope; the first product supplies its dependency order rather than deleting
-later obligations. This supersedes earlier planning-only/fresh-session phase
-instructions. M0-M5 are the delivery milestones; earlier P/F labels are
-historical planning organization. Earlier S0-S3 code remains unfinished
-experimental work, with known failures and historical checks recorded in the
-[current checkpoint](frontier_checkpoint_2026-10-08.md). Preserving code does
-not select its architecture or complete a milestone.
+The [product synthesis and handoff](../../FRONTIER_PLAN.md) records the completed
+planning and bounded report implementation sequence. Its latest completion
+receipt is recorded at `2338bdd`; older incomplete slices and failure counts
+must be read against the [current checkpoint](frontier_checkpoint_2026-10-08.md).
+The [user-facing documentation pass](#user-facing-documentation-pass) now owns
+the immediate direction. M0-M5 remain delivery milestones; earlier P/F labels
+are historical planning organization. Remaining engineering gates preserve
+the broader ambition without automatically selecting the next task.
 
 The latest October 9 direction starts from the end product. The first release
 selects calculation, local JSON report/repair and local function reuse. The
@@ -54,12 +50,41 @@ it is no longer the first user outcome by default. General D1/D2 and the wider
 frontier are scheduled below with concrete prerequisites, discriminators and
 closure gates. No delivery milestone is completed by this planning revision.
 
-The user-requested [frontier handoff](../../ASTRA_HANDOFF.md) preserves the broader
-ecosystem and freedom-to-strictness direction. Continue through the existing
-owners after each committed result. D1 and compatibility continuation failures
-are discriminators rather than a fixed priority lock. Bounded maintenance and
-independent frontier comparisons can proceed when their own prerequisites are
-ready; neither can replace the complete calculation/report/reuse outcomes.
+The historical [frontier handoff](../../ASTRA_HANDOFF.md) preserves the broader
+ecosystem and freedom-to-strictness direction. Its old suggested requests no
+longer select the active pass. Existing owners and delivery gates remain the
+starting point when implementation resumes.
+
+## User-Facing Documentation Pass
+
+The October 10 user direction closes the current research/implementation
+continuation with minor cleanup, then starts a separate pass from the reader's
+side. The research corpus is available as supporting evidence; expanding it is
+not the next deliverable. Open design packets retain their current statuses.
+
+Start with `README.md`, `docs/README.md` and the runnable calculation/report
+examples. Build a clear reading path around these questions:
+
+1. What is Nomi, who is it for, and what can I try now?
+2. How do I run a small calculation, inspect a result, repair input and save it?
+3. Which capabilities work today, which are experimental, and which are target
+   designs that cannot yet run?
+4. How will the same small program gradually grow through checked data,
+   failures, callbacks and local reuse, then broader tools and domains?
+
+Explain concepts when a task needs them. Put research, backend mechanics and
+detailed admission gates behind links. Describe gradual additions in dependency
+order without promising dates or presenting proposed syntax as runnable.
+Retain the wider general-purpose destination while making the first useful
+experience concrete.
+
+The first deliverable is a reader-oriented outline and capability/status map
+grounded in current samples and receipts, followed by the introductory docs and
+worked explanations. Verify every claimed runnable example on its stated path;
+documentation integrity alone is not runtime evidence. Keep semantic decisions
+with their existing design owners and engineering dependencies in
+[the delivery gates](#report-and-target-delivery-gates). This is a change of
+perspective, not target-language or release completion.
 
 ## October 8 Notes And Frontier Preparation
 

@@ -8,6 +8,12 @@
 
 ## Start Here
 
+To try what runs today, start with the repository
+[Quick Start](../README.md#quick-start) and its calculation/report examples.
+The next [user-facing documentation pass](orientation/project_roadmap.md#user-facing-documentation-pass)
+will build the introductory reading path and explain gradual additions;
+the design and research routes below remain reference material.
+
 For language design, read:
 
 1. [Target Design](design/README.md)
@@ -116,9 +122,9 @@ For a registered cross-cutting feature, use the complete
   semantic decisions remain with the existing design owners.
 - [Project Action Notes](orientation/project_action_notes.md): notes-only local
   tasks, domain recipes and completion/removal gates for the existing A01-A33 map.
-- [Frontier Handoff](../ASTRA_HANDOFF.md): temporary user-requested next-pass brief;
-  bounded design/implementation investigations, independent oracles and approvals,
-  not another language authority or work queue.
+- [Frontier Handoff](../ASTRA_HANDOFF.md): historical user-requested frontier
+  brief, superseded by the user-facing documentation pass; retained for context,
+  not another language authority or active work queue.
 - [AI Collaboration](orientation/ai_collaboration.md): repository doctrine for
   AI-assisted design, implementation, critique, and checkpoints.
 - [Design Pass Workflow](orientation/design_pass_workflow.md): linked research,

@@ -1,15 +1,18 @@
 # Nomi product synthesis and handoff
 
-> Active plan and execution handoff, refreshed 2026-10-10. Planning reached
-> synthesis at `7684950`; continued execution now delivers the bounded
-> compatibility report. The complete frontier remains in scope and follows
-> the target and reuse gates below.
+> Historical implementation plan, closed as a handoff 2026-10-10. Planning
+> reached synthesis at `7684950`; bounded compatibility report implementation
+> reached `8081e93`, with its completion recorded at `2338bdd`.
+> The next pass starts from user-facing documentation and explanation; follow
+> the [current pass direction](docs/orientation/project_roadmap.md#user-facing-documentation-pass).
+> The target and reuse gates below remain future engineering dependencies,
+> not the active task or a claim that the full frontier is complete.
 > This replaces the earlier contract-first execution order at `915aea1`.
 > Canonical selection: [synthesis](docs/design/synthesis.md#first-product-contract).
 > Project-wide delivery: [roadmap](docs/orientation/project_roadmap.md#delivery-order-and-dependencies).
 > Preserved code and actual checks: [checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md).
 
-## Resume Here
+## Completed Checkpoint And Remaining Engineering Gates
 
 Implementation checkpoint: `8081e93`, superseding the incomplete library slice
 `1d218ff`. The overall strategy is committed at `bc8f0c8`;
@@ -26,9 +29,9 @@ and ordinary source. `samples/report.nomi` works through hosted Python, Core,
 both JS producers, CLI and real default/legacy browser repair. The default
 browser also downloads exact encoded JSON and blocks stale publication.
 The [latest receipt](docs/orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
-supersedes the incomplete library checkpoint. Next close target scalar/data/
-Result/callback contracts and prepare source-derived closed reuse evidence;
-do not expand the two manual schemas or add a whole-report builtin.
+supersedes the incomplete library checkpoint. Future implementation must close
+target scalar/data/Result/callback contracts and prepare source-derived closed
+reuse evidence; do not expand the two manual schemas or add a whole-report builtin.
 Reopen a selected rule only for a concrete failed discriminator.
 The roadmap's [active queue](docs/orientation/project_roadmap.md#first-reviewable-work-queue)
 owns ordering. Keep three outcomes distinct: a working compatibility report,

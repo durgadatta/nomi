@@ -1,16 +1,16 @@
 # Nomi Frontier Handoff
 
-> **Current phase override, 2026-10-09:** the latest user requests a committed
-> overall strategy followed by iterative implementation over multiple commits;
-> the complete frontier is in scope. Pending work is preserved at
-> **6aec9f3**, including 24 known generator protocol failures. The current
-> product-first selection is calculation, local JSON report/repair and local
-> reuse; broader contract comparisons remain later evidence work. The
-> older phase restrictions below are historical context. The latest user
-> instruction authorizes implementation after the reviewed plan is committed. Continue through
-> [FRONTIER_PLAN.md](FRONTIER_PLAN.md) and the
-> [current checkpoint](docs/orientation/frontier_checkpoint_2026-10-08.md), which
-> record the exact fresh-session work order, evidence and unresolved findings.
+> **Historical handoff, superseded 2026-10-10:** the implementation continuation
+> reached the bounded report completion at `8081e93`, documented at `2338bdd`.
+> The earlier generator failure counts and suggested requests below describe
+> their original checkpoints, not current pending defects or active instructions.
+> The latest user direction is minor closure cleanup followed by a new pass
+> entirely from the user-facing side: documentation, key explanations of what
+> works today, and what will be added gradually. Start with the
+> [current pass direction](docs/orientation/project_roadmap.md#user-facing-documentation-pass).
+> The [completion receipt](docs/orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
+> preserves actual implementation evidence. The broader brief remains context;
+> it does not automatically resume frontier implementation.
 
 > Status: standalone, temporary, user-requested handoff for a fresh GPT 6 Astra
 > ULTRA session. No prior conversation is required.
