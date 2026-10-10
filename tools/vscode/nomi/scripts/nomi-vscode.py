@@ -77,7 +77,7 @@ Common actions:
   test           Run VS Code extension tests
   package        Build a local .vsix package
   install-local  Build and install the .vsix into local VS Code
-  enable-local   Install/update the .vsix and open demo.nomi to activate it
+  enable-local   Install/update the .vsix and open calculate.nomi to activate it
   dev            Open this extension folder in VS Code for F5 debugging
   status         Show environment, package, and generated artifact status
   clean          Remove generated local artifacts
@@ -125,10 +125,10 @@ def install_local() -> int:
 def enable_local() -> int:
     code = require_code()
     install_local()
-    demo = REPO_ROOT / "scripts" / "demo.nomi"
+    demo = REPO_ROOT / "samples" / "calculate.nomi"
     if demo.exists():
         run([code, "--reuse-window", str(demo)], cwd=REPO_ROOT)
-        print("\nOpened scripts/demo.nomi. The Nomi extension activates when a .nomi file opens.")
+        print("\nOpened samples/calculate.nomi. The Nomi extension activates when a .nomi file opens.")
     else:
         run([code, "--reuse-window", str(REPO_ROOT)], cwd=REPO_ROOT)
         print("\nOpened the Nomi repository. Open any .nomi file to activate the extension.")

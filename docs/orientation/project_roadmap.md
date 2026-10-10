@@ -300,6 +300,40 @@ This closes the observed beginner strip refusal and payload transport failure;
 source-literal escape parity, target Unicode trimming, and general text-method
 capability registration remain follow-ups rather than implied completion.
 
+### Notebook And Editor First-Task Repair — October 10
+
+Local notebook and editor entry defaults now align with the calculation task.
+The Jupyter launcher selects `notebooks/nomi_calculation.ipynb`, whose first
+program comes directly from `samples/calculate.nomi`; a second cell demonstrates
+state and the `5050` update. Explicit notebook paths and the minimal smoke option
+are retained. The two older notebook templates visibly identify their prototype
+or experimental status. Checked-in templates have stable IDs and no execution
+outputs; saved user notebooks were not edited.
+
+`enable-local` selects `samples/calculate.nomi`, with its repository-folder
+fallback retained. Two independent entry-default checks failed before the
+change and pass afterward. Generator/runtime checks verify the new lesson and
+preserve the two existing notebook contracts. The installed-kernel checker now
+accepts `--notebook`, filters messages by execution identity, executes cells in
+one fresh session, and does not write back to the file. Actual execution of the
+new lesson through the existing installed Nomi kernel prints **3850**, then
+**5050**. This is not clean kernelspec installation or Jupyter UI evidence.
+
+The combined tools/notebook selection passes **504 checks**; the final focused
+entry/generator/runtime/error-message selection passes **14 checks**. An actual
+bad-quantity probe returns status 1 with a concise TypeError and no checker
+traceback, removes its temporary input, and releases its kernel. Subsequent
+fresh calculation and legacy smoke checks pass. The kernel's original failure
+reply still carries internal frames; improve the actual notebook diagnostic
+presentation next under A20/A22 rather than confusing the checker's compact
+message with a completed Jupyter UI repair.
+
+The VS Code command path is verified with a substituted host; desktop execution
+remains unavailable because this host has no `code` CLI. The Docker launcher
+still selects its existing syntax-tour profile, and the CLI retains its legacy
+no-argument/debug defaults. Those entry/distribution decisions remain open
+rather than being silently changed along with the learning notebooks.
+
 ## October 8 Notes And Frontier Preparation
 
 Action-note checkpoint `8b82d8a` completes the requested notes-only decomposition

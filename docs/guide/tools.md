@@ -131,11 +131,13 @@ python3 tools/jupyter/launch_nomi_notebook.py
 ```
 
 The launcher installs dependencies and the local kernelspec, checks the kernel,
-and opens the syntax tour. Choose the **Nomi** kernel if necessary. Definitions
+and opens the first calculation notebook. Choose the **Nomi** kernel if necessary. Definitions
 persist across cells, so execution order matters. `%who` lists names, `%reset`
 clears state, `%run` runs a file, and `%ast` inspects the prototype's lowered AST.
 
-The existing tour includes historical experimental syntax. Use the
+The calculation reuses the same first program as the browser and guide, then
+shows a change in a second cell. Save a copy for your own work. The separate
+experimental syntax tour includes historical forms. Use the
 [language basics](language_basics.md) for the beginner subset and the
 [example catalog](examples.md) to interpret the older forms. Browser `.nomi.nb`
 source files and Jupyter `.ipynb` documents are different file formats.
@@ -161,8 +163,8 @@ cancellation aborts Run File. A task can be stopped with VS Code's task controls
 
 Highlighting, snippets, symbols, hover notes, and navigation are early prototype
 support. Navigation is based on source scanning, not a complete semantic language
-server. Setup opens the older demo; open `samples/calculate.nomi` for the beginner
-task. See [VS Code setup](../orientation/vscode_extension.md) for detailed settings.
+server. Setup opens `samples/calculate.nomi` for the beginner task. See
+[VS Code setup](../orientation/vscode_extension.md) for detailed settings.
 
 ## Troubleshooting
 

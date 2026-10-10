@@ -65,6 +65,8 @@ def minimal_notebook():
 
                 This tiny notebook is the first thing to try when checking that
                 the Nomi Jupyter kernel is executing cells and showing outputs.
+                Start learning with `nomi_calculation.ipynb`; this smoke test
+                retains an older prototype arrow-function form.
                 """,
             ),
             code(
@@ -92,16 +94,57 @@ def minimal_notebook():
     )
 
 
+def calculation_notebook():
+    source = (project_root() / "samples/calculate.nomi").read_text(encoding="utf-8")
+    return nomi_notebook([
+        markdown("nomi-calculation-title", """
+            # Your First Nomi Calculation
+
+            Select the Nomi kernel and run cells from top to bottom with Shift+Enter.
+            The first program is the same calculation used in the user guide and
+            playground. It prints **3850**: an invoice total in integer cents.
+            [Continue with the user guide](https://github.com/durgadatta/nomi/blob/main/docs/guide/README.md).
+            Nomi is an experimental preview; syntax and behavior may change.
+        """),
+        code("nomi-calculation-program", source),
+        markdown("nomi-calculation-change", """
+            ## Change A Value
+
+            The next cell reuses `subtotal`, `price`, and `delivery` from the
+            first cell. It prints **5050** after changing the quantity to four.
+            If a name is missing, run the first cell again.
+        """),
+        code("nomi-calculation-rerun", """
+            quantity = 4
+            total = subtotal(price, quantity) + delivery
+            print(total)
+        """),
+        markdown("nomi-calculation-repair", """
+            ## Inspect And Repair
+
+            Change `quantity = 4` to `quantity = "three"` in the cell above
+            and run it. Inspect the operand error, then restore a number and
+            rerun. Use Kernel → Restart Kernel and Run All Cells to check that
+            your notebook works from a fresh session.
+
+            Save a copy for your work. The syntax tour explores older prototype
+            experiments and is separate from this beginner learning path.
+        """),
+    ])
+
+
 def syntax_tour_notebook():
     return nomi_notebook(
         [
             markdown(
                 "nomi-tour-title",
                 """
-                # Nomi Syntax Tour
+                # Nomi Experimental Syntax Tour
 
                 This notebook uses the `Nomi` Jupyter kernel and covers the
                 language surface currently implemented in the prototype.
+                Some forms differ from the intended target or are being retired.
+                Start with `nomi_calculation.ipynb` for the beginner learning path.
                 """,
             ),
             code(
@@ -416,6 +459,7 @@ def write_notebook(path: Path, notebook) -> None:
 
 def main() -> None:
     notebooks_dir = project_root() / "notebooks"
+    write_notebook(notebooks_dir / "nomi_calculation.ipynb", calculation_notebook())
     write_notebook(notebooks_dir / "nomi_minimal.ipynb", minimal_notebook())
     write_notebook(notebooks_dir / "nomi_syntax_tour.ipynb", syntax_tour_notebook())
 

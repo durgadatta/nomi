@@ -22,6 +22,10 @@ data/ML engine is promised.
   hosted path. Escaped all C0 controls in Rust parser JSON and rebuilt WASM
   artifacts after text vectors exposed invalid transport. Target Unicode
   trimming and Python-style source escape parity remain separate work.
+- Aligned the local Jupyter launcher and editor activation with the beginner
+  calculation task. Added a clean calculation notebook, labeled older notebook
+  tours as experiments, and added actual-kernel notebook checking without
+  saving execution outputs into the lesson.
 - Audited current local browser, CLI, package, notebook, and editor boundaries;
   routed current walkthroughs to the checkout after detecting an older published
   playground. The [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit)

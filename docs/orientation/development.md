@@ -149,7 +149,7 @@ python3 tools/jupyter/launch_nomi_notebook.py
 
 The kernel preserves definitions between cells and supports `%run`, `%who`,
 `%reset`, and `%ast`. Start with
-[notebooks/nomi_syntax_tour.ipynb](../../notebooks/nomi_syntax_tour.ipynb).
+[notebooks/nomi_calculation.ipynb](../../notebooks/nomi_calculation.ipynb).
 
 For the Dockerized notebook path:
 

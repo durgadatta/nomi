@@ -5,7 +5,7 @@ The kernel reuses the existing Nomi parser and interpreter, so notebook cells
 execute through the same prototype semantics as the CLI.
 
 For the first learning route, use the [user guide](../../docs/guide/README.md)
-and [Language Basics](../../docs/guide/language_basics.md). The installed syntax
+and [Language Basics](../../docs/guide/language_basics.md). The separate syntax
 tour covers older experimental forms as well; it is not the complete target
 language or a promise that every form will remain.
 
@@ -28,7 +28,7 @@ python3 tools/jupyter/launch_nomi_notebook.py
 
 The launcher installs the editable package with Jupyter dependencies,
 installs/refreshes the local kernelspec, smoke-tests the Nomi kernel, and opens
-the syntax tour notebook directly through Jupyter's interactive notebook route.
+the first calculation notebook directly through Jupyter's interactive notebook route.
 Then choose the `Nomi` kernel if Jupyter does not pick it automatically.
 
 For a faster launch after the first run:
@@ -85,6 +85,18 @@ Stop the running container with:
 ```bash
 docker stop nomi-jupyter
 ```
+
+The calculation notebook reuses `samples/calculate.nomi`, then demonstrates
+cross-cell state and repair. The minimal smoke test and experimental syntax
+tour remain available. Check the calculation through the installed kernel:
+
+```bash
+python3 -m tools.jupyter.check_nomi_kernel --notebook notebooks/nomi_calculation.ipynb
+```
+
+It should print `3850` and `5050` from the two code cells. This command executes
+the supplied notebook; use it only with notebooks you intend to run. It checks
+execution without saving outputs back into the file.
 
 The notebooks are generated with clean metadata from:
 

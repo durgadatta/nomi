@@ -80,7 +80,7 @@ Then press `F5` in VS Code to launch an Extension Development Host.
 Manual smoke test:
 
 1. In the Extension Development Host, open the Nomi repository folder.
-2. Open `scripts/demo.nomi`.
+2. Open `samples/calculate.nomi`.
 3. Confirm syntax highlighting appears.
 4. Run `Nomi: Run File`.
 5. Select a few lines and run `Nomi: Run Selection`.
@@ -96,7 +96,7 @@ python3 tools/vscode/nomi/scripts/nomi-vscode.py enable-local
 
 This installs dependencies if needed, builds the `.vsix`, and runs
 `code --install-extension ... --force`.
-It then opens `scripts/demo.nomi`, which activates the extension because `.nomi`
+It then opens `samples/calculate.nomi`, which activates the extension because `.nomi`
 files are registered to the Nomi language.
 
 If you only want to install/update the package without opening a file:

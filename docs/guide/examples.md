@@ -5,7 +5,7 @@
 [User guide](README.md) / Example catalog
 
 Start with the small task you want to understand. You do not need to read the
-largest sample or a research dossier first. Files below live in the checkout's
+largest sample or a research dossier first. Nomi source samples below live in the checkout's
 `samples/` directory; the current local playground loads those same files into
 its sample list. The online preview is an older deployment and does not yet
 have the recommended calculation/report/data/text samples.
@@ -64,6 +64,19 @@ explains the rejected forms. The [support guide](status.md#prototype-and-target-
 summarizes the differences without requiring a design review first.
 
 ## Run And Keep Your Changes
+
+### Jupyter lessons
+
+Jupyter uses separate `.ipynb` documents. Choose the Nomi kernel and run cells
+from top to bottom; save a copy for your work.
+
+| Lesson | Purpose |
+| --- | --- |
+| [nomi_calculation.ipynb](../../notebooks/nomi_calculation.ipynb) | First calculation, a cross-cell change, and repair instructions; selected by the local notebook launcher. |
+| [nomi_minimal.ipynb](../../notebooks/nomi_minimal.ipynb) | Small kernel smoke test with older prototype notation. |
+| [nomi_syntax_tour.ipynb](../../notebooks/nomi_syntax_tour.ipynb) | Experimental compatibility tour; includes forms outside the target. |
+
+### Source files
 
 From the repository root:
 

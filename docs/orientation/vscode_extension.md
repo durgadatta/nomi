@@ -41,7 +41,7 @@ Supported actions:
 - `test`: run VS Code extension tests.
 - `package`: build a local `.vsix`.
 - `install-local`: build and install the `.vsix` into local VS Code.
-- `enable-local`: build/install the `.vsix`, then open `scripts/demo.nomi` to activate it.
+- `enable-local`: build/install the `.vsix`, then open `samples/calculate.nomi` to activate it.
 - `dev`: open the extension folder in VS Code for `F5` debugging.
 - `status`: show environment and artifact status.
 - `clean`: remove generated artifacts.
@@ -90,7 +90,7 @@ This:
 1. Installs dependencies if needed.
 2. Builds `nomi-vscode-<version>.vsix`.
 3. Installs it into VS Code with `code --install-extension ... --force`.
-4. Opens `scripts/demo.nomi` to activate the extension.
+4. Opens `samples/calculate.nomi` to activate the extension.
 
 Use `install-local` instead if you want to install the package without opening a file.
 
@@ -115,7 +115,7 @@ python3 tools/vscode/nomi/scripts/nomi-vscode.py dev
 Then press `F5` in VS Code. In the Extension Development Host:
 
 1. Open the Nomi repository folder.
-2. Open `scripts/demo.nomi`.
+2. Open `samples/calculate.nomi`.
 3. Confirm highlighting, snippets, Outline, hover, and go to definition.
 4. Run `Nomi: Run File`.
 5. Select a few lines and run `Nomi: Run Selection`.
