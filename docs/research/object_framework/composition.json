@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "vocabulary": "261a416c00ab73b7849ce085ed9c4436b9fe941fcc4414dd384216d6552d782a",
+  "objects": [
+    {
+      "id": "quantity",
+      "op": "exact.input",
+      "ports": {},
+      "attributes": {}
+    },
+    {
+      "id": "squared",
+      "op": "exact.square",
+      "ports": {
+        "value": "quantity"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "expanded_square",
+      "op": "exact.multiply",
+      "ports": {
+        "left": "quantity",
+        "right": "quantity"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "doubled",
+      "op": "exact.double",
+      "ports": {
+        "value": "squared"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "prefix",
+      "op": "text.literal",
+      "ports": {},
+      "attributes": {
+        "value": "Hello, "
+      }
+    },
+    {
+      "id": "name",
+      "op": "text.input",
+      "ports": {},
+      "attributes": {}
+    },
+    {
+      "id": "greeting",
+      "op": "text.concat",
+      "ports": {
+        "left": "prefix",
+        "right": "name"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "published",
+      "op": "text.alias",
+      "ports": {
+        "target": "greeting"
+      },
+      "attributes": {}
+    },
+    {
+      "id": "document",
+      "op": "document.describe",
+      "ports": {
+        "title": "published",
+        "body": "greeting"
+      },
+      "attributes": {
+        "purpose": "An inspectable description; not a rendered or saved document."
+      }
+    }
+  ],
+  "outputs": [
+    "doubled",
+    "published"
+  ]
+}

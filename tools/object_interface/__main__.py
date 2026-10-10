@@ -1,0 +1,63 @@
+"""Inspect/check inert objects; explicitly choose an adapter to realize them."""
+
+import argparse
+import json
+import sys
+
+from . import ContractError, Graph, Vocabulary, load_document
+from .backend import BackendFailure, Cancelled
+from .examples import lab_vocabulary, python_backend
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--vocabulary", help="explicit vocabulary artifact; default: tracked lab"
+    )
+    commands = parser.add_subparsers(dest="command", required=True)
+    for command in ("check", "inspect", "compare", "compile", "run"):
+        child = commands.add_parser(command)
+        child.add_argument("graph")
+        if command == "inspect":
+            child.add_argument("object")
+        if command == "compare":
+            child.add_argument("left")
+            child.add_argument("right")
+        if command in ("compile", "run"):
+            child.add_argument(
+                "--backend", required=True, choices=("python-exact-text",)
+            )
+        if command == "run":
+            child.add_argument("bindings")
+    args = parser.parse_args(argv)
+    try:
+        vocabulary = (
+            Vocabulary.from_document(load_document(args.vocabulary))
+            if args.vocabulary
+            else lab_vocabulary()
+        )
+        graph = Graph.from_document(load_document(args.graph), vocabulary)
+        if args.command == "check":
+            result = graph.check()
+        elif args.command == "inspect":
+            result = graph.inspect(args.object)
+        elif args.command == "compare":
+            result = graph.compare(args.left, args.right)
+        else:
+            # This explicitly selected example adapter accepts only its pinned vocabulary.
+            backend = python_backend(lab_vocabulary())
+            compiled = backend.compile(graph)
+            if args.command == "compile":
+                result = compiled.inspect()
+            else:
+                realization = compiled.bind(load_document(args.bindings)).execute()
+                result = {"values": realization.values, "receipt": realization.receipt}
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 1 if result.get("status") == "unknown" else 0
+    except (ContractError, BackendFailure, Cancelled, OSError) as exc:
+        print(json.dumps({"status": "refused", "message": str(exc)}), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

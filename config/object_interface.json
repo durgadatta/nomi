@@ -1,0 +1,236 @@
+{
+  "version": 1,
+  "id": "nomi.object-lab",
+  "revision": "v1",
+  "types": {
+    "ExactInt": {
+      "value": {
+        "kind": "int"
+      }
+    },
+    "Text": {
+      "value": {
+        "kind": "text"
+      }
+    },
+    "Document": {
+      "value": null
+    }
+  },
+  "operations": {
+    "exact.input": {
+      "role": "input",
+      "ports": {},
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.literal": {
+      "role": "literal",
+      "ports": {},
+      "attributes": {
+        "value": {
+          "kind": "int"
+        }
+      },
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.alias": {
+      "role": "alias",
+      "ports": {
+        "target": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "text.input": {
+      "role": "input",
+      "ports": {},
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "text.literal": {
+      "role": "literal",
+      "ports": {},
+      "attributes": {
+        "value": {
+          "kind": "text"
+        }
+      },
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "text.alias": {
+      "role": "alias",
+      "ports": {
+        "target": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "exact.add": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "exact.multiply": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": null
+    },
+    "text.concat": {
+      "role": "apply",
+      "ports": {
+        "left": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        },
+        "right": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "Text",
+      "effects": [],
+      "definition": null
+    },
+    "exact.double": {
+      "role": "derived",
+      "ports": {
+        "value": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": {
+        "objects": [
+          {
+            "id": "expanded",
+            "op": "exact.add",
+            "ports": {
+              "left": "$value",
+              "right": "$value"
+            },
+            "attributes": {}
+          }
+        ],
+        "output": "expanded"
+      }
+    },
+    "exact.square": {
+      "role": "derived",
+      "ports": {
+        "value": {
+          "accepts": [
+            "ExactInt"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {},
+      "result": "ExactInt",
+      "effects": [],
+      "definition": {
+        "objects": [
+          {
+            "id": "expanded",
+            "op": "exact.multiply",
+            "ports": {
+              "left": "$value",
+              "right": "$value"
+            },
+            "attributes": {}
+          }
+        ],
+        "output": "expanded"
+      }
+    },
+    "document.describe": {
+      "role": "description",
+      "ports": {
+        "title": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        },
+        "body": {
+          "accepts": [
+            "Text"
+          ],
+          "multiplicity": "one"
+        }
+      },
+      "attributes": {
+        "purpose": {
+          "kind": "text"
+        }
+      },
+      "result": "Document",
+      "effects": [],
+      "definition": null
+    }
+  }
+}

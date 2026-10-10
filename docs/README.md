@@ -17,7 +17,8 @@ Choose a reading path based on what you want to do:
 | Explore the broader ambition | [Computational Medium Vision](design/vision.md) | [Cognitive Foundations](research/cognition.md) and [Design-First Agenda](design/redesign_agenda.md). |
 | Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
 | Research or integrate a language mechanism | [Maintainer Synthesis Guide](research/synthesis_guide.md) | [Language reviews](research/languages/README.md), [feature comparisons](research/features/README.md), and [open questions](research/open_questions.md). |
-| Describe and check an analysis before supplying data | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
+| Describe and compose objects before choosing an engine | [Engine-Free Objects](design/object_framework.md) | Typed descriptions, closed composition and explicit realization; a source-checkout research tool. |
+| Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
 
 The getting-started guide describes runnable prototype examples. Design
 documents describe the intended language, including features that do not run
@@ -237,6 +238,7 @@ This list is intentionally complete and is checked by tests.
 - [Design-First Agenda](design/redesign_agenda.md)
 - [Function Contracts](design/function_contracts.md)
 - [Statistical Data Interface](design/statistical_data.md)
+- [Engine-Free Objects](design/object_framework.md)
 
 ### Research
 
