@@ -367,6 +367,21 @@ support proposes no empty/fabricated model. Broader vocabulary interpretation,
 semantic deduplication, missing/truncated hypotheses and evidence publication
 remain open; the bridge's guarantee is relative to the captured finite family.
 
+### Stronger Evidence For A Learned Description
+
+[Scoped polynomial interpretation](../../tools/scoped_polynomials.py) now lets
+source, constructor and induced pure functions enter the existing formal map
+algebra. Independent pinned SymPy replay checks their exact meaning and tangent
+vectors from qualified-owner terms. A force proposal learned from examples can
+therefore earn a separate formal identity to an explicit force description.
+Neither judgment establishes that the force describes an actual system.
+
+Alpha equality, exact polynomial equality and example fit remain different
+contracts. Equivalent spellings could later be grouped under a declared coding
+and prior policy, but no vocabulary collapse or probability change is automatic.
+Formal symbolic differentiation supplies an established algebra oracle; it is
+not a general numeric/accelerator AD adapter or a theory of learning.
+
 ## Start From The Developer's Activity
 
 The [minimal reasoning algebra](reasoning_algebra.md) now challenges the common

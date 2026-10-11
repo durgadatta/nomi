@@ -2181,3 +2181,32 @@ No empty model is invented after unsupported evidence.
 Connect source terms to exact symbolic structure and independent established
 algebra checks; then compare semantic equivalence and explicit prior policies
 before vocabulary deduplication. General premise transport remains open.
+
+## Scoped Scientific Interpretation — 2026-10-11
+
+### Evidence That Changed The Design
+
+Thirteen new checks connect scoped source/constructor/induced functions to the
+existing exact map algebra. Composition/tangent chain diagrams, nested binding,
+cancellation, cross terms and capacity failure run. Pinned SymPy independently
+checks qualified-owner expressions and symbolic derivatives.
+
+### Workflow Friction
+
+Alpha equality alone misses polynomial identities, while example fit cannot
+justify them. Projection also needs an explicit coordinate interpretation and
+reduction capacity; exhausting it is not refutation or a partial proof.
+
+### Durable Improvement
+
+One explicit adapter reuses the current formal algebra without changing source
+or ordinary evaluation. Independent owner-based SymPy replay challenges the
+producer's index-based symbolic reduction and derivative implementation. Learned
+force proposals can earn a stronger bounded equality separately from their fit.
+No automatic prior, vocabulary, physical or numeric-AD claim is introduced.
+
+### Next Pass
+
+Audit the integrated surface and independent checks, refresh discovery context,
+and retain exact next gates for general premise transport, latent dependence,
+causal learning, longer-horizon planning, numeric AD and human authoring evidence.

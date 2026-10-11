@@ -138,6 +138,32 @@ supplied assumptions. This is not automatic identification of a governing law.
 separately says whether all matching proposals were retained. Increasing a
 grammar or adding examples creates a new checking context.
 
+## Compare Meaning Without Supplying Inputs
+
+Run the source-to-polynomial interpretation:
+
+```bash
+python3 -m tools.scoped_polynomials
+```
+
+The force function becomes an exact formal polynomial and a tangent description
+for how it changes with position and velocity. No measurements are supplied.
+Within this profile, `x+0` equals `x` even though their syntax differs; `x*x`
+and `x` are different polynomials despite agreeing at zero and one.
+
+For an independent established symbolic check, install the optional adapter
+and ask for replay explicitly:
+
+```bash
+python3 -m pip install -e '.[reasoning-check]'
+python3 -m tools.scoped_polynomials --sympy
+```
+
+This pins SymPy 1.14.0 and independently checks both the source interpretation
+and formal derivative. It establishes a bounded exact algebra claim, not a
+numeric AD engine, an approximation guarantee or a physical law. Inspection
+records indicate whether this independent replay ran.
+
 ## What The Checks Establish
 
 Independent tuple enumeration and arithmetic replay check bounded program

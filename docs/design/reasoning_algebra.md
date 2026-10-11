@@ -492,6 +492,39 @@ measurement assumptions. There is no universal theory of spaces or transport
 of proof/evidence through arbitrary compositions. Five checks compare composition
 with independent arithmetic/path sums and reject forged provider/port revisions.
 
+### Scoped Functions Into The Scientific Algebra
+
+The [polynomial interpretation](../../tools/scoped_polynomials.py) now connects
+the same closed Rational source/constructor/induced functions to the existing
+exact map algebra. It evaluates scoped descriptions symbolically, using the
+producer's locally nameless form and a bounded reduction budget. The explicit
+coordinate contract retains parameter order, affine formal space identity and
+revision. This is an interpretation of the pure profile, not implicit rewriting
+of ordinary code or an inferred unit/manifold contract.
+
+```bash
+python3 -m tools.scoped_polynomials
+python3 -m tools.scoped_polynomials --sympy
+```
+
+The second command requires the optional pinned `reasoning-check` extra.
+Independent SymPy 1.14.0 replay follows qualified owner references in the original
+terms, not the producer's index evaluator or polynomial arithmetic. It checks
+source meaning and formal tangent vectors using symbolic differentiation. Thirteen
+checks cover composition and the tangent chain law, nested applications/shadowing,
+cancellation/cross terms, forged interpretations/derivatives, stale context and
+capacity refusal. An induced force proposal can earn checked formal equality
+to the explicit source force description, beyond merely fitting its examples.
+
+Projection supplies a stronger **polynomial-profile** equality than the original
+provider's alpha equality: `x+0` and `x` have different term forms but identical
+formal polynomials. This does not establish equivalence under effects, IEEE
+arithmetic, approximation or physical interpretation. No automatic semantic
+deduplication or prior change occurs. The existing profile caps coefficients,
+terms and degree; reduction additionally caps visits at 10,000 and depth at 64.
+Capacity exhaustion gives no false equality or partial interpretation claim.
+Numerical AD, continuous inference and general premise transport remain open.
+
 ## Executed Premise Ledger And Revision
 
 The [premise ledger](../../tools/premise_ledger.py) implements

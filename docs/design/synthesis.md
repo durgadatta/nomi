@@ -543,7 +543,10 @@ finite inquiry and exercises causal/abstraction counterexamples. The substantial
 gap remains broader integration. Bounded Nomi functions, constructors and typed
 program induction now share a Rational provider and produce finite prediction
 kernels. Observation journals and independent replay connect those kernels to
-adaptive inquiry and revision. Logical/numeric structures, general evidence
+adaptive inquiry and revision. Support-preserving family restrictions reject
+positive-mass loss. An explicit polynomial interpretation also connects scoped
+functions to the scientific map algebra, with independent SymPy meaning/tangent
+checks. Richer logical/numeric structures, general evidence
 transport and ordinary runtime admission must extend these contracts without
 standardizing unrelated laboratory schemas or erasing carrier laws.
 
