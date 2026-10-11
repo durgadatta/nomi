@@ -1852,3 +1852,35 @@ R2 supplies checker profiles and a declared interpretation replayed by an
 established tool, including invalid and non-equivalent bridges. Compare those
 artifacts through HX2/HX8/SP0 before generalizing the representation or admitting
 syntax. The research frontier is a source-acquisition map, not a parallel backlog.
+
+## Scoped-Binder Artifact — 2026-10-11
+
+### Evidence That Changed The Design
+
+The user requests implementation of scoped binders, a premise ledger and checked
+theory bridges, iteratively. The new pure-term artifact compares owner-indexed
+nominal references with a locally nameless form using source-derived report-line
+and scientific-map expressions. Twenty-four checks include independent
+owner-keyed evaluation and exact arithmetic vectors.
+
+### Workflow Friction
+
+Alpha-normalization loses labels/layout; a semantic normal form cannot serve as
+a source revision. Simultaneous substitution also differs from repeated replacement.
+A binder colliding with an inserted free owner must freshen without rewriting the
+inserted term. Shared spelling is not permission to reuse a declaration owner.
+
+### Durable Improvement
+
+The artifact separates typed descriptions, hygienic transformation, source-origin
+inspection and an explicit exact adapter. It retains revision/content fingerprints
+and bounded refusals. The producer is an isolated Python-expression adapter;
+Nomi source/runtime behavior is unchanged and no binder encoding is selected.
+Focused tests and lint pass; the canonical owner records remaining migration gates.
+
+### Next Pass
+
+Implement the finite supplied-rule premise ledger with independent support paths,
+quoted versus endorsed statements and withdrawal. Then check finite theory
+translations against independent model semantics. Retain recursive/effectful
+binding, Nomi producers, formatting and actual domain-library migration as gates.

@@ -299,7 +299,7 @@ roadmap. “Designed” below does not imply implemented support.
 
 | Gap | Current evidence | Next discriminating artifact and owner |
 | --- | --- | --- |
-| General contextual binding and theory parameters | Fixed nominal spaces/revisions in the exact lab; general binder representations remain open. | **R1:** compare scoped references and locally nameless binders on the ordinary report and a parameterized map; test alpha-renaming, capture, stale references and source reconstruction. |
+| General contextual binding and theory parameters | A separate pure-term lab now compares nominal and locally nameless binders with source spans and independent evaluation; Nomi/domain migration remains open. | **R1:** compare scoped references and locally nameless binders on the ordinary report and a parameterized map; test alpha-renaming, capture, stale references and source reconstruction. |
 | Mention versus asserted premise | Research distinction; no general knowledge-statement lab. | Extend **R1** with a tiny finite premise ledger. Quoting/importing a statement must not assert it. Remove one of two supports and replay dependencies. Keep the policy explicit. |
 | Interpretation and judgment profiles | One fixed exact rational-polynomial profile and separate domain labs. | **R2:** publish profile inputs/results and rule-provider obligations; reject an exact-to-float theorem transfer lacking a preservation contract. |
 | Checked theory bridges | Exact map composition and supplied two-sided inverse checks only. | **R2:** replay a parameterized theory interpretation with an established symbolic/proof tool; include a deliberately invalid mapping and a one-way, non-equivalent mapping. Do not call arbitrary graph export a theory morphism. |

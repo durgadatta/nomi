@@ -1,7 +1,7 @@
 # A Minimal Algebra Of Scientific Reasoning
 
 > Status: foundational redesign candidate, 2026-10-10, under language-coherence.
-> A closed exact polynomial-map experiment runs from a source checkout. No new
+> Closed exact maps and a typed binder comparison run from a source checkout. No new
 > syntax, universal IR, analytic calculus or physical theory is accepted here.
 
 The proposed pivot is to make **contextual terms, checked composition and
@@ -408,6 +408,50 @@ There is no persisted certificate consumer or independent symbolic replay for
 this new profile. Seeded exact-rational tests use independent hand arithmetic
 for primal/tangent results; the earlier scientific witness profile retains its
 own independent replay and is not silently reinterpreted.
+
+## Executed Scoped-Binder Comparison
+
+The [scoped-term laboratory](../../tools/scoped_terms.py) now implements the
+first R1 artifact in `pure-scoped-rational-terms-v1`. It compares nominal
+owner/revision/slot references with locally nameless bound indices and qualified
+free references. A replaceable Python-expression producer admits only exact
+integer literals, rational arithmetic, positional lambdas and application;
+it never uses host `eval`, name lookup or callbacks. This is **research source,
+not Nomi grammar**, and does not admit automatic currying into Nomi.
+
+```bash
+python3 -m tools.scoped_terms
+pytest -n 0 prototype/tests/unit/tools/test_scoped_terms.py
+```
+
+The report-line calculation and scientific square map have source-derived
+artifacts, typed callable contracts and passive inspection. Nested same-spelled
+parameters retain separate owners. Simultaneous substitution freshens a binder
+when an inserted free reference would be captured; it does not subsequently
+rewrite inserted terms. Beta reduction checks the application's type before
+and after transformation. Immutable descriptions carry no engine.
+
+Source origins use UTF-8 byte offsets, source identity/revision and a content
+digest. The lower form deliberately drops bound labels and source layout;
+inspection retains those separately. Alpha-equivalent terms can have different
+artifact fingerprints because their source contexts differ. Transformation
+origins identify contributing source, not a regenerated spelling of the result.
+A source view refuses stale revisions, changed bytes under the same revision
+and spans splitting a UTF-8 scalar.
+
+Twenty-four new checks include an independent owner-keyed interpreter versus
+the index-based exact adapter, seeded hand-arithmetic report/map vectors,
+nested shadowing, capture avoidance, simultaneous swaps, higher-order manual
+terms, stale imports and passive/detached inspection. The lab caps source at
+8192 bytes, terms at 256 nodes/depth 32 and exact scalars at 256 bits; capacity
+refusal does not change meaning. These are research budgets, not language limits.
+
+Neither binder representation is selected as Nomi Core. Nominal references aid
+source ownership/inspection; indices provide a small alpha-normal form but need
+source metadata beside them. No inverse formatter, Nomi producer, recursive
+binding groups, variants, effect/completion terms, general import resolver or
+shared domain-library migration is implemented. The next R1 artifact is the
+finite premise ledger; R2 then checks declared theory bridges independently.
 
 ## Ordinary Programming Must Stay Ordinary
 
