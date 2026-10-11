@@ -70,3 +70,37 @@ func check_oscillator_energy(
 # missing regularity remains an obligation rather than a guessed derivative.
 # Numerical trajectories, observation uncertainty and inverse identification
 # require separate qualified evidence as specified by SP3/SP4.
+
+
+# AI framework continuation: docs/design/ai_frameworks.md, AF1/AF2.
+# Fictional pure expression API, not source-checkout probe exports or runnable.
+from lab.numeric import NumericError, NumericProgram, NumericTheory, TensorExpression
+from lab.numeric import numeric
+
+
+func describe_linear_loss(
+    features: TensorExpression,
+    weights: TensorExpression,
+    bias: TensorExpression,
+    target: TensorExpression,
+    theory: NumericTheory,
+) -> Result[NumericProgram, NumericError]:
+    projection = numeric.matmul(features, weights, theory=theory)?
+    bias_batch = numeric.broadcast(bias, axes=projection.axes, theory=theory)?
+    prediction = numeric.add(projection, bias_batch, theory=theory)?
+    residual = numeric.subtract(prediction, target, theory=theory)?
+    squared_error = numeric.square(residual, theory=theory)?
+    loss = numeric.mean(squared_error, axes=squared_error.axes, theory=theory)?
+    return numeric.program("linear-loss", outputs=[prediction, loss], theory=theory)
+
+
+# A tensor expression is referable description data, not a concrete buffer.
+# features: batch x features; weights: features x outputs; bias: outputs;
+# target: batch x outputs. Extent equality alone cannot establish axis identity.
+# Broadcast, reduction denominator, scalar policy and program closure are
+# explicit library contracts; constructing this program performs no training.
+# Negative pressure: weights indexed by equal-size tokens refuse contraction;
+# omitted broadcast refuses add; target dtype/axes mismatch refuses subtraction;
+# host callbacks or foreign captured buffers cannot enter a checked program.
+# A future transformation needs independent primal/derivative/batching rules.
+# Backend metadata coverage does not validate kernels or mint device grants.

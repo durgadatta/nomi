@@ -241,6 +241,17 @@ general consistency obligation. General binding identity/capture avoidance,
 quantity-kind/unit/frame spaces, analytic calculus, observation/inverse contracts,
 solver evidence and actual human studies remain distinct next discriminators.
 
+**AI framework continuation:** [AF0-AF6](../design/ai_frameworks.md) refine
+ML1-ML6 in the [AI research](data_workflows/ai_ml.md). A closed named-axis
+metadata checker now validates a linear loss without arrays or an AI engine;
+it distinguishes inferred signatures and declared backend coverage from
+derivatives, numerical correctness and execution. Next compare explicit
+expression values with a checked numeric function subset, then one established
+AD adapter with independent primal/gradient/pairing vectors. Operator rule
+versions, custom derivatives, state/randomness, aliasing, distributed weighted
+objectives and serving context retain separate contracts. No arbitrary-pure-
+callback transformation or default Float semantics is accepted by this probe.
+
 The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
 now exercises a declared exact-rational theory without observations. Float64
 mean expansion, paired moments, units, weights and scientific assumptions

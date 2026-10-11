@@ -10,6 +10,10 @@
 [Dossier](README.md) · [Data/time](dependencies_and_time.md) ·
 [Numerics](../features/numerics.md) · [Domain composition](../domain_composition.md)
 
+The [AI framework proposal](../../design/ai_frameworks.md) owns integration with
+engine-free objects and thinking support. Its framework-author extension below
+was checked 2026-10-10; earlier sections retain their original review dates.
+
 ## Three Programs To Keep The Survey Honest
 
 1. A beginner fits a scaler on training rows and predicts on held-out rows.
@@ -509,3 +513,73 @@ same Result/effect/resource framework. They do not all reduce semantically to
 DW5 remains the original lifecycle question. These extensions narrow it and
 questions 4/7/8/9/12/15/17 rather than select a framework or admit syntax.
 The immediate dependency is D1-D3 closure, not adding training keywords.
+
+## Framework Authors: Rules, Transformations And Implementations
+
+Framework authors add operators, abstract evaluators, transformations, backends,
+state carriers or export adapters. A forward API alone does not establish
+gradient, batching, tracing, aliasing or distributed behavior. The following
+are selected mechanisms, not executed foreign examples or complete audits.
+
+| Primary source, checked 2026-10-10 | Mechanism / scope | Nomi inference and fork |
+| --- | --- | --- |
+| [PyTorch custom operators](https://docs.pytorch.org/tutorials/advanced/python_custom_ops.html) | Schema/aliasing, metadata-only fake kernels and separate autograd/batching registrations; registration checks differ from numerical/gradient checks | Semantic entry plus optional capabilities versus a backend callback implicitly defining everything |
+| [JAX custom derivative JEP](https://docs.jax.dev/en/latest/jep/2026-custom-derivatives.html) | Historical custom-transform/batching conflict and a design preserving custom derivative calls; serialized re-transformation is outside that proposal's scope | Preserve rule identity rather than inline away an intended derivative; no portable arbitrary-callback claim |
+| [JAX extension API](https://docs.jax.dev/en/latest/jax.extend.html) | Internal extension machinery explicitly lacks cross-release compatibility guarantees | Pin adapters/toolchains instead of making framework internals Nomi's permanent boundary |
+| [JAX symbolic shapes](https://docs.jax.dev/en/latest/export/shape_poly.html) | Export dimension variables with limited constraint reasoning | Proof/unknown/runtime obligation versus compatibility guessed from a sampled shape |
+| [PyTorch export](https://docs.pytorch.org/docs/stable/export.html) | Capture with dynamic shape specifications and constraint checks | Checked source subset with specialization evidence versus expression constructors |
+| [JAX AD and sharding](https://docs.jax.dev/en/latest/301/sharding-ad.html) | Cotangent placement relates to primal placement; pending sums retain required backward meaning | Track replicated, sharded and unreduced values; a communication-free primal may require backward communication |
+| [PyTorch DDP design](https://docs.pytorch.org/docs/2.14/notes/ddp.html) | Gradient synchronization through buckets/hooks with coordinated collective order | Participant/order contract beyond map or task groups; weighted objective remains separate |
+| [PyTorch AMP examples](https://docs.pytorch.org/docs/2.14/notes/amp_examples.html) | Autocast, scaling, accumulation, unscaling and optimizer steps | Explicit arithmetic/transition policies versus a dtype label claiming a complete training contract |
+| [DLPack Python specification](https://dmlc.github.io/dlpack/latest/python_spec.html) | Tensor sharing, lifetime responsibility and stream coordination | Zero-copy adapters need alias/lifetime/completion contracts; immutable descriptions are not immutable storage |
+| [Triton matrix multiplication](https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html) | Blocked kernels with masks and accumulation choices | Kernel tool behind host/layout/numerical profiles; its demonstrations are not Nomi benchmarks |
+| [ONNX IR](https://onnx.ai/onnx/repo-docs/IR.html) | Versioned operator-set dependencies; serialized graph distinct from internal representation | Export/receiving support remain explicit; serialization does not establish execution equivalence |
+
+### Discriminators Before A General Tensor Runtime
+
+1. **Axis identity:** contract `batch × features` with `features × outputs`.
+   Replace the weight's contracting axis with equal-size `tokens`. Extents
+   alone cannot detect the intended error. Nominal axes cost explicit conversion.
+2. **Abstract versus concrete rule:** declare one output shape and implement
+   another. Metadata checking and kernel evidence must remain separate; repeating
+   a declaration does not validate it. Test empty/non-contiguous/aliasing cases.
+3. **Derivative versus transpose:** use `f(w,x,b)=w*x+b` for an exact derivative
+   oracle and separately check JVP/VJP pairing. A mutually consistent but wrong
+   linear map and transpose can pass pairing.
+4. **Batch coupling:** independent per-example losses differ from a
+   batch-normalized/coupled objective. Retain axes, state/mode and objective;
+   transformations do not commute by notation alone.
+5. **Uneven reduction:** shard values `[0]` and `[10,10,10]`. Mean of shard
+   means is 5; global mean is `15/2`. Weighting and placement need an objective
+   contract, not just a collective name.
+6. **Stateful replay:** repeat a region with dropout/model state and interrupted
+   checkpoint publication. Rematerialization, retry and resume have distinct laws
+   for randomness, progress and visible state.
+7. **Profile migration:** change an operation, tokenizer, derivative, precision
+   or layout while retaining an architecture label. Reject stale claims; preserve
+   narrower artifacts still useful for inspection.
+
+These are prepared comparisons, not executed ML-engine or participant trials.
+The mean arithmetic is a finite counterexample, not a distributed experiment.
+Framework usability needs separate authoring/repair/handoff trials.
+
+### One Integration Path
+
+Prefer semantic spaces, checked programs, transformation rules, explicit state
+transitions, qualified realization and scoped evidence over unrelated keywords.
+A shared envelope supplies identity/revision/navigation; domain rules supply
+meaning. Authors should inspect missing capabilities before implementation.
+Library users can defer those details until a composition or portability fails.
+
+The [shape probe](../../../tools/ai_probe.py) executes the first axis discriminator
+on a named linear-loss description without arrays, weights or an AI engine.
+It provides immutable snapshots, dependency explanations and optional **declared**
+backend coverage. Distinct equal-size axes and implicit broadcast refuse; every
+intermediate is checked. This is not tensor arithmetic, AD, abstract evaluation
+of arbitrary source or independent replay.
+
+AF0-AF6 in the [design owner](../../design/ai_frameworks.md#integration-and-gap-analysis)
+refine ML1-ML6. Next compare expressions with a checked numeric function subset,
+then use one established engine for independent scalar/shape/gradient vectors.
+The scientific polynomial probe is one exact oracle, not justification for
+replacing ML3 with a custom general AD engine.

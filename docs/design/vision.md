@@ -13,6 +13,12 @@ Design the whole human-computer activity: the language, representations,
 tools, examples, feedback, collaboration, execution and surrounding practices.
 The programming language is a central part of that system.
 
+[AI framework development](ai_frameworks.md) is another demanding test of this
+goal: a model author, operator developer and experiment reviewer should recover
+the same meaning across descriptions, transformations, learned state and
+execution. AI-assisted work should preserve questions, alternatives, source
+evidence and human authority as it proposes or performs computations.
+
 A person might begin with a question, a table, a sketch, a demonstration, an
 equation, an example, a conversation or a piece of code. They should be able to
 make the important meaning explicit, inspect alternatives, revise the model,

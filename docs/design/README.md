@@ -53,6 +53,9 @@ For the broader purpose, competing directions and current gap, read the
 16. [Scientific Models And Discovery](scientific_discovery.md) - proposed spaces,
     equations, theories, observations and qualified realizations, with a physics
     workflow and ordered admission gates; no scientific engine admitted.
+17. [AI Frameworks](ai_frameworks.md) - proposed tensor spaces, transformable
+    programs, operator rules, training state and qualified execution; a bounded
+    input-free metadata checker, no autodiff or training runtime admitted.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly
@@ -86,6 +89,8 @@ It should be excellent for:
 - data ingestion, transformation, and validation;
 - services, jobs, application logic, and automation;
 - libraries that remain readable as teams and codebases grow;
+- scientific discovery and AI framework development through inspectable domain
+  contracts, explicit transformations and implementation boundaries;
 - native, server, browser/Wasm, and embedded-host deployment where the runtime
   profile permits it.
 

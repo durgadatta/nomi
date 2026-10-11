@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "id": "linear_regression",
+  "revision": 0,
+  "profile": "named-tensor-shapes-v1",
+  "extent_variables": ["N"],
+  "axes": [
+    {"id": "batch", "extent": "N"},
+    {"id": "features", "extent": 32},
+    {"id": "outputs", "extent": 1}
+  ],
+  "objects": [
+    {"id": "features", "op": "input", "axes": ["batch", "features"], "dtype": "Float32"},
+    {"id": "weights", "op": "parameter", "axes": ["features", "outputs"], "dtype": "Float32"},
+    {"id": "bias", "op": "parameter", "axes": ["outputs"], "dtype": "Float32"},
+    {"id": "target", "op": "input", "axes": ["batch", "outputs"], "dtype": "Float32"},
+    {"id": "projection", "op": "matmul", "args": ["features", "weights"]},
+    {"id": "bias_batch", "op": "broadcast", "args": ["bias"], "axes": ["batch", "outputs"]},
+    {"id": "prediction", "op": "add", "args": ["projection", "bias_batch"]},
+    {"id": "residual", "op": "subtract", "args": ["prediction", "target"]},
+    {"id": "squared_error", "op": "square", "args": ["residual"]},
+    {"id": "loss", "op": "mean", "args": ["squared_error"]}
+  ],
+  "outputs": ["prediction", "loss"]
+}

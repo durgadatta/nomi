@@ -1663,3 +1663,46 @@ question/alternative/premise/change/handoff tasks; human trials remain separate
 from exact checker outcomes. Extend rich spaces and premise transport only with
 explicit independent contracts, then qualified realization and joint observation
 models. Preserve the fixed-profile removal point and the existing generic lab.
+
+## Pass Retrospective — AI Framework Development — 2026-10-10
+
+### Evidence That Changed The Design
+
+Framework authors need abstract/operator contracts independently of forward
+kernels. Primary PyTorch/JAX/export/sharding/buffer/kernel mechanisms sharpened
+this distinction: shape, numerical, derivative, batching, aliasing and backend
+support are separate evidence. The new AI design owner integrates those with
+semantic spaces, checked programs, explicit state, qualified realization and
+thinking support. Existing ML1-ML6 remain the research gates; AF0-AF6 refine them.
+
+### Workflow Friction
+
+The earlier AI survey covered training/serving users more deeply than framework
+authors. Nominal generic ports do not establish tensor axis compatibility, and
+metadata-only support cannot establish gradient or numerical correctness. A
+large domain survey also needs a navigable owner rather than more independent
+feature proposals. No established engine adapter or participant trial was run.
+
+### Durable Improvement
+
+Added one AI framework contract owner, source-target long form and a closed
+named-axis metadata probe with immutable snapshots and detached explanations.
+The linear loss description remains useful without data, weights or an engine.
+Equal-size distinct contracting axes, implicit broadcast, dtype mismatch and
+invalid disconnected objects refuse; backend support remains unknown or merely
+declared. No grammar, interpreter, Core or browser behavior changed.
+
+Validation: 179 focused checks pass, including 33 new AI contract checks;
+operator/test lint, five registered packets, 2331 local links and the unchanged
+63-node/25-route composition hierarchy pass. The documented input-free CLI
+commands execute. Shape coverage is not numerical/derivative conformance or
+independent replay. No training or device execution is claimed.
+
+### Next Pass
+
+Compare explicit expression construction with a checked numeric source subset.
+Use an established AD engine for independent primal/gradient/pairing vectors,
+retaining operation/rule identity and unsupported cases. Keep stateful/random,
+uneven distributed and custom-operator challengers visible during that choice.
+Prepare authoring/repair/handoff tasks separately from formal or numerical
+checks. Project RAG/MCP setup follows as agent infrastructure, not AI semantics.

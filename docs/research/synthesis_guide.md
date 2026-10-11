@@ -49,6 +49,7 @@ meaning from implementation; deferred execution is one consequence.
 | Define objects independently of an implementation | [Engine-Free Objects](../design/object_framework.md) | Nominal families, typed ports, passive descriptions, domain obligations and explicit adapter capabilities |
 | Reduce a feature to reusable responsibilities | [Primitive compositions](../design/primitive_composition.md) | A typed long form, preserved laws, residual mechanisms and independent counterexamples |
 | Support physics and scientific discovery | [Scientific models](../design/scientific_discovery.md), [numeric evidence](features/numerics.md) | Spaces, equation models, theories, joint observations and qualified realizations; SP1-SP5 provide an ordered comparison |
+| Develop AI frameworks and learning systems | [AI contracts](../design/ai_frameworks.md), [primary research](data_workflows/ai_ml.md) | Abstract operator rules, transformation evidence, named tensor spaces, explicit training state and backend/serving boundaries; AF0-AF6 refine ML1-ML6 |
 | Move a settled result into the language | [Admission workflow](#integrate-a-settled-result) | Canonical laws, independent fixtures, and a reversible bridge |
 
 For this pass, start with the eight expanded reviews below. Follow the linked

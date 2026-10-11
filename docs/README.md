@@ -243,6 +243,7 @@ This list is intentionally complete and is checked by tests.
 - [Statistical Data Interface](design/statistical_data.md)
 - [Engine-Free Objects](design/object_framework.md)
 - [Scientific Models And Discovery](design/scientific_discovery.md)
+- [AI Frameworks And Differentiable Programs](design/ai_frameworks.md)
 
 ### Research
 

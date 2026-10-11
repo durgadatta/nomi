@@ -11,6 +11,11 @@ expression, an input contract, a model description, a document specification,
 an operation definition, or an intended outcome. Some objects can be realized;
 others remain useful descriptions with unresolved obligations.
 
+The [AI framework proposal](ai_frameworks.md) applies this separation to tensor
+programs, abstract operator rules, transformations and explicit training state.
+Its shape checker is domain-owned: nominal ports in this generic laboratory
+do not establish tensor axes, derivative correctness or backend conformance.
+
 This is broader than lazy evaluation. Delaying a calculation addresses *when*
 an engine computes. Engine-free objects also separate meaning, identity,
 composition, inspection, domain validation and realization. A document
