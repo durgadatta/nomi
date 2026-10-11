@@ -1568,3 +1568,48 @@ polynomial/differential rule fragment and independently replay the oscillator
 claim with explicit premises (SP2). Keep solver error, measurement uncertainty,
 inverse identifiability, advanced physics and user authoring trials separately
 qualified; do not use one successful derivation to certify them.
+
+
+## Thinking-First Scientific Model Expansion — 2026-10-10
+
+### Evidence That Changed The Design
+
+The user clarified that the cross-domain connection is thinking: Nomi should
+help form ideas, expose assumptions, follow consequences, compare alternatives
+and revise understanding. The scientific owner now starts with those activities
+and a question/alternative/evidence workspace. Primary evidence adds explicit
+binders, weak forms, abstract tensors, DAE initialization, stochastic integral
+interpretations, open-system composition and scientific interchange boundaries.
+The consequence is shared reasoning affordances with domain-owned laws, not a
+universal mental calculus or a larger executable Core.
+
+### Workflow Friction
+
+A purely mathematical model inventory leaves questions, unfinished ideas and
+handoff invisible. One graph can misleadingly collapse structural dependency,
+equation incidence, proof premises and causal hypotheses. Exact derivation,
+numerical approximation, empirical agreement and human comprehension need
+different evidence. Draft inspection must remain useful without publishing fake
+checked objects or triggering physical effects.
+
+### Durable Improvement
+
+Expanded one canonical scientific owner with thinking tasks, role contracts,
+graph boundaries, transformations, evidence/revision laws, diagnostics and ten
+physics challengers. Added one consolidated primary-system research synthesis
+with competing forks and prepared cross-domain activities. Updated the vision,
+interaction thesis, cognitive evidence, maintainer route and existing packet
+next actions. SP0 makes prediction, diagnosis, repair, confidence, accessibility
+and handoff actual admission questions rather than assumed benefits.
+
+Validation: 146 documentation/target/packet/primitive checks pass; 2300 local
+links across 170 documents resolve, and all five design packets remain coherent.
+No human study, target typechecking or scientific runtime conformance is claimed.
+
+### Next Pass
+
+Exercise one bounded dimension/formal-polynomial witness fragment without
+numeric inputs and independently replay its conditional/unknown outcomes.
+Compare a domain-owned mathematical validator with a passive generic-envelope
+projection. Retain all richer space, binder, analytic, observation, solver and
+human-authoring gates.

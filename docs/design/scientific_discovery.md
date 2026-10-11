@@ -18,12 +18,103 @@ library/artifact contracts, not five new language keywords or machine opcodes.
 The most urgent addition is a mathematical model that exists independently of
 an execution plan.
 
+The shared objective is to make thinking easier: people should be able to form,
+name, relate, question, compare and revise ideas without repeatedly rebuilding
+the surrounding context in their heads. Physics is a demanding pressure case.
+The mathematical contracts below support that activity; they are not a claim
+that all thought is mathematics or that one formal calculus captures cognition.
+
 This is a continuation of [language synthesis](synthesis.md), under the existing
 language-coherence packet. The [engine-free framework](object_framework.md)
 supplies the shared direction; [numeric research](../research/features/numerics.md)
 and [question 9](../research/open_questions.md#9-numeric-and-scientific-model)
 retain their existing evidence. The [maintainer guide](../research/synthesis_guide.md)
 owns integration practice. The [vision](vision.md) remains broader than physics.
+
+Read [thinking activities](#design-from-thinking-activities) for the organizing
+principle, [contract interactions](#contracts-and-their-interactions) for the
+semantic details, and [physics challengers](#physics-challengers-for-the-shared-design)
+for breadth. [Primary-system synthesis](../research/scientific_models.md)
+records the evidence, competing choices and bounded experiments.
+
+## Design From Thinking Activities
+
+The language and its environment should support the following recurring moves.
+These are design questions, not a psychological taxonomy or proposed opcodes.
+They elaborate the existing eight user acts rather than defining a second Core.
+
+| Thinking activity | Nomi should make available | A concrete failure to prevent |
+| --- | --- | --- |
+| Make a distinction and give it a name | Referable concepts with accessible definitions, roles and domains | Equal displays silently collapse distinct concepts |
+| Relate ideas | Inspectable dependencies, equations, constraints, analogies and competing causal hypotheses | Every relation is mistaken for an execution dependency or cause |
+| Hold something fixed while exploring | Explicit context, assumptions and a branch with retained baseline | An exploratory assumption silently becomes a fact in another branch |
+| Follow a consequence | Named intermediate steps and method-qualified evidence | An answer hides the premises that made it possible |
+| Compare alternatives | Aligned question, observation basis and discriminating predictions | Two outputs are compared under different conditions without disclosure |
+| Change perspective or abstraction level | Connected equation, diagram, trace, example and explanation views | A compressed view cannot lead back to an exception or concrete case |
+| Encounter a surprise or a gap | Unknown, disagreement, failed expectation and unsupported work remain visible | Missing evidence is presented as false, success or an invented value |
+| Revise and carry understanding forward | Semantic change, affected claims, surviving evidence and retained history | A new model inherits an old conclusion without rechecking its basis |
+
+Not every move requires execution. Rearranging a representation, isolating a
+case, checking a law, finding an assumption or comparing hypotheses can be useful
+without observations. Conversely, inspecting a model does not authorize an
+experiment on the world. A hypothetical branch must not operate an instrument.
+
+The cognitive owner distinguishes representations that aid discovery from
+claims that a particular representation is universally superior. Kirsh and
+Maglio's Tetris study distinguishes actions that reveal information from actions
+that directly advance an external goal. Victor's interactive essay demonstrates
+movement between concrete cases and abstractions. These motivate experiments
+with Nomi; neither establishes that this proposal improves scientific work.
+[Primary study](https://doi.org/10.1207/S15516709COG1804_1),
+[primary design demonstration](https://worrydream.com/LadderOfAbstraction/),
+[Nomi cognitive foundations](../research/cognition.md).
+
+### A Workspace For Reasoning
+
+A candidate workspace connects a question, alternative models, assumptions,
+derived predictions, observations, comparisons and open obligations. The
+objects retain their semantic owners: an equation, a survey response and a
+resource policy do not become interchangeable because a view connects them.
+
+For an oscillator, the user-facing question could be “Why does the amplitude
+decrease?” The workspace holds undamped dynamics, viscous damping, a changing
+measurement gain and external forcing as distinct candidates. Each candidate
+states what it predicts and what observation could distinguish it. Fitting a
+damped curve alone cannot silently eliminate a calibration explanation.
+
+The same activity appears in a service incident (“Why did latency rise?”), an
+ecological study (“Why did this population decline?”) or a financial model
+(“Why does the balance change?”). Shared affordances include referable ideas,
+baseline/alternative comparisons and inspectable evidence. The domain's causal,
+statistical and operational laws remain separate.
+
+### Incomplete Thinking Must Be Useful
+
+Keep a draft description distinct from a checked model and an admitted execution
+plan. A draft may contain an unspecified unit, an unresolved symbol, an informal
+conjecture or mutually competing assumptions. It can be saved, named, discussed
+and inspected. It must not export a fabricated checked reference or execute an
+unsupported claim. Promotion reports local obligations and preserves the draft.
+
+Formalization should be gradual: write a question, attach a sketch/example,
+identify the important distinctions, then make the needed slice checkable.
+A greeting program must not acquire a scientific proof ceremony. Reasoning
+support should compress useful context while making its expansion available.
+
+### Measure The Intended Benefit
+
+Compare text, structured and mixed representations using identical model facts
+and task goals. Let participants predict behavior, find a missing premise,
+distinguish alternative explanations, repair a changed assumption and explain
+the result to another person. Include domain experts and learners separately;
+do not substitute a synthetic checker for either group.
+
+Measure correct predictions, overlooked premises, time to diagnose/repair,
+ability to retrieve evidence, inappropriate confidence, and handoff accuracy.
+Count interaction and annotation costs as well as successes. Keyboard, screen
+reader, localization and nonvisual equation access belong in the comparison.
+An attractive view, shorter program or passing proof is not itself evidence of
+easier thinking. SP0 prepares these tasks; human trials remain unperformed.
 
 ## The Small Modeling Basis
 
@@ -199,6 +290,168 @@ regularity and conventions. JAX's JVP/VJP presentation exposes derivatives as
 linear maps rather than requiring materialized Jacobians.
 [Primary evidence: JAX differentiation](https://docs.jax.dev/en/latest/jacobian-vector-products.html).
 
+## Contracts And Their Interactions
+
+### Separate Object Roles
+
+The following record shapes describe responsibilities, not selected JSON keys,
+generic syntax or an admitted public API. The common envelope carries version,
+owner, stable identity, revision and explicit references. Domain payloads retain
+their own schemas and checkers.
+
+| Object | Minimum semantic facts | What promotion requires |
+| --- | --- | --- |
+| Question | Goal, scope, supplied facts, unresolved terms and desired discriminator | No proof requirement for asking; execution still needs an admitted plan |
+| Space | Carrier/scalar theory, quantity kind, dimension and declared structure | Well-formed declarations and explicit compatibility/morphism rules |
+| Symbol | Identity, role, space, scope and declared dependencies | Resolved references; no inference from display names |
+| Expression | Operation identity/revision, ordered operands, result space and free references | Typed application and retained definedness obligations |
+| Binder | Bound symbol identities, their domains, body and boundary of scope | Capture avoidance and alpha-equivalence under the admitted binder profile |
+| Relation | Predicate identity, ordered subjects, context and declared role | Compatible subjects; assignment/causation/solvability remain separate |
+| Model | Declarations, relations, assumptions, domain and initial/boundary contracts | Well-formedness; existence, uniqueness and identifiability are additional claims |
+| Theory | Vocabulary, laws/axioms, profiles, named premises and rule versions | Checker-supported fragment and explicit trust basis |
+| Claim | Precise statement, target context and requested evidence kind | A qualified checker outcome; the claim may remain unresolved |
+| Transformation | Source, target, method, correspondence and preservation claim | Evidence appropriate to equivalence, implication, approximation or representation change |
+| Observation | Measurand/measurement map, record, acquisition context and joint uncertainty references | Decode and admitted interpretation; causal support needs its own protocol |
+| Realization plan | Mathematical target, adapter/method, representation, conditions, limits and requested assessments | Capability/contract checks before execution |
+| Evidence | Statement, basis, used premises, artifact/method revisions, scope, outcome and limitations | Validity for the exact target context; no automatic upgrade between evidence kinds |
+
+Questions, prose, sketches and conjectures can precede these checked records.
+One question can have many models and one model can support several questions.
+Saved view order, graph layout and display labels do not change symbol identity
+or create a mathematical relation.
+
+### Keep Several Graphs Distinct
+
+| Graph | Edges mean | Cycles and identity |
+| --- | --- | --- |
+| Authored expression graph | One expression structurally refers to another | A checked finite DAG; named aliases and repeated operands survive |
+| Binding/scope graph | A use belongs to a declaration or binder | Shadowing uses identity, not string matching; recursion has its own contract |
+| Mathematical incidence graph | An equation constrains named unknowns | Cycles can be legitimate; edges are not a chosen solution direction |
+| Claim/evidence graph | A conclusion depends on premises and a method | Circular justification cannot establish a claim; separate mutual conjectures |
+| Execution graph | A method schedules admitted computations | Scheduler/resource contracts; it need not be the equation graph |
+| Causal hypothesis graph | A model asserts a causal relationship | Domain assumptions/intervention semantics; computational reach is not causation |
+| View/navigation graph | A person can move between representations | Links are navigation until a semantic owner supplies more meaning |
+
+A common reference envelope can connect these graphs without collapsing their
+edge laws. The existing dependency query describes explicit object-port reach;
+it must not be relabeled scientific causality or proof-premise completeness.
+
+### Space Morphisms And Model Changes
+
+Distinguish unit conversion, coordinate change, change of variables,
+nondimensionalization, discretization, model reduction and approximation. A
+transformation records its source/target spaces, direction, domain, inverse if
+admitted, reconstruction map and preserved claims. An invertible map on a
+restricted chart is not a global equivalence. A reduced model may preserve one
+observable while losing another.
+
+Typed units do not settle quantity-kind algebra. For example, torque paired
+with angular displacement can produce work under a mechanics contract; equal
+dimensions alone cannot establish that law. Multiplication by a dimensionless
+scalar is distinct from combining two semantic dimensionless quantities.
+Prefer declared operations and inspectable compatibility obligations before
+arbitrary coercion or global overload search.
+
+Parameter/domain uncertainty and incomplete space information propagate as
+obligations. A transformation can return a conditional candidate rather than
+inventing a frame, bound or metric. A plot can render admitted numeric data while
+keeping an unsupported model claim visible; neither result upgrades the other.
+
+### Binding, Calculus And Definedness
+
+Free parameters, independent variables, unknown functions, test functions and
+integration variables have different roles. Reusing the printed `x` inside an
+integral cannot capture a free `x` outside it. A derivative references the
+variable or direction it differentiates with respect to; a covariant derivative
+also references its connection. A partial derivative does not silently mean a
+total derivative along a trajectory.
+
+Definedness travels with the expression: division requires a denominator domain,
+logarithms require their admitted real/complex interpretation, and square roots
+retain branch/sign obligations. Restricting a model to a domain does not prove
+that a solution remains there. Differentiating a discontinuous event, an
+approximate iteration or a stochastic path needs a specific method contract.
+Moving a limit/derivative through an integral is a claim with hypotheses.
+
+An exact formal derivation on a polynomial algebra is one useful fragment. Its
+generator images and linear/product laws are explicit premises. It must not be
+presented as establishing smoothness, analytic existence, AD support or a
+physical trajectory. This is the bounded SP2 entry rather than a general CAS.
+
+### Open Model Composition
+
+Components can expose a boundary with quantities, orientation and permitted
+relations. Joining two components composes their equations and interface laws;
+it does not necessarily wire a value from one callback to another. A circuit
+connection can identify potentials and constrain signed flows. The same
+boundary pattern can occur in mechanics, reaction systems and coupled fields,
+with domain-specific conservation and constitutive laws.
+
+Composing open systems through boundaries has mathematical precedents in
+structured/decorated cospans. The proposed Nomi consequence is readable
+component contracts, not requiring users to learn that formalism. Composition
+must preserve each component's assumptions, expose newly introduced constraints,
+and check conflicts/redundancy/initialization to the extent supported.
+[Primary paper](https://arxiv.org/abs/2101.09363).
+
+Flattening, solving for a variable or eliminating a state retains a map from
+authored objects to transformed objects. Eliminated observables remain
+referable when an admitted reconstruction exists. If multiple branches or a
+singular parameter value prevent reconstruction, report the condition instead
+of silently choosing a branch. Sequential, parallel and feedback composition
+have distinct admissibility rules.
+
+### Evidence And Revision Laws
+
+An evidence record is immutable. Its use is checked against the current target,
+theory, premises, observation basis, method and representation profile. Changing
+any required identity makes that use stale. Retaining old evidence for an old
+model is useful history; displaying it as current evidence for a new model is
+an error. A display-label change can preserve meaning, while an assumption
+change can invalidate a claim even when the equation text is unchanged.
+
+Keep requested premises, premises actually used, and supported completeness
+claims distinct. The first implementation can conservatively pin the complete
+context. More precise reuse requires a checker that establishes dependency
+completeness; a UI's abbreviated premise list is insufficient. A premise
+transport/reuse operation needs its own evidence and must not be a hash bypass.
+
+Evidence kinds have domain-specific combination rules. Two approximate results
+agreeing does not yield an exact proof. Independent measurements may strengthen
+a comparison only under a stated dependence/protocol model. Conflicting evidence
+does not disappear into a single green status. Known inconsistent premises are
+reported; unknown consistency stays visible even if an implication is checked.
+
+### Interaction Costs And Diagnostics
+
+The interface should lead with the question, named result and immediate reason.
+Offer expansion into premises, domain/profile, method, derivation, observations
+and alternative explanations. Retain a text fallback and nonvisual navigation;
+color, spatial layout or typeset equations alone cannot carry evidence status.
+An expert may inspect a derivation while a learner opens a concrete example.
+Both see the same context and limitations.
+
+Example diagnostics are semantic records with a concise rendering:
+
+```text
+Cannot add "travel_distance" and "elapsed_time".
+Expected a compatible quantity space; received Length and Time.
+No computation ran. Inspect each declaration or choose a different relation.
+
+"energy_conserved" belongs to the undamped model revision.
+The current dynamics includes "viscous_damping".
+Recheck the claim; the old receipt remains available for the earlier model.
+
+This comparison cannot distinguish stiffness from mass.
+The supplied free-motion model depends on their ratio k/m.
+Add relevant independent information or choose a discriminating experiment.
+```
+
+Such messages are proposals, not measured repair guidance. An instrument action,
+large compute job or remote query still uses the existing authority, failure,
+cancellation and resource scopes. An explanation, slider movement or refresh
+must not trigger it merely because a preview changed.
+
 ## Composition: One Mass–Spring Model
 
 This mathematical fixture is a proposed oracle, not executable Nomi syntax or
@@ -249,8 +502,8 @@ For inference, free-motion observations can identify at most the ratio `k/m`;
 even that needs informative motion and an adequate measurement/time basis. A
 zero-displacement stationary trajectory does not identify it. Recovering `k`
 requires additional information about `m` or a changed experiment. This follows
-directly from dividing the model by nonzero `m`: scaling both parameters by the same
-positive factor leaves its free-motion equation unchanged.
+directly from dividing the model by nonzero `m`: scaling both parameters by the
+same positive factor leaves its free-motion equation unchanged.
 
 Adding viscous damping `c >= 0` changes dynamics to `m*a + c*v + k*x = 0`, so
 the corresponding energy claim becomes `D_t(E) = -c*v^2 <= 0`. Revising the
@@ -289,6 +542,45 @@ models need operator ordering and state/measurement semantics, and stochastic
 dynamics need integration conventions. These remain later domain gates, not
 claims that the first polynomial fragment covers all physics.
 
+## Physics Challengers For The Shared Design
+
+The shared thinking loop should survive the following changes of domain. These
+prepared models expose contracts, not a promise to implement every field.
+
+| Challenger | Required composition | Corner case that challenges the abstraction |
+| --- | --- | --- |
+| Constrained pendulum | Affine geometry, dynamics, holonomic relations and initialization | `q·q = l²` without `q·v = 0` can supply incompatible initial velocity |
+| Diffusion or elasticity | Function spaces, differential/weak operators, boundary measures and discretization | A missing boundary flux or rigid-body/null mode changes solvability |
+| Electromagnetism | Fields, orientation, differential forms, material/boundary contracts | Gauge redundancy and constraints are not independent physical states |
+| Relativity | Manifolds, charts, tensor bundles, metric and connection | Coordinate singularity is not automatically physical singularity; chart validity matters |
+| Quantum mechanics | State space, ordered operators, adjoints and measurement maps | Operator products need not commute; an unbounded operator needs a domain |
+| Stochastic dynamics | Joint process, filtration/adaptation and integral interpretation | Itô/Stratonovich changes can require drift correction rather than a solver relabel |
+| Thermodynamics | State variables, constitutive relations, process/boundary and regime | Equilibrium assumptions and path-dependent work cannot be inferred from units |
+| Hybrid/contact systems | Continuous dynamics, guards, reset relations and event policy | Simultaneous events, discontinuous sensitivities and nonunique transitions need explicit handling |
+| Multiscale/approximate models | Small parameters, reduction maps, regime and assessed remainder | A small parameter alone does not establish a uniform approximation near a boundary/singularity |
+| Discovery from observations | Candidate basis, measurement map, selection protocol and held-out predictions | Equivalent predictions can leave several explanations unresolved |
+
+UFL retains distinct interior, boundary and facet measures. PETSc time stepping
+operates on a supplied semi-discrete problem. These support keeping continuum
+meaning, weak formulation, spatial discretization and time stepping separately
+inspectable. Their composition does not automatically provide convergence or
+error bounds.
+[UFL form language](https://docs.fenicsproject.org/ufl/main/manual/form_language.html),
+[PETSc time stepping](https://petsc.org/release/manual/ts/).
+
+xTensor distinguishes abstract tensor indices from frame components; its general
+covariant derivative does not automatically assume metric compatibility. SciML
+explicitly distinguishes stochastic integral interpretations. These challenge
+the idea that a shared array or operation name supplies shared laws.
+[xTensor indices](https://xact.es/Documentation/HTML/HTMLLinks/xTensorRefGuide.nb_3.html),
+[connection assumptions](https://xact.es/Documentation/HTML/HTMLLinks/xTensorDoc.nb_39.html),
+[stochastic interpretation](https://docs.sciml.ai/SciMLBase/stable/interfaces/Algorithms/).
+
+The project should reuse reasoning affordances across these tasks: name a
+distinction, retain context, inspect a consequence, compare alternatives and
+revise. Importing a proven law across domains requires a meaning-preserving
+interpretation, not an analogy, a matching graph shape or a common display.
+
 ## Current Gap And Ordered Implementation
 
 The existing research framework checks nominal typed DAG composition, declared
@@ -302,6 +594,7 @@ representation needs a versioned codec rather than bypassing that boundary.
 
 | Pass | Deliverable | Independent positive/negative oracle |
 | --- | --- | --- |
+| SP0: thinking workflow | Matched question/model/alternative/evidence tasks, draft/checked separation and text/structured/mixed representation comparisons | Explain fading amplitude, find a missing premise, revise damping, distinguish calibration, transfer the reasoning pattern and hand off an unfinished question; actual human trials remain open |
 | SP1: spaces and expressions | Domain-owned versioned artifact, exact scale representation, symbol/binder identity, typed application, model relations and no-input inspection | Length/time refusal; distinct same-named symbols; capture-avoiding substitution; valid cyclic constraints without a cyclic executable DAG |
 | SP2: theory and claims | Bounded exact polynomial rules, explicit premise contexts, derivation receipts and separately implemented replay | Oscillator energy law; damping invalidates conservation; `x/x` remains unsupported or conditional; changing theory/premises invalidates receipts |
 | SP3: realization | One narrow explicit solver profile, then a second adapter under the same admitted mathematical contract | Analytic reference cases, method-qualified tolerance checks, singular/ill-conditioned refusal, stale mesh/profile receipts; local estimates never reported as global bounds |

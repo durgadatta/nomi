@@ -209,6 +209,24 @@ between representations or a credible alternative. It does not need to fit an
 old milestone before it can influence the design. Conversely, a compelling
 demonstration does not make its mechanism suitable for every other program.
 
+### Thinking Is The Shared Design Goal
+
+The October 10 direction makes the common purpose explicit: support people in
+forming, distinguishing, relating, questioning, comparing and revising ideas.
+Cross-domain coherence is judged by those activities, with computation and
+formal contracts supplying reliable support. A universal mathematical IR or a
+catalog of domain features is not the purpose. No single cognitive theory or
+formal calculus is asserted to describe every person's thinking.
+
+The [scientific-discovery proposal](scientific_discovery.md#design-from-thinking-activities)
+tests this direction through physics: a question connects alternative models,
+premises, predictions, observations and gaps. The same reasoning affordances
+should transfer to other activities while their domain laws retain ownership.
+Useful incomplete ideas need a draft surface; promoting them to checked objects
+or executable plans must expose the remaining obligations. Easier thinking
+requires measured comprehension, diagnosis, revision and handoff, not only
+correct computation or fluent explanation.
+
 ## Where Nomi Stands, 2026-10-10
 
 Nomi is a research-rich language-design laboratory with runnable compatibility

@@ -9,6 +9,14 @@ choice. The objective is one language whose parts support the same way of
 reasoning as work grows from exploration into shared programs. A collection of
 individually attractive features does not establish that coherence.
 
+The shared objective is to make thinking easier across domains: help people form
+ideas, expose assumptions, follow consequences, compare explanations and revise
+understanding. Evaluate a mechanism within that activity, including incomplete
+ideas and handoff. The [scientific-model evidence](scientific_models.md) and
+[thinking workflow](../design/scientific_discovery.md#design-from-thinking-activities)
+put this direction under concrete pressure; formal correctness and human
+comprehension remain different evidence requirements.
+
 The broader [vision](../design/vision.md) guides discovery. Current accepted
 meaning lives in [syntax](../design/syntax.md), [semantics](../design/semantics.md),
 and [industrial contracts](../design/industrial.md). Research can challenge those

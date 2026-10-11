@@ -13,6 +13,10 @@ contexts, joint observations and qualified realizations. SP1-SP5 compose an
 oscillator workflow and challenge dimensional mistakes, cyclic constraints,
 conditional conservation, parameter non-identifiability and numerical error.
 Those are prepared admission oracles, not executed scientific conformance.
+The [primary-system synthesis](../scientific_models.md) extends this with weak
+forms, abstract tensors, stochastic interpretations, open-system composition
+and cognitive representation comparisons. Shared reasoning does not establish
+a universal numeric algebra or a human-comprehension result.
 
 The [notation atlas](../notation_atlas.md) deepens bound indices, axes,
 units/frames and algebra laws. [Scientific source forms](../data_workflows/source_forms.md)

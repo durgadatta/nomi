@@ -52,8 +52,12 @@ common diagnostics do not erase relation, temporal or numeric laws.
 Nomi could be a checked computational medium whose meaning remains inspectable
 through text, values, tables, diagrams, commands, and traces. This is broader
 than an editor with decorations and narrower than a universal language of
-thought. The unit of coherence is the computation and its contracts, not the
-number of interfaces surrounding it.
+thought. The unit of coherence is a person's reasoning activity, supported by
+explicit computations and contracts. The [thinking direction](vision.md#thinking-is-the-shared-design-goal)
+asks whether people can form an idea, expose its assumptions, follow consequences,
+compare alternatives and revise understanding across representations. The
+[scientific continuation](scientific_discovery.md) supplies a demanding pressure
+case; neither a common view nor a common graph erases domain-specific laws.
 
 Two credible directions remain:
 

@@ -711,3 +711,38 @@ contract explanations. Compare passive plan/schema/proof views with explicit
 execution and preserve unresolved conditions. Language-coherence owns the
 interface/law model; this packet retains representation and human-activity
 questions, including its prepared timing alternatives.
+
+
+## Cross-Domain Thinking As The Coherence Criterion — 2026-10-10
+
+### Evidence That Changed The Design
+
+The user's clarification makes a person's reasoning activity the coherence
+criterion, supported by explicit computations and contracts. The interaction
+thesis now names forming an idea, exposing assumptions, following consequences,
+comparing alternatives and revising understanding. Physics supplies a demanding
+challenger; shared representation does not transfer domain laws by itself.
+
+### Workflow Friction
+
+Correct computation and fluent explanation can coexist with poor understanding.
+Drafts, ambiguous concepts, conflicting hypotheses and unfinished handoff must
+remain visible before a checked model exists. A type checker or a synthetic task
+oracle cannot establish human comprehension or appropriate confidence.
+
+### Durable Improvement
+
+The scientific owner defines SP0's matched text/structured/mixed tasks, separates
+draft/checked/realization stages and distinguishes several graph meanings.
+The cognitive owner links the new primary-system synthesis while preserving the
+limits of the cited studies/design demonstrations. Existing HX/NL and creative
+comparison routes remain available; no winner of the representation fork was
+selected and no new UI or psychological theory was accepted.
+
+### Next Pass
+
+Prepare identical fading-amplitude and contrasting nonphysical investigation
+facts. Compare prediction, missing-premise diagnosis, alternative explanation,
+revision and handoff with experts and learners separately. Formal experiment
+results are evidence for artifact checks only; actual participant trials and
+accessibility evaluation remain unperformed.

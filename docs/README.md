@@ -254,6 +254,7 @@ This list is intentionally complete and is checked by tests.
 - [Open Questions](research/open_questions.md)
 - [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
 - [Cognitive Foundations](research/cognition.md)
+- [Scientific Models As Instruments For Thinking](research/scientific_models.md)
 - [Natural Language As A Design Resource](research/interfaces/natural_language.md)
 - [Language Redesign Frontiers](research/design_frontiers.md)
 - [Language-Feature Synthesis Matrix](research/language_feature_matrix.md)

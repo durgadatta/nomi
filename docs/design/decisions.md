@@ -37,6 +37,13 @@ type rule or universal intermediate representation is accepted here. Existing
 semantic decisions retain their status until a named revision supplies its own
 coherent contract and consequences.
 
+The later October 10 clarification makes easier thinking the shared purpose
+across domains. The [vision continuation](vision.md#thinking-is-the-shared-design-goal)
+and [scientific thinking workflow](scientific_discovery.md#design-from-thinking-activities)
+organize discovery around distinctions, assumptions, consequences, alternatives
+and revision. This updates the guiding design criterion; it does not accept a
+universal mental calculus, new Core primitives or a measured usability claim.
+
 ## Accepted Foundations
 
 | Area | Decision | Rationale |

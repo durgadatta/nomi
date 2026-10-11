@@ -10,6 +10,14 @@ Read this before the [interface threads](interfaces/README.md), then the
 Historical interpretation, Nomi inference, and untested claims
 are distinguished below. This is not a claim to exhaust either philosophy or HCI.
 
+The user's October 10 continuation explicitly makes easier thinking the shared
+purpose across domains. The [scientific-model synthesis](scientific_models.md)
+adds primary mechanisms for referable models, premises, evidence and alternative
+representations; [SP0](../design/scientific_discovery.md#design-from-thinking-activities)
+prepares prediction, diagnosis, revision and handoff tasks. These are design
+inferences and unperformed human comparisons, not a theory that formal semantics
+captures all cognition or a claim that Nomi already improves it.
+
 The [natural-language continuation](interfaces/natural_language.md) supplies
 selected linguistic, pragmatic and code-comprehension evidence for naming,
 roles, scope, dialogue repair and multilingual access. It translates these into
