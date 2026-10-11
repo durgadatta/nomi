@@ -340,8 +340,9 @@ No posterior is silently transported into a revised hypothesis vocabulary.
 
 The journal bounds trials/reports/questions at 16/32/8 and reuses finite exact
 model capacities. Its conditional-independence law and one-step objective are
-not universal cognitive primitives. Longer-horizon planning, latent-dependent
-observations, generalized causal discovery, vocabulary transport and human
+not universal cognitive primitives. A bounded contingent lookahead now follows this one-step comparison. General
+stateful planning, latent-dependent observations, causal discovery, vocabulary
+transport and human
 interaction remain subsequent discriminators. See the
 [runnable guide](../guide/reasoning_lab.md) for authoring and correction.
 
@@ -381,6 +382,31 @@ contracts. Equivalent spellings could later be grouped under a declared coding
 and prior policy, but no vocabulary collapse or probability change is automatic.
 Formal symbolic differentiation supplies an established algebra oracle; it is
 not a general numeric/accelerator AD adapter or a theory of learning.
+
+### Compose Contingent Inquiry Beyond One Step
+
+The [contingent policy comparison](../../tools/inquiry_policy.py) now composes
+the same journal estimates, kernels, losses and prospective branches through a
+bounded horizon. Each option's cost is its query cost plus outcome-weighted
+continuation loss/cost. Stopping is always available. Complete search retains
+all best first-query/stop ties; partial search exposes feasible incumbents and
+conservative lower/upper cost bounds, not an optimality claim.
+
+The discriminator asks for two-bit parity. Each bit alone has no decision value,
+so one-step inquiry stops. A two-step policy sees that their combination resolves
+parity. With cost `1/16` per query, expected loss plus costs is `1/8`, below the
+stop loss `1/2`. An independent enumeration of all two-step contingent strategies
+checks that optimum. Separate policy replay validates every query through the
+existing joint-loss checker and independently recomputes continuation bounds,
+coverage, stopping decisions and budget use. Zero-mass branches have no children;
+unsupported evidence supplies no policy.
+
+Run `python3 -m tools.inquiry_policy --horizon 1`, then `--horizon 2`.
+`--budget 1` retains incomplete bounds; `--json` exposes named policy branches.
+The profile admits up to three query methods, horizon three and 256 internal
+expansions, following the journal's explicit conditional-independence assumption.
+It models inquiry about a fixed hidden state, not general world transitions,
+causal action, correlated unmodeled draws or an unbounded agent planner.
 
 ## Start From The Developer's Activity
 

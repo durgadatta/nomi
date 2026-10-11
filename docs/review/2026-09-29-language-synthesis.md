@@ -2210,3 +2210,31 @@ No automatic prior, vocabulary, physical or numeric-AD claim is introduced.
 Audit the integrated surface and independent checks, refresh discovery context,
 and retain exact next gates for general premise transport, latent dependence,
 causal learning, longer-horizon planning, numeric AD and human authoring evidence.
+
+## Contingent Inquiry And Real Entry Points — 2026-10-11
+
+### Evidence That Changed The Design
+
+One-step selection stops on two-bit parity, despite useful joint inquiry.
+Bounded lookahead now finds the two-query policy; independent exhaustive
+strategies and branch/cost replay check it. Eight new checks cover budgets,
+stale/deep forged claims, terminal/zero-support cases and actual module CLIs.
+
+### Workflow Friction
+
+Greedy query value can miss information synergy. Resource-limited search also
+cannot present an incumbent as a proven optimum. CLI smoke checks exposed
+Python's duplicate __main__/imported receipt class identities in program search.
+
+### Durable Improvement
+
+Contingent plans compose existing estimates, kernels and losses, preserving stop
+and ties, named branches and conservative incomplete bounds. No measurement
+executes. Canonical CLI entry points now retain one receipt class identity when
+independent consumers import them; focused failing process tests verify the fix.
+
+### Next Pass
+
+Audit exact receipt types and all executable routes, refresh local retrieval,
+and retain general state evolution, causal action, dependent latent observations,
+premise transport and actual user validation as separate open gates.

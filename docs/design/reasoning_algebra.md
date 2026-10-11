@@ -703,6 +703,17 @@ journal remains available for withdrawal. General evidence/premise transport,
 new vocabulary meanings, missing hypotheses and checked extensional identity
 require their own stronger interpretations and validation.
 
+### A Thinking Strategy Is A Composition
+
+[Bounded contingent inquiry](../../tools/inquiry_policy.py) adds lookahead by
+composing existing belief branches and objective-relative selection. A two-bit
+parity example distinguishes useful joint questioning from a greedy one-step
+stop. Independent exhaustive strategy enumeration and branch/cost replay check
+its finite optimum; budget exhaustion retains conservative bounds and feasible
+stopping. No new reasoning opcode, measurement effect or model superclass is
+needed. Hidden-state evolution, general actions and richer dependence remain
+separate semantic obligations.
+
 ## Ordinary Programming Must Stay Ordinary
 
 Writing a function, matching a Result, reading a file or building a report must

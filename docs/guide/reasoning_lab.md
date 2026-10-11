@@ -138,6 +138,25 @@ supplied assumptions. This is not automatic identification of a governing law.
 separately says whether all matching proposals were retained. Increasing a
 grammar or adding examples creates a new checking context.
 
+## Look Beyond The Next Question
+
+Some questions are useful only together. Two unknown bits determine whether
+parity is even or odd; learning either bit alone leaves that answer equally
+uncertain. Compare one-step and two-step planning:
+
+```bash
+python3 -m tools.inquiry_policy --horizon 1
+python3 -m tools.inquiry_policy --horizon 2
+python3 -m tools.inquiry_policy --horizon 2 --budget 1
+```
+
+One step chooses to stop. Two steps propose either bit first, then the other.
+The exact modeled loss plus query costs falls from `1/2` to `1/8`. The third
+command deliberately limits search: it displays incomplete bounds and a feasible
+choice, without claiming to have found the optimum. Add `--json` for every
+prospective branch. These are plans about a fixed hidden state; they execute no
+measurement and assume the declared observation dependence model.
+
 ## Compare Meaning Without Supplying Inputs
 
 Run the source-to-polynomial interpretation:
@@ -176,6 +195,6 @@ has a different scope from probability under a supplied model. Neither proves
 empirical adequacy. A family restriction can preserve probability only when
 dropped alternatives already have zero mass; dropping positive mass does not
 earn a more confident model. Richer types and structures, causal learning, checked model
-and premise transport, continuous inference, library learning and ordinary Nomi
+and premise transport, continuous inference, general stateful planning, library learning and ordinary Nomi
 integration remain open in the [shared foundation design](../design/reasoning_algebra.md)
 and [intelligent-program contract](../design/ai_frameworks.md).

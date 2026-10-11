@@ -182,4 +182,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Validators import the canonical module; keep one receipt type identity.
+    from tools.program_search import main as _main
+
+    _main()
