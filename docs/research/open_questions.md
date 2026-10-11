@@ -223,6 +223,16 @@ are unperformed and do not replace the existing owner-enforced publication law.
 
 ## 9. Numeric And Scientific Model
 
+**Foundational pivot:** [the minimal reasoning algebra](../design/reasoning_algebra.md)
+compares smaller cores before adding scientific features. Its exact scoped-map
+lab checks composition/tangent identities, discrete stationarity, supplied
+Legendre inverses and retained perturbation remainders without inputs. This is
+not analytic calculus or a proof that three responsibilities are irreducible.
+Next R1/SP1 compares scoped-reference and locally nameless binding artifacts
+on ordinary and scientific terms; R2/AF2 tests explicit structure providers
+against established adapters and independent replay. Preserve effects/cleanup,
+stationary saddles, singular inversion and nonuniform approximation as challengers.
+
 **Physics/discovery continuation:** the
 [scientific-model proposal](../design/scientific_discovery.md) supplies five
 composable contracts and SP1-SP5. First compare a dedicated mathematical

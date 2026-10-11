@@ -38,6 +38,13 @@ before observations or solver selection. These are unimplemented contracts;
 the current DAG, nominal port checks and definition replay do not establish
 scientific equivalence or well-posedness.
 
+The [foundational reasoning comparison](reasoning_algebra.md) now tests a smaller
+semantic organization: contextual terms, checked composition and judgments.
+Its map lab retains scope/revision and separates transformations from explicit
+realization, but uses a closed polynomial representation rather than this
+envelope's nominal ports. R1 compares shared scoped descriptions before selecting
+a common implementation; neither laboratory becomes universal IR by assertion.
+
 The [composition hierarchy](primitive_composition.md) connects this experiment
 to the broader language. Its input/literal/alias/apply/derived/description roles
 classify inert objects; they are not the six semantic families used to compare

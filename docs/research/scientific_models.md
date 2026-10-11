@@ -95,3 +95,42 @@ that fragment; general spaces/binders and actual human comparisons remain open.
 Use reference/identity/revision helpers from the generic framework only
 when their contracts match. Adapter round trips, mathematical semantic
 alignment and actual human trials retain separate admission gates.
+
+## Foundational Algebra Evidence
+
+The user's minimal-algebra pivot challenges the existing six execution families,
+rather than proposing six more language features. The
+[redesign comparison](../design/reasoning_algebra.md) distinguishes a contextual
+term foundation from supplied mathematical structures. Sources checked on
+2026-10-10; the recommendations below are Nomi design inferences.
+
+| Primary source | Mechanism | Consequence and limit |
+| --- | --- | --- |
+| [Blute, Cockett and Seely: differential categories](https://www.math.mcgill.ca/rags/difftl/difftl.abstract.html) | Differentiation is additional coherent structure on a categorical setting | Composable arrows alone do not derive differentiation. Compare explicit rule providers, not a universal `differentiate` compiler instruction. |
+| [Cockett and Cruttwell: differential bundles and tangent categories](https://arxiv.org/abs/1606.08379) | Bundle and tangent constructions support structural differential geometry | Separate abstract spaces/bundles from coordinates. This evidence does not make a finite polynomial representation a manifold checker. |
+| [Sussman and Wisdom: SICM, Lagrangian mechanics](https://tgvaughan.github.io/sicm/chapter001.html) | Executable descriptions compose paths, action and variations; symmetry supplies conservation in a stated variational setting | Use the whole derivation as a challenger. Retain admissible variations and theorem hypotheses; no `action` keyword or general conservation from any symmetry. |
+| [SICM, Hamiltonian mechanics](https://tgvaughan.github.io/sicm/chapter003.html) | Quadratic Legendre construction explicitly solves for velocity using an invertible matrix | Check an inverse candidate before transporting descriptions. Singular or merely locally invertible fiber derivatives need a different contract. |
+| [NIST DLMF, section 2.1](https://dlmf.nist.gov/2.1) | Order symbols, expansions and uniformity have defined regimes; differentiated asymptotics need extra conditions | Preserve exact remainder first, then attach qualified bound/order evidence. Truncation is not convergence or numerical error evidence. |
+
+### A Smaller Core Is A Hypothesis, Not An Encoding Contest
+
+Compare (a) execution families plus domain libraries, (b) lambda/variant
+encoding, (c) bare objects/arrows and (d) contextual terms/composition/judgments.
+Use the same ordinary report, two scoped maps, constrained variational model
+and perturbation task. Count independent rules, annotation burden, hidden
+premises, diagnostic repair steps and unsupported operations. Counting three
+headings against six establishes no minimality result.
+
+The closed [map experiment](../../tools/reasoning_algebra.py) establishes finite
+formal identities without supplied inputs. Tangent lifting and substitution
+operate on immutable scoped descriptions; exact realization is separate.
+Fourteen [worked judgments](../../tools/reasoning_examples.py) exercise the
+requested chains at bounded slices. Tests include independent exact arithmetic,
+damping, singular inversion, stationary saddles and changed revisions.
+Continuum variation, cotangent transport, asymptotic validity and independent
+symbolic certificate replay remain unimplemented.
+
+The next discriminator is R1/SP1: compare scoped-reference and locally nameless
+binder artifacts on ordinary and scientific terms, including capture avoidance
+and readable repair. R2/AF2 then uses an established symbolic/AD adapter and
+independent checks; this is not a replacement general AD engine.

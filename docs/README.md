@@ -19,6 +19,7 @@ Choose a reading path based on what you want to do:
 | Research or integrate a language mechanism | [Maintainer Synthesis Guide](research/synthesis_guide.md) | [Language reviews](research/languages/README.md), [feature comparisons](research/features/README.md), and [open questions](research/open_questions.md). |
 | Describe and compose objects before choosing an engine | [Engine-Free Objects](design/object_framework.md) | Typed descriptions, reusable workflows, relation/collection conditions and explicit realization; a source-checkout research tool. |
 | Design by composing a few primitives | [Primitives And Their Compositions](design/primitive_composition.md) | Hierarchy, worked reductions, construct catalog and explicit unclosed laws. |
+| Rethink the foundation for scientific reasoning | [Minimal Reasoning Algebra](design/reasoning_algebra.md) | Current-core audit, smaller candidates, library structures, exact executable compositions and R0-R5 integration. |
 | Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
 | Design for physics and scientific discovery | [Scientific Models And Discovery](design/scientific_discovery.md) | Five modeling contracts, an oscillator derivation, implementation gaps and independent admission oracles. |
 
@@ -235,6 +236,7 @@ This list is intentionally complete and is checked by tests.
 - [Decision Ledger](design/decisions.md)
 - [Language Synthesis](design/synthesis.md)
 - [Primitives And Their Compositions](design/primitive_composition.md)
+- [A Minimal Algebra Of Scientific Reasoning](design/reasoning_algebra.md)
 - [Target Suite](design/targets/README.md)
 - [Resource Completion Proposal](design/resource_lifetime.md)
 - [Interaction Proposal](design/interaction_model.md)

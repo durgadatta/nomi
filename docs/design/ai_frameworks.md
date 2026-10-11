@@ -22,6 +22,12 @@ contracts under the language-coherence packet; its
 
 ## Start From The Developer's Activity
 
+The [minimal reasoning algebra](reasoning_algebra.md) now challenges the common
+foundation with contextual terms, composition and judgments. Its formal tangent
+map experiment is a finite exact rule comparison, not general AD or a tensor
+engine. R1/R2 align scoped descriptions and tangent/cotangent obligations with
+AF1/AF2; an established AD adapter remains the next general derivative oracle.
+
 | Activity | What the environment should explain | A discriminating failure |
 | --- | --- | --- |
 | Express a hypothesis | Architecture, objective, assumptions, trainable choices and alternatives | A better benchmark score is presented as a general explanation |

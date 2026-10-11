@@ -1749,3 +1749,61 @@ files before editing. Measure retrieval on real project questions and expose
 source revision/freshness before selecting an embedding/reranking adapter. Add
 book extraction only for an explicitly configured owned corpus. Keep exact AI
 framework checks separate from this agent-infrastructure evidence.
+
+## Pass Retrospective — Minimal Algebra Of Scientific Reasoning — 2026-10-10
+
+### Evidence That Changed The Design
+
+The user's pivot requires a smaller coherent foundation, rather than adding
+scientific features. The audit found six semantic families but no established
+irreducibility result, 31 transitional Core node types, and separate domain
+laboratories. Bare categorical composition does not supply differential
+structure. SICM makes inverse validity explicit in Legendre construction;
+DLMF distinguishes exact truncation from qualified asymptotics. These sources
+and their precise design consequences are retained in scientific research.
+
+### Workflow Friction
+
+Calling three broad headings a kernel would merely rename the existing design.
+The proposal therefore adds a concrete typed-term/computation grammar and maps
+all six operational obligations into it. Scientific meaning must stay independent
+of representation while the first executable profile is deliberately finite and
+coordinate-based. Independent arithmetic vectors are narrower evidence than
+independent symbolic replay or mathematical/physical conformance.
+
+### Durable Improvement
+
+Added `reasoning_algebra.md` as a designing cross-cutting comparison, linked
+through synthesis, scientific/object/AI owners, decisions, questions and the
+existing registered packet. Contextual terms, checked composition and judgments
+are the recommended candidate; differential, invariant, selection and scale
+structures remain supplied library contracts. The five requested chains expose
+their additional assumptions rather than becoming compiler theories.
+
+Commit `4157df7` adds immutable scoped exact polynomial-map descriptions,
+capture-free substitution, tangent lifting, directional variation, supplied
+inverse checks, retained exact remainders and explicit separate realization.
+Fourteen input-free worked judgments cover the finite slices. New tests compare
+seeded primal/tangent results with independent exact arithmetic and reject scope,
+revision, scalar and capacity mismatches; damping, singular inversion and saddles
+retain counterexamples. No source parser, runtime or browser behavior changed.
+
+Validation: 234 focused checks pass, including 28 new reasoning-algebra checks,
+existing scientific replay and AI contracts, documentation lifecycle, packet,
+composition, research matrix and target-direction checks. Lint, five packet
+checks, 63-node/25-route catalog and 2360 local links across 172 documents pass.
+There is no general binder implementation, continuum variation, asymptotic
+certificate, general AD engine, physical validation or new-profile independent
+symbolic replay. No minimality theorem or human usability result is claimed.
+
+### Next Pass
+
+R1/SP1 compares context-indexed nominal references with locally nameless binder
+artifacts, using an ordinary report function and a scientific map. Close
+capture-free substitution, alpha-equivalence, same-spelled nested binders,
+source spans and revision invalidation before merging laboratory representations.
+R2/AF2 then separates structure/rule providers and compares an established
+symbolic/AD adapter with independent vectors/replay, including tangent/cotangent
+refusals. R3/R4 retain constrained variations, boundary terms, singular Legendre
+transport and nonuniform approximation. R5 measures authoring, repair and handoff
+before admitting a new source or interaction contract.

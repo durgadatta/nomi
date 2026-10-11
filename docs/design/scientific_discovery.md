@@ -20,6 +20,16 @@ library/artifact contracts, not five new language keywords or machine opcodes.
 The most urgent addition is a mathematical model that exists independently of
 an execution plan.
 
+The [minimal reasoning algebra](reasoning_algebra.md) takes the next step:
+redesign the foundation around contextual terms, composition and judgments,
+rather than treating those five contracts or the six execution families as
+irreducible. It derives the user's six scientific themes as supplied structures
+and works through spaces/flows, symmetry/conservation, action, Legendre transport
+and approximation. Its closed map experiment adds scoped finite coordinate
+contexts and exact transformations; it does not close the general binder,
+continuum, manifold or asymptotic contracts below. R1/R2 refine SP1/SP2 and the
+AI transformation gates, while observations and realizations retain their owners.
+
 The shared objective is to make thinking easier: people should be able to form,
 name, relate, question, compare and revise ideas without repeatedly rebuilding
 the surrounding context in their heads. Physics is a demanding pressure case.

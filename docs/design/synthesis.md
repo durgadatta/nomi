@@ -453,6 +453,17 @@ to admit any of them.
 
 ## Candidate Primitive Synthesis And Integration Path
 
+The user's scientific-reasoning pivot now calls for a **foundational comparison**,
+not more domain feature additions. [A minimal reasoning algebra](reasoning_algebra.md)
+audits accepted obligations, the six-family hypothesis, the 31-node experimental
+Core and current domain laboratories. Its recommended candidate is contextual
+terms, checked composition and explicit judgments, with variation, invariants,
+selection and scale supplied as library structures. This is designing, not an
+accepted three-opcode Core or proof of minimality. R0-R5 names the replacement
+path and the operational laws an encoding must preserve. Fourteen exact
+polynomial-map compositions execute without inputs; continuum variation,
+asymptotics, general binders and independent replay remain separate gates.
+
 The selected continuation now starts with the domain-neutral
 [Engine-Free Objects](object_framework.md): typed references, descriptions,
 closed composition and explicit realization. It separates object meaning from
@@ -542,8 +553,11 @@ increment is open. Close only the promises of the selected slice.
 | 6 | Reuse and inspect the same checked workflow from two consumers; cognitive packet owns representation comparison | Independent consumer checking, revision invalidation, named intermediates and repair/handoff observations | Improve interfaces/diagnostics before adding another syntax |
 | 7 | Admit a proven useful convenience or generalization | Long form, formatter, lowering, diagnostics, independent conformance and removal criteria agree | Keep the ordinary composition; a failed shorthand does not reject the domain need |
 
-The immediate continuation is step 2's generic framework and domain-validator
-boundary. The first implementation now checks closed arithmetic/text composition
+The foundational continuation is now R1/SP1's scoped-term comparison in
+[the reasoning algebra](reasoning_algebra.md#one-integration-path-with-closure-receipts),
+refining step 2's shared reference and domain-validator boundary. Do not grow the
+envelope before comparing its binding/context laws with the dedicated map
+artifact. The existing implementation checks closed arithmetic/text composition
 and realizes selected objects through explicit adapters. Statistical descriptors
 reuse its envelope; statistical computation and mean-law replay retain their
 own checker until a contract-preserving adapter is demonstrated. This library

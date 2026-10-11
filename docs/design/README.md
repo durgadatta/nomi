@@ -56,6 +56,9 @@ For the broader purpose, competing directions and current gap, read the
 17. [AI Frameworks](ai_frameworks.md) - proposed tensor spaces, transformable
     programs, operator rules, training state and qualified execution; a bounded
     input-free metadata checker, no autodiff or training runtime admitted.
+18. [Minimal Reasoning Algebra](reasoning_algebra.md) - foundational redesign
+    comparison, contextual terms/composition/judgments and supplied mathematical
+    structures; exact map experiments and R0-R5 gates, not accepted Core syntax.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly

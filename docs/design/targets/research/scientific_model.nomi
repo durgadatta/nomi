@@ -104,3 +104,31 @@ func describe_linear_loss(
 # host callbacks or foreign captured buffers cannot enter a checked program.
 # A future transformation needs independent primal/derivative/batching rules.
 # Backend metadata coverage does not validate kernels or mint device grants.
+
+
+# Foundational continuation: docs/design/reasoning_algebra.md, R1/R2.
+# Fictional ordinary library calls; executable Python comparison is in
+# tools/reasoning_examples.py. No composition operator or derivative syntax.
+from lab.reasoning import MapDescription, MapJudgment, ReasoningError, ReasoningTheory, maps
+
+
+func check_tangent_composition(
+    first: MapDescription,
+    second: MapDescription,
+    theory: ReasoningTheory,
+) -> Result[MapJudgment, ReasoningError]:
+    combined = maps.compose(first, second, theory=theory)?
+    lifted_combined = maps.tangent(combined, theory=theory)?
+    lifted_first = maps.tangent(first, theory=theory)?
+    lifted_second = maps.tangent(second, theory=theory)?
+    combined_lifts = maps.compose(lifted_first, lifted_second, theory=theory)?
+    return maps.check_identity(lifted_combined, combined_lifts, theory=theory)
+
+
+# compose means second after first. Intermediate semantic space/revision must
+# agree; equal coordinate spelling or shape alone is insufficient.
+# The chosen theory supplies differential structure and admissible map rules.
+# An Ok judgment can retain unknown obligations; it is not automatically proof.
+# No input bindings, solver, hardware authority or effects are acquired here.
+# Negative pressure: unknown derivative rule, scope mismatch, stale evidence,
+# tangent/cotangent substitution and a merely one-sided inverse must not pass.

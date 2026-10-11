@@ -30,6 +30,14 @@ empirical agreement; the existing catalog does not certify those domain laws.
 
 ## Distill Responsibilities Before Choosing Instructions
 
+The [minimal reasoning algebra](reasoning_algebra.md) now challenges this map
+with contextual terms, checked composition and explicit judgments. The six
+families below remain operational obligations to preserve, not a fixed lower
+bound on a redesigned kernel. Its R0-R5 path distinguishes language foundations
+from supplied variation, selection and scale structures; exact map compositions
+run in a bounded checkout experiment. The catalog remains a navigation DAG,
+not a proof against a smaller foundation.
+
 These are **semantic families**, not six indivisible machine instructions.
 For example, Value contains atoms, products, alternatives and opaque handles;
 Scope contains several independently specified completion policies. We have
@@ -392,6 +400,10 @@ rejected; a reducible alias does not earn another spelling.
 
 Reuse the [D0-D7 agenda](redesign_agenda.md) and existing packet owners. This is
 a dependency path through their work, not a second release schedule.
+
+The foundational redesign now follows [R0-R5](reasoning_algebra.md#one-integration-path-with-closure-receipts),
+starting with the R1 scoped-term comparison. The obligations below remain
+discriminators for that replacement; they do not mandate the six-family kernel.
 
 | Next increment | Primitive/composition focus | Concrete closure receipt |
 | --- | --- | --- |
