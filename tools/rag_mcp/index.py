@@ -30,6 +30,9 @@ TEXT_SUFFIXES = {
     ".yml",
     ".js",
     ".ts",
+    ".nomi",
+    ".nb",
+    ".rs",
 }
 
 STOPWORDS = {

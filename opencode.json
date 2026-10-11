@@ -329,17 +329,11 @@
   // =========================================================================
   // Model Context Protocol servers for external tools & integrations.
 
-  // "mcp": {
-  //   "nomi-rag": {
-  //     "type": "local",
-  //     "command": [
-  //       "python3",
-  //       "-m",
-  //       "tools.rag_mcp.mcp_server",
-  //       "--config",
-  //       "config/rag_sources.json"
-  //     ],
-  //     "enabled": true
-  //   }
-  // }
+  "mcp": {
+    "nomi-rag": {
+      "type": "local",
+      "command": ["python3", "-m", "tools.rag_mcp.mcp_server"],
+      "enabled": true
+    }
+  }
 }

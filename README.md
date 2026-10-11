@@ -143,6 +143,7 @@ not run yet. Runnable examples live in [samples](samples/).
 | Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
 | Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |
 | Research and integrate language mechanisms | [Maintainer synthesis guide](docs/research/synthesis_guide.md) |
+| Give an AI coding tool cited project context | [Local RAG/MCP setup](docs/orientation/rag_mcp.md): build, connect, search, read and find design owners. |
 | Trace richer constructs back to a small semantic basis | [Primitives And Their Compositions](docs/design/primitive_composition.md): hierarchy, worked reductions, domain laws and remaining gates. |
 | Explore objects independent of execution engines | [Engine-Free Objects](docs/design/object_framework.md): compose named objects and check relations or collection conditions before choosing an implementation; a Python research tool. |
 

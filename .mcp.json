@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nomi-rag": {
+      "command": "python3",
+      "args": ["-m", "tools.rag_mcp.mcp_server"]
+    }
+  }
+}

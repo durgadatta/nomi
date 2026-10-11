@@ -1706,3 +1706,46 @@ retaining operation/rule identity and unsupported cases. Keep stateful/random,
 uneven distributed and custom-operator challengers visible during that choice.
 Prepare authoring/repair/handoff tasks separately from formal or numerical
 checks. Project RAG/MCP setup follows as agent infrastructure, not AI semantics.
+
+## Pass Retrospective — Project Retrieval And MCP Connection — 2026-10-10
+
+### Evidence That Changed The Design
+
+Existing lexical retrieval and stdio resources already supplied the right
+source-discovery boundary. Missing client wiring and omission of target source,
+registries, skills and browser/Rust code were concrete setup gaps. A real stdio
+subprocess outside the checkout exercised eleven requests; installed Claude Code
+and OpenCode reported connected, and Codex registered an enabled absolute
+launcher. No model/API call or remote publication was needed.
+
+### Workflow Friction
+
+A relative module command depends on a client's project working directory.
+Project configuration is distinct from personal approval and a running tool
+catalog. Older Codex guidance unnecessarily changed its home directory. Optional
+programming books are absent; lexical ranking, source freshness and full MCP
+compatibility remain separate from a successful connection.
+
+### Durable Improvement
+
+Added an absolute checkout launcher, repeatable build/export/smoke command,
+portable Claude/OpenCode wiring and ignored machine-specific snippets. Expanded
+only the declared retrieval corpus, retaining scratch/build/private exclusions.
+The read-only design-owner tool validates selected packets without executing
+commands, and refuses excluded registry/artifact reads. Grounded prompts retain
+authority and source-content boundaries. Personal Codex registration and Claude
+project approval remain local state, not committed permissions for collaborators.
+
+Validation: 65 focused retrieval, source-boundary, stdio, setup, hook, packet and
+document checks pass, including 18 new connection checks. Lint and local links
+pass; the final setup rebuild and agent doctor check validate derived context.
+These are bounded checks, not a complete MCP SDK/lifecycle certification or a
+retrieval-quality/usability study. No runtime/parser behavior changed.
+
+### Next Pass
+
+Use the connected tools to discover owners, search narrowly and read current
+files before editing. Measure retrieval on real project questions and expose
+source revision/freshness before selecting an embedding/reranking adapter. Add
+book extraction only for an explicitly configured owned corpus. Keep exact AI
+framework checks separate from this agent-infrastructure evidence.

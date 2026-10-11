@@ -110,6 +110,7 @@ omits them. In that case, use the repository fallback: read the matching
 - Check the Nomi Jupyter kernel:
   `python3 -m tools.jupyter.check_nomi_kernel`
 - Build local RAG context: `python3 -m tools.rag_mcp.cli build`
+- Build/export/smoke-test local RAG/MCP: `python3 -m tools.rag_mcp.setup`
 - Search local RAG context: `python3 -m tools.rag_mcp.cli search "binding constraints"`
 - List registered design passes: `python3 -m tools.design_passes list`
 - Validate design-pass packets: `python3 -m tools.design_passes check`

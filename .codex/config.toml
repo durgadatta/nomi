@@ -4,11 +4,10 @@
 # secrets, and private scratch config out of this committed file.
 
 
-### codex config issue
-## codex does not seem to allow project level info in local config. To make that work
-## we need to change CODEX_HOME to local project folder but that will cause to write
-## tui config which changes every session (making git tracking noisy)
-## For now, most used profile have been moved/duplicated in global config outside git.
+# Supporting Codex clients read project configuration for trusted workspaces.
+# Keep personal credentials and session state in user-owned configuration.
+# RAG/MCP setup exports an absolute launcher stanza under ignored `.nomi/mcp/`;
+# see docs/orientation/rag_mcp.md for registration without changing the home.
 
 
 # ---------------------------------------------------------------------------
@@ -90,8 +89,8 @@ personality = "pragmatic"
 # Reusable profiles
 # ---------------------------------------------------------------------------
 
-# Usage note: To use these profiles, launch Codex with the local home directory:
-#   CODEX_HOME=$PWD/.codex codex --profile qwen-local
+# Usage in a client that loads trusted project profiles, from this checkout:
+#   codex --profile qwen-local
 
 # Default Nomi development profile.
 [profiles.default]

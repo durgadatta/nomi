@@ -8,9 +8,26 @@
       "include": [
         "AGENTS.md",
         "README.md",
+        "pyproject.toml",
+        "rust-toolchain.toml",
+        ".agents/skills/**/*.md",
         "docs/**/*.md",
+        "docs/design/**/*.nomi",
+        "docs/design/schemas/**/*.json",
+        "config/design_passes.json",
+        "config/primitive_composition.json",
+        "config/object_interface.json",
+        "config/data_interface.json",
+        "config/document_interface.json",
+        "config/rag_sources.json",
+        "samples/**/*.nomi",
+        "samples/**/*.nomi.nb",
+        "web/*.js",
+        "web/*.py",
         "prototype/**/*.py",
         "prototype/**/*.lark",
+        "prototype/**/*.rs",
+        "prototype/**/Cargo.toml",
         "scripts/**/*.py",
         "tools/**/*.py"
       ],
@@ -21,7 +38,9 @@
         "local/**",
         "PLAY/**",
         "reports/**",
-        "**/__pycache__/**"
+        "**/__pycache__/**",
+        "**/target/**",
+        "**/node_modules/**"
       ],
       "path_boosts": [
         {

@@ -73,8 +73,11 @@ clear semantics, tests, examples, and documentation.
   checks; `.vscode/tasks.json` exposes the same commands locally. See the
   [VS Code task map](vscode_extension.md#vs-code-tasks).
 - `opencode.json`: project-level OpenCode config (model, LSP, formatter,
-  permissions, instructions, watcher, compaction, and commented-out templates
-  for providers, agents, commands, plugins, and MCP servers).
+  permissions, instructions, watcher, compaction, enabled local RAG/MCP, and
+  commented-out templates for providers, agents, commands and plugins).
+- `.mcp.json`: portable project-root RAG/MCP wiring for Claude Code. Personal
+  approvals and absolute machine-specific command snippets stay outside git;
+  [setup and client checks](rag_mcp.md#start-here) explain the distinction.
 - `.agents/skills/`: generic AI-assistant skill definitions shared by Codex,
   OpenCode, deepseek-tui, Claude Code, and other agents that can read a
   `SKILL.md`. Available skills:

@@ -39,6 +39,11 @@ Current skills:
 
 ## Registered Design Passes
 
+Local retrieval and the `nomi_design_passes` MCP tool expose this navigation
+without running declared commands. Build/export/check with
+`python3 -m tools.rag_mcp.setup`; use `docs/orientation/rag_mcp.md` for client
+wiring, selected source boundaries and current limitations.
+
 `config/design_passes.json` routes a bounded language topic to one linked
 research document, canonical focused design, target fixture, implementation
 bridge, validation list, and exact next actions. The process contract is
