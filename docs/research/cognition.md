@@ -24,6 +24,12 @@ roles, scope, dialogue repair and multilingual access. It translates these into
 NL1-NL6 under the existing interaction packet; prepared stimuli are not human
 results or a claim that fluent prose makes a computation correct.
 
+The [general knowledge-framework synthesis](knowledge_frameworks.md) continues
+this history from Leibniz into logic, defaults and revision, modular theories,
+knowledge exchange, uncertainty and learned methods. It separates representation,
+inference, realization and human augmentation, with source-depth labels and a
+bounded handoff to the existing foundation and interaction owners.
+
 ## Start Before Programming Languages
 
 The design object is a person making an idea sufficiently precise to inspect,

@@ -45,6 +45,11 @@ The [language-feature matrix](../language_feature_matrix.md) includes Excel and
 keyboard commands beside the 45 language columns, using these thread reviews
 as their evidence links. The other threads retain this separate interface map.
 
+The October 10 [knowledge-framework continuation](../knowledge_frameworks.md)
+adds historical evidence for explicit reasoning contexts, mention versus assertion,
+qualified theory bridges and revision-aware explanations. It sharpens HX2/HX8
+and SP0 without adding numbered threads, executed probes or participant results.
+
 ## Thread Map
 
 The [data/workflow extension](../data_workflows/README.md) and

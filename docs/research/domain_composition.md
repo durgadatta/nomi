@@ -15,6 +15,12 @@ owns the current proposal; D1-D7 route current admission work. The
 [broader vision](../design/vision.md) can challenge the model and these routes;
 discovery is not limited to the present domain taxonomy.
 
+The [knowledge-framework history and synthesis](knowledge_frameworks.md) adds
+a specific test of this proposal: interoperable objects need declared reasoning
+profiles and preservation claims as well as common interfaces. It sharpens
+context, interpretation and evidence boundaries; it does not supply a global
+ontology or a universal truth-maintenance engine.
+
 ## Ambition With A Compositional Boundary
 
 The useful version of "a language for all human knowledge" is a medium in which

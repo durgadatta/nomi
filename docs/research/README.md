@@ -21,7 +21,14 @@ research loop, candidate worksheet, eight deeper language comparisons,
 composition discriminators, depth gaps, and integration handoff. It routes into
 the existing evidence owners and accepted contracts rather than adding a backlog.
 
-The selected continuation is now data/statistics:
+The selected continuation now examines [general knowledge frameworks](knowledge_frameworks.md)
+from Leibniz through contextual logic, theory modularity, linked knowledge and
+learned processing. It refines the [minimal reasoning algebra](../design/reasoning_algebra.md)
+without replacing domain laws with a universal ontology. The dossier marks reading
+depth and unresolved research, then routes implementation through R1/R2 and the
+existing interaction trials.
+
+The data/statistics continuation remains a domain pressure:
 [Statistical Objects Before Observations](data_workflows/statistical_objects.md)
 compares primary systems, and the
 [Statistical Data Interface](../design/statistical_data.md) owns the candidate
