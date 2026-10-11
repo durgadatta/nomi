@@ -443,9 +443,9 @@ def _selected_value(value, path):
 
 
 def _universal_results(
-    vocabulary, objects, normal, terms, rules, obligations, supplied
+    vocabulary, objects, normal, terms, rules, obligations, supplied, version=4
 ):
-    """v4 has two closed condition forms, never arbitrary code or truth claims."""
+    """Closed v4 traversal/relations and v5 identity; never code or truth claims."""
     identities, results, item_checks = set(), [], 0
     unary = {
         "exact.positive-v1": ("int",),
@@ -461,6 +461,31 @@ def _universal_results(
         condition = obligation["condition"]
         if type(condition) is not dict:
             raise ReplayError("invalid condition record")
+        if version == 5 and condition.get("kind") == "composition":
+            _keys(condition, ("kind", "left", "right"))
+            left, right = condition["left"], condition["right"]
+            for subject in (left, right):
+                _identity(subject)
+                if subject not in objects:
+                    raise ReplayError("unknown composition condition subject")
+            if rules[objects[left]["op"]][0] != rules[objects[right]["op"]][0]:
+                raise ReplayError("composition condition nominal family mismatch")
+            normals = [normal[left], normal[right]]
+            results.append(
+                {
+                    "id": identity,
+                    "status": "satisfied" if normals[0] == normals[1] else "pending",
+                    "condition": {
+                        "kind": "composition",
+                        "left": left,
+                        "right": right,
+                        "normal_references": normals,
+                        "basis": "structural identity after declared pure definitions and aliases",
+                        "evidence_origin": "declared composition",
+                    },
+                }
+            )
+            continue
         if condition.get("kind") == "relation":
             _keys(condition, ("kind", "rule", "operands"))
             relation = _relation_results(
@@ -573,7 +598,7 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
     graph_context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
     if (
         type(requirements["version"]) is not int
-        or requirements["version"] not in (1, 2, 3, 4)
+        or requirements["version"] not in (1, 2, 3, 4, 5)
         or requirements["graph"] != graph_context
     ):
         raise ReplayError("unsupported or stale requirement context")
@@ -601,9 +626,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
             vocabulary, objects, normal, terms, rules, obligations, supplied
         )
         obligations = []
-    elif version == 4:
+    elif version >= 4:
         results = _universal_results(
-            vocabulary, objects, normal, terms, rules, obligations, supplied
+            vocabulary, objects, normal, terms, rules, obligations, supplied, version
         )
         obligations = []
     for obligation in obligations:
@@ -699,7 +724,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
             if version == 2
             else "structural-operand-relations-v3"
             if version == 3
-            else "bounded-universal-conditions-v4",
+            else "bounded-universal-conditions-v4"
+            if version == 4
+            else "mixed-structural-evidence-v5",
         }
     )
     expected = {
@@ -716,7 +743,9 @@ def _requirement_receipt(vocabulary, graph, requirements, bindings=None):
         if version == 2
         else "closed structural operand relations, not nominal equality, scientific assumptions or a general solver"
         if version == 3
-        else "bounded structural universal conditions and relations, not scientific assumptions or a general solver",
+        else "bounded structural universal conditions and relations, not scientific assumptions or a general solver"
+        if version == 4
+        else "closed composition identity and bounded structural conditions; not algebraic, engine or scientific proof",
     }
     _artifact(expected)
     return expected
@@ -735,7 +764,7 @@ def replay_requirements(vocabulary, graph, requirements, receipt, bindings=None)
         "context": expected["context"],
         "graph": expected["graph"],
         "independent_checker": True,
-        "scope": "pinned lab predicates; no engine or scientific validity claim",
+        "scope": "pinned lab requirement evidence; no engine or scientific validity claim",
     }
 
 
@@ -865,9 +894,12 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
             for requirement in source["requirements"]:
                 copied = json.loads(_encode(requirement))
                 copied["id"] = _identity(namespace + "." + requirement["id"])
-                if source["version"] == 4:
+                if source["version"] >= 4:
                     body = copied["condition"]
-                    if body["kind"] == "every":
+                    if body["kind"] == "composition":
+                        body["left"] = substitution[body["left"]]
+                        body["right"] = substitution[body["right"]]
+                    elif body["kind"] == "every":
                         body["subject"] = substitution[body["subject"]]
                     else:
                         for operand in body["operands"]:
@@ -916,7 +948,7 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
                     }
                 )
         conditions = promoted
-    if requirement_version == 4:
+    if requirement_version >= 4:
         promoted = []
         for condition in conditions:
             if "condition" in condition:

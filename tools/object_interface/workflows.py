@@ -161,10 +161,15 @@ class Workflow(Frozen):
                         "instantiated requirement identity",
                     ),
                 }
-                if source["version"] == 4:
+                if source["version"] >= 4:
                     body = condition["condition"]
                     copied["condition"] = {**body}
-                    if body["kind"] == "every":
+                    if body["kind"] == "composition":
+                        copied["condition"].update(
+                            left=substitutions[body["left"]],
+                            right=substitutions[body["right"]],
+                        )
+                    elif body["kind"] == "every":
                         copied["condition"]["subject"] = substitutions[body["subject"]]
                     else:
                         copied["condition"]["operands"] = [
@@ -195,7 +200,7 @@ class Workflow(Frozen):
                 }
                 for condition in conditions
             ]
-        if version == 4:
+        if version >= 4:
             conditions = [
                 condition
                 if "condition" in condition

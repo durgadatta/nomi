@@ -759,8 +759,8 @@
         "option-result"
       ],
       "owner": "docs/design/object_framework.md",
-      "law": "Literal and explicit input evidence discharge closed relations and finite universal unary conditions; computed operands stay pending and empty universals are vacuous.",
-      "gate": "Nested/correlated quantification and scientific assumptions require further laws; condition-only inputs require explicit inclusion.",
+      "law": "Declared composition identity and literal/input predicates have distinct evidence bases; finite universal conditions compose with them without executing objects.",
+      "gate": "General algebra, nested/correlated quantification, engine conformance and scientific assumptions require their own laws and evidence.",
       "placement": "library",
       "status": "experiment",
       "fixtures": [

@@ -1478,3 +1478,45 @@ preserving their different evidence bases. Definition expansion can establish
 structural equality without inputs; general algebra, domain laws and backend
 conformance remain separate proof owners. Keep source, normalized, contract and
 realization dependencies visible through this next integration.
+
+## Named Composition Laws Alongside Snapshot Conditions — 2026-10-10
+
+### Evidence That Changed The Design
+
+The framework checked declared composition equality and input requirements in
+separate tools, preventing one named contract from retaining both evidence
+bases. Version 5 adds a closed composition condition: equal normal references
+establish the fact without inputs, while a different normal form stays pending.
+Representation predicates and finite universal conditions keep their existing
+rules. This is definition/alias identity, not general algebra or scientific law.
+
+### Workflow Friction
+
+A proven law must not create a runtime binding requirement or accidentally
+execute computed objects. Pending laws cannot be resolved by executing a backend.
+Selected physical subjects still delimit compiled required contracts. Both sides
+of every law need substitution and all earlier envelope forms need promotion
+without changing their standalone contracts. One outer checkpoint can carry
+static composition facts and snapshot-derived facts, with explicit origins.
+
+### Durable Improvement
+
+New tests establish no-input definition identity, mixed evidence, same-reference
+versus positivity, unknown/refusal semantics, codec-free descriptions, literal
+arithmetic staying unknown, all earlier workflow versions in both orders,
+documentary universal composition and isolated independent replay. A deliberately
+faulty backend test demonstrates that satisfied structural laws cannot certify
+implementation correctness. A tracked mixed computation contract runs through
+existing requirement/run/replay commands, preserving broader domain-law owners.
+
+Validation: 701 focused object/statistical, documentation, target and packet
+checks pass. All six Python and fourteen shell example blocks execute. Lint,
+all five packets, the 63-node hierarchy and 2264 local links pass.
+
+### Next Pass
+
+Compose independently owned domain-law evidence with named requirements only
+after specifying admissible theory contexts and premises. Compare the current
+repair/explanation flow in two representations and close ordinary source/library
+contracts before source admission. General algebra, correlated quantification,
+effects/resources and backend conformance remain separately owned gaps.

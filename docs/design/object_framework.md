@@ -32,6 +32,18 @@ to the broader language. Its input/literal/alias/apply/derived/description roles
 classify inert objects; they are not the six semantic families used to compare
 language execution, authority and scope.
 
+Choose a route through the lab:
+
+| Task | Start here |
+| --- | --- |
+| Check meaning without supplying inputs | [First composition](#try-a-composition-before-supplying-inputs), then [named composition laws](#put-composition-laws-and-input-conditions-in-one-named-contract). |
+| Reuse several named results | [Workflow composition](#reuse-a-workflow-with-several-outputs). |
+| Find inputs and downstream edit dependencies | [Dependency explanations](#explain-dependencies-before-supplying-inputs). |
+| Change a named intermediate safely | [Checked revisions](#revise-named-objects-as-one-checked-change). |
+| Validate relations or every collection item | [Operand relations](#relate-several-objects-without-an-engine), then [universal conditions](#compose-a-universal-condition-from-a-collection-and-a-rule). |
+| Diagnose a rejected binding | [Condition repair](#repair-a-refused-condition). |
+| Add a domain or an implementation | [Domain integration order](#domain-integration-order), then [explicit document rendering](#a-document-domain-with-explicit-rendering). |
+
 ## Try A Composition Before Supplying Inputs
 
 From a source checkout, with Python only:
@@ -525,6 +537,59 @@ and rewire the collection subject or every relation operand. Source ownership
 remains in component inspection. Earlier standalone envelopes and older-only
 workflow compositions retain their existing formats. The independently admitted
 consumer checks traversal, witnesses, limits, promotion and substitution.
+
+### Put Composition Laws And Input Conditions In One Named Contract
+
+Version 5 adds `composition` alongside the earlier `relation` and `every` forms.
+It asks whether two existing objects of the same nominal family have the same
+normal reference after declared definitions and aliases:
+
+```json
+{
+  "id": "square_definition",
+  "condition": {
+    "kind": "composition",
+    "left": "squared",
+    "right": "expanded_square"
+  }
+}
+```
+
+The [mixed computation contract](../research/object_framework/computation_requirements_v5.json)
+names this law together with positive-quantity and nonempty-name requirements.
+Before inputs, the composition condition is satisfied while the other two are
+pending. With the [explicit snapshot](../research/object_framework/bindings.json),
+all three are satisfied. No arithmetic callback contributes to the law's proof.
+
+```bash
+python3 -m tools.object_interface requirements docs/research/object_framework/composition.json docs/research/object_framework/computation_requirements_v5.json > /tmp/nomi-computation-conditions.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/composition.json /tmp/nomi-computation-conditions.json --requirements docs/research/object_framework/computation_requirements_v5.json
+python3 -m tools.object_interface run docs/research/object_framework/composition.json docs/research/object_framework/bindings.json --backend python-exact-text --requirements docs/research/object_framework/computation_requirements_v5.json
+```
+
+Evidence records the compared names, normal references and `declared composition`
+origin. Binding evidence can contain both this static fact and snapshot-derived
+facts; its outer phase and digest identify the supplied checkpoint. Same-reference
+input/alias identity can be established without values, while a predicate such
+as positivity stays pending. Different normal forms also stay pending: this
+protocol does not prove inequality or evaluate expressions to fill the gap.
+`add(2, 2)` versus literal `4` needs an arithmetic theory, even though a trusted
+engine could produce equal values. Exact mean retains its separately owned
+observation-domain/mask/numeric theory and independent consumer.
+
+A compiled required contract admits established composition conditions before
+binding. Pending composition conditions refuse attachment with their static
+evidence; execution cannot upgrade them. Compared physical subjects must already
+belong to the selected realization, including when condition-only input inclusion
+is requested. A proven law creates no extra runtime binding requirement and is
+not listed as a value-dependent condition by `explain_input`.
+
+Workflows promote earlier condition forms into v5 and rewire both sides of each
+named law. Independent replay reconstructs the definitions, reference identity,
+promotion and evidence. Earlier standalone envelopes remain unchanged. A source
+or vocabulary revision invalidates the whole claim context. Even a satisfied
+law cannot certify a faulty backend's implementations; a wrong multiplication
+callback can return an integer satisfying its codec while violating arithmetic.
 
 ### Repair A Refused Condition
 

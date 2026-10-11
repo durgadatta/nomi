@@ -61,7 +61,8 @@ def main(argv=None):
                 help="select a named object; repeat for multiple outputs",
             )
             child.add_argument(
-                "--requirements", help="explicit required input/literal conditions"
+                "--requirements",
+                help="explicit required composition and input/literal conditions",
             )
             child.add_argument(
                 "--include-condition-inputs",

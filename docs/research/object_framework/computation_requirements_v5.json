@@ -1,0 +1,42 @@
+{
+  "version": 5,
+  "graph": "22984d66866560e65fee6f7e94e5838a9331d41b7076205c1dccb41c4825fec9",
+  "owner": "example.computation-contract",
+  "revision": "v1",
+  "requirements": [
+    {
+      "id": "square_definition",
+      "condition": {
+        "kind": "composition",
+        "left": "squared",
+        "right": "expanded_square"
+      }
+    },
+    {
+      "id": "positive_quantity",
+      "condition": {
+        "kind": "relation",
+        "rule": "exact.positive-v1",
+        "operands": [
+          {
+            "subject": "quantity",
+            "path": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "name_has_content",
+      "condition": {
+        "kind": "relation",
+        "rule": "text.nonempty-v1",
+        "operands": [
+          {
+            "subject": "name",
+            "path": []
+          }
+        ]
+      }
+    }
+  ]
+}

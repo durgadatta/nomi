@@ -1,6 +1,7 @@
 """Small engine-free obligation protocol, separate from generic type checking.
 
-Closed scalar and structural-path predicates are admitted in this lab. Literal and alias
+Closed scalar/path predicates and declared composition identity are admitted.
+Literal and alias
 evidence can discharge them without inputs. Explicit input snapshots can
 discharge them at binding. Computed expressions stay pending: no evaluator,
 solver, engine callback, or assertion is run to manufacture static evidence.
@@ -43,12 +44,14 @@ CHECKERS = {
     2: "structural-path-predicates-v2",
     3: "structural-operand-relations-v3",
     4: "bounded-universal-conditions-v4",
+    5: "mixed-structural-evidence-v5",
 }
 SCOPES = {
     1: "closed representation predicates, not scientific assumptions or a general solver",
     2: "closed structural path predicates, not scientific assumptions or a general solver",
     3: "closed structural operand relations, not nominal equality, scientific assumptions or a general solver",
     4: "bounded structural universal conditions and relations, not scientific assumptions or a general solver",
+    5: "closed composition identity and bounded structural conditions; not algebraic, engine or scientific proof",
 }
 MAX_ITEM_CHECKS = 4096
 MAX_FAILURES = 128
@@ -90,6 +93,7 @@ class Obligation:
     rule: str
     operands: tuple[Operand, ...]
     item_path: tuple[str | int, ...] | None = None
+    composition: bool = False
 
 
 class Requirements(Frozen):
@@ -135,10 +139,29 @@ class Requirements(Frozen):
             if identity in identities:
                 raise ContractError("duplicate requirement identity")
             identities.add(identity)
-            if version == 4:
+            if version >= 4:
                 condition = requirement["condition"]
                 if type(condition) is not dict:
                     raise ContractError("expected a closed condition record")
+                if version == 5 and condition.get("kind") == "composition":
+                    keys(condition, ("kind", "left", "right"), "composition condition")
+                    left, right = (
+                        graph.ref(condition["left"]),
+                        graph.ref(condition["right"]),
+                    )
+                    if graph._objects[left.id].type != graph._objects[right.id].type:
+                        raise ContractError(
+                            "composition condition requires the same nominal family"
+                        )
+                    obligations.append(
+                        Obligation(
+                            identity,
+                            "declared-composition-identity-v1",
+                            (Operand(left.id), Operand(right.id)),
+                            composition=True,
+                        )
+                    )
+                    continue
                 if condition.get("kind") == "every":
                     keys(
                         condition,
@@ -273,6 +296,26 @@ class Requirements(Frozen):
         results = []
         item_checks = 0
         for obligation in self._obligations:
+            if obligation.composition:
+                left, right = (operand.subject for operand in obligation.operands)
+                normals = [self._graph._normal[left], self._graph._normal[right]]
+                results.append(
+                    {
+                        "id": obligation.id,
+                        "status": "satisfied"
+                        if normals[0] == normals[1]
+                        else "pending",
+                        "condition": {
+                            "kind": "composition",
+                            "left": left,
+                            "right": right,
+                            "normal_references": normals,
+                            "basis": "structural identity after declared pure definitions and aliases",
+                            "evidence_origin": "declared composition",
+                        },
+                    }
+                )
+                continue
             evidence = [
                 self._operand_evidence(operand, supplied, manifest)
                 for operand in obligation.operands
@@ -303,7 +346,7 @@ class Requirements(Frozen):
                     }
                     for operand, item in zip(obligation.operands, evidence)
                 ]
-                if version == 4:
+                if version >= 4:
                     result = {
                         "id": obligation.id,
                         "status": status,

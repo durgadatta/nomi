@@ -165,12 +165,14 @@ class Compiled(Frozen):
             for operand in obligation.operands:
                 index = self._graph._normal[operand.subject]
                 outside = index not in self._terms
-                if outside and not include_condition_inputs:
+                if outside and (obligation.composition or not include_condition_inputs):
                     raise ContractError(
                         "requirement subject is outside selected realization"
                     )
                 term = self._graph._terms[index]
                 contract = manifest["operations"][term[0]]
+                if obligation.composition:
+                    continue
                 if contract["role"] not in ("input", "literal"):
                     raise ContractError(
                         "computed preconditions need a richer validator; they cannot be enforced before execution"
@@ -187,6 +189,17 @@ class Compiled(Frozen):
         if evidence["status"] == "refuted":
             raise RequirementContractError(
                 "required literal condition is refuted", evidence
+            )
+        pending_compositions = [
+            item["id"]
+            for item in evidence["requirements"]
+            if item.get("condition", {}).get("kind") == "composition"
+            and item["status"] != "satisfied"
+        ]
+        if pending_compositions:
+            raise RequirementContractError(
+                f"required composition conditions {pending_compositions} are not satisfied; backend was not invoked",
+                evidence,
             )
         result = Compiled()
         result._graph, result._backend = self._graph, self._backend
@@ -320,6 +333,8 @@ class Compiled(Frozen):
         conditions = []
         if self._requirements is not None:
             for obligation in self._requirements._obligations:
+                if obligation.composition:
+                    continue
                 operands = [
                     {
                         "index": index,
