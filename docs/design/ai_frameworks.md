@@ -345,6 +345,28 @@ observations, generalized causal discovery, vocabulary transport and human
 interaction remain subsequent discriminators. See the
 [runnable guide](../guide/reasoning_lab.md) for authoring and correction.
 
+### Checked Hypothesis Restriction
+
+The [support-restriction bridge](../../tools/model_refinement.py) now compares
+an original program family with an explicitly selected subset or permutation.
+Only exact artifact identities and callable contracts are preserved. A new
+vocabulary, equal sample outputs or changed grammar does not establish transport.
+An independent retained-set/mass replay verifies the assessment.
+
+Removing positive probability returns `positive-mass-loss` with no transported
+measure; it does not silently renormalize. Removing only zero-mass alternatives
+can produce a support-preserving measure. Explicit adapters restrict prediction
+rows and objective state columns while preserving the original outcome/decision
+spaces. Six checks include stale contexts, permutation, positive-mass refusal,
+preserved predictive distributions/decisions and end-to-end refinement proposals.
+
+The discovery loop exposes a checked restriction proposal after a supported
+observation. It keeps the original journal/prior active, rather than publishing
+a conditioned prior that would destroy withdrawal semantics. Repair after zero
+support proposes no empty/fabricated model. Broader vocabulary interpretation,
+semantic deduplication, missing/truncated hypotheses and evidence publication
+remain open; the bridge's guarantee is relative to the captured finite family.
+
 ## Start From The Developer's Activity
 
 The [minimal reasoning algebra](reasoning_algebra.md) now challenges the common

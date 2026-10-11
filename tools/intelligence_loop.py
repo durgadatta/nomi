@@ -11,6 +11,7 @@ import json
 from tools import adaptive_inquiry as a
 from tools import adaptive_inquiry_replay as replay
 from tools import finite_inquiry as q
+from tools import model_refinement as refinement
 from tools import program_search as p
 from tools import program_search_replay
 from tools import reasoning_structures as s
@@ -91,11 +92,25 @@ def run(*, observed=None, at=F(2)):
         ), task.budget, task.retain)
         revised_search = p.search(revised_task)
         program_search_replay.verify(revised_task, revised_search)
+        restriction_proposal = {"status": "no-supported-refinement", "publication": "not-performed"}
+        if after.estimate.posterior is not None and revised_search.proposals:
+            destination = s.ProgramFamily(revised_search.proposals)
+            bridge = refinement.Restriction(family, destination)
+            assessment = refinement.restrict(bridge, after.estimate.posterior)
+            refinement.verify(bridge, after.estimate.posterior, assessment)
+            restriction_proposal = {
+                "source_family": family.space.identity,
+                "destination_family": destination.space.identity,
+                "basis_journal": journal.fingerprint,
+                "assessment": assessment,
+                "publication": "not-performed",
+            }
         result.update({
             "supplied_observation": {"origin": origin, "at": at, "value": observed},
             "after": describe(journal, questions, objective, after),
             "revised_search": p.describe(revised_search),
             "posterior_transport_to_new_family": "not-performed",
+            "refinement_proposal": restriction_proposal,
         })
     return json.loads(json.dumps(result, default=_wire))
 

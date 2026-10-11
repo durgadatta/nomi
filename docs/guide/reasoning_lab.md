@@ -26,6 +26,8 @@ The planner retains both equally useful queries, with their supplied cost.
 The second command supplies a teaching observation, `2 → 4`. The square remains
 supported; the line does not. The learner rechecks the enlarged example set,
 and the planner stops because another paid query offers no decision benefit.
+The JSON also includes a checked proposal to restrict the family to its supported
+rule. It keeps the original journal active so an observation can be withdrawn.
 
 The third supplies `2 → 3`, which neither rule predicts. The observation is
 retained, but there is no supported posterior. The next step is to repair the
@@ -145,7 +147,9 @@ Inspection is passive; these checks run only through explicit checker calls.
 
 Example fit is different from a universal identity. An alpha-normal-form match
 has a different scope from probability under a supplied model. Neither proves
-empirical adequacy. Richer types and structures, causal learning, checked model
+empirical adequacy. A family restriction can preserve probability only when
+dropped alternatives already have zero mass; dropping positive mass does not
+earn a more confident model. Richer types and structures, causal learning, checked model
 and premise transport, continuous inference, library learning and ordinary Nomi
 integration remain open in the [shared foundation design](../design/reasoning_algebra.md)
 and [intelligent-program contract](../design/ai_frameworks.md).

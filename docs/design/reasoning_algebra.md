@@ -655,6 +655,21 @@ There is no silent posterior transport to a revised family. These additions use
 ordinary immutable terms, supplied laws and qualified judgments; they introduce
 neither a special intelligence primitive nor probabilistic ordinary evaluation.
 
+### Check A Vocabulary Change Before Transport
+
+[Program-family restriction](../../tools/model_refinement.py) supplies one
+bounded interpretation: identical callable artifacts may be selected/permuted,
+with a transported measure only when no positive mass is lost. Prediction rows
+and objective state columns can be restricted explicitly, preserving their
+outcome/decision spaces. Independent retained-set replay rejects silent
+renormalization, changed grammars and stale contexts.
+
+This is a support-preserving bridge inside one captured family, not general
+concept learning or a Bayesian update in disguise. The active observation
+journal remains available for withdrawal. General evidence/premise transport,
+new vocabulary meanings, missing hypotheses and checked extensional identity
+require their own stronger interpretations and validation.
+
 ## Ordinary Programming Must Stay Ordinary
 
 Writing a function, matching a Result, reading a file or building a report must

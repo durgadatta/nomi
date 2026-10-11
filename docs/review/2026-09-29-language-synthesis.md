@@ -2155,3 +2155,29 @@ Check explicit restriction/refinement of hypothesis families, including lost
 positive mass, truncated search and changed grammar. Then broaden causal,
 latent-dependent and longer-horizon challengers and independent adapters;
 actual scientific adequacy and human comprehension remain separate evidence.
+
+## Support-Preserving Model Restriction — 2026-10-11
+
+### Evidence That Changed The Design
+
+Six checks now validate exact family subset/permutation, preserved prediction and
+decision values, stale contexts and explicit discovery refinement proposals.
+
+### Workflow Friction
+
+Renormalizing after dropping a positive-mass hypothesis would manufacture
+confidence. Publishing the current posterior as a new prior would also lose the
+original withdrawal basis. Equal examples cannot identify changed vocabulary.
+
+### Durable Improvement
+
+A separate retained-set replay verifies support-preserving transport, refusing
+positive-mass loss. Explicit kernel/objective adapters preserve outcome/decision
+spaces. The loop exposes the checked proposal while keeping its journal active.
+No empty model is invented after unsupported evidence.
+
+### Next Pass
+
+Connect source terms to exact symbolic structure and independent established
+algebra checks; then compare semantic equivalence and explicit prior policies
+before vocabulary deduplication. General premise transport remains open.
