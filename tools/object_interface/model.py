@@ -375,6 +375,61 @@ class Graph(Frozen):
         document["outputs"].append(identity)
         return Graph.from_document(document, self._vocabulary)
 
+    def dependencies(self, identity):
+        """Logical repair reach and normalized input reach, without an engine."""
+        self.ref(identity)
+        parents = {
+            key: {ref for _, refs in obj.ports for ref in refs}
+            for key, obj in self._objects.items()
+        }
+        closures = {}
+        for key in self._order:
+            closures[key] = {key}
+            for parent in parents[key]:
+                closures[key].update(closures[parent])
+        physical, stack = set(), [self._normal[identity]]
+        while stack:
+            index = stack.pop()
+            if index not in physical:
+                physical.add(index)
+                stack.extend(ref for _, refs in self._terms[index][3] for ref in refs)
+        operations = self._vocabulary.document["operations"]
+        receipt = {
+            "version": 1,
+            "status": "dependencies-checked",
+            "context": self._context,
+            "vocabulary": self._vocabulary.fingerprint,
+            "subject": identity,
+            "logical_dependencies": [
+                key
+                for key in self._order
+                if key != identity and key in closures[identity]
+            ],
+            "logical_dependents": [
+                key
+                for key in self._order
+                if key != identity and identity in closures[key]
+            ],
+            "logical_inputs": [
+                key
+                for key in self._order
+                if key in closures[identity]
+                and operations[self._objects[key].op]["role"] == "input"
+            ],
+            "normalized_inputs": [
+                self._terms[index][2]
+                for index in sorted(physical)
+                if operations[self._terms[index][0]]["role"] == "input"
+            ],
+            "logical_outputs": [
+                key for key in self._outputs if identity in closures[key]
+            ],
+            "execution": "not performed",
+            "scope": "declared logical repair reach and normalized input reach; not scheduling, causation or domain proof",
+        }
+        snapshot(receipt)
+        return receipt
+
     def check(self):
         return {
             "status": "composition-checked",
@@ -468,3 +523,6 @@ class Reference:
 
     def inspect(self):
         return self._graph.inspect(self.id)
+
+    def dependencies(self):
+        return self._graph.dependencies(self.id)

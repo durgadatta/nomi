@@ -1442,3 +1442,39 @@ Explain which selected output or condition needs each input and which named
 objects are downstream of an edit. Keep dependency evidence inspectable and
 bounded; do not confuse logical reuse with scheduler, caching or causal proof.
 Compare the resulting repair flow with manual inline construction.
+
+## Inspectable Dependency And Input Explanations — 2026-10-10
+
+### Evidence That Changed The Design
+
+Repair depends on declared source references, while binding uses normalized
+computation. Two equivalent named expressions can share a physical term without
+one being an edit dependency of the other. A closed definition can ignore a
+parameter. Dependency inspection now exposes both facts before choosing an
+engine; an explicitly compiled plan separately explains each required input's
+selected output and attached condition usage.
+
+### Workflow Friction
+
+Repeated references and shared DAGs must not generate exponentially many paths.
+Condition-only inputs need explanations even though they influence no rendered
+output. Alias names and operand positions still matter to repair. Universal
+conditions need item paths. Source-layer order, detached exports and revision
+invalidation need reproducible evidence rather than a scheduler/causal claim.
+
+### Durable Improvement
+
+New tests cover every original named object, documentary condition-only requests,
+unused parameters, shared normal forms, repeated aliases, a deep DAG, source
+reordering, detached explanations, forged reachability and stale receipts. The
+separate consumer replays graph reach without importing producer or backend.
+CLI dependency and why-input queries remain passive; no binding values are
+needed and no implementation callback runs.
+
+### Next Pass
+
+Unify named composition-law obligations with snapshot requirements while
+preserving their different evidence bases. Definition expansion can establish
+structural equality without inputs; general algebra, domain laws and backend
+conformance remain separate proof owners. Keep source, normalized, contract and
+realization dependencies visible through this next integration.

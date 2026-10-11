@@ -972,6 +972,64 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
     }
 
 
+def replay_dependencies(vocabulary, graph, subject, receipt):
+    """Check dependency inspection separately from callbacks and scheduler claims."""
+    objects, normal, terms = _reconstruct(vocabulary, graph)
+    rules = _rules_for(vocabulary)
+    _artifact(receipt)
+    _identity(subject)
+    if subject not in objects:
+        raise ReplayError("unknown dependency subject")
+    # Reconstruction's insertion order is the reviewed source-layer order.
+    order = list(normal)
+    ancestors = {}
+    for identity in order:
+        reached = {identity}
+        for parent in objects[identity]["ports"].values():
+            reached |= ancestors[parent]
+        ancestors[identity] = reached
+    physical, work = set(), [normal[subject]]
+    while work:
+        index = work.pop()
+        if index not in physical:
+            physical.add(index)
+            work.extend(ref for _, refs in terms[index][3] for ref in refs)
+    context = _digest({"graph": graph, "envelope": "nomi.object-graph-1"})
+    expected = {
+        "version": 1,
+        "status": "dependencies-checked",
+        "context": context,
+        "vocabulary": _digest(vocabulary),
+        "subject": subject,
+        "logical_dependencies": [
+            i for i in order if i != subject and i in ancestors[subject]
+        ],
+        "logical_dependents": [
+            i for i in order if i != subject and subject in ancestors[i]
+        ],
+        "logical_inputs": [
+            i
+            for i in order
+            if i in ancestors[subject] and rules[objects[i]["op"]][1] == "input"
+        ],
+        "normalized_inputs": [
+            terms[i][2] for i in sorted(physical) if rules[terms[i][0]][1] == "input"
+        ],
+        "logical_outputs": [i for i in graph["outputs"] if subject in ancestors[i]],
+        "execution": "not performed",
+        "scope": "declared logical repair reach and normalized input reach; not scheduling, causation or domain proof",
+    }
+    _artifact(expected)
+    if _encode(receipt) != _encode(expected):
+        raise ReplayError("dependency receipt disagrees with independent reachability")
+    return {
+        "status": "verified",
+        "context": context,
+        "independent_checker": True,
+        "scope": "pinned logical/normalized reachability; no scheduler, causation or domain proof",
+    }
+
+
 def replay_revision(vocabulary, base_graph, revision, receipt):
     """Reconstruct a bounded local edit; no authorization or intent proof."""
     objects, _, _ = _reconstruct(vocabulary, base_graph)
@@ -1059,6 +1117,9 @@ def main(argv=None):
     parser.add_argument("receipt")
     parser.add_argument("--revision", help="explicit named-object replacement artifact")
     parser.add_argument(
+        "--dependencies", help="replay named-object dependency inspection"
+    )
+    parser.add_argument(
         "--requirements",
         help="replay requirement evidence rather than a composition comparison",
     )
@@ -1072,7 +1133,18 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
     try:
-        if args.revision:
+        if args.dependencies:
+            if args.revision or args.workflow or args.requirements or args.bindings:
+                raise ReplayError(
+                    "dependency replay is separate from revisions, workflows or binding evidence"
+                )
+            result = replay_dependencies(
+                load(args.vocabulary),
+                load(args.graph),
+                args.dependencies,
+                load(args.receipt),
+            )
+        elif args.revision:
             if args.workflow or args.requirements or args.bindings:
                 raise ReplayError(
                     "revision replay is separate from workflow or binding evidence"

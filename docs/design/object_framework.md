@@ -192,6 +192,46 @@ Keep the three kinds of change distinct:
 
 ## Separate The Claims
 
+### Explain Dependencies Before Supplying Inputs
+
+`objects.dependencies("squared")` and `objects.ref("squared").dependencies()`
+inspect the declared graph without choosing an engine. The bounded receipt
+separates logical dependencies/dependents, logical input slots, normalized input
+slots and selected outputs that refer to the subject. Results are deduplicated
+reachability in source topological order, not a list of every path or a count of
+reference occurrences. `inspect` retains each port's original ordered references.
+
+```bash
+python3 -m tools.object_interface dependencies docs/research/object_framework/composition.json squared > /tmp/nomi-object-dependencies.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/composition.json /tmp/nomi-object-dependencies.json --dependencies squared
+```
+
+`squared` is used by `doubled`; the equivalent `expanded_square` is separately
+named and does not refer to `squared`. Shared normalized terms do not add logical
+edit dependencies. A declared definition can also ignore a parameter: that
+input remains in logical construction but is absent from normalized input reach.
+This describes the artifact's declared reduction, not ordinary language call
+evaluation order, scheduling, causal influence or cache invalidation policy.
+The separate pinned consumer independently checks both forms of reachability.
+
+After explicitly choosing a backend, `compiled.explain_input("quantity")`
+states which selected output names and attached condition operands require that
+underlying binding slot. Its role is `computation`, `condition` or `both`.
+Aliases and repeated operands retain their original names/indices in the
+condition explanation; universal conditions additionally name their item path.
+The explanation requires no binding and invokes no callback.
+
+```bash
+python3 -m tools.object_interface --vocabulary config/document_interface.json why-input docs/research/object_framework/publication.json requested --backend document-blocks --requirements docs/research/object_framework/publication_requirements_v4.json --include-condition-inputs
+```
+
+Here `requested` is required solely by `title_matches`, with no computation
+outputs. `draft` serves both computation and conditions. The input explanation
+uses the selected compiled plan and attached conditions; the graph dependency
+query itself does not discover separate conditions. Neither report exposes raw
+attribute/binding values or certifies a backend. Source revision invalidates old
+dependency receipts, and unadmitted vocabularies still require independent review.
+
 | Stage | Implemented evidence | Limit |
 | --- | --- | --- |
 | Describe/check | Unique names, acyclic references, nominal port compatibility, inert attribute shapes | Does not establish domain refinements, actual input validity or scientific assumptions. |

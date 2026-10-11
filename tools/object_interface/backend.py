@@ -300,6 +300,65 @@ class Compiled(Frozen):
         result._sealed = True
         return result
 
+    def explain_input(self, identity):
+        """State which selected outputs and attached conditions require a slot."""
+        if type(identity) is not str or identity not in self._inputs:
+            raise ContractError("unknown required input")
+        input_index = self._graph._normal[identity]
+        outputs = []
+        for output in self._outputs:
+            visited, stack = set(), [self._graph._normal[output]]
+            while stack:
+                index = stack.pop()
+                if index not in visited:
+                    visited.add(index)
+                    stack.extend(
+                        ref for _, refs in self._graph._terms[index][3] for ref in refs
+                    )
+            if input_index in visited:
+                outputs.append(output)
+        conditions = []
+        if self._requirements is not None:
+            for obligation in self._requirements._obligations:
+                operands = [
+                    {
+                        "index": index,
+                        "subject": operand.subject,
+                        "path": list(operand.path),
+                    }
+                    for index, operand in enumerate(obligation.operands)
+                    if self._graph._normal[operand.subject] == input_index
+                ]
+                if operands:
+                    condition = {
+                        "id": obligation.id,
+                        "rule": obligation.rule,
+                        "kind": "relation",
+                        "operands": operands,
+                    }
+                    if obligation.item_path is not None:
+                        condition.update(
+                            kind="every", item_path=list(obligation.item_path)
+                        )
+                    conditions.append(condition)
+        receipt = {
+            "status": "dependencies-checked",
+            "context": self._graph.context,
+            "input": identity,
+            "role": "both"
+            if outputs and conditions
+            else "computation"
+            if outputs
+            else "condition",
+            "computation_outputs": outputs,
+            "conditions": conditions,
+            "binding": "required",
+            "execution": "not performed",
+            "scope": "normalized output and attached condition dependencies; not execution, provenance or domain proof",
+        }
+        snapshot(receipt)
+        return receipt
+
 
 class Bound(Frozen):
     __slots__ = ("_compiled", "_bindings")

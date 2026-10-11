@@ -33,17 +33,23 @@ def main(argv=None):
         "run",
         "requirements",
         "revise",
+        "dependencies",
+        "why-input",
     ):
         child = commands.add_parser(command)
         child.add_argument("graph")
         if command == "revise":
             child.add_argument("revision", help="explicit object replacement artifact")
+        if command == "dependencies":
+            child.add_argument("object")
+        if command == "why-input":
+            child.add_argument("input", help="required underlying input slot")
         if command == "inspect":
             child.add_argument("object")
         if command == "compare":
             child.add_argument("left")
             child.add_argument("right")
-        if command in ("compile", "run"):
+        if command in ("compile", "run", "why-input"):
             child.add_argument(
                 "--backend",
                 required=True,
@@ -81,6 +87,8 @@ def main(argv=None):
             result = graph.check()
         elif args.command == "revise":
             result = Revision.from_document(load_document(args.revision), graph).receipt
+        elif args.command == "dependencies":
+            result = graph.dependencies(args.object)
         elif args.command == "inspect":
             result = graph.inspect(args.object)
         elif args.command == "compare":
@@ -116,6 +124,8 @@ def main(argv=None):
                 )
             if args.command == "compile":
                 result = compiled.inspect()
+            elif args.command == "why-input":
+                result = compiled.explain_input(args.input)
             else:
                 realization = compiled.bind(load_document(args.bindings)).execute()
                 result = {"values": realization.values, "receipt": realization.receipt}
