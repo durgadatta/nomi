@@ -22,6 +22,9 @@ Documentation = "https://github.com/durgadatta/nomi/blob/main/docs/guide/README.
 Issues = "https://github.com/durgadatta/nomi/issues"
 
 [project.optional-dependencies]
+reasoning-check = [
+    "sympy==1.14.0",
+]
 web-test = [
     "playwright>=1.51,<2",
 ]

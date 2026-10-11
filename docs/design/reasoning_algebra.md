@@ -1,7 +1,7 @@
 # A Minimal Algebra Of Scientific Reasoning
 
-> Status: foundational redesign candidate, 2026-10-10, under language-coherence.
-> Closed exact maps and a typed binder comparison run from a source checkout. No new
+> Status: foundational redesign candidate, 2026-10-11, under language-coherence.
+> Exact maps, scoped terms, premise support and finite bridges run from a checkout. No new
 > syntax, universal IR, analytic calculus or physical theory is accepted here.
 
 The proposed pivot is to make **contextual terms, checked composition and
@@ -491,6 +491,44 @@ opposing derivation is not ruled out. Limits are 16 atoms, 32 rules/reports,
 8 literals per rule and 50000 candidate attempts. These are refusing lab budgets,
 not target-language limits. No probabilities, default logic, general belief
 revision, learned inference, remote retrieval or actual authority is implied.
+
+## Executed Finite Theory Bridges
+
+`python3 -m tools.theory_bridges` checks captured classical propositional theories
+with at most eight qualified atoms each. An interpretation maps every source
+atom to a destination formula; identical spelling is not a bridge. Soundness
+requires every destination model to reduce to a source model. A **finite model
+bijection** additionally requires coverage of all source models and no merged
+destination models. It is not general equivalence of logics, an empirical model
+fit, or permission to transfer arbitrary evidence.
+
+The executable examples distinguish a sound one-way translation, a failed
+bijection and an invalid interpretation with a countermodel. Independent tests
+use set denotations rather than the producer's recursive Boolean evaluator.
+An optional pinned established adapter replays Boolean meanings with SymPy:
+
+```bash
+python3 -m pip install -e '.[reasoning-check]'
+python3 -m tools.theory_bridges --sympy
+```
+
+Eleven focused checks pass with SymPy 1.14.0 installed; the ordinary suite has
+ten passes and an explicitly skipped optional adapter check without that extra.
+The adapter compares semantic evaluations, not an independent proof-search
+implementation. Assessment fingerprints include constructor tags, theory
+identity/revision, exact signatures, axioms, interpretation and claim. A new
+context refuses an old assessment. Complete enumeration can validate a finite
+claim; exhausting a valuation budget cannot. Inconsistent theories are named
+and do not earn vacuous success.
+
+`from_ledger` is an explicit **classical reinterpretation**, never an implicit
+conversion of a support certificate. Quoted reports stay inert; endorsed
+reports and supplied rules become axioms. A conflicting signed-support ledger
+can still be inspected, while an inconsistent classical export refuses.
+Different profiles do not share a universal truth result. Translation of
+probability, approximation, effects or authority needs separate obligations.
+General first-order theories, continuum spaces, derived evidence transport and
+source-level syntax remain open R2 gates.
 
 ## Ordinary Programming Must Stay Ordinary
 

@@ -1915,3 +1915,36 @@ Implement checked finite theory bridges with model semantics and an established
 checker adapter. Then use broader AI research to challenge the foundational
 contracts for compositional models, hypotheses, learning, inference and inquiry;
 keep matrix kernels behind realization rather than making them the definition.
+
+## Checked Finite Interpretations — 2026-10-11
+
+### Evidence That Changed The Design
+
+Finite classical model semantics distinguishes sound preservation from a model
+bijection. Executed examples include a one-way bridge, a missing-model witness,
+an invalid interpretation, composite interpretations and inconsistent contexts.
+Eleven checks pass with the optional pinned SymPy 1.14.0 adapter installed.
+
+### Workflow Friction
+
+Support flags in the ledger are not classical complementary truth values.
+Reinterpretation must refuse inconsistent exports rather than silently transport
+support evidence. Constructor tags also matter in fingerprints: conjunction and
+disjunction can have identical fields while denoting different formulas.
+SymPy's simultaneous arithmetic substitution fails within Boolean connectives;
+total symbol-to-Boolean replacement provides the appropriate independent oracle.
+
+### Durable Improvement
+
+The fixed bridge profile captures revisions, qualified signatures, axiom sets,
+complete interpretations and exact requested claims. Bounded searches preserve
+incomplete coverage; stale assessments refuse. Set-denotation tests and the
+established Boolean adapter challenge the local evaluator independently. This
+closes a finite R2 experiment, not general scientific theory/evidence transport.
+
+### Next Pass
+
+Absorb AI research into the conceptual foundation: compositional generative
+models, inference, learned abstractions, causal interventions and inquiry.
+Separate shared language guarantees from particular algorithms; demonstrate
+one exact finite inference/action composition before broad source admission.
