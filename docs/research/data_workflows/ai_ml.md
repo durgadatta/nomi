@@ -1,4 +1,4 @@
-# AI And ML: Transformations, State And Evidence
+# AI, Learning And Knowledge: Conceptual Foundations
 
 > Status: selected primary research and Nomi candidates, not accepted tensor,
 > differentiation, model, training, inference or agent APIs.
@@ -11,8 +11,149 @@
 [Numerics](../features/numerics.md) · [Domain composition](../domain_composition.md)
 
 The [AI framework proposal](../../design/ai_frameworks.md) owns integration with
-engine-free objects and thinking support. Its framework-author extension below
-was checked 2026-10-10; earlier sections retain their original review dates.
+engine-free objects and thinking support. Its framework-author extension was checked 2026-10-10. The conceptual
+continuation below was consulted 2026-10-11; earlier sections retain their dates.
+
+## Intelligence As A Language Pressure — October 11
+
+The user's continuation changes the question from “can Nomi host an ML
+framework?” to **“can the same language represent, improve and act on models
+without an additional conceptual language?”** Numerical operators are one
+realization. The intellectual work includes creating hypotheses, explaining
+observations, imagining alternatives, discovering reusable structure, choosing
+questions and revising beliefs. The [design owner](../../design/ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+turns this evidence into a coherent candidate, not a collection of new keywords.
+
+### Primary Evidence And Actual Reading Depth
+
+**T** means selected original sections; **M** selected official mechanism
+contracts; **A** an author abstract. None means entire-paper reproduction or
+empirical validation. All rows were consulted on October 11. Publication years
+come from the works, not a search engine's crawl date. The Church paper is from
+2008 despite its 2024 proceedings reissue. GenJAX is a related implementation,
+not evidence that every interface below exists unchanged in the 2018 Gen report.
+
+| Primary work / depth | Mechanism worth retaining | Nomi inference and discriminator |
+| --- | --- | --- |
+| [Church, Goodman et al., 2008](https://ai.cs.washington.edu/www/media/papers/church_GooManRoyBonTenUAI2008.pdf), **T**, stochastic memoization/query sections | Generative programs compose; stochastic memoization changes the modeled joint dependence, not merely runtime cost | Model description, random choice and conditioning need different contracts. Sharing a latent draw and drawing twice must not become equivalent through caching. |
+| [Gen report, Cusumano-Towner et al., 2018](https://dspace.mit.edu/entities/publication/6538d5bf-2254-4c05-aaae-c687926cf2f6), **A**; [GenJAX core](https://genjax.gen.dev/library/core.html), **M**, generative function/trace/target interfaces | Models, addressed choices, targets and inference operations have distinct roles; edit proposals have additional validity requirements | Separate the object being inferred from the method and its execution trace. Address edits must preserve observation meaning or name discarded evidence. |
+| [Lake, Salakhutdinov and Tenenbaum, 2015](https://cbmm-new.mit.edu/publications/human-level-concept-learning-through-probabilistic-program-induction), **A** | Concepts represented as explanatory programs, demonstrated for handwritten characters | Learn structural descriptions as well as numeric parameters. A narrow character result does not establish universal one-shot learning. |
+| [Lake et al., 2017](https://gershmanlab.com/pubs/Lake17.pdf), **T**, original introduction | Model building, compositionality, causality and learning to learn challenge recognition-only accounts | Compare reusable mechanisms and transfer, not only a score on another sample from the same distribution. These are research hypotheses, not settled laws of cognition. |
+| [DreamCoder, Ellis et al., PLDI 2021](https://www.neurosymbolic.org/papers/EllisWNSMHCST21.pdf), **T**, sections 2–3 | Typed program search, abstraction/library learning and learned search guidance are coupled but distinct; finite beams approximate inference | Proposed abstractions need hygiene, explicit assumptions and checked refactoring. A learned search priority or finite beam is not completeness or a new semantic rule. |
+| [Causal representation learning, Schölkopf et al., 2021](https://arxiv.org/pdf/2102.11107), **T**, introduction and modeling levels | Observed dependence, changed mechanisms and discovery of causal variables are different tasks | A generative model is not automatically an identifiable causal model. Compare observationally indistinguishable candidates under intervention. |
+| [Relational inductive biases, Battaglia et al., 2018](https://arxiv.org/abs/1806.01261), **A** | Structured entities/relations and shared computation encourage combinatorial generalization | Retain typed relationships and invariance assumptions independently of a graph layout. A neural graph is not a proof of equivariance or causal structure. |
+| [DreamerV3, Hafner et al., 2023](https://arxiv.org/abs/2301.04104), **A**, original preprint | Learned environment models support imagined trajectories for behavior improvement | Distinguish simulated outcomes, actual observations, policy and objective. No benchmark result is reproduced or treated as general intelligence evidence. |
+| [Soar architecture manual](https://soar.eecs.umich.edu/soar_manual/02_TheSoarArchitecture/), **M**, support/impasse/chunking | Subproblem results carry support; chunking generalizes resolved reasoning into reusable productions | Keep support and learned generalization distinct. Missing negative premises can overgeneralize a learned rule; a cached conclusion must not erase its context. |
+| [CoALA, Sumers et al., 2023/24](https://arxiv.org/html/2309.02427v3), **T**, section 4 | Working, episodic, semantic and procedural memory; internal and external actions in a decision cycle | These become context, traces, descriptions and reusable procedures with different read/write rules. Generated text does not acquire truth or live authority by entering memory. |
+| [DeepProbLog, Manhaeve et al., 2018](https://arxiv.org/abs/1805.10872), **A** | Learned neural predicates integrate with probabilistic logic | A learned score and a supplied logical relation must retain their distinct semantics; duplicate proof paths must not silently double probability mass. |
+| [Friston, 2010](https://www.fil.ion.ucl.ac.uk/~karl/NRN.pdf), **T**, introduction/Box 1 | A proposed variational account connects perception, learning and action through explicit model/objective assumptions | Compare unified objectives as supplied structures. Do not make a disputed brain theory or one free-energy objective mandatory language semantics. |
+| [Ouyang et al., 2022](https://arxiv.org/abs/2203.02155), **A** | Demonstrations, rankings and optimization encode a selected feedback process | Preference evidence needs its population, elicitation and objective. A preferred answer is not thereby a theorem, calibrated probability or universal human intent. |
+| [Hinton and McClelland, 1987](https://proceedings.neurips.cc/paper_files/paper/1987/hash/afacc5db3e0e85b446e6c7727cd7dca5-Abstract.html), **A** | Learned internal representations evaluated through reconstruction | Encoders/decoders and learned spaces need a declared comparison criterion. Low reconstruction loss alone does not establish identifiable meaning. |
+
+These sources differ in aims and commitments. A language should support their
+mechanisms and comparisons without declaring one of them the true account of
+intelligence. The historical [knowledge synthesis](../knowledge_frameworks.md)
+remains the owner for logic, truth maintenance, ontologies, probability and
+retrieval. Its Leibniz-to-modern route now connects to this model-building route.
+
+### Distill The Recurring Mechanisms
+
+A useful common vocabulary is **description, context, transformation and
+qualified assessment**, with revision/action retaining ordinary state/effect
+laws. It describes the following activities without requiring one universal
+model class:
+
+| Activity | Composition pressure | Fact that stays explicit |
+| --- | --- | --- |
+| Predict or imagine | A state/world description and a transition or generative law | Support, observation map, latent sharing and realization profile |
+| Infer or explain | A query over alternatives constrained/reweighted by evidence | Hypothesis space, prior/constraints, likelihood and method coverage |
+| Learn | A context-qualified transition over parameters, structure or reusable procedures | Objective, examples, selected search space and learning history |
+| Abstract or analogize | Discover a reusable scoped term or an interpretation between structures | Preserved laws versus observed similarity; lost distinctions |
+| Plan | Compose possible transitions and compare their consequences under an objective | Horizon, risk, cost, feasibility and actual action authority |
+| Explore or ask | Compare prospective evidence for a chosen intellectual or practical objective | Information gain differs from decision value and novelty differs from learning progress |
+| Remember | Retain descriptions, episodes, support and executable procedures | Retention/retrieval selection, access policy and revision basis |
+| Reconsider | Change premises/model/objective and replay relevant consequences | Alternative support, non-invertible updates and stale evidence |
+| Think about thinking | Compare reasoning methods under cost/coverage constraints | A budgeted proposal can remain incomplete; no guaranteed best universal reasoner |
+| Communicate or teach | Relate an expression to another person's context and interpretation | Ambiguity, perspective and grounding; agreement is not automatic truth |
+
+These are **derived activities**, not ten proposed opcodes. A probability
+measure adds laws to a space; a hypothesis is a candidate description; a policy
+is a proposed decision procedure. A neural network can provide any suitable
+approximate map or proposal. Its implementation need not define those concepts.
+
+Three unifications are tempting but wrong without further obligations:
+
+1. “Inference is inversion.” A deterministic bijection, relational preimage,
+   Bayesian conditional and causal counterfactual have different existence,
+   uniqueness and support assumptions.
+2. “Learning is just optimization.” Search, structure induction, memory revision
+   and parameter fitting can use optimization; the objective and eligible
+   updates still define what is learned. Stationarity need not mean a useful
+   solution, and a predictive fit need not identify a causal mechanism.
+3. “Everything is a weighted graph.” Boolean relation, probability measure,
+   logical support and preference weights have different combination laws.
+   A graph may store all four without making them interchangeable.
+
+### Corner Cases That Challenge The Foundation
+
+- An observation has zero modeled probability: keep “impossible under this
+  model” rather than inventing a posterior or claiming the world is impossible.
+- A model predicts observations but leaves two hypotheses indistinguishable:
+  retain non-identifiability; a search result cannot manufacture uniqueness.
+- A copied report and a fresh observation use different dependence models.
+  Neither report IDs nor common provenance alone determine independence.
+- Conditioning on an action is not replacing its causal mechanism. A
+  counterfactual also needs a declared coupling to the same past world.
+- A deterministic transformation merges two alternatives: sum finite mass,
+  expose lost distinctions and refuse an inverse-equivalence claim.
+- A shared latent parameter and per-call fresh randomness are different joint
+  models. Ordinary memoization/rematerialization rules must not erase this.
+- A learned abstraction matches examples but changes behavior elsewhere:
+  label empirical fit separately from a checked semantics-preserving rewrite.
+- A perfect measurement is irrelevant to the selected decision. Query novelty,
+  entropy reduction, practical loss and cost need different objectives.
+- A policy stops at its horizon; the environment has not necessarily terminated.
+  A simulated successful action has not necessarily happened.
+- A reward, surrogate loss or preference record changes: earlier “best” answers
+  retain their old objective, not authority over the revised question.
+- A posterior is numerically exact under a misspecified model. Mathematical
+  exactness does not establish calibration, robustness or empirical adequacy.
+- A method or retriever changes which alternatives were examined: carry search
+  and selection history rather than imply that discarded alternatives were
+  refuted or missing documents were false.
+- Learning modifies a procedure with effects: preserve capture/lifetime/grant
+  contracts; a learned executable artifact is not its own admission authority.
+- Memory compaction or model unlearning removes storage but not necessarily
+  influence. Existing learned-removal and adaptive-evaluation owners still apply.
+
+### Broader Frontier: Acquisition, Not Claimed Coverage
+
+| Area still to deepen | Primary entry point / current depth | Discriminating question |
+| --- | --- | --- |
+| Sequential decisions and partial observability | [Sutton/Barto 2018 complete draft](https://www.incompleteideas.net/book/bookdraft2018mar21.pdf), indexed original; full text unavailable in this pass | Can a belief state, recurrent policy and terminal/truncated outcome share ordinary context/completion rules? |
+| Cognitive timing and activation | [ACT-R reference manual](https://act-r.psy.cmu.edu/actr7.x/reference-manual.pdf), indexed, not section-reviewed | How do latency and retrieval selection affect a compositional explanation without becoming truth values? |
+| Predictive/energy-based world models | [LeCun 2022 position paper](https://openreview.net/pdf?id=BZ5a1r-kVsf), indexed, not section-reviewed | When can latent compatibility energies replace normalized likelihoods, and what question remains answerable? |
+| Intrinsic motivation | [Schmidhuber creativity chapter](https://people.idsia.ch/~juergen/creativitybook.pdf), author abstract/index | Can learning progress be distinguished from unpredictable noise and from practical decision value? |
+| Meta-learning and adaptive optimization | [Chen et al. 2017](https://proceedings.mlr.press/v70/chen17e.html), author abstract | Which learned method contracts survive a new task distribution or a longer horizon? |
+| Continual learning | [Schwarz et al. 2018](https://proceedings.mlr.press/v80/schwarz18a/schwarz18a.pdf), indexed | Can new model revisions preserve prior task coverage without claiming semantic equivalence or guaranteed non-forgetting? |
+| Multi-agent/game/epistemic models | Extend the knowledge synthesis's modal/game frontier; no new primary review here | Who knows which premise, what is publicly communicated, and which equilibrium/existence claim is actually checked? |
+| Information/compression and universal induction | Extend existing Shannon/MDL/program-induction routes; no universal induction theorem reviewed here | Which encoding, prior, computability and approximation choices determine the claimed compression or generalization? |
+| Embodied/developmental/social learning | Extend cognitive and interaction owners; selected model-building evidence only | Which meanings arise from intervention or teaching rather than passive examples? |
+| Robust/set-valued uncertainty and formal learning bounds | Extend numerics/causal/evaluation owners; no bound implementation | When is a set of admissible answers more honest than a normalized probability? |
+
+### Executed Finite Conceptual Slice
+
+`python3 -m tools.finite_inquiry` now composes exact finite measures and kernels,
+conditions a captured joint world on declared events, compares decision losses
+and values a prospective measurement. Eleven focused checks include identity,
+associativity, duplicate/correlated report handling, withdrawal, zero mass,
+stale revisions and exhaustive contingent-policy comparison. A separate replay
+uses unnormalized joint losses, avoiding the producer's conditional calculation.
+
+This is an engine-free proof of composition at a finite slice, not a general
+AI framework, empirical discovery result or accepted Nomi API. It adds no
+random sampling, causal model, optimizer, matrix backend or external action.
+The common source/reference/structure integration is the next AF1/R2 gate.
 
 ## Three Programs To Keep The Survey Honest
 

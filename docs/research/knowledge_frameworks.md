@@ -29,6 +29,13 @@ Read this document in three passes:
 3. The handoff turns those findings into discriminating tasks within existing
    design passes. The unreviewed frontier remains a source-acquisition plan.
 
+The [AI conceptual continuation](data_workflows/ai_ml.md#intelligence-as-a-language-pressure--october-11)
+now deepens the learned-processing side: generative programs, program/library
+induction, causal representations, cognitive memory and inquiry. It preserves
+its own primary-source depth and frontier; shared foundations belong to the
+existing reasoning/AI owners. Finite exact inference and decision value now run
+beside the ledger and bridge experiments, with different result meanings.
+
 ## Reading Depth And Historical Scope
 
 The tables distinguish **T**: selected original text or primary translation;

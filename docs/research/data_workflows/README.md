@@ -22,8 +22,9 @@ mathematics, biology, chemistry, linguistics, music, and argumentation.
    category programs and a combined reconciliation fixture.
 5. [Dependencies, Change And Time](dependencies_and_time.md): graph owners,
    ordering, incremental laws, snapshots, bitemporal history and DT1-DT5.
-6. [AI And ML](ai_ml.md): numeric transformations, learned/training state,
-   data splits, randomness, interchange, agents and ML1-ML6.
+6. [AI, Learning And Knowledge](ai_ml.md): conceptual model/inference/abstraction,
+   causal and inquiry research; numeric transformations, training state and
+   ML1-ML6 remain implementation pressures, not the whole foundation.
 7. [Coherent Domain Layers](../domain_composition.md): shared foundations,
    selected domain families, package obligations and DC1-DC6.
 8. [Local Composition Experiments](composition_experiments.md): captured

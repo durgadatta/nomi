@@ -21,6 +21,7 @@ Choose a reading path based on what you want to do:
 | Design by composing a few primitives | [Primitives And Their Compositions](design/primitive_composition.md) | Hierarchy, worked reductions, construct catalog and explicit unclosed laws. |
 | Study general knowledge frameworks from Leibniz onward | [Knowledge Frameworks](research/knowledge_frameworks.md) | Historical mechanisms, interpretation and inference forks, current gaps and the next scoped experiments. |
 | Rethink the foundation for scientific reasoning | [Minimal Reasoning Algebra](design/reasoning_algebra.md) | Current-core audit, smaller candidates, library structures, exact executable compositions and R0-R5 integration. |
+| Absorb intelligence into the same language | [Learning And Intelligent Programs](design/ai_frameworks.md) | Generative models, inference, abstraction, causal explanation, memory and inquiry; shared semantic guarantees and finite checks. |
 | Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
 | Design for physics and scientific discovery | [Scientific Models And Discovery](design/scientific_discovery.md) | Five modeling contracts, an oscillator derivation, implementation gaps and independent admission oracles. |
 
@@ -246,7 +247,7 @@ This list is intentionally complete and is checked by tests.
 - [Statistical Data Interface](design/statistical_data.md)
 - [Engine-Free Objects](design/object_framework.md)
 - [Scientific Models And Discovery](design/scientific_discovery.md)
-- [AI Frameworks And Differentiable Programs](design/ai_frameworks.md)
+- [Learning, Inference And Intelligent Programs](design/ai_frameworks.md)
 
 ### Research
 
@@ -271,7 +272,7 @@ This list is intentionally complete and is checked by tests.
 - [Statistical Objects Before Observations](research/data_workflows/statistical_objects.md)
 - [Workflow Execution Models](research/data_workflows/execution_models.md)
 - [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
-- [AI/ML Transformations, State And Evidence](research/data_workflows/ai_ml.md)
+- [AI, Learning And Knowledge: Conceptual Foundations](research/data_workflows/ai_ml.md)
 - [Messaging And Event-Driven Architectures](research/data_workflows/messaging_and_events.md)
 - [Coherent Domain Layers](research/domain_composition.md)
 - [Generic Operations And Compositional Properties](research/generic_operations.md)

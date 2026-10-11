@@ -1948,3 +1948,38 @@ Absorb AI research into the conceptual foundation: compositional generative
 models, inference, learned abstractions, causal interventions and inquiry.
 Separate shared language guarantees from particular algorithms; demonstrate
 one exact finite inference/action composition before broad source admission.
+
+## Intelligence As Shared Language Meaning — 2026-10-11
+
+### Evidence That Changed The Design
+
+The user asks to absorb intelligence-induction research into the language's
+conceptual foundation, beyond matrix execution and separate-framework APIs.
+Selected primary mechanisms cover generative programming, learned abstractions,
+causal representation, relational models, cognitive memory and world-model
+planning. Source depth and unreviewed frontiers are explicit.
+
+### Workflow Friction
+
+The AI owner was centered on numeric programs and backend contracts. That missed
+the meaning of inference, goals, learning new vocabulary and choosing questions.
+Conversely, collapsing those activities into one graph/optimization/truth score
+would erase differences needed for trustworthy composition.
+
+### Durable Improvement
+
+The canonical AI owner now challenges the shared foundation with scoped
+descriptions, lawful transformations, qualified questions and explicit revision
+and action. Synthesis, vision, decisions and maintainer routes agree. A new exact
+finite lab composes kernels, conditions events, retains ties and values inquiry;
+eleven checks include independent joint-loss replay and exhaustive contingent
+policies. Zero support returns no posterior; copied reports do not imply
+independent observations. Perfect but irrelevant information has no decision
+value. No general intelligence result or new source construct is claimed.
+
+### Next Pass
+
+Link source-derived scoped hypotheses to the finite inquiry descriptions and
+exercise causal non-identifiability and empirical fit versus checked extraction.
+Then compare shared structure providers and source diagnostics before any
+foundational admission; keep analytic, operational and human evidence separate.

@@ -44,6 +44,14 @@ organize discovery around distinctions, assumptions, consequences, alternatives
 and revision. This updates the guiding design criterion; it does not accept a
 universal mental calculus, new Core primitives or a measured usability claim.
 
+The October 11 AI direction extends that guiding purpose: learning, inference,
+planning, memory, causal explanation and inquiry are pressures on the **shared
+language foundation**, not only separate-framework features. The
+[conceptual proposal](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+compares these as compositions with distinct evidence/objective/authority laws.
+This accepts the direction of exploration; concrete model/inference contracts
+and any foundational replacement remain designing, not newly accepted syntax.
+
 ## Accepted Foundations
 
 | Area | Decision | Rationale |
@@ -354,7 +362,7 @@ These choices are not yet strong enough for permanent syntax:
 | Scientific modeling layer | Five proposed contracts: spaces, bound expressions/relations, theories, joint observations and qualified realizations | [SP1-SP5](scientific_discovery.md#current-gap-and-ordered-implementation): no-input oscillator checks, premise-qualified derivation, approximation and inference counterexamples. |
 | Foundational scientific-reasoning pivot | Investigate contextual terms, checked composition and explicit judgments; variation, selection and scale are supplied structures, not new domain keywords | [R0-R5](reasoning_algebra.md#one-integration-path-with-closure-receipts): audit and bounded exact map compositions now; scoped binders, independent rules/replay, continuum variation and qualified approximation remain gates. No minimality proof or accepted replacement Core. |
 | Contextual knowledge and reasoning | Extend the foundational candidate with explicit interpretations, premise endorsement, profile-specific judgments and checked bridges; ordinary libraries first | [Knowledge synthesis](../research/knowledge_frameworks.md) and [R1/R2](reasoning_algebra.md#contexts-interpretations-and-reasoning-methods): finite support/revision oracle, invalid and one-way theory mappings, bounded-search results, and HX2/HX8/SP0 explanation comparisons. No universal ontology, consequence relation or knowledge engine accepted. |
-| AI framework development | Proposed semantic spaces, numeric programs, transformation rules, explicit state transitions, qualified realization and scoped evidence; no new source syntax | [AF0-AF6](ai_frameworks.md#integration-and-gap-analysis): bounded no-input named-axis checker first; independent gradient, state/resume and backend evidence remain open. |
+| Intelligent programs and AI development | Shared scoped descriptions, lawful transformations, qualified inference/objectives and explicit revision/action; numeric execution is one realization | [AF0-AF6](ai_frameworks.md#integration-and-gap-analysis): finite premise, bridge and inquiry comparisons now run; common source/structure providers, causal/abstraction-learning discrimination, established AD and human evidence remain open. No universal knowledge/AI engine or source syntax accepted. |
 | Data openness | Explicit rest field or decoder policy | API evolution and forward-compatible config programs. |
 | Edition boundaries | Per-package editions normalized to Core | First real breaking migration. |
 

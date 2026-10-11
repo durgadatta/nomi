@@ -28,6 +28,14 @@ without replacing domain laws with a universal ontology. The dossier marks readi
 depth and unresolved research, then routes implementation through R1/R2 and the
 existing interaction trials.
 
+The [conceptual AI continuation](data_workflows/ai_ml.md#intelligence-as-a-language-pressure--october-11)
+adds model building, generative programs, abstraction/library induction, causal
+representation, memory and active inquiry. Selected primary sections and author
+abstracts have explicit depth; the frontier names further acquisition work.
+The [shared AI foundation](../design/ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+owns synthesis. Finite probes are conceptual comparisons, not general
+intelligence, model-quality or language-admission evidence.
+
 The data/statistics continuation remains a domain pressure:
 [Statistical Objects Before Observations](data_workflows/statistical_objects.md)
 compares primary systems, and the

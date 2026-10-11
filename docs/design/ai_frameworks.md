@@ -1,7 +1,7 @@
-# AI Frameworks And Differentiable Programs
+# Learning, Inference And Intelligent Programs
 
-> Status: designing domain contracts, 2026-10-10. No tensor type, automatic
-> differentiation engine, training runtime or AI source syntax is admitted.
+> Status: shared-foundation redesign candidate, 2026-10-11. No general model,
+> inference, tensor, training or AI source syntax is admitted.
 > The bounded source-checkout shape experiment below is separately identified.
 
 Nomi should help people **develop AI frameworks as well as use them**. A person
@@ -15,10 +15,230 @@ reasoning, simulation, search and effectful agents retain their own laws.
 The [primary research](../research/data_workflows/ai_ml.md) owns evidence and
 forks. The [engine-free framework](object_framework.md) owns shared description,
 reference and realization boundaries. [Scientific discovery](scientific_discovery.md)
-owns mathematical/empirical distinctions. This proposal owns AI-specific
+owns mathematical/empirical distinctions. This proposal owns the shared foundation's intelligence pressures and AI implementation
 contracts under the language-coherence packet; its
 [research target](targets/research/scientific_model.nomi) and
 [bridge](../review/2026-09-29-language-synthesis.md) retain admission status.
+
+## Intelligence Belongs In The Shared Foundation
+
+The goal is **one language for building and improving explanations and behavior**.
+Nomi should express learned, symbolic, probabilistic and ordinary computational
+models through the same naming, binding, composition, inspection and revision
+rules. A person should not have to move into a separate framework's conceptual
+language to ask what follows from a model, how evidence changes it, which
+abstraction can be reused, or which experiment is worth doing.
+
+This is a proposed foundational responsibility, broader than accelerator
+execution or a standard AI package. It challenges the current split between
+ordinary source functions and the several laboratory description formats.
+[Primary AI evidence](../research/data_workflows/ai_ml.md#intelligence-as-a-language-pressure--october-11)
+adds generative programming, program/library induction, causal representation,
+relational learning, cognitive memory and world-model planning to the
+[historical knowledge synthesis](../research/knowledge_frameworks.md). These
+are competing research approaches, not one settled theory of intelligence.
+
+The strongest current candidate remains the reasoning algebra's three
+responsibilities: **contextual descriptions, lawful composition/transformation,
+and qualified questions/judgments**. Updating or acting on an answer uses
+ordinary state, failure, scope and effect semantics. The third responsibility
+must now cover epistemic *and* practical questions without equating their
+answers. Whether this remains the smallest coherent organization is open.
+
+### What The Language Must Guarantee
+
+| Shared semantic responsibility | Why ordinary programming and intelligence both need it | What is supplied above the foundation |
+| --- | --- | --- |
+| Resolved identity, types and scoped dependencies | A captured variable, hypothesis, latent choice or scientific parameter must retain its owner through substitution and reuse | Domain spaces, variable roles, model vocabulary and learned feature names |
+| First-class inspectable descriptions with explicit interpretation | A description can be composed or transformed without running arbitrary host code; source and artifact revisions remain related | Numeric, logical, stochastic, causal and other structure providers with declared domains |
+| Lawful composition and hygienic transformation | Reusable functions, models, explanations and learned abstractions must preserve the facts they claim to preserve | Differentiation, inference, simplification, abstraction and planning methods, each with obligations |
+| Context-qualified queries and evidence | An exact identity, posterior, feasible plan and model evaluation are useful answers with different meanings | Consequence relations, priors/likelihoods, objectives, approximation rules and evaluation designs |
+| Explicit revision, publication and action | Updating a belief, changing code and performing an external action have distinct observable consequences | Learning policies, retention/retrieval, checkpointing, experiment execution and human collaboration |
+
+These are candidate **language guarantees**, not a universal `Model` superclass,
+five mandatory annotations or five new keywords. Ordinary inferred code remains
+ordinary. Algorithms and domain structures should be expressible as Nomi values
+and procedures under those guarantees; engines implement a selected contract.
+Replacing an engine must not replace the question's meaning. A source function
+still needs an admitted reification domain before it can become a transformable
+description; arbitrary closures are not automatically serializable or analyzable.
+
+The implementation comparison should extract shared machinery from the labs
+rather than standardize each lab's current schema. Do not select Python AST,
+a tensor graph, a theorem prover or a weighted relation as the definition of
+all Nomi meaning. Keep Nomi source as one producer and library constructors as
+another, both targeting the same selected scoped contracts where they agree.
+
+### Models, Relations And Measures
+
+A deterministic map assigns an output to an input. A relation can admit several
+outputs or none. A probability kernel assigns a measure on possible outputs
+for an input, under explicit normalization/measurability/support conditions.
+An unnormalized potential or a set of admissible distributions supplies
+something different. These can use shared typed descriptions and composition
+interfaces while keeping their own laws.
+
+For finite kernels, composition sums over an intermediate space:
+`(K ; L)(x,z) = sum_y K(x,y) * L(y,z)`.
+An ordinary deterministic map embeds as point mass. Mapping a measure forward
+sums mass over alternatives merged by the map. This composition must preserve
+normalization; it does not establish an inverse, causal mechanism or empirical
+validity. Continuous composition needs additional measure/integration contracts,
+not an unrestricted substitution of a finite `sum` with numeric quadrature.
+
+Do not identify stochastic choice with an ordinary Bool branch, a sample with a
+distribution, or uncertainty with failure. Unobserved latent sharing belongs to
+the model; random streams and sampled traces belong to a realization. Named
+choice sites require scoped identity and a trace contract. A shared latent draw
+versus fresh draws changes meaning, even when both implementations return the
+same marginal distribution for a single call.
+
+Boolean relations, signed logical support, probability measures and preference
+weights cannot share unspecified addition/multiplication. Each supplies a law
+profile. A storage graph may represent them all; that does not give it one
+consequence relation. Constraint sets and intervals remain useful alternatives
+when a calibrated probability is unavailable.
+
+### Derive Intelligent Activities Through Composition
+
+The notation here is explanatory metalanguage, not admitted Nomi exports.
+Each row must ultimately have a readable ordinary long form and source mapping.
+
+| Derived activity | Composition from shared descriptions and laws | Result that must remain qualified |
+| --- | --- | --- |
+| Prediction and imagination | State/model + transition/generative law + observation map | Distribution or simulated outcome under that model and realization |
+| Deduction | Premises + supplied consequence rules + checked derivation | Supported/conditional conclusion with retained assumptions and coverage |
+| Abduction | Hypothesis descriptions + explanation criterion + bounded search | Candidate explanations; uniqueness/completeness are separate claims |
+| Bayesian inference | Prior/joint model + evidence/query + conditioning/marginalization | Conditional measure under the model, or zero-support/unsupported/incomplete result |
+| Parameter learning | Model family + examples/objective + permitted state update | Revised parameter artifact and training/evaluation basis |
+| Structure or concept learning | Typed term/relationship search + examples/priors + proposed abstraction | New description/library revision with empirical or checked preservation evidence |
+| Analogy and transfer | Explicit interpretation between structures + preserved judgments | Which conclusions/operations survive and which distinctions are lost |
+| Planning and control | Possible transitions + objective/constraints + selection over policies | A proposed contingent policy under horizon/risk/cost assumptions |
+| Active inquiry | Prospective observation/intervention + possible updates + selected value criterion | Expected benefit and cost of asking/acting; no observation has happened yet |
+| Memory and reconsideration | Retained descriptions/traces/support + selected retrieval + revision/replay | Selected context and remaining support, never all-world knowledge |
+| Meta-learning and metareasoning | Methods described as values + task/history + objective/budget + checked replacement | Learned method and its measured domain; no universal optimal reasoner |
+
+A gradient is one variation operator useful for some learning updates. Search,
+constraint propagation, exact enumeration, learned recognition and human
+correction are other methods. A neural component can propose a program, approximate
+an inference map or supply a perception model without defining what a proof,
+objective or observation means. “No separate framework” means these activities
+compose through shared language semantics; it does not mean all algorithms
+become compiler instructions or all evidence has one type.
+
+### Causal Thinking Requires More Than Conditioning
+
+A causal description retains mechanisms, exogenous uncertainty and a declared
+family of interventions. An intervention changes a mechanism while retaining
+those declared as unaffected. A counterfactual additionally couples the changed
+model to the same past world under explicit assumptions. Observation, model
+revision, hypothetical intervention and actually operating an instrument are
+four different activities.
+
+A small discriminator: let `U` be a fair bit and observe `X=Y=U`. One model uses
+`X=U; Y=X`; another uses `Y=U; X=Y`. Both produce exactly the same observational
+distribution. Under `do(X=0)`, the first has `P(Y=1)=0`, the second `P(Y=1)=1/2`.
+A correlation model cannot choose between them without additional assumptions
+or evidence. Neither a valid probability calculation nor a checked theory
+bridge can silently supply causal identification.
+
+For scientific discovery, connect this to existing observation/realization and
+inverse-model owners. A learned causal variable needs a role/interpretation and
+an intervention contract; a latent feature name alone supplies neither. Units,
+conservation, symmetries and invariance across environments can constrain model
+search without proving that the unique physical mechanism has been found.
+
+### Learn Abstractions Without Changing Meaning Silently
+
+Learning a parameter changes a selected model instance. Learning an abstraction
+can change the vocabulary used to describe many models. The latter is a
+first-class design pressure on binding and revision, not an optimizer feature.
+A proposed reusable function should have scoped parameters, declared captures,
+source correspondence and a preservation claim with its own basis.
+
+Compare three outcomes:
+
+- A beta-equivalent extraction in the admitted pure-term domain can earn a
+  checked refactoring claim, after hygienic substitution and type checking.
+- A hypothesis matching finite examples earns coverage of those examples.
+  It does not thereby become a universal replacement for the old program.
+- A learned approximation can replace an expensive map under a declared error
+  and use regime. Its empirical loss does not automatically establish the bound.
+
+Library growth, type/feature discovery and learned search guidance can reinforce
+one another, but remain separately versioned. A changed hypothesis vocabulary
+may require a checked interpretation to compare old and new belief states.
+Compression scores depend on the coding/prior/objective; they do not settle
+human readability or scientific truth. Effectful learned procedures additionally
+retain ordinary effect, capture, resource and completion obligations.
+
+### Memory, Goals And The Thinking Loop
+
+The shared objects support a deliberate loop:
+
+```text
+question + current context
+  -> propose alternatives / retrieve selected descriptions
+  -> derive or infer consequences under a named method
+  -> compare under an explicit intellectual or practical objective
+  -> propose a question, model revision or action
+  -> check and publish the revision / authorize and perform the action
+  -> capture the actual observation or outcome, then reconsider
+```
+
+Working memory is the selected active context. Episodes are qualified traces
+and observations; semantic memory stores descriptions and their evidence;
+procedural memory stores reusable transformations/policies. These are roles
+with different retention and read/write rules, not four global stores built
+into the compiler. Retrieval quality and freshness are different from evidence
+strength. A model-generated explanation can propose premises or procedures;
+publication and execution remain separate checks.
+
+A goal can select information gain, predictive accuracy, explanation simplicity,
+practical loss, resource cost or a combination with declared constraints.
+Those objectives can disagree. Perfect information about an irrelevant variable
+has no decision value; unpredictable noise can be novel without teaching a
+useful model. Choosing a query is not being compelled to perform it. Preserve
+ties, infeasible/no-supported answers and the option to stop. Human correction,
+teaching, ambiguity resolution and perspective changes belong in this loop.
+
+### Executed Finite Inquiry, Not A Matrix Framework
+
+The [finite inquiry lab](../../tools/finite_inquiry.py) is an original bounded
+composition, runnable with `python3 -m tools.finite_inquiry`. Immutable spaces,
+measures, kernels, observations and loss descriptions contain no callbacks,
+RNG, solver or live authority. The exact adapter checks finite normalization,
+composes kernels, conditions a shared joint world, compares decisions and
+computes one-step decision value for a prospective observation. All inputs are
+qualified descriptions; no sensor, optimizer or accelerator is invoked.
+
+In its oscillator example, two model hypotheses have equal prior mass. A
+prospective measurement has declared reliability `3/4`; the supplied mismatch
+loss is one. Baseline expected loss is `1/2`, expected loss after observing is
+`1/4`, and cost is `1/8`. Net expected decision value is `1/8`. This answers a
+conditional model question, not whether the instrument or hypotheses are right.
+
+Eleven focused checks include kernel laws, exact path enumeration, event
+idempotence, withdrawal, zero-support evidence, irrelevant information,
+zero-mass outcomes, tied decisions and stale revisions. An independent consumer
+replays inquiry through unnormalized joint losses. Exhaustive contingent-policy
+tests compare all choices after every possible outcome. Repeated report events
+are intersected, not multiplied as independent likelihoods; repeated independent
+measurements must be explicitly represented in the joint model.
+
+The profile permits at most eight members per finite space, sixteen observation
+constraints and bounded nonnegative exact rational inputs. These are lab caps,
+not language limits. Zero-support conditioning returns no invented posterior.
+Withdrawal recomputes from the original model and remaining evidence, since a
+conditioning update need not be invertible. Assessment fingerprints bind model,
+experiment and objective content/revision/cost; changed context refuses replay.
+An assessment proposes no external action and grants no authority.
+
+General probabilistic source programs, continuous inference, stochastic traces,
+causal interventions, structure learning and empirical model adequacy remain
+unimplemented. The artifacts test the conceptual foundation rather than
+claiming a general intelligence engine. Common scoped source production and
+structure-provider integration remain necessary before language admission.
 
 ## Start From The Developer's Activity
 
@@ -48,8 +268,8 @@ changing a view must propose a checked revision, not mutate a running model.
 
 ## A Few Reusable Contracts
 
-These are ordinary library/artifact responsibilities, not new keywords or a
-claim of a minimal universal IR. They compose the six candidate families
+These domain contracts build on the shared semantic responsibilities above.
+They are not new keywords or a claim of a minimal universal IR. They compose the six candidate families
 [Value, Bind, Apply, Choose, Perform and Scope](primitive_composition.md).
 
 | Contract | Composition | Domain facts that cannot be erased |
@@ -273,13 +493,13 @@ instructions or complete tensor laws.
 
 | Gate | Deliverable | Independent positive and negative discriminator |
 | --- | --- | --- |
-| AF0: authoring | Beginner linear regression, custom-operator author, failure-heavy stateful/distributed workflow | Explain axes/phase/premises, repair an invalid composition, compare drafts and checked exports; actual human trials |
-| AF1: abstract programs | Closed operation signatures, named axes, scalar-profile labels, input-free metadata inference | Correct contraction; equal-size swapped axes; explicit broadcast; missing shape evidence; stale receipt |
-| AF2: transformations | Versioned checked numeric subset or explicit operator values, JVP/VJP/batch source maps | Exact scalar oracle, pairing identity, numerical vectors in one established AD adapter; unsupported effect/custom-rule refusal |
+| AF0: authoring | An ordinary report, scientific hypothesis/inquiry, beginner regression, custom operator and failure-heavy agent | Explain assumptions/phase/premises, compare drafts, correct a model and hand off its question; actual human trials |
+| AF1: abstract programs | One scoped source/constructor contract across ordinary maps, logical hypotheses, finite kernels and numeric programs | Hygiene, same-label/different-owner, named axes, latent sharing, changed vocabulary and stale context |
+| AF2: transformations | Explicit structure providers for deduction, finite inference, abstraction/refactoring and numeric variation | Independent support/models, zero-support inference, invalid bridge, non-equivalent learned extraction, established AD vectors; bounded incomplete results |
 | AF3: realizations | One bounded backend adapter, then a second under the same declared contract | Independent values/errors, precision policy, non-contiguous/empty shapes, measured completed device work |
 | AF4: state and resume | Explicit model/optimizer/RNG/data transition and checkpoint basis | Weights-only resume refused, changed mode/schema, interrupted publication and repeated random choices |
 | AF5: scale and serve | Sharding/collective and export profiles, pinned model/tokenizer/cache context | Uneven weighted mean, missing backward collective, unsupported export, tenant/cache mismatch and rank failure |
-| AF6: learning evidence and agents | Selection-aware evaluation and capability-bound proposal/reconciliation | Held-out influence, unknown adaptation history, stale review, lost acknowledgement and untrusted retrieved instructions |
+| AF6: learning evidence and agents | Model/objective revision, adaptive inquiry, structure learning and capability-bound proposals | Non-identifiability, observational versus intervention answers, irrelevant information, held-out influence, stale review and lost acknowledgement |
 
 These gates refine ML1-ML6 and the existing function/numeric/effect questions;
 they do not replace them with a second release backlog. No grammar change is
@@ -288,8 +508,11 @@ tensor, accelerator, autodiff or training contract. The scientific polynomial
 probe is a bounded formal oracle, not a gradient engine. Existing generic object
 composition does not infer tensor axes from nominal ports.
 
-Prioritize AF1, then explicit-expression versus checked-function comparison and
-AF2 with an established engine. Keep stateful/random/distributed challengers in
+Prioritize the shared AF1 scoped-source/constructor and R2 structure-provider
+comparison, using finite logical/probabilistic and ordinary challengers beside
+the numeric example. Follow with AF2 established symbolic/AD checks and a tiny
+causal/abstraction-learning comparison; do not let matrix execution dictate the
+foundation. Keep stateful/random/distributed challengers in
 the pressure set from the start so a convenient pure example does not determine
 all later semantics. Compare development tasks and handoff, not only numerical
 outputs. Extract shared machinery where context/reference meanings agree;

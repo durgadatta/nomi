@@ -13,7 +13,8 @@ not a proof that three concepts are irreducible or sufficient for every domain.
 This document owns the cross-cutting redesign comparison. The
 [synthesis](synthesis.md#candidate-primitive-synthesis-and-integration-path)
 owns integration; [scientific models](scientific_discovery.md) owns scientific
-contracts; [AI frameworks](ai_frameworks.md) owns numeric-program contracts.
+contracts; [intelligent programs](ai_frameworks.md) owns AI pressures on the shared foundation
+and the numeric/model/inference contracts.
 [Primary evidence](../research/scientific_models.md#foundational-algebra-evidence)
 and the [bridge](../review/2026-09-29-language-synthesis.md) retain provenance and
 migration evidence. The current [semantics](semantics.md) remains the accepted
@@ -530,6 +531,45 @@ probability, approximation, effects or authority needs separate obligations.
 General first-order theories, continuum spaces, derived evidence transport and
 source-level syntax remain open R2 gates.
 
+## Intelligence Tests The Proposed Minimality
+
+The user's October 11 direction adds intelligence induction to the scientific
+and knowledge pressures. [The conceptual AI owner](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+uses the same candidate responsibilities to organize generative models,
+conditional inference, program/abstraction learning, goals, planning, memory and
+inquiry. Particular algorithms remain supplied methods; the ability to describe,
+compose, inspect and revise them is a proposed shared language guarantee.
+
+A probability measure supplies laws over a space; a kernel supplies lawful
+uncertain transformation; a hypothesis is a candidate contextual description.
+A question can ask for consequences, a conditional measure, an explanatory
+candidate or a policy selected under an objective. These are distinct answers,
+not a universal theorem result. Differentiation is useful to some learning
+methods; it does not define learning, causality or intelligent action.
+
+`python3 -m tools.finite_inquiry` executes the finite probability/inquiry slice.
+It composes normalized exact kernels, conditions captured joint worlds on events,
+compares decisions and values prospective observations without performing them.
+Identity/associativity and independent path/contingent-policy vectors pass;
+separate unnormalized-loss replay checks inquiry. Withdrawing evidence recomputes
+from the original model; repeated events do not imply independent sampling.
+Zero modeled probability supplies no posterior. Changed model/objective/experiment
+content or revision refuses an old inquiry assessment.
+
+This pressures R1/R2 toward a **shared scoped source and structure-provider
+contract**. The separate labs still have different term/signature/space objects;
+reusing qualified identity alone does not complete integration. Compare one
+source-derived ordinary function and a tiny scientific hypothesis family using
+shared binding/source laws, then explicit logical and finite probabilistic
+interpretations. Include a learned example-fit proposal that fails universal
+replacement and two observationally indistinguishable causal models. Preserve
+R3/R4 analytic/approximation gates and R5 comprehension/handoff evidence.
+
+No stochastic keyword, universal model superclass, model-generated authority,
+mandatory brain theory or general inference engine is accepted by these examples.
+A kernel comparison can guide the design without requiring ordinary eager
+programming to become a probabilistic execution graph.
+
 ## Ordinary Programming Must Stay Ordinary
 
 Writing a function, matching a Result, reading a file or building a report must
@@ -567,7 +607,9 @@ be represented as terms. This is a general-purpose redesign, not a physics DSL.
    Include an ordinary report function and a scientific map; neither must become
    a global lazy graph. Then use a finite supplied-rule premise ledger to test
    mention versus assertion, scoped imports and independent justification paths.
-   This is the next implementation decision, not a new source feature.
+   The executed finite binder/ledger artifacts close a comparison slice; Nomi
+   production, reconstruction, effects/recursion and common domain migration
+   remain gates, not new source features.
 3. **R2 — structures and qualified transformations.** Introduce explicit providers
    for map rules, tangent/cotangent roles and partial-domain obligations. Use an
    established symbolic/AD adapter for independent vectors, plus an independent
@@ -575,6 +617,9 @@ be represented as terms. This is a general-purpose redesign, not a physics DSL.
    must fail; unknown operators remain unsupported. Add a declared theory
    interpretation, one-way preservation and an invalid bridge; retain each
    profile's own result type and distinguish exhausted search from refutation.
+   The finite classical bridge and exact inquiry artifacts now challenge these
+   laws independently. Next connect scoped sources to explicit structure
+   providers and compare causal/learned interpretation obligations.
 4. **R3 — relations, selection and variation.** Compose a constrained model and
    a continuum action with named admissible variations and boundary terms.
    Independently check one Euler-Lagrange derivation. Retain stationary saddles,

@@ -1,6 +1,6 @@
 # Researching And Integrating One Coherent Language
 
-> Status: maintainer/designer research guide, prepared 2026-10-10. Comparative
+> Status: maintainer/designer research guide, updated 2026-10-11. Comparative
 > evidence and proposed experiments; no new target semantics accepted here.
 
 This is the working entry point for Nomi's developer, maintainer, and language
@@ -22,6 +22,16 @@ meaning lives in [syntax](../design/syntax.md), [semantics](../design/semantics.
 and [industrial contracts](../design/industrial.md). Research can challenge those
 choices explicitly. The Python and browser prototypes are replaceable evidence
 surfaces; their present capabilities do not bound the language we can investigate.
+
+For the intelligence continuation, ask which **shared semantic responsibility**
+a mechanism needs before asking which framework API to copy. Record its object
+of reasoning, context, eligible alternatives, evidence, transformation law,
+objective, revision and actual effects. Compare it with an ordinary function and
+a scientific model. A matrix kernel, a symbolic rule and a learned search policy
+can be implementations within the same language without sharing a truth criterion.
+The existing AI/reasoning owners hold the candidate; no second research plan is
+needed. Next compare one source/constructor contract across the current finite
+labs, including an invalid learned abstraction and an unidentified causal model.
 
 ## Find Your Question
 
@@ -51,7 +61,7 @@ meaning from implementation; deferred execution is one consequence.
 | Redesign the foundation rather than add features | [Minimal reasoning algebra](../design/reasoning_algebra.md) | Current-core audit, concrete kernel candidates, supplied domain structures and R0-R5 closure receipts |
 | Connect general knowledge frameworks | [Knowledge-framework synthesis](knowledge_frameworks.md) | Interpretation/inference commitments, checked theory bridges, revision and whole-investigation discriminators; extend R1/R2 and HX2/HX8 |
 | Support physics and scientific discovery | [Scientific models](../design/scientific_discovery.md), [numeric evidence](features/numerics.md) | Spaces, equation models, theories, joint observations and qualified realizations; SP1-SP5 provide an ordered comparison |
-| Develop AI frameworks and learning systems | [AI contracts](../design/ai_frameworks.md), [primary research](data_workflows/ai_ml.md) | Abstract operator rules, transformation evidence, named tensor spaces, explicit training state and backend/serving boundaries; AF0-AF6 refine ML1-ML6 |
+| Absorb intelligence mechanisms into one language | [Conceptual AI foundation](../design/ai_frameworks.md#intelligence-belongs-in-the-shared-foundation), [primary research](data_workflows/ai_ml.md#intelligence-as-a-language-pressure--october-11) | Shared descriptions/transformations/queries; model, inference, abstraction, causal and inquiry discriminators; AF0-AF6 refine R1/R2 and ML1-ML6 |
 | Move a settled result into the language | [Admission workflow](#integrate-a-settled-result) | Canonical laws, independent fixtures, and a reversible bridge |
 
 For this pass, start with the eight expanded reviews below. Follow the linked

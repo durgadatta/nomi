@@ -103,11 +103,12 @@ through physics. A source-checkout experiment checks a small formal energy
 identity without measurements; scientific modeling, solvers and richer reasoning
 interfaces remain research work.
 
-The same goal extends to [AI framework development](docs/design/ai_frameworks.md):
-inspect model structure, check tensor contracts before supplying data, explain
-transformations, and keep training state and execution explicit. A small
-source-checkout checker now checks named axes and intermediates without an AI
-engine; differentiation, training and accelerator execution remain design work.
+The same goal extends to [learning and intelligent programs](docs/design/ai_frameworks.md):
+describe possible worlds, compare explanations, learn reusable ideas and choose
+useful questions through the same language foundations. Bounded checkout
+experiments now check scoped terms, premise support, theory translations and
+exact finite inquiry without an AI engine. A tensor-contract checker also runs;
+general inference, learning and their source integration remain design work.
 
 The first useful language is focused on **small scripts and trustworthy local
 data reports**. The goal is to let you add stronger guarantees as a program

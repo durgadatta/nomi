@@ -461,8 +461,9 @@ terms, checked composition and explicit judgments, with variation, invariants,
 selection and scale supplied as library structures. This is designing, not an
 accepted three-opcode Core or proof of minimality. R0-R5 names the replacement
 path and the operational laws an encoding must preserve. Fourteen exact
-polynomial-map compositions execute without inputs; continuum variation,
-asymptotics, general binders and independent replay remain separate gates.
+polynomial-map compositions execute without inputs. Scoped pure terms, finite
+premise support and classical theory bridges now have independent checks;
+continuum variation, asymptotics, general binders and domain migration remain gates.
 
 The selected continuation now starts with the domain-neutral
 [Engine-Free Objects](object_framework.md): typed references, descriptions,
@@ -505,6 +506,42 @@ specified policies, not a universal user-defined block handler. A resource scope
 function return boundary, and task group cannot share an unspecified completion
 rule. Observed traces, revisions, types, and contracts accompany these operations;
 they are evidence dimensions, not a seventh universal runtime object.
+
+### Intelligence Challenges The Same Foundation
+
+The October 11 continuation treats AI as a **shared semantic design pressure**,
+not a demand to build a faster matrix package. The
+[conceptual AI proposal](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+asks the same language to describe hypotheses and possible worlds, infer under
+evidence, learn reusable abstractions, compare goals, remember and reconsider.
+[Primary evidence](../research/data_workflows/ai_ml.md#intelligence-as-a-language-pressure--october-11)
+compares probabilistic programs, program/library induction, causal and relational
+models, world-model planning and cognitive architectures. It does not select a
+universal theory of intelligence.
+
+| Shared composition | Scientific, intelligent and ordinary use | Preserved distinction |
+| --- | --- | --- |
+| Scoped description | A report function, physical mechanism, latent choice or candidate learned function | A value description versus executing eager code; same label versus resolved identity |
+| Lawful transformation | Compose maps/kernels, derive consequences, vary a model or extract an abstraction | Exact preservation, finite-example fit, approximate similarity and causal interpretation |
+| Qualified question/judgment | A contract check, posterior, feasible plan, explanation or experiment comparison | Requested claim, context, method coverage, uncertainty and objective |
+| Explicit transition | Revise a model, learn parameters, retain an episode or change source | New basis versus reuse of old evidence; alternative support and non-invertible updates |
+| Owned effect and completion | Print a report, query a model service or perform an experiment | Proposed/simulated action versus completed world action and actual grants |
+
+These preserve the candidate organization while broadening what it must explain.
+A deterministic function can embed in a finite probability kernel; an arbitrary
+probability kernel is not an invertible function, logical rule or causal model.
+A learned method may supply proposals but cannot silently become its own checker.
+Do not force all uncertainty, objectives or evidence into one scalar/graph.
+
+The exact finite inquiry lab composes inert measures, kernels, observation
+constraints and losses. It checks normalization/composition, returns no posterior
+for zero-support evidence, retains tied decisions and computes prospective
+measurement value. Independent replay and exhaustive contingent-policy vectors
+pass. This is a bounded AF1/AF2 experiment, not an AI runtime or accepted source
+API. The substantial gap is now integration: one scoped source/constructor
+contract and explicit structure providers must connect ordinary terms, logical
+hypotheses, numeric maps and finite models, rather than standardize unrelated
+laboratory schemas.
 
 ### Compose Richer Features
 
@@ -561,9 +598,11 @@ without adding a universal knowledge ontology or evaluator. The
 [interaction owner](interaction_model.md#knowledge-contexts-and-qualified-explanations)
 retains the explanation and human-comparison obligations.
 
-The foundational continuation is now R1/SP1's scoped-term comparison in
-[the reasoning algebra](reasoning_algebra.md#one-integration-path-with-closure-receipts),
-refining step 2's shared reference and domain-validator boundary. Do not grow the
+The foundational continuation now has bounded R1 scoped terms/premise support
+and R2 finite bridge/inquiry evidence in
+[the reasoning algebra](reasoning_algebra.md#one-integration-path-with-closure-receipts).
+Next compare a shared source/constructor contract and explicit structure
+providers, refining step 2's reference and domain-validator boundary. Do not grow the
 envelope before comparing its binding/context laws with the dedicated map
 artifact. The existing implementation checks closed arithmetic/text composition
 and realizes selected objects through explicit adapters. Statistical descriptors
