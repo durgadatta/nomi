@@ -232,6 +232,15 @@ preserving named premises and invalidation under damping. Solver approximation,
 joint observations and inverse identifiability retain separate evidence gates.
 This extends question 9 without selecting new source syntax or a universal IR.
 
+The [thinking-first expansion](../design/scientific_discovery.md#design-from-thinking-activities)
+adds SP0 and a question/alternative/evidence workspace; it does not assert a
+universal mental calculus. A bounded exact formal probe now checks dimensioned
+polynomial witnesses for oscillator conservation and damping, with independent
+replay and no numeric inputs. It retains unknown results and an unchecked
+general consistency obligation. General binding identity/capture avoidance,
+quantity-kind/unit/frame spaces, analytic calculus, observation/inverse contracts,
+solver evidence and actual human studies remain distinct next discriminators.
+
 The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
 now exercises a declared exact-rational theory without observations. Float64
 mean expansion, paired moments, units, weights and scientific assumptions

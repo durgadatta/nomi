@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "id": "damped-oscillator",
+  "revision": "v2",
+  "profile": "formal-rational-polynomial-v1",
+  "derivation": {
+    "id": "D_t",
+    "dimension": {
+      "Time": 1
+    },
+    "images": {
+      "m": null,
+      "k": null,
+      "x": "v",
+      "v": "a",
+      "c": null
+    }
+  },
+  "objects": [
+    {
+      "id": "m",
+      "op": "symbol",
+      "label": "mass",
+      "dimension": {
+        "Mass": 1
+      }
+    },
+    {
+      "id": "k",
+      "op": "symbol",
+      "label": "stiffness",
+      "dimension": {
+        "Mass": 1,
+        "Time": -2
+      }
+    },
+    {
+      "id": "x",
+      "op": "symbol",
+      "label": "displacement",
+      "dimension": {
+        "Length": 1
+      }
+    },
+    {
+      "id": "v",
+      "op": "symbol",
+      "label": "velocity",
+      "dimension": {
+        "Length": 1,
+        "Time": -1
+      }
+    },
+    {
+      "id": "a",
+      "op": "symbol",
+      "label": "acceleration",
+      "dimension": {
+        "Length": 1,
+        "Time": -2
+      }
+    },
+    {
+      "id": "c",
+      "op": "symbol",
+      "label": "viscous damping",
+      "dimension": {
+        "Mass": 1,
+        "Time": -1
+      }
+    },
+    {
+      "id": "half",
+      "op": "rational",
+      "numerator": 1,
+      "denominator": 2,
+      "dimension": {}
+    },
+    {
+      "id": "zero_force",
+      "op": "rational",
+      "numerator": 0,
+      "denominator": 1,
+      "dimension": {
+        "Mass": 1,
+        "Length": 1,
+        "Time": -2
+      }
+    },
+    {
+      "id": "zero_power",
+      "op": "rational",
+      "numerator": 0,
+      "denominator": 1,
+      "dimension": {
+        "Mass": 1,
+        "Length": 2,
+        "Time": -3
+      }
+    },
+    {
+      "id": "inertia",
+      "op": "multiply",
+      "args": [
+        "m",
+        "a"
+      ]
+    },
+    {
+      "id": "restoring",
+      "op": "multiply",
+      "args": [
+        "k",
+        "x"
+      ]
+    },
+    {
+      "id": "force_balance",
+      "op": "add",
+      "args": [
+        "inertia",
+        "restoring",
+        "damping_force"
+      ]
+    },
+    {
+      "id": "kinetic_twice",
+      "op": "multiply",
+      "args": [
+        "m",
+        "v",
+        "v"
+      ]
+    },
+    {
+      "id": "potential_twice",
+      "op": "multiply",
+      "args": [
+        "k",
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "energy_twice",
+      "op": "add",
+      "args": [
+        "kinetic_twice",
+        "potential_twice"
+      ]
+    },
+    {
+      "id": "energy",
+      "op": "multiply",
+      "args": [
+        "half",
+        "energy_twice"
+      ]
+    },
+    {
+      "id": "energy_rate",
+      "op": "differentiate",
+      "arg": "energy"
+    },
+    {
+      "id": "damping_force",
+      "op": "multiply",
+      "args": [
+        "c",
+        "v"
+      ]
+    },
+    {
+      "id": "dissipation",
+      "op": "multiply",
+      "args": [
+        "c",
+        "v",
+        "v"
+      ]
+    },
+    {
+      "id": "energy_balance",
+      "op": "add",
+      "args": [
+        "energy_rate",
+        "dissipation"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "dynamics",
+      "left": "force_balance",
+      "right": "zero_force"
+    }
+  ],
+  "claims": [
+    {
+      "id": "energy_conserved",
+      "left": "energy_rate",
+      "right": "zero_power",
+      "witness": [
+        {
+          "relation": "dynamics",
+          "multiplier": "v"
+        }
+      ]
+    },
+    {
+      "id": "energy_dissipation",
+      "left": "energy_balance",
+      "right": "zero_power",
+      "witness": [
+        {
+          "relation": "dynamics",
+          "multiplier": "v"
+        }
+      ]
+    }
+  ]
+}

@@ -96,6 +96,13 @@ different ways into the same work. Nomi researches these possibilities alongside
 language semantics; the [guiding vision](docs/design/vision.md) explains the
 questions and current gaps. These are directions under investigation.
 
+The shared goal across domains is to make thinking easier: name an idea, expose
+its assumptions, follow consequences, compare explanations and revise it.
+[Scientific discovery](docs/design/scientific_discovery.md) tests this direction
+through physics. A source-checkout experiment checks a small formal energy
+identity without measurements; scientific modeling, solvers and richer reasoning
+interfaces remain research work.
+
 The first useful language is focused on **small scripts and trustworthy local
 data reports**. The goal is to let you add stronger guarantees as a program
 grows, while keeping ordinary code readable.

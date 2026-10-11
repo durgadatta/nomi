@@ -1,0 +1,524 @@
+{
+  "claims": [
+    {
+      "id": "energy_conserved",
+      "residual": [
+        {
+          "coefficient": [
+            -1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 2
+          }
+        }
+      ],
+      "status": "unknown",
+      "witness": [
+        {
+          "multiplier": "v",
+          "relation": "dynamics"
+        }
+      ]
+    },
+    {
+      "id": "energy_dissipation",
+      "residual": [],
+      "status": "conditional-identity",
+      "witness": [
+        {
+          "multiplier": "v",
+          "relation": "dynamics"
+        }
+      ]
+    }
+  ],
+  "context": "89432b8f8deed7fdd4e037eabcbc3777b54124139116d055140881020047ae6d",
+  "objects": [
+    {
+      "dimension": {
+        "Mass": 1
+      },
+      "id": "m",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "m": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "k",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1
+      },
+      "id": "x",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "x": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Time": -1
+      },
+      "id": "v",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "v": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Time": -2
+      },
+      "id": "a",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Mass": 1,
+        "Time": -1
+      },
+      "id": "c",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {},
+      "id": "half",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            2
+          ],
+          "powers": {}
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "zero_force",
+      "normal": []
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -3
+      },
+      "id": "zero_power",
+      "normal": []
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "inertia",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1,
+            "m": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "restoring",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "x": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "force_balance",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "x": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1,
+            "m": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "kinetic_twice",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "m": 1,
+            "v": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "potential_twice",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "x": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "energy_twice",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "m": 1,
+            "v": 2
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "x": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "energy",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            2
+          ],
+          "powers": {
+            "m": 1,
+            "v": 2
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            2
+          ],
+          "powers": {
+            "k": 1,
+            "x": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -3
+      },
+      "id": "energy_rate",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "v": 1,
+            "x": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1,
+            "m": 1,
+            "v": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "damping_force",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 1
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -3
+      },
+      "id": "dissipation",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 2
+          }
+        }
+      ]
+    },
+    {
+      "dimension": {
+        "Length": 2,
+        "Mass": 1,
+        "Time": -3
+      },
+      "id": "energy_balance",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "v": 1,
+            "x": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 2
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1,
+            "m": 1,
+            "v": 1
+          }
+        }
+      ]
+    }
+  ],
+  "profile": "formal-rational-polynomial-v1",
+  "relations": [
+    {
+      "dimension": {
+        "Length": 1,
+        "Mass": 1,
+        "Time": -2
+      },
+      "id": "dynamics",
+      "normal": [
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "k": 1,
+            "x": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "c": 1,
+            "v": 1
+          }
+        },
+        {
+          "coefficient": [
+            1,
+            1
+          ],
+          "powers": {
+            "a": 1,
+            "m": 1
+          }
+        }
+      ]
+    }
+  ],
+  "scope": {
+    "derivation": "declared formal generator images",
+    "direct_contradictions": [],
+    "independent": false,
+    "inputs": "none",
+    "physical_validity": "not-established",
+    "premise_consistency": "not-checked",
+    "solver": "not-run"
+  },
+  "version": 1
+}

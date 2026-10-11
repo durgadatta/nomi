@@ -1613,3 +1613,53 @@ numeric inputs and independently replay its conditional/unknown outcomes.
 Compare a domain-owned mathematical validator with a passive generic-envelope
 projection. Retain all richer space, binder, analytic, observation, solver and
 human-authoring gates.
+
+
+## Exact Formal Reasoning Without Numeric Inputs — 2026-10-10
+
+### Evidence That Changed The Design
+
+A bounded formal-rational polynomial profile now checks named dimensioned
+expressions, declared generator images, equality premises and supplied witness
+multipliers. The undamped oscillator has a conditional energy identity without
+binding numbers; damping leaves the old witness unknown and admits a different
+balance identity. A standalone consumer uses its own admission and a different
+polynomial representation without importing producer/framework/engine modules.
+The generic structural projection admits a description whose dimensions the
+mathematical validators refuse. That discriminator supports a shared envelope
+plus domain-owned validation rather than mathematical meaning in nominal ports.
+
+### Workflow Friction
+
+Flat formal symbols do not provide general binders, analytic regularity or rich
+semantic spaces. A zero witness residual does not establish premise consistency,
+physical truth or implementation correctness. Direct constant contradictions can
+be reported, while contradictions requiring relation combinations remain outside
+the checker. A nonzero residual is unknown, not refuted. Full-context pinning is
+conservative evidence invalidation, not a proven minimal dependency analysis.
+
+### Durable Improvement
+
+Added immutable bounded source snapshots, exact dimension/derivation checks,
+conditional/unknown/inconsistent outcomes, named claim explanations and detached
+receipts. Tracked undamped/damped artifacts and independent replay cover changed
+premises, identical display labels, multiple relations, numerical counterexamples,
+unsupported operations, input/receipt tampering and explicit capacity refusal.
+A contrasting nonphysical vocabulary reuses the formal reasoning profile without
+importing a physics interpretation. The source-checkout guide executes both
+checks and replays and explicitly retains the unsupported scientific/HCI gates.
+
+Validation: 763 focused object/statistical/scientific and documentation checks
+pass, including 62 new scientific checks. All seven documented commands/code
+blocks execute with declared success/unknown exits. Lint, the five design packets
+and the unchanged 63-node/25-route hierarchy pass. No parser, interpreter or
+browser behavior changed; no participant or scientific engine trial was run.
+
+### Next Pass
+
+Compare symbolic scope/binder identity and capture-avoiding substitutions in a
+small dedicated artifact and a shared-framework extension. Prepare SP0's matched
+question/alternative/premise/change/handoff tasks; human trials remain separate
+from exact checker outcomes. Extend rich spaces and premise transport only with
+explicit independent contracts, then qualified realization and joint observation
+models. Preserve the fixed-profile removal point and the existing generic lab.

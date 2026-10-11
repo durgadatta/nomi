@@ -88,6 +88,10 @@ well-posed, or whether its premises describe nature.
 
 The design owner orders SP0-SP5. The first exact formal experiment should expose
 its assumptions and unsupported operations, not advertise a symbolic physics
-engine. Use reference/identity/revision helpers from the generic framework only
+engine. The [bounded probe](../design/scientific_discovery.md#try-a-formal-consequence-without-inputs)
+now runs dimension/formal-polynomial witness checks with independently replayed
+conditional/unknown outcomes and named claim explanations. This is evidence for
+that fragment; general spaces/binders and actual human comparisons remain open.
+Use reference/identity/revision helpers from the generic framework only
 when their contracts match. Adapter round trips, mathematical semantic
 alignment and actual human trials retain separate admission gates.

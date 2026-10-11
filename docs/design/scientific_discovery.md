@@ -3,6 +3,8 @@
 > Status: designing proposal, 2026-10-10. Physics supplies the first pressure
 > cases for a general engine-free modeling layer. No new source syntax, numeric
 > profile, scientific library, solver or proof engine is admitted by this document.
+> A bounded source-checkout probe now checks exact formal polynomial witnesses;
+> its scope and unresolved modeling contracts are described below.
 
 Nomi should help a person express a model, derive consequences, compare them
 with observations, find a disagreement, and revise the model. A simulation is
@@ -615,3 +617,106 @@ after beginner, production and failure-heavy workflows expose a cost. This
 proposal changes no eager evaluation or existing `where`, `with`, `->` or `=>`
 meaning. Its success criterion is an explained, revisable scientific workflow,
 including unknown results, rather than a larger list of numerical builtins.
+
+## Try A Formal Consequence Without Inputs
+
+The source-checkout [producer](../../tools/scientific_probe.py) and separately
+implemented [consumer](../../tools/scientific_replay.py) now exercise a narrow
+SP1/SP2 fragment. They check dimensioned commutative polynomials over exact
+rational coefficients, a declared formal derivation and supplied equality
+witnesses. They accept no callbacks, numeric bindings, host Float values or
+solver handles. This is an inspectable reasoning experiment, not analytic
+calculus, a physical model validator or a Nomi source feature.
+
+```bash
+python3 -m tools.scientific_probe docs/research/scientific_models/oscillator.json
+python3 -m tools.scientific_probe docs/research/scientific_models/oscillator.json --claim energy_conserved
+python3 tools/scientific_replay.py docs/research/scientific_models/oscillator.json docs/research/scientific_models/oscillator_receipt.json
+python3 -m tools.scientific_probe docs/research/scientific_models/damped_oscillator.json
+python3 -m tools.scientific_probe docs/research/scientific_models/damped_oscillator.json --claim energy_dissipation
+python3 tools/scientific_replay.py docs/research/scientific_models/damped_oscillator.json docs/research/scientific_models/damped_oscillator_receipt.json
+```
+
+The undamped [model](../research/scientific_models/oscillator.json) explicitly
+declares `D(m)=0`, `D(k)=0`, `D(x)=v` and `D(v)=a`. It names every expression,
+the dynamics relation and the conservation claim. The checker establishes the
+polynomial identity `D(E) = v*(m*a + k*x)` under that formal derivation. A supplied
+witness multiplies the named dynamics relation by `v`. It does not bind any
+numbers to `m`, `k`, `x`, `v` or `a`.
+
+`--claim` leads with one named statement and a concise outcome explanation,
+then exposes the declared derivation, relations, supplied witness, residual and
+scope. It does not infer a minimal premise set or generate an explanation of
+physical truth. The complete context stays pinned; both explanations and full
+receipts are detached from the immutable authored snapshot.
+
+The [damped model](../research/scientific_models/damped_oscillator.json) retains
+the old conservation question and adds an energy-balance question. The old
+witness leaves the residual `-c*v²`, so conservation stays `unknown`; that
+outcome is not a proof of non-conservation for every admitted case. The balance
+identity `D(E) + c*v² = v*(m*a + c*v + k*x)` has a zero residual. Inferring
+`D(E) <= 0` additionally needs an ordered real theory and `c >= 0`; this probe
+does not check inequalities.
+
+### What The Artifact Means
+
+| Part | Contract in this bounded profile |
+| --- | --- |
+| Profile | Closed `formal-rational-polynomial-v1`; changing it requires a distinct admitted checker contract |
+| Dimension | At most 16 named nonzero integer exponents; no quantity-kind, unit-scale, affine, axis or frame inference |
+| Generator | Stable named identity, display label and dimension; this is a flat formal symbol, not a general binder or measured input |
+| Rational | Exact numerator/positive denominator plus dimension; no Float coercion or ordinary-language division change |
+| Expression | Named symbol/rational/add/multiply/differentiate; ordered repeated operands, checked DAG and dimensions |
+| Derivation | Named variable dimension and explicitly supplied generator images; null declares zero, absence remains missing evidence |
+| Relation | Equality between named expressions with compatible dimensions; it is a premise, not a solve instruction |
+| Claim/witness | Named equality and a list of relation/multiplier pairs; the checker verifies `left-right = sum(multiplier*(relation.left-relation.right))` |
+| Receipt | Full source/profile context, named dimensions/normal forms, witness residuals and explicit scope; changing a premise makes an old receipt stale |
+
+The mathematical basis is a commutative polynomial algebra with a declared
+linear derivation obeying the product rule. The producer uses exponent vectors;
+the standalone consumer uses multisets of named factors and its own source
+admission. Neither imports an algebra/physics engine. The replay result verifies
+the recorded outcomes, including unknown outcomes; it does not upgrade them.
+
+`conditional-identity` means the supplied polynomial witness reduces the claim
+to the stated relations. A nonzero residual is `unknown`, not refuted: another
+witness might work. A directly contradictory constant relation blocks claims
+as `inconsistent-premises`. General consistency remains `not-checked`, including
+contradictions that require combining several relations. No outcome certifies
+regularity, existence, uniqueness, empirical truth or solver correctness.
+
+The current limits are 128 expressions, 16 generators, 128 relations/claims,
+16 operands per add/multiply, expression/artifact depth 64, a 1 MB artifact,
+degree 32, 256 retained monomials and 4096-bit exact coefficients. Intermediate
+algebra steps can exhaust these capacities. CLI exits distinguish checked
+witnesses (0), unresolved/inconsistent claims (1), and refused artifacts (2).
+These are research limits, not measured target runtime guarantees.
+
+### The Shared-Envelope Comparison
+
+```python
+import json
+from pathlib import Path
+from tools.scientific_probe import Model, envelope_graph
+
+source = json.loads(Path("docs/research/scientific_models/oscillator.json").read_text())
+model = Model(source)
+receipt = model.check()
+graph = envelope_graph(source)
+print(receipt["claims"][0]["status"])
+print(graph.inspect("energy")["role"])
+```
+
+The structural projection retains authored expressions and the scientific
+context as passive descriptions. It performs no scientific check and cannot
+realize them. Tests deliberately project a dimensionally invalid addition: the
+generic envelope accepts its structure while both mathematical checkers refuse
+it. This is evidence for a shared envelope plus independently owned domain
+validation, not a choice to encode all mathematical semantics in nominal ports.
+
+Flat symbols, dimension checks and one formal witness fragment now run. General
+binders/capture avoidance, semantic spaces beyond dimensions, proof search,
+premise transport/completeness, analytic calculus, observation models, numerical
+realizations and actual user trials remain open. The removal/extraction point is
+the fixed profile and adapter boundary: retain independent fixtures and laws
+when replacing the experimental artifact or algebra implementation.
