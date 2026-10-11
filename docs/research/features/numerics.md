@@ -6,6 +6,14 @@
 User pressure: obtain deliberate, portable numerical results, not accidental
 host behavior.
 
+The [scientific modeling continuation](../../design/scientific_discovery.md)
+extends that pressure to discovery in physics and other domains. Its sourced
+proposal distinguishes space meaning, bound expressions/relations, theory
+contexts, joint observations and qualified realizations. SP1-SP5 compose an
+oscillator workflow and challenge dimensional mistakes, cyclic constraints,
+conditional conservation, parameter non-identifiability and numerical error.
+Those are prepared admission oracles, not executed scientific conformance.
+
 The [notation atlas](../notation_atlas.md) deepens bound indices, axes,
 units/frames and algebra laws. [Scientific source forms](../data_workflows/source_forms.md)
 add fit/transform and tracing boundaries; DW4/DW5 own the corresponding experiments.

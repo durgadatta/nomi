@@ -20,6 +20,7 @@ Choose a reading path based on what you want to do:
 | Describe and compose objects before choosing an engine | [Engine-Free Objects](design/object_framework.md) | Typed descriptions, reusable workflows, relation/collection conditions and explicit realization; a source-checkout research tool. |
 | Design by composing a few primitives | [Primitives And Their Compositions](design/primitive_composition.md) | Hierarchy, worked reductions, construct catalog and explicit unclosed laws. |
 | Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
+| Design for physics and scientific discovery | [Scientific Models And Discovery](design/scientific_discovery.md) | Five modeling contracts, an oscillator derivation, implementation gaps and independent admission oracles. |
 
 The getting-started guide describes runnable prototype examples. Design
 documents describe the intended language, including features that do not run
@@ -241,6 +242,7 @@ This list is intentionally complete and is checked by tests.
 - [Function Contracts](design/function_contracts.md)
 - [Statistical Data Interface](design/statistical_data.md)
 - [Engine-Free Objects](design/object_framework.md)
+- [Scientific Models And Discovery](design/scientific_discovery.md)
 
 ### Research
 

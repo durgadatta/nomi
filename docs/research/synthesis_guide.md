@@ -40,6 +40,7 @@ meaning from implementation; deferred execution is one consequence.
 | Test composition beyond ordinary source | [Interfaces](interfaces/README.md), [domain composition](domain_composition.md), [DSL models](dsls/orthogonal_models.md) | A whole activity, preserving domain-specific meaning |
 | Define objects independently of an implementation | [Engine-Free Objects](../design/object_framework.md) | Nominal families, typed ports, passive descriptions, domain obligations and explicit adapter capabilities |
 | Reduce a feature to reusable responsibilities | [Primitive compositions](../design/primitive_composition.md) | A typed long form, preserved laws, residual mechanisms and independent counterexamples |
+| Support physics and scientific discovery | [Scientific models](../design/scientific_discovery.md), [numeric evidence](features/numerics.md) | Spaces, equation models, theories, joint observations and qualified realizations; SP1-SP5 provide an ordered comparison |
 | Move a settled result into the language | [Admission workflow](#integrate-a-settled-result) | Canonical laws, independent fixtures, and a reversible bridge |
 
 For this pass, start with the eight expanded reviews below. Follow the linked

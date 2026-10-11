@@ -11,7 +11,7 @@ and [notation research](../../../research/notation_atlas.md) own their questions
 | --- | --- | --- | --- |
 | Eager collection baseline | [data_collections.nomi](data_collections.nomi) | Real callbacks and predictable evaluation, versus table planning. | Numeric/collection callback contracts. |
 | Table description | [table_plan.nomi](table_plan.nomi) | Schema-bound expressions; explain doesn't collect. | Generic/schema/null/cardinality and engine laws. |
-| Scientific learned state | [scientific_model.nomi](scientific_model.nomi) | Fit sees training data; prediction doesn't refit. | Split/schema/learned-state and reproducibility contracts. |
+| Scientific models and learned state | [scientific_model.nomi](scientific_model.nomi) | Named oscillator expressions and premise-qualified claims need no observations; fit sees training data and prediction doesn't refit. | [Spaces, theories and evidence](../../scientific_discovery.md); split/schema/learned-state and reproducibility contracts. |
 | Workflow publication | [workflow.nomi](workflow.nomi) | Partition/attempt/idempotency identities; uncertain external outcome. | Persistence, runtime grants and retry/reconciliation contracts. |
 | Set/tensor/chemistry | [notation.nomi](notation.nomi) | Named universe, contracted axes and conservation model. | Equality, shape/unit and domain-validator contracts. |
 | Overall reconciliation | [overall.nomi](overall.nomi) | Decode, validate keys, calculate, preview, separately publish. | Higher-order effect/generic and domain-error contracts. |

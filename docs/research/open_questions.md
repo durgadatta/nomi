@@ -223,6 +223,15 @@ are unperformed and do not replace the existing owner-enforced publication law.
 
 ## 9. Numeric And Scientific Model
 
+**Physics/discovery continuation:** the
+[scientific-model proposal](../design/scientific_discovery.md) supplies five
+composable contracts and SP1-SP5. First compare a dedicated mathematical
+artifact with a shared-framework extension for spaces, binder identity and
+relations. Then check an exact oscillator derivation with independent replay,
+preserving named premises and invalidation under damping. Solver approximation,
+joint observations and inverse identifiability retain separate evidence gates.
+This extends question 9 without selecting new source syntax or a universal IR.
+
 The [statistical interface](../design/statistical_data.md#the-first-implemented-law)
 now exercises a declared exact-rational theory without observations. Float64
 mean expansion, paired moments, units, weights and scientific assumptions

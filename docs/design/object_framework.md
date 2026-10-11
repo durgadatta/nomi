@@ -27,6 +27,12 @@ The [statistical interface](statistical_data.md) is a domain on top of this
 direction. Its observation domains, masks and scientific laws retain their own
 authority.
 
+The [scientific modeling proposal](scientific_discovery.md) explores a second
+domain direction: mathematical spaces, symbolic binders and equation models
+before observations or solver selection. These are unimplemented contracts;
+the current DAG, nominal port checks and definition replay do not establish
+scientific equivalence or well-posedness.
+
 The [composition hierarchy](primitive_composition.md) connects this experiment
 to the broader language. Its input/literal/alias/apply/derived/description roles
 classify inert objects; they are not the six semantic families used to compare

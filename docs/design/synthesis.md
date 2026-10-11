@@ -462,6 +462,14 @@ and document descriptions exercise the shared envelope. The
 its existing checker and independent exact mean consumer remain domain-owned.
 The shared envelope does not erase domain algebras or replace Nomi Core.
 
+The [scientific-discovery continuation](scientific_discovery.md) proposes five
+modeling contracts over this foundation: semantic spaces, bound expressions and
+relations, explicit theories, joint observations and qualified realizations.
+The oscillator workflow separates exact derivation, numerical approximation and
+empirical support. A relation model may contain cyclic constraints while the
+current executable object graph remains a DAG. These are designing domain/library
+contracts, not additional Core instructions or admitted source syntax.
+
 > Designing hypothesis, 2026-10-10. These six semantic families organize a
 > comparison; they are not accepted opcodes, syntax, or a universal domain IR.
 

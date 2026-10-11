@@ -1520,3 +1520,51 @@ after specifying admissible theory contexts and premises. Compare the current
 repair/explanation flow in two representations and close ordinary source/library
 contracts before source admission. General algebra, correlated quantification,
 effects/resources and backend conformance remain separately owned gaps.
+
+
+## Physics As A Scientific-Discovery Pressure — 2026-10-10
+
+### Evidence That Changed The Design
+
+The requested physics direction needs mathematical models before computation
+plans. Primary mechanisms from ModelingToolkit, Wolfram, SymPy, JAX, Lean and
+BIPM motivate explicit equation descriptions, space/binding identity, theory
+premises, derivative maps, independently checked claims and joint uncertainty.
+The canonical [proposal](../design/scientific_discovery.md) retains five modeling
+contracts over the existing primitive families. An oscillator exposes no-input
+unit/derivation checks, damping invalidation and parameter non-identifiability.
+The named shared framework has useful reference/revision/evidence machinery but
+nominal ports and definition expansion cannot establish these scientific laws.
+
+### Workflow Friction
+
+The existing scientific target exercised learned state without a mathematical
+physics model. Conflating expression DAGs with cyclic equation constraints would
+weaken the executable graph invariant. Conflating proof, approximation and
+empirical fit would hide the scientific basis even with a replayable receipt.
+Source spelling and numeric implementations should not be selected before those
+contracts exist; a fictional explicit-call target keeps the activity reviewable.
+
+### Durable Improvement
+
+Added one focused designing owner, linked it through synthesis, primitive and
+framework routes, the maintainer guide, numeric evidence, question 9 and the
+open decision ledger. Extended the existing scientific pressure fixture with
+referable energy expressions and explicit premise-qualified checking, preserving
+its learned-state cases. SP1-SP5 name independent positive/negative oracles,
+representation alternatives and the current implementation gaps. No parser,
+runtime, solver, mathematical proof checker or ordinary source feature changed.
+
+Validation: 146 documentation, target, packet and primitive checks pass; 2285
+local file links across 169 documents resolve, all five packets are coherent,
+and the 63-node hierarchy still maps the same 25 target routes. These checks
+validate artifact/navigation integrity, not scientific or source conformance.
+
+### Next Pass
+
+Compare the same small space/binder/relation model in a dedicated mathematical
+artifact and a shared-framework extension (SP1). Then specify a bounded exact
+polynomial/differential rule fragment and independently replay the oscillator
+claim with explicit premises (SP2). Keep solver error, measurement uncertainty,
+inverse identifiability, advanced physics and user authoring trials separately
+qualified; do not use one successful derivation to certify them.

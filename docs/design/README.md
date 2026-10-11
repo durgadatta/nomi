@@ -50,6 +50,9 @@ For the broader purpose, competing directions and current gap, read the
 15. [Statistical Data Interface](statistical_data.md) - designing engine-free
     object contracts, named lazy plans, schema checking and bounded exact laws;
     a domain adapter over the shared direction; no data engine or source syntax admitted.
+16. [Scientific Models And Discovery](scientific_discovery.md) - proposed spaces,
+    equations, theories, observations and qualified realizations, with a physics
+    workflow and ordered admission gates; no scientific engine admitted.
 
 [The old target](target.nomi) remains a superseded predecessor, not an active
 specification. Target programs illustrate accepted core syntax and explicitly

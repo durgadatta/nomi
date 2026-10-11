@@ -26,3 +26,47 @@ func predict(
 # Required oracle: adding an outlier only to held-out rows cannot change the
 # fitted training scaler; changing feature schema rejects prediction.
 # Choosing a bad temporal split remains a modeling error, not repaired by syntax.
+
+
+# Physics continuation: docs/design/scientific_discovery.md, SP1/SP2.
+# Fictional ordinary constructors/checker calls; not runnable or typechecked.
+# Inputs are named symbolic expressions, not numeric bindings or a live solver.
+from lab.science import ClaimEvidence, Expression, MathematicalModel
+from lab.science import ScienceError, Symbol, Theory, claims, expressions
+
+
+func check_oscillator_energy(
+    model: MathematicalModel,
+    theory: Theory,
+    time: Symbol,
+    displacement: Expression,
+    mass: Expression,
+    stiffness: Expression,
+) -> Result[ClaimEvidence, ScienceError]:
+    velocity = expressions.derivative(displacement, variable=time, theory=theory)?
+    speed_squared = expressions.multiply(velocity, velocity, theory=theory)?
+    displacement_squared = expressions.multiply(displacement, displacement, theory=theory)?
+    kinetic_twice = expressions.multiply(mass, speed_squared, theory=theory)?
+    potential_twice = expressions.multiply(stiffness, displacement_squared, theory=theory)?
+    energy_twice = expressions.add(kinetic_twice, potential_twice, theory=theory)?
+    half = expressions.rational(1, 2, theory=theory)?
+    energy = expressions.multiply(half, energy_twice, theory=theory)?
+    energy_rate = expressions.derivative(energy, variable=time, theory=theory)?
+    conservation = claims.zero(energy_rate, model=model, theory=theory)?
+    return claims.check(conservation, premises=model.relations, theory=theory)
+
+
+# Contract: every returned expression is engine-free, context-qualified and
+# referable. An Expression result says it is well formed, not that a theorem
+# about it has been proved. rational constructs exact expression data; it does
+# not change the admitted ordinary Int division contract.
+# This claim needs constant m,k, a real C2 displacement and the undamped,
+# unforced dynamics relation m*D_t^2(x) + k*x = 0. All are retained premises.
+# ClaimEvidence can remain unknown/conditional; an Ok receipt is NOT a proof
+# of conservation or empirical validity. No observations or solver run occur.
+# Negative pressure: time substituted for displacement fails space checking;
+# same-spelled symbols from different binders are not interchangeable;
+# revising dynamics to include damping invalidates the conservation receipt;
+# missing regularity remains an obligation rather than a guessed derivative.
+# Numerical trajectories, observation uncertainty and inverse identification
+# require separate qualified evidence as specified by SP3/SP4.

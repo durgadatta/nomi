@@ -344,6 +344,7 @@ These choices are not yet strong enough for permanent syntax:
 | Generators | Dedicated design using reserved `yield` or streams | Cases where iterator objects are materially worse. |
 | Table planning | Ordinary verbs on typed plan values | CSV, dataframe, SQL, and distributed execution prototypes. |
 | Numeric tower beyond the first-product Int contract | Exact Int is accepted; Float/Decimal, explicit fixed width and conversion remain open | Scientific, finance, and systems-profile laws and benchmarks. |
+| Scientific modeling layer | Five proposed contracts: spaces, bound expressions/relations, theories, joint observations and qualified realizations | [SP1-SP5](scientific_discovery.md#current-gap-and-ordered-implementation): no-input oscillator checks, premise-qualified derivation, approximation and inference counterexamples. |
 | Data openness | Explicit rest field or decoder policy | API evolution and forward-compatible config programs. |
 | Edition boundaries | Per-package editions normalized to Core | First real breaking migration. |
 

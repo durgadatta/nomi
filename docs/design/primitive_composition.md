@@ -22,6 +22,12 @@ Read the next two sections for the hierarchy, the worked reductions for its
 meaning, and the catalog for a particular construct. The final integration
 path turns the map into implementation work.
 
+For physics and other scientific domains, the
+[scientific modeling proposal](scientific_discovery.md) composes spaces,
+expressions/relations, theories, observations and realizations over these
+families. It retains distinct evidence for exact derivation, approximation and
+empirical agreement; the existing catalog does not certify those domain laws.
+
 ## Distill Responsibilities Before Choosing Instructions
 
 These are **semantic families**, not six indivisible machine instructions.
