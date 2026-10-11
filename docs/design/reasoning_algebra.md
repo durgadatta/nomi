@@ -565,6 +565,15 @@ interpretations. Include a learned example-fit proposal that fails universal
 replacement and two observationally indistinguishable causal models. Preserve
 R3/R4 analytic/approximation gates and R5 comprehension/handoff evidence.
 
+The [source-linked comparison](../../tools/intelligence_examples.py) now closes
+one tiny cross-lab boundary: source-derived typed oscillator hypotheses become
+finite alternatives through full artifact fingerprints. Changed source content
+invalidates inquiry. Supplied binary causal mechanisms retain different
+intervention answers despite identical observational distributions; example-fit
+versus a universal replacement and hygienic beta extraction also run. Five
+independent checks pass. These are finite discriminators, not general causal or
+learning support. Shared providers and a Nomi producer remain open.
+
 No stochastic keyword, universal model superclass, model-generated authority,
 mandatory brain theory or general inference engine is accepted by these examples.
 A kernel comparison can guide the design without requiring ordinary eager

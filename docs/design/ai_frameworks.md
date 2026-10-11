@@ -240,6 +240,35 @@ unimplemented. The artifacts test the conceptual foundation rather than
 claiming a general intelligence engine. Common scoped source production and
 structure-provider integration remain necessary before language admission.
 
+### Source-Linked Hypotheses And Two Deeper Discriminators
+
+`python3 -m tools.intelligence_examples` connects the scoped-term producer to
+finite inquiry. The two oscillator mechanisms are source-derived pure rational
+functions with the same checked callable contract. Their finite alternative
+identities bind the full source/type/origin inspection fingerprints. Changing
+formula content invalidates the inquiry basis even if a producer reuses the old
+source revision label. The measurement likelihood and mismatch loss remain
+explicit assumptions; the mechanism text does not establish those numbers.
+
+The command also runs the causal discriminator above. Independent tests execute
+its binary structural assignments separately from the kernel adapter. Both
+observational distributions agree, while the intervened `Y=1` probabilities are
+zero and one-half. This is a supplied finite mechanism comparison, not learned
+causal identification or a general intervention engine.
+
+For abstraction learning, `x*x` and `x` agree at supplied examples zero and one
+but disagree at two. Finite fit therefore fails a universal replacement claim.
+Separately, hygienic beta extraction of `offset=5` yields an alpha-equivalent
+`x+5` term in the admitted pure-term lab. Five cross-lab checks pass. These are
+executable conceptual counterexamples, not empirical discovery benchmarks.
+
+The producer is still a checked Python-expression adapter, not Nomi source
+quotation. It returns detached passive inspection records and finite model
+objects, without evaluating a sensor or learned callback. Source identities now
+cross one explicit boundary; common type/space/context providers, Nomi production,
+source reconstruction, general law transport and user-facing diagnostics remain
+integration gates. Do not treat the small bridge as a universal model hierarchy.
+
 ## Start From The Developer's Activity
 
 The [minimal reasoning algebra](reasoning_algebra.md) now challenges the common

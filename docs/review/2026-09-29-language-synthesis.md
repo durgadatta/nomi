@@ -1983,3 +1983,34 @@ Link source-derived scoped hypotheses to the finite inquiry descriptions and
 exercise causal non-identifiability and empirical fit versus checked extraction.
 Then compare shared structure providers and source diagnostics before any
 foundational admission; keep analytic, operational and human evidence separate.
+
+## Source Hypotheses, Causality And Abstraction — 2026-10-11
+
+### Evidence That Changed The Design
+
+The source-linked comparison now composes checked pure-term hypotheses with
+finite inquiry through artifact-bound identities. Five checks include source
+content invalidation, shared callable contracts, an independent binary-assignment
+causal oracle and an example-fit counterexample beside checked beta extraction.
+
+### Workflow Friction
+
+Reuse of a source revision label cannot bless changed formula content. Nor can
+a formula establish the supplied measurement likelihood. Two models can agree
+observationally and disagree under intervention. Passing every supplied example
+does not establish a semantics-preserving learned abstraction.
+
+### Durable Improvement
+
+The first explicit cross-lab boundary captures source/type/origin fingerprints
+and preserves finite model/loss assumptions. It rechecks inquiry rather than
+transporting an earlier assessment. Supplied causal mechanisms and independently
+executed equations expose non-identifiability; a finite learning proposal is
+refuted while hygienic extraction passes its narrower pure-term claim.
+
+### Next Pass
+
+Compare common structure providers and Nomi source/constructor production with
+independent law/evidence transport and useful diagnostics. The present producer
+is a Python-expression adapter. General causality, continuous inference,
+abstraction learning, empirical adequacy and measured usability remain open.

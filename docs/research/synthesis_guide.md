@@ -30,8 +30,10 @@ objective, revision and actual effects. Compare it with an ordinary function and
 a scientific model. A matrix kernel, a symbolic rule and a learned search policy
 can be implementations within the same language without sharing a truth criterion.
 The existing AI/reasoning owners hold the candidate; no second research plan is
-needed. Next compare one source/constructor contract across the current finite
-labs, including an invalid learned abstraction and an unidentified causal model.
+needed. A source-linked finite comparison now exercises an invalid learned abstraction
+and observationally indistinguishable causal mechanisms. Next compare common
+structure providers and a Nomi source/constructor contract, retaining independent
+law transport and source diagnostics.
 
 ## Find Your Question
 

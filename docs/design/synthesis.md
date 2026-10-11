@@ -538,10 +538,11 @@ constraints and losses. It checks normalization/composition, returns no posterio
 for zero-support evidence, retains tied decisions and computes prospective
 measurement value. Independent replay and exhaustive contingent-policy vectors
 pass. This is a bounded AF1/AF2 experiment, not an AI runtime or accepted source
-API. The substantial gap is now integration: one scoped source/constructor
-contract and explicit structure providers must connect ordinary terms, logical
-hypotheses, numeric maps and finite models, rather than standardize unrelated
-laboratory schemas.
+API. A tiny cross-lab comparison now links source-derived scoped hypotheses to
+finite inquiry and exercises causal/abstraction counterexamples. The substantial
+gap remains integration: a Nomi source/constructor contract and explicit
+structure providers must connect ordinary terms, logical hypotheses, numeric
+maps and finite models, rather than standardize unrelated laboratory schemas.
 
 ### Compose Richer Features
 

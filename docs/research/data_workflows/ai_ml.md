@@ -150,6 +150,13 @@ associativity, duplicate/correlated report handling, withdrawal, zero mass,
 stale revisions and exhaustive contingent-policy comparison. A separate replay
 uses unnormalized joint losses, avoiding the producer's conditional calculation.
 
+`python3 -m tools.intelligence_examples` additionally links source-derived typed
+oscillator hypotheses into inquiry with content-bound references. Five checks
+include changed-content invalidation, an independent binary-assignment causal
+oracle and a learned-example-fit counterexample beside checked beta extraction.
+This closes finite **discriminators**, not general source/type/structure-provider
+integration, causal discovery or learned-library admission.
+
 This is an engine-free proof of composition at a finite slice, not a general
 AI framework, empirical discovery result or accepted Nomi API. It adds no
 random sampling, causal model, optimizer, matrix backend or external action.
