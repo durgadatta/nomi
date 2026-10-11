@@ -2097,3 +2097,30 @@ CLI uses actual Nomi source, retaining its explicit supplied likelihoods.
 Implement bounded typed program search with independently replayed example fit,
 then use candidate predictions to choose and revise sequential inquiries. Keep
 search coverage, empirical adequacy and universal identities distinguishable.
+
+## Typed Program Induction — 2026-10-11
+
+### Evidence That Changed The Design
+
+The shared callable boundary now accepts an inductive producer. Twelve checks
+exercise ranked bounded enumeration, contradictory examples, budget/retention
+limits, counterexample revision and a composed scientific force proposal.
+
+### Workflow Friction
+
+A shortest example-fitting function need not express the actual mechanism.
+Equivalent spellings can also bias a prior if silently treated as distinct
+hypotheses. Proposal retention is a different limit from search coverage.
+
+### Durable Improvement
+
+A separate tuple enumerator and arithmetic interpreter replay example fit,
+coverage and ranked retention without producer search or realization. Context
+captures the exact grammar, examples, ordering, budget and retention. Proposals
+are ordinary typed terms, not privileged AI objects or universal rewrites.
+
+### Next Pass
+
+Connect learned/source-derived alternatives to adaptive inquiry and an immutable
+observation journal. Independently replay withdrawal, dependence, impossible
+observations and changed model/objective contexts before suggesting world actions.

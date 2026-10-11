@@ -438,3 +438,9 @@ Record performed evidence and the next exact discriminator in the
 [existing bridge](../review/2026-09-29-language-synthesis.md), then return here to
 choose the next question. This pass prepares the deeper synthesis decision; it
 does not preselect its outcome.
+
+The implemented induction path is now `tools.program_search`: explicit typed
+grammar → bounded term construction → example-qualified proposals → independent
+replay → shared callable family. Use this alongside source-derived hypotheses;
+next connect predictions to captured observations and adaptive inquiry. Passing
+examples does not promote a proposed abstraction into a universal rewrite.

@@ -621,6 +621,23 @@ mandatory brain theory or general inference engine is accepted by these examples
 A kernel comparison can guide the design without requiring ordinary eager
 programming to become a probabilistic execution graph.
 
+### Learned Terms Are Qualified Proposals
+
+The [bounded program search](../../tools/program_search.py) constructs typed
+closed functions from a declared grammar and examples, then shares them through
+the existing Rational transformation provider. An independent tuple grammar and
+arithmetic interpreter replay its example-fit and bounded completeness claims.
+Grammar/example revisions, budget, ordering and retention participate in context
+identity. Search limits and retained-proposal truncation stay distinguishable.
+
+This adds a finite inductive producer alongside source and explicit constructors,
+not a new language primitive. Induction does not confer universal equality or
+physical adequacy. A later counterexample invalidates the example basis and can
+remove a proposal; a checked refactoring still needs its own stronger judgment.
+Library growth, learned search guidance and transport to richer structures remain
+open. The scientific force comparison demonstrates compositional construction,
+not automatic discovery of units, causal meaning or governing physics.
+
 ## Ordinary Programming Must Stay Ordinary
 
 Writing a function, matching a Result, reading a file or building a report must

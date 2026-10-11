@@ -235,8 +235,8 @@ experiment and objective content/revision/cost; changed context refuses replay.
 An assessment proposes no external action and grants no authority.
 
 General probabilistic source programs, continuous inference, stochastic traces,
-causal interventions, structure learning and empirical model adequacy remain
-unimplemented. The artifacts test the conceptual foundation rather than
+general causal interventions, unrestricted structure learning and empirical
+model adequacy remain unimplemented. The artifacts test the conceptual foundation rather than
 claiming a general intelligence engine. Common scoped source production and
 structure-provider integration remain necessary before language admission.
 
@@ -254,6 +254,33 @@ pure scientific/ordinary functions through the actual frontend into the same
 scoped-term contract. This closes the Python-only authoring comparison for that
 profile; general source admission, evidence transport and structure providers
 remain separate obligations.
+
+### Executed Bounded Program Induction
+
+Run `python3 -m tools.program_search` to construct pure rational functions from
+a captured typed grammar and teaching examples. The
+[producer](../../tools/program_search.py) enumerates bodies by node count and
+explicit grammar order, checks example outputs, and retains bounded proposals
+using the shared transformation provider. No callback, learned truth or execution
+authority is embedded in a proposal. Separate
+[tuple enumeration and arithmetic replay](../../tools/program_search_replay.py)
+checks counts, ranked proposals, retention and complete/incomplete coverage.
+
+The demonstration learns both `x` and `x*x` from `(0,0)` and `(1,1)`; an actual
+example `(2,4)` removes the line. Another test induces `-2*position - velocity`
+from supplied force examples. These are original finite comparisons, not
+reproductions of DreamCoder or a neural learner. A match establishes only the
+supplied examples. Exhaustiveness is bounded by the declared grammar and node
+limit; it does not establish that the actual mechanism is in that grammar.
+
+Descriptions retain example/grammar identities and exact contents, ordering,
+search budget and proposal limit. There are one to three scalar parameters,
+up to four constants/operations, seven body nodes, sixteen examples and five
+thousand examined candidates. Constants and example rationals have a declared
+16-bit capacity. Retention truncation is distinct from incomplete search. Multiple
+spellings of the same function remain distinct proposals; their prior coding and
+semantic deduplication require explicit policies. No learned approximation or
+universal refactoring claim is inferred from example fit.
 
 ### Source-Linked Hypotheses And Two Deeper Discriminators
 
@@ -552,10 +579,11 @@ tensor, accelerator, autodiff or training contract. The scientific polynomial
 probe is a bounded formal oracle, not a gradient engine. Existing generic object
 composition does not infer tensor axes from nominal ports.
 
-Prioritize the shared AF1 scoped-source/constructor and R2 structure-provider
-comparison, using finite logical/probabilistic and ordinary challengers beside
-the numeric example. Follow with AF2 established symbolic/AD checks and a tiny
-causal/abstraction-learning comparison; do not let matrix execution dictate the
+Extend the bounded AF1 Nomi-source/constructor and R2 function/kernel provider
+comparison to logical and numeric challengers. Program induction now supplies
+example-qualified proposals. Next connect actual observations to adaptive inquiry,
+then follow with AF2 established symbolic/AD checks and causal/abstraction-learning
+comparisons; do not let matrix execution dictate the
 foundation. Keep stateful/random/distributed challengers in
 the pressure set from the start so a convenient pure example does not determine
 all later semantics. Compare development tasks and handoff, not only numerical
