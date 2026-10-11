@@ -167,18 +167,24 @@ class ProgramFamily:
 class Prediction:
     family: ProgramFamily
     arguments: tuple[F, ...]
-    outcomes: tuple[F, ...]
+    outcomes: tuple[F | None, ...]
     kernel: q.Kernel
 
 
-def predict(family, arguments):
+def predict(family, arguments, *, include_other=False):
     """Explicit exact realization; returns a finite observation description."""
     if type(family) is not ProgramFamily or type(arguments) is not tuple:
         raise t.Refused("prediction requires captured family and immutable arguments")
     if any(type(x) is not F for x in arguments):
         raise t.Refused("prediction requires exact rational inputs")
+    if type(include_other) is not bool:
+        raise t.Refused("outside-support bucket requires explicit boolean")
     values = tuple(t.realize(x.description, arguments) for x in family.programs)
     outcomes = tuple(sorted(set(values)))
+    if include_other:
+        if len(outcomes) >= 8:
+            raise t.Refused("outside-support bucket exceeds finite outcome capacity")
+        outcomes += (None,)
     revision = q.fingerprint(family.space, arguments, outcomes)
     destination = q.Space(
         t.Identity("program-prediction", revision, "outcomes"),

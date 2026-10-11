@@ -39,6 +39,7 @@ Follow the [learning path](guide/README.md#learn-in-order), or jump to a topic:
 - [Example Catalog](guide/examples.md): recommended tasks and older experimental samples.
 - [Using Nomi's Tools](guide/tools.md): browser, CLI, notebooks, editor, and troubleshooting.
 - [Current Support And Growth](guide/status.md): capability boundaries and future guarantees.
+- [Explore Learning And Reasoning](guide/reasoning_lab.md): capture functions, induce proposals and revise inquiries from observations.
 
 The remaining sections are reference routes for design, research, and
 development. The [complete inventory](#complete-markdown-inventory) is available
@@ -226,6 +227,7 @@ This list is intentionally complete and is checked by tests.
 - [Example Catalog](guide/examples.md)
 - [Using Nomi's Tools](guide/tools.md)
 - [Current Support And Growth](guide/status.md)
+- [Explore Learning And Reasoning](guide/reasoning_lab.md)
 
 ### Design
 

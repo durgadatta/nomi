@@ -540,9 +540,12 @@ measurement value. Independent replay and exhaustive contingent-policy vectors
 pass. This is a bounded AF1/AF2 experiment, not an AI runtime or accepted source
 API. A tiny cross-lab comparison now links source-derived scoped hypotheses to
 finite inquiry and exercises causal/abstraction counterexamples. The substantial
-gap remains integration: a Nomi source/constructor contract and explicit
-structure providers must connect ordinary terms, logical hypotheses, numeric
-maps and finite models, rather than standardize unrelated laboratory schemas.
+gap remains broader integration. Bounded Nomi functions, constructors and typed
+program induction now share a Rational provider and produce finite prediction
+kernels. Observation journals and independent replay connect those kernels to
+adaptive inquiry and revision. Logical/numeric structures, general evidence
+transport and ordinary runtime admission must extend these contracts without
+standardizing unrelated laboratory schemas or erasing carrier laws.
 
 ### Compose Richer Features
 

@@ -5,8 +5,11 @@ The position collector is a removable bridge until typed Surface carries spans
 for all expressions. It does not certify ordinary Nomi numeric semantics.
 """
 
+import argparse
 import ast
+import hashlib
 import json
+from pathlib import Path
 
 from lark import Token
 from lark.exceptions import LarkError
@@ -89,8 +92,23 @@ def describe(source, context=()):
 
 
 def main():
-    source = t.Source("nomi-square", "1", "func square(x):\n    return x * x\n")
-    print(json.dumps(describe(source), indent=2))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("source", nargs="?", type=Path, help="one pure Nomi function; captured, never run")
+    parser.add_argument("--identity", help="source owner (default: path-qualified filename)")
+    parser.add_argument("--revision", help="revision label (default: content digest)")
+    args = parser.parse_args()
+    try:
+        if args.source is None:
+            source = t.Source("nomi-square", "1", "func square(x):\n    return x * x\n")
+        else:
+            code = args.source.read_text(encoding="utf-8")
+            source = t.Source(
+                args.identity or (args.source.name[:40] + "@" + hashlib.sha256(str(args.source.resolve()).encode()).hexdigest()),
+                args.revision or hashlib.sha256(code.encode()).hexdigest(), code,
+            )
+        print(json.dumps(describe(source), indent=2))
+    except (OSError, UnicodeError, t.Refused) as error:
+        parser.error(str(error))
 
 
 if __name__ == "__main__":

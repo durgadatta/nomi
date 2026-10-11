@@ -237,8 +237,8 @@ An assessment proposes no external action and grants no authority.
 General probabilistic source programs, continuous inference, stochastic traces,
 general causal interventions, unrestricted structure learning and empirical
 model adequacy remain unimplemented. The artifacts test the conceptual foundation rather than
-claiming a general intelligence engine. Common scoped source production and
-structure-provider integration remain necessary before language admission.
+claiming a general intelligence engine. Bounded source/function/kernel integration now runs; broader typed source and
+structure/evidence contracts remain necessary before language admission.
 
 The inquiry artifact now also retains each prospective outcome as a named,
 immutable branch: its modeled mass, conditional hypothesis measure and tied
@@ -252,7 +252,7 @@ hypothetical branches are not reports that an observation occurred.
 The [explicit Nomi producer](../../tools/nomi_terms.py) also captures bounded
 pure scientific/ordinary functions through the actual frontend into the same
 scoped-term contract. This closes the Python-only authoring comparison for that
-profile; general source admission, evidence transport and structure providers
+profile; general source admission, evidence transport and richer structure providers
 remain separate obligations.
 
 ### Executed Bounded Program Induction
@@ -304,12 +304,46 @@ Separately, hygienic beta extraction of `offset=5` yields an alpha-equivalent
 `x+5` term in the admitted pure-term lab. Five cross-lab checks pass. These are
 executable conceptual counterexamples, not empirical discovery benchmarks.
 
-The producer is still a checked Python-expression adapter, not Nomi source
-quotation. It returns detached passive inspection records and finite model
-objects, without evaluating a sensor or learned callback. Source identities now
-cross one explicit boundary; common type/space/context providers, Nomi production,
-source reconstruction, general law transport and user-facing diagnostics remain
-integration gates. Do not treat the small bridge as a universal model hierarchy.
+The comparison CLI now uses the bounded Nomi producer; the Python-expression
+adapter remains available explicitly. Both capture inert checked terms. Closed
+rational functions and finite kernels share a provider boundary, while source
+reconstruction, general law/evidence transport, richer types and runtime
+integration remain open. Do not treat this bridge as a universal model hierarchy.
+
+### Executed Adaptive Observation And Revision
+
+The [adaptive inquiry journal](../../tools/adaptive_inquiry.py) now captures
+original priors, trial occurrences, reports and explicit endorsement. Each report
+binds the full captured trial law. Copies about the same trial count once;
+conflicting outcomes about that occurrence are `conflicting-reports`, distinct
+from `impossible-under-model`. Withdrawal recomputes from the original prior.
+The admitted profile explicitly declares conditional independence of **distinct
+trials given the modeled state**. This is a supplied modeling assumption; source
+names or report multiplicity cannot establish it. Correlated trials need a joint
+state/likelihood description, not silent multiplication.
+
+A one-step plan recomputes model-relative information value for each captured
+question and objective. It retains best-query ties and zero-value stop ties;
+negative-value queries do not compel action. No supported posterior requests
+model/evidence repair. Changed priors, trial laws, endorsements, query costs or
+objectives invalidate earlier assessments. Independent likelihood-product replay
+and the existing unnormalized joint-loss checker verify estimates and plans.
+
+Run `python3 -m tools.intelligence_loop` for an inspectable composition of
+induction, prediction, inquiry and revision. `--observe 4 --at 2` explicitly
+supplies a teaching observation, rechecks examples and stops; `--observe 3`
+retains unexpected output through an explicit zero-likelihood outside-support
+bucket and requests repair. `--json` exposes every named intermediate. A source
+or learned description neither samples a sensor nor authorizes world action.
+The original observed scalar is retained in a content-addressed input record.
+No posterior is silently transported into a revised hypothesis vocabulary.
+
+The journal bounds trials/reports/questions at 16/32/8 and reuses finite exact
+model capacities. Its conditional-independence law and one-step objective are
+not universal cognitive primitives. Longer-horizon planning, latent-dependent
+observations, generalized causal discovery, vocabulary transport and human
+interaction remain subsequent discriminators. See the
+[runnable guide](../guide/reasoning_lab.md) for authoring and correction.
 
 ## Start From The Developer's Activity
 

@@ -107,8 +107,12 @@ The same goal extends to [learning and intelligent programs](docs/design/ai_fram
 describe possible worlds, compare explanations, learn reusable ideas and choose
 useful questions through the same language foundations. Bounded checkout
 experiments now check scoped terms, premise support, theory translations and
-exact finite inquiry without an AI engine. A tensor-contract checker also runs;
-general inference, learning and their source integration remain design work.
+exact finite inquiry. The [learning and reasoning lab](docs/guide/reasoning_lab.md)
+now captures bounded Nomi functions, constructs example-fitting programs and
+revises useful questions from supplied observations. Try
+`python3 -m tools.intelligence_loop --observe 4`. These checkout tools have
+independent replay; general inference, richer learning and ordinary runtime
+integration remain design work.
 
 The first useful language is focused on **small scripts and trustworthy local
 data reports**. The goal is to let you add stronger guarantees as a program

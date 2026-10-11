@@ -450,10 +450,10 @@ refusal does not change meaning. These are research budgets, not language limits
 
 Neither binder representation is selected as Nomi Core. Nominal references aid
 source ownership/inspection; indices provide a small alpha-normal form but need
-source metadata beside them. No inverse formatter, Nomi producer, recursive
-binding groups, variants, effect/completion terms, general import resolver or
-shared domain-library migration is implemented. The next R1 artifact is the
-finite premise ledger; R2 then checks declared theory bridges independently.
+source metadata beside them. The bounded Nomi producer and finite premise ledger
+now run. Inverse formatting, recursive binding groups, variants, effect/completion
+terms, general imports and broad domain-library migration remain open. R2 checks
+declared finite theory bridges independently.
 
 ### Actual Nomi Source Production
 
@@ -609,7 +609,8 @@ invalidates inquiry. Supplied binary causal mechanisms retain different
 intervention answers despite identical observational distributions; example-fit
 versus a universal replacement and hygienic beta extraction also run. Five
 independent checks pass. These are finite discriminators, not general causal or
-learning support. Shared providers and a Nomi producer remain open.
+learning support. Bounded Nomi production and function/kernel providers now run;
+logical/numeric integration and general evidence transport remain open.
 
 Inquiry explanations now retain named hypothetical branches, posteriors and
 decisions, not only their aggregate score. Independent replay checks those
@@ -637,6 +638,22 @@ remove a proposal; a checked refactoring still needs its own stronger judgment.
 Library growth, learned search guidance and transport to richer structures remain
 open. The scientific force comparison demonstrates compositional construction,
 not automatic discovery of units, causal meaning or governing physics.
+
+### Observation Changes Context, Not Meaning Silently
+
+The [adaptive journal](../../tools/adaptive_inquiry.py) composes the shared finite
+models with occurrence-bound quoted/endorsed reports, independent-trial assumptions
+and immutable revision. Separate replay verifies conditional estimates and plans.
+Copied reports are idempotent; conflicts and zero model support have distinct
+results. A new query or changed objective has no authority to rewrite earlier
+observations. Withdrawal starts from the original prior. Source/inductive programs
+supply predictions; actual observation is an explicit input, not a forecast.
+
+The [discovery loop](../../tools/intelligence_loop.py) now executes these shared
+compositions with named intermediates and an outside-model-support bucket.
+There is no silent posterior transport to a revised family. These additions use
+ordinary immutable terms, supplied laws and qualified judgments; they introduce
+neither a special intelligence primitive nor probabilistic ordinary evaluation.
 
 ## Ordinary Programming Must Stay Ordinary
 
@@ -675,8 +692,8 @@ be represented as terms. This is a general-purpose redesign, not a physics DSL.
    Include an ordinary report function and a scientific map; neither must become
    a global lazy graph. Then use a finite supplied-rule premise ledger to test
    mention versus assertion, scoped imports and independent justification paths.
-   The executed finite binder/ledger artifacts close a comparison slice; Nomi
-   production, reconstruction, effects/recursion and common domain migration
+   The executed finite binder/ledger and bounded Nomi producer close a comparison
+   slice; general typed production, reconstruction, effects/recursion and domain migration
    remain gates, not new source features.
 3. **R2 — structures and qualified transformations.** Introduce explicit providers
    for map rules, tangent/cotangent roles and partial-domain obligations. Use an
@@ -686,8 +703,9 @@ be represented as terms. This is a general-purpose redesign, not a physics DSL.
    interpretation, one-way preservation and an invalid bridge; retain each
    profile's own result type and distinguish exhausted search from refutation.
    The finite classical bridge and exact inquiry artifacts now challenge these
-   laws independently. Next connect scoped sources to explicit structure
-   providers and compare causal/learned interpretation obligations.
+   laws independently. Closed Rational/finite-kernel providers now connect scoped
+   sources and induction to adaptive inquiry. Next extend structures and compare
+   causal/learned interpretation and premise/vocabulary transport obligations.
 4. **R3 — relations, selection and variation.** Compose a constrained model and
    a continuum action with named admissible variations and boundary terms.
    Independently check one Euler-Lagrange derivation. Retain stationary saddles,

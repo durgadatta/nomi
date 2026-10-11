@@ -2124,3 +2124,34 @@ are ordinary typed terms, not privileged AI objects or universal rewrites.
 Connect learned/source-derived alternatives to adaptive inquiry and an immutable
 observation journal. Independently replay withdrawal, dependence, impossible
 observations and changed model/objective contexts before suggesting world actions.
+
+## Adaptive Discovery Composition — 2026-10-11
+
+### Evidence That Changed The Design
+
+Induction, source/constructor transformations, finite prediction, observation
+journals and inquiry now form one executable loop. Sixteen new checks cover
+quoted/endorsed observations, repeated trials, copies, conflict, withdrawal,
+independent joint-world enumeration, stale laws, ties, CLI and model repair.
+
+### Workflow Friction
+
+A forecast is not an observation; two reports need not represent two trials.
+Surprising values cannot be discarded because the finite family lacks them.
+Changing a hypothesis vocabulary also cannot silently carry the old posterior.
+
+### Durable Improvement
+
+The journal binds each report to an immutable occurrence/law context and names
+the distinct-trial dependence assumption. Independent likelihood replay checks
+estimates; existing joint-loss replay checks all query branches. A zero-likelihood
+outside-support bucket retains unexpected observations and requests repair. The
+CLI explains the loop, with full named JSON on request; a new user guide provides
+hierarchical authoring and correction routes. Ordinary eager execution is intact.
+
+### Next Pass
+
+Check explicit restriction/refinement of hypothesis families, including lost
+positive mass, truncated search and changed grammar. Then broaden causal,
+latent-dependent and longer-horizon challengers and independent adapters;
+actual scientific adequacy and human comprehension remain separate evidence.

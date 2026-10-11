@@ -104,6 +104,13 @@ compatibility spellings, not acceptance of a complete target escape grammar.
 The [escape repair receipt](../orientation/project_roadmap.md#source-text-escape-repair--october-10)
 records the tested scope and remaining work.
 
+The [learning and reasoning lab](reasoning_lab.md) is also runnable from a
+checkout. It captures bounded pure Nomi function descriptions, searches typed
+grammars for example-fitting proposals and revises finite inquiry from explicitly
+endorsed observations. These Python-hosted tools are separate from the ordinary
+Nomi interpreter and browser; their checks do not establish general intelligence
+or empirical scientific validity.
+
 ## The Guarantees Being Built
 
 These concepts describe the intended growth path. They do not claim that the

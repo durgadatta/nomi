@@ -33,6 +33,7 @@ document or save it as `example.nomi` and run it from the CLI.
 | Is syntax in a design document available yet? | [Support labels and differences](status.md#reading-status-labels) |
 | What do types, effects, and capabilities mean? | [Growing a program](status.md#the-guarantees-being-built) |
 | Can I install and distribute Nomi as a stable language? | [Distribution status](status.md#distribution-status) |
+| Can I try the learning and reasoning experiments? | [Explore Learning And Reasoning](reasoning_lab.md) |
 | How do I work on Nomi itself? | [Developing Nomi](../orientation/development.md) |
 
 ## About These Guides
