@@ -1884,3 +1884,34 @@ Implement the finite supplied-rule premise ledger with independent support paths
 quoted versus endorsed statements and withdrawal. Then check finite theory
 translations against independent model semantics. Retain recursive/effectful
 binding, Nomi producers, formatting and actual domain-library migration as gates.
+
+## Finite Premise Support — 2026-10-11
+
+### Evidence That Changed The Design
+
+The premise ledger now makes mention/endorsement, contradictory support,
+alternative justifications and withdrawal executable. Twelve focused checks use
+independent set-only replay and exhaustive models of a supplied-rule theory.
+The user's AI clarification broadens the continuation toward inference, learning,
+causal models and action selection as language-level composition pressures.
+
+### Workflow Friction
+
+A missing conclusion is not false. Two signed support flags are not classical
+complementary truth values, and two report IDs do not establish independent
+observations. Evidence revision cannot simply remove the first derivation.
+
+### Durable Improvement
+
+The fixed profile keeps immutable records, qualified identities, parent context,
+independently replayed sufficient support and bounded incomplete results. It
+preserves old conditional evidence while refusing reuse against a new context.
+No universal belief logic, probability score or actual authority is introduced.
+Focused tests and lint pass; the design owner records exact scope and limits.
+
+### Next Pass
+
+Implement checked finite theory bridges with model semantics and an established
+checker adapter. Then use broader AI research to challenge the foundational
+contracts for compositional models, hypotheses, learning, inference and inquiry;
+keep matrix kernels behind realization rather than making them the definition.

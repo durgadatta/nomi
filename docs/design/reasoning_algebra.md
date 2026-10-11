@@ -359,7 +359,8 @@ premise ledger as a discriminator. R2 should make profiles and interpretation
 obligations explicit, using an established checker for independent replay. This
 is not an implementation of general theorem proving or AGM belief revision.
 The current exact lab still implements only its fixed polynomial profile, with
-no general premise ledger, theory bridge or rule-provider plugin boundary.
+no general premise ledger, theory bridge or rule-provider plugin boundary;
+the separate finite ledger below does not change that polynomial profile.
 
 ## Compact Executable Examples
 
@@ -452,6 +453,44 @@ source metadata beside them. No inverse formatter, Nomi producer, recursive
 binding groups, variants, effect/completion terms, general import resolver or
 shared domain-library migration is implemented. The next R1 artifact is the
 finite premise ledger; R2 then checks declared theory bridges independently.
+
+## Executed Premise Ledger And Revision
+
+The [premise ledger](../../tools/premise_ledger.py) implements
+`finite-signed-rule-support-v1`: immutable qualified atoms, quoted reports,
+explicit endorsement, supplied rules and revision-bound support. It reuses
+qualified identity from the binder lab, but does not reinterpret rational terms
+or pretend that the two profiles share a universal truth algebra.
+
+```bash
+python3 -m tools.premise_ledger
+pytest -n 0 prototype/tests/unit/tools/test_premise_ledger.py
+```
+
+Both signs of an atom may have support. This profile uses only its supplied rules;
+contradiction does not entail arbitrary facts. Missing support is not falsity.
+An unconditional rule is an explicitly supplied assumption, not an imported
+report. The producer retains nondominated report/rule dependency sets, including
+alternative rules with the same report basis. An independent set-only consumer
+replays each sufficient support and checks complete closure coverage. Twelve new
+checks compare seeded systems against exhaustive Horn models with **separate
+support flags for both signs**, not classical complementary truth values.
+
+Revision returns a new ledger with increasing local revision and parent digest.
+Withdraw one endorsement and the other justification survives; withdraw all and
+the result is unestablished. Old evidence remains replayable only in its captured
+context. Display records preserve originating sources: two copied reports are
+not asserted to be statistically independent merely because they have different
+report IDs. History is not a distributed publication protocol or an automatic
+choice of which report is correct.
+
+A derivation budget can leave partial support with `incomplete` coverage;
+unsupported questions then report `search-incomplete`, never fabricated
+refutation. Existing support may be displayed with partial coverage, so an unseen
+opposing derivation is not ruled out. Limits are 16 atoms, 32 rules/reports,
+8 literals per rule and 50000 candidate attempts. These are refusing lab budgets,
+not target-language limits. No probabilities, default logic, general belief
+revision, learned inference, remote retrieval or actual authority is implied.
 
 ## Ordinary Programming Must Stay Ordinary
 
