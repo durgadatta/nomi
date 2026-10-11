@@ -300,6 +300,15 @@ def decide(measure, objective):
 
 
 @dataclass(frozen=True)
+class Branch:
+    identity: Identity
+    outcome: Identity
+    mass: Fraction
+    posterior: Measure | None
+    decision: Decision | None
+
+
+@dataclass(frozen=True)
 class Inquiry:
     context: str
     baseline_loss: Fraction
@@ -307,6 +316,7 @@ class Inquiry:
     cost: Fraction
     net_value: Fraction
     outcome_masses: tuple[Fraction, ...]
+    branches: tuple[Branch, ...] = ()
 
 
 def query_value(measure, experiment, objective, *, cost=Fraction(0)):
@@ -321,8 +331,14 @@ def query_value(measure, experiment, objective, *, cost=Fraction(0)):
     baseline = decide(measure, objective).expected_loss
     predictive = pushforward(measure, experiment)
     residual = Fraction(0)
+    branches = []
     for j, outcome_mass in enumerate(predictive.masses):
+        outcome = experiment.destination.members[j]
+        branch_id = _result_identity(
+            "forecast-branch", measure, experiment, objective, outcome
+        )
         if not outcome_mass:
+            branches.append(Branch(branch_id, outcome, outcome_mass, None, None))
             continue  # A zero-mass branch supplies no conditional answer.
         weights = tuple(
             p * row[j] / outcome_mass
@@ -333,7 +349,11 @@ def query_value(measure, experiment, objective, *, cost=Fraction(0)):
             measure.space,
             weights,
         )
-        residual += outcome_mass * decide(hypothetical, objective).expected_loss
+        decision = decide(hypothetical, objective)
+        residual += outcome_mass * decision.expected_loss
+        branches.append(
+            Branch(branch_id, outcome, outcome_mass, hypothetical, decision)
+        )
     return Inquiry(
         fingerprint(measure, experiment, objective, cost),
         baseline,
@@ -341,6 +361,7 @@ def query_value(measure, experiment, objective, *, cost=Fraction(0)):
         cost,
         baseline - residual - cost,
         predictive.masses,
+        tuple(branches),
     )
 
 
@@ -385,7 +406,59 @@ def verify_inquiry(measure, experiment, objective, assessment):
         or assessment.outcome_masses != masses
     ):
         raise Refused("inquiry differs from independent loss replay")
+    expected_branches = []
+    for j, (outcome, mass, weights) in enumerate(
+        zip(experiment.destination.members, masses, joint, strict=True)
+    ):
+        branch_id = _result_identity(
+            "forecast-branch", measure, experiment, objective, outcome
+        )
+        if not mass:
+            expected_branches.append(Branch(branch_id, outcome, mass, None, None))
+            continue
+        posterior = Measure(
+            _result_identity("hypothetical", measure, experiment, j),
+            measure.space,
+            tuple(weight / mass for weight in weights),
+        )
+        # Work with joint losses before division; independent of decide().
+        risks = tuple(
+            sum(weight * loss for weight, loss in zip(weights, row, strict=True))
+            for row in objective.losses
+        )
+        minimum = min(risks)
+        decision = Decision(
+            fingerprint(posterior, objective),
+            minimum / mass,
+            tuple(
+                key
+                for key, risk in zip(objective.decisions.members, risks, strict=True)
+                if risk == minimum
+            ),
+        )
+        expected_branches.append(Branch(branch_id, outcome, mass, posterior, decision))
+    if type(assessment.branches) is not tuple or assessment.branches != tuple(
+        expected_branches
+    ):
+        raise Refused("inquiry branches differ from independent replay")
     return True
+
+
+def describe(assessment):
+    """Passive detached view; it does not validate evidence or perform a query."""
+    if type(assessment) is not Inquiry:
+        raise Refused("expected inquiry assessment")
+
+    def wire(value):
+        if type(value) is Fraction:
+            return {"numerator": value.numerator, "denominator": value.denominator}
+        if type(value) is dict:
+            return {key: wire(item) for key, item in value.items()}
+        if type(value) in (list, tuple):
+            return [wire(item) for item in value]
+        return value
+
+    return {"profile": PROFILE, **wire(asdict(assessment))}
 
 
 def example():
@@ -423,15 +496,7 @@ def main():
     prior, experiment, objective = example()
     result = query_value(prior, experiment, objective, cost=Fraction(1, 8))
     verify_inquiry(prior, experiment, objective, result)
-    record = asdict(result)
-    record = {
-        key: str(value)
-        if type(value) is Fraction
-        else [str(x) for x in value]
-        if type(value) is tuple
-        else value
-        for key, value in record.items()
-    }
+    record = describe(result)
     print(
         json.dumps(
             {

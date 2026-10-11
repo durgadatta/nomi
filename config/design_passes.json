@@ -275,7 +275,18 @@
         "reasoning contexts",
         "theory interpretation",
         "premise revision",
-        "mention versus assertion"
+        "mention versus assertion",
+        "intelligence",
+        "generative models",
+        "abduction",
+        "causal reasoning",
+        "causal discovery",
+        "concept learning",
+        "inference",
+        "active inquiry",
+        "world models",
+        "cognitive architecture",
+        "learned abstractions"
       ],
       "artifacts": {
         "research": "docs/research/features/README.md",
@@ -390,7 +401,9 @@
         "ruff check tools/finite_inquiry.py prototype/tests/unit/tools/test_finite_inquiry.py",
         "python3 -m tools.intelligence_examples",
         "pytest -n 0 prototype/tests/unit/tools/test_intelligence_examples.py",
-        "ruff check tools/intelligence_examples.py prototype/tests/unit/tools/test_intelligence_examples.py"
+        "ruff check tools/intelligence_examples.py prototype/tests/unit/tools/test_intelligence_examples.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_inquiry_branch_replay.py",
+        "ruff check prototype/tests/unit/tools/test_inquiry_branch_replay.py"
       ],
       "next_actions": [
         "Follow reasoning_algebra.md R0-R5: contextual terms, checked composition and explicit judgments remain a foundational candidate. R0 exact maps, R1 pure scoped binders and signed-rule premise support, and a finite R2 classical bridge now run with independent evaluation/model oracles. SymPy 1.14.0 optionally replays bridge semantics. Next integrate one source-derived scientific interpretation and explicit premise/evidence transport; compare structure providers with an established symbolic/AD adapter. Preserve qualified identity, hygiene, alternative support, inert quotation, profile-specific results, incomplete search and actual authority boundaries. Nomi producers, source reconstruction, recursive/effectful binders, continuum variation, general flows, cotangent roles, asymptotic validity and measured human benefit remain open.",

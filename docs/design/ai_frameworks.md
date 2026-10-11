@@ -240,6 +240,15 @@ unimplemented. The artifacts test the conceptual foundation rather than
 claiming a general intelligence engine. Common scoped source production and
 structure-provider integration remain necessary before language admission.
 
+The inquiry artifact now also retains each prospective outcome as a named,
+immutable branch: its modeled mass, conditional hypothesis measure and tied
+best decisions. A zero-mass branch is still referable but has no invented
+posterior or decision. `describe` exposes detached JSON without executing or
+validating anything; `verify_inquiry` independently checks those intermediates
+as well as the aggregate loss. Four additional checks reject forged branches
+with correct aggregates and confirm passive inspection/immutability. These
+hypothetical branches are not reports that an observation occurred.
+
 ### Source-Linked Hypotheses And Two Deeper Discriminators
 
 `python3 -m tools.intelligence_examples` connects the scoped-term producer to

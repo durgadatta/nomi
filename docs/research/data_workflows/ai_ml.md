@@ -157,6 +157,11 @@ oracle and a learned-example-fit counterexample beside checked beta extraction.
 This closes finite **discriminators**, not general source/type/structure-provider
 integration, causal discovery or learned-library admission.
 
+Four additional checks cover named hypothetical branches and passive inspection.
+Each outcome retains its conditional model and decisions; independent replay
+rejects a forged posterior even if the aggregate expected loss is correct.
+Impossible outcomes stay referable without invented conditional answers.
+
 This is an engine-free proof of composition at a finite slice, not a general
 AI framework, empirical discovery result or accepted Nomi API. It adds no
 random sampling, causal model, optimizer, matrix backend or external action.

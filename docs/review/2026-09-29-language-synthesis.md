@@ -2014,3 +2014,33 @@ Compare common structure providers and Nomi source/constructor production with
 independent law/evidence transport and useful diagnostics. The present producer
 is a Python-expression adapter. General causality, continuous inference,
 abstraction learning, empirical adequacy and measured usability remain open.
+
+## Inspectable Inquiry And Discovery Routes — 2026-10-11
+
+### Evidence That Changed The Design
+
+Reviewing the finite inquiry output exposed a mismatch with the goal of referable
+intermediates: only the aggregate expected loss was exposed. Intelligence prompt
+vocabulary also did not reliably match the established design packet.
+
+### Workflow Friction
+
+A correct total can hide a forged conditional model. Hiding hypothetical
+branches also makes it harder to explain why a measurement changes a decision.
+Source-discovery routing must follow the conceptual direction, not only old
+framework names.
+
+### Durable Improvement
+
+Named immutable outcome branches now retain conditional measures and decisions,
+including tied alternatives. Independent replay checks branch contents; passive
+detached JSON does not validate or execute. Zero-mass branches retain their names
+without invented posteriors. Four additional checks pass. The existing packet
+now recognizes intelligence, inference, world-model, causal and abstraction
+prompts; no new packet or parallel design authority was created.
+
+### Next Pass
+
+Refresh derived context and verify prompt/source discovery. Resume common scoped
+source/structure-provider integration with explicit law and evidence transport;
+keep hypothetical branches separate from observed outcomes and external action.

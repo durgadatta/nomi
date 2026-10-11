@@ -133,8 +133,7 @@ def main():
             for member, artifact in zip(prior.space.members, artifacts, strict=True)
         ],
         "inquiry": {
-            "context": result.context,
-            "net_value": str(result.net_value),
+            "assessment": q.describe(result),
             "claim": "exact under supplied measurement and loss assumptions",
             "replay": q.verify_inquiry(prior, experiment, objective, result),
         },

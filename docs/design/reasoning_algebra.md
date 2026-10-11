@@ -574,6 +574,11 @@ versus a universal replacement and hygienic beta extraction also run. Five
 independent checks pass. These are finite discriminators, not general causal or
 learning support. Shared providers and a Nomi producer remain open.
 
+Inquiry explanations now retain named hypothetical branches, posteriors and
+decisions, not only their aggregate score. Independent replay checks those
+intermediates; passive JSON inspection does not assert an observation occurred.
+A zero-mass branch remains referable without a fabricated conditional result.
+
 No stochastic keyword, universal model superclass, model-generated authority,
 mandatory brain theory or general inference engine is accepted by these examples.
 A kernel comparison can guide the design without requiring ordinary eager
