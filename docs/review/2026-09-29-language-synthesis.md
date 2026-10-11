@@ -1406,3 +1406,39 @@ Compare concrete repairs through the same named graph in two representations.
 Correlated/nested quantification, domain-law proof composition, effects/resources
 and ordinary Nomi source admission remain separately owned gaps. These lab
 interfaces are removable and do not establish distribution readiness.
+
+## Checked Named Object Revisions — 2026-10-10
+
+### Evidence That Changed The Design
+
+Repairing a named intermediate previously required manually rebuilding a full
+graph document. A revision artifact now declares complete object replacements
+against an exact source context, applies them atomically and checks the whole
+new graph. The same downstream names survive while old meaning/evidence remains
+available. Input rebinding, graph revision and vocabulary-law change have
+separate invalidation boundaries.
+
+### Workflow Friction
+
+Nominal migrations can need several coordinated replacements; validating each
+intermediate edit would reject a coherent final graph. Conversely disconnected
+invalid changes and cycles cannot hide behind selected outputs. No-op changes
+should retain the original instance. Inspection distinguishes requested records
+from actual source changes and preserves source object order. Separate required
+conditions cannot be migrated by merely copying an old satisfied status.
+
+### Durable Improvement
+
+The bounded inert producer and separate pinned consumer replay atomic edits,
+including documentary changes, nominal migrations, no-ops, stale contexts,
+cycle/type refusals, hidden changes, output preservation and aggregate receipt
+limits. A CLI and Python greeting repair show named reuse without engine
+selection. Every receipt remains contextual; the independent checker proves the
+transformation, not authorization, authoring intent or domain validity.
+
+### Next Pass
+
+Explain which selected output or condition needs each input and which named
+objects are downstream of an edit. Keep dependency evidence inspectable and
+bounded; do not confuse logical reuse with scheduler, caching or causal proof.
+Compare the resulting repair flow with manual inline construction.

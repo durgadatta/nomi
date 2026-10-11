@@ -9,6 +9,7 @@ from . import (
     Graph,
     RequirementContractError,
     Requirements,
+    Revision,
     Vocabulary,
     load_document,
 )
@@ -24,9 +25,19 @@ def main(argv=None):
         "--vocabulary", help="explicit vocabulary artifact; default: tracked lab"
     )
     commands = parser.add_subparsers(dest="command", required=True)
-    for command in ("check", "inspect", "compare", "compile", "run", "requirements"):
+    for command in (
+        "check",
+        "inspect",
+        "compare",
+        "compile",
+        "run",
+        "requirements",
+        "revise",
+    ):
         child = commands.add_parser(command)
         child.add_argument("graph")
+        if command == "revise":
+            child.add_argument("revision", help="explicit object replacement artifact")
         if command == "inspect":
             child.add_argument("object")
         if command == "compare":
@@ -68,6 +79,8 @@ def main(argv=None):
         graph = Graph.from_document(load_document(args.graph), vocabulary)
         if args.command == "check":
             result = graph.check()
+        elif args.command == "revise":
+            result = Revision.from_document(load_document(args.revision), graph).receipt
         elif args.command == "inspect":
             result = graph.inspect(args.object)
         elif args.command == "compare":

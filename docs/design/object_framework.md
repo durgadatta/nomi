@@ -128,6 +128,68 @@ Public documents, inspection results, bindings and returned values are detached
 snapshots. Each execution is a separate realization; it does not cache a result
 inside an object or change that object's identity.
 
+### Revise Named Objects As One Checked Change
+
+The [revision protocol](../../tools/object_interface/revisions.py) replaces
+existing named object descriptions against an exact source graph context.
+Each replacement gives the whole `id`, `op`, `ports` and `attributes` record.
+All replacements are applied together, then the entire graph is checked. A
+coherent change can update several nominal families and their consumers
+atomically; an ill-typed intermediate does not become a published graph.
+Unknown/duplicate IDs, undeclared operations, wrong codecs, missing references,
+cycles and stale source contexts refuse the change without modifying the source.
+
+The [greeting revision](../research/object_framework/greeting_revision.json)
+changes the named prefix rather than rebuilding its downstream expressions:
+
+```python
+from tools.object_interface import Graph, Revision, load_document
+from tools.object_interface.examples import lab_vocabulary, python_backend
+
+original = Graph.from_document(
+    load_document("docs/research/object_framework/composition.json"), lab_vocabulary(),
+)
+edit = Revision.from_document(
+    load_document("docs/research/object_framework/greeting_revision.json"), original,
+)
+updated = edit.graph
+assert original.inspect("prefix")["attributes"]["value"] == "Hello, "
+assert updated.inspect("prefix")["attributes"]["value"] == "Welcome, "
+assert edit.inspect()["changed_objects"] == ["prefix"]
+result = python_backend(updated.vocabulary).compile(
+    updated, [updated.ref("published")],
+).bind({"name": "Ada"}).execute()
+assert result.values == {"published": "Welcome, Ada"}
+```
+
+Graph object order and selected outputs are preserved. This bounded protocol
+does not create, delete or rename objects, change a vocabulary, or migrate
+separate conditions. Source handles and receipts cannot be reused in a changed
+graph context; resolve handles again and review any condition artifact before
+assigning it to the new context. An exact no-op preserves the original checked
+graph instance. Inspection separates requested objects from those whose source
+records actually changed; this is a source comparison, not semantic minimality.
+
+```bash
+python3 -m tools.object_interface revise docs/research/object_framework/composition.json docs/research/object_framework/greeting_revision.json > /tmp/nomi-greeting-revision.json
+python3 -m tools.object_replay config/object_interface.json docs/research/object_framework/composition.json /tmp/nomi-greeting-revision.json --revision docs/research/object_framework/greeting_revision.json
+```
+
+The producer exports the checked graph and bounded revision receipt. The
+independent consumer reconstructs the edit from the original graph and explicit
+replacement artifact, rejecting hidden changes, altered outputs or forged
+inspection. It establishes the declared transformation for the pinned lab;
+it does not establish editing authority, intended meaning, concurrent merge or
+domain validity. No backend is selected by an edit.
+
+Keep the three kinds of change distinct:
+
+| Change | What becomes different |
+| --- | --- |
+| Supply another input snapshot | Binding digest and realization evidence; graph meaning remains unchanged. |
+| Revise an object description | Graph context and dependent claims; old conditions/receipts require review. |
+| Change a vocabulary or law | Vocabulary fingerprint, graph/backend compatibility and independent admission. |
+
 ## Separate The Claims
 
 | Stage | Implemented evidence | Limit |

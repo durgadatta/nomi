@@ -216,6 +216,14 @@ document-specific assertion mechanism. Correlated and nested quantification
 remain a design gap, and satisfying a representation condition is not a domain
 proof.
 
+Named [object revisions](object_framework.md#revise-named-objects-as-one-checked-change)
+also distinguish changing an input snapshot from changing meaning. A prefix
+replacement preserves downstream names while creating a new checked graph
+context; a batch replacement is admitted only after the whole new graph checks.
+Old handles, conditions and receipts retain their original context. Independent
+replacement replay establishes the transformation, while intent, authority and
+concurrent editing remain under the interaction owner.
+
 ### Statistical Equality Needs A Theory In Addition To Composition
 
 `mean(x)` can expand to `sum(x) / count(x)` only under the

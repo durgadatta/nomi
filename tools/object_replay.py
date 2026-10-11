@@ -972,6 +972,64 @@ def replay_workflows(vocabulary, base_graph, workflows, receipt):
     }
 
 
+def replay_revision(vocabulary, base_graph, revision, receipt):
+    """Reconstruct a bounded local edit; no authorization or intent proof."""
+    objects, _, _ = _reconstruct(vocabulary, base_graph)
+    _artifact(revision)
+    _artifact(receipt)
+    _keys(revision, ("version", "graph", "replacements"))
+    source = _digest({"graph": base_graph, "envelope": "nomi.object-graph-1"})
+    if type(revision["version"]) is not int or revision["version"] != 1:
+        raise ReplayError("unsupported revision envelope")
+    if revision["graph"] != source:
+        raise ReplayError("revision source context mismatch")
+    replacements = revision["replacements"]
+    if type(replacements) is not list or not 1 <= len(replacements) <= 512:
+        raise ReplayError("invalid replacement count")
+    updates = {}
+    for replacement in replacements:
+        _keys(replacement, ("id", "op", "ports", "attributes"))
+        identity = _identity(replacement["id"])
+        if identity not in objects or identity in updates:
+            raise ReplayError("unknown or duplicate replaced object")
+        updates[identity] = replacement
+    revised = json.loads(_encode(base_graph))
+    changed = []
+    for index, obj in enumerate(revised["objects"]):
+        if obj["id"] in updates:
+            replacement = updates[obj["id"]]
+            if _encode(obj) != _encode(replacement):
+                changed.append(obj["id"])
+            revised["objects"][index] = replacement
+    _reconstruct(vocabulary, revised)
+    context = _digest({"revision": revision, "envelope": "nomi.object-revision-1"})
+    graph_context = _digest({"graph": revised, "envelope": "nomi.object-graph-1"})
+    expected = {
+        "revision": context,
+        "graph": revised,
+        "inspection": {
+            "status": "composition-checked",
+            "revision": context,
+            "source": source,
+            "graph": graph_context,
+            "requested_objects": [r["id"] for r in replacements],
+            "changed_objects": changed,
+            "realization": "unbound",
+            "contracts": "not migrated",
+        },
+    }
+    _artifact(expected)
+    if _encode(receipt) != _encode(expected):
+        raise ReplayError("revision receipt disagrees with independent replacement")
+    return {
+        "status": "verified",
+        "revision": context,
+        "graph": graph_context,
+        "independent_checker": True,
+        "scope": "pinned atomic object replacement; no authorization, intent or domain proof",
+    }
+
+
 def _pairs(pairs):
     result = {}
     for key, value in pairs:
@@ -999,6 +1057,7 @@ def main(argv=None):
     parser.add_argument("vocabulary")
     parser.add_argument("graph")
     parser.add_argument("receipt")
+    parser.add_argument("--revision", help="explicit named-object replacement artifact")
     parser.add_argument(
         "--requirements",
         help="replay requirement evidence rather than a composition comparison",
@@ -1013,7 +1072,18 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
     try:
-        if args.workflow:
+        if args.revision:
+            if args.workflow or args.requirements or args.bindings:
+                raise ReplayError(
+                    "revision replay is separate from workflow or binding evidence"
+                )
+            result = replay_revision(
+                load(args.vocabulary),
+                load(args.graph),
+                load(args.revision),
+                load(args.receipt),
+            )
+        elif args.workflow:
             if args.requirements or args.bindings:
                 raise ReplayError(
                     "workflow expansion replay is separate from binding evidence"
