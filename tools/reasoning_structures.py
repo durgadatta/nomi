@@ -24,12 +24,16 @@ class Provider:
 
 
 RATIONAL = Provider(
-    t.Identity(PROFILE, "1", "rational"), "closed-rational-function",
-    "alpha-normal-form", ("typed-composition", "pure-application"),
+    t.Identity(PROFILE, "1", "rational"),
+    "closed-rational-function",
+    "alpha-normal-form",
+    ("typed-composition", "pure-application"),
 )
 FINITE = Provider(
-    t.Identity(PROFILE, "1", "finite"), "finite-probability-kernel",
-    "exact-rows-and-ports", ("normalization", "identity", "associativity"),
+    t.Identity(PROFILE, "1", "finite"),
+    "finite-probability-kernel",
+    "exact-rows-and-ports",
+    ("normalization", "identity", "associativity"),
 )
 PROVIDERS = (RATIONAL, FINITE)
 
@@ -87,7 +91,9 @@ def rational(term):
     sort = t.infer(term)
     if type(sort) is not t.FunctionType:
         raise t.Refused("provider requires a closed rational callable contract")
-    return Transformation(RATIONAL, RationalPort(len(sort.parameters)), RationalPort(1), term)
+    return Transformation(
+        RATIONAL, RationalPort(len(sort.parameters)), RationalPort(1), term
+    )
 
 
 def stochastic(kernel):
@@ -98,8 +104,10 @@ def stochastic(kernel):
 
 def compose(first, second):
     if (
-        type(first) is not Transformation or type(second) is not Transformation
-        or first.provider != second.provider or first.destination != second.source
+        type(first) is not Transformation
+        or type(second) is not Transformation
+        or first.provider != second.provider
+        or first.destination != second.source
     ):
         raise t.Refused("composition requires matching provider and captured ports")
     if first.provider == FINITE:
@@ -109,7 +117,9 @@ def compose(first, second):
         t.Binding(t.Identity("structure-composition", revision, f"arg:{i}"), f"arg{i}")
         for i in range(first.source.arity)
     )
-    applied = t.Application(first.description, tuple(t.Reference(x.identity) for x in parameters))
+    applied = t.Application(
+        first.description, tuple(t.Reference(x.identity) for x in parameters)
+    )
     return rational(t.Lambda(parameters, t.Application(second.description, (applied,))))
 
 
@@ -118,7 +128,9 @@ def equivalent(first, second):
     if type(first) is not Transformation or type(second) is not Transformation:
         raise t.Refused("expected transformation descriptions")
     if (first.provider, first.source, first.destination) != (
-        second.provider, second.source, second.destination
+        second.provider,
+        second.source,
+        second.destination,
     ):
         return False
     if first.provider == RATIONAL:
@@ -130,17 +142,27 @@ def describe(transformation):
     if type(transformation) is not Transformation:
         raise t.Refused("expected transformation description")
     payload = (
-        t.describe(transformation.description) if transformation.provider == RATIONAL
+        t.describe(transformation.description)
+        if transformation.provider == RATIONAL
         else transformation.description
     )
-    return json.loads(json.dumps({
-        "profile": PROFILE, "identity": transformation.identity,
-        "provider": transformation.provider, "source": transformation.source,
-        "destination": transformation.destination, "payload": payload,
-    }, default=lambda x: (
-        {"numerator": x.numerator, "denominator": x.denominator}
-        if type(x) is F else x.__dict__
-    )))
+    return json.loads(
+        json.dumps(
+            {
+                "profile": PROFILE,
+                "identity": transformation.identity,
+                "provider": transformation.provider,
+                "source": transformation.source,
+                "destination": transformation.destination,
+                "payload": payload,
+            },
+            default=lambda x: (
+                {"numerator": x.numerator, "denominator": x.denominator}
+                if type(x) is F
+                else x.__dict__
+            ),
+        )
+    )
 
 
 @dataclass(frozen=True)
@@ -149,8 +171,13 @@ class ProgramFamily:
 
     def __post_init__(self):
         if type(self.programs) is not tuple or not 1 <= len(self.programs) <= 8:
-            raise t.Refused("program family requires one to eight immutable alternatives")
-        if any(type(x) is not Transformation or x.provider != RATIONAL for x in self.programs):
+            raise t.Refused(
+                "program family requires one to eight immutable alternatives"
+            )
+        if any(
+            type(x) is not Transformation or x.provider != RATIONAL
+            for x in self.programs
+        ):
             raise t.Refused("family requires rational callable providers")
         if any(x.source != self.programs[0].source for x in self.programs):
             raise t.Refused("family requires one shared checked callable contract")
@@ -160,7 +187,9 @@ class ProgramFamily:
     @property
     def space(self):
         members = tuple(x.identity for x in self.programs)
-        return q.Space(t.Identity("program-family", q.fingerprint(members), "space"), members)
+        return q.Space(
+            t.Identity("program-family", q.fingerprint(members), "space"), members
+        )
 
 
 @dataclass(frozen=True)
@@ -188,10 +217,15 @@ def predict(family, arguments, *, include_other=False):
     revision = q.fingerprint(family.space, arguments, outcomes)
     destination = q.Space(
         t.Identity("program-prediction", revision, "outcomes"),
-        tuple(t.Identity("program-prediction", revision, f"outcome:{i}") for i in range(len(outcomes))),
+        tuple(
+            t.Identity("program-prediction", revision, f"outcome:{i}")
+            for i in range(len(outcomes))
+        ),
     )
     kernel = q.Kernel(
-        t.Identity("program-prediction", revision, "kernel"), family.space, destination,
+        t.Identity("program-prediction", revision, "kernel"),
+        family.space,
+        destination,
         tuple(tuple(F(value == outcome) for outcome in outcomes) for value in values),
     )
     return Prediction(family, arguments, outcomes, kernel)

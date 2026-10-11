@@ -85,8 +85,10 @@ def verify(task, result):
     if result.profile != p.PROFILE or result.context != task.fingerprint:
         raise t.Refused("stale search assessment")
     if (
-        type(result.examined) is not int or type(result.matches) is not int
-        or type(result.proposals) is not tuple or type(result.costs) is not tuple
+        type(result.examined) is not int
+        or type(result.matches) is not int
+        or type(result.proposals) is not tuple
+        or type(result.costs) is not tuple
         or any(type(x) is not int for x in result.costs)
     ):
         raise t.Refused("malformed search assessment")
@@ -103,9 +105,15 @@ def verify(task, result):
     coverage = "complete" if next(stream, None) is None else "incomplete"
     if (
         (result.examined, result.matches, result.coverage, result.retention)
-        != (examined, matches, coverage, "all-matches" if matches <= task.retain else "truncated")
+        != (
+            examined,
+            matches,
+            coverage,
+            "all-matches" if matches <= task.retain else "truncated",
+        )
         or result.costs != tuple(costs)
-        or tuple(_proposal_tree(x, task.grammar) for x in result.proposals) != tuple(expected)
+        or tuple(_proposal_tree(x, task.grammar) for x in result.proposals)
+        != tuple(expected)
     ):
         raise t.Refused("search counts, coverage or ranked proposals failed replay")
     return True

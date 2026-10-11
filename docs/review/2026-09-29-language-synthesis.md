@@ -2238,3 +2238,31 @@ independent consumers import them; focused failing process tests verify the fix.
 Audit exact receipt types and all executable routes, refresh local retrieval,
 and retain general state evolution, causal action, dependent latent observations,
 premise transport and actual user validation as separate open gates.
+
+## Exact Receipt Audit — 2026-10-11
+
+### Evidence That Changed The Design
+
+Five focused failing checks exposed malformed Bool/Int values passing as exact
+rational losses, outcome masses or branch decisions through Python equality.
+
+### Workflow Friction
+
+Correct mathematical values do not excuse a wrong carrier in a supposedly typed
+artifact. Nested receipts need their own checks, even when aggregate arithmetic
+and context fingerprints agree.
+
+### Durable Improvement
+
+Independent inquiry replay now validates exact aggregate/branch scalar types
+before value comparison, closing the hole for adaptive and contingent consumers.
+New implementations are formatted for maintainers; existing test files remain
+unchanged. Discovery vocabulary now routes induction, journals, lookahead and
+symbolic replay into the established packet.
+
+### Next Pass
+
+Refresh derived retrieval and smoke-test all registered executable routes. The
+next semantic gates remain richer typed source/effects, general premise and
+vocabulary transport, dependent latent/causal models, state evolution, numeric
+AD and empirical/user validation. These checks do not admit an AGI runtime.

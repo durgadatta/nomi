@@ -408,6 +408,15 @@ expansions, following the journal's explicit conditional-independence assumption
 It models inquiry about a fixed hidden state, not general world transitions,
 causal action, correlated unmodeled draws or an unbounded agent planner.
 
+### Exact Receipt Types Survive Replay
+
+Inquiry replay now checks exact Rational fields in aggregate losses, probabilities,
+branch masses and decision receipts before mathematical comparison. Python's
+`False == 0` and `True == 1` cannot substitute Bool/Int into this profile. Five
+focused failing-then-passing checks exercise these cases. This preserves the
+accepted separation of Bool from numeric values across the shared inquiry,
+adaptive revision and contingent-policy consumers.
+
 ## Start From The Developer's Activity
 
 The [minimal reasoning algebra](reasoning_algebra.md) now challenges the common

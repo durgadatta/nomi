@@ -377,6 +377,30 @@ def verify_inquiry(measure, experiment, objective, assessment):
     ):
         raise Refused("invalid inquiry replay context")
     _numbers((assessment.cost,), 1)
+    if any(
+        type(value) is not Fraction
+        for value in (
+            assessment.baseline_loss, assessment.residual_loss, assessment.net_value
+        )
+    ):
+        raise Refused("inquiry losses and value require exact rational scalars")
+    _numbers(
+        assessment.outcome_masses, len(experiment.destination.members), normalized=True
+    )
+    if type(assessment.branches) is not tuple:
+        raise Refused("inquiry branches require an immutable tuple")
+    for branch in assessment.branches:
+        if type(branch) is not Branch or type(branch.mass) is not Fraction:
+            raise Refused("branch requires exact rational mass")
+        if branch.posterior is not None and type(branch.posterior) is not Measure:
+            raise Refused("branch requires a captured conditional measure")
+        if branch.decision is not None and (
+            type(branch.decision) is not Decision
+            or type(branch.decision.expected_loss) is not Fraction
+            or type(branch.decision.alternatives) is not tuple
+            or any(type(x) is not Identity for x in branch.decision.alternatives)
+        ):
+            raise Refused("branch requires an exact typed decision receipt")
     if assessment.context != fingerprint(
         measure, experiment, objective, assessment.cost
     ):

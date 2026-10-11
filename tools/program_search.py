@@ -17,8 +17,13 @@ PROFILE = "bounded-rational-program-search-v1"
 
 
 def _number(value):
-    if type(value) is not F or max(value.numerator.bit_length(), value.denominator.bit_length()) > 16:
-        raise t.Refused("search examples/constants require exact rationals within 16 bits")
+    if (
+        type(value) is not F
+        or max(value.numerator.bit_length(), value.denominator.bit_length()) > 16
+    ):
+        raise t.Refused(
+            "search examples/constants require exact rationals within 16 bits"
+        )
 
 
 @dataclass(frozen=True)
@@ -43,7 +48,8 @@ class Grammar:
         if len(set(self.constants)) != len(self.constants):
             raise t.Refused("duplicate grammar constant")
         if (
-            type(self.operators) is not tuple or len(self.operators) > 4
+            type(self.operators) is not tuple
+            or len(self.operators) > 4
             or any(type(x) is not str or x not in t.OPERATIONS for x in self.operators)
             or len(set(self.operators)) != len(self.operators)
         ):
@@ -52,7 +58,10 @@ class Grammar:
     @property
     def parameters(self):
         revision = q.fingerprint(PROFILE, self)
-        return tuple(t.Binding(t.Identity("program-search", revision, f"arg:{i}"), f"arg{i}") for i in range(self.arity))
+        return tuple(
+            t.Binding(t.Identity("program-search", revision, f"arg:{i}"), f"arg{i}")
+            for i in range(self.arity)
+        )
 
 
 @dataclass(frozen=True)
@@ -78,9 +87,16 @@ class Task:
     retain: int = 8
 
     def __post_init__(self):
-        if type(self.grammar) is not Grammar or type(self.examples) is not tuple or len(self.examples) > 16:
+        if (
+            type(self.grammar) is not Grammar
+            or type(self.examples) is not tuple
+            or len(self.examples) > 16
+        ):
             raise t.Refused("task requires captured grammar and up to sixteen examples")
-        if any(type(x) is not Example or len(x.inputs) != self.grammar.arity for x in self.examples):
+        if any(
+            type(x) is not Example or len(x.inputs) != self.grammar.arity
+            for x in self.examples
+        ):
             raise t.Refused("example callable contract mismatch")
         if len({x.identity for x in self.examples}) != len(self.examples):
             raise t.Refused("duplicate example identity")
@@ -123,7 +139,9 @@ def _bodies(grammar):
                         yield t.Operation(name, (child,))
                 elif t.OPERATIONS[name] == 2:
                     for left_size in range(1, size - 1):
-                        for left, right in itertools.product(layers[left_size], layers[size - 1 - left_size]):
+                        for left, right in itertools.product(
+                            layers[left_size], layers[size - 1 - left_size]
+                        ):
                             yield t.Operation(name, (left, right))
 
         for body in candidates():
@@ -148,8 +166,14 @@ def search(task):
                 costs.append(cost)
     coverage = "complete" if next(stream, None) is None else "incomplete"
     return Result(
-        PROFILE, task.fingerprint, coverage, examined, matches, tuple(proposals),
-        tuple(costs), "all-matches" if matches <= task.retain else "truncated",
+        PROFILE,
+        task.fingerprint,
+        coverage,
+        examined,
+        matches,
+        tuple(proposals),
+        tuple(costs),
+        "all-matches" if matches <= task.retain else "truncated",
     )
 
 
@@ -157,18 +181,25 @@ def describe(result):
     if type(result) is not Result:
         raise t.Refused("expected search result")
     return {
-        "profile": result.profile, "context": result.context,
-        "coverage": result.coverage, "examined": result.examined,
-        "matches": result.matches, "retention": result.retention,
+        "profile": result.profile,
+        "context": result.context,
+        "coverage": result.coverage,
+        "examined": result.examined,
+        "matches": result.matches,
+        "retention": result.retention,
         "selection": "body-node-count-then-declared-grammar-order",
         "evidence": "supplied-examples-only",
-        "proposals": [s.describe(x) for x in result.proposals], "costs": list(result.costs),
+        "proposals": [s.describe(x) for x in result.proposals],
+        "costs": list(result.costs),
     }
 
 
 def example():
     grammar = Grammar(t.Identity("square-or-line", "1", "grammar"), 1, (), ("mul",), 3)
-    examples = tuple(Example(t.Identity("teaching", "1", f"example:{x}"), (F(x),), F(x)) for x in (0, 1))
+    examples = tuple(
+        Example(t.Identity("teaching", "1", f"example:{x}"), (F(x),), F(x))
+        for x in (0, 1)
+    )
     return Task(grammar, examples)
 
 

@@ -73,51 +73,122 @@ def solve(journal, questions, objective, *, horizon=2, budget=256):
         identity = t.Identity(PROFILE, q.fingerprint(captured, path, belief), "node")
         stop = q.decide(belief, objective)
         if remaining == 0:
-            return Node(identity, belief, remaining, False, True, stop.expected_loss, stop.expected_loss, stop, (), (stop_id,))
+            return Node(
+                identity,
+                belief,
+                remaining,
+                False,
+                True,
+                stop.expected_loss,
+                stop.expected_loss,
+                stop,
+                (),
+                (stop_id,),
+            )
         if expanded == budget:
             # Stop is a feasible incumbent. Nonnegative costs/losses give zero
             # as a conservative lower bound, never a claimed optimal answer.
-            return Node(identity, belief, remaining, False, False, F(0), stop.expected_loss, stop, (), (stop_id,))
+            return Node(
+                identity,
+                belief,
+                remaining,
+                False,
+                False,
+                F(0),
+                stop.expected_loss,
+                stop,
+                (),
+                (stop_id,),
+            )
         expanded += 1
         options = []
         complete = True
         for i, question in enumerate(questions):
-            inquiry = q.query_value(belief, question.kernel, objective, cost=question.cost)
+            inquiry = q.query_value(
+                belief, question.kernel, objective, cost=question.cost
+            )
             children = []
             lower = upper = question.cost
             for j, branch in enumerate(inquiry.branches):
-                child = None if branch.posterior is None else visit(branch.posterior, remaining - 1, path + (i, j))
+                child = (
+                    None
+                    if branch.posterior is None
+                    else visit(branch.posterior, remaining - 1, path + (i, j))
+                )
                 children.append(child)
                 if child is not None:
                     lower += branch.mass * child.lower
                     upper += branch.mass * child.upper
                     complete &= child.complete
-            options.append(Option(question.identity, inquiry, tuple(children), lower, upper))
+            options.append(
+                Option(question.identity, inquiry, tuple(children), lower, upper)
+            )
         lower = min((stop.expected_loss, *(x.lower for x in options)))
         upper = min((stop.expected_loss, *(x.upper for x in options)))
-        incumbents = ((stop_id,) if stop.expected_loss == upper else ()) + tuple(x.question for x in options if x.upper == upper)
-        return Node(identity, belief, remaining, True, complete, lower, upper, stop, tuple(options), incumbents)
+        incumbents = ((stop_id,) if stop.expected_loss == upper else ()) + tuple(
+            x.question for x in options if x.upper == upper
+        )
+        return Node(
+            identity,
+            belief,
+            remaining,
+            True,
+            complete,
+            lower,
+            upper,
+            stop,
+            tuple(options),
+            incumbents,
+        )
 
     root = visit(estimate.posterior, horizon, ())
-    return Policy(captured, "complete" if root.complete else "incomplete", expanded, estimate, root)
+    return Policy(
+        captured,
+        "complete" if root.complete else "incomplete",
+        expanded,
+        estimate,
+        root,
+    )
 
 
 def example():
     """Each bit alone is useless for parity; both together answer the question."""
+
     def key(name):
         return t.Identity("parity-inquiry", "1", name)
 
-    states = q.Space(key("worlds"), tuple(key(f"{x}{y}") for x in (0, 1) for y in (0, 1)))
+    states = q.Space(
+        key("worlds"), tuple(key(f"{x}{y}") for x in (0, 1) for y in (0, 1))
+    )
     bits = q.Space(key("bits"), (key("zero"), key("one")))
     decisions = q.Space(key("decisions"), (key("even"), key("odd")))
     prior = q.Measure(key("prior"), states, (F(1, 4),) * 4)
     journal = a.Journal(key("journal"), prior, a.DEPENDENCE)
-    questions = tuple(a.Question(
-        key(f"bit:{axis}"),
-        q.Kernel(key(f"law:{axis}"), states, bits, tuple(tuple(F(pair[axis] == value) for value in (0, 1)) for pair in ((0, 0), (0, 1), (1, 0), (1, 1)))),
-        F(1, 16),
-    ) for axis in (0, 1))
-    objective = q.Objective(key("parity-loss"), states, decisions, tuple(tuple(F(decision != (x ^ y)) for x, y in ((0, 0), (0, 1), (1, 0), (1, 1))) for decision in (0, 1)))
+    questions = tuple(
+        a.Question(
+            key(f"bit:{axis}"),
+            q.Kernel(
+                key(f"law:{axis}"),
+                states,
+                bits,
+                tuple(
+                    tuple(F(pair[axis] == value) for value in (0, 1))
+                    for pair in ((0, 0), (0, 1), (1, 0), (1, 1))
+                ),
+            ),
+            F(1, 16),
+        )
+        for axis in (0, 1)
+    )
+    objective = q.Objective(
+        key("parity-loss"),
+        states,
+        decisions,
+        tuple(
+            tuple(F(decision != (x ^ y)) for x, y in ((0, 0), (0, 1), (1, 0), (1, 1)))
+            for decision in (0, 1)
+        ),
+    )
     return journal, questions, objective
 
 
@@ -127,21 +198,41 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--horizon", type=int, default=2)
     parser.add_argument("--budget", type=int, default=256)
-    parser.add_argument("--json", action="store_true", help="all named prospective policy branches")
+    parser.add_argument(
+        "--json", action="store_true", help="all named prospective policy branches"
+    )
     args = parser.parse_args()
     try:
         journal, questions, objective = example()
-        policy = solve(journal, questions, objective, horizon=args.horizon, budget=args.budget)
-        verify(journal, questions, objective, policy, horizon=args.horizon, budget=args.budget)
+        policy = solve(
+            journal, questions, objective, horizon=args.horizon, budget=args.budget
+        )
+        verify(
+            journal,
+            questions,
+            objective,
+            policy,
+            horizon=args.horizon,
+            budget=args.budget,
+        )
         if args.json:
             from tools.intelligence_loop import _wire
 
             print(json.dumps(policy, default=_wire, indent=2))
         else:
-            print(f"Coverage: {policy.coverage}; expanded {policy.expanded} internal nodes.")
-            print(f"Expected loss plus query costs: [{policy.root.lower}, {policy.root.upper}].")
-            print("Proposed first choices: " + ", ".join(x.slot for x in policy.root.incumbents))
-            print("Both bits determine parity; each alone has no decision benefit. No measurement was executed.")
+            print(
+                f"Coverage: {policy.coverage}; expanded {policy.expanded} internal nodes."
+            )
+            print(
+                f"Expected loss plus query costs: [{policy.root.lower}, {policy.root.upper}]."
+            )
+            print(
+                "Proposed first choices: "
+                + ", ".join(x.slot for x in policy.root.incumbents)
+            )
+            print(
+                "Both bits determine parity; each alone has no decision benefit. No measurement was executed."
+            )
     except (t.Refused, q.Refused) as error:
         parser.error(str(error))
 

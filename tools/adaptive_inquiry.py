@@ -16,7 +16,11 @@ DEPENDENCE = "conditionally-independent-trials-given-state-v1"
 
 
 def _ids(values, limit):
-    if type(values) is not tuple or len(values) > limit or any(type(x) is not t.Identity for x in values):
+    if (
+        type(values) is not tuple
+        or len(values) > limit
+        or any(type(x) is not t.Identity for x in values)
+    ):
         raise t.Refused("expected bounded immutable qualified identities")
     if len(set(values)) != len(values):
         raise t.Refused("duplicate qualified identity")
@@ -41,7 +45,9 @@ class Trial:
 
     def __post_init__(self):
         if type(self.identity) is not t.Identity or type(self.question) is not Question:
-            raise t.Refused("trial requires an occurrence identity and captured question")
+            raise t.Refused(
+                "trial requires an occurrence identity and captured question"
+            )
 
     @property
     def fingerprint(self):
@@ -60,7 +66,11 @@ class Report:
         _ids((self.identity,), 1)
         for value in (self.origin, self.trial, self.outcome):
             _ids((value,), 1)
-        if type(self.trial_context) is not str or len(self.trial_context) != 64 or any(x not in "0123456789abcdef" for x in self.trial_context):
+        if (
+            type(self.trial_context) is not str
+            or len(self.trial_context) != 64
+            or any(x not in "0123456789abcdef" for x in self.trial_context)
+        ):
             raise t.Refused("report requires the captured trial fingerprint")
 
 
@@ -79,12 +89,23 @@ class Journal:
             raise t.Refused("journal requires captured identity and prior")
         if self.dependence != DEPENDENCE:
             raise t.Refused("declare the admitted conditional-independence profile")
-        for values, kind, limit in ((self.trials, Trial, 16), (self.reports, Report, 32)):
-            if type(values) is not tuple or len(values) > limit or any(type(x) is not kind for x in values):
+        for values, kind, limit in (
+            (self.trials, Trial, 16),
+            (self.reports, Report, 32),
+        ):
+            if (
+                type(values) is not tuple
+                or len(values) > limit
+                or any(type(x) is not kind for x in values)
+            ):
                 raise t.Refused("journal contains unsupported records")
             _ids(tuple(x.identity for x in values), limit)
         _ids(self.endorsed, 32)
-        if self.parent is not None and (type(self.parent) is not str or len(self.parent) != 64 or any(x not in "0123456789abcdef" for x in self.parent)):
+        if self.parent is not None and (
+            type(self.parent) is not str
+            or len(self.parent) != 64
+            or any(x not in "0123456789abcdef" for x in self.parent)
+        ):
             raise t.Refused("journal parent requires a context fingerprint")
         trials = {x.identity: x for x in self.trials}
         if any(x.question.kernel.source != self.prior.space for x in self.trials):
@@ -116,7 +137,10 @@ def revise(journal, *, prior=None, trials=None, reports=None, endorsed=None):
     revision = q.fingerprint(PROFILE, journal.fingerprint, values)
     return Journal(
         t.Identity(journal.identity.owner, revision, journal.identity.slot),
-        values[0], journal.dependence, *values[1:], parent=journal.fingerprint,
+        values[0],
+        journal.dependence,
+        *values[1:],
+        parent=journal.fingerprint,
     )
 
 
@@ -144,11 +168,17 @@ def infer(journal):
     weights = list(journal.prior.masses)
     conflicting = False
     for trial in journal.trials:
-        reports = tuple(x for x in journal.reports if x.identity in active and x.trial == trial.identity)
+        reports = tuple(
+            x
+            for x in journal.reports
+            if x.identity in active and x.trial == trial.identity
+        )
         if not reports:
             continue
         outcomes = tuple(sorted({x.outcome for x in reports}))
-        supports.append(Support(trial.identity, outcomes, tuple(x.identity for x in reports)))
+        supports.append(
+            Support(trial.identity, outcomes, tuple(x.identity for x in reports))
+        )
         if len(outcomes) != 1:
             conflicting = True
             continue
@@ -162,10 +192,13 @@ def infer(journal):
     if not normalizer:
         return Estimate(context, "impossible-under-model", F(0), None, tuple(supports))
     posterior = q.Measure(
-        t.Identity("adaptive-inference", context, "posterior"), journal.prior.space,
+        t.Identity("adaptive-inference", context, "posterior"),
+        journal.prior.space,
         tuple(x / normalizer for x in weights),
     )
-    return Estimate(context, "exact-under-declared-model", normalizer, posterior, tuple(supports))
+    return Estimate(
+        context, "exact-under-declared-model", normalizer, posterior, tuple(supports)
+    )
 
 
 @dataclass(frozen=True)
@@ -185,9 +218,17 @@ class Plan:
 
 
 def plan_context(journal, questions, objective):
-    if type(journal) is not Journal or type(objective) is not q.Objective or objective.states != journal.prior.space:
+    if (
+        type(journal) is not Journal
+        or type(objective) is not q.Objective
+        or objective.states != journal.prior.space
+    ):
         raise t.Refused("planning requires identical journal/objective state space")
-    if type(questions) is not tuple or len(questions) > 8 or any(type(x) is not Question for x in questions):
+    if (
+        type(questions) is not tuple
+        or len(questions) > 8
+        or any(type(x) is not Question for x in questions)
+    ):
         raise t.Refused("plan requires up to eight captured questions")
     _ids(tuple(x.identity for x in questions), 8)
     if any(x.kernel.source != journal.prior.space for x in questions):
@@ -200,10 +241,20 @@ def plan(journal, questions, objective):
     estimate = infer(journal)
     if estimate.posterior is None:
         return Plan(context, "needs-model-or-evidence-repair", estimate, (), (), True)
-    assessments = tuple(Assessment(x.identity, q.query_value(estimate.posterior, x.kernel, objective, cost=x.cost)) for x in questions)
+    assessments = tuple(
+        Assessment(
+            x.identity,
+            q.query_value(estimate.posterior, x.kernel, objective, cost=x.cost),
+        )
+        for x in questions
+    )
     best = max((F(0), *(x.inquiry.net_value for x in assessments)))
     alternatives = tuple(x.question for x in assessments if x.inquiry.net_value == best)
-    status = "propose-inquiry" if best > 0 else ("stop-or-tied-inquiry" if alternatives else "stop")
+    status = (
+        "propose-inquiry"
+        if best > 0
+        else ("stop-or-tied-inquiry" if alternatives else "stop")
+    )
     return Plan(context, status, estimate, assessments, alternatives, best == 0)
 
 
@@ -214,6 +265,8 @@ def observe(journal, question, outcome, *, occurrence, identity, origin, endorse
     trial = Trial(occurrence, question)
     report = Report(identity, origin, occurrence, trial.fingerprint, outcome)
     return revise(
-        journal, trials=journal.trials + (trial,), reports=journal.reports + (report,),
+        journal,
+        trials=journal.trials + (trial,),
+        reports=journal.reports + (report,),
         endorsed=journal.endorsed + ((identity,) if endorse else ()),
     )
