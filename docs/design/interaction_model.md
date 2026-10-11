@@ -151,6 +151,61 @@ explicit action. Opening a view cannot silently refresh host objects, queries,
 or live handles. P14 only tests an imposed snapshot policy; real adapters and
 privacy guarantees still need their own evidence.
 
+## Knowledge Contexts And Qualified Explanations
+
+The [historical knowledge-framework synthesis](../research/knowledge_frameworks.md)
+extends this proposal beyond program traces. The person needs to distinguish a
+statement being discussed, a premise being endorsed, a consequence being checked
+and an observation being reported. These distinctions refine existing Model,
+View and Evidence concepts; they do not introduce one global truth object or
+universal ontology.
+
+Keep reasoning context separate from source revision, model incarnation and
+execution authority. A context may identify a theory/signature, parameters,
+premises, interpretation and method. Bind only the facets the question needs.
+Every displayed answer must retain its applicable scope and profile-specific
+result; ordinary Bool expressions keep their language meaning.
+
+An explanation view should expose:
+
+- the exact question and interpretation, including identity, negation and any
+  completeness assumptions;
+- endorsed premises separately from quoted reports, hypotheses and retrieved
+  material;
+- derivation or observation support and independently supported alternatives;
+- unresolved obligations, omitted evidence and the method's resource limits;
+- which source, premise or model revision changed the applicability of the answer.
+
+Displaying a statement does not assert it. Opening a captured explanation does
+not run its method again. A theory import does not transfer actual permissions.
+Replaying a proof requires the matching checker/context; rendering provenance is
+not proof replay. A model bridge must retain what it preserves, approximates or
+loses, rather than show all translated answers as equivalent.
+
+| Open design fork | Benefit | Cost and discriminator |
+| --- | --- | --- |
+| One canonical ontology versus context-owned vocabularies | Canonical terms simplify some cross-domain lookups; local vocabularies preserve domain commitments. | Global reconciliation can impose false identity. Compare same labels/different owners and different labels/possibly same entity. |
+| Global answer/status envelope versus profile-specific judgments with shared navigation | A common envelope simplifies rendering; typed payloads preserve meaning. | A single status can erase unknown/conflict/search limits. Compare a proof, a closed-snapshot query and an empirical estimate. |
+| Monotonic derivation history versus revision-aware current support | History is stable and replayable; current support reflects corrected premises. | A revision needs an explicit policy and all relevant support paths. Withdraw one of two justifications and preserve the other. |
+| Automatic model alignment versus explicitly checked correspondence | Automation reduces authoring effort; explicit obligations expose limits. | A plausible match can overclaim equivalence. Require refusal of an unqualified exact-to-float or one-way-to-two-way transfer. |
+
+Prefer context-owned vocabularies, profile-specific payloads and explicit
+correspondence for the bounded comparison. This remains a designing candidate;
+do not burden a simple program with ontology metadata or claim the remaining
+alternatives have been empirically rejected.
+
+Extend HX2/HX8 and SP0 with the dossier's fading-oscillation investigation,
+missing-invoice question, conflicting reports and exact-to-numerical conversion.
+Match facts across text, structured and mixed views. Score correct scope,
+missing-premise diagnosis, alternative comparison, revision and handoff. Show
+“no match in this complete snapshot” separately from “not established in this
+knowledge context.” No participant trial or general knowledge UI has run.
+
+The [reasoning algebra](reasoning_algebra.md#contexts-interpretations-and-reasoning-methods)
+owns R1/R2's binder, premise and bridge experiments. This packet owns whether their
+qualified explanations support the person's work. Finite artifact oracles can
+check support and context handling; they cannot establish human understanding.
+
 ## Candidate Architecture, Not Mandatory Core IR
 
 ```text

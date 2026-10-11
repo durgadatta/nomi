@@ -118,6 +118,14 @@ encoding repeatedly obscures the model, revisit the placement rather than
 protecting a small core for its own sake. Any accepted change still needs
 coherent semantics, diagnostics, tooling and independent examples.
 
+The [knowledge-framework synthesis](../research/knowledge_frameworks.md) gives
+this ambition a historical challenger: common notation, a common ontology and
+a common method of inference are different projects. Investigate a workspace
+with explicit contexts, interpretations and checked bridges between methods.
+Keep deduction, conjecture, probability, observation and execution distinct while
+making their relationships easy to inspect. A common interface must preserve
+those commitments; it cannot supply the missing domain laws by itself.
+
 ### Creation includes unfinished work
 
 Explore partial programs, provisional data and incomplete models as part of the

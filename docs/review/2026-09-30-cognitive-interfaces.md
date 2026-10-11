@@ -746,3 +746,41 @@ facts. Compare prediction, missing-premise diagnosis, alternative explanation,
 revision and handoff with experts and learners separately. Formal experiment
 results are evidence for artifact checks only; actual participant trials and
 accessibility evaluation remain unperformed.
+
+## Knowledge Frameworks And Qualified Explanations — 2026-10-11
+
+### Evidence That Changed The Design
+
+The user's request expands the inquiry from scientific reasoning to historical
+attempts at general knowledge representation and processing, starting with
+Leibniz. The [consolidated dossier](../research/knowledge_frameworks.md) marks
+selected text, official mechanisms, abstracts and indexed excerpts separately.
+It connects formal notation and augmentation with contextual inference, revision,
+theory modularity, linked knowledge, uncertainty and learned processing. Its
+unreviewed frontier remains explicit; it does not claim an exhaustive history.
+
+### Workflow Friction
+
+A shared representation can conceal incompatible identity, negation, consequence
+and update rules. An explanation can also turn quoted reports into endorsed
+premises or display a query absence, a proof and an observation as the same kind
+of answer. A fluent historical survey would not expose these implementation gaps
+without concrete correction and translation cases.
+
+### Durable Improvement
+
+The interaction owner now requires qualified questions, premise endorsement,
+profile-specific results, independent support paths and revision dependencies.
+The target records refusal/comparison cases without inventing new APIs. HX2/HX8
+and SP0 retain representation and human-study ownership; R1/R2 own binder,
+premise-ledger and interpretation artifacts. Source and runtime semantics are
+unchanged; no general knowledge interface or participant trial was implemented.
+
+### Next Pass
+
+Follow R1's binder comparison, then prepare a finite supplied-rule ledger with
+mention/assertion, premise withdrawal and independent support. Compare matched
+views on the fading-oscillation, missing-invoice, conflicting-report and
+exact-to-numerical cases. Check artifact semantics against independent finite
+facts, then test actual comprehension, repair and handoff separately. An artifact
+oracle is not evidence of human understanding.

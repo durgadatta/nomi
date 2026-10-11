@@ -558,6 +558,16 @@ Compare passive traces, contrastive dependency slices and separately authorized
 hypothetical repair. Showing one failed condition does not prove that changing
 it will enable the expected action; incomplete evidence must remain visible.
 
+**Knowledge-framework pressure:** [the historical synthesis](knowledge_frameworks.md)
+sharpens questions 9/11/12/15/17 with scoped premises, mention versus assertion,
+profile-specific inference, theory interpretation and revision-aware support.
+R1 first compares binder artifacts, then a finite supplied-rule ledger; R2
+compares independently checked interpretation obligations, including an invalid
+and a one-way bridge. Extend HX2/HX8/SP0 with incomplete invoice knowledge,
+conflicting reports, withdrawn support and exact-to-numerical conversion. Keep
+ordinary Bool semantics and actual authority separate from logical contexts.
+No general reasoner, truth-maintenance implementation or participant trial has run.
+
 ## User-Facing Readiness Pressure
 
 The October 10 [user-facing audit](../orientation/project_roadmap.md#user-facing-readiness-audit)

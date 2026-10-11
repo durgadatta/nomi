@@ -553,6 +553,14 @@ increment is open. Close only the promises of the selected slice.
 | 6 | Reuse and inspect the same checked workflow from two consumers; cognitive packet owns representation comparison | Independent consumer checking, revision invalidation, named intermediates and repair/handoff observations | Improve interfaces/diagnostics before adding another syntax |
 | 7 | Admit a proven useful convenience or generalization | Long form, formatter, lowering, diagnostics, independent conformance and removal criteria agree | Keep the ordinary composition; a failed shorthand does not reject the domain need |
 
+The [knowledge-framework continuation](../research/knowledge_frameworks.md)
+sharpens contextual terms with explicit interpretation and premise endorsement,
+composition with judgment-preservation obligations, and evidence with
+profile-specific results and revision dependencies. These refine the candidate
+without adding a universal knowledge ontology or evaluator. The
+[interaction owner](interaction_model.md#knowledge-contexts-and-qualified-explanations)
+retains the explanation and human-comparison obligations.
+
 The foundational continuation is now R1/SP1's scoped-term comparison in
 [the reasoning algebra](reasoning_algebra.md#one-integration-path-with-closure-receipts),
 refining step 2's shared reference and domain-validator boundary. Do not grow the

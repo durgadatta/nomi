@@ -272,3 +272,20 @@ example "two valid snapshot candidates do not establish a shared commit":
 # - Numeric overflow must follow the selected profile's explicit target policy.
 # Views proposed here: text, read-only grid, dependency graph, input form,
 # command palette, and trace. None is a second evaluator or supported sample.
+
+# Knowledge-context pressure, designing continuation 2026-10-11:
+# These are required comparison cases, not new APIs or executable assertions.
+# - Import a quoted report: preserve its source; do not add an endorsed premise.
+# - No invoice in a complete snapshot versus an incomplete knowledge context:
+#   preserve the question's completeness/negation policy and scoped result.
+# - Same label/different owner and different labels/possibly same ontology entity:
+#   require a declared identity interpretation rather than string equality.
+# - A conclusion has two independent supports; withdraw one and keep the other.
+# - Conflicting reports remain visible without arbitrary derived world claims.
+# - A premise revision invalidates dependent support while retaining its history.
+# - A proof-search budget expires: retain incomplete, never fabricate refutation.
+# - A type-correct one-way theory bridge does not certify two-way equivalence.
+# - Exact rational associativity cannot silently transfer to an IEEE adapter.
+# - An ideal conservation proof and a fading observation retain separate claims.
+# - Opening a captured explanation does not retrieve, simulate, prove or measure.
+# - Theoretical permission statements do not confer actual host authority.

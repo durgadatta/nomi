@@ -300,6 +300,67 @@ are separate judgments. Rules for differentiated asymptotics require extra
 conditions; uniform claims also specify which parameters range uniformly.
 [NIST DLMF definitions and differentiation](https://dlmf.nist.gov/2.1).
 
+## Contexts, Interpretations And Reasoning Methods
+
+The [knowledge-framework synthesis](../research/knowledge_frameworks.md) sharpens
+the candidate after tracing selected primary work from Leibniz onward. A common
+description format cannot supply a common ontology, consequence relation or
+execution method. Keep the three foundational responsibilities; make their
+contracts more precise rather than add a universal knowledge primitive.
+
+**Contextual terms** distinguish lexical binding, nominal identity, a theory's
+signature and parameters, endorsed premises, and artifact revision. These are
+related contexts with different owners, not interchangeable labels. Ordinary
+programs need only the relevant obligations. A quoted statement is a description;
+importing or displaying it does not assert it as a premise. A theoretical claim
+about an actor's permission cannot confer an actual capability.
+
+Ontologies are selected theory libraries, not a mandatory runtime superclass
+hierarchy. Ontological classification, nominal typing, structural compatibility
+and set membership require explicit correspondence. Identical observed fields
+cannot merge two actual owners. This keeps rich domain modeling possible while
+preserving simple ordinary values and the library's chosen commitments.
+
+**Checked composition** has at least two questions: can these terms compose under
+their type/completion contracts, and which semantic judgments does a proposed
+interpretation preserve? A theory bridge declares source and destination,
+translation direction, assumptions and preservation obligations. Equivalence,
+one-way sound translation, approximation and unchecked correspondence are distinct
+library contracts. A type-correct bridge is not automatically judgment-preserving.
+Do not infer global inverses from local coordinate inverses or exact arithmetic
+laws from an executable floating-point adapter.
+
+**Explicit judgments** retain a particular question, profile, premises, method,
+result and dependencies. Different profiles may have different result types.
+Exact identity, constructible witness, ontology entailment, shape validation,
+posterior probability, empirical support and a suggested explanation are not
+members of one ordered truth/confidence scale. A bounded unsuccessful search
+cannot fabricate a refutation. Mention, endorsement and proof from premises are
+separate lifecycle states; endorsement can change while the old conditional
+proof remains valid in its recorded context.
+
+These facets belong first in library descriptions and checker interfaces. A
+theory, statement, interpretation or method plan can be ordinary data assembled
+with the existing candidate's products, variants, binders and calls. No claim is
+made that every logic can be encoded without cost, or that every such description
+is automatically executable. If a concrete activity repeatedly requires a
+residual mechanism, reopen the foundation comparison instead of hiding it.
+
+| Library composition | Preserved obligation | Refusal discriminator |
+| --- | --- | --- |
+| Signature + scoped terms + premises + supplied consequence rules | Conclusions name their theory and exact support. | Same-spelled imported parameter captures a local binder. |
+| Theory description + interpretation + discharged obligations | Transfer only covered statements/judgments. | An array export loses nominal space identity or reverses a one-way theorem implication. |
+| Question + method plan + explicit realization | Result retains method limits and actual execution owner. | A timeout is displayed as false, or opening a view executes a remote query. |
+| Evidence + justification dependencies + revision policy | Withdrawal invalidates dependent support without erasing history. | A conclusion with two independent supports disappears when one is removed. |
+| Alternative models + observation descriptions + comparison view | Mathematical and empirical claims remain qualified. | An ideal conservation proof is displayed as evidence that measured fading cannot occur. |
+
+R1 should first compare binder representations, then add a finite supplied-rule
+premise ledger as a discriminator. R2 should make profiles and interpretation
+obligations explicit, using an established checker for independent replay. This
+is not an implementation of general theorem proving or AGM belief revision.
+The current exact lab still implements only its fixed polynomial profile, with
+no general premise ledger, theory bridge or rule-provider plugin boundary.
+
 ## Compact Executable Examples
 
 Run every worked composition without supplying data or selecting a solver:
@@ -383,12 +444,16 @@ be represented as terms. This is a general-purpose redesign, not a physics DSL.
    with locally nameless terms. Close capture-free substitution, alpha-equivalence,
    same-name binders, imports and revision invalidation for one monomorphic slice.
    Include an ordinary report function and a scientific map; neither must become
-   a global lazy graph. This is the next implementation decision.
+   a global lazy graph. Then use a finite supplied-rule premise ledger to test
+   mention versus assertion, scoped imports and independent justification paths.
+   This is the next implementation decision, not a new source feature.
 3. **R2 — structures and qualified transformations.** Introduce explicit providers
    for map rules, tangent/cotangent roles and partial-domain obligations. Use an
    established symbolic/AD adapter for independent vectors, plus an independent
    exact certificate consumer. Incorrect chain rules and tangent/cotangent swaps
-   must fail; unknown operators remain unsupported.
+   must fail; unknown operators remain unsupported. Add a declared theory
+   interpretation, one-way preservation and an invalid bridge; retain each
+   profile's own result type and distinguish exhausted search from refutation.
 4. **R3 — relations, selection and variation.** Compose a constrained model and
    a continuum action with named admissible variations and boundary terms.
    Independently check one Euler-Lagrange derivation. Retain stationary saddles,

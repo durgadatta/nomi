@@ -1807,3 +1807,48 @@ symbolic/AD adapter with independent vectors/replay, including tangent/cotangent
 refusals. R3/R4 retain constrained variations, boundary terms, singular Legendre
 transport and nonuniform approximation. R5 measures authoring, repair and handoff
 before admitting a new source or interaction contract.
+
+## Contextual Knowledge As A Foundation Challenger — 2026-10-11
+
+### Evidence That Changed The Design
+
+The [knowledge-framework research](../research/knowledge_frameworks.md) adds
+selected historical/primary mechanisms from Leibniz onward, with explicit reading
+depth and unreviewed families. Its synthesis separates notation, ontology,
+inference, computation, interchange and human augmentation. Contextual inference,
+theory interpretation and revision show why one passive object envelope is
+insufficient as a general reasoning foundation.
+
+### Workflow Friction
+
+Calling two engines through one interface does not reconcile their conclusions.
+Logical contexts must remain distinct from lexical scopes, artifact revisions
+and actual capabilities. Import can silently turn discussion into assertion;
+translation can silently overclaim preservation. Adding a global truth enum
+would hide these conflicts instead of closing them.
+
+### Durable Improvement
+
+The reasoning-algebra owner retains contextual terms, checked composition and
+explicit judgments while clarifying interpretation, premise endorsement,
+profile-specific results and bridge obligations. Existing R1/R2 now include
+independent support paths, invalid and one-way mappings, and search exhaustion
+without fabricated refutation. The interaction owner retains explanations and
+human trials. No new Core, knowledge engine, source feature or universal ontology
+was admitted; current polynomial/scientific/AI labs keep their separate profiles.
+
+Validation: 100 focused checks pass for documentation lifecycle, registered
+packets, interaction models/capture/study fixtures, the exact reasoning algebra,
+research matrices and target direction. The fourteen exact examples still run;
+five packets and 2384 local links across 173 documents check successfully.
+This validates repository consistency and existing bounded artifacts, not the
+new knowledge mechanisms or historical completeness.
+
+### Next Pass
+
+Perform R1's ordinary-report/scientific-map binder comparison first. Then use a
+finite supplied-rule premise ledger with an independent support/revision oracle.
+R2 supplies checker profiles and a declared interpretation replayed by an
+established tool, including invalid and non-equivalent bridges. Compare those
+artifacts through HX2/HX8/SP0 before generalizing the representation or admitting
+syntax. The research frontier is a source-acquisition map, not a parallel backlog.
