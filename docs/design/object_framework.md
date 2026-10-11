@@ -316,7 +316,7 @@ explicit mechanism below.
 
 Workflow substitution rewires **all** operands. A composition containing v3
 conditions promotes older unary conditions to single-operand records in v3;
-a composition containing only older conditions retains v2. Component inspection
+a composition containing only v1/v2 conditions retains v2. Component inspection
 retains each source owner, revision and context. Independent replay checks the
 promotion, reference substitution and evidence without importing the producer.
 
@@ -423,6 +423,48 @@ and rewire the collection subject or every relation operand. Source ownership
 remains in component inspection. Earlier standalone envelopes and older-only
 workflow compositions retain their existing formats. The independently admitted
 consumer checks traversal, witnesses, limits, promotion and substitution.
+
+### Repair A Refused Condition
+
+Required conditions stop binding before any backend callback. A typed
+`RequirementContractError` preserves the exact static or binding receipt under
+its detached `.report` property. Its failed records identify subjects, rules
+and paths; universal conditions retain indexed counterexamples and their
+completeness flag. The report includes context and binding digests rather than
+copies of rejected values.
+
+```python
+from tools.object_interface import Graph, RequirementContractError, Requirements, load_document
+from tools.object_interface.documentary import document_backend, document_vocabulary
+
+publication = Graph.from_document(
+    load_document("docs/research/object_framework/publication.json"),
+    document_vocabulary(),
+)
+required = Requirements.from_document(
+    load_document("docs/research/object_framework/publication_requirements_v4.json"),
+    publication,
+)
+compiled = document_backend(publication.vocabulary).compile(publication).require(
+    required, include_condition_inputs=True,
+)
+inputs = load_document("docs/research/object_framework/publication_bindings.json")
+inputs["draft"]["sections"][1]["heading"] = ""
+try:
+    compiled.bind(inputs)
+except RequirementContractError as failure:
+    failed = [r for r in failure.report["requirements"] if r["status"] == "refuted"]
+    assert failed[0]["condition"]["failures"][0]["path"] == ["sections", 1, "heading"]
+```
+
+Repair that heading and bind again; neither the graph nor the compiled plan
+changed during refusal. A refuted literal produces the same exception with
+static evidence when attaching the contract. The CLI exits with code 2 and
+writes `{status: "refused", kind: "requirement-contract", message, evidence}`
+to stderr. Evidence retains its original `refuted` verdict and can be supplied
+to the independent consumer with the matching source and snapshot; refusing an
+execution is not an independent proof of the report. Shape, capability and
+capacity refusals remain distinct from a condition's counterexample.
 
 ### Domain Integration Order
 

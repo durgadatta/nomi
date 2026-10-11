@@ -54,6 +54,18 @@ MAX_ITEM_CHECKS = 4096
 MAX_FAILURES = 128
 
 
+class RequirementContractError(ContractError):
+    """A required condition failed; its replayable evidence remains inspectable."""
+
+    def __init__(self, message, report):
+        self._report = snapshot(report)
+        super().__init__(message)
+
+    @property
+    def report(self):
+        return json.loads(self._report)
+
+
 def _predicate(rule, values):
     if rule == "exact.le-v1":
         return values[0] <= values[1]
@@ -61,7 +73,9 @@ def _predicate(rule, values):
         return values[0] == values[1]
     if rule == "exact.positive-v1":
         return values[0] > 0
-    return len(values[0]) > 0
+    if rule in ("text.nonempty-v1", "array.nonempty-v1"):
+        return len(values[0]) > 0
+    raise ContractError("no reviewed predicate implementation for this rule")
 
 
 @dataclass(frozen=True)

@@ -1370,3 +1370,39 @@ lexical item binding; specify domain identity and evaluation capacities. Adapt
 statistical computation only with observation domains and independent exact-law
 evidence preserved. Effects, resource scopes and ordinary Nomi source admission
 remain separate owner gates.
+
+## Repairable Requirement Refusals — 2026-10-10
+
+### Evidence That Changed The Design
+
+The condition checker retained indexed counterexamples, but a refused binding
+reported only failing condition names. The required execution boundary now
+preserves its exact receipt in a typed exception and in structured CLI stderr.
+This makes existing inspection evidence usable during repair without re-running
+an engine or echoing rejected input values.
+
+### Workflow Friction
+
+Static literal and binding failures need different phases, while both should
+retain independent replay and detached exports. Every envelope version must
+remain inspectable. Failed bindings cannot change the graph or compiled plan;
+repair requires a new explicit snapshot, not a supplied satisfied status.
+
+### Durable Improvement
+
+New tests independently replay detached failure reports for all four envelopes,
+check static literal refusals, and exercise relation/indexed CLI diagnostics
+without private value echo. The canonical object guide includes a runnable
+repair example. Existing condition receipts, workflow ownership and default
+closed realization behavior retain their contracts.
+
+Validation: all 598 focused checks pass. All five Python and ten shell example
+blocks in the object guide execute; lint, packet/catalog coherence and 2258
+local documentation links pass.
+
+### Next Pass
+
+Compare concrete repairs through the same named graph in two representations.
+Correlated/nested quantification, domain-law proof composition, effects/resources
+and ordinary Nomi source admission remain separately owned gaps. These lab
+interfaces are removable and do not establish distribution readiness.

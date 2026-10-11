@@ -4,7 +4,14 @@ import argparse
 import json
 import sys
 
-from . import ContractError, Graph, Requirements, Vocabulary, load_document
+from . import (
+    ContractError,
+    Graph,
+    RequirementContractError,
+    Requirements,
+    Vocabulary,
+    load_document,
+)
 from .backend import BackendFailure, Cancelled
 from .documents import ValueContractError
 from .documentary import document_backend, document_vocabulary
@@ -101,6 +108,19 @@ def main(argv=None):
                 result = {"values": realization.values, "receipt": realization.receipt}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1 if result.get("status") in ("unknown", "pending", "refuted") else 0
+    except RequirementContractError as exc:
+        print(
+            json.dumps(
+                {
+                    "status": "refused",
+                    "kind": "requirement-contract",
+                    "message": str(exc),
+                    "evidence": exc.report,
+                }
+            ),
+            file=sys.stderr,
+        )
+        return 2
     except ValueContractError as exc:
         report = exc.report
         print(

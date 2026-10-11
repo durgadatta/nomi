@@ -2,13 +2,14 @@
 
 from .documents import ContractError, load_document
 from .model import Graph, Reference, Vocabulary
-from .contracts import Requirements
+from .contracts import RequirementContractError, Requirements
 from .workflows import Workflow, WorkflowInstance
 
 __all__ = [
     "ContractError",
     "Graph",
     "Reference",
+    "RequirementContractError",
     "Requirements",
     "Vocabulary",
     "Workflow",

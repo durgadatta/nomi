@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import json
 from types import MappingProxyType
 
+from .contracts import RequirementContractError
 from .documents import (
     ContractError,
     Frozen,
@@ -182,8 +183,11 @@ class Compiled(Frozen):
                     condition_subjects.add(operand.subject)
                     if contract["role"] == "input":
                         condition_inputs.add(term[2])
-        if requirements.check()["status"] == "refuted":
-            raise ContractError("required literal condition is refuted")
+        evidence = requirements.check()
+        if evidence["status"] == "refuted":
+            raise RequirementContractError(
+                "required literal condition is refuted", evidence
+            )
         result = Compiled()
         result._graph, result._backend = self._graph, self._backend
         result._outputs, result._terms = (
@@ -287,8 +291,9 @@ class Compiled(Frozen):
                 if item["status"] != "satisfied"
             ]
             if failed:
-                raise ContractError(
-                    f"required input conditions {failed} are not satisfied; backend was not invoked"
+                raise RequirementContractError(
+                    f"required input conditions {failed} are not satisfied; backend was not invoked",
+                    evidence,
                 )
         result = Bound()
         result._compiled, result._bindings = self, encoded

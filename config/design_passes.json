@@ -177,7 +177,8 @@
         "ruff check tools/object_interface tools/object_replay.py prototype/tests/unit/tools/test_object_relations.py prototype/tests/unit/tools/test_object_relation_replay.py",
         "pytest -n 0 prototype/tests/unit/tools/test_object_condition_inputs.py",
         "pytest -n 0 prototype/tests/unit/tools/test_object_universal_conditions.py prototype/tests/unit/tools/test_object_universal_replay.py",
-        "ruff check tools/object_interface tools/object_replay.py prototype/tests/unit/tools/test_object_universal_conditions.py prototype/tests/unit/tools/test_object_universal_replay.py"
+        "ruff check tools/object_interface tools/object_replay.py prototype/tests/unit/tools/test_object_universal_conditions.py prototype/tests/unit/tools/test_object_universal_replay.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_object_requirement_diagnostics.py"
       ],
       "next_actions": [
         "Use the six-family/57-composition hierarchy to derive the report and engine-free objects with explicit laws. Its 25 target routes are navigation evidence, not semantic proof. Structural codecs, documentary renderers, reusable workflows, cross-object relations, explicit condition-only inputs and bounded universal conditions now run with independent pinned replay. Next compare reuse and repair with inline composition, then specify correlated/nested quantification and domain-law evidence. Adapt statistical computation while preserving observation domains, missingness, exact theory and independent v1 replay. Units, paired moments, effects/resource scopes and source admission retain separate gates.",
