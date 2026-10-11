@@ -228,9 +228,12 @@ compares smaller cores before adding scientific features. Its exact scoped-map
 lab checks composition/tangent identities, discrete stationarity, supplied
 Legendre inverses and retained perturbation remainders without inputs. This is
 not analytic calculus or a proof that three responsibilities are irreducible.
-Next R1/SP1 compares scoped-reference and locally nameless binding artifacts
-on ordinary and scientific terms; R2/AF2 tests explicit structure providers
-against established adapters and independent replay. Preserve effects/cleanup,
+R1 now compares scoped references and locally nameless binders with independent
+replay, bounded actual Nomi production and a premise ledger. R2 connects closed
+functions and finite kernels, checks support-preserving family restriction, and
+interprets source/induced terms as exact maps with independent SymPy tangent
+checks. Next extend typed source/effects, premise transport and richer structures;
+these finite comparisons do not close general interpretation or numeric AD. Preserve effects/cleanup,
 stationary saddles, singular inversion and nonuniform approximation as challengers.
 
 **Physics/discovery continuation:** the
@@ -247,17 +250,22 @@ adds SP0 and a question/alternative/evidence workspace; it does not assert a
 universal mental calculus. A bounded exact formal probe now checks dimensioned
 polynomial witnesses for oscillator conservation and damping, with independent
 replay and no numeric inputs. It retains unknown results and an unchecked
-general consistency obligation. General binding identity/capture avoidance,
-quantity-kind/unit/frame spaces, analytic calculus, observation/inverse contracts,
+general consistency obligation. Pure-term binding/capture avoidance now runs;
+general typed/effectful binding, quantity-kind/unit/frame spaces, analytic calculus, observation/inverse contracts,
 solver evidence and actual human studies remain distinct next discriminators.
 
 **AI framework continuation:** [AF0-AF6](../design/ai_frameworks.md) refine
 ML1-ML6 in the [AI research](data_workflows/ai_ml.md). A closed named-axis
 metadata checker now validates a linear loss without arrays or an AI engine;
 it distinguishes inferred signatures and declared backend coverage from
-derivatives, numerical correctness and execution. Next compare explicit
-expression values with a checked numeric function subset, then one established
-AD adapter with independent primal/gradient/pairing vectors. Operator rule
+derivatives, numerical correctness and execution. Bounded scoped function
+production, typed grammar induction, adaptive observation journals and contingent
+inquiry now share descriptions and finite models. Independent replay checks
+example fit, likelihoods, support-preserving restriction and budgeted policy
+bounds; source-to-polynomial meaning/formal tangents also have pinned SymPy
+checks. Next compare richer numeric structures and an established numeric AD
+adapter with independent primal/gradient/pairing vectors, plus dependent latent
+observations, causal action and general state evolution. Operator rule
 versions, custom derivatives, state/randomness, aliasing, distributed weighted
 objectives and serving context retain separate contracts. No arbitrary-pure-
 callback transformation or default Float semantics is accepted by this probe.

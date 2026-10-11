@@ -2266,3 +2266,30 @@ Refresh derived retrieval and smoke-test all registered executable routes. The
 next semantic gates remain richer typed source/effects, general premise and
 vocabulary transport, dependent latent/causal models, state evolution, numeric
 AD and empirical/user validation. These checks do not admit an AGI runtime.
+
+## Integrated Maintainer And User Routes — 2026-10-11
+
+### Evidence That Changed The Design
+
+The new composition crossed enough existing owners that older open-question and
+implementation routes still described completed comparisons as future work.
+
+### Workflow Friction
+
+Without one current artifact map, a new maintainer could mistake separate tools
+for a second AI language or repeat already executed binder/provider comparisons.
+
+### Durable Improvement
+
+The existing artifact map now inventories each description/operation and its
+independent evidence. Open questions, synthesis guide and aspirational pressure
+comments distinguish implemented bounded slices from remaining general gates.
+The hierarchical user guide is the executable route; canonical design owners
+retain semantic authority. Derived RAG/MCP context will be rebuilt, not committed.
+
+### Next Pass
+
+Resume richer source/structure and premise/vocabulary transport with dependent
+latent or causal/stateful discriminators. Use the committed checks and artifact
+map rather than another research plan; actual usability and scientific adequacy
+need their own observations.

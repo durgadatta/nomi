@@ -378,6 +378,57 @@ prototype/tests/data/sample_sources/interpreter/
 samples/
 ```
 
+## Engine-Free Reasoning And Discovery Tools
+
+These source-checkout tools are experimental library adapters, separate from
+ordinary Nomi execution and the browser. Begin with the hierarchical
+[learning and reasoning guide](../guide/reasoning_lab.md). The
+[reasoning owner](../design/reasoning_algebra.md) and
+[intelligent-program owner](../design/ai_frameworks.md) define their design gates.
+No general AI source feature, inference runtime or physical theory is admitted.
+
+| Surface | Captured description or explicit operation | Independent evidence |
+| --- | --- | --- |
+| `tools.scoped_terms` | Qualified typed pure terms; substitution and beta reduction | Owner-based versus index evaluation, hygiene and arithmetic vectors |
+| `tools.nomi_terms` | Actual Nomi single-function capture and UTF-8 origins | Constructor normal forms, arithmetic and refused-source/CLI tests |
+| `tools.reasoning_structures` | Closed Rational and finite-kernel providers; typed ports and composition | Arithmetic/path sums, stale/carrier refusal |
+| `tools.premise_ledger` | Quoted/endorsed reports, supplied signed rules and revision-bound support | Independent reachability and finite Horn models |
+| `tools.theory_bridges` | Finite classical interpretations, soundness and model-bijection claims | Exhaustive models and optional pinned SymPy Boolean replay |
+| `tools.program_search` | Typed grammar and examples → bounded example-fitting terms | Separate tuple enumeration/arithmetic replay |
+| `tools.finite_inquiry` | Measures/kernels, hypothetical branches, objective-relative inquiry | Joint-loss replay and exhaustive contingent choices |
+| `tools.adaptive_inquiry` | Trial-bound reports/endorsements → revised estimates and next questions | Separate likelihood products and joint-world enumeration |
+| `tools.model_refinement` | Explicit subset/permutation with support-preserving measure transport | Separate retained-set/mass replay; positive-mass refusal |
+| `tools.scoped_polynomials` | Scoped functions → existing formal map/tangent algebra | Pinned SymPy owner-based meaning/derivative replay |
+| `tools.inquiry_policy` | Bounded contingent questioning with stop, ties and incomplete bounds | Independent branch/cost replay and exhaustive strategies |
+| `tools.intelligence_loop` | Induction → prediction → inquiry → supplied observation → revision | Composed checkers and actual CLI scenarios |
+
+The common transformation boundary retains carrier-specific equality and laws.
+Descriptions store no callbacks, solver, RNG or live authority. Capture/inspection
+is distinct from realization, and a hypothetical branch is distinct from an
+endorsed observation. The finite observation profiles state their dependence
+assumptions; copied reports do not create independent trials.
+
+Useful entry points:
+
+```bash
+python3 -m tools.nomi_terms force.nomi --identity my-force
+python3 -m tools.program_search
+python3 -m tools.intelligence_loop --observe 4
+python3 -m tools.intelligence_loop --observe 3 --json
+python3 -m tools.inquiry_policy --horizon 2 --budget 1
+python3 -m tools.scoped_polynomials
+```
+
+The optional `reasoning-check` extra pins SymPy 1.14.0 for
+`python3 -m tools.scoped_polynomials --sympy` and
+`python3 -m tools.theory_bridges --sympy`. Missing/wrong adapters are explicitly
+refused; passive descriptions do not imply independent validation. Search and
+polynomial capacities are laboratory bounds, not language-level scalar limits.
+General typed/effectful source, premise/vocabulary transport, latent-dependent
+and causal models, stateful planning, numeric AD and human/empirical validation
+remain separate gates. Local [RAG/MCP](rag_mcp.md) retrieves these source contracts
+and registered checks; it does not execute a proposed policy or model callback.
+
 ## Inspection Commands
 
 Use these before and after grammar/lowering changes:

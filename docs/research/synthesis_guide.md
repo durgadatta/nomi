@@ -442,5 +442,10 @@ does not preselect its outcome.
 The implemented induction path is now `tools.program_search`: explicit typed
 grammar → bounded term construction → example-qualified proposals → independent
 replay → shared callable family. Use this alongside source-derived hypotheses;
-next connect predictions to captured observations and adaptive inquiry. Passing
-examples does not promote a proposed abstraction into a universal rewrite.
+predictions now feed captured observation journals, adaptive inquiry and bounded
+contingent policies. Support-preserving restriction rejects positive-mass loss,
+while explicit polynomial interpretation can earn a stronger formal equality
+with independent SymPy replay. Passing examples alone still does not promote a
+proposed abstraction into a universal rewrite. Start the executable path at the
+[learning and reasoning guide](../guide/reasoning_lab.md); extend the existing
+AI/reasoning owners for richer source, premise, causal and stateful contracts.
