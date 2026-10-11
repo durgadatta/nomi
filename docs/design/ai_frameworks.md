@@ -249,6 +249,12 @@ as well as the aggregate loss. Four additional checks reject forged branches
 with correct aggregates and confirm passive inspection/immutability. These
 hypothetical branches are not reports that an observation occurred.
 
+The [explicit Nomi producer](../../tools/nomi_terms.py) also captures bounded
+pure scientific/ordinary functions through the actual frontend into the same
+scoped-term contract. This closes the Python-only authoring comparison for that
+profile; general source admission, evidence transport and structure providers
+remain separate obligations.
+
 ### Source-Linked Hypotheses And Two Deeper Discriminators
 
 `python3 -m tools.intelligence_examples` connects the scoped-term producer to

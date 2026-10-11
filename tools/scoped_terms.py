@@ -382,6 +382,28 @@ def parse(source, context=()):
     offsets = [0]
     for line in source.text.splitlines(keepends=True):
         offsets.append(offsets[-1] + len(line.encode()))
+    def origin_for(node):
+        return Origin(
+            source.identity, source.revision, source.digest,
+            offsets[node.lineno - 1] + node.col_offset,
+            offsets[node.end_lineno - 1] + node.end_col_offset,
+        )
+
+    return from_ast(source, root.body, context, origin_for=origin_for)
+
+
+def from_ast(source, root, context=(), *, origin_for):
+    """Checked pure-term extraction shared by explicit source producers.
+
+    AST is a transitional input, never evaluated. Producers own truthful source
+    correspondence; this function owns the bounded type and term contract.
+    """
+    if type(source) is not Source or not callable(origin_for):
+        raise Refused("producer requires source revision and origin mapping")
+    _context(context)
+    names = {x.label: x for x in context}
+    if len(names) != len(context):
+        raise Refused("ambiguous imported label")
     serial = 0
     count = 0
 
@@ -390,13 +412,7 @@ def parse(source, context=()):
         count += 1
         if depth > MAX_DEPTH or count > MAX_NODES:
             raise Refused("source term exceeds capacity")
-        origin = Origin(
-            source.identity,
-            source.revision,
-            source.digest,
-            offsets[node.lineno - 1] + node.col_offset,
-            offsets[node.end_lineno - 1] + node.end_col_offset,
-        )
+        origin = origin_for(node)
         if type(node) is ast.Constant:
             result = literal(node.value)
             return Literal(result.value, origin)
@@ -404,7 +420,14 @@ def parse(source, context=()):
             if node.id not in local:
                 raise Refused("unresolved source name")
             return Reference(local[node.id].identity, origin)
-        if type(node) is ast.Lambda:
+        if type(node) in (ast.Lambda, ast.FunctionDef):
+            if type(node) is ast.FunctionDef and (
+                node.decorator_list or node.returns is not None
+                or getattr(node, "type_params", ())
+                or len(node.body) != 1 or type(node.body[0]) is not ast.Return
+                or node.body[0].value is None
+            ):
+                raise Refused("only pure expression function contracts")
             args = node.args
             if (
                 args.defaults
@@ -413,6 +436,7 @@ def parse(source, context=()):
                 or args.kwarg
                 or args.kwonlyargs
                 or args.posonlyargs
+                or any(x.annotation is not None for x in args.args)
             ):
                 raise Refused("only closed positional lambda contracts")
             parameters = []
@@ -428,7 +452,10 @@ def parse(source, context=()):
                 raise Refused("duplicate source parameter")
             return Lambda(
                 tuple(parameters),
-                visit(node.body, local | {x.label: x for x in parameters}, depth + 1),
+                visit(
+                    node.body if type(node) is ast.Lambda else node.body[0].value,
+                    local | {x.label: x for x in parameters}, depth + 1,
+                ),
                 origin,
             )
         if type(node) is ast.BinOp and type(node.op) in (ast.Add, ast.Sub, ast.Mult):
@@ -451,7 +478,7 @@ def parse(source, context=()):
             )
         raise Refused("source form outside pure rational profile")
 
-    term = visit(root.body, names)
+    term = visit(root, names)
     infer(term, context)
     return term
 

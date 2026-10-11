@@ -455,6 +455,24 @@ binding groups, variants, effect/completion terms, general import resolver or
 shared domain-library migration is implemented. The next R1 artifact is the
 finite premise ledger; R2 then checks declared theory bridges independently.
 
+### Actual Nomi Source Production
+
+The [Nomi term producer](../../tools/nomi_terms.py) now captures one named
+`func` with a single expression return, or one parenthesized anonymous function,
+through the existing frontend. Run `python3 -m tools.nomi_terms`. Both feed the
+same bounded typed term extraction as constructor/Python-expression producers;
+no source rewriting, host lookup or evaluation occurs during capture.
+
+This explicit adapter selects exact Rational interpretation for its unannotated
+parameters; it does not change ordinary Nomi scalar semantics or introduce
+implicit quotation. Annotations, effects, recursion, defaults and unsupported
+syntax are refused. Source origins retain UTF-8 byte intervals and content
+identity. The temporary position collector derives contributor intervals when
+precedence lowering loses metadata; typed Surface should eventually own this
+correspondence. Source reconstruction and general typed/effectful production
+remain open. A constructor-normal-form oracle and exact arithmetic vectors
+check the supported named/anonymous forms and lexical shadowing.
+
 ## Executed Premise Ledger And Revision
 
 The [premise ledger](../../tools/premise_ledger.py) implements

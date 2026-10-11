@@ -2044,3 +2044,30 @@ prompts; no new packet or parallel design authority was created.
 Refresh derived context and verify prompt/source discovery. Resume common scoped
 source/structure-provider integration with explicit law and evidence transport;
 keep hypothetical branches separate from observed outcomes and external action.
+
+## Actual Nomi Function Capture — 2026-10-11
+
+### Evidence That Changed The Design
+
+Named and anonymous Nomi source now produces the same typed scoped descriptions
+as constructors, through the existing frontend. Independent arithmetic vectors
+and normal-form comparison exercise the bridge; unsupported programs are refused.
+
+### Workflow Friction
+
+Precedence lowering drops some source metadata. AST offsets were not trustworthy
+for Unicode. A removable collector now retains actual contributor intervals;
+full typed Surface production must eventually replace this bridge.
+
+### Durable Improvement
+
+One checked extraction owns the pure-term contract for both producers. Capture
+remains inert; exact Rational interpretation is explicitly selected by this lab,
+not imposed on ordinary source execution. Lexical identity and content-bound
+UTF-8 provenance survive the producer boundary.
+
+### Next Pass
+
+Integrate scoped callable descriptions with finite transformation providers,
+then implement bounded hypothesis synthesis and observation-driven revision.
+Keep empirical example fit separate from universal refactoring evidence.
