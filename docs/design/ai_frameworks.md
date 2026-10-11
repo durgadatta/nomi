@@ -257,7 +257,7 @@ remain separate obligations.
 
 ### Source-Linked Hypotheses And Two Deeper Discriminators
 
-`python3 -m tools.intelligence_examples` connects the scoped-term producer to
+`python3 -m tools.intelligence_examples` connects actual Nomi scoped-function capture to
 finite inquiry. The two oscillator mechanisms are source-derived pure rational
 functions with the same checked callable contract. Their finite alternative
 identities bind the full source/type/origin inspection fingerprints. Changing
@@ -599,3 +599,9 @@ and `numerical-correctness: not-established`. The checker neither imports an AI
 framework nor allocates tensors. Removal/extraction point: replace its closed
 operator table/profile with an admitted domain artifact, preserving independent
 axis counterexamples, source identity and honest capability outcomes.
+
+The shared [transformation boundary](../../tools/reasoning_structures.py) now
+provides closed callable families and explicit finite prediction kernels. Pure
+Nomi source, constructor terms and finite inquiry compose without callbacks or
+execution authority stored in descriptions. Carrier-specific equality, law
+checks, general typed sources and evidence transport remain separate gates.

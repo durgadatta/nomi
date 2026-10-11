@@ -406,7 +406,9 @@
         "ruff check prototype/tests/unit/tools/test_inquiry_branch_replay.py",
         "python3 -m tools.nomi_terms",
         "pytest -n 0 prototype/tests/unit/tools/test_nomi_term_producer.py",
-        "ruff check tools/nomi_terms.py prototype/tests/unit/tools/test_nomi_term_producer.py"
+        "ruff check tools/nomi_terms.py prototype/tests/unit/tools/test_nomi_term_producer.py",
+        "pytest -n 0 prototype/tests/unit/tools/test_reasoning_structures.py",
+        "ruff check tools/reasoning_structures.py prototype/tests/unit/tools/test_reasoning_structures.py"
       ],
       "next_actions": [
         "Follow reasoning_algebra.md R0-R5: contextual terms, checked composition and explicit judgments remain a foundational candidate. R0 exact maps, R1 pure scoped binders and signed-rule premise support, and a finite R2 classical bridge now run with independent evaluation/model oracles. SymPy 1.14.0 optionally replays bridge semantics. Next integrate one source-derived scientific interpretation and explicit premise/evidence transport; compare structure providers with an established symbolic/AD adapter. Preserve qualified identity, hygiene, alternative support, inert quotation, profile-specific results, incomplete search and actual authority boundaries. A bounded Nomi pure-function producer now shares term extraction and qualified UTF-8 provenance; general typed source production, source reconstruction, recursive/effectful binders, continuum variation, general flows, cotangent roles, asymptotic validity and measured human benefit remain open.",

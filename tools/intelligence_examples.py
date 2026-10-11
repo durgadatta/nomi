@@ -1,7 +1,7 @@
 """Source-linked hypotheses, inquiry and causal/learning counterexamples.
 
 This composes existing scoped-term and finite-inquiry labs. The source producer
-is a checked Python-expression adapter, not admitted Nomi quotation syntax.
+uses explicit Nomi/Python-expression adapters, not admitted quotation syntax.
 Measurement likelihoods are explicit assumptions, not derived physics.
 """
 
@@ -10,13 +10,19 @@ import json
 
 from tools import finite_inquiry as q
 from tools import scoped_terms as terms
+from tools import nomi_terms
+from tools import reasoning_structures as structures
 
 
-def hypothesis_family(sources):
+def hypothesis_family(sources, *, producer="python-expression"):
     """Capture checked terms as finite alternatives through content-bound owners."""
     if type(sources) is not tuple or not 1 <= len(sources) <= 8:
         raise q.Refused("expected a bounded immutable source family")
-    artifacts = tuple(terms.describe(terms.parse(source)) for source in sources)
+    producers = {"python-expression": terms.parse, "nomi": nomi_terms.parse}
+    if producer not in producers:
+        raise q.Refused("unsupported source producer")
+    transformations = tuple(structures.rational(producers[producer](source)) for source in sources)
+    artifacts = tuple(terms.describe(x.description) for x in transformations)
     members = tuple(
         terms.Identity(source.identity, artifact["fingerprint"], "hypothesis")
         for source, artifact in zip(sources, artifacts, strict=True)
@@ -32,16 +38,19 @@ def hypothesis_family(sources):
     return space, artifacts
 
 
-def scientific_inquiry(sources=None):
+def scientific_inquiry(sources=None, *, producer="python-expression"):
     sources = (
         (
             terms.Source(
                 "damped-mechanism",
                 "1",
-                "lambda position, velocity: -2 * position - velocity",
+                ("(position, velocity) => -2 * position - velocity"
+                 if producer == "nomi" else "lambda position, velocity: -2 * position - velocity"),
             ),
             terms.Source(
-                "undamped-mechanism", "1", "lambda position, velocity: -2 * position"
+                "undamped-mechanism", "1",
+                ("(position, velocity) => -2 * position"
+                 if producer == "nomi" else "lambda position, velocity: -2 * position")
             ),
         )
         if sources is None
@@ -49,7 +58,7 @@ def scientific_inquiry(sources=None):
     )
     if len(sources) != 2:
         raise q.Refused("this inquiry comparison expects two hypotheses")
-    family, artifacts = hypothesis_family(sources)
+    family, artifacts = hypothesis_family(sources, producer=producer)
     prior, experiment, objective = q.example()
     # Transport only declared model/loss tables, rebinding their source space.
     # No original assessment or claim is transferred to the new family.
@@ -125,7 +134,7 @@ def abstraction_comparison():
 
 
 def main():
-    prior, experiment, objective, result, artifacts = scientific_inquiry()
+    prior, experiment, objective, result, artifacts = scientific_inquiry(producer="nomi")
     record = {
         "status": "bounded source-linked comparison, not Nomi source admission",
         "hypotheses": [

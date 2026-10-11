@@ -473,6 +473,25 @@ correspondence. Source reconstruction and general typed/effectful production
 remain open. A constructor-normal-form oracle and exact arithmetic vectors
 check the supported named/anonymous forms and lexical shadowing.
 
+### Shared Transformation Providers
+
+[Transformation providers](../../tools/reasoning_structures.py) now share inert
+inspection, captured ports and explicit composition for closed Rational functions
+and finite probability kernels. Their versioned declarations identify carrier,
+equality and available laws; they grant neither proof nor authority. The rational
+provider compares alpha-normal forms, not all extensionally equal functions.
+The finite provider compares exact rows with identical nominal ports. Mixing
+carriers or stale ports is refused; embeddings require explicit adapters.
+
+A `ProgramFamily` retains immutable source/constructor transformations as named
+finite alternatives. Explicit `predict` realizes those pure descriptions at a
+captured exact input, then constructs a deterministic observation kernel. That
+kernel can feed existing inference/inquiry without a new AI result type or
+engine embedded in a program object. The model still supplies prior, loss and
+measurement assumptions. There is no universal theory of spaces or transport
+of proof/evidence through arbitrary compositions. Five checks compare composition
+with independent arithmetic/path sums and reject forged provider/port revisions.
+
 ## Executed Premise Ledger And Revision
 
 The [premise ledger](../../tools/premise_ledger.py) implements

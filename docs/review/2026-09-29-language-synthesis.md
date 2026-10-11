@@ -2071,3 +2071,29 @@ UTF-8 provenance survive the producer boundary.
 Integrate scoped callable descriptions with finite transformation providers,
 then implement bounded hypothesis synthesis and observation-driven revision.
 Keep empirical example fit separate from universal refactoring evidence.
+
+## Shared Transformation Boundary — 2026-10-11
+
+### Evidence That Changed The Design
+
+Closed ordinary functions and finite kernels now use one inspection/composition
+boundary, with independent arithmetic and path-sum checks. Source-based program
+families create observation kernels for existing finite inquiry.
+
+### Workflow Friction
+
+An arity match is insufficient across carriers. Alpha equality also cannot prove
+all extensional rational identities. Generic packaging must retain those laws
+and the finite spaces' qualified revisions rather than erase them.
+
+### Durable Improvement
+
+Providers declare versioned carriers, ports and equality without executable
+callbacks. Capture and prediction are separate. The scientific comparison now
+CLI uses actual Nomi source, retaining its explicit supplied likelihoods.
+
+### Next Pass
+
+Implement bounded typed program search with independently replayed example fit,
+then use candidate predictions to choose and revise sequential inquiries. Keep
+search coverage, empirical adequacy and universal identities distinguishable.
