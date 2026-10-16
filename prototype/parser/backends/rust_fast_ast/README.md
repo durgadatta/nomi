@@ -6,7 +6,7 @@ as real replacement machinery, not as the replacement itself.
 
 ## Current Status
 
-The October prototype delivery pass fixes implicit line continuation inside
+The lexer supports implicit line continuation inside
 balanced `()`, `[]` and `{}`: interior whitespace/comments do not emit statement
 or indentation tokens, outer suites still do, and mismatched delimiters fail
 with byte offsets. This is parity repair for existing collection/call syntax,
@@ -67,7 +67,7 @@ guided-tour forms such as `unless`, `match`/`case`, `guard`, `data`
 declarations, `$` holes, ranges, pipelines, null-safe tokens, and other
 currently-raw expression forms.
 
-As of the current checkpoint, `scripts/demo.nomi`, `samples/block.nomi`,
+For the supported parity slice, `scripts/demo.nomi`, `samples/block.nomi`,
 `samples/constraint.nomi`, and every shared feature snippet in
 `test_parser_frontend_acceptance.py` lower through `rust-fast-ast` to the exact
 same Python AST dump as `lark-lalr`. The Rust-generated core demo AST also
@@ -78,7 +78,7 @@ payload is parse-accepted but not fully lowered.
 The parse-acceptance slice is not exact Python AST parity. It is a
 parser-frontier milestone only: `rust-fast-ast` is now enrolled in parser
 frontend acceptance tests, but must not be made selectable for execution yet.
-It also accepts the older Lark-accepted debug/interpreter fixtures covered by
+It also accepts the tracked Lark-accepted parser/interpreter fixtures covered by
 `prototype/tests/unit/parser/test_rust_fast_ast_frontend.py`.
 
 The runtime can also use this frontend to produce the Python AST artifact before

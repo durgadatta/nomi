@@ -1,0 +1,24 @@
+func each_key_val(data_dict):
+    for key,val in data_dict.items():
+        yield key, val
+
+func each(items):
+    for item in items:
+        yield item
+
+func times2():
+    yield
+    yield
+
+times2():
+    print('one')
+each([1,2,3]) -> item:
+    print(f'each {item}')
+
+each_key_val({"one":1, "two":2}) -> key, val:
+    print(f"each_key_val {key=}, {val=}")
+
+
+# Block captures accept destructuring assignment targets.
+each({"one":1, "two":2}.items()) -> key, val:
+    print(f"each {key=}, {val=}")

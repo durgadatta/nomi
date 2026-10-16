@@ -17,9 +17,9 @@ RUST_FAST_AST_SNIPPETS = {
 }
 
 RUST_FAST_AST_EXTRA_ACCEPTED_FIXTURES = (
-    "PLAY/debug/blocks.nomi",
-    "PLAY/debug/fix.nomi",
-    "PLAY/debug/functions.nomi",
+    "prototype/tests/data/sample_sources/parser/block_calls.nomi",
+    "prototype/tests/data/sample_sources/parser/loop_suite.nomi",
+    "prototype/tests/data/sample_sources/parser/arrow_calls.nomi",
     "prototype/tests/data/sample_sources/interpreter/blocks.nomi",
     "prototype/tests/data/sample_sources/interpreter/func_styles.nomi",
     "prototype/tests/data/sample_sources/interpreter/functions.nomi",

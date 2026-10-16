@@ -1,0 +1,2 @@
+for __ in range(5):
+    print('fine')
