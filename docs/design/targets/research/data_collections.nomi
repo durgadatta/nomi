@@ -1,6 +1,9 @@
 # Status: target-only research candidate; not runnable or typechecked.
 # Evidence: docs/research/data_workflows/source_forms.md
-# Proposed std collection contracts; numeric overflow remains open.
+# Proposed std collection contracts; exact Int meaning is accepted, capacity is
+# a separate backend admission gate. No runtime conformance is claimed here.
+# Composition continuation: docs/design/synthesis.md
+# Policy oracle: docs/research/data_workflows/nomi_candidates.md
 from std.collections import filter, fold, map
 
 data Sale:
@@ -25,3 +28,32 @@ example "eager arithmetic before any table planner":
 
 # Calls evaluate now. |> only inserts the first argument.
 # No assumed SQL translation, laziness, parallelism or callback quotation.
+
+
+# An application acceptance predicate does not redefine equality or key identity.
+# This ordinary function is target-only; no comparison library API is assumed.
+func within_amount_policy(
+    left: Int,
+    right: Int,
+    tolerance: Int where tolerance >= 0,
+) -> Bool:
+    if left <= right:
+        return right - left <= tolerance
+    return left - right <= tolerance
+
+example "retain exact differences under an explicit acceptance policy":
+    check 200 != 250
+    check within_amount_policy(200, 250, 50)
+    check not within_amount_policy(200, 250, 49)
+    check within_amount_policy(250, 200, 50)
+    check within_amount_policy(200, 200, 0)
+
+example "pairwise tolerance is not a transitive key relation":
+    check within_amount_policy(0, 40, 50)
+    check within_amount_policy(40, 80, 50)
+    check not within_amount_policy(0, 80, 50)
+
+# Negative oracle: tolerance -1 fails the parameter constraint before the body;
+# no Bool verdict is produced. Untrusted policy input instead needs decode.
+# Do not infer a hash/equality implementation, clustering or automatic rounding
+# from this predicate. A streamed prefix also cannot prove complete comparison.

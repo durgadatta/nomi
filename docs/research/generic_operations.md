@@ -36,6 +36,38 @@ uses ordinary calls and explicit long forms. [Local probes](features/probe_gener
 execute only small Python-host/library and original finite-model distinctions.
 They do not typecheck the challenger or run the compared foreign libraries.
 
+## Composition Leads From The Earlier Brief
+
+> Integrated 2026-10-16 as discovery leads. Existing GA experiments and the
+> function-contracts packet retain ownership; no new operator or universal
+> function method is selected.
+
+Preserve the questions behind `f.maybe`, `f.safe`, `f.either` and `f.async`
+without adopting those spellings. Compare an ordinary wrapper that names its
+input/output carrier, failure classification, capture policy, invocation count
+and work-start timing. Converting a declared expected failure differs from
+catching panic or cancellation; wrapping a synchronous call does not establish
+nonblocking execution. Retry, logging, memoization and tracing additionally
+depend on authority, observable state and lifetime. They are not automatically
+meaningful transformations of every function.
+
+| Research lens | Concrete comparison to prepare | Boundary to preserve |
+| --- | --- | --- |
+| Functor-like mapping | Explicitly map a value inside List, Option, Result and a reader/function carrier | A container metaphor alone does not specify function behavior, demand or effects; test the proposed identity/composition laws under the actual evaluation model. |
+| Applicative combination versus monadic sequencing | Validate independent fields and accumulate their errors; then use one result to select the next computation | Independent combination, dependent sequencing, error order and partial effects differ. `map`/`bind`/`join`/`unit` are research vocabulary, not prelude commitments. |
+| Kleisli versus ordinary composition | Compose two Result-returning calls with explicit matching/propagation and compare with an ordinary nested call | The carrier decides short-circuiting; the pipeline operator still only inserts an argument. |
+| Structural application | Compare mapping over expression parts, applying to argument structure, threading paired inputs and distributing functions | Retain Wolfram `Map`/`Apply`/`Thread`/`MapThread`/`Through` as study leads; specify shape, arity and evaluation rather than one ambiguous `apply`. |
+| Combinatory and function-level programming | Compare named intermediates, explicit lambdas and ordinary combinator calls in the same report | Schönfinkel's I/K/S, Backus's function-level programming and tacit array styles are leads; avoid a second point-free grammar or changed call counts. |
+| Array rank and shape | Compare explicit nested loops with rank/axis-directed library operations, including unequal shapes and empty axes | APL/J/K/Q/Shakti/BQN are study leads; no implicit List broadcasting, glyph syntax or numeric reassociation follows. |
+
+These are proposed comparisons, not newly researched foreign-system claims or
+executed experiments. Existing [language reviews](languages/README.md),
+[collection evidence](features/collections.md), and [DW4](data_workflows/nomi_candidates.md#bounded-experiments)
+supply starting points. Keep transformation separate from observation: collecting
+the return values of a printing callback is not the same contract as visiting
+items for effects. GA1-GA8 already compare carrier, history, observation and
+invocation policies; sharpen those comparisons before adding APIs.
+
 ## Cross-Language Mechanisms
 
 These are selected mechanisms, not an exhaustive feature survey. Pinned Java SE

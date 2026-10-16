@@ -13,6 +13,8 @@ designed and built. Syntax and behavior may change as the project develops.
 **[Learn Nomi](docs/guide/README.md)** ·
 **[Documentation](docs/README.md)**
 
+For a compact story of the whole repository, read the [Repository Digest](DIGEST.md).
+
 The [online preview](https://durgadatta.github.io/nomi/web/) is an older
 deployment: the October 10 check found nine samples and no calculation/report
 samples. Use the checkout locally for the current walkthroughs. Deployment

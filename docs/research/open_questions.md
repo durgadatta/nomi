@@ -172,6 +172,13 @@ exception-like propagation.
 
 ## 7. Generator And Stream Semantics
 
+The [earlier-brief construction/observation lead](synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+adds folds versus unfolds, finite observations and state-machine equivalence as
+discovery probes. Its [shared-binding comparison](features/binding.md#shared-binding-responsibilities)
+also retains bidirectional sent-value binding. Compare explicit suspended state
+with resumable execution while preserving lexical control, cleanup and source
+positions. No generator syntax, evaluator mixin or coinductive proof is selected.
+
 **Question:** Do synchronous and asynchronous generators need `yield` syntax,
 or are explicit iterator/stream builders clearer?
 
@@ -183,6 +190,17 @@ cleanup, reentrancy, and typing.
 bidirectional coroutines, and async events.
 
 ## 8. Tables And Query Plans
+
+The [structured-data comparison showcase](data_workflows/nomi_candidates.md#structured-data-comparison-showcase)
+extends DW1-DW3 with key versus row membership, duplicate policy, comparable
+projections, date/day equality and source-linked differences. Begin with its
+literal in-memory oracle before connectors or UI. This is an unperformed
+application comparison, not another release prerequisite or accepted table API.
+The [composed activity](data_workflows/nomi_candidates.md#comparison-as-a-policy-qualified-judgment)
+adds raw difference versus policy acceptance, revision invalidation and complete
+versus prefix-only observation. Portable and incremental consumers must preserve
+those distinctions; a proposed policy or tolerant predicate does not define
+nominal equality or justify a hash/merge law.
 
 The selected continuation starts with the generic
 [engine-free object framework](../design/object_framework.md), then adapts it to
@@ -362,6 +380,12 @@ versioned decoders, and migrations as ordinary functions with provenance.
 client/server skew, and schema export limitations.
 
 ## 12. Metaprogramming Boundary
+
+The earlier brief's [symbolic leads](features/metaprogramming.md#matching-unification-and-equivalence-exploration)
+retain one-sided matching, syntactic/equational unification, anti-unification,
+directed rewriting and e-graph extraction as different questions. Use declared
+theories, binding identities, strategies and budgets; general symbolic solving
+does not become ordinary pattern matching. No new experiment ran in this intake.
 
 **Question:** Which capabilities justify syntax generation, and what is the
 smallest safe mechanism?

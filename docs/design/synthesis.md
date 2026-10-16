@@ -451,6 +451,82 @@ keywords, extractors, implicit conversions, generic declaration syntax, macro
 quotation, or a second query language. A beautiful short example is not enough
 to admit any of them.
 
+## Extend The Earlier Brief While Preserving The Core
+
+> Designing synthesis, 2026-10-16. Interpolation connects existing contracts;
+> extrapolation proposes further compositions. Neither accepts new syntax,
+> public APIs, inference rules or runtime behavior.
+
+The [earlier-brief intake](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+preserves ideas that can now be developed together. Here the core means Nomi's
+compositional purpose and accepted observable laws. It does not mean a frozen
+Python AST, Core node inventory or universal graph. An encoding may change while
+preserving those laws; a proposal that changes them must name a separate revision.
+
+### Interpolate Between Existing Responsibilities
+
+The strongest connection is **shared mechanisms with explicitly different
+policies**, rather than making every similar-looking construct interchangeable:
+
+| Existing pieces | Interpolated composition | Law that remains separate |
+| --- | --- | --- |
+| Parameter, local and match binding | Shared resolved identities, tentative captures, validation and commit descriptions | Arity/contract failure, external decode errors, structural non-match and false guards have different continuations. |
+| Functions, carrier operations and adapters | Explicit wrappers that compose declared inputs, outputs and completion behavior | List traversal, Option absence, Result failure and Task demand are not one invocation schedule. |
+| Owned rows, projections, predicates and reporting | A comparison library that separates alignment, raw differences and policy acceptance | Nominal equality, key identity, tolerated difference and missing observation remain distinct. |
+| Inert descriptions, source provenance and judgments | Explain which input, policy and checked fact supports each result | Inspection does not execute the description; a displayed explanation does not supply proof or authority. |
+| Revisions, dependencies and retained evidence | Recompute or recheck only against an explicitly identified basis | Same displayed value does not establish that old evidence remains applicable. |
+
+These are deductions about compatible responsibilities, not proof that one
+implementation can already serve every owner. For each extraction, compare the
+construct-specific baseline against a shared description using the same values,
+call/control traces, failures, source locations and completion outcomes. Stop
+when the common layer needs hidden rules to recover a distinction it erased.
+
+### One Whole Activity Before More Features
+
+Use the [data-comparison continuation](../research/data_workflows/nomi_candidates.md#comparison-as-a-policy-qualified-judgment)
+to connect the brief's practical and theoretical threads. Decode two snapshots,
+align their rows, retain raw field differences, assess a named policy, explain
+the result, revise the policy and explicitly request any export. Each step can
+start as ordinary values and functions. Description/check/realization become
+useful boundaries when a second engine or representation actually needs them.
+
+The target-only [amount-policy example](targets/research/data_collections.nomi)
+uses an ordinary constrained function and Bool results. It demonstrates that
+`200` and `250` can satisfy a tolerance policy while remaining unequal Ints.
+The three values `0`, `40`, `80` with tolerance `50` expose non-transitivity;
+pairwise acceptance therefore cannot silently define hash identity, set equality
+or an order-independent grouping relation. No new comparison operator is needed.
+
+Preserve both raw change and policy acceptance in the research result. Changing
+the tolerance changes the assessment basis, not the input or default equality.
+Changing a source snapshot invalidates affected assessments even if a summary
+looks the same. Failed decode produces no trusted comparison; a denied save
+does not erase the inspected result or become a successful publication.
+
+### Extrapolate Through Explicit Boundaries
+
+| Further candidate | Why it follows from the existing pieces | Prepared discriminator and limit |
+| --- | --- | --- |
+| Portable comparison descriptions | Closed policy data, schema-bound expressions and explicit adapters could describe the same comparison across formats/engines | Run the same literal inputs through in-memory calls and one adapter; preserve raw changes, errors, order and policy identity. Reject unsupported callbacks or schema mismatch before I/O. A matching example does not prove general engine equivalence. |
+| Incremental explained comparisons | Named dependencies and revisions could reuse unaffected alignment/assessment work | Edit an amount, a key, then the policy; compare each incremental result with independent full recomputation. Include a duplicate-key edit. Do not reuse a result on unchanged display alone or assume arbitrary callbacks support delta updates. |
+| Bounded observation of streams | Explicit Stream demand and owned completion could support partial comparisons without materializing everything | Under a declared positional policy, two equal items establish only prefix agreement; a third-item difference can refute equality immediately. Complete equality needs both ends. Cancellation or early stop must close owned work; a budget is not evidence of equality. |
+| Proposed or learned comparison policies | Existing typed program proposals and checked interpretation boundaries could suggest a projection or acceptance rule | A proposal fitting supplied pairs must face a held-out counterexample and a changed policy/context. Keep empirical fit, declared domain policy and independently checked algebraic law separate; no learner can install its own equality or authorization. |
+
+These extend DW/DT, questions 3/7/8/12/17 and the existing AI/reasoning owners;
+they are alternative research continuations, not four new release requirements.
+Keep an ordinary-call baseline viable. A portable description is justified by
+the second consumer, incremental machinery by exact invalidation/recompute
+evidence, and a learned proposal by useful independently assessed behavior.
+
+Across every extension, retain eager once-only ordinary calls, atomic checked
+binding, inert exhaustive structural choice, explicit owned-data boundaries,
+distinct Option/Result/panic/cancellation, actual runtime authority, lexical
+completion ownership and inspectable source provenance. Shared spelling never
+licenses hidden iteration, fusion, suspension, retry or error conversion.
+If a candidate cannot preserve these obligations, keep it outside the core and
+record the conflict rather than weakening an accepted law for a convenient demo.
+
 ## Candidate Primitive Synthesis And Integration Path
 
 The user's scientific-reasoning pivot now calls for a **foundational comparison**,

@@ -189,7 +189,7 @@
       "topic": "Cross-language synthesis and whole-program coherence",
       "owner": "language-design",
       "status": "designing",
-      "last_reviewed": "2026-10-11",
+      "last_reviewed": "2026-10-16",
       "keywords": [
         "language research",
         "language comparison",
@@ -448,7 +448,8 @@
         "Establish the report's closed checked callback/library contracts before claiming the overall target is typeable. General generic/protocol/effect-polymorphic and scoped task-handle contracts remain prerequisites of the wider function/resource/job fixtures, not of the first compatibility report.",
         "Close task failure/observation policy and separate running/queue bounds using deterministic scheduler fixtures.",
         "Retain the selected failure-envelope, path, lexical and accounting vectors while replacing compatibility adapters with nominal data/Result/checked callbacks and local reuse. Local capacity probes now run on pinned Python/Node/Chromium; browser peak memory, representative support validation, separate input/options revisions and host release evidence remain open. Reopen planning only for a concrete failed discriminator.",
-        "Promote only a completed category contract through Surface/Core, diagnostics, formatter, runtime conformance, supported samples, and GitHub playground smoke coverage."
+        "Promote only a completed category contract through Surface/Core, diagnostics, formatter, runtime conformance, supported samples, and GitHub playground smoke coverage.",
+        "The October 16 earlier-brief intake and interpolation/extrapolation are routed through synthesis_guide.md, synthesis.md and the language-synthesis bridge. Shared binding/carrier/evidence responsibilities and portable, incremental, streaming or learned extensions remain designing comparisons. For the data-comparison showcase, declare key/equality/projection policies and compare the prepared in-memory A/B fixture under DW1-DW3, retaining raw changes separately from policy acceptance and coverage. The target-only tolerance predicate supplies a non-transitivity counterexample, not a new equality law. No connector, syntax, priority or packet-status change follows."
       ]
     },
     {

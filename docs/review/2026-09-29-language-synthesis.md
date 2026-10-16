@@ -2293,3 +2293,188 @@ Resume richer source/structure and premise/vocabulary transport with dependent
 latent or causal/stateful discriminators. Use the committed checks and artifact
 map rather than another research plan; actual usability and scientific adequacy
 need their own observations.
+
+## Earlier Consolidated Brief Intake — 2026-10-16
+
+Source: the user's **Nomi — Consolidated Design, Research, and Implementation
+Brief**, 50 numbered sections, original date unknown, supplied on October 16.
+This receipt reconciles the notes with the current repository. It does not
+make the older brief a specification, silently reopen rejected forms, execute
+its engineering list or replace current priorities. Distinct ideas are retained
+in their existing owners; the original essay is not duplicated as a parallel
+authority. The [maintainer route](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+is the entry point for later work.
+
+### Section Dispositions
+
+“Covered” means represented in current documents, not completed implementation.
+“Retained” means a discovery lead or prepared comparison, not accepted semantics.
+“Conflict” names an older proposal that needs an explicit revision before use.
+
+| Brief sections | Disposition | Current home and reconciliation |
+| --- | --- | --- |
+| 1 — Purpose and influences | Covered | [Vision](../design/vision.md), [families](../research/families.md), [language reviews](../research/languages/README.md): language/environment discovery leads implementation; influences supply mechanisms rather than copied syntax. |
+| 2 — Semantics before syntax | Covered with qualification | [Synthesis guide](../research/synthesis_guide.md): name meaning and explicit long forms, then test source, diagnostics and whole activity together; abstract semantic elegance alone is insufficient. |
+| 3-5 — Small core, normalization, declarative rules | Covered | [Primitive compositions](../design/primitive_composition.md), [reasoning algebra](../design/reasoning_algebra.md), [implementation doctrine](../orientation/exploratory_implementation_doctrine.md). Lisp-like or call-only Core is a probe, not a selected universal representation; rejected surface sugar is not readmitted by easy desugaring. |
+| 6 — Python independence | Covered | [Industrial model](../design/industrial.md), [implementation layers](../orientation/implementation_layers.md), roadmap A03/A17/A27: distinguish language laws, portable library contracts and explicit host adapters. |
+| 7 — Binding algebra | Retained | [Binding comparison](../research/features/binding.md#shared-binding-responsibilities): locals, annotations, parameters, destructuring, captures, `as`, iteration, acquisition and possible received values share responsibilities but keep distinct policies. |
+| 8 — Patterns and extractors | Covered / conflict | [Pattern contract](../design/pattern_matching.md), [ledger](../design/decisions.md): closed inert patterns are current target; range/type/predicate classification uses explicit computation or guards. Extractors, view patterns, `if let` and a choice-level `when` are not initial-core features. |
+| 9 — Implicit subject | Conflict / retained question | [Ledger](../design/decisions.md#syntax-simplification-decisions), [table fork](../research/data_workflows/nomi_candidates.md#concrete-surface-fork-eager-callback-or-expression-data): explicit lambdas/expression data are the baseline. No `.age`, `_` or omitted-left-operand subject is admitted. |
+| 10 — Function forms and call-site design | Covered / conflict | [Functions](../research/features/functions.md), [contracts](../design/function_contracts.md): equation definitions, operator sections, implicit partial application and local `where` remain rejected. Multiple parameter lists, trailing/scoped blocks and argument-label alternatives remain study leads with no accepted second call form. |
+| 11-13 — Pipelines, observation, function adapters | Covered / retained | [Generic operations](../research/generic_operations.md#composition-leads-from-the-earlier-brief): map/thread/apply, scan/chunk/partition, row/group scopes and taps refine existing GA/DW comparisons. Separate transformation, effects, carrier conversion and execution timing; `f.safe`/`f.async` are questions, not universal methods. |
+| 14-15 — Handlers and resumable computation | Covered / retained | [Control effects](../research/features/effects.md#control-effects-and-continuation-ownership), [question 7](../research/open_questions.md#7-generator-and-stream-semantics): compare explicit state, generators and handlers. A resumable layer/mixin remains an implementation hypothesis; compatibility support does not select a target continuation model. |
+| 16-17 — Postpone types; predicate constraints | Conflict / partly covered | [Progressive assurance](../design/semantics.md#progressive-assurance), [constraints](../design/semantics.md#constraints): dynamic exploration is supported direction, but checked interfaces, public effects and structured tasks already have target commitments. Predicates do not collapse nominal types, guards and external decode. Untagged `Int \| Text` or value-union type syntax is not admitted. |
+| 18 — Logic and quantification | Retained / adjacent coverage | [Synthesis lead](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief), [knowledge frameworks](../research/knowledge_frameworks.md): compare finite bind-and-aggregate with symbolic/possibly infinite domains; no automatic relation/function equivalence or new quantifier syntax. |
+| 19 — Rewriting and unification | Retained / adjacent coverage | [Symbolic leads](../research/features/metaprogramming.md#matching-unification-and-equivalence-exploration): terms, substitution, syntactic/equational unification, anti-unification, strategy, normal forms and e-graphs remain distinct. Reading suggestions are unverified leads, not a theorem-prover mandate. |
+| 20-21 — Contextual composition | Covered / retained | [Generic composition leads](../research/generic_operations.md#composition-leads-from-the-earlier-brief): functor/applicative/monad, map/bind/join/unit and Kleisli composition motivate carrier-specific experiments without importing Haskell's whole model. |
+| 22-23 — Category theory; algebra/coalgebra | Retained | [Theoretical leads](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief): universal constructions, construction/observation, folds/unfolds and coinduction remain discoverable; require concrete programming consequences and finite-evidence limits. |
+| 24-25 — Combinators and array languages | Retained / existing coverage | [Generic composition leads](../research/generic_operations.md#composition-leads-from-the-earlier-brief), [collections](../research/features/collections.md): I/K/S, Backus, tacit composition, rank/shape and the named array traditions are research directions; no new global glyph or composition grammar. |
+| 26-27 — Scala, Kotlin, Swift | Covered / retained questions | Existing [Scala](../research/languages/scala.md), [Kotlin](../research/languages/kotlin.md), [Swift](../research/languages/swift.md) reviews and function owners cover dispatch, `apply`/`unapply`, scope functions, value/reference behavior and call-site clarity. Contextual supply, extensions and labels require discoverable selection and invocation contracts. |
+| 28-29 — Systematic notation; honest examples | Covered / conflict | [Notation atlas](../research/notation_atlas.md), [syntax matrix](../research/syntax_matrix.md), [ledger](../design/decisions.md): evaluate symbols, familiar meaning, frequency, ambiguity, visual role and parsing as a system. Old shorthand/end-marker/implicit-multiplication questions do not create syntax; examples must earn conveniences. |
+| 30 — Canonical demo | Covered with qualification | [Sample/catalog route](../guide/examples.md), [target suite](../design/targets/README.md), roadmap A31: share runnable examples across hosts and generated manifests. One large demo does not replace task examples, focused fixtures or separately labelled aspirational targets. |
+| 31-33 — Parser comparison, spans, richer testing | Covered | [Engineering routing](../orientation/project_roadmap.md#earlier-brief-integration--october-16), A04/A19/A24/A25: compare shared artifacts and values/environments/errors/lowering, not only output or parser speed. Isolate known unsupported cases; an xfail is not target conformance. |
+| 34 — Packaging and CLI | Covered / older aspiration | [Development](../orientation/development.md), roadmap A20/A26/A28: installed resources and clean-host execution remain checks; the old `python -m nomi` goal is not advertised as an existing command. |
+| 35-37 — Editor, web, notebooks, Docker | Covered, implementation incomplete | [Artifacts](../orientation/artifacts_and_usage.md), roadmap A21-A23/A29: these surfaces already exist at different maturity levels. Shared language services, completion/navigation/debugging and portable host verification retain their gates. |
+| 38 — Structured-data comparison | Retained | [Application pressure](../research/data_workflows/nomi_candidates.md#structured-data-comparison-showcase): preserve connectors, keys, column projections/transforms, equality, calendar-day policy, hooks, versioning, drilldown and reports; start with a literal in-memory comparison oracle. |
+| 39-40 — AI integration and agents | Covered with qualification | [AI collaboration](../orientation/ai_collaboration.md), [AI-language direction](../design/ai_frameworks.md), roadmap A32: retain RAG/MCP, document/API connectors, CI and coding assistance as engineering concerns. Probabilistic assistance does not redefine deterministic source meaning; the later shared-foundation AI research remains broader than developer assistance. No delegation or connector action was performed. |
+| 41-45 — Two tracks, design log, interactions, research, principles | Covered | [Vision](../design/vision.md), [guide/worksheet](../research/synthesis_guide.md), [pass workflow](../orientation/design_pass_workflow.md): connected discovery/delivery, explicit statuses, comparative mechanisms, interaction matrices, clarity and practical evidence already organize the project. Do not add another log or blanket instruction set. |
+| 46-48 — Engineering order, research passes, outputs | Routed, not rescheduled | [Roadmap](../orientation/project_roadmap.md#earlier-brief-integration--october-16) and [registered packets](../orientation/design_pass_workflow.md): the old A-E pass sequence is historical. Keep concrete examples, comparisons, statuses, tests where justified and next questions under existing owners. |
+| 49-50 — Unification; depth and usability | Covered / ongoing hypothesis | [Primitive composition](../design/primitive_composition.md), [vision](../design/vision.md): seek reusable mechanisms without forcing binding, recognition, effects or domains into identical laws. Validate simpler meaning through practical programs and observed use. |
+
+### Pass Retrospective
+
+#### Evidence That Changed The Design
+
+No target decision changed. Comparing the supplied notes with current owners
+showed substantial existing coverage and specific conflicts with later decisions.
+The main retained additions are binding-policy comparisons, theoretical and
+symbolic discovery leads, and a more complete data-comparison pressure program.
+
+#### Workflow Friction
+
+The brief mixes old open questions, engineering wishes and design principles
+without version/status boundaries. Copying it wholesale would make rejected
+syntax and already existing tools appear newly required. Attachment paths also
+provide no durable repository navigation.
+
+#### Durable Improvement
+
+Existing owners now retain the distinct questions and prepared counterexamples.
+This section maps all 50 source sections; the guide, open questions, roadmap and
+documentation index provide durable navigation. The registry records this intake
+without promoting packet status or replacing the active continuation. No new
+skill, process rule, duplicate essay or research packet was justified.
+
+Validation: **174 passed** across the existing documentation lifecycle, packet,
+target-fixture, packet-boundary, research-matrix, data/notation and generic-operation
+tests (`pytest -n 0`). `tools.design_passes check` reports all **5** packets
+coherent; `scripts/check_doc_links.py` checks **2,512** local file links across
+**174** documents. An additional intake audit confirms all **50** source sections
+are mapped exactly once and all **37** added heading links resolve.
+`git diff --check` passes. These checks establish document/packet integrity and
+preserve existing probe checks; none of the newly prepared research comparisons
+has run, and runtime behavior is unchanged.
+
+#### Next Pass
+
+For these notes, select unique-key/equality/projection policies and compare the
+literal A/B fixture in DW1-DW3 using ordinary in-memory functions versus inert
+expression data. Preserve independent errors, order and provenance before adding
+connectors or a review UI. This is an available research continuation, not a new
+priority above target report/reuse or the current AI/reasoning work.
+
+#### Global Consistency Follow-Up
+
+The requested October 16 follow-up scanned the documentation set, current design
+spine, active targets, research routes, roadmap, packet metadata and tracked agent
+configuration. The retained brief agrees with the current distinction between
+accepted target laws, compatibility behavior and open research. In particular,
+its unique-key comparison policy does not change the first report's intentional
+duplicate-row preservation. The prepared application comparison is now explicitly
+optional when resuming these notes; current AI/reasoning, data/statistics and
+first-product gates keep their owners and ordering.
+
+A heading-link audit found two older stale fragments missed by the file-only
+checker: the roadmap's vision assessment date and the statistical research route
+to its data-adapter path. Both now resolve to their current headings. No new
+semantic decision or implementation change was needed. The target-alignment
+inspection still distinguishes retiring prototype conveniences from accepted
+forms and unresolved integrations.
+
+Follow-up validation: **222 tests passed**, all **5** packets remain coherent,
+**2,512** local file links across **174** documents resolve, and all **445** local
+Markdown heading links resolve in the additional audit. The tracked-agent doctor
+passed its configuration/routing checks and identified a stale derived retrieval
+index for local refresh. `git diff --check` passes. These are consistency checks,
+not whole-language conformance, foreign-library executions or human evidence.
+
+## Interpolation And Extrapolation — 2026-10-16
+
+### Evidence That Changed The Design
+
+The user's continuation asks for synthesis beyond retaining older notes while
+preserving the core. No accepted law changed. The new
+[designing synthesis](../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+connects binding transactions, carrier-specific composition, inert descriptions,
+policy-qualified assessment and revision evidence. Shared responsibilities do
+not imply shared mismatch, equality, demand or completion policies.
+
+The [comparison activity](../research/data_workflows/nomi_candidates.md#comparison-as-a-policy-qualified-judgment)
+retains `b: 200 -> 250` as a raw difference even when tolerance 50 accepts it;
+tolerance 49 rejects it without changing source values. One-sided rows need
+their own acceptance policy. The target-only
+[ordinary function](../design/targets/research/data_collections.nomi) exposes the
+non-transitive `0/40/80` counterexample. It cannot justify hash identity or
+order-independent grouping. Examples are prepared target expectations, not
+executed source conformance.
+
+### Workflow Friction
+
+A common mechanism can look smaller by hiding domain policy, failure channels
+or completion facts. A speculative extension can also look accepted merely
+because it has a short example. The new material separates deductions from
+further hypotheses and describes the observation that would invalidate each.
+
+### Durable Improvement
+
+Existing design/research owners now connect the retained brief to one whole
+activity and four bounded extension candidates: portable descriptions, exact
+incremental reuse, prefix-qualified streaming and proposed/learned policies.
+Each retains an ordinary-call baseline, independent expected observations and
+an explicit stop condition. The source fixture uses existing target syntax;
+an older overflow comment now distinguishes accepted exact Int meaning from
+backend capacity admission. Registry status remains `designing`; no new packet,
+keyword, API, runtime mechanism or implementation substrate is selected.
+
+Validation: **222 tests passed** across the existing documentation, packet,
+target-fixture, research and syntax-direction checks. All **5** packets remain
+coherent, **2,525** local file links across **174** documents resolve, and the
+additional audit resolves all **454** local Markdown heading links.
+`git diff --check` passes. Manual review also distinguishes a stream prefix's
+incomplete agreement from an early counterexample that can refute equality under
+a declared alignment policy. These checks do not execute the new target-only
+examples or establish the four extension hypotheses. Prior intake and consistency
+receipts retain their original scope and counts.
+
+### Next Pass
+
+If this comparison is selected, close DW1's policy/callback contracts and compare
+ordinary calls with inert expression data on the same literal fixture, tolerance
+boundary, duplicate-key failure and changed revision. Preserve values, source
+paths, call/control traces and completion. Extend to a second consumer only
+after this baseline is independently checked. The broader R0-R5, data/statistics
+and first-product gates retain their existing owners and priorities.
+
+### Repository Digest And Final Verification
+
+The October 16 completion adds [DIGEST.md](../../DIGEST.md), a self-contained
+repository story linking purpose, accepted laws, working prototypes, research,
+gaps and next boundaries. README/documentation navigation and the existing RAG
+source config expose it without adding another specification or action queue.
+
+Final verification: **247 focused tests passed**; all **5** packets are coherent;
+**2,550** local file links across **175** documents and **456** heading links
+resolve. The intake audit maps all **50** brief sections exactly once. Calculation
+prints **3850**, and the supplied-observation inquiry demo completes. Whitespace
+checks pass; local retrieval is refreshed without tracking its generated index.
+This completes documentation integration, not full-suite or target conformance.

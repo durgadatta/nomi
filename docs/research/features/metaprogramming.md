@@ -78,3 +78,38 @@ code size, debugging steps, formatter output, and the source origin of errors.
 Prefer the smallest candidate that answers the actual pressure. Keep research
 models removable and avoid making a universal AST the owner of every domain.
 The [maintainer guide](../synthesis_guide.md) supplies the shared review worksheet.
+
+## Matching, Unification And Equivalence Exploration
+
+> Earlier-brief discovery leads, integrated 2026-10-16; no new symbolic engine,
+> extractor, rewrite syntax or inference rule is accepted.
+
+Keep the brief's symbolic research vocabulary available without treating it as
+a progression that ordinary `match` must implement:
+
+| Lead | Question to investigate | Prepared discriminator |
+| --- | --- | --- |
+| Terms, ground terms, patterns and substitutions | Which variables are bindable, and who owns their identity? | Distinct scoped variables with the same display name must not merge. |
+| One-sided matching versus syntactic unification | Is only a pattern variable instantiated, or may both terms contain unknowns? | Compare matching `f(x)` against ground `f(1)` with solving `f(x) = f(g(y))`; require explicit cyclic-term/occurs-check policy for `x = f(x)`. |
+| Equational unification | Which declared theory permits alternative substitutions? | A commutative operation may admit swapped operands; an ordinary ordered constructor must not inherit that law. |
+| Anti-unification | Can a common template expose reusable structure without asserting equality? | Generalize two different expressions while retaining their distinct substitutions; a template is not a proof that the inputs agree. |
+| Directed rewriting and normal forms | Which strategy, side conditions and termination evidence justify a result? | Competing rules and a cycle distinguish chosen output, incomplete search and established normal form. |
+| E-graphs and extraction | How are justified equivalences retained and one representative selected? | Separate equality evidence, saturation budget and extraction cost; reaching a limit cannot claim complete equivalence exploration. |
+
+The next useful comparison is explicit inert term data plus ordinary library
+operations against a scoped symbolic tool. Fix binding identities, assumptions,
+rules, strategy, limits and source provenance first. Compare results and
+refusals under an exact theory and a numerical profile; no rule may silently
+duplicate an effectful computation. Existing
+[DSL rewrite comparisons](../dsls/orthogonal_models.md),
+[numeric laws](numerics.md#transformations-need-a-stated-theory), and the
+[reasoning algebra](../../design/reasoning_algebra.md) already own adjacent
+work. Their finite probes do not establish general unification or saturation.
+
+The supplied brief suggests *Term Rewriting and All That*, Dershowitz's work,
+automated reasoning and modern e-graph literature as future reading leads.
+Those are user-supplied directions, not newly verified citations or claims that
+this intake reviewed those sources. Select a primary source and bounded case
+before extending the evidence. Ordinary Nomi patterns remain inert, closed
+structural tests; Scala-style extractors and view patterns remain outside the
+initial core.

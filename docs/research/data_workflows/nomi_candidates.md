@@ -53,6 +53,113 @@ edition, binder rules, diagnostics, formatter and expansion mapping. A string
 passed to an ordinary call is easy to add but not automatically a good editor
 interface; diagnostics must map offsets back to the source literal.
 
+## Structured Data Comparison Showcase
+
+> Candidate application retained from the earlier brief, integrated 2026-10-16.
+> This extends DW1-DW3; no comparison tool or new connector is implemented here.
+
+The brief proposes a practical regression/reconciliation tool: compare source A
+and source B, explain common and one-sided records, and drill down to changed
+fields. It is a useful pressure program for ordinary data, callbacks, constraints,
+failure and reporting. It does not replace the first calculation/JSON-report
+release or select a dataframe/query language.
+
+Retain the broader application scope in layers:
+
+| Layer | Candidate capabilities | Contract needed before implementation |
+| --- | --- | --- |
+| Sources | CSV, Excel, Parquet and later connectors | Explicit format/schema conversion, original row/cell provenance, resource and host capability requirements. |
+| Alignment | Configured primary/composite keys, column mapping, intersection, A minus B, B minus A | State whether membership compares keys, full rows, sets or bags; duplicate and missing-key policies cannot be guessed. |
+| Comparable values | Per-column transforms, projected values, custom equality, date/day-aware comparison | Preserve raw and normalized values; declare units, time zone/calendar, missingness and equality laws. Approximate equality must not silently become a hash/set identity. |
+| Workflow | Preprocessing/postprocessing hooks and versioned configurations/results | Callback order/effects, failure policy, source snapshots, policy identity and invalidation; postprocessing cannot silently change the comparison basis. |
+| Review and output | Summary, row/column drilldown, machine report and polished email-style rendering | Explain each difference back to inputs and policy; encoding, rendering, saving and actual message delivery are separate operations. |
+
+**First bounded fixture (prepared, not executed):** compare two already-decoded
+in-memory lists under a declared unique Text `id` policy and exact Int `amount`:
+
+```text
+A = [("a", 100), ("b", 200), ("d", 400)]
+B = [("a", 100), ("b", 250), ("c", 300)]
+shared keys       = ["a", "b"]
+unchanged keys    = ["a"]
+changed fields   = [("b", "amount", 200, 250)]
+A-only keys      = ["d"]
+B-only keys      = ["c"]
+```
+
+This prepared policy orders shared/A-only results by A and B-only results by B.
+Reverse an input and require only the corresponding order to change. A duplicate
+`"b"` or missing key must produce a path-addressed policy failure before any
+successful comparison report; do not overwrite or multiply rows. A whole-row set
+comparison would put the two `"b"` rows in different one-sided sets, so it must
+be a separately selected policy rather than an alternate label for key alignment.
+
+Add independent cases for mapped columns, explicit normalization, missing cells
+versus absent rows, and instants that cross a local calendar-day boundary. Keep
+the original values and selected time-zone basis available for explanation.
+Compare eager ordinary functions with the existing schema-bound expression/plan
+candidate under the same policies. Inspect values, errors, invocation traces and
+source paths; do not add connectors, UI or notation to answer a policy question.
+
+After that comparison, choose one connector and verify its independent conversion
+fixtures on an actual host before adding another format. Rich drilldown,
+configuration versioning and rendering remain later application pressures. A
+rendered email summary does not send mail. Existing
+[function contracts](../../design/function_contracts.md),
+[table question](../open_questions.md#8-tables-and-query-plans), and
+[delivery roadmap](../../orientation/project_roadmap.md) own admission and priority.
+
+## Comparison As A Policy-Qualified Judgment
+
+> Interpolation and extrapolation, 2026-10-16. Prepared research expectations,
+> not a result schema, implemented comparison API or new equality law.
+
+The [canonical synthesis](../../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+connects this application to shared binding, carrier and evidence responsibilities.
+Keep four questions explicit: which rows align; which raw fields differ; whether
+those differences satisfy a selected policy; and whether all requested work
+completed. A single `equal` Bool would conceal useful distinctions.
+
+For the preceding A/B fixture, compare exact assessment with a declared absolute
+amount tolerance of 50. The unchanged row remains `a`, and `b` still has the raw
+change `200 -> 250`. Exact assessment rejects that change; the tolerance policy
+accepts it. The one-sided `d` and `c` remain one-sided under both assessments.
+An overall acceptance verdict additionally needs an explicit one-sided-row
+policy; tolerance alone cannot supply it. No tolerant assessment changes Int
+equality or silently drops the original difference.
+
+The [target-only ordinary function](../../design/targets/research/data_collections.nomi)
+supplies a concrete long form for pairwise amount acceptance. It requires no
+new pattern, implicit subject, operator or callback convention. Its prepared
+oracle also exposes `0 ~ 40` and `40 ~ 80` but not `0 ~ 80` at tolerance 50.
+Here `~` is explanatory notation only. Do not use this predicate as a hash-key
+equivalence or build grouping by chaining accepted pairs without a separate
+clustering/order policy.
+
+| Activity or change | Required observation | Existing owner |
+| --- | --- | --- |
+| Compare valid snapshots under exact policy | Raw changes and one-sided rows match the literal oracle; no effects needed after inputs are owned | DW1-DW3, ordinary data/functions |
+| Reassess under tolerance 50, then 49 | Raw `b` difference persists; its acceptance changes from true to false; source rows stay untouched | Generic callbacks and explicit policy/revision basis |
+| Change B's `b` amount from 250 to 251 | The old tolerance-50 assessment cannot be reused; recomputation rejects the difference | DT dependencies, identity and invalidation |
+| Introduce a duplicate `b` key | Alignment fails with both original paths; no successful or partially trusted comparison | Decode versus application-policy failure |
+| Inspect, render, then deny save | Inspection needs no file/network grant; rendering does not send; denied save leaves the owned comparison available | Effects/capabilities and host outcome handling |
+| Compare a stream prefix | Report observed coverage and unfinished state. Under declared positional alignment, a concrete mismatch can refute equality early; agreement needs both ends before a complete equality claim | Stream demand and resource/task completion |
+| Receive a proposed projection from an AI tool | Preserve proposal origin, policy/context and independent test/check results; applying it creates a new assessment basis | Existing AI proposal, evidence and authority owners |
+
+The bounded experiment should compare explicit eager calls with inert expression
+data using these same expectations. Observe invocation count/order, values,
+failure channels, raw paths and policy identity. A pure callback label alone
+does not license reordering or fusion when failure/termination can differ.
+Define diagnostic and view specimens that distinguish malformed input, duplicate
+keys, an ordinary unaccepted difference, incomplete work and refused export.
+
+The longer-term candidates are portable descriptions, exact incremental reuse,
+prefix-qualified streaming observations and proposed policies. They remain
+separate forks with the falsifiers in the synthesis. None requires a universal
+comparison protocol, contextual expression syntax, symbolic unification inside
+`match`, or an extra semantic Core node. No new comparison experiment has run
+in this design continuation.
+
 ## Proposed Contracts Before Implementations
 
 The following is **metalanguage**, not accepted Nomi type or effect syntax:

@@ -8,6 +8,7 @@
       "include": [
         "AGENTS.md",
         "README.md",
+        "DIGEST.md",
         "pyproject.toml",
         "rust-toolchain.toml",
         ".agents/skills/**/*.md",

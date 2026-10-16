@@ -57,6 +57,29 @@ ecosystem and freedom-to-strictness direction. Its old suggested requests no
 longer select the active pass. Existing owners and delivery gates remain the
 starting point when implementation resumes.
 
+## Earlier Brief Integration — October 16
+
+The earlier user-supplied consolidated brief is now reconciled through the
+[maintainer guide](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+and its [section disposition receipt](../review/2026-09-29-language-synthesis.md#earlier-consolidated-brief-intake--2026-10-16).
+This is notes integration, not a new audit, reordered work queue or implementation
+receipt. Its approximate engineering order must be read against the current
+first-product gates and the later whole-system direction below.
+
+| Earlier engineering theme | Existing delivery owner and continuation |
+| --- | --- |
+| Small core, normalization, declarative rules and Python independence | A03-A06/A17/A27: preserve source meaning and inspection across replaceable parsers, runtimes and libraries; do not harden a universal IR merely to reduce node count. |
+| Parser comparisons, source positions and richer tests | A04/A19/A24/A25: compare the same versioned inputs and downstream artifacts; measure parse time, memory and startup separately from grammar maintainability and diagnostic quality. |
+| Canonical examples and installed CLI/package usability | A20/A26/A28/A31: share runnable examples/fixtures through existing sample and manifest paths; keep aspirational targets separate. `python -m nomi` in the old brief remains an aspiration, not an added supported command. |
+| Browser, shared editor services, notebook and Docker | A21-A23/A29: reuse semantic/diagnostic contracts and verify the actual host; old requests to create these surfaces are not evidence that today's scaffolds are absent or complete. |
+| AI assistance, retrieval and abstract connectors | A32 and existing capability/FFI owners: distinguish development assistance from deterministic program semantics and from the broader AI-language research. No new agent workflow or service connection is selected. |
+| Serious structured-data comparison showcase | A12/A16/A19/A31 and [DW1-DW3](../research/data_workflows/nomi_candidates.md#structured-data-comparison-showcase): preserve the broader CSV/Excel/Parquet, policy, drilldown and reporting idea; first compare explicit in-memory key/equality policies. |
+
+The brief's A-E research-pass names are historical suggestions, not replacements
+for registered packet IDs, D0-D7 or A01-A33. Research continues alongside usable
+delivery. Intake-derived ideas stay open until their own evidence changes an
+existing target decision or delivery dependency.
+
 ## Whole-System Direction — October 10
 
 The user's later direction places the [computational-medium vision](../design/vision.md)
@@ -71,7 +94,7 @@ The current standing is a research-rich laboratory with runnable compatibility
 journeys and substantial target contracts. Portable target execution, integrated
 evidence/explanation, competing authoring models, human benefit, checked growth
 and broader operational behavior have major gaps. The
-[vision assessment](../design/vision.md#where-nomi-stands-2026-10-10) records their
+[vision assessment](../design/vision.md#where-nomi-stands-2026-10-11) records their
 different evidence levels without a completion percentage. The earlier readiness
 receipts remain evidence for their named tasks, not proof of this broader system.
 

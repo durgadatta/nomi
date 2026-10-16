@@ -215,7 +215,7 @@ forms to compare, but no implicit ambient column namespace or universal staged
 evaluator is admitted. JSON is just the current engine-free laboratory boundary.
 
 Continue only through the ordered closures in the
-[design proposal](../../design/statistical_data.md#current-gaps-and-selected-data-only-path).
+[design proposal](../../design/statistical_data.md#current-gaps-and-data-adapter-path).
 The next experiment remains data-specific: expose independently replayable
 expression artifacts further and extend exact paired moments with units, before a
 physical adapter or broad source syntax.

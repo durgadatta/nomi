@@ -9,6 +9,12 @@ Start with the [maintainer synthesis guide](../synthesis_guide.md) to research
 and integrate mechanisms. Its eight expanded language comparisons feed these
 existing semantic owners; the guide is a working route, not another specification.
 
+The [earlier-brief synthesis](../../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+connects shared binding/carrier/evidence responsibilities without conflating their
+policies. Its data-comparison case separates exact equality, raw changes and
+policy acceptance, then names falsifiers for further extensions. No additional
+Core mechanism or accepted source form follows from these deductions.
+
 Read across a feature row or down a language column in the
 [single synthesis matrix](../language_feature_matrix.md), then follow a feature
 page below or an individual language in [the language index](../languages/README.md).

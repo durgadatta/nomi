@@ -5,6 +5,9 @@
 > Start with the user guide for runnable examples. Design describes the intended
 > language; research records evidence; development pages explain the implementation.
 
+The [Repository Digest](../DIGEST.md) gives a self-contained snapshot of the
+purpose, accepted core, runnable surfaces, research frontier and remaining gaps.
+
 ## Start Here
 
 Choose a reading path based on what you want to do:
@@ -67,6 +70,9 @@ For the evidence and unresolved forks behind those choices, read:
 
 Start with the [maintainer synthesis guide](research/synthesis_guide.md) for one
 research loop, candidate worksheet, composition cases, and existing topic owners.
+The [earlier consolidated brief intake](research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+routes the user's older notes to current coverage, retained leads and explicit
+conflicts without changing accepted semantics.
 
 1. [Research Overview](research/README.md)
 2. [Language Families](research/families.md)
