@@ -53,14 +53,14 @@ def test_validator_rejects_an_unlinked_packet(tmp_path):
     assert any("research artifact must link design artifact" in error for error in errors)
 
 
-def test_validator_rejects_an_empty_retrospective_section(tmp_path):
+def test_validator_rejects_an_empty_current_bridge_section(tmp_path):
     registry = make_registry(tmp_path)
     bridge = tmp_path / registry["passes"][0]["artifacts"]["bridge"]
     text = bridge.read_text(encoding="utf-8")
     bridge.write_text(
         text.replace(
-            "### Durable Improvement\nA durable improvement.",
-            "### Durable Improvement",
+            "## Validation\nRun the independent checks.",
+            "## Validation",
         ),
         encoding="utf-8",
     )
@@ -68,7 +68,7 @@ def test_validator_rejects_an_empty_retrospective_section(tmp_path):
     errors = validate_registry(tmp_path)
 
     assert any(
-        "retrospective section '### Durable Improvement' is empty" in error
+        "bridge section '## Validation' is empty" in error
         for error in errors
     )
 
@@ -78,7 +78,7 @@ def make_registry(root: Path) -> dict:
         "research": "docs/research/topic.md",
         "design": "docs/design/topic.md",
         "target": "docs/design/topic_target.nomi",
-        "bridge": "docs/review/2026-07-16-topic.md",
+        "bridge": "docs/review/topic.md",
     }
     all_paths = list(artifacts.values())
     for rel_path in all_paths:
@@ -89,11 +89,10 @@ def make_registry(root: Path) -> dict:
         if rel_path == artifacts["bridge"]:
             content += "\n" + "\n\n".join(
                 [
-                    "## Pass Retrospective",
-                    "### Evidence That Changed The Design\nEvidence changed the design.",
-                    "### Workflow Friction\nThe workflow had friction.",
-                    "### Durable Improvement\nA durable improvement.",
-                    "### Next Pass\nTake the next pass.",
+                    "## Current Evidence\nIndependent evidence and its scope.",
+                    "## Open Gaps\nThe remaining implementation gaps.",
+                    "## Validation\nRun the independent checks.",
+                    "## Next Actions\nClose the next contract.",
                 ]
             )
         path.write_text(content, encoding="utf-8")
@@ -102,7 +101,7 @@ def make_registry(root: Path) -> dict:
         "docs/design/syntax.md",
         "docs/design/semantics.md",
         "docs/design/decisions.md",
-        "docs/design/target.nomi",
+        "docs/design/targets/overall.nomi",
     ]
     for rel_path in canonical_updates:
         path = root / rel_path

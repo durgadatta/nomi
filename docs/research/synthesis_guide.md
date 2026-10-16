@@ -70,27 +70,19 @@ For this pass, start with the eight expanded reviews below. Follow the linked
 feature owners for synthesis; they consolidate shared questions rather than
 requiring a reader to reconcile eight independent proposals.
 
-## Revisit The Earlier Consolidated Brief
+## Composition Research Leads
 
-The user-supplied **Nomi — Consolidated Design, Research, and Implementation
-Brief** (50 sections, original date unknown) was reconciled on 2026-10-16.
-The [intake receipt](../review/2026-09-29-language-synthesis.md#earlier-consolidated-brief-intake--2026-10-16)
-maps every section to its current owner and disposition. It is a source of
-questions for later work, not a second specification or priority queue.
+These questions connect binding, application, symbolic reasoning and practical
+data comparison. Name meaning and explicit long forms before admitting notation,
+then test source, diagnostics and whole activity together. Small node counts and
+abstract unification alone do not establish a good language.
 
-Much is already present: replaceable implementation substrates, declarative
-metadata, inspectable reductions, source positions, cross-backend contracts,
-interaction reviews and connected research/delivery loops. Preserve its
-semantic-first intent by naming meaning and an explicit long form before
-admitting notation. Test that meaning through readable source and real activity;
-neither an abstract unification nor a small node count establishes a good language.
+Use the existing owners:
 
-Resume the retained leads here:
-
-| Lead from the brief | Current owner and next useful question |
+| Research lead | Current owner and next useful question |
 | --- | --- |
 | A binding algebra across locals, parameters, patterns and received values | [Binding responsibilities](features/binding.md#shared-binding-responsibilities): compare shared tentative-bind/check/commit metadata while retaining distinct scope and mismatch policies. |
-| Function adaptation, contextual composition and array structure | [Composition leads](generic_operations.md#composition-leads-from-the-earlier-brief): refine existing GA/DW cases before proposing universal adapters or notation. |
+| Function adaptation, contextual composition and array structure | [Composition leads](generic_operations.md#composition-research-leads): refine existing GA/DW cases before proposing universal adapters or notation. |
 | Matching, unification, anti-unification, rewriting and e-graphs | [Symbolic leads](features/metaprogramming.md#matching-unification-and-equivalence-exploration): distinguish substitution, strategy, theory and extraction before a scoped experiment. |
 | A substantial structured-data comparison application | [Comparison showcase](data_workflows/nomi_candidates.md#structured-data-comparison-showcase): extend DW1-DW3 with explicit key/equality/projection policies and independent expected results. |
 
@@ -118,24 +110,21 @@ infinite or symbolic domain. This is a supplied research analogy, not a claim
 that all quantification reduces to finite folds or a new logic syntax. Extend
 the existing [knowledge-framework owner](knowledge_frameworks.md).
 
-The brief's notation questions remain discoverable through the
+Notation questions remain discoverable through the
 [notation atlas](notation_atlas.md) and [syntax matrix](syntax_matrix.md).
 `@`/`$`/`_` subjects, equation functions, operator sections, local `where`,
 implicit multiplication and generalized block control must name their conflict
 with the [ledger](../design/decisions.md#syntax-simplification-decisions) before
 any reconsideration. `when` is currently a match guard, not an alternate choice
 construct. Runtime predicates do not replace nominal types or external decode.
-The older advice to postpone effects/types/concurrency also cannot erase current
-progressive-assurance, effect/capability and structured-task commitments.
+Dynamic exploration still preserves progressive-assurance, effect/capability
+and structured-task commitments.
 
-These leads were integrated from the supplied notes, not verified by new external
-research, foreign runs, human studies or implementation experiments. If resuming
-the brief's application idea, start with the prepared in-memory data-comparison
-fixture under DW1-DW3 and declare its policies before implementing it. This
-available comparison does not change the current AI/reasoning continuation,
-selected data/statistics work or first-product delivery gates.
+These are discovery leads and prepared comparisons, not newly verified foreign
+systems or executed Nomi conformance. The comparison fixture can be selected
+under DW1-DW3 without changing current research or product priorities.
 
-The [interpolation and extrapolation synthesis](../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+The [interpolation and extrapolation synthesis](../design/synthesis.md#composition-while-preserving-the-core)
 now connects these leads through shared mechanisms and explicit domain policies.
 It develops a [whole comparison activity](data_workflows/nomi_candidates.md#comparison-as-a-policy-qualified-judgment)
 and [ordinary target-only predicate](../design/targets/research/data_collections.nomi),
@@ -508,7 +497,7 @@ git diff --check
 Those checks verify routing and document/fixture coherence. They do not execute
 foreign languages, prove target semantics, or measure human understanding.
 Record performed evidence and the next exact discriminator in the
-[existing bridge](../review/2026-09-29-language-synthesis.md), then return here to
+[existing bridge](../review/language_coherence.md#current-evidence), then return here to
 choose the next question. This pass prepares the deeper synthesis decision; it
 does not preselect its outcome.
 

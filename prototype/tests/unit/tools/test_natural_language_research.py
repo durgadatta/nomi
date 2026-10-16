@@ -210,7 +210,7 @@ def test_cognitive_packet_routes_the_dossier_and_maintained_checks():
     for path in (
         "docs/research/interfaces/README.md",
         "docs/design/interaction_model.md",
-        "docs/review/2026-09-30-cognitive-interfaces.md",
+        "docs/review/cognitive_interfaces.md",
     ):
         assert "natural_language.md" in (ROOT / path).read_text()
 

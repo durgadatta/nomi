@@ -3,13 +3,13 @@
 > Status: comparative evidence and experiment routes, not target specification.
 
 Packet: `docs/design/synthesis.md`, `docs/design/targets/overall.nomi`,
-`docs/review/2026-09-29-language-synthesis.md`.
+`docs/review/language_coherence.md`.
 
 Start with the [maintainer synthesis guide](../synthesis_guide.md) to research
 and integrate mechanisms. Its eight expanded language comparisons feed these
 existing semantic owners; the guide is a working route, not another specification.
 
-The [earlier-brief synthesis](../../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+The [composition synthesis](../../design/synthesis.md#composition-while-preserving-the-core)
 connects shared binding/carrier/evidence responsibilities without conflating their
 policies. Its data-comparison case separates exact equality, raw changes and
 policy acceptance, then names falsifiers for further extensions. No additional
@@ -55,7 +55,7 @@ coherently. The same [registered synthesis](../../design/synthesis.md#domain-lay
 owns the proposal; [local experiments](../data_workflows/composition_experiments.md)
 are bounded models, not a new specification or runtime capability inventory.
 
-## Research Gap Continuation
+## Research Gaps
 
 The October 4 research-only audit deepens four existing owners rather than
 adding feature rows: [polymorphic sharing](functions.md#polymorphic-sharing-and-generalization),
@@ -66,5 +66,5 @@ Each distinguishes existing coverage from the sharper unresolved contract,
 compares alternatives, and supplies beginner/production/failure-heavy inputs.
 These are unperformed discriminators, not accepted generic notation, a memory
 model, an FFI ABI or a package/type identity scheme. The
-[research overview](../README.md#research-gap-continuation) routes the related
+[research overview](../README.md#research-gaps) routes the related
 data, numeric and human-interaction obligations without changing the matrix.

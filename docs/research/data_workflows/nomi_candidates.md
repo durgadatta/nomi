@@ -55,10 +55,10 @@ interface; diagnostics must map offsets back to the source literal.
 
 ## Structured Data Comparison Showcase
 
-> Candidate application retained from the earlier brief, integrated 2026-10-16.
+> Candidate application; prepared comparison, not an implemented tool.
 > This extends DW1-DW3; no comparison tool or new connector is implemented here.
 
-The brief proposes a practical regression/reconciliation tool: compare source A
+The application pressure is a practical regression/reconciliation tool: compare source A
 and source B, explain common and one-sided records, and drill down to changed
 fields. It is a useful pressure program for ordinary data, callbacks, constraints,
 failure and reporting. It does not replace the first calculation/JSON-report
@@ -114,7 +114,7 @@ rendered email summary does not send mail. Existing
 > Interpolation and extrapolation, 2026-10-16. Prepared research expectations,
 > not a result schema, implemented comparison API or new equality law.
 
-The [canonical synthesis](../../design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
+The [canonical synthesis](../../design/synthesis.md#composition-while-preserving-the-core)
 connects this application to shared binding, carrier and evidence responsibilities.
 Keep four questions explicit: which rows align; which raw fields differ; whether
 those differences satisfy a selected policy; and whether all requested work
@@ -203,7 +203,7 @@ underlying forks. No separate implementation backlog is created here.
 | DW7 | Compare finite-set calls and a Venn projection with a named universe, plus typed chemical/reference models. | Complement without universe; nonmatching reference versions; invalid ring link or unbalanced stoichiometry. | No false proof, clinical inference or automatic simulation; lossless textual model and error paths. | Diagrams make relationships visible while limitations remain inspectable. |
 | DW8 / last | Only for a settled slice: independent value/error fixtures, formatter and source mapping, CLI/browser implementation plan. | Native/browser mismatch, stale source revision, denied authority, resource escape. | Existing tests/supported playground samples remain green; new sample only after conformance, not from aspirational files. | A small honest playground experience, not a menu of unsupported syntax. |
 
-No DW experiment has run in this documentation pass. Numbers are specifications
+DW1-DW8 remain prepared comparisons. Numbers are specifications
 of future reference checks, not claimed measurements or comprehension results.
 If two forms are semantically identical and neither wins comprehension/error
 locality, stop at ordinary calls and delete the proposed shorthand.

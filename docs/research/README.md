@@ -4,7 +4,7 @@
 >
 > This directory replaces the previous collection of overlapping surveys,
 > deep dives, feature atlases, syntheses, and research plans. The source corpus
-> remains recoverable in Git history at commit `08f2aad`; these documents retain
+> remains recoverable in Git history; these documents retain
 > the conclusions needed for current design work without preserving parallel
 > authorities.
 
@@ -104,9 +104,9 @@ The decisions drawn from this evidence live in
 [Decision Ledger](../design/decisions.md). Research proposes; target design
 decides.
 
-## Research Gap Continuation
+## Research Gaps
 
-The [October 10 synthesis guide](synthesis_guide.md#where-the-features-must-compose)
+The [synthesis guide](synthesis_guide.md#where-the-features-must-compose)
 deepens Wolfram, Haskell, Scala, Kotlin, Rust, Mojo, Julia, and TypeScript around
 dispatch coherence, demand, representation, access/ownership, staging, numerical
 laws, and definition visibility. The detailed continuations stay with
@@ -242,9 +242,7 @@ Schema, Terraform, Cargo, Go Modules, Nix, Deno, and Sigstore documentation;
 and foundational work by Landin, Strachey, Hoare, Milner, Wadler, and related
 language-design traditions.
 
-The old source URLs and longer bibliographies remain available in repository
-history. The September review adds freshly checked primary references under
-the requested language/feature indexes; it does not restore old competing
-atlases or syntheses. Extend these pages with the question, evidence boundary and
-design consequence of a useful discovery. An implementation or syntax proposal
-must additionally develop concrete programs, contracts and discriminators.
+Follow the primary references in each current language/feature owner. Extend
+those pages with the question, evidence boundary and design consequence of a
+useful discovery. An implementation or syntax proposal must additionally develop
+concrete programs, contracts and independent discriminators.

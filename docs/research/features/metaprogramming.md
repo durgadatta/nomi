@@ -81,10 +81,10 @@ The [maintainer guide](../synthesis_guide.md) supplies the shared review workshe
 
 ## Matching, Unification And Equivalence Exploration
 
-> Earlier-brief discovery leads, integrated 2026-10-16; no new symbolic engine,
+> Current symbolic research leads; no new symbolic engine,
 > extractor, rewrite syntax or inference rule is accepted.
 
-Keep the brief's symbolic research vocabulary available without treating it as
+Keep these symbolic questions distinct rather than treating them as
 a progression that ordinary `match` must implement:
 
 | Lead | Question to investigate | Prepared discriminator |
@@ -106,10 +106,10 @@ duplicate an effectful computation. Existing
 [reasoning algebra](../../design/reasoning_algebra.md) already own adjacent
 work. Their finite probes do not establish general unification or saturation.
 
-The supplied brief suggests *Term Rewriting and All That*, Dershowitz's work,
-automated reasoning and modern e-graph literature as future reading leads.
-Those are user-supplied directions, not newly verified citations or claims that
-this intake reviewed those sources. Select a primary source and bounded case
+Further reading leads include *Term Rewriting and All That*, Dershowitz's work,
+automated reasoning and modern e-graph literature.
+Those are acquisition leads, not verified citations or claims of completed
+source review. Select a primary source and bounded case
 before extending the evidence. Ordinary Nomi patterns remain inert, closed
 structural tests; Scala-style extractors and view patterns remain outside the
 initial core.

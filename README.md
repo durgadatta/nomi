@@ -15,18 +15,18 @@ designed and built. Syntax and behavior may change as the project develops.
 
 For a compact story of the whole repository, read the [Repository Digest](DIGEST.md).
 
-The [online preview](https://durgadatta.github.io/nomi/web/) is an older
-deployment: the October 10 check found nine samples and no calculation/report
-samples. Use the checkout locally for the current walkthroughs. Deployment
-parity is tracked in the [readiness audit](docs/orientation/project_roadmap.md#user-facing-readiness-audit).
+**[Open the playground](https://durgadatta.github.io/nomi/web/)** to run the
+calculation and JSON report examples without installing Nomi. The published site
+serves the current main branch; the same browser checks cover local and public
+execution.
 
 ## Quick Start
 
 ### Try a calculation
 
-First [download or clone the repository](docs/guide/getting_started.md#choose-where-to-run).
-From its root directory, start the current browser playground using the
-committed parser assets:
+Open the [public playground](https://durgadatta.github.io/nomi/web/), choose
+`calculate.nomi`, and run it. To work locally, [download or clone the repository](docs/guide/getting_started.md#choose-where-to-run)
+and start the playground from its root using the committed parser assets:
 
 ```bash
 python3 scripts/launch_web.py --no-wasm
@@ -146,7 +146,7 @@ not run yet. Runnable examples live in [samples](samples/).
 | Save files, use tools, or diagnose a problem | [Tools And Troubleshooting](docs/guide/tools.md) |
 | Find guides, design references, or research | [Documentation](docs/README.md) |
 | Understand the ambition and intended language | [Computational Medium Vision](docs/design/vision.md), then [Target Design](docs/design/README.md) |
-| See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [Changelog](CHANGELOG.md) |
+| See delivery priorities and recent changes | [Roadmap](docs/orientation/project_roadmap.md), [History](HISTORY.md) |
 | Set up tools or contribute to the implementation | [Developing Nomi](docs/orientation/development.md), [agent/contributor map](AGENTS.md) |
 | Explore the evidence behind design choices | [Research](docs/research/README.md), [AI collaboration](docs/orientation/ai_collaboration.md) |
 | Research and integrate language mechanisms | [Maintainer synthesis guide](docs/research/synthesis_guide.md) |

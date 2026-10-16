@@ -74,7 +74,7 @@ Valid stages: `raw-tree`, `transformed-tree`, `surface-ast`, `python-ast`
 | `docs/design/pattern_matching.md` | Canonical focused pattern contract |
 | `docs/design/industrial.md` | Package, effect, concurrency, tooling, and deployment target |
 | `docs/design/decisions.md` | Accepted, rejected, deferred, and open choices |
-| `docs/design/target.nomi` | Aspirational whole-language fixture; not runnable today |
+| `docs/design/targets/overall.nomi` | Aspirational whole-language fixture; not runnable today |
 | `config/design_passes.json` | Focused-pass status, artifacts, checks, and next actions |
 
 ## Commit style

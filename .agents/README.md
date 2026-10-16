@@ -53,7 +53,7 @@ language specification.
 The guiding purpose is `docs/design/vision.md`. Discovery can precede a bounded
 packet and can revise the taxonomy; source/semantic promotion still needs its
 owned contract and evidence. The active whole-language fixture is
-`docs/design/targets/overall.nomi`, not the superseded `target.nomi`.
+`docs/design/targets/overall.nomi`.
 
 Inspect it with:
 
@@ -65,7 +65,7 @@ python3 -m tools.design_passes check
 
 Codex/Claude hooks inject open or prompt-matched packets. Other agents should
 check the registry before creating another design note. Every pass ends with a
-retrospective that promotes repeated reasoning into skills/prompts and
+current bridge that promotes repeated reasoning into skills/prompts and
 deterministic invariants into checks, while avoiding instruction growth from
 one-off observations.
 
@@ -81,7 +81,7 @@ canonical under `.codex/prompts/*.md`. Claude
 Code command shims under `.claude/commands/*.md` point back to those templates.
 
 Use `.codex/prompts/feedback-cycle.md` for the implementation loop: independent
-oracle, owned change, review, repair, checks, retrospective and next exact task.
+oracle, owned change, review, repair, checks, current bridge and next exact task.
 `python3 -m tools.check_receipt -- COMMAND [ARG ...]` retains actual command
 outcomes and logs in unique ignored `reports/checks/` directories. It runs only
 explicit argv and performs no shell expansion, test selection or commits. See

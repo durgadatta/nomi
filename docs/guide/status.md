@@ -16,7 +16,6 @@ for someone trying the language. Detailed decisions remain in their linked owner
 | Experimental or bounded | A feature works within specific limits; it is not a general solution for every program. |
 | Target design | The intended behavior is documented, but the complete feature may not be implemented. |
 | Open design or research | Alternatives still need comparison or evidence; no final behavior is promised. |
-| Historical | The document describes an earlier state. Use current guides and receipts before acting on it. |
 
 An accepted target decision and a green prototype test establish different
 things. A design can be accepted while its implementation is incomplete; a
@@ -37,15 +36,14 @@ prototype can support syntax that the target has rejected.
 Defined bounds are not measured production-capacity guarantees. The report can
 refuse oversized, overly complex, or unsupported numeric inputs; a capped error
 list is marked incomplete. The [report walkthrough](getting_started.md#validate-a-json-report)
-explains how to read its outcome, and the receipt linked there separates limits
-from measured host behavior.
+explains how to read its outcome and separates declared limits from measured
+host behavior.
 
 ### Execution paths
 
-The browser support above refers to the current local checkout. The October 10
-published-site audit found an older nine-sample deployment without the new
-calculation/report workflows and result views. Local conformance checks do not
-establish what is deployed; see the [readiness audit](../orientation/project_roadmap.md#user-facing-readiness-audit).
+The [public playground](https://durgadatta.github.io/nomi/web/) serves the
+current main branch. Actual browser checks cover the published calculation,
+report repair/export, cells, recovery and mobile layouts.
 
 The CLI and Jupyter use the Python-hosted prototype. The default browser uses a
 Rust/WASM parser and JavaScript runtime. An optional legacy browser route runs
@@ -66,16 +64,16 @@ It is not a complete syntax migration guide.
 | Area | Current prototype examples | Intended target |
 | --- | --- | --- |
 | Names and updates | Python-compatible assignment and rebinding remain on supported paths. | Ordinary names are immutable; `var` and `set` make mutation explicit. |
-| Boolean and absent literals | Older examples use `True`, `False`, and `None`. | The target spells these `true`, `false`, and `none`; `()` represents Unit. |
-| Functions | `func` works; older samples also use equation definitions and hole lambdas. | One named `func` form and explicit anonymous functions; equation and hole forms are rejected. |
+| Boolean and absent literals | Compatibility examples use `True`, `False`, and `None`. | The target spells these `true`, `false`, and `none`; `()` represents Unit. |
+| Functions | `func` works; experimental samples also use equation definitions and hole lambdas. | One named `func` form and explicit anonymous functions; equation and hole forms are rejected. |
 | Collection calls | The beginner examples use callback-first `map`/`filter` and `list(...)`. | The target collection family is data-first with distinct strict, streaming, and table types. |
 | Data validation | The report uses structural outcome maps and two manual schemas. | Owned immutable `data`, explicit typed decoding, and `Result` outcomes. |
-| Pattern choice | Older samples have additional pattern shortcuts and match spellings. | A single structural `match` contract, with transactional captures and coverage checks. |
-| Resources and concurrency | Historical samples explore block calls, `yield`, and host behavior. | Resource scopes and structured tasks have separate lifetime and failure contracts. |
+| Pattern choice | Compatibility samples have additional pattern shortcuts and match spellings. | A single structural `match` contract, with transactional captures and coverage checks. |
+| Resources and concurrency | Experimental samples explore block calls, `yield`, and host behavior. | Resource scopes and structured tasks have separate lifetime and failure contracts. |
 
 See [Syntax](../design/syntax.md), [Semantics](../design/semantics.md), and
 [Decisions](../design/decisions.md) for the actual target rules. Use the
-[example catalog](examples.md#older-experimental-samples) to recognize the
+[example catalog](examples.md#experimental-samples) to recognize the
 experimental forms you may encounter.
 
 ### Text compatibility
@@ -101,8 +99,8 @@ formatted (`f"..."`) literals, including raw-prefix combinations; join ordinary
 text explicitly instead of using a formatted literal. Multiline edge cases
 are outside this bounded text guarantee. These are prototype
 compatibility spellings, not acceptance of a complete target escape grammar.
-The [escape repair receipt](../orientation/project_roadmap.md#source-text-escape-repair--october-10)
-records the tested scope and remaining work.
+The [portable-values roadmap](../orientation/project_roadmap.md#portable-values-and-libraries)
+names current support and remaining work.
 
 The [learning and reasoning lab](reasoning_lab.md) is also runnable from a
 checkout. It captures bounded pure Nomi function descriptions, searches typed
@@ -207,4 +205,4 @@ not shipped in the wheel. They are not part of the beginner language workflow.
 License selection, a declared support matrix, artifact identity, hosted release
 parity, and rollback remain release gates. Their current evidence and
 user-facing findings are tracked in the
-[distribution-readiness audit](../orientation/project_roadmap.md#user-facing-readiness-audit).
+[distribution roadmap](../orientation/project_roadmap.md#current-support).

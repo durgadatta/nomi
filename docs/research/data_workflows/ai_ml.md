@@ -16,8 +16,7 @@ continuation below was consulted 2026-10-11; earlier sections retain their dates
 
 ## Intelligence As A Language Pressure — October 11
 
-The user's continuation changes the question from “can Nomi host an ML
-framework?” to **“can the same language represent, improve and act on models
+The question is **“can the same language represent, improve and act on models
 without an additional conceptual language?”** Numerical operators are one
 realization. The intellectual work includes creating hypotheses, explaining
 observations, imagining alternatives, discovering reusable structure, choosing

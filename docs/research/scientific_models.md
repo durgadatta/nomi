@@ -3,7 +3,7 @@
 > Status: primary evidence and designing experiments, 2026-10-10. Mechanism
 > synthesis under language-coherence, not a specification or human-study result.
 
-The user's direction is to connect domains through the activity of thinking.
+The purpose is to connect domains through the activity of thinking.
 Physics tests whether Nomi helps a person distinguish concepts, express a
 model, derive a consequence, compare explanations and revise understanding.
 Read [the design proposal](../design/scientific_discovery.md) for its five

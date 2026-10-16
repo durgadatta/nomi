@@ -9,7 +9,7 @@
 - Research: `docs/research/pattern_matching.md`
 - Canonical design: `docs/design/pattern_matching.md`
 - Focused target: `docs/design/pattern_matching_target.nomi`
-- Implementation bridge: `docs/review/2026-07-16-pattern-matching.md`
+- Implementation bridge: `docs/review/pattern_matching.md`
 
 ## Design Goal
 

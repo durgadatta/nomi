@@ -3,9 +3,8 @@
 > Status: proposed, notes-only action detail; not implementation, semantic
 > acceptance, release approval or a second priority registry.
 >
-> Planning baseline: `3184ef3`; drafted 2026-10-05, reviewed 2026-10-08.
 > All checkboxes describe
-> future work, not actions executed or results obtained by this notes pass.
+> future work, not actions executed or results obtained.
 
 ## Navigation
 
@@ -26,26 +25,23 @@
 
 These notes expand the existing [A01-A33 work map](project_roadmap.md#whole-project-work-map)
 into local tasks and cross-system completion criteria. The roadmap still owns
-priorities, delivery order and milestone receipts; the
+priorities, delivery order and dependency gates; the
 [redesign agenda](../design/redesign_agenda.md#ordered-design-closure) owns D0-D7.
 Do not schedule a second independent queue from this document. Move a selected
 task's exact contract and evidence into its existing semantic/engineering owner,
 then link its completion from the roadmap rather than check off a whole subsystem.
 
-Read the [latest runtime receipt](project_roadmap.md#scoped-runtime-continuation-receipt)
-before treating an older audit finding as pending. Hosted call/default binding,
-synchronous scope cleanup, child-frame ordering, native displayed values,
-historical binding-name maps, scalar range fences and workbench recovery have
-bounded repairs already. Their remaining target contracts and unsupported
-compositions are different work. The
-[research gap expansion](../research/README.md#research-gap-continuation) documents
-unperformed comparisons; documentation completeness is not implementation.
+Use the [current runtime map](artifacts_and_usage.md) and
+[delivery roadmap](project_roadmap.md) before selecting a task. Hosted call/default
+binding, synchronous scope cleanup, session values, numeric fences and workbench
+recovery already have bounded repairs. Their target gaps are separate work;
+reproduce a defect before treating it as pending.
 
 Task basis labels:
 
 | Label | Meaning | Required next evidence |
 | --- | --- | --- |
-| Gap | A current limitation is recorded in a maintained receipt/fixture | Reproduce at the selected revision and surface before repair |
+| Gap | A current limitation is recorded in a maintained record/fixture | Reproduce at the selected revision and surface before repair |
 | Target | Canonical target direction exists but the supported prototype is narrower/different | Accepted/rejected fixtures and an explicit migration profile |
 | Fork | Two or more credible contracts remain; no implementation choice is accepted here | A bounded comparison with a falsifier and a recorded decision |
 | Investigate | A risk or missing evidence needs inspection; not a demonstrated defect | Confirm, narrow or dismiss with a minimal observation |
@@ -690,7 +686,7 @@ editor installation or full-LSP claim from parser-backed navigation alone.
 ### A24 Tests, Oracles, Differential Evidence And Fuzzing
 
 **Basis:** Investigate / Target. **Depends on:** semantic owners and A02 evidence.
-**Owners:** test layout/skills, [deferred test review](../review/2026-09-30-test-issues.md),
+**Owners:** test layout/skills, [test layout](../../prototype/tests/README.md),
 fixture ladders, parser/artifact/runtime/browser and installed-distribution checks.
 
 - [ ] Audit case collection and selector behavior under declared pytest versions;
@@ -870,7 +866,7 @@ without reproduction, noninterference claim from masking or unsafe native probe.
 
 **Basis:** Investigate / Extend. **Depends on:** A01/A02 and semantic owners.
 **Local surface:** README, docs index, runnable samples, target/research routes,
-changelog, issue/PR instructions and contribution guidance.
+project history, issue/PR instructions and contribution guidance.
 
 - [ ] Walk beginner, contributor and bug-reporter routes through the supported
   preview; record missing information and repair friction instead of adding
@@ -882,8 +878,7 @@ changelog, issue/PR instructions and contribution guidance.
 - [ ] Connect one executable documentation page to the A20/A24 example/check
   slice; distinguish extractable supported examples from aspirational targets,
   and record actual doc-runner results rather than treat fenced prose as a test.
-- [ ] Link historical evidence to latest completion receipts, archive or consolidate
-  stale scheduling lists and ensure each live question has one owning location.
+- [ ] Keep current evidence with its owner, consolidate stale scheduling lists and ensure each live question has one owning location.
 - [ ] Turn research into bounded comparisons, independent oracles and decisions,
   not another catalog; preserve contrary results and inaccessible-source limits.
 - [ ] Prepare sanitized issue reproduction, contributor setup, architecture routes,
@@ -906,7 +901,7 @@ hooks/doctor, design registry and `tools/rag_mcp/`.
 - [ ] Verify actual clients consume the intended skill/shim/hook routes; parsed
   configuration and doctor success do not prove useful agent behavior.
 - [ ] Check retrieval coverage for source, Nomi, Rust, JS, schemas and documentation;
-  dated reviews and cached snippets must not outrank current canonical owners.
+  project history and cached snippets must not outrank current canonical owners.
 - [ ] Recheck excluded/symlink/out-of-root sources and sensitive retained snippets
   at query/resource time; index presence alone is not current privacy enforcement.
 - [ ] Keep checkpoints concise: goal, modified paths, exact next action, tests,
@@ -1109,7 +1104,7 @@ only after the relevant D1-D3 contracts and adapter profile are settled.
 ## Eleven Research Units To Turn Into Evidence
 
 This is execution preparation for the existing
-[gap owners](../research/README.md#research-gap-continuation), not another question
+[gap owners](../research/README.md#research-gaps), not another question
 series. Start with supplied judgments/independent oracles, then a removable
 model/adapter or human comparison as appropriate. Their detailed sources and
 method limitations remain with the research owner.
@@ -1146,7 +1141,7 @@ boundary; do not use file size, research breadth or aesthetic preference alone.
 | Diagnostics/source mapping; A04/A06/A19 | Add a validated versioned span carrier for one path | Incompatible host locations/envelopes lose originating source or causes repeatedly | Shared semantic record with small adapters; do not require all proposed event producers at once |
 | Playground document state; A18/A21 | Specify current document/run/draft/model transitions | Independent mutable UI flags cannot maintain identity, freshness and recovery under tested workflows | One owned state protocol with preservation/disposal cases; no cosmetic redesign as a substitute |
 | Backend performance; A25/A27 | Measure a stable corpus and one bottleneck | A chosen engine cannot meet the justified budget while preserving the closed contract | Opt-in engine, parity, host/installed evidence and measured benefit; retain readable orchestration |
-| Documentation sprawl; A31 | Resolve one duplicate owner/stale route | Live priorities or guarantees are genuinely contradicted across active docs | Consolidate authority and retain dated evidence in history/reviews; no deletion of unresolved obligations |
+| Documentation sprawl; A31 | Resolve one duplicate owner/stale route | Live priorities or guarantees are genuinely contradicted across active docs | Consolidate current authority and keep concise evolution in HISTORY.md; no deletion of unresolved obligations |
 
 - [ ] For each proposed rewrite, state old/new artifact boundaries, unchanged user
   observables, migration profile, fallback, proof/test oracle and removal trigger.
@@ -1181,19 +1176,18 @@ as a substitute for an independent local oracle.
 
 ## Handoff And Task Closure
 
-The temporary [frontier handoff](../../ASTRA_HANDOFF.md) turns these notes into
-a bounded next-pass brief. It does not authorize this notes-only pass to implement
-the tasks or become a second scheduler/specification.
+Choose a bounded task through the roadmap and current contract owners.
+These detailed recipes are not an independent scheduler or language specification.
 
 - [ ] Choose the next task through the roadmap's existing dependencies, informed
-  by current receipts and one failed user/program pressure; do not execute this
+  by current evidence and one failed user/program pressure; do not execute this
   document as a giant unchecked installation or feature list.
 - [ ] Start each task with the canonical owner and applicable repo-local skill;
   retrieval supplies candidate paths, not authority or permission.
 - [ ] Record the selected hypothesis/contract, exact first reproduction/judgment,
   expected artifacts and test/host evidence before edits or expensive experiments.
 - [ ] Leave changed paths, actual checks, unresolved risks and the next exact step
-  in the owner/receipt when a pass ends; do not report the whole A item complete
+  in the current owner when a pass ends; do not report the whole A item complete
   because one bounded patch or corpus expansion finished.
 - [ ] Revisit/remove notes after their owner settles the question or their pressure
   disappears; replace stale task prose with a link to evidence, not a second live

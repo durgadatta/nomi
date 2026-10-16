@@ -12,10 +12,10 @@ keeping meaning, assumptions and authority visible.
 
 The repository contains three different kinds of progress: **working prototype
 behavior**, **accepted target-language contracts**, and **research hypotheses
-with bounded experiments**. They overlap but are not interchangeable. An old
-feature can run while being rejected from the target; an accepted design can
-still lack an implementation. Nomi is versioned `0.1.0`, marked pre-alpha, and
-has no source-compatibility promise yet.
+with bounded experiments**. They overlap but are not interchangeable.
+Compatibility features can run while being rejected from the target; an accepted
+design can still lack an implementation. Nomi is versioned `0.1.0`, marked
+pre-alpha, and has no source-compatibility promise yet.
 
 ## The Core Being Preserved
 
@@ -57,13 +57,14 @@ module interfaces are still work ahead.
 | --- | --- |
 | CLI and Jupyter | Python 3.12+ host, Lark parsing, transitional Python AST and layered `python`/`nomi`/`reduced` interpreters. These are implementation modes, not language strictness levels. |
 | Runtime architecture | `prototype.runtime` exposes execution, inspection and sessions. Nomi-owned Surface/Core artifacts, verification, registries and alternate backend paths exist; complete target execution is unfinished. |
-| Default local browser | Rust/WASM parser feeding a JavaScript runtime, with examples, cells, diagnostics and report download. An optional legacy route uses Pyodide. Their supported subsets and limits differ. |
+| Browser playground | Rust/WASM parser feeding a JavaScript runtime, with examples, cells, diagnostics and report download. An optional legacy route uses Pyodide. Their supported subsets and limits differ. |
 | Editor and containers | A local VS Code extension provides highlighting/run support and bounded navigation; notebook and Docker helpers exist. A mature shared language service, debugging and portable deployment remain incomplete. |
 
 Parser/runtime substrates are replaceable; a Rust parser is not a native Nomi
 compiler. Capability metadata, asset freshness and artifact parity bound support.
-The October 10 public-site audit found an older deployment; current walkthroughs
-use the local checkout, with publication parity a separate delivery gate.
+The [public playground](https://durgadatta.github.io/nomi/web/) serves main and
+passes the same calculation/report, inspection, recovery and mobile browser
+checks as the local checkout.
 
 From the repository root:
 
@@ -109,17 +110,16 @@ structured and mixed authoring still compete. Comprehension, accessibility,
 reliance and handoff have prepared comparisons and finite probes; human benefit
 still needs observation.
 
-## The Current Chapter And The Next Boundary
+## Open Gaps And The Next Boundary
 
-The latest work reconciles an older 50-section brief, retaining leads and marking
-conflicts with later decisions. It connects binding, carrier operations,
+The current composition proposal connects binding, carrier operations,
 descriptions and evidence through shared mechanisms with explicit policies.
 A data-comparison showcase is prepared: raw change, key identity, tolerance and
 coverage stay distinct. Accepting `200 -> 250` under a tolerance does not make
 the numbers equal. Portable, incremental, streaming and learned extensions have
 counterexamples and admission limits. See the
-[synthesis](docs/design/synthesis.md#extend-the-earlier-brief-while-preserving-the-core)
-and [comparison case](docs/research/data_workflows/nomi_candidates.md#structured-data-comparison-showcase).
+[synthesis](docs/design/synthesis.md#composition-while-preserving-the-core) and
+[comparison case](docs/research/data_workflows/nomi_candidates.md#structured-data-comparison-showcase).
 
 Delivery now needs the intended calculation/report semantics to work together:
 portable exact scalar transport, nominal construction and derived decode,
@@ -147,19 +147,20 @@ and functions, resource lifetime, cognitive interfaces and language coherence
 | [Implementation map](docs/orientation/artifacts_and_usage.md) and [development guide](docs/orientation/development.md) | Runtime paths, tool ownership, setup and checks. |
 | [Design-pass registry](config/design_passes.json) and [workflow](docs/orientation/design_pass_workflow.md) | Linked research/design/target/bridge packets, status, validation commands and continuation. |
 | [Agent map](AGENTS.md) and [AI collaboration](docs/orientation/ai_collaboration.md) | Repo-local skills, advisory hooks and cited RAG/MCP discovery; retrieved material must be read and reconciled with current authority. |
-| [Documentation index](docs/README.md) | Complete routes through user guides, design, research, orientation and dated reviews. |
+| [Documentation index](docs/README.md) | Complete routes through guides, design, research, implementation and current bridges. |
 
 Tests describe supported prototype behavior; canonical design owns intended
-meaning, and current user decisions can revise it. Dated reviews are evidence,
-not competing live specifications. `local/` and `PLAY/` are scratch/reference
+meaning, and current user decisions can revise it. Current bridges record
+implementation evidence and gaps; project evolution
+belongs only in [HISTORY.md](HISTORY.md). `local/` and `PLAY/` are scratch/reference
 areas; generated caches, reports and build products are not project authority.
 
 Verification separates implementation tests, documentation/packet integrity,
-generated-asset freshness and actual-host behavior. The October 16 final
-integration check reported **247 focused tests passed** and **five
-coherent packets**; this is not a fresh full-suite or release certification.
-No test total measures progress toward the whole vision.
+generated-asset freshness and actual-host behavior. Current checks are
+reproducible commands, not release certification or a
+percentage of progress. The [roadmap](docs/orientation/project_roadmap.md) and
+[development guide](docs/orientation/development.md) name those gates.
 
 Update this digest when the accepted design, supported paths, research frontier
-or next product boundary changes. Keep the detailed laws and task receipts in
+or next product boundary changes. Keep detailed laws and current evidence in
 their linked owners so this remains a short, self-contained map of the story.

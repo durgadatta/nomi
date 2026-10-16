@@ -55,23 +55,20 @@ Start with these files before broad design or implementation changes:
 - `docs/design/decisions.md`: accepted, rejected, deferred, and open choices.
 - `docs/design/targets/overall.nomi` and `docs/design/targets/README.md`: active
   aspirational coherence program and category suite; not expected to run today.
-  `docs/design/target.nomi` is a superseded predecessor.
 - `config/design_passes.json` and
   `docs/orientation/design_pass_workflow.md`: registered topic packets,
-  validation, migration status, and retrospective loop.
+  validation, current implementation gaps, and next actions.
 - `docs/research/convergences.md`: consolidated cross-language evidence.
 - `docs/research/open_questions.md`: bounded experiments; start here before new
   research.
-- `docs/review/2026-07-16.md`: historical reset judgment; current priorities and
-  receipts belong to `docs/orientation/project_roadmap.md`.
+- `docs/orientation/project_roadmap.md`: current support, priorities and delivery gates.
 - `docs/orientation/artifacts_and_usage.md`: current runtime pipeline and
   artifact map.
 - `docs/orientation/exploratory_implementation_doctrine.md`: reversible
   implementation posture.
 
-Research under `docs/research/` is evidence, not specification. The previous
-deep-dive corpus remains in Git history at `08f2aad`; do not restore it as
-parallel authority. Read the relevant `.agents/skills/*/SKILL.md` before domain
+Research under `docs/research/` is evidence, not specification. Project evolution belongs only in `HISTORY.md`; detailed old artifacts remain
+in Git history and must not be restored as parallel authority. Read the relevant `.agents/skills/*/SKILL.md` before domain
 work. Treat repo-local skills as canonical even when a tool's native inventory
 omits them. In that case, use the repository fallback: read the matching
 `SKILL.md` directly and say which repo-local skill is guiding the work.
@@ -231,10 +228,9 @@ then the broader relevant suite.
 
 ## AI Collaboration Workflow
 
-Nomi has already used ChatGPT, Grok, DeepSeek, Gemini, Claude, and Codex for
-design critique, synthesis, and infrastructure work. Treat AI output as design
-material that must be reconciled with the repo, tests, and the user's current
-intent.
+Treat AI output as proposed material that must be reconciled with current
+design contracts, implementation evidence and the user's intent. Update present
+state in place; keep session narratives and project chronology out of active docs.
 
 When local RAG/MCP context is available, use it as a source-discovery layer for
 questions about Nomi and nearby programming-language references. Prefer

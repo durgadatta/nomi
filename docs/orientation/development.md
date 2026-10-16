@@ -62,10 +62,9 @@ The optional Pyodide path loads required Python modules and explicitly registere
 runtime data from the same manifest. Add `--legacy-pyodide` to the browser gate
 to check that slower network-bootstrap path too.
 
-The published preview is currently older than this checkout; the October 10
-[readiness audit](project_roadmap.md#user-facing-readiness-audit) records the
-failed current-workbench comparison. Test a declared local or published URL
-explicitly rather than assuming a local pass establishes deployment parity.
+The [public playground](https://durgadatta.github.io/nomi/web/) serves the current
+main branch. The same browser gate checks calculation, report repair/export,
+inspection, recovery and mobile layouts on the declared local or public URL.
 
 The JS prototype rejects integers outside +/-9007199254740991 rather than
 rounding them; Python supports wider integers. Target scalar semantics and
@@ -141,7 +140,7 @@ marked as previous-source results. Drafts use browser-local storage; storage
 failures are reported, and downloads do not depend on that storage. Stopping a
 worker resets it; this is not the target language's resource-cleanup guarantee.
 
-See [Unreleased Changes](../../CHANGELOG.md) and the
+See [current support](../guide/status.md) and the
 [delivery roadmap](project_roadmap.md). This is an experimental
 preview, not a stable or target-conforming release.
 
@@ -250,8 +249,8 @@ current pipeline and [AGENTS.md](../../AGENTS.md) for engineering guidance.
 
 Start with a concrete user task or a small failing program. Read the relevant
 guide, then its target/design owner and current implementation owner. The
-[roadmap](project_roadmap.md#user-facing-readiness-audit) records user-facing
-findings awaiting repair; historical audit tables are not all current defects.
+[roadmap](project_roadmap.md#current-support) records current support and open delivery gates. Reproduce a defect on its
+actual supported path before treating it as pending.
 
 For a documentation change, verify links, support labels, and every runnable
 example you claim. For a runtime or tool change, reproduce the failure first,
@@ -268,4 +267,4 @@ Do not commit caches, browser captures, local VSIX files, or generated reports.
 In a review description, state the user-visible before/after behavior, the
 changed contract, actual validation, and remaining limits. Package builds and
 local browser checks are evidence for the checkout; release/deployment requires
-the separate [distribution gates](project_roadmap.md#user-facing-readiness-audit).
+the separate [distribution gates](project_roadmap.md#current-support).

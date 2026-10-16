@@ -38,8 +38,7 @@ visibility. [Target](../../design/targets/binding.nomi).
 
 ## Shared Binding Responsibilities
 
-> Discovery lead retained from the earlier consolidated brief, integrated
-> 2026-10-16. This compares responsibilities; it does not accept a universal
+> Current discovery lead; no shared implementation is established. This compares responsibilities; it does not accept a universal
 > binding protocol or additional binding syntax.
 
 The useful question is whether source evaluation, decomposition, tentative
@@ -63,7 +62,7 @@ require one release. Finally model a sent coroutine value without changing the
 ordinary evaluator. Compare shared declarative binding descriptions with
 construct-specific adapters, including source ranges and lexical scope.
 
-These cases have not been executed by this intake. Retain a shared mechanism
+These remain prepared, unexecuted comparisons. Retain a shared mechanism
 only if it preserves those distinct outcomes and simplifies inspection. Do not
 turn mutation into fresh binding, guards into constraints, or received external
 data into trusted nominal data. [Semantics](../../design/semantics.md#binding),

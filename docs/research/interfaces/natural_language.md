@@ -6,7 +6,7 @@
 
 Packet: [interface research](README.md), [interaction proposal](../../design/interaction_model.md),
 [target challenger](../../design/targets/research/natural_language.nomi),
-[current-to-target bridge](../../review/2026-09-30-cognitive-interfaces.md).
+[current-to-target bridge](../../review/cognitive_interfaces.md#current-evidence).
 Neighbors: [text boundaries](../dsls/text_as_interface.md),
 [PowerShell](../languages/powershell.md), [cognition](../cognition.md),
 [domain composition](../domain_composition.md).

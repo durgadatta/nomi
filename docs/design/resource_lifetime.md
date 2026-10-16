@@ -4,7 +4,7 @@
 
 Packet: `docs/research/resource_lifetime.md`,
 `docs/design/resource_lifetime_target.nomi`,
-`docs/review/2026-09-29-resource-lifetime.md`.
+`docs/review/resource_lifetime.md`.
 
 ## Existing Contract Versus Proposal
 
@@ -162,7 +162,7 @@ and null spans; it never invents parsed source locations.
 
 ## Remaining Completion Experiments
 
-October 9 planning continuation; the following expectations are conditional on
+The following prepared expectations are conditional on
 this proposal. They prepare the next experiment rather than report new traces.
 Keep them separate from Python generator compatibility and its suppression rules.
 

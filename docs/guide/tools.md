@@ -10,10 +10,9 @@ They share the project direction but do not have identical feature coverage.
 
 ## Browser Playground
 
-Use the current local playground for these instructions; the
-[online preview](https://durgadatta.github.io/nomi/web/) is an older deployment
-without the calculation/report samples or current inspection controls.
-From the repository root:
+Open the [public playground](https://durgadatta.github.io/nomi/web/) for the
+calculation, report and inspection workflows. To serve it locally, run from the
+repository root:
 
 ```bash
 python3 scripts/launch_web.py --no-wasm
@@ -22,7 +21,7 @@ python3 scripts/launch_web.py --no-wasm
 Open the printed URL. On a first visit, `calculate.nomi` is selected. Returning
 visits restore your selected file and local drafts. **Start here** contains the
 calculation and report tasks; **Data and text** contains the two collection
-notebooks. **Experiments** labels older prototype tours. Search matches file
+notebooks. **Experiments** labels experimental prototype tours. Search matches file
 names, descriptions, groups, and status. The sidebar's **User guide** link opens
 the guide in the repository; a local checkout may be ahead of that published copy.
 
@@ -109,7 +108,7 @@ are resolved from the terminal's current directory. Source files have the
 
 Checking and running are distinct commands. A successful check does not run the
 file or grant permission to access files, networks, or other host resources.
-Without a filename, `nomi` runs a packaged historical demo; use an explicit
+Without a filename, `nomi` runs a packaged experimental demo; use an explicit
 filename for the beginner examples. The installed wheel does not include the
 checkout's `samples/` directory.
 
@@ -142,9 +141,9 @@ cell and rerun it, or use `%reset` and Run All for a fresh start.
 
 The calculation reuses the same first program as the browser and guide, then
 shows a change in a second cell. Save a copy for your own work. The separate
-experimental syntax tour includes historical forms. Use the
+experimental syntax tour includes experimental forms. Use the
 [language basics](language_basics.md) for the beginner subset and the
-[example catalog](examples.md) to interpret the older forms. Browser `.nomi.nb`
+[example catalog](examples.md) to interpret the experimental forms. Browser `.nomi.nb`
 source files and Jupyter `.ipynb` documents are different file formats.
 
 The [Jupyter guide](../../tools/jupyter/README.md) covers kernelspec recovery,
@@ -187,7 +186,7 @@ server. Setup opens `samples/calculate.nomi` for the beginner task. See
 | Report validation reports several paths | Repair all listed fields before expecting a report; validation happens before eligibility filtering. |
 | Download JSON is unavailable or stale | Use the default browser route, encode successfully, and rerun after editing source. |
 | The browser remains at startup or reports asset loading failure | Retry/restart and inspect the visible error. CDN assets require network access; serving the checkout locally does not make those dependencies offline. |
-| The online sample list has no calculation/report or inspection tabs | It is the older published preview. Serve the current checkout locally; deployment parity is awaiting the next fixing pass. |
+| The online sample list has no calculation/report or inspection tabs | Reload the current playground and clear an outdated cached page if necessary. The current sample list includes calculation and report; reproduce a missing asset using the public browser check. |
 | VS Code cannot run a file | Open a trusted workspace folder, save the file, and verify its configured Python executable has Nomi dependencies. |
 | A Jupyter notebook opens but does not execute | Choose the Nomi kernel and run the kernel check in the [Jupyter troubleshooting guide](../../tools/jupyter/README.md#troubleshooting). |
 

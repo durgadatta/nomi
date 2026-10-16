@@ -1,7 +1,7 @@
 # Status: target-only callback pressure fixture; not runnable or typechecked.
 # Packet: docs/research/features/functions.md
 # Design: docs/design/function_contracts.md
-# Bridge: docs/review/2026-09-30-function-contracts.md
+# Bridge: docs/review/function_contracts.md
 # Proposed library contracts: strict pure map, Result.map_error, HTTP API.
 # No generic/function-value type notation is admitted by this fixture.
 # Generic-operation continuation: docs/design/targets/research/generic_operations.nomi

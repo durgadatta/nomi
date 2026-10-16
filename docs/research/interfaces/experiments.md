@@ -161,10 +161,10 @@ evidence; HX1-HX8 and the human study are still unperformed Nomi candidate
 comparisons. Generated web assets, runtime capability tables, grammar, and
 supported samples do not change because of this capture.
 
-## Creative Timing Continuation, 2026-10-10
+## Creative Timing Model
 
 The [creative challenger](music_timing.md#creative-authoring-challenger--october-10)
-now has a separate, executed finite model comparison. Its
+has a separate, executed finite model comparison. Its
 [24 literal cases](timing_cases.json) are not additional P-series probes, a
 replacement for the historical capture, or an HX authoring/human trial. The
 [model profile and commands](music_timing.md#bounded-model-experiment) state the

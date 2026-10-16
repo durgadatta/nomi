@@ -1,87 +1,58 @@
 # Design Pass Workflow
 
-> Status: canonical AI-assisted language-design workflow.
->
-> This process connects research, target decisions, pressure fixtures,
-> implementation reality, and agent learning without making any one prototype
-> the language specification.
+> Status: current research-to-design-to-implementation workflow.
 
-## Purpose
-
-Nomi changes quickly, and a design conversation can otherwise disappear into
-chat history or leave four partially overlapping documents behind. A registered
-design pass turns one bounded language question into a durable packet:
-
-```text
-research evidence
--> canonical design
--> focused target program
--> current-to-target bridge
--> validation and retrospective
-```
-
-The registry at `config/design_passes.json` is an index and routing surface. It
-does not decide semantics. Target authority remains under `docs/design/`.
+A registered packet connects one question to evidence, target meaning, pressure
+programs and a current implementation bridge. `config/design_passes.json` routes
+work; it does not specify the language. Discovery may begin outside the registry.
 
 ## Packet Contract
 
-The [guiding vision](../design/vision.md) permits discovery before a question fits
-a registered packet. Observation, historical synthesis and speculative models
-can revise the taxonomy and target. Use a packet when a bounded question needs
-this durable contract; registration is not a prerequisite for exploration.
-
-Every registered pass owns exactly these artifacts:
-
 | Artifact | Location | Responsibility |
 | --- | --- | --- |
-| Research | `docs/research/<topic>.md` | Primary evidence, real uses, genuine forks, and rejected mechanisms |
-| Design | `docs/design/<topic>.md` | Target laws, proposed alternatives, diagnostics and boundaries, with acceptance status explicit |
-| Target | `docs/design/<topic>_target.nomi` | Coherent positive examples plus clearly commented rejection cases |
-| Bridge | `docs/review/<date>-<topic>.md` | Current implementation audit, ordered migration, risks, and retrospective |
+| Research | `docs/research/` | Primary evidence, alternatives, costs and counterexamples. |
+| Design | `docs/design/` | Accepted laws and explicitly unaccepted proposals. |
+| Target | `docs/design/` | Coherent positive/rejection examples, kept outside runnable samples. |
+| Bridge | `docs/review/<topic>.md` | Current evidence, open gaps, validation and next actions. |
 
-The four artifacts link one another by repository-relative path. Broad target
-files such as `syntax.md`, `semantics.md`, `decisions.md`, and the active
-`targets/overall.nomi` / category suite
-still receive the durable cross-language changes; a focused design file may
-own detail that would make those spine documents unreadable.
+All four artifacts link one another by repository path. Broad syntax, semantics,
+decisions and active target programs also receive accepted cross-cutting changes.
+Use stable topical filenames; dates belong in evidence metadata when needed.
 
 ## Lifecycle
 
-Pass status is one of:
-
-| Status | Meaning |
-| --- | --- |
-| `researching` | Evidence is being gathered around a bounded question. |
-| `designing` | Credible candidates are being pressure-tested. |
-| `design-accepted` | The target is coherent; implementation work remains. |
-| `implementing` | Parser, IR, runtime, tooling, and fixtures are converging. |
-| `validated` | Target behavior agrees across the declared conformance surfaces. |
-| `paused` | Work is intentionally deferred with a named reason and next trigger. |
-| `rejected` | The proposal failed its admission test; rationale remains discoverable. |
-
-Status describes the whole packet, not whether one backend happens to parse a
-spelling. Update `last_reviewed`, checks, and next actions whenever status moves.
+`researching` gathers evidence; `designing` compares credible candidates;
+`design-accepted` means target closure; `implementing` aligns execution surfaces;
+`validated` means declared conformance; `paused` names a deferral and trigger;
+`rejected` retains the reason a candidate failed. Update status, `last_reviewed`,
+validation and next actions when their actual facts change.
 
 ## Pass Loop
 
-1. **Discover.** Check the registry before creating notes. Resume an existing
-   packet when its keywords and user pressure match.
-2. **Research.** Ground the focused question in a real activity or program. Use
-   official specifications, primary papers and current Nomi evidence. Record
-   forks, not language tours.
-3. **Decide.** Update canonical target docs and the decision ledger. Accept,
-   reject or retain an unresolved comparison with a named next discriminator;
-   distinguish a stable description from an accepted mechanism.
-4. **Pressure-test.** Put the choice in a focused target file and the broad
-   whole-language target. Include formatting and diagnostic expectations.
-5. **Bridge.** Audit every current frontend, IR, runtime, editor, test, and web
-   surface that disagrees. Order migration by semantic dependency.
-6. **Validate.** Run the commands registered with the pass. Target-only files
-   stay outside `samples/` until all supported execution surfaces agree.
-7. **Reflect.** Record what evidence changed the design, what slowed the pass,
-   the smallest durable workflow improvement, and the exact next pass.
+1. Discover the concrete activity and existing owner.
+2. Compare primary mechanisms and credible alternatives with an independent oracle.
+3. Accept, reject or retain a bounded fork in its canonical owner.
+4. Pressure-test source, meaning, diagnostics, formatting, effects and completion.
+5. Update the implementation bridge with present evidence and gaps.
+6. Run the relevant declared checks; promote samples only after conformance.
+7. Refresh current status and the next exact action in place.
 
-Run the deterministic surface with:
+## Current Bridge Contract
+
+Every bridge contains these nonempty sections in order:
+
+- `## Current Evidence`: what actually runs or is checked, with scope and owners.
+- `## Open Gaps`: missing semantics, implementation or host/human evidence.
+- `## Validation`: reproducible commands and what they can establish.
+- `## Next Actions`: the smallest dependency-ordered closure steps.
+
+Do not append session retrospectives, conversation summaries, commit trails or
+old test totals. Narrative evolution belongs only in [HISTORY.md](../../HISTORY.md),
+kept short; Git retains detailed old versions. Raw execution reports and source/
+host/version provenance remain with their evidence artifacts. Keep current docs
+self-contained enough that a reader does not need the project chronology.
+
+## Validation And Routing
 
 ```bash
 python3 -m tools.design_passes list
@@ -89,64 +60,17 @@ python3 -m tools.design_passes show pattern-matching
 python3 -m tools.design_passes check
 ```
 
-The CLI validates metadata and packet links before listing or showing a pass.
-Required artifact paths cannot be blank or mistyped; duplicate JSON keys,
-invalid calendar dates, unreadable text and out-of-repository artifacts fail
-the check. Each artifact must also resolve inside its declared authority
-directory, even through `..` or an in-repository symlink. Rejected artifact
-paths are not opened. This is packet-integrity
-validation, not parsing, typechecking, semantic conformance or evidence that a
-declared validation command has run.
-
-## Self-Improvement Rule
-
-Each bridge note ends with a `Pass Retrospective` containing four headings:
-
-- `Evidence That Changed The Design`
-- `Workflow Friction`
-- `Durable Improvement`
-- `Next Pass`
-
-The durable improvement must be a concrete edit to a check, skill, prompt,
-registry field, fixture, or canonical document, or an explicit statement that
-no process change was justified. This is evidence-driven self-improvement, not
-automatic growth of instructions after every task.
-
-Recurring friction should move inward:
-
-```text
-one-off observation -> bridge note
-repeated reasoning need -> skill or prompt
-deterministic invariant -> validator, hook, or test
-source-discovery need -> RAG/MCP
-target semantic decision -> docs/design
-```
-
-Delete or consolidate obsolete guidance when promoting a better workflow. The
-system improves when agents need less rediscovery, not when context files only
-become longer.
-
-## Agent Routing
-
-Session hooks show a bounded list of open passes. Prompt hooks match registry
-keywords and inject the four relevant packet paths without that startup cap.
-Agents still read the files before editing; injected paths are navigation, not
-preloaded truth.
-
-The `nomi-language-design` skill owns packet reasoning. The `nomi-ai-native`
-skill owns the workflow machinery. Parser, interpreter, test, Rust/Wasm, and
-web skills consume the bridge and conformance expectations when implementation
-begins.
+The validator checks metadata, allowed authority paths, cross-links and current
+bridge sections. It does not typecheck target programs or run listed commands.
+Hooks and MCP expose packet navigation; agents still read the source files.
+Use skills for variable reasoning, deterministic checks for invariants and
+current docs for maintained state. Promote process changes only when they solve
+repeated friction; avoid expanding instructions for one-off events.
 
 ## Completion Gate
 
-A pass is `validated` only when:
-
-- canonical design and focused examples agree;
-- accepted and rejected source fixtures exist;
-- parse, typed Surface/Core, runtime result, diagnostic, and tooling contracts
-  are explicit;
-- supported CLI and browser paths agree or honestly reject the feature;
-- registered validation commands pass;
-- the bridge has no unnamed blocker and its retrospective is complete;
-- remaining work is a new bounded pass rather than an unclosed part of this one.
+A packet is validated only when canonical laws/examples agree; independent
+parse/Surface/Core/value/error/effect/completion fixtures exist; supported CLI
+and browser surfaces agree or refuse honestly; declared relevant checks pass;
+and every remaining gap is either closed or a separately bounded continuation.
+Publication, human benefit and foreign-host behavior require their own evidence.

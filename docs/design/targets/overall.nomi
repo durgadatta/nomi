@@ -1,6 +1,6 @@
 # Status: aspirational first-product fixture, not runnable or typechecked.
 # Packet: docs/research/features/README.md; docs/design/synthesis.md;
-# docs/review/2026-09-29-language-synthesis.md
+# docs/review/language_coherence.md
 # Category map: docs/design/targets/README.md
 #
 # Story: paste a small JSON batch, validate it, select eligible rows, inspect

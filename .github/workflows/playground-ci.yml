@@ -31,7 +31,10 @@ jobs:
           package-manager-cache: false
       - run: rustup toolchain install stable --profile minimal --component rustfmt
       - run: python3 -m pip install -e '.[dev]'
-      - run: python3 -m pytest -q -n 0
+      - run: python3 -m pytest -q -n 0 --junitxml=reports/pytest.xml
+      - name: Annotate test failures
+        if: failure()
+        run: python3 scripts/report_pytest_failures.py reports/pytest.xml
 
   minimum-python:
     name: Installed runtime on Python 3.12

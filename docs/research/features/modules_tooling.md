@@ -244,4 +244,4 @@ Inspection must distinguish a result produced under A from a fresh B result,
 explain the dependency that invalidated a cache, and identify a suspended task's
 version. Compare predictability, restart cost, edit-to-feedback time, retained
 memory, and repair complexity. No method-table implementation, reload engine,
-or usability study was executed by this documentation pass.
+or usability study is established by these prepared comparisons.

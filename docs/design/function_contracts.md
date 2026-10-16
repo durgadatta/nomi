@@ -4,7 +4,7 @@
 
 Packet: `docs/research/features/functions.md`,
 `docs/design/function_contracts_target.nomi`,
-`docs/review/2026-09-30-function-contracts.md`.
+`docs/review/function_contracts.md`.
 
 [Syntax](syntax.md) accepts named `func`, explicit expression lambdas, and
 ordinary calls. [Semantics](semantics.md) accepts lexical closures, checked

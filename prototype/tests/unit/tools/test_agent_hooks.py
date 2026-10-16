@@ -68,7 +68,7 @@ def test_user_prompt_hook_routes_registered_design_pass():
     assert "nomi-language-design" in context
     assert "pattern-matching" in context
     assert "docs/research/pattern_matching.md" in context
-    assert "docs/review/2026-07-16-pattern-matching.md" in context
+    assert "docs/review/pattern_matching.md" in context
 
 
 def test_pre_tool_hook_blocks_destructive_git_reset():

@@ -1,422 +1,218 @@
 # Nomi Documentation
 
-> Status: canonical documentation entry point.
->
-> Start with the user guide for runnable examples. Design describes the intended
-> language; research records evidence; development pages explain the implementation.
+> Status: current documentation entry point.
 
-The [Repository Digest](../DIGEST.md) gives a self-contained snapshot of the
-purpose, accepted core, runnable surfaces, research frontier and remaining gaps.
+Start with [DIGEST.md](../DIGEST.md) for a self-contained repository story or
+[open the playground](https://durgadatta.github.io/nomi/web/) to try calculation
+and report repair/export. The published and local playgrounds share committed
+samples and runtime assets.
 
-## Start Here
+## Choose A Route
 
-Choose a reading path based on what you want to do:
-
-| Your goal | Start with | Then explore |
+| Goal | Start here | What it owns |
 | --- | --- | --- |
-| Try Nomi for the first time | [User Guide](guide/README.md) | [Getting Started](guide/getting_started.md), then [Language Basics](guide/language_basics.md). |
-| Find a task or solve a problem | [Example Catalog](guide/examples.md) | [Tools And Troubleshooting](guide/tools.md). |
-| Understand what will be added | [Current Support And Growth](guide/status.md) | [Target Design](design/README.md), then the [delivery roadmap](orientation/project_roadmap.md). |
-| Explore the broader ambition | [Computational Medium Vision](design/vision.md) | [Cognitive Foundations](research/cognition.md) and [Design-First Agenda](design/redesign_agenda.md). |
-| Work on the implementation | [Developing Nomi](orientation/development.md) | [Implementation Layers](orientation/implementation_layers.md) and [contributor/agent map](../AGENTS.md). |
-| Research or integrate a language mechanism | [Maintainer Synthesis Guide](research/synthesis_guide.md) | [Language reviews](research/languages/README.md), [feature comparisons](research/features/README.md), and [open questions](research/open_questions.md). |
-| Describe and compose objects before choosing an engine | [Engine-Free Objects](design/object_framework.md) | Typed descriptions, reusable workflows, relation/collection conditions and explicit realization; a source-checkout research tool. |
-| Design by composing a few primitives | [Primitives And Their Compositions](design/primitive_composition.md) | Hierarchy, worked reductions, construct catalog and explicit unclosed laws. |
-| Study general knowledge frameworks from Leibniz onward | [Knowledge Frameworks](research/knowledge_frameworks.md) | Historical mechanisms, interpretation and inference forks, current gaps and the next scoped experiments. |
-| Rethink the foundation for scientific reasoning | [Minimal Reasoning Algebra](design/reasoning_algebra.md) | Current-core audit, smaller candidates, library structures, exact executable compositions and R0-R5 integration. |
-| Absorb intelligence into the same language | [Learning And Intelligent Programs](design/ai_frameworks.md) | Generative models, inference, abstraction, causal explanation, memory and inquiry; shared semantic guarantees and finite checks. |
-| Adapt the object framework to data and statistics | [Statistical Data Interface](design/statistical_data.md) | [Statistical-object research](research/data_workflows/statistical_objects.md); the executable fragment is a research tool, not a dataframe engine. |
-| Design for physics and scientific discovery | [Scientific Models And Discovery](design/scientific_discovery.md) | Five modeling contracts, an oscillator derivation, implementation gaps and independent admission oracles. |
-
-The getting-started guide describes runnable prototype examples. Design
-documents describe the intended language, including features that do not run
-yet. Research explains evidence and alternatives. You can learn the examples
-without reading the research corpus first.
-
-## User Guide
-
-Follow the [learning path](guide/README.md#learn-in-order), or jump to a topic:
-
-- [Getting Started](guide/getting_started.md): run, change, repair, and export.
-- [Language Basics](guide/language_basics.md): ordinary source explained through complete programs.
-- [Example Catalog](guide/examples.md): recommended tasks and older experimental samples.
-- [Using Nomi's Tools](guide/tools.md): browser, CLI, notebooks, editor, and troubleshooting.
-- [Current Support And Growth](guide/status.md): capability boundaries and future guarantees.
-- [Explore Learning And Reasoning](guide/reasoning_lab.md): capture functions, induce proposals and revise inquiries from observations.
-
-The remaining sections are reference routes for design, research, and
-development. The [complete inventory](#complete-markdown-inventory) is available
-when you need to find a particular document.
-
-## Design And Research References
-
-For language design, read:
-
-1. [Target Design](design/README.md)
-   and [Computational Medium Vision](design/vision.md): intended language and
-   broader purpose, with current gaps and open directions.
-2. [Syntax](design/syntax.md)
-3. [Semantics](design/semantics.md)
-4. [Pattern Matching](design/pattern_matching.md)
-5. [Industrial Model](design/industrial.md)
-6. [Decision Ledger](design/decisions.md)
-7. [Target Suite](design/targets/README.md) and [Overall Program](design/targets/overall.nomi)
-8. [Pattern Target](design/pattern_matching_target.nomi)
-9. [Language Synthesis](design/synthesis.md)
-10. [Interaction Proposal](design/interaction_model.md) and
-    [Design-First Agenda](design/redesign_agenda.md)
-
-For the evidence and unresolved forks behind those choices, read:
-
-Start with the [maintainer synthesis guide](research/synthesis_guide.md) for one
-research loop, candidate worksheet, composition cases, and existing topic owners.
-The [earlier consolidated brief intake](research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
-routes the user's older notes to current coverage, retained leads and explicit
-conflicts without changing accepted semantics.
-
-1. [Research Overview](research/README.md)
-2. [Language Families](research/families.md)
-3. [Design Convergences](research/convergences.md)
-4. [Pattern Matching Research](research/pattern_matching.md)
-5. [Open Questions](research/open_questions.md)
-6. [Language-Feature Matrix](research/language_feature_matrix.md),
-   [Transpose](research/feature_language_matrix.md),
-   [Syntax Matrix](research/syntax_matrix.md), and [Syntax Forms](research/syntax_forms.md)
-   alongside [Language Reviews](research/languages/README.md) and [Feature Comparisons](research/features/README.md)
-7. [Cognitive Foundations](research/cognition.md) and
-   [Human-Computer Languages](research/interfaces/README.md)
-   with the [human computation edge atlas](research/interfaces/edge_cases.md),
-   [composition experiments](research/interfaces/composition_cases.md), and
-   [executed local probes](research/interfaces/experiments.md): philosophical
-   ideas translated to contracts, counterexamples, and implementation handoffs.
-8. [Data And Workflow Languages](research/data_workflows/README.md) and
-   [Cross-Disciplinary Notation](research/notation_atlas.md): source forms,
-   layered execution models, critical comparisons and bounded Nomi experiments.
-9. [DSLs And Strings](research/dsls/README.md): configuration/string boundaries
-   plus text API vocabulary, 50 DSL families and 24 orthogonal semantic models;
-   primary evidence, composition fixtures, local probes and bounded candidates.
-
-For the current repository and runtime, read:
-
-1. [Artifacts And Usage](orientation/artifacts_and_usage.md)
-2. [Implementation Guideline](orientation/implementation_guideline.md)
-3. [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
-4. [Design Pass Workflow](orientation/design_pass_workflow.md)
-5. [Implementation Layers](orientation/implementation_layers.md)
-
-The [2026-07-16 Language Design Review](review/2026-07-16.md) records why the
-old design corpus was consolidated and gives the concrete action sequence.
-The [Pattern Matching Design Pass](review/2026-07-16-pattern-matching.md) is the
-first registered research-to-target-to-bridge packet.
+| Learn and run Nomi | [User guide](guide/README.md), [getting started](guide/getting_started.md), [examples](guide/examples.md) | Supported workflows and their boundaries. |
+| Understand current support | [Status](guide/status.md), [artifact map](orientation/artifacts_and_usage.md) | Working prototypes, profiles and implementation limits. |
+| Understand purpose and meaning | [Vision](design/vision.md), [target design](design/README.md), [syntax](design/syntax.md), [semantics](design/semantics.md), [decisions](design/decisions.md) | Accepted laws and clearly marked design candidates. |
+| Grow the language | [Synthesis](design/synthesis.md), [industrial contracts](design/industrial.md), [pattern contract](design/pattern_matching.md), [target suite](design/targets/README.md) | Whole-program coherence and admission obligations. |
+| Study alternatives | [Research guide](research/synthesis_guide.md), [families](research/families.md), [convergences](research/convergences.md), [open questions](research/open_questions.md) | Comparative evidence and bounded experiments. |
+| Implement or maintain | [Development](orientation/development.md), [implementation layers](orientation/implementation_layers.md), [roadmap](orientation/project_roadmap.md) | Setup, current owners and dependency-ordered delivery. |
+| Resume a focused question | [Packet workflow](orientation/design_pass_workflow.md), [registry](../config/design_passes.json), current bridges below | Evidence, open gaps, checks and next actions. |
 
 ## Authority
 
-When artifacts disagree, use this order:
+Current user decisions can revise the target. `design/` owns intended meaning;
+`research/` supplies evidence; `orientation/` maps current implementation and
+work. Tests establish supported prototype behavior, not the final language.
+Target-only code stays under `design/`; runnable product examples live in
+`samples/` and require parser/runtime/diagnostic agreement on advertised paths.
 
-```text
-current user decision
--> docs/design target
--> docs/research evidence
--> docs/orientation current implementation map
--> executable prototypes and tests
--> Git history
-```
-
-Tests remain authoritative for what a supported implementation does today.
-They are not a veto over a new target-language decision.
-
-Within target design, the [vision](design/vision.md) owns the purpose and outcomes;
-accepted syntax/semantics own the current intended laws. Designing proposals own
-unresolved alternatives. A new direction can revise those laws explicitly; it
-does not silently reinterpret existing source, change runtime behavior or turn
-a proposed mechanism into an accepted one.
-
-Target-only source belongs under `docs/design/targets/` or a registered focused
-target. `design/target.nomi` is a superseded predecessor retained for historical
-links. Files under `samples/` are runnable product fixtures
-and must remain aligned with parser, runtime, tests, generated web manifest,
-and browser execution.
-
-## Documentation Types
-
-| Location | Purpose | May decide target semantics? |
-| --- | --- | --- |
-| `docs/guide/` | User walkthroughs of supported examples and tools | No; explains current behavior |
-| `docs/design/` | Canonical target language and industrial contracts | Yes |
-| `docs/research/` | Consolidated evidence and bounded open questions | No; informs decisions |
-| `docs/orientation/` | Current implementation, tooling, and collaboration | No |
-| `docs/review/` | Dated judgments and evidence snapshots | No; decisions must be promoted |
-
-New design notes should normally update an existing canonical file. Add a new
-document only when it owns a durable information type that the current set
-cannot hold cleanly.
-
-## Design Change Workflow
-
-For a registered cross-cutting feature, use the complete
-[Design Pass Workflow](orientation/design_pass_workflow.md) and update
-`config/design_passes.json`.
-
-Discovery can begin with observed activity, an unfamiliar discipline or a
-speculative model under the [guiding vision](design/vision.md). The steps below
-govern turning a candidate into a language change; existing packets and milestone
-names can evolve rather than confine that discovery.
-
-1. Ground the proposed change in a concrete activity or program and its pressure.
-2. Check [Open Questions](research/open_questions.md) and existing research
-   convergence before doing new broad research.
-3. Compare at least two Nomi surfaces and the explicit long form.
-4. Specify semantics, formatting, diagnostics, effects, and interactions.
-5. Update the [Target Suite](design/targets/README.md) and [Overall Program](design/targets/overall.nomi).
-6. Record the decision or experiment in the [Decision Ledger](design/decisions.md).
-7. Only then map the change onto parser, Surface/Core, runtimes, tests, and web.
-
-## Implementation Orientation
-
-- [Developing Nomi](orientation/development.md): checkout setup, local playground,
-  notebook/editor tools, packaging, and verification commands.
-- [Project Enhancement Roadmap](orientation/project_roadmap.md): project-wide
-  audit, priorities, dependencies, detailed workstreams and delivery gates;
-  semantic decisions remain with the existing design owners.
-- [Project Action Notes](orientation/project_action_notes.md): notes-only local
-  tasks, domain recipes and completion/removal gates for the existing A01-A33 map.
-- [Frontier Handoff](../ASTRA_HANDOFF.md): historical user-requested frontier
-  brief, superseded by the user-facing documentation pass; retained for context,
-  not another language authority or active work queue.
-- [AI Collaboration](orientation/ai_collaboration.md): repository doctrine for
-  AI-assisted design, implementation, critique, and checkpoints.
-- [Design Pass Workflow](orientation/design_pass_workflow.md): linked research,
-  target, bridge, validation, retrospective, and topic-routing contract.
-- [Artifacts And Usage](orientation/artifacts_and_usage.md): current execution
-  pipelines, runtime artifacts, samples, and validation commands.
-- [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md):
-  reversible implementation while semantics are still moving.
-- [Implementation Guideline](orientation/implementation_guideline.md): current
-  engineering posture and project history.
-- [Implementation Layers](orientation/implementation_layers.md): readable
-  orchestration, replaceable engines, packaging, and bounded migration gates.
-- [Performance Notes](orientation/performance_notes.md): parser/runtime
-  performance experiments and measurements.
-- [RAG MCP Context](orientation/rag_mcp.md): local code/document retrieval
-  setup.
-- [VS Code Extension](orientation/vscode_extension.md): local editor tooling.
-- [WASM-JS Runtime Review](orientation/wasm_js_runtime_review.md): browser
-  parser/runtime architecture evidence.
-
-## Reviews
-
-- [Language Design Review 2026-07-16](review/2026-07-16.md): syntax-first reset,
-  research consolidation, target language, and ordered actions.
-- [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md):
-  focused research, accepted target, implementation delta, and bridge.
-- [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md):
-  user-facing playground and VS Code agent workflow.
-- [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md):
-  cross-language evidence, target corrections, and registered continuation.
-- [Implementation Boundary Review 2026-09-30](review/2026-09-30-implementation-boundaries.md):
-  discovery/fix checkpoint preserving the current runtime and playground.
-- [Deferred Test Review 2026-09-30](review/2026-09-30-test-issues.md):
-  test-maintenance findings reserved for a separate pass.
+Update live records in place. Current bridges under `review/` describe present
+evidence and gaps. Project evolution is concise and isolated in
+[HISTORY.md](../HISTORY.md); detailed old artifacts remain in Git.
 
 ## Complete Markdown Inventory
 
-This list is intentionally complete and is checked by tests.
-
 <details>
-<summary>Browse every document by category</summary>
+<summary>Browse current documents by area</summary>
 
-### User Guides
+### Guide
 
-- [User Guide](guide/README.md)
-- [Getting Started](guide/getting_started.md)
+- [Learn And Use Nomi](guide/README.md)
+- [Choose An Example](guide/examples.md)
+- [Getting Started With Nomi](guide/getting_started.md)
 - [Language Basics](guide/language_basics.md)
-- [Example Catalog](guide/examples.md)
-- [Using Nomi's Tools](guide/tools.md)
-- [Current Support And Growth](guide/status.md)
 - [Explore Learning And Reasoning](guide/reasoning_lab.md)
+- [Current Support And Growth](guide/status.md)
+- [Using Nomi's Tools](guide/tools.md)
 
 ### Design
 
-- [Target Design](design/README.md)
-- [Computational Medium Vision](design/vision.md)
-- [Syntax](design/syntax.md)
-- [Semantics](design/semantics.md)
+- [Nomi Target Design](design/README.md)
+- [Learning, Inference And Intelligent Programs](design/ai_frameworks.md)
+- [Nomi Decision Ledger](design/decisions.md)
+- [Function And Callback Contracts](design/function_contracts.md)
+- [Nomi Industrial Model](design/industrial.md)
+- [Nomi Interaction Model](design/interaction_model.md)
+- [Engine-Free Objects](design/object_framework.md)
 - [Pattern Matching](design/pattern_matching.md)
-- [Industrial Model](design/industrial.md)
-- [Decision Ledger](design/decisions.md)
-- [Language Synthesis](design/synthesis.md)
 - [Primitives And Their Compositions](design/primitive_composition.md)
 - [A Minimal Algebra Of Scientific Reasoning](design/reasoning_algebra.md)
-- [Target Suite](design/targets/README.md)
+- [Design-First Redesign Agenda](design/redesign_agenda.md)
 - [Resource Completion Proposal](design/resource_lifetime.md)
-- [Interaction Proposal](design/interaction_model.md)
-- [Design-First Agenda](design/redesign_agenda.md)
-- [Function Contracts](design/function_contracts.md)
-- [Statistical Data Interface](design/statistical_data.md)
-- [Engine-Free Objects](design/object_framework.md)
 - [Scientific Models And Discovery](design/scientific_discovery.md)
-- [Learning, Inference And Intelligent Programs](design/ai_frameworks.md)
+- [Nomi Semantics](design/semantics.md)
+- [Statistical Data Interface](design/statistical_data.md)
+- [Nomi Syntax](design/syntax.md)
+- [Nomi Language Synthesis](design/synthesis.md)
+- [Target Program Suite](design/targets/README.md)
+- [Research Pressure Programs](design/targets/research/README.md)
+- [Nomi As A Computational Medium](design/vision.md)
 
 ### Research
 
-- [Research Overview](research/README.md)
-- [Maintainer Synthesis Guide](research/synthesis_guide.md)
-- [Language Families](research/families.md)
-- [Design Convergences](research/convergences.md)
-- [Pattern Matching Research](research/pattern_matching.md)
-- [Open Questions](research/open_questions.md)
-- [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
-- [Cognitive Foundations](research/cognition.md)
-- [General Knowledge Representation And Processing](research/knowledge_frameworks.md)
-- [Scientific Models As Instruments For Thinking](research/scientific_models.md)
-- [Natural Language As A Design Resource](research/interfaces/natural_language.md)
-- [Language Redesign Frontiers](research/design_frontiers.md)
-- [Language-Feature Synthesis Matrix](research/language_feature_matrix.md)
-- [Feature-Language Transpose](research/feature_language_matrix.md)
-- [Syntax Matrix](research/syntax_matrix.md)
-- [Syntax Forms](research/syntax_forms.md)
-- [Data And Workflow Research](research/data_workflows/README.md)
+- [Nomi Research](research/README.md)
+- [Computation As A Cognitive Instrument](research/cognition.md)
+- [Cross-Language Design Convergences](research/convergences.md)
+- [Data And Workflow Languages](research/data_workflows/README.md)
+- [AI, Learning And Knowledge: Conceptual Foundations](research/data_workflows/ai_ml.md)
+- [Local Composition Experiments](research/data_workflows/composition_experiments.md)
+- [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
+- [Execution And Workflow Models](research/data_workflows/execution_models.md)
+- [Messaging And Event-Driven Architectures](research/data_workflows/messaging_and_events.md)
+- [Nomi Synthesis And Experiments](research/data_workflows/nomi_candidates.md)
 - [Data Source Forms](research/data_workflows/source_forms.md)
 - [Statistical Objects Before Observations](research/data_workflows/statistical_objects.md)
-- [Workflow Execution Models](research/data_workflows/execution_models.md)
-- [Dependencies, Change And Time](research/data_workflows/dependencies_and_time.md)
-- [AI, Learning And Knowledge: Conceptual Foundations](research/data_workflows/ai_ml.md)
-- [Messaging And Event-Driven Architectures](research/data_workflows/messaging_and_events.md)
+- [Language Redesign Frontiers](research/design_frontiers.md)
 - [Coherent Domain Layers](research/domain_composition.md)
-- [Generic Operations And Compositional Properties](research/generic_operations.md)
-- [Local Domain Composition Experiments](research/data_workflows/composition_experiments.md)
-- [Data/Notation Synthesis And Experiments](research/data_workflows/nomi_candidates.md)
-- [DSL And String Research](research/dsls/README.md)
-- [Layered Configuration Languages](research/dsls/layered_configuration.md)
-- [Strings And Embedded Languages](research/dsls/strings_and_embedding.md)
-- [Text As A Computational Interface](research/dsls/text_as_interface.md)
-- [DSL Domain Atlas](research/dsls/domain_atlas.md)
-- [Orthogonal DSL Models](research/dsls/orthogonal_models.md)
+- [DSLs And Strings: Research Dossier](research/dsls/README.md)
 - [Composing Orthogonal DSLs](research/dsls/composition_boundaries.md)
-- [Nomi DSL Candidates And Experiments](research/dsls/nomi_candidates.md)
+- [DSL Domain Atlas](research/dsls/domain_atlas.md)
 - [Executed DSL Boundary Probes](research/dsls/experiments.md)
-- [Cross-Disciplinary Notation Atlas](research/notation_atlas.md)
-- [Research Pressure Targets](design/targets/research/README.md)
-
-### Interface Threads
-
-- [Human-Computer Language Index](research/interfaces/README.md)
-- [Human Computation Edge Atlas](research/interfaces/edge_cases.md)
-- [Interaction Composition And Implementation Experiments](research/interfaces/composition_cases.md)
-- [Executed Interaction Boundary Probes](research/interfaces/experiments.md)
-- [Spreadsheets](research/interfaces/spreadsheets.md)
-- [Command Shells](research/interfaces/command_shells.md)
-- [Keyboard Commands](research/interfaces/keyboard_commands.md)
-- [Direct Manipulation](research/interfaces/direct_manipulation.md)
-- [Visual Programming](research/interfaces/visual_programming.md)
-- [Text Patterns](research/interfaces/text_patterns.md)
-- [Query And Search](research/interfaces/query_search.md)
-- [State And Protocols](research/interfaces/state_protocols.md)
-- [Reactive Time](research/interfaces/reactive_temporal.md)
-- [Units And Constraints](research/interfaces/types_units_constraints.md)
-- [Structured Documents](research/interfaces/structured_documents.md)
-- [Collaboration](research/interfaces/distributed_collaboration.md)
-- [Planning And Optimization](research/interfaces/planning_optimization.md)
-- [Music And Timing](research/interfaces/music_timing.md)
-- [Games And Turtles](research/interfaces/games_turtles.md)
-- [Conversational Agents](research/interfaces/conversational_agents.md)
-- [Stack And Tacit Forms](research/interfaces/tacit_stack.md)
-- [Transactions And History](research/interfaces/transactions_versions.md)
-
-### Language Reviews
-
-- [Language Review Index](research/languages/README.md)
-- [Python](research/languages/python.md)
-- [Ruby](research/languages/ruby.md)
-- [JavaScript](research/languages/javascript.md)
-- [TypeScript](research/languages/typescript.md)
-- [Bash](research/languages/bash.md)
-- [PowerShell](research/languages/powershell.md)
-- [Tcl](research/languages/tcl.md)
-- [Scheme](research/languages/scheme.md)
-- [Racket](research/languages/racket.md)
-- [Clojure](research/languages/clojure.md)
-- [OCaml](research/languages/ocaml.md)
-- [F#](research/languages/fsharp.md)
-- [Haskell](research/languages/haskell.md)
-- [Elm](research/languages/elm.md)
-- [Gleam](research/languages/gleam.md)
-- [Roc](research/languages/roc.md)
-- [Rust](research/languages/rust.md)
-- [Mojo](research/languages/mojo.md)
-- [Go](research/languages/go.md)
-- [Zig](research/languages/zig.md)
-- [Swift](research/languages/swift.md)
-- [Kotlin](research/languages/kotlin.md)
-- [Scala](research/languages/scala.md)
-- [Java](research/languages/java.md)
-- [C#](research/languages/csharp.md)
-- [Dart](research/languages/dart.md)
-- [C](research/languages/c.md)
-- [C++](research/languages/cpp.md)
-- [Erlang](research/languages/erlang.md)
-- [Elixir](research/languages/elixir.md)
-- [SQL](research/languages/sql.md)
-- [R](research/languages/r.md)
-- [MATLAB](research/languages/matlab.md)
-- [Julia](research/languages/julia.md)
-- [APL](research/languages/apl.md)
-- [J](research/languages/j.md)
-- [BQN](research/languages/bqn.md)
-- [Uiua](research/languages/uiua.md)
-- [Wolfram Language](research/languages/wolfram.md)
-- [CUE](research/languages/cue.md)
-- [Nickel](research/languages/nickel.md)
-- [Dhall](research/languages/dhall.md)
-- [Pkl](research/languages/pkl.md)
-- [Nix](research/languages/nix.md)
-- [HCL](research/languages/hcl.md)
-
-### Feature Comparisons
-
-- [Feature Index](research/features/README.md)
-- [Bindings](research/features/binding.md)
-- [Functions](research/features/functions.md)
-- [Types And Data](research/features/types_data.md)
-- [Patterns](research/features/patterns.md)
-- [Failure](research/features/failure.md)
-- [Effects](research/features/effects.md)
-- [Resources](research/features/resources.md)
+- [Layered Configuration Is A Stack Of Languages](research/dsls/layered_configuration.md)
+- [Nomi DSL Candidates And Discriminating Experiments](research/dsls/nomi_candidates.md)
+- [Orthogonal DSL Models](research/dsls/orthogonal_models.md)
+- [Strings, Embedded Languages And Boundary Preservation](research/dsls/strings_and_embedding.md)
+- [Text As A Computational Interface](research/dsls/text_as_interface.md)
+- [Language Family Findings](research/families.md)
+- [Feature-Language Synthesis Matrix (Transposed)](research/feature_language_matrix.md)
+- [Cross-Language Feature Comparisons](research/features/README.md)
+- [Bindings And State](research/features/binding.md)
+- [Collections And Plans](research/features/collections.md)
 - [Concurrency](research/features/concurrency.md)
-- [Collections](research/features/collections.md)
-- [Decoding](research/features/decoding.md)
-- [Numerics](research/features/numerics.md)
-- [Modules And Tooling](research/features/modules_tooling.md)
+- [Decoding And Constraints](research/features/decoding.md)
+- [Effects And Authority](research/features/effects.md)
+- [Failure And Absence](research/features/failure.md)
+- [Functions And Calls](research/features/functions.md)
 - [Metaprogramming](research/features/metaprogramming.md)
+- [Modules And Tooling](research/features/modules_tooling.md)
+- [Numerics And Shape](research/features/numerics.md)
+- [Patterns And Choice](research/features/patterns.md)
+- [Resource Lifetime](research/features/resources.md)
+- [Types And Owned Data](research/features/types_data.md)
+- [Generic Operations And Compositional Properties](research/generic_operations.md)
+- [Human-Computer Languages](research/interfaces/README.md)
+- [Shells: Invocation Is A Boundary](research/interfaces/command_shells.md)
+- [Interaction Composition And Implementation Experiments](research/interfaces/composition_cases.md)
+- [Dialogue: Negotiate Intent Before Execution](research/interfaces/conversational_agents.md)
+- [Direct Manipulation: Make The Change Explicit](research/interfaces/direct_manipulation.md)
+- [Collaboration: Agreement Is Not Correctness](research/interfaces/distributed_collaboration.md)
+- [Human Computation At The Edges](research/interfaces/edge_cases.md)
+- [Executed Interaction Boundary Probes](research/interfaces/experiments.md)
+- [Games And Turtles: An Executable Mental Model](research/interfaces/games_turtles.md)
+- [Keyboard Commands: Meaning Before Gesture](research/interfaces/keyboard_commands.md)
+- [Music And Timing: Choose The Clock](research/interfaces/music_timing.md)
+- [Natural Language As A Design Resource](research/interfaces/natural_language.md)
+- [Planning: Ask For A Witness](research/interfaces/planning_optimization.md)
+- [Query And Search: Evidence Has A Domain](research/interfaces/query_search.md)
+- [Reactive Interfaces: Recalculation Is Not Repetition](research/interfaces/reactive_temporal.md)
+- [Spreadsheets: Name The Dependency](research/interfaces/spreadsheets.md)
+- [State And Protocols: Validity Over Time](research/interfaces/state_protocols.md)
+- [Structured Documents: Preserve The Draft](research/interfaces/structured_documents.md)
+- [Stack And Tacit Forms: Where Did The Argument Go?](research/interfaces/tacit_stack.md)
+- [Patterns And Selectors: Describe A Set](research/interfaces/text_patterns.md)
+- [History: Undo Which World?](research/interfaces/transactions_versions.md)
+- [Units And Constraints: Meaning Is More Than A Number](research/interfaces/types_units_constraints.md)
+- [Visual Programs: An Edge Needs A Meaning](research/interfaces/visual_programming.md)
+- [General Knowledge Representation And Processing](research/knowledge_frameworks.md)
+- [Language-Feature Synthesis Matrix](research/language_feature_matrix.md)
+- [Critical Language Reviews](research/languages/README.md)
+- [APL](research/languages/apl.md)
+- [Bash](research/languages/bash.md)
+- [BQN](research/languages/bqn.md)
+- [C](research/languages/c.md)
+- [Clojure](research/languages/clojure.md)
+- [C++](research/languages/cpp.md)
+- [C#](research/languages/csharp.md)
+- [CUE](research/languages/cue.md)
+- [Dart](research/languages/dart.md)
+- [Dhall](research/languages/dhall.md)
+- [Elixir](research/languages/elixir.md)
+- [Elm](research/languages/elm.md)
+- [Erlang](research/languages/erlang.md)
+- [F#](research/languages/fsharp.md)
+- [Gleam](research/languages/gleam.md)
+- [Go](research/languages/go.md)
+- [Haskell](research/languages/haskell.md)
+- [HCL](research/languages/hcl.md)
+- [J](research/languages/j.md)
+- [Java](research/languages/java.md)
+- [JavaScript](research/languages/javascript.md)
+- [Julia](research/languages/julia.md)
+- [Kotlin](research/languages/kotlin.md)
+- [MATLAB](research/languages/matlab.md)
+- [Mojo](research/languages/mojo.md)
+- [Nickel](research/languages/nickel.md)
+- [Nix](research/languages/nix.md)
+- [OCaml](research/languages/ocaml.md)
+- [Pkl](research/languages/pkl.md)
+- [PowerShell](research/languages/powershell.md)
+- [Python](research/languages/python.md)
+- [R](research/languages/r.md)
+- [Racket](research/languages/racket.md)
+- [Roc](research/languages/roc.md)
+- [Ruby](research/languages/ruby.md)
+- [Rust](research/languages/rust.md)
+- [Scala](research/languages/scala.md)
+- [Scheme](research/languages/scheme.md)
+- [SQL](research/languages/sql.md)
+- [Swift](research/languages/swift.md)
+- [Tcl](research/languages/tcl.md)
+- [TypeScript](research/languages/typescript.md)
+- [Uiua](research/languages/uiua.md)
+- [Mathematica And Wolfram Language](research/languages/wolfram.md)
+- [Zig](research/languages/zig.md)
+- [Notation Beyond Programming](research/notation_atlas.md)
+- [Open Research Questions](research/open_questions.md)
+- [Pattern Matching Research](research/pattern_matching.md)
+- [Resource Outcome And Escape Experiment](research/resource_lifetime.md)
+- [Scientific Models As Instruments For Thinking](research/scientific_models.md)
+- [Syntax Forms: Recognition Before Compression](research/syntax_forms.md)
+- [Syntax Matrix: The Forms People Read And Write](research/syntax_matrix.md)
+- [Researching And Integrating One Coherent Language](research/synthesis_guide.md)
 
 ### Orientation
 
-- [Developing Nomi](orientation/development.md)
-- [Project Enhancement Roadmap](orientation/project_roadmap.md)
-- [Frontier Checkpoint 2026-10-08](orientation/frontier_checkpoint_2026-10-08.md)
-  — committed experimental baseline, detailed planning handoff and unresolved findings.
-- [Project Action Notes](orientation/project_action_notes.md)
 - [AI Collaboration](orientation/ai_collaboration.md)
-- [Design Pass Workflow](orientation/design_pass_workflow.md)
 - [Artifacts And Usage](orientation/artifacts_and_usage.md)
+- [Design Pass Workflow](orientation/design_pass_workflow.md)
+- [Developing Nomi](orientation/development.md)
 - [Exploratory Implementation Doctrine](orientation/exploratory_implementation_doctrine.md)
 - [Implementation Guideline](orientation/implementation_guideline.md)
 - [Implementation Layers](orientation/implementation_layers.md)
-- [Performance Notes](orientation/performance_notes.md)
+- [Performance And Profiling](orientation/performance_notes.md)
+- [Project Action Notes](orientation/project_action_notes.md)
+- [Project Roadmap](orientation/project_roadmap.md)
 - [RAG MCP Context](orientation/rag_mcp.md)
 - [VS Code Extension](orientation/vscode_extension.md)
-- [WASM-JS Runtime Review](orientation/wasm_js_runtime_review.md)
+- [Browser Runtime Architecture](orientation/wasm_js_runtime_review.md)
 
-### Reviews
+### Review
 
-- [Language Design Review 2026-07-16](review/2026-07-16.md)
-- [Pattern Matching Design Pass 2026-07-16](review/2026-07-16-pattern-matching.md)
-- [GitHub Playground Plan 2026-09-29](review/2026-09-29-github-playground-agentic-plan.md)
-- [Language Synthesis Review 2026-09-29](review/2026-09-29-language-synthesis.md)
-- [Resource Lifetime Experiment 2026-09-29](review/2026-09-29-resource-lifetime.md)
-- [Cognitive And Interface Review 2026-09-30](review/2026-09-30-cognitive-interfaces.md)
-- [Function Contract Checkpoint 2026-09-30](review/2026-09-30-function-contracts.md)
-- [Implementation Boundary Review 2026-09-30](review/2026-09-30-implementation-boundaries.md)
-- [Deferred Test Review 2026-09-30](review/2026-09-30-test-issues.md)
+- [Cognitive Interfaces Implementation Bridge](review/cognitive_interfaces.md)
+- [Function Contracts Implementation Bridge](review/function_contracts.md)
+- [Language Coherence Implementation Bridge](review/language_coherence.md)
+- [Pattern Matching Implementation Bridge](review/pattern_matching.md)
+- [Resource Lifetime Implementation Bridge](review/resource_lifetime.md)
 
 </details>

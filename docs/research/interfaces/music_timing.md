@@ -120,7 +120,7 @@ compares selected observations with independently written literal expectations
 in [timing_cases.json](timing_cases.json). The
 [tests](../../../prototype/tests/unit/tools/test_creative_timing_experiment.py)
 also challenge empty selections, unknown paths, lost run identity and host
-boolean/number coercion. The [experiment receipt](experiments.md#creative-timing-continuation-2026-10-10)
+boolean/number coercion. The [experiment receipt](experiments.md#creative-timing-model)
 owns the case inventory. No generated outcome capture replaces the expectations.
 Checking is non-writing; a mismatch returns failure. An unknown case or malformed
 fixture is an error, rather than an empty successful check.

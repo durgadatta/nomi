@@ -10,8 +10,7 @@ Read this before the [interface threads](interfaces/README.md), then the
 Historical interpretation, Nomi inference, and untested claims
 are distinguished below. This is not a claim to exhaust either philosophy or HCI.
 
-The user's October 10 continuation explicitly makes easier thinking the shared
-purpose across domains. The [scientific-model synthesis](scientific_models.md)
+Easier thinking is the shared purpose across domains. The [scientific-model synthesis](scientific_models.md)
 adds primary mechanisms for referable models, premises, evidence and alternative
 representations; [SP0](../design/scientific_discovery.md#design-from-thinking-activities)
 prepares prediction, diagnosis, revision and handoff tasks. These are design

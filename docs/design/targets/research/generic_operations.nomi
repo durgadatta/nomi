@@ -1,7 +1,7 @@
 # Status: target-only research candidate; fictional lab APIs, not runnable or typechecked.
 # Evidence: docs/research/generic_operations.md
 # Design: docs/design/function_contracts.md
-# Bridge: docs/review/2026-09-30-function-contracts.md
+# Bridge: docs/review/function_contracts.md
 # Core call/pipeline shapes only. Generic/effect/region/protocol contracts open.
 # All numeric examples use finite small integers, not an overflow oracle.
 from std.collections import filter, fold, map

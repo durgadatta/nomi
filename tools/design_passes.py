@@ -24,12 +24,11 @@ ALLOWED_STATUSES = {
     "paused",
     "rejected",
 }
-RETROSPECTIVE_HEADINGS = (
-    "## Pass Retrospective",
-    "### Evidence That Changed The Design",
-    "### Workflow Friction",
-    "### Durable Improvement",
-    "### Next Pass",
+BRIDGE_HEADINGS = (
+    "## Current Evidence",
+    "## Open Gaps",
+    "## Validation",
+    "## Next Actions",
 )
 
 
@@ -168,7 +167,7 @@ def validate_registry(root: Path = ROOT, path: Path | None = None) -> list[str]:
                 except (OSError, UnicodeError) as exc:
                     errors.append(f"{prefix}: cannot read bridge artifact: {exc}")
                 else:
-                    errors.extend(validate_retrospective(prefix, bridge_text))
+                    errors.extend(validate_bridge(prefix, bridge_text))
 
     return errors
 
@@ -240,28 +239,29 @@ def validate_packet_links(
     return errors
 
 
-def validate_retrospective(prefix: str, text: str) -> list[str]:
+def validate_bridge(prefix: str, text: str) -> list[str]:
     errors: list[str] = []
     positions = []
-    for heading in RETROSPECTIVE_HEADINGS:
-        position = text.find(heading)
+    for heading in BRIDGE_HEADINGS:
+        match = re.search(rf"^{re.escape(heading)}$", text, re.MULTILINE)
+        position = match.start() if match else -1
         if position == -1:
             errors.append(f"{prefix}: bridge is missing {heading!r}")
         positions.append(position)
     if errors:
         return errors
     if positions != sorted(positions):
-        return [f"{prefix}: retrospective headings are out of order"]
+        return [f"{prefix}: bridge headings are out of order"]
 
-    for index, heading in enumerate(RETROSPECTIVE_HEADINGS[1:], start=1):
+    for index, heading in enumerate(BRIDGE_HEADINGS):
         body_start = positions[index] + len(heading)
         body_end = (
             positions[index + 1]
-            if index + 1 < len(RETROSPECTIVE_HEADINGS)
+            if index + 1 < len(BRIDGE_HEADINGS)
             else len(text)
         )
         if not text[body_start:body_end].strip():
-            errors.append(f"{prefix}: retrospective section {heading!r} is empty")
+            errors.append(f"{prefix}: bridge section {heading!r} is empty")
     return errors
 
 

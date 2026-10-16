@@ -22,9 +22,9 @@ A proposal is judged in this order:
 Implementation effort and existing tests are not reasons to preserve a design.
 They matter only after a target choice survives this review.
 
-## Guiding Vision Direction — October 10
+## Guiding Vision
 
-The user's direction establishes the [computational-medium vision](vision.md):
+The guiding purpose is the [computational-medium vision](vision.md):
 design language and environment around how people create, understand, revise,
 share and authorize computational work. The prototype, current evidence map and
 release milestones are revisable means toward it. Discovery may start beyond
@@ -37,14 +37,14 @@ type rule or universal intermediate representation is accepted here. Existing
 semantic decisions retain their status until a named revision supplies its own
 coherent contract and consequences.
 
-The later October 10 clarification makes easier thinking the shared purpose
+Easier thinking is the shared purpose
 across domains. The [vision continuation](vision.md#thinking-is-the-shared-design-goal)
 and [scientific thinking workflow](scientific_discovery.md#design-from-thinking-activities)
 organize discovery around distinctions, assumptions, consequences, alternatives
 and revision. This updates the guiding design criterion; it does not accept a
 universal mental calculus, new Core primitives or a measured usability claim.
 
-The October 11 AI direction extends that guiding purpose: learning, inference,
+The same guiding purpose covers AI: learning, inference,
 planning, memory, causal explanation and inquiry are pressures on the **shared
 language foundation**, not only separate-framework features. The
 [conceptual proposal](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
@@ -180,10 +180,10 @@ code. Tooling must show resolved effects and unknowns separately. A selected
 annotation policy can demand written `uses`; it cannot change execution or
 grant authority. The exact effect taxonomy and general inference remain open.
 
-### Progressive assurance (October 8 revision)
+### Progressive assurance
 
-The user's exploration-first direction replaces mandatory public source
-annotations with complete checked interface evidence, inferred or declared.
+Progressive assurance combines dynamic exploration with complete checked
+interface evidence, inferred or declared.
 Dynamic exploration may proceed with honest unknowns and defined runtime
 checks. The [semantics](semantics.md#progressive-assurance) separates evidence,
 policy, authority and engines. Reject a universal strictness switch that changes
@@ -197,7 +197,7 @@ composition and dynamic/checked adapters remain open. The binding law and
 `var`/`set` spellings remain current target choices; plain reassignment is a
 reopened experiment requiring closure and notebook re-execution comparisons.
 
-The October 9 [growth-journey plan](synthesis.md#growth-journeys-and-boundary-evidence)
+The [growth-journey plan](synthesis.md#growth-journeys-and-boundary-evidence)
 and [function trial](function_contracts.md#bounded-contract-comparison-for-implementation)
 select **experiment baselines, not additional accepted rules**: closed
 monomorphic interface evidence before general public inference, exact positional
@@ -209,7 +209,7 @@ No Fn spelling, policy syntax or artifact schema is admitted. The paired
 keeps structured-document primary viable; prose comparisons do not select a
 usability winner. Resource/defer timing and cleanup precedence remain proposed.
 
-### First-product scalars (October 9 acceptance)
+### First-product scalars
 
 Accept [the bounded scalar contract](semantics.md#first-product-scalar-contract):
 default Int is exact mathematical integer arithmetic; Bool is a distinct type;
@@ -240,10 +240,10 @@ The [independent vectors](semantics.md#independent-scalar-vectors) are acceptanc
 oracles. Keep separate capability evidence for source acceptance, checking,
 lowering, execution, diagnostics and formatting. A passing operand-coercion
 repair is not complete exact-Int or typed-call conformance; the existing
-[synthesis bridge](../review/2026-09-29-language-synthesis.md#bounded-scalar-continuation-2026-10-09)
+[synthesis bridge](../review/language_coherence.md#current-evidence)
 owns migration and unresolved work.
 
-### First-report boundary (October 9 planning decision)
+### First-report boundary
 
 Select [the closed report rules](semantics.md#first-report-boundary-contract):
 exact JSON numeric token preservation, integer-form tokens for Int fields,
@@ -276,7 +276,7 @@ Keep target promotion and runner/host/human gates explicit; a useful compatibili
 sample is not completion of the canonical report. No general schema language,
 numeric tower, package system or new evaluator feature is selected here.
 
-The [October 9 synthesis closure](synthesis.md#report-admission-gaps) selects the
+The [report contracts](synthesis.md#report-admission-gaps) selects the
 remaining bounded plan: operation kind plus stable codes, stage-scoped
 completeness, options-first entry failure, escaped lossless paths, a
 token-preserving scanner, deterministic writing, whitelisted structural
@@ -396,7 +396,7 @@ This remains **open**: world effects, mutable captures, retained regions and
 latent task effects require a coherent type model and source notation first.
 Result-returning callbacks do not silently introduce propagation or rollback.
 
-The [September synthesis](synthesis.md) reaffirms the accepted core without
+The [language synthesis](synthesis.md) reaffirms the accepted core without
 admitting new syntax. [Category targets](targets/README.md) and
 [the overall fixture](targets/overall.nomi) replace the legacy program as the
 active coherence suite. API names in those files are explicitly proposals.

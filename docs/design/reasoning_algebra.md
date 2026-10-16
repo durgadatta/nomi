@@ -16,7 +16,7 @@ owns integration; [scientific models](scientific_discovery.md) owns scientific
 contracts; [intelligent programs](ai_frameworks.md) owns AI pressures on the shared foundation
 and the numeric/model/inference contracts.
 [Primary evidence](../research/scientific_models.md#foundational-algebra-evidence)
-and the [bridge](../review/2026-09-29-language-synthesis.md) retain provenance and
+and the [bridge](../review/language_coherence.md#current-evidence) retain provenance and
 migration evidence. The current [semantics](semantics.md) remains the accepted
 target until a replacement meets its obligations.
 
@@ -603,8 +603,7 @@ source-level syntax remain open R2 gates.
 
 ## Intelligence Tests The Proposed Minimality
 
-The user's October 11 direction adds intelligence induction to the scientific
-and knowledge pressures. [The conceptual AI owner](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
+Intelligence induction joins the scientific and knowledge pressures. [The conceptual AI owner](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
 uses the same candidate responsibilities to organize generative models,
 conditional inference, program/abstraction learning, goals, planning, memory and
 inquiry. Particular algorithms remain supplied methods; the ability to describe,

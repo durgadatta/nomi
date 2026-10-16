@@ -61,8 +61,8 @@ For the broader purpose, competing directions and current gap, read the
     comparison, contextual terms/composition/judgments and supplied mathematical
     structures; exact map experiments and R0-R5 gates, not accepted Core syntax.
 
-[The old target](target.nomi) remains a superseded predecessor, not an active
-specification. Target programs illustrate accepted core syntax and explicitly
+The [overall target](targets/overall.nomi) owns whole-program pressure.
+Target programs illustrate accepted core syntax and explicitly
 proposed library contracts; they are not runnable conformance claims.
 
 Versioned frontend-neutral contracts live under [`schemas/`](schemas/). The
@@ -71,8 +71,7 @@ target-only fragment artifact used for Lark/Rust conformance before target
 `match` syntax becomes runnable.
 
 The research behind these decisions is consolidated under
-[Research](../research/README.md). The dated rationale and action sequence are
-in the [2026-07-16 review](../review/2026-07-16.md). Registered focused passes
+[Research](../research/README.md). Registered focused passes
 follow the [design-pass workflow](../orientation/design_pass_workflow.md).
 
 ## Product Promise

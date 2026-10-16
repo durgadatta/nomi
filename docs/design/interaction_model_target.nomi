@@ -1,7 +1,7 @@
 # Status: target-only cognitive/interface pressure fixture; not runnable today.
 # Packet: docs/research/interfaces/README.md
 # Design: docs/design/interaction_model.md
-# Bridge: docs/review/2026-09-30-cognitive-interfaces.md
+# Bridge: docs/review/cognitive_interfaces.md
 # All collection, generated codec, and Result method APIs below are proposals.
 # No new syntax. Int precision/overflow and generic callback contracts are open.
 # Edge cases: docs/research/interfaces/edge_cases.md

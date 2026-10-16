@@ -37,17 +37,15 @@ type, predicate, value, and diagnostic note without rereading.
 **Question:** Which declarations require annotations, and how much local
 inference remains predictable?
 
-**Current direction (October 8):** exploration permits unresolved static facts;
+**Current direction:** exploration permits unresolved static facts;
 selected restrictions demand evidence. Checked exported contracts may be inferred
 locally or declared; inference cannot depend on clients' private calls. An
 unknown is not an inferred `Any` or proof. Constraint predicates retain runtime
 meaning. See the revised [assurance contract](../design/semantics.md#progressive-assurance).
 
-**First executable discriminator:** the scalar/direct-call experiment is
-preserved at 6aec9f3; see the [checkpoint](../orientation/frontier_checkpoint_2026-10-08.md)
-for current checks and separate continuation failures. It infers bounded
-invoice call results, checks independent type/purity obligations and keeps
-uncalled function effects latent. Rebinding and unknown operations must not
+**Executable scope:** the [scalar/direct-call analyzer](../orientation/implementation_layers.md#experimental-source-analysis)
+infers bounded invoice call results and checks independent type/purity obligations.
+Uncalled function effects stay latent. Rebinding and unknown operations must not
 retain stale proofs. This does not close public generic inference.
 
 **Next discriminator:** the [growth journeys](../design/synthesis.md#growth-journeys-and-boundary-evidence)
@@ -172,7 +170,7 @@ exception-like propagation.
 
 ## 7. Generator And Stream Semantics
 
-The [earlier-brief construction/observation lead](synthesis_guide.md#revisit-the-earlier-consolidated-brief)
+The [construction/observation comparison](synthesis_guide.md#composition-research-leads)
 adds folds versus unfolds, finite observations and state-machine equivalence as
 discovery probes. Its [shared-binding comparison](features/binding.md#shared-binding-responsibilities)
 also retains bidirectional sent-value binding. Compare explicit suspended state
@@ -296,7 +294,7 @@ shared engine-free framework comes first; statistical computation adaptation
 must preserve that replay contract before adding specialized semantics, exact
 variance/covariance and units. A nominal port check cannot discharge those laws.
 
-**October 9 bounded closure:** default mathematical Int, distinct Bool and the
+**Bounded scalar contract:** default mathematical Int, distinct Bool and the
 initial scalar operations are accepted in
 [semantics](../design/semantics.md#first-product-scalar-contract). Fixed width
 is not default Int meaning. Exact transport/execution and shared measured
@@ -381,11 +379,11 @@ client/server skew, and schema export limitations.
 
 ## 12. Metaprogramming Boundary
 
-The earlier brief's [symbolic leads](features/metaprogramming.md#matching-unification-and-equivalence-exploration)
+The [symbolic leads](features/metaprogramming.md#matching-unification-and-equivalence-exploration)
 retain one-sided matching, syntactic/equational unification, anti-unification,
 directed rewriting and e-graph extraction as different questions. Use declared
 theories, binding identities, strategies and budgets; general symbolic solving
-does not become ordinary pattern matching. No new experiment ran in this intake.
+does not become ordinary pattern matching. These remain prepared research questions.
 
 **Question:** Which capabilities justify syntax generation, and what is the
 smallest safe mechanism?
@@ -602,7 +600,7 @@ No general reasoner, truth-maintenance implementation or participant trial has r
 
 ## User-Facing Readiness Pressure
 
-The October 10 [user-facing audit](../orientation/project_roadmap.md#user-facing-readiness-audit)
+The October 10 [user-facing audit](../orientation/project_roadmap.md#current-support)
 adds concrete usage pressures beneath existing questions 4/7/15/17, not new
 accepted syntax or a separate research program:
 
@@ -639,7 +637,7 @@ already have two fully formed answers. Preserve it as a lead, develop its pressu
 and alternatives, and revise the map when necessary. The criteria below govern
 promotion into a focused language-design fork, not whether discovery may begin.
 
-The [September synthesis](../design/synthesis.md) orders these gates against
+The [language synthesis](../design/synthesis.md) orders these gates against
 [the overall program](../design/targets/overall.nomi). Task-group policy is a
 specific additional fork exposed there: cancel siblings versus collect all on
 abnormal failure, with ordinary child Err remaining data unless explicitly

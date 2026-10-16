@@ -22,17 +22,16 @@ Read in this order:
    tooling, and deployment contracts.
 5. `docs/design/decisions.md` - accepted, rejected, deferred, and open choices.
 6. `docs/design/targets/overall.nomi` and `docs/design/targets/README.md` - active
-   whole-language pressure fixture and category suite. `target.nomi` is superseded.
+   whole-language pressure fixture and category suite. The active target suite owns coherence examples.
 7. `config/design_passes.json` - registered focused-pass routing and status.
-8. `docs/orientation/design_pass_workflow.md` - packet and retrospective
+8. `docs/orientation/design_pass_workflow.md` - packet and current bridge
    contract.
 9. `docs/research/convergences.md` - consolidated evidence.
 10. `docs/research/open_questions.md` - bounded experiments.
 
 Current code and tests describe prototype behavior. They do not define the
-target. The old deep-dive corpus is available in Git history at `08f2aad`; use
-it only when an open question needs detail that the consolidated research does
-not retain.
+target. Use current evidence owners first. Project evolution is isolated in HISTORY.md;
+recover older detail from Git only when a current question needs it.
 
 ## Core Posture
 
@@ -170,9 +169,10 @@ justified only when a cross-cutting feature contract no longer fits cleanly in
 the consolidated files.
 Registration organizes a bounded question; it is not a prerequisite for discovery.
 
-At the end of every pass, update status, validation, exact next actions, and
-the bridge retrospective required by
-`docs/orientation/design_pass_workflow.md`. Promote repeated reasoning into a
+At the end of every pass, update status, validation and exact next actions in
+place. The bridge records Current Evidence, Open Gaps, Validation and Next
+Actions under `docs/orientation/design_pass_workflow.md`. Do not append session
+histories; narrative evolution belongs only in HISTORY.md. Promote repeated reasoning into a
 skill or prompt and deterministic invariants into checks; do not grow agent
 instructions for one-off observations.
 
@@ -268,7 +268,8 @@ and require parser/runtime/tests/web agreement.
 - Put target decisions only under `docs/design/`.
 - Put consolidated evidence and bounded unknowns under `docs/research/`.
 - Put current implementation maps under `docs/orientation/`.
-- Put dated judgments under `docs/review/`; promote durable decisions.
+- Keep current implementation bridges under `docs/review/`; put concise project
+  evolution only in `HISTORY.md` and recover detailed old judgments from Git.
 - Label implemented, target, experimental, deferred, and rejected explicitly.
 - Prefer tables for comparisons and prose for semantics/tradeoffs.
 - Do not preserve duplicate essays as archives; Git history is the archive.

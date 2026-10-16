@@ -18,7 +18,7 @@ reference and realization boundaries. [Scientific discovery](scientific_discover
 owns mathematical/empirical distinctions. This proposal owns the shared foundation's intelligence pressures and AI implementation
 contracts under the language-coherence packet; its
 [research target](targets/research/scientific_model.nomi) and
-[bridge](../review/2026-09-29-language-synthesis.md) retain admission status.
+[bridge](../review/language_coherence.md#current-evidence) retain admission status.
 
 ## Intelligence Belongs In The Shared Foundation
 

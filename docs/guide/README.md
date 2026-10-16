@@ -15,7 +15,7 @@ checked libraries are being added gradually.
 | --- | --- | --- |
 | 1 | [Getting Started](getting_started.md) | Run a calculation, repair input, and produce a JSON report. |
 | 2 | [Language Basics](language_basics.md) | Values, functions, choices, loops, records, and collection operations. |
-| 3 | [Example Catalog](examples.md) | Choose a focused example and recognize older experimental syntax. |
+| 3 | [Example Catalog](examples.md) | Choose a focused example and recognize experimental syntax. |
 | 4 | [Using Nomi's Tools](tools.md) | Work with source files, browser cells, the CLI, notebooks, and VS Code. |
 | 5 | [Current Support And Growth](status.md) | Understand what is runnable, limited, planned, or still being researched. |
 
@@ -40,7 +40,7 @@ document or save it as `example.nomi` and run it from the CLI.
 
 These guides explain current behavior and link to the owners of future design
 decisions. They do not turn a proposed feature into a supported one. Examples
-under `samples/` are runnable prototype fixtures; older samples may deliberately
+under `samples/` are runnable prototype fixtures; experimental samples may deliberately
 exercise syntax that will change. The catalog identifies that distinction.
 
 For detailed reference, use the [documentation index](../README.md). The

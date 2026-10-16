@@ -1,6 +1,6 @@
 # Status: candidate pressure fixture; not runnable or fully typechecked.
 # Packet: docs/research/resource_lifetime.md; docs/design/resource_lifetime.md;
-# docs/review/2026-09-29-resource-lifetime.md
+# docs/review/resource_lifetime.md
 # These examples use accepted source forms and PROPOSED library types/APIs.
 # ScopeFailure[E], Reader, CopySession, ByteStream, run_scope, async_run_scope,
 # and resource-description factories are not existing standard-library exports.

@@ -55,7 +55,7 @@ Keep this loop operational:
 
 ```text
 prompt keyword -> registered packet -> evidence/decision/target/bridge
--> deterministic validation -> retrospective -> smallest durable improvement
+-> deterministic validation -> current bridge -> smallest durable improvement
 ```
 
 Agent hooks may inject packet paths, but they must fail quietly and stay
@@ -127,7 +127,7 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
 - **Handoff:** Can another agent resume from notes, tests, and git status
   without relying on chat memory?
 - **Design-pass continuity:** Can a topic prompt discover one linked packet,
-  its status, registered checks, next action, and prior retrospective?
+  its status, registered checks, next action, and current implementation bridge?
 
 ## Improvement Workflow
 
@@ -143,7 +143,7 @@ Use this checklist when asked "what is missing?" or "make this more AI-native":
 6. **Document the contract:** Update `.agents/README.md`,
    `docs/orientation/ai_collaboration.md`, or the local hook/skill docs if the
    workflow changed.
-7. **Reflect:** For registered design work, update the bridge retrospective and
+7. **Reflect:** For registered design work, update the current bridge and
    promote only repeated friction into durable agent infrastructure.
 
 ## Project Review Workflow
@@ -162,10 +162,12 @@ consolidate docs, or update agent skills after a broad scan.
    - `docs/design/decisions.md` for target choices and bounded experiments;
    - `docs/research/open_questions.md` for unresolved research forks;
    - `docs/orientation/artifacts_and_usage.md` for current implementation truth;
-   - `docs/review/` only for dated evidence, then promote durable decisions.
+   - `docs/review/` for current implementation evidence and remaining gaps;
+   - `HISTORY.md` for concise project evolution.
 3. **Avoid duplicate synthesis docs.** Do not create another "whole project
    review" unless it retires an existing action surface. Fold durable findings
-   into the canonical docs and leave old reviews as evidence.
+   into current owners. Keep concise evolution only in HISTORY.md; Git retains
+   old reviews and session details.
 4. **Name the highest-leverage gaps.** For Nomi, broad scans should check
    capability honesty, Surface/Core authority, runtime result contracts,
    semantic event producers, frontend parity, feature profiles, generated

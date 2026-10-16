@@ -22,10 +22,9 @@ Complete one evidence-driven Nomi feedback cycle:
    affected checks; widen validation according to the changed semantic surface.
    Keep failed receipts alongside later successes. Do not weaken an oracle to
    clear a failure without recording the independently justified target change.
-6. Record evidence in the existing checkpoint or bridge retrospective: what
-   changed the judgment, workflow friction, one smallest durable improvement
-   (test/check/prompt/skill/docs), or why no process change is justified. Name
-   remaining obligations and the exact next fixture/action.
+6. Update the current bridge in place with evidence, gaps, validation and the
+   exact next fixture/action. Put actual logs in ignored reports. Keep narrative
+   evolution concise and isolated in HISTORY.md.
 7. Review the staged diff and create a coherent checkpoint commit when the user
    has authorized commits. Generated reports remain ignored; copy a concise
    result summary into the tracked note. Continue with the next owned increment.

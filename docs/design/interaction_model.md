@@ -4,7 +4,7 @@
 
 Packet: `docs/research/interfaces/README.md`,
 `docs/design/interaction_model_target.nomi`,
-`docs/review/2026-09-30-cognitive-interfaces.md`.
+`docs/review/cognitive_interfaces.md`.
 
 Evidence starts at [cognitive foundations](../research/cognition.md) and the
 [18 interface threads](../research/interfaces/README.md). This proposal extends
@@ -462,8 +462,8 @@ do not justify a new evaluator or waiting for every research family to close;
 promote one settled executable contract at a time under the existing D0-D7 gates.
 Those gates govern the promise being promoted, rather than admitting discovery.
 
-Use the existing [playground plan](../review/2026-09-29-github-playground-agentic-plan.md).
-No UI was built and no study was run here. A trial of six to eight varied users
+Use the current [playground roadmap](../orientation/project_roadmap.md).
+The runtime UI does not establish these proposed interaction laws or human benefit. A trial of six to eight varied users
 could identify failure mechanisms, but would not establish universal usability.
 Pre-register tasks, counterbalance presentation order, retain qualitative repair
 accounts, and include assistive-technology testing rather than claiming it from

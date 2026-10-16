@@ -4,7 +4,7 @@
 
 Packet: `docs/research/features/README.md`,
 `docs/design/targets/overall.nomi`,
-`docs/review/2026-09-29-language-synthesis.md`.
+`docs/review/language_coherence.md`.
 
 ## Read The Language
 
@@ -34,7 +34,7 @@ closure order; the sequence below continues to own import-workflow admission.
 
 ## First Product Contract
 
-October 9 synthesis selects **small scripts and trustworthy local data reports**
+The first product selects **small scripts and trustworthy local data reports**
 as the first useful product. The primary user is a person who can read simple
 code and wants a calculation or a small data transformation to work, explain
 mistakes, and become reusable. Local library authors are the next user, reached
@@ -105,10 +105,10 @@ merely to keep extension possible.
 
 ### Bounded Closure Before Coding The Target Slice
 
-October 9 accepts the bounded Int/Bool/Text meaning in
+The scalar contract accepts the bounded Int/Bool/Text meaning in
 [semantics](semantics.md#first-product-scalar-contract), with
 [independent vectors](semantics.md#independent-scalar-vectors) and a decision in
-[the ledger](decisions.md#first-product-scalars-october-9-acceptance). Exact Int
+[the ledger](decisions.md#first-product-scalars). Exact Int
 avoids both browser rounding and an arbitrary fixed-width overflow law. Bool
 is distinct; Text has explicit code-point units and scalar-value ordering.
 This does not establish portable implementation or accept every scalar API.
@@ -223,20 +223,12 @@ the first-product target or general D1/D3 contracts.
 
 ### Report Admission Gaps
 
-October 9 synthesis closure: the eight planning gaps now have selected bounded
-answers below. This completes the implementation brief, not the implementation
-or the whole designing packet. The interfaces are selected for the lab; target
-nominal data, Result, checked libraries and modules retain their own admission
-gates. Scheduling stays in the
-[roadmap](../orientation/project_roadmap.md#report-and-target-delivery-gates).
-
-October 10 execution receipt: the bounded compatibility library/source and
-default-browser repair/export slice now runs against independent records.
-See the [implementation receipt](../orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
-for routes, limits, measurements and remaining gaps. The table below retains
-the admission obligations: structural outcomes and two manual descriptors are
-still a bridge, while source-derived trust, nominal target contracts, separate
-input/options host controls and supported production capacity remain open.
+The bounded compatibility library/source and browser repair/export slice run
+against independent records. Structural outcomes and two manual descriptors
+remain a bridge. Target nominal data/Result, checked libraries/modules, separate
+input/options controls and supported production capacity retain their admission
+gates. The [implementation map](../orientation/artifacts_and_usage.md) owns
+present routes and limits.
 
 | Gap / existing owner | Selected plan and reason | Evidence still required |
 | --- | --- | --- |
@@ -398,7 +390,7 @@ refused, not skipped silently or counted as conformance.
 
 ## One Coherent Model
 
-### October 9 Planning Synthesis
+### Report Composition
 
 The first product now has one causal path: explicit Text/options enter a strict
 boundary, valid rows become a report through ordinary source functions, and the
@@ -416,12 +408,10 @@ The compatibility bridge is deliberately temporary: declaration-derived data
 replaces manual schema metadata, Result replaces outcome maps, and public module
 evidence replaces trusted local wiring as those target mechanisms become ready.
 
-The planning result is complete at that boundary: product selection, precise lab
-rules, independent expected records, implementation owners, dependency order,
-replacement triggers and completion evidence are explicit. The immediate next
-action is executable library comparison. A missing measured capacity or an
-unperformed browser/user trial is an execution obligation, not an invitation to
-invent another semantic choice or repeat the research survey.
+The bounded compatibility library and source report run against independent
+records. The next target work is scalar/data/Result/call/module integration,
+not another implementation of those manual descriptors. Measured capacity,
+separate input controls and human trials remain independently open.
 
 The larger language remains open in bounded ways. D1 still owns public inference,
 callback/generic/effect and module identity comparisons; D2 owns resources,
@@ -451,14 +441,14 @@ keywords, extractors, implicit conversions, generic declaration syntax, macro
 quotation, or a second query language. A beautiful short example is not enough
 to admit any of them.
 
-## Extend The Earlier Brief While Preserving The Core
+## Composition While Preserving The Core
 
 > Designing synthesis, 2026-10-16. Interpolation connects existing contracts;
 > extrapolation proposes further compositions. Neither accepts new syntax,
 > public APIs, inference rules or runtime behavior.
 
-The [earlier-brief intake](../research/synthesis_guide.md#revisit-the-earlier-consolidated-brief)
-preserves ideas that can now be developed together. Here the core means Nomi's
+The [composition research](../research/synthesis_guide.md#composition-research-leads)
+connects binding, carriers, domain policies and evidence. Here the core means Nomi's
 compositional purpose and accepted observable laws. It does not mean a frozen
 Python AST, Core node inventory or universal graph. An encoding may change while
 preserving those laws; a proposal that changes them must name a separate revision.
@@ -485,7 +475,7 @@ when the common layer needs hidden rules to recover a distinction it erased.
 ### One Whole Activity Before More Features
 
 Use the [data-comparison continuation](../research/data_workflows/nomi_candidates.md#comparison-as-a-policy-qualified-judgment)
-to connect the brief's practical and theoretical threads. Decode two snapshots,
+to connect practical and theoretical responsibilities. Decode two snapshots,
 align their rows, retain raw field differences, assess a named policy, explain
 the result, revise the policy and explicitly request any export. Each step can
 start as ordinary values and functions. Description/check/realization become
@@ -529,7 +519,7 @@ record the conflict rather than weakening an accepted law for a convenient demo.
 
 ## Candidate Primitive Synthesis And Integration Path
 
-The user's scientific-reasoning pivot now calls for a **foundational comparison**,
+The foundation is an open **comparative design question**,
 not more domain feature additions. [A minimal reasoning algebra](reasoning_algebra.md)
 audits accepted obligations, the six-family hypothesis, the 31-node experimental
 Core and current domain laboratories. Its recommended candidate is contextual
@@ -541,7 +531,7 @@ polynomial-map compositions execute without inputs. Scoped pure terms, finite
 premise support and classical theory bridges now have independent checks;
 continuum variation, asymptotics, general binders and domain migration remain gates.
 
-The selected continuation now starts with the domain-neutral
+The shared-description candidate uses the domain-neutral
 [Engine-Free Objects](object_framework.md): typed references, descriptions,
 closed composition and explicit realization. It separates object meaning from
 implementation, which is broader than deferring evaluation. Arithmetic, text
@@ -585,7 +575,7 @@ they are evidence dimensions, not a seventh universal runtime object.
 
 ### Intelligence Challenges The Same Foundation
 
-The October 11 continuation treats AI as a **shared semantic design pressure**,
+AI is a **shared semantic design pressure**,
 not a demand to build a faster matrix package. The
 [conceptual AI proposal](ai_frameworks.md#intelligence-belongs-in-the-shared-foundation)
 asks the same language to describe hypotheses and possible worlds, infer under
@@ -645,7 +635,7 @@ equality does not establish nominal identity, authority or scientific meaning.
 Numeric operations and native handles retain profile-specific implementations.
 The model reduces repeated concepts without claiming every domain has one algebra.
 
-### Gap Analysis With Concrete Closure Receipts
+### Gap Analysis And Closure Evidence
 
 | Gap now | Required receipt | Dependency and tradeoff |
 | --- | --- | --- |
@@ -697,38 +687,14 @@ The [maintainer guide](../research/synthesis_guide.md) owns the research workshe
 and interaction counterexamples. The [agenda](redesign_agenda.md) keeps D0-D7;
 the [roadmap](../orientation/project_roadmap.md) still owns distribution scheduling.
 
-## Where The Previous Program Broke Down
+## Report Composition Requirements
 
-The [legacy target](target.nomi) exposed useful ambitions but hid interactions:
-
-1. CSV rows were decoded into Int and Instant fields without an explicit text
-   conversion policy. Strict decoding cannot imply those conversions.
-2. Mapping a per-row decoder and collecting Results did not specify preservation
-   of original row paths or accumulation behavior.
-3. "Rejected" counted age-ineligible valid rows, while malformed data aborted
-   the workflow. That is misleading report terminology.
-4. Normalization entered constrained constructors without a stated preservation
-   argument. A transforming boundary needs validation if predicates can change.
-5. TaskGroup had a running limit but no named abnormal-failure policy, queued
-   memory bound, or public composed-outcome contract.
-6. Config acquisition, retry, and generated codec APIs were underspecified;
-   Clock and other inferred effects could disappear from an attractive signature.
-7. Constructor values and callback generics/effects were assumed by examples
-   before their declaration and dispatch rules were settled.
-
-The earlier combined fixture improved those boundaries, but still made a useful
-local report depend on network, task, resource and publication design. The
-October 9 product synthesis removes that dependency from the active
-[overall fixture](targets/overall.nomi). It now validates a maximum-128-row
-batch, preserves original error paths, filters valid rows, normalizes names,
-and returns an owned report. Repeated IDs are retained in source order because
-rows are observations, not updates to an identity registry.
-
-The pure function does not publish files. An explicit encoder and host save
-operation follow inspection. Proposed codecs and callback contracts remain
-labeled; byte/depth/work limits are not implied by a row count. The richer
-network/resource program remains in Git at `915aea1`; category and focused
-resource/concurrency fixtures retain its extension pressure.
+Strict external decoding requires explicit text/numeric conversion and original
+input paths. Malformed rows are different from valid but ineligible rows.
+Normalization must preserve constraints or revalidate. The first report is a
+pure, bounded function; resource/network/task policies belong to later fixtures.
+Repeated IDs retain input order. Inspection precedes explicit encoding and host
+save, whose failures remain separate from report construction.
 
 ## Interactions To Resolve First
 
@@ -757,31 +723,13 @@ are not prerequisites. The dated bridge records why this order changed.
 
 ## Prototype Evidence And Next Admission
 
-### October 8: exploration and selected assurance
+### Exploration And Selected Assurance
 
-The latest direction reopens mandatory public annotations. Canonical
-[semantics](semantics.md#progressive-assurance) now accepts dynamic exploration
-with honest unknowns and checked interfaces whose complete contracts may be
-inferred locally or declared. Source semantics, selected checking restrictions,
-runtime authority and engine choice remain independent. The whole-program
-fixture includes an inferable public batch limit and a negative unknown-call
-boundary; neither supplies a general inference algorithm.
-
-The conservative scalar/direct-call module experiment is now preserved at
-6aec9f3: an unannotated invoice, output that defeats purity, and an unknown
-dependency that defeats closed evidence. Its type and purity requirements are
-independent. The [checkpoint](../orientation/frontier_checkpoint_2026-10-08.md)
-distinguishes passing analysis/integration checks from unresolved hosted
-continuation failures. Call-context facts must not be generalized into public
-proofs; uncalled function effects must not become module effects. This bounded
-experiment leaves D1/D2 and dynamic package adapters open. Research
-still routes through [the feature packet](../research/features/README.md) and
-[the bridge](../review/2026-09-29-language-synthesis.md).
-
-The October 4 delivery pass converts selected research into bounded runnable
-experiments and interaction repairs. It deliberately does not turn all research
-categories into language primitives. These observations constrain future design
-but do not settle its open contracts:
+Dynamic exploration retains unknowns; checked interfaces need complete contracts
+inferred locally or declared. The scalar/direct-call analyzer has independent
+type and purity requirements. Observed client calls cannot establish a generic
+public contract, and uncalled function effects are not module execution effects.
+The current bridge records remaining source/module/region integration gates.
 
 | Research pressure | Runnable evidence | Still unresolved |
 | --- | --- | --- |
@@ -806,10 +754,10 @@ without claiming that small prototype experiments implement entire domains.
 
 ## Growth Journeys And Boundary Evidence
 
-October 9 planning continuation. These are conditional design comparisons and
+Prepared comparison. These are conditional design comparisons and
 prepared expectations, not executed target programs or additional accepted
 syntax. They connect the existing fixtures to the first reusable product slice.
-The [frontier plan](../../FRONTIER_PLAN.md) owns execution order; this section
+The [roadmap](../orientation/project_roadmap.md) owns execution order; this section
 owns the whole-program questions. Do not replace the wider invoice/import/job
 journeys with the scalar prototype simply because it is runnable.
 

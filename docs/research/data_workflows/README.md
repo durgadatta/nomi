@@ -111,9 +111,9 @@ needed to interpret a line. A shorter expression can be a worse interface.
 
 The synthesis must narrow these claims before an implementation is admitted.
 
-## October Continuation
+## Domain Integration
 
-The requested broader pass starts with data and AI/ML, then tests extension to
+Domain composition starts with data and AI/ML, then compares extension to
 web, CLI, visual tools, support, DevOps/cloud, design, databases, research,
 mathematics, legal documents, scientific naming, cataloging and communication.
 The domain map distinguishes selected reviewed mechanisms from discovery and

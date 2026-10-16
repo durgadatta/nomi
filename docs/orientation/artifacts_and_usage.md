@@ -250,8 +250,8 @@ admits only its existing named `as` target.
 
 Target default-reference/effect restrictions, transactional predicate effects,
 static callback contracts and richer portable call/scope representations remain
-A08/D1-D2 work. See the [continuation receipt](project_roadmap.md#scoped-runtime-continuation-receipt)
-and [resource bridge](../review/2026-09-29-resource-lifetime.md#2026-10-04-hosted-compatibility-follow-up).
+A08/D1-D2 work. See the [portable-values roadmap](project_roadmap.md#portable-values-and-libraries)
+and [resource bridge](../review/resource_lifetime.md#current-evidence).
 
 The generated browser manifest includes Python/Lark source plus explicitly
 registered runtime data (`make_web.py:RUNTIME_ASSET_PATHS`), including host
@@ -718,8 +718,8 @@ Nomi source is parsed by a Rust WASM parser (`nomi_parser.wasm`), lowered to
 Core IR by `prototype/runtime/js/lower_to_core_ir.js`, and executed by `prototype/runtime/js/core_runtime.js`.
 This path is the default in the browser playground. See
 [`wasm_js_runtime_review.md`](wasm_js_runtime_review.md) for the current
-architecture review and promotion risks, and the
-[`2026-07-16 design review`](../review/2026-07-16.md) for the current
+architecture and promotion boundaries, and the
+[delivery roadmap](project_roadmap.md) for the current
 project-wide follow-up plan.
 
 ```text

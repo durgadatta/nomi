@@ -6,7 +6,7 @@
 Owned by the existing [function evidence](features/functions.md),
 [function contract proposal](../design/function_contracts.md),
 [callback target](../design/function_contracts_target.nomi) and
-[bridge](../review/2026-09-30-function-contracts.md). This continuation also
+[bridge](../review/function_contracts.md#current-evidence). This continuation also
 connects [collections](features/collections.md), [text boundaries](dsls/text_as_interface.md)
 and [domain composition](domain_composition.md). No additional design packet.
 
@@ -36,9 +36,9 @@ uses ordinary calls and explicit long forms. [Local probes](features/probe_gener
 execute only small Python-host/library and original finite-model distinctions.
 They do not typecheck the challenger or run the compared foreign libraries.
 
-## Composition Leads From The Earlier Brief
+## Composition Research Leads
 
-> Integrated 2026-10-16 as discovery leads. Existing GA experiments and the
+> Current discovery leads. Existing GA experiments and the
 > function-contracts packet retain ownership; no new operator or universal
 > function method is selected.
 

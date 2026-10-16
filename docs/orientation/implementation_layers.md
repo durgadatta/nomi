@@ -169,11 +169,8 @@ paths are declared in the adapter handler table: yield/from, expression,
 assignment, return, binary operator, call, if/for/while, try and with. Other
 suspended shapes fail before generator-body effects. Scope traversal includes
 definition-time defaults, decorators and class bases while excluding nested
-function bodies. The October 9 completion receipt in the
-[checkpoint](frontier_checkpoint_2026-10-08.md#continuation-completion-receipt-2026-10-09)
-closes the previously recorded 24 protocol-review failures. This remains a
-bounded compatibility adapter; reduced desugaring guards stay active and raw
-`With` cannot bypass its reduction.
+function bodies. This is a bounded compatibility adapter; reduced desugaring
+guards remain active and raw `With` cannot bypass its reduction.
 
 The adapter owns `send`, `throw`, `close` and child completion. A private
 `SourceException` carrier preserves actual `StopIteration`/`GeneratorExit`
@@ -325,8 +322,8 @@ local imports, then compare the same independent values/errors/bytes before
 removing adapters. A third schema or general schema syntax requires returning
 to the target owner. Separate input/options editing and persistence, source
 locations/formatting, browser peak memory and supported release capacity remain
-open. The [October 10 receipt](frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10)
-records actual verification; broader target conformance is not inferred.
+open. The current runtime/report fixtures establish only their declared
+compatibility boundaries; broader target conformance is not inferred.
 
 ## Next Bounded Steps
 
@@ -339,8 +336,8 @@ diagnostic, conformance and product work rather than another engine framework.
 
 Do not batch these into a rewrite. Discovery should produce a small fix or a
 specific unresolved contract, followed by focused checks and a checkpoint.
-Suspected test defects belong in the [separate test review](../review/2026-09-30-test-issues.md),
-not in implementation changes that merely make the suite appear green.
+Reproduce suspected test defects independently and preserve their oracle; do
+not mix assertion weakening into implementation changes to make a suite green.
 
 ## Verification Loop
 

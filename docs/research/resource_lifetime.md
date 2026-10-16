@@ -4,7 +4,7 @@
 
 Packet: `docs/design/resource_lifetime.md`,
 `docs/design/resource_lifetime_target.nomi`,
-`docs/review/2026-09-29-resource-lifetime.md`.
+`docs/review/resource_lifetime.md`.
 
 ## Pressure And Evidence
 

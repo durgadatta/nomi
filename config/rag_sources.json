@@ -9,6 +9,7 @@
         "AGENTS.md",
         "README.md",
         "DIGEST.md",
+        "HISTORY.md",
         "pyproject.toml",
         "rust-toolchain.toml",
         ".agents/skills/**/*.md",
@@ -66,7 +67,11 @@
         },
         {
           "pattern": "docs/review/**",
-          "boost": 0.75
+          "boost": 1.1
+        },
+        {
+          "pattern": "HISTORY.md",
+          "boost": 0.5
         }
       ]
     },

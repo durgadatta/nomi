@@ -2,7 +2,7 @@
 
 > Status: research synthesis and bounded experiments; no syntax/API admission.
 >
-> Completes the requested documentary research pass. Runtime integrations,
+> Comparative evidence and prepared experiments. Runtime integrations,
 > reader studies and target-language experiments below remain unperformed.
 
 ## Research Judgment

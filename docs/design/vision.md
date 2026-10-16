@@ -225,7 +225,7 @@ demonstration does not make its mechanism suitable for every other program.
 
 ### Thinking Is The Shared Design Goal
 
-The October 10 direction makes the common purpose explicit: support people in
+The common purpose is to support people in
 forming, distinguishing, relating, questioning, comparing and revising ideas.
 Cross-domain coherence is judged by those activities, with computation and
 formal contracts supplying reliable support. A universal mathematical IR or a
@@ -241,7 +241,7 @@ or executable plans must expose the remaining obligations. Easier thinking
 requires measured comprehension, diagnosis, revision and handoff, not only
 correct computation or fluent explanation.
 
-The October 11 clarification extends this purpose to intelligence itself.
+This purpose includes intelligence itself.
 Learning, inference, planning, memory, causal explanation and active inquiry
 should be expressible through the shared language foundations, without an
 additional framework's conceptual language. The
@@ -252,7 +252,7 @@ abstraction and a revised explanation must be inspectable and composable just
 like an ordinary program. Exact finite reasoning probes now exist, but shared
 source integration and actual human benefit remain substantial gaps.
 
-## Where Nomi Stands, 2026-10-11
+## Current State
 
 Nomi is a research-rich language-design laboratory with runnable compatibility
 prototypes. It has a broad selected evidence corpus, a substantial target and
@@ -271,7 +271,7 @@ coherent computational medium described above.
 
 Test counts describe exercised prototypes. Corpus size describes selected
 coverage. Neither supplies a percentage of progress toward this vision. The
-[delivery receipts](../orientation/project_roadmap.md#user-facing-readiness-audit)
+[delivery receipts](../orientation/project_roadmap.md#current-support)
 preserve exact support; the [design agenda](redesign_agenda.md) preserves open
 questions. This assessment does not promote any packet or claim a new trial.
 

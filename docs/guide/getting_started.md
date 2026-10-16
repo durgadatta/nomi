@@ -11,7 +11,8 @@ in the [target design](../design/README.md).
 
 ## Choose Where To Run
 
-You need a checkout for the current browser and sample commands. Download a ZIP
+The [public playground](https://durgadatta.github.io/nomi/web/) needs no checkout.
+For local execution and sample commands, download the repository. Download a ZIP
 from [the repository's Code menu](https://github.com/durgadatta/nomi) and extract
 it, or clone it with Git:
 
@@ -26,7 +27,8 @@ operating-system support has not yet been declared as a distribution matrix.
 
 ### In your browser
 
-For the current examples, run the playground from a checkout of this repository:
+Open the [playground](https://durgadatta.github.io/nomi/web/) and choose
+`calculate.nomi`. For local development, run the same playground from a checkout:
 
 ```bash
 python3 scripts/launch_web.py --no-wasm
@@ -41,11 +43,8 @@ For notebook examples, `Shift+Enter` runs the current cell; `Run All` resets
 the session and runs cells from the top. The optional legacy Pyodide route has
 different inspection support, including no Bindings download control.
 
-The [online preview](https://durgadatta.github.io/nomi/web/) is an older deployed
-version. The October 10 audit found neither the calculation nor report sample
-there. These instructions refer to the current local checkout; deployment parity
-remains a [readiness issue](../orientation/project_roadmap.md#user-facing-readiness-audit).
-CDN editor/runtime assets still need network access even when serving locally.
+The published and local playgrounds use the same committed examples and assets.
+CDN editor/runtime assets need network access even when serving locally.
 
 ### On your computer
 
@@ -162,7 +161,7 @@ incomplete. Capacity or work-budget refusal can stop validation and return a
 different failure record. These refusals do not produce a successful report.
 For larger inputs, inspect the outcome rather than assuming the visible errors
 are the only problems. Exact provisional limits and measurements are in the
-[report completion receipt](../orientation/frontier_checkpoint_2026-10-08.md#report-compatibility-completion-receipt-2026-10-10).
+[runtime boundary contract](../orientation/artifacts_and_usage.md#bounded-prototype-library-and-numeric-contracts).
 
 ## Check A Program Without Running It
 

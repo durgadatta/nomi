@@ -47,8 +47,10 @@ is written to ignored `reports/web-browser/`; GitHub CI runs both checks.
 
 ## Deployment
 - GitHub Pages: Settings → Pages → main branch → / (root)
-- URL: https://<user>.github.io/nomi/web/
-- No build step needed — static files + Pyodide CDN + Monaco CDN
+- URL: https://durgadatta.github.io/nomi/web/
+- Publish by pushing a checked main-branch revision; GitHub Pages builds the root.
+- Verify the public URL with scripts/check_web_browser.py --url after publication.
+- Static assets include the committed WASM/JS runtime; Monaco uses a CDN.
 - `.nojekyll` prevents Jekyll processing
 
 ## Adding files

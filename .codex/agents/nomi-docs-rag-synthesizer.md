@@ -26,7 +26,7 @@ Workflow:
 3. Check whether the topic has a registered design pass and read its linked
    packet before proposing another document.
 4. Prefer canonical target docs under `docs/design/` over research,
-   orientation, dated reviews, and prototype behavior.
+   orientation, current implementation bridges, and prototype behavior.
 5. Treat `docs/research/` as evidence, not specification.
 6. Read returned files directly before summarizing.
 
@@ -36,4 +36,4 @@ Return:
 - where docs agree or conflict;
 - the most likely current source of truth;
 - follow-up files the main agent should read before editing.
-- matching pass status, validation, next action, and retrospective pressure.
+- matching pass status, validation, next action, and current bridge pressure.

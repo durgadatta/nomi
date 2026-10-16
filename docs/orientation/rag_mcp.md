@@ -146,8 +146,9 @@ replace it with an absolute path outside the repo.
 
 Sources may include `path_boosts` to steer lexical ranking. The default
 configuration gives the strongest document boost to `docs/design/`, a smaller
-boost to current implementation orientation, and lower boosts to research and
-dated reviews. This matches the authority order in `docs/README.md`.
+boost to current implementation orientation and bridges, and lower boosts to
+research and project history. Ranking helps discovery; authority still follows
+`docs/README.md`.
 
 The checkout now selects accepted/proposed design targets, schemas, composition
 and domain registries, repo-local skills, runnable Nomi samples (including plain

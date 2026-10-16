@@ -159,8 +159,8 @@ and file/selection process execution through the source CLI. Set
 `NOMI_TEST_PYTHON` to the Python executable containing Nomi's dependencies for
 the process checks, and launch the host with an opened workspace. Unit tests
 use a VS Code substitute; neither local suite proves every operating system.
-The currently tracked launcher also has a macOS executable-name issue; see the separate
-[test review](../review/2026-09-30-test-issues.md) for deferred coverage work.
+Launcher and host coverage are version/platform-specific. Run the tracked wrapper
+on the intended host and distinguish an unavailable host from passing tests.
 
 The argument-based task API and trust gate follow the official
 [VS Code API](https://code.visualstudio.com/api/references/vscode-api) and

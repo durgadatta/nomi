@@ -1,7 +1,6 @@
 # Critical Language Reviews
 
-> Status: comparative evidence; original reviews 2026-09-29, selected deeper
-> continuation 2026-10-10. Not Nomi specification.
+> Status: comparative evidence; not Nomi specification.
 
 These 45 reviews answer a bounded question: which mechanisms help Nomi keep
 local reasoning as a script becomes a package? This is a deliberately selected
@@ -9,14 +8,14 @@ comparison set, not a ranking or a complete catalogue of languages. Each page
 separates sourced observations from Nomi design judgments and supplies a
 concrete falsification exercise. No comparative usability study was run.
 
-The October 10 pass deepens [Wolfram](wolfram.md), [Haskell](haskell.md),
+Selected deeper comparisons cover [Wolfram](wolfram.md), [Haskell](haskell.md),
 [Scala](scala.md), [Kotlin](kotlin.md), [Rust](rust.md), [Julia](julia.md), and
-[TypeScript](typescript.md), and adds [Mojo](mojo.md). Use the
+[TypeScript](typescript.md), and [Mojo](mojo.md). Use the
 [maintainer synthesis guide](../synthesis_guide.md) to compare their mechanisms
-in one language. Other reviews retain their earlier bounded scope. The new
+in one language. Other reviews have a narrower bounded scope. These
 prepared cases have not been executed in the foreign languages or Nomi.
-The [OCaml](ocaml.md) review also adds a bounded handler/continuation lead;
-its earlier type/module comparison is otherwise retained.
+The [OCaml](ocaml.md) review includes a bounded handler/continuation lead
+alongside its type/module comparison.
 
 Primary documentation was consulted for the cited mechanisms on 2026-09-29.
 Version scope matters: Haskell means the 2010 report, C means the C11 committee
@@ -26,7 +25,7 @@ Terraform's expression dialect, and Zig's cited master manual is moving.
 Uiua's cited release article is historical, not a current feature inventory.
 Other unversioned manuals are living references, not pinned conformance data.
 Examples in the linked Nomi suite are proposals, not executed comparisons.
-The selected October 10 review pages identify their newer primary sources;
+The deeper review pages identify their primary sources;
 Haskell's GHC extension evidence is pinned to 9.12.2, Mojo's consulted docs were
 labelled 1.1.0, and Scala capture/separation checking remains explicitly experimental.
 
@@ -51,7 +50,7 @@ adds the separate interface dimension, including Excel, keyboard commands,
 forms, and diagrams.
 The older [families](../families.md) and
 [convergences](../convergences.md) remain the compact evidence spine. These
-pages deepen that spine at the user's request; they do not revive the old
+pages deepen that spine; they do not introduce competing
 corpus or introduce another language authority. Decisions still belong in
 [the ledger](../../design/decisions.md).
 

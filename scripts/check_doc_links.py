@@ -23,7 +23,7 @@ FENCE = re.compile(r'^\s{0,3}(`{3,}|~{3,})')
 
 def default_documents(root: Path = ROOT) -> list[Path]:
     return sorted({
-        root / "README.md", root / "CHANGELOG.md",
+        root / "README.md", root / "DIGEST.md", root / "HISTORY.md",
         *root.glob("docs/**/*.md"),
         root / "tools/jupyter/README.md", root / "tools/vscode/nomi/README.md",
     })

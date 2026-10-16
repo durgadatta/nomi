@@ -27,15 +27,14 @@ are intentional so each can be reviewed alone.
 
 The detailed [pattern fixture](../pattern_matching_target.nomi) still owns the
 registered pattern pass. `patterns.nomi` is a short user-story view, not a
-second pattern specification. [The legacy target](../target.nomi) is retained
-as a superseded predecessor for historical links; this suite owns the active
-overall fixture.
+second pattern specification. The category suite owns focused pressure;
+the overall fixture owns the
+integrated first-product story.
 
-The October 9 product synthesis narrows `overall.nomi` to the first useful
+The product scope limits `overall.nomi` to the first useful
 release. Network enrichment, task groups and fallible resources remain later
 pressure in their category/focused fixtures; they are not prerequisites for
-this pure report. The earlier combined program is preserved in Git at `915aea1`.
-The suite is a design pressure set, not a promise to ship every category together.
+this pure report. The suite is a design pressure set, not a promise to ship every category together.
 
 The [research pressure programs](research/README.md) extend category/overall
 comparison for data, workflows and cross-disciplinary notation. They use

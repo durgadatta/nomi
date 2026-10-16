@@ -27,7 +27,7 @@ The [vision](vision.md) owns the broader purpose. The
 [primitive synthesis](synthesis.md#candidate-primitive-synthesis-and-integration-path)
 supplies the language context. This framework is an ordinary library/artifact
 experiment under the language-coherence packet, whose
-[review](../review/2026-09-29-language-synthesis.md) records evidence and next work.
+[review](../review/language_coherence.md#current-evidence) records evidence and next work.
 The [statistical interface](statistical_data.md) is a domain on top of this
 direction. Its observation domains, masks and scientific laws retain their own
 authority.

@@ -5,7 +5,7 @@
 
 This is the experiment detail for the [edge atlas](edge_cases.md), within the
 existing [interaction proposal](../../design/interaction_model.md) and
-[current-to-target bridge](../../review/2026-09-30-cognitive-interfaces.md).
+[current-to-target bridge](../../review/cognitive_interfaces.md#current-evidence).
 The [philosophical translation](../cognition.md) generates discriminating
 questions; it does not settle the candidates. The
 [local probes](experiments.md) test original finite models, not these Nomi APIs.

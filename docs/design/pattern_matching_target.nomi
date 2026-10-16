@@ -4,7 +4,7 @@
 # - docs/research/pattern_matching.md
 # - docs/design/pattern_matching.md
 # - docs/design/pattern_matching_target.nomi
-# - docs/review/2026-07-16-pattern-matching.md
+# - docs/review/pattern_matching.md
 #
 # This file specifies target source. It is intentionally outside samples/
 # until parser, typed Surface/Core, runtimes, diagnostics, and web agree.

@@ -4,7 +4,7 @@
 
 Packet: `docs/design/interaction_model.md`,
 `docs/design/interaction_model_target.nomi`,
-`docs/review/2026-09-30-cognitive-interfaces.md`.
+`docs/review/cognitive_interfaces.md`.
 
 Start with [the cognitive foundations](../cognition.md). This third dimension
 extends the [45 language reviews](../languages/README.md) and

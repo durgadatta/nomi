@@ -11,7 +11,7 @@ holes, higher-order effects, bidirectional laws, incremental artifacts,
 coordination, synthesis, Unicode, and runtime budgets against primary evidence.
 Existing accepted contracts remain in [syntax](syntax.md),
 [semantics](semantics.md), [industrial](industrial.md), and [decisions](decisions.md).
-The [dated audit](../review/2026-09-30-cognitive-interfaces.md) is evidence, not
+The [current bridge](../review/cognitive_interfaces.md#current-evidence) records evidence, not
 a second live backlog.
 The [Project Enhancement Roadmap](../orientation/project_roadmap.md) schedules
 language closure alongside runtime, product, verification and maintenance work.
@@ -163,7 +163,7 @@ structure and supported laws can be checked without providing data. Keep domain
 theory and execution adapters separate; input-free checking cannot establish
 unobserved empirical facts.
 
-The October 9 [first-product contract](synthesis.md#first-product-contract)
+The [first-product contract](synthesis.md#first-product-contract)
 selects calculation, local JSON report/repair and local reuse. Apply these gates
 to the guarantees that profile promises. D1 needs closed calls and the selected
 library callbacks; D3 needs portable scalars and strict codecs. General public

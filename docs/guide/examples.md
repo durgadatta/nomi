@@ -5,10 +5,9 @@
 [User guide](README.md) / Example catalog
 
 Start with the small task you want to understand. You do not need to read the
-largest sample or a research dossier first. Nomi source samples below live in the checkout's
-`samples/` directory; the current local playground loads those same files into
-its sample list. The online preview is an older deployment and does not yet
-have the recommended calculation/report/data/text samples.
+largest sample or a research dossier first. The [public playground](https://durgadatta.github.io/nomi/web/)
+and local checkout load the same committed `samples/` files, including the
+recommended calculation, report, data and text examples.
 
 ## Recommended Examples
 
@@ -39,13 +38,13 @@ three records. Their counts are `[3, 5, 2]`, the total is `10`, and the history 
 can fail at conversion; this notebook does not collect structured decode errors
 as the report does.
 
-## Older Experimental Samples
+## Experimental Samples
 
 These remain useful implementation experiments, not the recommended route for
 learning the future language. A title such as “guided tour” or “comprehensive”
 describes prototype coverage and does not make the file the target specification.
 Support differs by execution path; start with the hosted CLI when investigating
-an older form, and use the playground's diagnostics for unsupported operations.
+an experimental form, and use the playground's diagnostics for unsupported operations.
 
 | Sample | What it explores | Reading caution |
 | --- | --- | --- |
@@ -57,7 +56,7 @@ an older form, and use the playground's diagnostics for unsupported operations.
 | [block.nomi](../../samples/block.nomi) | Caller blocks and `yield`. | The target does not use universal block/yield control for resources or concurrency. |
 | [others.nomi](../../samples/others.nomi) | Defer, try expressions, shortcuts, and composition. | Contains several deliberately rejected target forms. |
 | [comprehensive.nomi](../../samples/comprehensive.nomi) | Large compatibility/edge-case corpus. | An implementation exercise; read a focused example first. |
-| [notebook_intro.nomi.nb](../../samples/notebook_intro.nomi.nb) | Cell state, functions, and collection work. | Its final constraint cell uses historical notation. |
+| [notebook_intro.nomi.nb](../../samples/notebook_intro.nomi.nb) | Cell state, functions, and collection work. | Its final constraint cell uses experimental notation. |
 
 The [decision ledger](../design/decisions.md#syntax-simplification-decisions)
 explains the rejected forms. The [support guide](status.md#prototype-and-target-differences)
@@ -73,7 +72,7 @@ from top to bottom; save a copy for your work.
 | Lesson | Purpose |
 | --- | --- |
 | [nomi_calculation.ipynb](../../notebooks/nomi_calculation.ipynb) | First calculation, a cross-cell change, and repair instructions; selected by the local notebook launcher. |
-| [nomi_minimal.ipynb](../../notebooks/nomi_minimal.ipynb) | Small kernel smoke test with older prototype notation. |
+| [nomi_minimal.ipynb](../../notebooks/nomi_minimal.ipynb) | Small kernel smoke test with experimental prototype notation. |
 | [nomi_syntax_tour.ipynb](../../notebooks/nomi_syntax_tour.ipynb) | Experimental compatibility tour; includes forms outside the target. |
 
 ### Source files

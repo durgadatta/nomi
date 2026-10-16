@@ -22,7 +22,7 @@ Read first:
 - `docs/research/convergences.md`
 
 When the topic matches a registered pass, read all four packet artifacts and
-its prior retrospective before critiquing.
+its current implementation bridge before critiquing.
 
 Evaluate:
 
@@ -34,7 +34,7 @@ Evaluate:
 - whether it duplicates an existing recognition path or punctuation meaning;
 - what diagnostics or examples make misuse explainable;
 - whether existing research already answers the question.
-- whether packet status, validation, exact next action, or retrospective must
+- whether packet status, validation, exact next action, or current bridge must
   change with the verdict.
 
 Return:

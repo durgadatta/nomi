@@ -4,7 +4,7 @@
 
 Packet: `docs/design/function_contracts.md`,
 `docs/design/function_contracts_target.nomi`,
-`docs/review/2026-09-30-function-contracts.md`.
+`docs/review/function_contracts.md`.
 
 The [generic-operation continuation](../generic_operations.md) researches a
 pragmatic hierarchy beyond FP doctrine: call adapters, carrier-specific
